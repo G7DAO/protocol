@@ -10,7 +10,7 @@ bin/game7:
 
 bindings/Game7Token/Game7Token.go: hardhat
 	mkdir -p bindings/Game7Token
-	seer evm generate --package Game7Token --output bindings/Game7Token/Game7Token.go --hardhat contracts/artifacts/contracts/Token/Game7Token.sol/Game7Token.json --cli --struct Game7Token
+	seer evm generate --package Game7Token --output bindings/Game7Token/Game7Token.go --hardhat web3/artifacts/contracts/Token/Game7Token.sol/Game7Token.json --cli --struct Game7Token
 
 bindings: bindings/Game7Token/Game7Token.go
 
@@ -21,7 +21,7 @@ clean:
 	rm -rf bindings/* bin/*
 
 hardhat:
-	cd contracts && npx hardhat compile
+	cd web3 && npm install && npx hardhat compile
 
 docs:
 	forge doc
