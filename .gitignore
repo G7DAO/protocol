@@ -29,3 +29,6 @@ coverage.json
 out
 cache_forge
 forge-artifacts
+
+# protocol
+bin/

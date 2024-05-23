@@ -18,7 +18,7 @@ test:
 	npx hardhat test
 
 clean:
-	rm -rf out/* bin/*
+	rm -rf bindings/* bin/*
 
 hardhat:
 	cd contracts && npx hardhat compile
