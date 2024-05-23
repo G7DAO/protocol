@@ -5,6 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/G7DAO/protocol/bindings/ArbitrumL1OrbitCustomGateway"
 	"github.com/G7DAO/protocol/bindings/ArbitrumL2CustomGateway"
 	"github.com/G7DAO/protocol/bindings/Game7Token"
 	"github.com/G7DAO/protocol/cmd/game7/version"
@@ -26,10 +27,13 @@ func CreateRootCommand() *cobra.Command {
 	tokenCmd := Game7Token.CreateGame7TokenCommand()
 	tokenCmd.Use = "token"
 
-	arbitrumCustomGatewayCmd := ArbitrumL2CustomGateway.CreateL2CustomGatewayCommand()
-	arbitrumCustomGatewayCmd.Use = "arbitrum-custom-gateway"
+	arbitrumL1OrbitCustomGatewayCmd := ArbitrumL1OrbitCustomGateway.CreateL1OrbitCustomGatewayCommand()
+	arbitrumL1OrbitCustomGatewayCmd.Use = "arbitrum-l1-orbit-custom-gateway"
 
-	rootCmd.AddCommand(completionCmd, versionCmd, tokenCmd, arbitrumCustomGatewayCmd)
+	arbitrumL2CustomGatewayCmd := ArbitrumL2CustomGateway.CreateL2CustomGatewayCommand()
+	arbitrumL2CustomGatewayCmd.Use = "arbitrum-l2-custom-gateway"
+
+	rootCmd.AddCommand(completionCmd, versionCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd)
 
 	// By default, cobra Command objects write to stderr. We have to forcibly set them to output to
 	// stdout.
