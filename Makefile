@@ -18,7 +18,7 @@ test:
 	npx hardhat test
 
 clean:
-	rm -rf bindings/* bin/*
+	rm -rf bindings/Game7Token/* bin/*
 
 hardhat:
 	cd web3 && npm install && npx hardhat compile
