@@ -1,6 +1,6 @@
 pragma solidity ^0.8.24;
 
-import { IERC20 } from './interfaces/IERC20.sol';
+import { IERC20 } from '../interfaces/IERC20.sol';
 
 /**
  * @title Game7 Token
@@ -16,6 +16,7 @@ contract Game7Token is IERC20 {
     mapping(address => mapping(address => uint256)) public allowance;
     constructor(uint256 _totalSupply) {
         balanceOf[msg.sender] = _totalSupply;
+        totalSupply = _totalSupply;
     }
 
     function approve(address spender, uint256 value) external returns (bool) {
@@ -37,7 +38,7 @@ contract Game7Token is IERC20 {
         }
 
         balanceOf[from] -= value;
-        balanceOf[to] -= value;
+        balanceOf[to] += value;
 
         emit Transfer(from, to, value);
 
