@@ -1839,9 +1839,9 @@ func CreateGetOutboundCalldataCommand() *cobra.Command {
 			_from0 = common.HexToAddress(_from0Raw)
 
 			if _to0Raw == "" {
-				return fmt.Errorf("---to-0 argument not specified")
+				return fmt.Errorf("--to-0 argument not specified")
 			} else if !common.IsHexAddress(_to0Raw) {
-				return fmt.Errorf("---to-0 argument is not a valid Ethereum address")
+				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
 			}
 			_to0 = common.HexToAddress(_to0Raw)
 
@@ -1906,7 +1906,7 @@ func CreateGetOutboundCalldataCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&tokenRaw, "token", "", "token argument")
 	cmd.Flags().StringVar(&_from0Raw, "-from-0", "", "-from-0 argument")
-	cmd.Flags().StringVar(&_to0Raw, "-to-0", "", "-to-0 argument")
+	cmd.Flags().StringVar(&_to0Raw, "to-0", "", "to-0 argument")
 	cmd.Flags().StringVar(&amountRaw, "amount", "", "amount argument")
 	cmd.Flags().StringVar(&dataRaw, "data", "", "data argument")
 
@@ -3322,9 +3322,9 @@ func CreateOutboundTransferCommand() *cobra.Command {
 			token = common.HexToAddress(tokenRaw)
 
 			if _to0Raw == "" {
-				return fmt.Errorf("---to-0 argument not specified")
+				return fmt.Errorf("--to-0 argument not specified")
 			} else if !common.IsHexAddress(_to0Raw) {
-				return fmt.Errorf("---to-0 argument is not a valid Ethereum address")
+				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
 			}
 			_to0 = common.HexToAddress(_to0Raw)
 
@@ -3447,7 +3447,7 @@ func CreateOutboundTransferCommand() *cobra.Command {
 	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
 
 	cmd.Flags().StringVar(&tokenRaw, "token", "", "token argument")
-	cmd.Flags().StringVar(&_to0Raw, "-to-0", "", "-to-0 argument")
+	cmd.Flags().StringVar(&_to0Raw, "to-0", "", "to-0 argument")
 	cmd.Flags().StringVar(&amountRaw, "amount", "", "amount argument")
 	cmd.Flags().StringVar(&maxGasRaw, "max-gas", "", "max-gas argument")
 	cmd.Flags().StringVar(&gasPriceBidRaw, "gas-price-bid", "", "gas-price-bid argument")
@@ -3860,9 +3860,9 @@ func CreateOutboundTransferCustomRefundCommand() *cobra.Command {
 			refundTo = common.HexToAddress(refundToRaw)
 
 			if _to0Raw == "" {
-				return fmt.Errorf("---to-0 argument not specified")
+				return fmt.Errorf("--to-0 argument not specified")
 			} else if !common.IsHexAddress(_to0Raw) {
-				return fmt.Errorf("---to-0 argument is not a valid Ethereum address")
+				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
 			}
 			_to0 = common.HexToAddress(_to0Raw)
 
@@ -3987,7 +3987,7 @@ func CreateOutboundTransferCustomRefundCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&tokenRaw, "token", "", "token argument")
 	cmd.Flags().StringVar(&refundToRaw, "refund-to", "", "refund-to argument")
-	cmd.Flags().StringVar(&_to0Raw, "-to-0", "", "-to-0 argument")
+	cmd.Flags().StringVar(&_to0Raw, "to-0", "", "to-0 argument")
 	cmd.Flags().StringVar(&amountRaw, "amount", "", "amount argument")
 	cmd.Flags().StringVar(&maxGasRaw, "max-gas", "", "max-gas argument")
 	cmd.Flags().StringVar(&gasPriceBidRaw, "gas-price-bid", "", "gas-price-bid argument")
