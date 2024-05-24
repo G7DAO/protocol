@@ -9,7 +9,7 @@ import (
 	"github.com/G7DAO/protocol/bindings/ArbitrumL1OrbitGatewayRouter"
 	"github.com/G7DAO/protocol/bindings/ArbitrumL2CustomGateway"
 	"github.com/G7DAO/protocol/bindings/ArbitrumUpgradeExecutor"
-	
+
 	"github.com/G7DAO/protocol/bindings/Game7Token"
 	"github.com/G7DAO/protocol/cmd/game7/version"
 )
