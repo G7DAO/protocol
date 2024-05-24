@@ -7,6 +7,7 @@ import (
 
 	"github.com/G7DAO/protocol/bindings/ArbitrumL1OrbitCustomGateway"
 	"github.com/G7DAO/protocol/bindings/ArbitrumL2CustomGateway"
+	"github.com/G7DAO/protocol/bindings/ArbitrumUpgradeExecutor"
 	"github.com/G7DAO/protocol/bindings/Game7Token"
 	"github.com/G7DAO/protocol/cmd/game7/version"
 )
@@ -33,7 +34,10 @@ func CreateRootCommand() *cobra.Command {
 	arbitrumL2CustomGatewayCmd := ArbitrumL2CustomGateway.CreateL2CustomGatewayCommand()
 	arbitrumL2CustomGatewayCmd.Use = "arbitrum-l2-custom-gateway"
 
-	rootCmd.AddCommand(completionCmd, versionCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd)
+	arbitrumUpgradeExecutorCmd := ArbitrumUpgradeExecutor.CreateArbitrumUpgradeExecutorCommand()
+	arbitrumUpgradeExecutorCmd.Use = "arbitrum-upgrade-executor"
+
+	rootCmd.AddCommand(completionCmd, versionCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd)
 
 	// By default, cobra Command objects write to stderr. We have to forcibly set them to output to
 	// stdout.
