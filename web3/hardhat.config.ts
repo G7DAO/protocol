@@ -11,11 +11,6 @@ const {
   ARB_SCAN_API_KEY,
 } = process.env
 
-if (!DEPLOYER_PRIVATE_KEY) {
-  throw new Error('HardhatConfig: The private key is required');
-}
-
-
 const config: HardhatUserConfig = {
   solidity: "0.8.24",
   etherscan: {
