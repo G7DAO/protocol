@@ -5,7 +5,9 @@ import (
 )
 
 func CreateAccounts(accountsDir string, numAccounts int, password string) error {
-	s := keystore.NewKeyStore(accountsDir, keystore.StandardScryptN, keystore.StandardScryptP)
+	// WARNING: This is a *very* insecure method to generate accounts. It is using insecure ScryptN and ScryptP parameters!
+	// Do not use this for ANYTHING important please.
+	s := keystore.NewKeyStore(accountsDir, 2, 8)
 
 	for i := 0; i < numAccounts; i++ {
 		_, err := s.NewAccount(password)

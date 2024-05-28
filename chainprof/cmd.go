@@ -144,6 +144,9 @@ func CreateAccountsCreateCommand() *cobra.Command {
 	createCmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create profiling accounts",
+		Long: `Create profiling accounts.
+
+WARNING: This is a *very* insecure method to generate accounts. It is using insecure ScryptN and ScryptP parameters! It should NOT be used for ANYTHING even remotely important.`,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			if accountsDir == "" {
 				return errors.New("--accounts-dir is required")
