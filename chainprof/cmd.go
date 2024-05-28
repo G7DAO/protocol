@@ -3,6 +3,7 @@ package chainprof
 import (
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math/big"
 	"os"
@@ -137,13 +138,27 @@ func CreateAccountsCommand() *cobra.Command {
 }
 
 func CreateAccountsCreateCommand() *cobra.Command {
+	var accountsDir, password string
+	var numAccounts int
+
 	createCmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create profiling accounts",
-		Run: func(cmd *cobra.Command, args []string) {
-			cmd.Help()
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if accountsDir == "" {
+				return errors.New("--accounts-dir is required")
+			}
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return CreateAccounts(accountsDir, numAccounts, password)
 		},
 	}
+
+	createCmd.Flags().StringVarP(&accountsDir, "accounts-dir", "d", "", "Directory to create accounts in")
+	createCmd.Flags().StringVarP(&password, "password", "p", "", "Password to encrypt accounts with")
+	createCmd.Flags().IntVarP(&numAccounts, "num-accounts", "n", 1, "Number of accounts to create")
+
 	return createCmd
 }
 
