@@ -166,13 +166,55 @@ WARNING: This is a *very* insecure method to generate accounts. It is using inse
 }
 
 func CreateAccountsFundCommand() *cobra.Command {
+	var accountsDir, keyfile, password, valueRaw, rpc string
+	var amountToFund *big.Int
+	
 	fundCmd := &cobra.Command{
 		Use:   "fund",
 		Short: "Fund profiling accounts",
-		Run: func(cmd *cobra.Command, args []string) {
-			cmd.Help()
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if accountsDir == "" {
+				return errors.New("--accounts-dir is required")
+			}
+			if keyfile == "" {
+				return errors.New("--keyfile is required")
+			}
+
+			amountToFund = new(big.Int)
+			if valueRaw != "" {
+				_, ok := amountToFund.SetString(valueRaw, 10)
+				if !ok {
+					return fmt.Errorf("invalid value: %s", valueRaw)
+				}
+			} else {
+				amountToFund.SetInt64(0)
+			}
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			results, err := FundAccounts(rpc, accountsDir, keyfile, password, amountToFund)
+			if err != nil {
+				return err
+			}
+
+			output, marshalErr := json.Marshal(results)
+
+			if marshalErr != nil {
+				return marshalErr
+			}
+
+			cmd.Println(string(output))
+
+			return nil
 		},
 	}
+
+	fundCmd.Flags().StringVarP(&accountsDir, "accounts-dir", "d", "", "Directory containing accounts to fund")
+	fundCmd.Flags().StringVarP(&keyfile, "keyfile", "k", "", "Keyfile to use for funding")
+	fundCmd.Flags().StringVarP(&password, "password", "p", "", "Password for keyfile")
+	fundCmd.Flags().StringVarP(&valueRaw, "value", "v", "", "Value to fund accounts with")
+	fundCmd.Flags().StringVarP(&rpc, "rpc", "r", "", "RPC endpoint to use for funding")
+
 	return fundCmd
 }
 
