@@ -9,12 +9,12 @@ import (
 	"github.com/G7DAO/protocol/bindings/ArbitrumL1OrbitGatewayRouter"
 	"github.com/G7DAO/protocol/bindings/ArbitrumL2CustomGateway"
 	"github.com/G7DAO/protocol/bindings/ArbitrumUpgradeExecutor"
+	"github.com/G7DAO/protocol/bindings/ArbSys"
 
 	"github.com/G7DAO/protocol/bindings/Game7Token"
 	"github.com/G7DAO/protocol/cmd/game7/version"
 )
-
-func CreateRootCommand() *cobra.Command {
+func CreateRootCommand() *cobra.Command 
 	// rootCmd represents the base command when called without any subcommands
 	rootCmd := &cobra.Command{
 		Use:   "game7",
@@ -38,9 +38,12 @@ func CreateRootCommand() *cobra.Command {
 
 	arbitrumUpgradeExecutorCmd := ArbitrumUpgradeExecutor.CreateArbitrumUpgradeExecutorCommand()
 	arbitrumUpgradeExecutorCmd.Use = "arbitrum-upgrade-executor"
-
+	
 	arbitrumL1OrbitGatewayRouterCmd := ArbitrumL1OrbitGatewayRouter.CreateL1OrbitGatewayRouterCommand()
 	arbitrumL1OrbitGatewayRouterCmd.Use = "arbitrum-l1-orbit-gateway-router"
+	
+	arbSysCmd := ArbSys.CreateL1OrbitGatewayRouterCommand()
+	arbSysCmd.Use = "arbitrum-l1-orbit-gateway-router"
 
 	rootCmd.AddCommand(completionCmd, versionCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd)
 
@@ -49,7 +52,7 @@ func CreateRootCommand() *cobra.Command {
 	rootCmd.SetOut(os.Stdout)
 
 	return rootCmd
-}
+
 
 func CreateCompletionCommand(rootCmd *cobra.Command) *cobra.Command {
 	completionCmd := &cobra.Command{
@@ -109,7 +112,7 @@ func CreateVersionCommand() *cobra.Command {
 	versionCmd := &cobra.Command{
 		Use:   "version",
 		Short: "Print the version of game7 that you are currently using",
-		Run: func(cmd *cobra.Command, args []string) {
+mk		Run: func(cmd *cobra.Command, args []string) {
 			cmd.Println(version.Game7Version)
 		},
 	}
