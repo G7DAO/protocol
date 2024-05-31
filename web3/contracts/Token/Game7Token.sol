@@ -31,11 +31,11 @@ contract Game7Token is IERC20 {
     }
 
     function transferFrom(address from, address to, uint256 amount) public returns (bool) {
-        require(balanceOf[from] >= amount);
+        require(balanceOf[from] >= amount, 'ERC20: transfer amount exceeds balance');
         
 
-        if (msg.sender != from) {
-            require(allowance[from][msg.sender] >= amount);
+        if (msg.sender != from && allowance[from][msg.sender] != type(uint256).max) {
+            require(allowance[from][msg.sender] >= amount, 'ERC20: insufficient allowance');
             allowance[from][msg.sender] -= amount;
         } 
 

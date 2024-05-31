@@ -2,6 +2,7 @@ import { ethers } from 'hardhat';
 import { expect } from 'chai';
 import { shouldBehaveLikeERC20, shouldBehaveLikeERC20Transfer, shouldBehaveLikeERC20Approve } from './ERC20.behavior';
 import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
+import { HardhatEthersSigner } from '../helpers/type';
 
 const TOKENS = [{ Token: 'Game7Token' }];
 
@@ -11,11 +12,14 @@ const initialSupply = BigInt(100n);
 
 describe('ERC20', function () {
   for (const { Token } of TOKENS) {
+    let holder: HardhatEthersSigner;
+    let recipient: HardhatEthersSigner;
+
     describe(Token, function () {
       const fixture = async () => {
         // this.accounts is used by shouldBehaveLikeERC20
-        const accounts = await ethers.getSigners();
-        const [holder, recipient] = accounts;
+        [holder, recipient] = await ethers.getSigners();
+        const accounts =  await ethers.getSigners()
 
         const token = await ethers.deployContract(Token, [initialSupply]);
 
@@ -42,7 +46,7 @@ describe('ERC20', function () {
 
       describe('transfer', function () {
         beforeEach(function () {
-          this.transfer = this.token.transfer;
+          this.transfer = (from: HardhatEthersSigner, to: string, value: bigint) => this.token.connect(from).transfer(to, value);
         });
 
         shouldBehaveLikeERC20Transfer(initialSupply);
@@ -51,11 +55,10 @@ describe('ERC20', function () {
 
       describe('approve', function () {
         beforeEach(function () {
-          this.approve = this.token.approve;
+          this.approve = (owner: HardhatEthersSigner, spender: HardhatEthersSigner, value: bigint) => this.token.connect(owner).approve(spender.address, value);
         });
 
         shouldBehaveLikeERC20Approve(initialSupply);
-
       });
     });
   }
