@@ -19,4 +19,4 @@ jobs:
               run: cd web3 && npm install
 
             - name: Run Hardhat tests
-              run: cd web3 && npx hardhat tests
+              run: cd web3 && npx hardhat test
