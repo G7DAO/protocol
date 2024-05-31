@@ -56,10 +56,18 @@ describe('ERC20', function () {
       describe('approve', function () {
         beforeEach(function () {
           this.approve = (owner: HardhatEthersSigner, spender: HardhatEthersSigner, value: bigint) => this.token.connect(owner).approve(spender.address, value);
+          this.other = this.accounts[2];
         });
 
         shouldBehaveLikeERC20Approve(initialSupply);
+
+        it('reverts when the spender has insufficient allowance', async function () {
+          const value = 1n
+          await expect(this.token.connect(this.other).transferFrom(this.holder.address, this.other.address, value)).to.be.revertedWith('ERC20: insufficient allowance');
+        });
       });
+
+     
     });
   }
 });
