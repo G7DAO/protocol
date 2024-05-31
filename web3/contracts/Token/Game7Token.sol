@@ -20,28 +20,29 @@ contract Game7Token is IERC20 {
         totalSupply = _totalSupply;
     }
 
-    function approve(address spender, uint256 value) external returns (bool) {
-        allowance[msg.sender][spender] = value;
-        emit Approval(msg.sender, spender, value);
+    function approve(address spender, uint256 amount) external returns (bool) {
+        allowance[msg.sender][spender] = amount;
+        emit Approval(msg.sender, spender, amount);
         return true;
     }
 
-    function transfer(address to, uint256 value) external returns (bool) {
-        return transferFrom(msg.sender, to, value);
+    function transfer(address to, uint256 amount) external returns (bool) {
+        return transferFrom(msg.sender, to, amount);
     }
 
-    function transferFrom(address from, address to, uint256 value) public returns (bool) {
-        require(balanceOf[from] >= value);
+    function transferFrom(address from, address to, uint256 amount) public returns (bool) {
+        require(balanceOf[from] >= amount);
+        
 
-        if (msg.sender != from && allowance[from][msg.sender] != 0) {
-            require(allowance[from][msg.sender] >= value);
-            allowance[from][msg.sender] -= value;
-        }
+        if (msg.sender != from) {
+            require(allowance[from][msg.sender] >= amount);
+            allowance[from][msg.sender] -= amount;
+        } 
 
-        balanceOf[from] -= value;
-        balanceOf[to] += value;
+        balanceOf[from] -= amount;
+        balanceOf[to] += amount;
 
-        emit Transfer(from, to, value);
+        emit Transfer(from, to, amount);
 
         return true;
     }
