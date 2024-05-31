@@ -31,7 +31,7 @@ func CreateChainprofCommand() *cobra.Command {
 }
 
 func CreateEvaluateCommand() *cobra.Command {
-	var accountsDir, calldataRaw, outfile, rpc, toRaw, valueRaw string
+	var accountsDir, calldataRaw, outfile, rpc, toRaw, valueRaw, password string
 	var transactionsPerAccount uint
 
 	type profile struct {
@@ -80,7 +80,7 @@ func CreateEvaluateCommand() *cobra.Command {
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			result := profile{
+			/* result := profile{
 				Accounts:               []common.Address{},
 				RPC:                    rpc,
 				Calldata:               string(calldata),
@@ -89,9 +89,14 @@ func CreateEvaluateCommand() *cobra.Command {
 				TransactionsPerAccount: transactionsPerAccount,
 				Transactions:           map[string]string{},
 				Times:                  map[string][]uint{},
+			} */
+
+			results, err := EvaluateAccount(rpc, accountsDir, password, calldata, to.String(), value, transactionsPerAccount)
+			if err != nil {
+				return err
 			}
 
-			resultBytes, marshalErr := json.Marshal(result)
+			resultBytes, marshalErr := json.Marshal(results)
 			if marshalErr != nil {
 				return marshalErr
 			}
@@ -110,6 +115,7 @@ func CreateEvaluateCommand() *cobra.Command {
 	}
 
 	evaluateCmd.Flags().StringVar(&accountsDir, "accounts-dir", "", "Directory containing accounts to use when profiling the chain")
+	evaluateCmd.Flags().StringVar(&password, "password", "", "Password for accounts")
 	evaluateCmd.Flags().StringVar(&calldataRaw, "calldata", "", "Calldata for profiling transactions")
 	evaluateCmd.Flags().StringVar(&outfile, "outfile", "", "File to write profile to")
 	evaluateCmd.Flags().StringVar(&rpc, "rpc", "", "RPC endpoint for the chain being profiled")

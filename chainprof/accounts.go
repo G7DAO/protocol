@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 
 	"github.com/G7DAO/protocol/bindings/Game7Token"
+	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -34,7 +35,7 @@ type account struct {
 	Address string `json:"address"`
 }
 
-type fundResult struct {
+type transactionResult struct {
 	Hash                 string `json:"hash"`
 	MaxFeePerGas         string `json:"maxFeePerGas"`
 	MaxPriorityFeePerGas string `json:"maxPriorityFeePerGas"`
@@ -42,10 +43,17 @@ type fundResult struct {
 	From                 string `json:"from"`
 	To                   string `json:"to"`
 	Value                string `json:"value"`
+	Data                 string `json:"data"`
 }
 
-func FundAccounts(rpcURL string, accountsDir string, keyFile string, password string, value *big.Int) ([]fundResult, error) {
-	results := []fundResult{}
+type optGas struct {
+	MaxFeePerGas         *big.Int
+	MaxPriorityFeePerGas *big.Int
+	Gas                  uint64
+}
+
+func FundAccounts(rpcURL string, accountsDir string, keyFile string, password string, value *big.Int) ([]transactionResult, error) {
+	results := []transactionResult{}
 
 	recipients, recipientErr := ReadAccounts(accountsDir)
 	if recipientErr != nil {
@@ -63,7 +71,8 @@ func FundAccounts(rpcURL string, accountsDir string, keyFile string, password st
 	}
 
 	for _, recipient := range recipients {
-		result, resultErr := TransferEth(client, key, password, recipient.Address, value)
+		result, resultErr := SendTransaction(client, key, password, []byte{}, recipient.Address, value, optGas{})
+		//TransferEth(client, key, password, recipient.Address, value)
 		if resultErr != nil {
 			fmt.Fprintln(os.Stderr, resultErr.Error())
 			continue
@@ -112,8 +121,8 @@ func ReadAccounts(accountsDir string) ([]account, error) {
 	return recipients, nil
 }
 
-func DrainAccounts(rpcURL string, accountsDir string, recipientAddress string, password string) ([]fundResult, error) {
-	results := []fundResult{}
+func DrainAccounts(rpcURL string, accountsDir string, recipientAddress string, password string) ([]transactionResult, error) {
+	results := []transactionResult{}
 
 	accountKeyFiles, accountKeyFileErr := os.ReadDir(accountsDir)
 	if accountKeyFileErr != nil {
@@ -136,8 +145,14 @@ func DrainAccounts(rpcURL string, accountsDir string, recipientAddress string, p
 			return results, balanceErr
 		}
 
+		gasConfig := optGas{
+			MaxFeePerGas:         big.NewInt(10000000),
+			MaxPriorityFeePerGas: big.NewInt(1),
+		}
+
 		transactionCost := big.NewInt(1000000 * 10000000)
-		result, resultErr := TransferEth(client, accountKey, password, recipientAddress, balance.Sub(balance, transactionCost))
+		result, resultErr := SendTransaction(client, accountKey, password, []byte{}, recipientAddress, balance.Sub(balance, transactionCost), gasConfig)
+		//TransferEth(client, accountKey, password, recipientAddress, balance.Sub(balance, transactionCost))
 		if resultErr != nil {
 			fmt.Fprintln(os.Stderr, resultErr.Error())
 			continue
@@ -149,8 +164,40 @@ func DrainAccounts(rpcURL string, accountsDir string, recipientAddress string, p
 	return results, nil
 }
 
-func TransferEth(client *ethclient.Client, key *keystore.Key, password string, recipient string, value *big.Int) (fundResult, error) {
-	result := fundResult{}
+func EvaluateAccount(rpcURL string, accountsDir string, password string, calldata []byte, to string, value *big.Int, transactionsPerAccount uint) ([]transactionResult, error) {
+	results := []transactionResult{}
+	accountKeyFiles, accountKeyFileErr := os.ReadDir(accountsDir)
+	if accountKeyFileErr != nil {
+		return results, accountKeyFileErr
+	}
+
+	client, clientErr := ethclient.Dial(rpcURL)
+	if clientErr != nil {
+		return results, clientErr
+	}
+
+	for _, accountKeyFile := range accountKeyFiles {
+		accountKey, accountKeyErr := Game7Token.KeyFromFile(filepath.Join(accountsDir, accountKeyFile.Name()), password)
+		if accountKeyErr != nil {
+			return results, accountKeyErr
+		}
+
+		for i := uint(0); i < transactionsPerAccount; i++ {
+			result, resultErr := SendTransaction(client, accountKey, password, calldata, to, value, optGas{})
+			if resultErr != nil {
+				fmt.Fprintln(os.Stderr, resultErr.Error())
+				continue
+			}
+
+			results = append(results, result)
+		}
+	}
+
+	return results, nil
+}
+
+func SendTransaction(client *ethclient.Client, key *keystore.Key, password string, calldata []byte, to string, value *big.Int, opts optGas) (transactionResult, error) {
+	result := transactionResult{}
 
 	chainID, chainIDErr := client.ChainID(context.Background())
 	if chainIDErr != nil {
@@ -162,17 +209,37 @@ func TransferEth(client *ethclient.Client, key *keystore.Key, password string, r
 		return result, nonceErr
 	}
 
-	recipientAddress := common.HexToAddress(recipient)
+	recipientAddress := common.HexToAddress(to)
+
+	rawTransaction := ethereum.CallMsg{
+		From:  key.Address,
+		To:    &recipientAddress,
+		Value: value,
+		Data:  []byte(calldata),
+	}
+
+	gasLimit, gasLimitErr := client.EstimateGas(context.Background(), rawTransaction)
+	if gasLimitErr != nil {
+		return result, gasLimitErr
+	}
+
+	if opts.MaxFeePerGas == nil {
+		opts.MaxFeePerGas = big.NewInt(10000000)
+	}
+
+	if opts.MaxPriorityFeePerGas == nil {
+		opts.MaxPriorityFeePerGas = big.NewInt(1)
+	}
 
 	transaction := types.NewTx(&types.DynamicFeeTx{
 		ChainID:   chainID,
 		Nonce:     nonce,
-		GasTipCap: big.NewInt(1),
-		GasFeeCap: big.NewInt(10000000),
-		Gas:       uint64(1000000),
+		GasTipCap: opts.MaxPriorityFeePerGas,
+		GasFeeCap: opts.MaxFeePerGas,
+		Gas:       gasLimit,
 		To:        &recipientAddress,
 		Value:     value,
-		Data:      nil,
+		Data:      []byte(calldata),
 	})
 
 	signedTransaction, signedTransactionErr := types.SignTx(transaction, types.NewLondonSigner(chainID), key.PrivateKey)
@@ -185,14 +252,15 @@ func TransferEth(client *ethclient.Client, key *keystore.Key, password string, r
 		return result, sendTransactionErr
 	}
 
-	result = fundResult{
+	result = transactionResult{
 		Hash:                 signedTransaction.Hash().Hex(),
-		MaxFeePerGas:         transaction.GasFeeCap().String(),
-		MaxPriorityFeePerGas: transaction.GasTipCap().String(),
-		Nonce:                fmt.Sprintf("%d", transaction.Nonce()),
+		MaxFeePerGas:         signedTransaction.GasFeeCap().String(),
+		MaxPriorityFeePerGas: signedTransaction.GasTipCap().String(),
+		Nonce:                fmt.Sprintf("%d", signedTransaction.Nonce()),
 		From:                 key.Address.Hex(),
-		To:                   recipientAddress.Hex(),
-		Value:                value.String(),
+		To:                   signedTransaction.To().Hex(),
+		Value:                signedTransaction.Value().String(),
+		Data:                 string(signedTransaction.Data()[:]),
 	}
 
 	return result, nil
