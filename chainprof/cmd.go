@@ -168,7 +168,7 @@ WARNING: This is a *very* insecure method to generate accounts. It is using inse
 func CreateAccountsFundCommand() *cobra.Command {
 	var accountsDir, keyfile, password, valueRaw, rpc string
 	var amountToFund *big.Int
-	
+
 	fundCmd := &cobra.Command{
 		Use:   "fund",
 		Short: "Fund profiling accounts",
@@ -219,12 +219,42 @@ func CreateAccountsFundCommand() *cobra.Command {
 }
 
 func CreateAccountsDrainCommand() *cobra.Command {
+	var accountsDir, sendTo, password, rpc string
+
 	drainCmd := &cobra.Command{
 		Use:   "drain",
 		Short: "Drain profiling accounts",
-		Run: func(cmd *cobra.Command, args []string) {
-			cmd.Help()
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if accountsDir == "" {
+				return errors.New("--accounts-dir is required")
+			}
+			if sendTo == "" {
+				return errors.New("--send-to is required")
+			}
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			results, err := DrainAccounts(rpc, accountsDir, sendTo, password)
+			if err != nil {
+				return err
+			}
+
+			output, marshalErr := json.Marshal(results)
+
+			if marshalErr != nil {
+				return marshalErr
+			}
+
+			cmd.Println(string(output))
+
+			return nil
 		},
 	}
+
+	drainCmd.Flags().StringVarP(&accountsDir, "accounts-dir", "d", "", "Directory containing accounts to drain")
+	drainCmd.Flags().StringVarP(&sendTo, "send-to", "t", "", "Address to send funds to")
+	drainCmd.Flags().StringVarP(&password, "password", "p", "", "Password for keyfile")
+	drainCmd.Flags().StringVarP(&rpc, "rpc", "r", "", "RPC endpoint to use for funding")
+
 	return drainCmd
 }
