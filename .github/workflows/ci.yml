@@ -16,7 +16,7 @@ jobs:
                   node-version: 18.18.0
 
             - name: Install dependencies
-              run: npm install
+              run: cd web3 && npm install
 
             - name: Run Hardhat tests
-              run: npx hardhat tests
+              run: cd web3 && npx hardhat tests
