@@ -73,3 +73,22 @@ bin/game7 token approve \
 ```
 
 Output: Transaction Hash
+
+## Check tokens balance of a wallet
+
+### Environment variables (set in the first script)
+
+- [x] `export RECIPIENT_ADDRESS=<address of the wallet>`
+
+### Check balance
+
+- [x] Check balance of wallet
+
+```bash
+bin/game7 token balance-of \
+    --contract $GAME7_TOKEN_ADDRESS \
+    --rpc $RPC_URL \
+    --arg-0 $RECIPIENT_ADDRESS \
+```
+
+Output: O: Balance of wallet
