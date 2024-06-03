@@ -7,6 +7,8 @@ import (
 	"math/big"
 	"os"
 	"path/filepath"
+	"strconv"
+	"time"
 
 	"github.com/G7DAO/protocol/bindings/Game7Token"
 	"github.com/ethereum/go-ethereum"
@@ -44,7 +46,9 @@ type transactionResult struct {
 	To                   string `json:"to"`
 	Value                string `json:"value"`
 	Data                 string `json:"data"`
-	Time                 string `json:"time"`
+	CreatedAt            string `json:"createdAt"`
+	ExecutedAt           string `json:"executedAt"`
+	ExecutionTime        string `json:"executionTime"`
 }
 
 type optGas struct {
@@ -256,6 +260,10 @@ func SendTransaction(client *ethclient.Client, key *keystore.Key, password strin
 		return result, sendTransactionErr
 	}
 
+	now := time.Now()
+
+	duration := now.Sub(signedTransaction.Time())
+
 	result = transactionResult{
 		Hash:                 signedTransaction.Hash().Hex(),
 		MaxFeePerGas:         signedTransaction.GasFeeCap().String(),
@@ -265,7 +273,9 @@ func SendTransaction(client *ethclient.Client, key *keystore.Key, password strin
 		To:                   signedTransaction.To().Hex(),
 		Value:                signedTransaction.Value().String(),
 		Data:                 string(signedTransaction.Data()[:]),
-		Time:                 signedTransaction.Time().String(),
+		CreatedAt:            now.Format("2006-01-02 15:04:05"),
+		ExecutedAt:           signedTransaction.Time().Format("2006-01-02 15:04:05"),
+		ExecutionTime:        strconv.FormatFloat(duration.Seconds(), 'f', -1, 64),
 	}
 
 	return result, nil

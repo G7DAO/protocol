@@ -100,13 +100,13 @@ func CreateEvaluateCommand() *cobra.Command {
 				return marshalErr
 			}
 
+			cmd.Println(string(resultBytes))
+
 			if outfile != "" {
 				writeErr := os.WriteFile(outfile, resultBytes, 0644)
 				if writeErr != nil {
 					return writeErr
 				}
-			} else {
-				cmd.Println(string(resultBytes))
 			}
 
 			return nil
