@@ -52,7 +52,6 @@ type transactionResult struct {
 	ExecutionTime        string `json:"executionTime"`
 	GasUsed              string `json:"gasUsed"`
 	GasPrice             string `json:"gasPrice"`
-	Status               string `json:"status"`
 }
 
 type optGas struct {
@@ -286,7 +285,6 @@ func SendTransaction(client *ethclient.Client, key *keystore.Key, password strin
 		ExecutionTime:        strconv.FormatFloat(duration.Seconds(), 'f', -1, 64),
 		GasUsed:              fmt.Sprintf("%d", receipt.GasUsed),
 		GasPrice:             signedTransaction.GasPrice().String(),
-		Status:               fmt.Sprintf("%d", receipt.Status),
 	}
 
 	return result, nil
