@@ -12,6 +12,7 @@ import (
 
 	"github.com/G7DAO/protocol/bindings/Game7Token"
 	"github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -49,6 +50,9 @@ type transactionResult struct {
 	CreatedAt            string `json:"createdAt"`
 	ExecutedAt           string `json:"executedAt"`
 	ExecutionTime        string `json:"executionTime"`
+	GasUsed              string `json:"gasUsed"`
+	GasPrice             string `json:"gasPrice"`
+	Status               string `json:"status"`
 }
 
 type optGas struct {
@@ -260,9 +264,13 @@ func SendTransaction(client *ethclient.Client, key *keystore.Key, password strin
 		return result, sendTransactionErr
 	}
 
-	now := time.Now()
+	receipt, receiptErr := bind.WaitMined(context.Background(), client, signedTransaction)
+	if receiptErr != nil {
+		return result, receiptErr
+	}
 
-	duration := now.Sub(signedTransaction.Time())
+	executedAt := time.Now()
+	duration := executedAt.Sub(signedTransaction.Time())
 
 	result = transactionResult{
 		Hash:                 signedTransaction.Hash().Hex(),
@@ -273,9 +281,12 @@ func SendTransaction(client *ethclient.Client, key *keystore.Key, password strin
 		To:                   signedTransaction.To().Hex(),
 		Value:                signedTransaction.Value().String(),
 		Data:                 string(signedTransaction.Data()[:]),
-		CreatedAt:            now.Format("2006-01-02 15:04:05"),
-		ExecutedAt:           signedTransaction.Time().Format("2006-01-02 15:04:05"),
+		CreatedAt:            signedTransaction.Time().Format("2006-01-02 15:04:05"),
+		ExecutedAt:           executedAt.Format("2006-01-02 15:04:05"),
 		ExecutionTime:        strconv.FormatFloat(duration.Seconds(), 'f', -1, 64),
+		GasUsed:              fmt.Sprintf("%d", receipt.GasUsed),
+		GasPrice:             signedTransaction.GasPrice().String(),
+		Status:               fmt.Sprintf("%d", receipt.Status),
 	}
 
 	return result, nil
