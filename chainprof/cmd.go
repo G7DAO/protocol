@@ -41,8 +41,7 @@ func CreateEvaluateCommand() *cobra.Command {
 		To                     string
 		Value                  string
 		TransactionsPerAccount uint
-		Transactions           map[string]string
-		Times                  map[string][]uint
+		Transactions           []transactionResult
 	}
 
 	var value *big.Int
@@ -80,23 +79,23 @@ func CreateEvaluateCommand() *cobra.Command {
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			/* result := profile{
-				Accounts:               []common.Address{},
+
+			transactions, accounts, err := EvaluateAccount(rpc, accountsDir, password, calldata, to.String(), value, transactionsPerAccount)
+			if err != nil {
+				return err
+			}
+
+			result := profile{
+				Accounts:               accounts,
 				RPC:                    rpc,
 				Calldata:               string(calldata),
 				To:                     to.String(),
 				Value:                  value.String(),
 				TransactionsPerAccount: transactionsPerAccount,
-				Transactions:           map[string]string{},
-				Times:                  map[string][]uint{},
-			} */
-
-			results, err := EvaluateAccount(rpc, accountsDir, password, calldata, to.String(), value, transactionsPerAccount)
-			if err != nil {
-				return err
+				Transactions:           transactions,
 			}
 
-			resultBytes, marshalErr := json.Marshal(results)
+			resultBytes, marshalErr := json.Marshal(result)
 			if marshalErr != nil {
 				return marshalErr
 			}

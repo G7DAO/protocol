@@ -44,6 +44,7 @@ type transactionResult struct {
 	To                   string `json:"to"`
 	Value                string `json:"value"`
 	Data                 string `json:"data"`
+	Time                 string `json:"time"`
 }
 
 type optGas struct {
@@ -72,7 +73,6 @@ func FundAccounts(rpcURL string, accountsDir string, keyFile string, password st
 
 	for _, recipient := range recipients {
 		result, resultErr := SendTransaction(client, key, password, []byte{}, recipient.Address, value, optGas{})
-		//TransferEth(client, key, password, recipient.Address, value)
 		if resultErr != nil {
 			fmt.Fprintln(os.Stderr, resultErr.Error())
 			continue
@@ -152,7 +152,7 @@ func DrainAccounts(rpcURL string, accountsDir string, recipientAddress string, p
 
 		transactionCost := big.NewInt(1000000 * 10000000)
 		result, resultErr := SendTransaction(client, accountKey, password, []byte{}, recipientAddress, balance.Sub(balance, transactionCost), gasConfig)
-		//TransferEth(client, accountKey, password, recipientAddress, balance.Sub(balance, transactionCost))
+
 		if resultErr != nil {
 			fmt.Fprintln(os.Stderr, resultErr.Error())
 			continue
@@ -164,23 +164,27 @@ func DrainAccounts(rpcURL string, accountsDir string, recipientAddress string, p
 	return results, nil
 }
 
-func EvaluateAccount(rpcURL string, accountsDir string, password string, calldata []byte, to string, value *big.Int, transactionsPerAccount uint) ([]transactionResult, error) {
+func EvaluateAccount(rpcURL string, accountsDir string, password string, calldata []byte, to string, value *big.Int, transactionsPerAccount uint) ([]transactionResult, []common.Address, error) {
 	results := []transactionResult{}
+	accounts := []common.Address{}
+
 	accountKeyFiles, accountKeyFileErr := os.ReadDir(accountsDir)
 	if accountKeyFileErr != nil {
-		return results, accountKeyFileErr
+		return results, accounts, accountKeyFileErr
 	}
 
 	client, clientErr := ethclient.Dial(rpcURL)
 	if clientErr != nil {
-		return results, clientErr
+		return results, accounts, clientErr
 	}
 
 	for _, accountKeyFile := range accountKeyFiles {
 		accountKey, accountKeyErr := Game7Token.KeyFromFile(filepath.Join(accountsDir, accountKeyFile.Name()), password)
 		if accountKeyErr != nil {
-			return results, accountKeyErr
+			return results, accounts, accountKeyErr
 		}
+
+		accounts = append(accounts, accountKey.Address)
 
 		for i := uint(0); i < transactionsPerAccount; i++ {
 			result, resultErr := SendTransaction(client, accountKey, password, calldata, to, value, optGas{})
@@ -193,7 +197,7 @@ func EvaluateAccount(rpcURL string, accountsDir string, password string, calldat
 		}
 	}
 
-	return results, nil
+	return results, accounts, nil
 }
 
 func SendTransaction(client *ethclient.Client, key *keystore.Key, password string, calldata []byte, to string, value *big.Int, opts optGas) (transactionResult, error) {
@@ -215,7 +219,7 @@ func SendTransaction(client *ethclient.Client, key *keystore.Key, password strin
 		From:  key.Address,
 		To:    &recipientAddress,
 		Value: value,
-		Data:  []byte(calldata),
+		Data:  calldata,
 	}
 
 	gasLimit, gasLimitErr := client.EstimateGas(context.Background(), rawTransaction)
@@ -239,7 +243,7 @@ func SendTransaction(client *ethclient.Client, key *keystore.Key, password strin
 		Gas:       gasLimit,
 		To:        &recipientAddress,
 		Value:     value,
-		Data:      []byte(calldata),
+		Data:      calldata,
 	})
 
 	signedTransaction, signedTransactionErr := types.SignTx(transaction, types.NewLondonSigner(chainID), key.PrivateKey)
@@ -261,6 +265,7 @@ func SendTransaction(client *ethclient.Client, key *keystore.Key, password strin
 		To:                   signedTransaction.To().Hex(),
 		Value:                signedTransaction.Value().String(),
 		Data:                 string(signedTransaction.Data()[:]),
+		Time:                 signedTransaction.Time().String(),
 	}
 
 	return result, nil
