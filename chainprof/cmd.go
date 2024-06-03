@@ -88,7 +88,7 @@ func CreateEvaluateCommand() *cobra.Command {
 			result := profile{
 				Accounts:               accounts,
 				RPC:                    rpc,
-				Calldata:               string(calldata),
+				Calldata:               hex.EncodeToString(calldata),
 				To:                     to.String(),
 				Value:                  value.String(),
 				TransactionsPerAccount: transactionsPerAccount,

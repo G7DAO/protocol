@@ -2,6 +2,7 @@ package chainprof
 
 import (
 	"context"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"math/big"
@@ -279,7 +280,7 @@ func SendTransaction(client *ethclient.Client, key *keystore.Key, password strin
 		From:                 key.Address.Hex(),
 		To:                   signedTransaction.To().Hex(),
 		Value:                signedTransaction.Value().String(),
-		Data:                 string(signedTransaction.Data()[:]),
+		Data:                 hex.EncodeToString(signedTransaction.Data()),
 		CreatedAt:            signedTransaction.Time().Format("2006-01-02 15:04:05"),
 		ExecutedAt:           executedAt.Format("2006-01-02 15:04:05"),
 		ExecutionTime:        strconv.FormatFloat(duration.Seconds(), 'f', -1, 64),
