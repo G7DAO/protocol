@@ -214,7 +214,7 @@ func EvaluateAccount(rpcURL string, accountsDir string, password string, calldat
 					Nonce: nonce + uint64(j),
 				}
 				transactionsPercentage := float64(j+1) / float64(transactionsPerAccount) * 100
-				fmt.Printf("%.2f %% - Sending transaction for account %s with nonce %d (%.0f%% completed) \n", accountsPercentage, key.Address.Hex(), opts.Nonce, transactionsPercentage)
+				fmt.Printf("%.2f%% - Sending transaction for account %s with nonce %d (%.0f%% completed) \n", accountsPercentage, key.Address.Hex(), opts.Nonce, transactionsPercentage)
 				transaction, result, transactionErr := SendTransaction(client, key, password, calldata, to, value, opts)
 				if transactionErr != nil {
 					fmt.Fprintln(os.Stderr, transactionErr.Error())
@@ -237,27 +237,35 @@ func EvaluateAccount(rpcURL string, accountsDir string, password string, calldat
 	var waitWg sync.WaitGroup
 	for i, transaction := range transactions {
 		waitWg.Add(1)
-		go func(index int, transaction *types.Transaction, result *transactionResult) {
+		go func(index int, transaction *types.Transaction) {
 			defer waitWg.Done()
 
-			waitPercentage := float64(index+1) / float64(len(transactions)) * 100
-			fmt.Printf("%.2f%% - Waiting for transaction %d to be mined\n", waitPercentage, (index + 1))
+			fmt.Printf("Waiting for transaction %d to be mined\n", (index + 1))
 			// Wait for each transaction to be mined
 			receipt, receiptErr := bind.WaitMined(context.Background(), client, transaction)
 			if receiptErr != nil {
 				fmt.Fprintln(os.Stderr, receiptErr.Error())
 				return
 			}
-			fmt.Printf("%.2f%% - Transaction %d mined\n", waitPercentage, (index + 1))
+			fmt.Printf("Transaction %d mined\n", (index + 1))
 
 			executedAt := time.Now()
-			createdAtTime, _ := time.Parse("2006-01-02 15:04:05", result.CreatedAt)
-			duration := executedAt.Sub(createdAtTime)
 
-			result.GasUsed = fmt.Sprintf("%d", receipt.GasUsed)
-			result.ExecutedAt = executedAt.Format("2006-01-02 15:04:05")
-			result.ExecutionTime = strconv.FormatFloat(duration.Seconds(), 'f', -1, 64)
-		}(i, transaction, &results[i])
+			/*
+				TODO: check why this is not working (error: transaction type not supported)
+				block, blockErr := client.BlockByNumber(context.Background(), receipt.BlockNumber)
+				if blockErr != nil {
+					fmt.Fprintln(os.Stderr, blockErr.Error())
+					return
+				}
+				block.Time() */
+			duration := executedAt.Sub(transaction.Time())
+
+			results[index].GasUsed = fmt.Sprintf("%d", receipt.GasUsed)
+			results[index].GasPrice = receipt.EffectiveGasPrice.String()
+			results[index].ExecutedAt = executedAt.Format("2006-01-02 15:04:05")
+			results[index].ExecutionTime = strconv.FormatFloat(duration.Seconds(), 'f', -1, 64)
+		}(i, transaction)
 	}
 
 	fmt.Printf("Waiting for %d transactions to be mined\n", len(transactions))
