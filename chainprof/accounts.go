@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/G7DAO/protocol/bindings/Game7Token"
@@ -55,10 +56,10 @@ type transactionResult struct {
 	GasPrice             string `json:"gasPrice"`
 }
 
-type optGas struct {
+type optTx struct {
 	MaxFeePerGas         *big.Int
 	MaxPriorityFeePerGas *big.Int
-	Gas                  uint64
+	Nonce                uint64
 }
 
 func FundAccounts(rpcURL string, accountsDir string, keyFile string, password string, value *big.Int) ([]transactionResult, error) {
@@ -80,7 +81,7 @@ func FundAccounts(rpcURL string, accountsDir string, keyFile string, password st
 	}
 
 	for _, recipient := range recipients {
-		result, resultErr := SendTransaction(client, key, password, []byte{}, recipient.Address, value, optGas{})
+		_, result, resultErr := SendTransaction(client, key, password, []byte{}, recipient.Address, value, optTx{})
 		if resultErr != nil {
 			fmt.Fprintln(os.Stderr, resultErr.Error())
 			continue
@@ -153,13 +154,13 @@ func DrainAccounts(rpcURL string, accountsDir string, recipientAddress string, p
 			return results, balanceErr
 		}
 
-		gasConfig := optGas{
+		gasConfig := optTx{
 			MaxFeePerGas:         big.NewInt(10000000),
 			MaxPriorityFeePerGas: big.NewInt(1),
 		}
 
 		transactionCost := big.NewInt(1000000 * 10000000)
-		result, resultErr := SendTransaction(client, accountKey, password, []byte{}, recipientAddress, balance.Sub(balance, transactionCost), gasConfig)
+		_, result, resultErr := SendTransaction(client, accountKey, password, []byte{}, recipientAddress, balance.Sub(balance, transactionCost), gasConfig)
 
 		if resultErr != nil {
 			fmt.Fprintln(os.Stderr, resultErr.Error())
@@ -174,11 +175,12 @@ func DrainAccounts(rpcURL string, accountsDir string, recipientAddress string, p
 
 func EvaluateAccount(rpcURL string, accountsDir string, password string, calldata []byte, to string, value *big.Int, transactionsPerAccount uint) ([]transactionResult, []common.Address, error) {
 	results := []transactionResult{}
+	transactions := []*types.Transaction{}
 	accounts := []common.Address{}
 
-	accountKeyFiles, accountKeyFileErr := os.ReadDir(accountsDir)
-	if accountKeyFileErr != nil {
-		return results, accounts, accountKeyFileErr
+	keyFiles, keyFileErr := os.ReadDir(accountsDir)
+	if keyFileErr != nil {
+		return results, accounts, keyFileErr
 	}
 
 	client, clientErr := ethclient.Dial(rpcURL)
@@ -186,39 +188,89 @@ func EvaluateAccount(rpcURL string, accountsDir string, password string, calldat
 		return results, accounts, clientErr
 	}
 
-	for _, accountKeyFile := range accountKeyFiles {
-		accountKey, accountKeyErr := Game7Token.KeyFromFile(filepath.Join(accountsDir, accountKeyFile.Name()), password)
-		if accountKeyErr != nil {
-			return results, accounts, accountKeyErr
+	var sendWg sync.WaitGroup
+
+	for _, keyFile := range keyFiles {
+		key, keyErr := Game7Token.KeyFromFile(filepath.Join(accountsDir, keyFile.Name()), password)
+		if keyErr != nil {
+			return results, accounts, keyErr
 		}
 
-		accounts = append(accounts, accountKey.Address)
+		accounts = append(accounts, key.Address)
 
-		for i := uint(0); i < transactionsPerAccount; i++ {
-			result, resultErr := SendTransaction(client, accountKey, password, calldata, to, value, optGas{})
-			if resultErr != nil {
-				fmt.Fprintln(os.Stderr, resultErr.Error())
-				continue
-			}
+		nonce, nonceErr := client.PendingNonceAt(context.Background(), key.Address)
+		if nonceErr != nil {
+			return results, accounts, nonceErr
+		}
 
-			results = append(results, result)
+		fmt.Printf("Processing account %s with nonce %d\n", key.Address.Hex(), nonce)
+
+		for index := uint(0); index < transactionsPerAccount; index++ {
+			sendWg.Add(1)
+			go func(key *keystore.Key, index uint, nonce uint64) {
+				defer sendWg.Done()
+				opts := optTx{
+					Nonce: nonce + uint64(index),
+				}
+
+				fmt.Printf("Sending transaction %d for account %s with nonce %d\n", index, key.Address.Hex(), opts.Nonce)
+				transaction, result, transactionErr := SendTransaction(client, key, password, calldata, to, value, opts)
+				if transactionErr != nil {
+					fmt.Fprintln(os.Stderr, transactionErr.Error())
+					return
+				}
+
+				transactions = append(transactions, transaction)
+				results = append(results, result)
+			}(key, index, nonce)
 		}
 	}
+
+	fmt.Printf("Sending %d transactions\n", len(transactions))
+	sendWg.Wait()
+	fmt.Printf("All %d transactions sent!", len(transactions))
+
+	fmt.Printf("Waiting for %d transactions to be mined\n", len(transactions))
+	var waitWg sync.WaitGroup
+	for index, transaction := range transactions {
+		waitWg.Add(1)
+		go func(index int, transaction *types.Transaction, result transactionResult) {
+			defer waitWg.Done()
+			// Wait for each transaction to be mined
+			fmt.Printf("Waiting for transaction %d to be mined\n", index)
+			receipt, receiptErr := bind.WaitMined(context.Background(), client, transaction)
+			if receiptErr != nil {
+				fmt.Fprintln(os.Stderr, receiptErr.Error())
+				return
+			}
+			fmt.Printf("Transaction %d mined\n", index)
+
+			executedAt := time.Now()
+			createdAtTime, _ := time.Parse("2006-01-02 15:04:05", result.CreatedAt)
+			duration := executedAt.Sub(createdAtTime)
+
+			result.GasUsed = fmt.Sprintf("%d", receipt.GasUsed)
+			result.ExecutedAt = executedAt.Format("2006-01-02 15:04:05")
+			result.ExecutionTime = strconv.FormatFloat(duration.Seconds(), 'f', -1, 64)
+
+			results = append(results, result)
+		}(index, transaction, results[index])
+	}
+
+	fmt.Printf("Waiting for %d transactions to be mined\n", len(transactions))
+	waitWg.Wait()
+	fmt.Printf("All %d transactions mined! \n", len(transactions))
 
 	return results, accounts, nil
 }
 
-func SendTransaction(client *ethclient.Client, key *keystore.Key, password string, calldata []byte, to string, value *big.Int, opts optGas) (transactionResult, error) {
+func SendTransaction(client *ethclient.Client, key *keystore.Key, password string, calldata []byte, to string, value *big.Int, opts optTx) (*types.Transaction, transactionResult, error) {
 	result := transactionResult{}
+	transactionResponse := &types.Transaction{}
 
 	chainID, chainIDErr := client.ChainID(context.Background())
 	if chainIDErr != nil {
-		return result, chainIDErr
-	}
-
-	nonce, nonceErr := client.PendingNonceAt(context.Background(), key.Address)
-	if nonceErr != nil {
-		return result, nonceErr
+		return transactionResponse, result, chainIDErr
 	}
 
 	recipientAddress := common.HexToAddress(to)
@@ -232,7 +284,7 @@ func SendTransaction(client *ethclient.Client, key *keystore.Key, password strin
 
 	gasLimit, gasLimitErr := client.EstimateGas(context.Background(), rawTransaction)
 	if gasLimitErr != nil {
-		return result, gasLimitErr
+		return transactionResponse, result, gasLimitErr
 	}
 
 	if opts.MaxFeePerGas == nil {
@@ -243,9 +295,18 @@ func SendTransaction(client *ethclient.Client, key *keystore.Key, password strin
 		opts.MaxPriorityFeePerGas = big.NewInt(1)
 	}
 
+	if opts.Nonce == 0 {
+		nonce, nonceErr := client.PendingNonceAt(context.Background(), key.Address)
+		if nonceErr != nil {
+			return transactionResponse, result, nonceErr
+		}
+
+		opts.Nonce = nonce
+	}
+
 	transaction := types.NewTx(&types.DynamicFeeTx{
 		ChainID:   chainID,
-		Nonce:     nonce,
+		Nonce:     opts.Nonce,
 		GasTipCap: opts.MaxPriorityFeePerGas,
 		GasFeeCap: opts.MaxFeePerGas,
 		Gas:       gasLimit,
@@ -256,21 +317,8 @@ func SendTransaction(client *ethclient.Client, key *keystore.Key, password strin
 
 	signedTransaction, signedTransactionErr := types.SignTx(transaction, types.NewLondonSigner(chainID), key.PrivateKey)
 	if signedTransactionErr != nil {
-		return result, signedTransactionErr
+		return signedTransaction, result, signedTransactionErr
 	}
-
-	sendTransactionErr := client.SendTransaction(context.Background(), signedTransaction)
-	if sendTransactionErr != nil {
-		return result, sendTransactionErr
-	}
-
-	receipt, receiptErr := bind.WaitMined(context.Background(), client, signedTransaction)
-	if receiptErr != nil {
-		return result, receiptErr
-	}
-
-	executedAt := time.Now()
-	duration := executedAt.Sub(signedTransaction.Time())
 
 	result = transactionResult{
 		Hash:                 signedTransaction.Hash().Hex(),
@@ -282,11 +330,7 @@ func SendTransaction(client *ethclient.Client, key *keystore.Key, password strin
 		Value:                signedTransaction.Value().String(),
 		Data:                 hex.EncodeToString(signedTransaction.Data()),
 		CreatedAt:            signedTransaction.Time().Format("2006-01-02 15:04:05"),
-		ExecutedAt:           executedAt.Format("2006-01-02 15:04:05"),
-		ExecutionTime:        strconv.FormatFloat(duration.Seconds(), 'f', -1, 64),
-		GasUsed:              fmt.Sprintf("%d", receipt.GasUsed),
-		GasPrice:             signedTransaction.GasPrice().String(),
 	}
 
-	return result, nil
+	return signedTransaction, result, client.SendTransaction(context.Background(), signedTransaction)
 }
