@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math/big"
 	"os"
+	"time"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/spf13/cobra"
@@ -41,6 +42,10 @@ func CreateEvaluateCommand() *cobra.Command {
 		To                     string
 		Value                  string
 		TransactionsPerAccount uint
+		ExecutionTime          int
+		BlockProductionTime    int
+		InitialBlockNumber     uint64
+		FinalBlockNumber       uint64
 		Transactions           []transactionResult
 	}
 
@@ -79,11 +84,13 @@ func CreateEvaluateCommand() *cobra.Command {
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-
-			transactions, accounts, err := EvaluateAccount(rpc, accountsDir, password, calldata, to.String(), value, transactionsPerAccount)
+			startTime := time.Now()
+			transactions, accounts, duration, intialBlockNumber, finalBlockNumber, err := EvaluateAccount(rpc, accountsDir, password, calldata, to.String(), value, transactionsPerAccount)
 			if err != nil {
 				return err
 			}
+			endTime := time.Now()
+			executionTime := endTime.Sub(startTime)
 
 			result := profile{
 				Accounts:               accounts,
@@ -91,6 +98,10 @@ func CreateEvaluateCommand() *cobra.Command {
 				Calldata:               hex.EncodeToString(calldata),
 				To:                     to.String(),
 				Value:                  value.String(),
+				ExecutionTime:          int(executionTime.Seconds()),
+				BlockProductionTime:    int(duration.Seconds()),
+				InitialBlockNumber:     intialBlockNumber,
+				FinalBlockNumber:       finalBlockNumber,
 				TransactionsPerAccount: transactionsPerAccount,
 				Transactions:           transactions,
 			}
@@ -100,7 +111,7 @@ func CreateEvaluateCommand() *cobra.Command {
 				return marshalErr
 			}
 
-			cmd.Println(string(resultBytes))
+			//cmd.Println(string(resultBytes))
 
 			if outfile != "" {
 				writeErr := os.WriteFile(outfile, resultBytes, 0644)

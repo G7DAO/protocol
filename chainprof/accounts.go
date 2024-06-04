@@ -8,7 +8,6 @@ import (
 	"math/big"
 	"os"
 	"path/filepath"
-	"strconv"
 	"sync"
 	"time"
 
@@ -50,10 +49,9 @@ type transactionResult struct {
 	Value                string `json:"value"`
 	Data                 string `json:"data"`
 	CreatedAt            string `json:"createdAt"`
-	ExecutedAt           string `json:"executedAt"`
-	ExecutionTime        string `json:"executionTime"`
 	GasUsed              string `json:"gasUsed"`
 	GasPrice             string `json:"gasPrice"`
+	BlockNumber          uint64 `json:"blockNumber"`
 }
 
 type optTx struct {
@@ -173,34 +171,39 @@ func DrainAccounts(rpcURL string, accountsDir string, recipientAddress string, p
 	return results, nil
 }
 
-func EvaluateAccount(rpcURL string, accountsDir string, password string, calldata []byte, to string, value *big.Int, transactionsPerAccount uint) ([]transactionResult, []common.Address, error) {
+func EvaluateAccount(rpcURL string, accountsDir string, password string, calldata []byte, to string, value *big.Int, transactionsPerAccount uint) ([]transactionResult, []common.Address, time.Duration, uint64, uint64, error) {
 	results := []transactionResult{}
 	transactions := []*types.Transaction{}
 	accounts := []common.Address{}
+	duration := time.Duration(0)
 
 	keyFiles, keyFileErr := os.ReadDir(accountsDir)
 	if keyFileErr != nil {
-		return results, accounts, keyFileErr
+		return results, accounts, duration, 0, 0, keyFileErr
 	}
 
 	client, clientErr := ethclient.Dial(rpcURL)
 	if clientErr != nil {
-		return results, accounts, clientErr
+		return results, accounts, duration, 0, 0, clientErr
 	}
 
 	var sendWg sync.WaitGroup
+	var resultWg sync.WaitGroup
+
+	resultChan := make(chan transactionResult)
+	transactionChan := make(chan *types.Transaction)
 
 	for i, keyFile := range keyFiles {
 		key, keyErr := Game7Token.KeyFromFile(filepath.Join(accountsDir, keyFile.Name()), password)
 		if keyErr != nil {
-			return results, accounts, keyErr
+			return results, accounts, duration, 0, 0, keyErr
 		}
 
 		accounts = append(accounts, key.Address)
 
 		nonce, nonceErr := client.PendingNonceAt(context.Background(), key.Address)
 		if nonceErr != nil {
-			return results, accounts, nonceErr
+			return results, accounts, duration, 0, 0, nonceErr
 		}
 
 		accountsPercentage := float64(i+1) / float64(len(keyFiles)) * 100
@@ -208,28 +211,34 @@ func EvaluateAccount(rpcURL string, accountsDir string, password string, calldat
 
 		for j := uint(0); j < transactionsPerAccount; j++ {
 			sendWg.Add(1)
-			go func(key *keystore.Key, j uint, nonce uint64, accountsPercentage float64) {
-				defer sendWg.Done()
-				opts := optTx{
-					Nonce: nonce + uint64(j),
-				}
-				transactionsPercentage := float64(j+1) / float64(transactionsPerAccount) * 100
-				fmt.Printf("%.2f%% - Sending transaction for account %s with nonce %d (%.0f%% completed) \n", accountsPercentage, key.Address.Hex(), opts.Nonce, transactionsPercentage)
-				transaction, result, transactionErr := SendTransaction(client, key, password, calldata, to, value, opts)
-				if transactionErr != nil {
-					fmt.Fprintln(os.Stderr, transactionErr.Error())
-					return
-				}
-
-				results = append(results, result)
-				transactions = append(transactions, transaction)
-			}(key, j, nonce, accountsPercentage)
+			go SubmitTransaction(&sendWg, resultChan, transactionChan, key, j, nonce, accountsPercentage, transactionsPerAccount, client, password, calldata, to, value)
 		}
 	}
 
 	fmt.Printf("Sending %d transactions \n", len(transactions))
+
+	resultWg.Add(1)
+	go func() {
+		defer resultWg.Done()
+		for result := range resultChan {
+			results = append(results, result)
+		}
+	}()
+
+	resultWg.Add(1)
+	go func() {
+		defer resultWg.Done()
+		for transaction := range transactionChan {
+			transactions = append(transactions, transaction)
+		}
+	}()
+
 	sendWg.Wait()
+	close(resultChan)
+	close(transactionChan)
+	resultWg.Wait()
 	fmt.Printf("All %d transactions sent! \n", len(transactions))
+
 	fmt.Printf("transactions length: %d\n", len(transactions))
 	fmt.Printf("results length: %d\n", len(results))
 
@@ -249,22 +258,9 @@ func EvaluateAccount(rpcURL string, accountsDir string, password string, calldat
 			}
 			fmt.Printf("Transaction %d mined\n", (index + 1))
 
-			executedAt := time.Now()
-
-			/*
-				TODO: check why this is not working (error: transaction type not supported)
-				block, blockErr := client.BlockByNumber(context.Background(), receipt.BlockNumber)
-				if blockErr != nil {
-					fmt.Fprintln(os.Stderr, blockErr.Error())
-					return
-				}
-				block.Time() */
-			duration := executedAt.Sub(transaction.Time())
-
 			results[index].GasUsed = fmt.Sprintf("%d", receipt.GasUsed)
 			results[index].GasPrice = receipt.EffectiveGasPrice.String()
-			results[index].ExecutedAt = executedAt.Format("2006-01-02 15:04:05")
-			results[index].ExecutionTime = strconv.FormatFloat(duration.Seconds(), 'f', -1, 64)
+			results[index].BlockNumber = receipt.BlockNumber.Uint64()
 		}(i, transaction)
 	}
 
@@ -272,7 +268,39 @@ func EvaluateAccount(rpcURL string, accountsDir string, password string, calldat
 	waitWg.Wait()
 	fmt.Printf("All %d transactions mined! \n", len(transactions))
 
-	return results, accounts, nil
+	var initialBlockNumber, latestBlockNumber uint64
+
+	for _, result := range results {
+		if initialBlockNumber == 0 {
+			initialBlockNumber = result.BlockNumber
+		} else if result.BlockNumber < initialBlockNumber {
+			initialBlockNumber = result.BlockNumber
+		}
+
+		if result.BlockNumber > latestBlockNumber {
+			latestBlockNumber = result.BlockNumber
+		}
+	}
+
+	fmt.Printf("Initial block number: %d\n", initialBlockNumber)
+	fmt.Printf("Latest block number: %d\n", latestBlockNumber)
+
+	initialBlockTimestamp, initialBlockTimestampErr := ArbitrumGetBlockTimestampByBlockNumber(rpcURL, big.NewInt(int64(initialBlockNumber)))
+	if initialBlockTimestampErr != nil {
+		return results, accounts, duration, 0, 0, initialBlockTimestampErr
+	}
+
+	latestBlockTimestamp, latestBlockTimestampErr := ArbitrumGetBlockTimestampByBlockNumber(rpcURL, big.NewInt(int64(latestBlockNumber)))
+	if latestBlockTimestampErr != nil {
+		return results, accounts, duration, 0, 0, latestBlockTimestampErr
+	}
+
+	fmt.Printf("Initial block timestamp: %s\n", initialBlockTimestamp)
+	fmt.Printf("Latest block timestamp: %s\n", latestBlockTimestamp)
+
+	duration = latestBlockTimestamp.Sub(initialBlockTimestamp)
+
+	return results, accounts, duration, initialBlockNumber, latestBlockNumber, nil
 }
 
 func SendTransaction(client *ethclient.Client, key *keystore.Key, password string, calldata []byte, to string, value *big.Int, opts optTx) (*types.Transaction, transactionResult, error) {
@@ -344,4 +372,35 @@ func SendTransaction(client *ethclient.Client, key *keystore.Key, password strin
 	}
 
 	return signedTransaction, result, client.SendTransaction(context.Background(), signedTransaction)
+}
+
+func SubmitTransaction(
+	sendWg *sync.WaitGroup,
+	resultChan chan<- transactionResult,
+	transactionChan chan<- *types.Transaction,
+	key *keystore.Key,
+	j uint,
+	nonce uint64,
+	accountsPercentage float64,
+	transactionsPerAccount uint,
+	client *ethclient.Client,
+	password string,
+	calldata []byte,
+	to string,
+	value *big.Int,
+) {
+	defer sendWg.Done()
+	opts := optTx{
+		Nonce: nonce + uint64(j),
+	}
+	transactionsPercentage := float64(j+1) / float64(transactionsPerAccount) * 100
+	fmt.Printf("%.2f%% - Sending transaction for account %s with nonce %d (%.0f%% completed) \n", accountsPercentage, key.Address.Hex(), opts.Nonce, transactionsPercentage)
+	transaction, result, transactionErr := SendTransaction(client, key, password, calldata, to, value, opts)
+	if transactionErr != nil {
+		fmt.Fprintln(os.Stderr, transactionErr.Error())
+		return
+	}
+
+	resultChan <- result
+	transactionChan <- transaction
 }
