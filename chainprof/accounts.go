@@ -190,7 +190,7 @@ func EvaluateAccount(rpcURL string, accountsDir string, password string, calldat
 
 	var sendWg sync.WaitGroup
 
-	for _, keyFile := range keyFiles {
+	for i, keyFile := range keyFiles {
 		key, keyErr := Game7Token.KeyFromFile(filepath.Join(accountsDir, keyFile.Name()), password)
 		if keyErr != nil {
 			return results, accounts, keyErr
@@ -203,47 +203,52 @@ func EvaluateAccount(rpcURL string, accountsDir string, password string, calldat
 			return results, accounts, nonceErr
 		}
 
-		fmt.Printf("Processing account %s with nonce %d\n", key.Address.Hex(), nonce)
+		accountsPercentage := float64(i+1) / float64(len(keyFiles)) * 100
+		fmt.Printf("%.2f%% - Processing account %s with nonce %d \n", accountsPercentage, key.Address.Hex(), nonce)
 
-		for index := uint(0); index < transactionsPerAccount; index++ {
+		for j := uint(0); j < transactionsPerAccount; j++ {
 			sendWg.Add(1)
-			go func(key *keystore.Key, index uint, nonce uint64) {
+			go func(key *keystore.Key, j uint, nonce uint64, accountsPercentage float64) {
 				defer sendWg.Done()
 				opts := optTx{
-					Nonce: nonce + uint64(index),
+					Nonce: nonce + uint64(j),
 				}
-
-				fmt.Printf("Sending transaction %d for account %s with nonce %d\n", index, key.Address.Hex(), opts.Nonce)
+				transactionsPercentage := float64(j+1) / float64(transactionsPerAccount) * 100
+				fmt.Printf("%.2f %% - Sending transaction for account %s with nonce %d (%.0f%% completed) \n", accountsPercentage, key.Address.Hex(), opts.Nonce, transactionsPercentage)
 				transaction, result, transactionErr := SendTransaction(client, key, password, calldata, to, value, opts)
 				if transactionErr != nil {
 					fmt.Fprintln(os.Stderr, transactionErr.Error())
 					return
 				}
 
-				transactions = append(transactions, transaction)
 				results = append(results, result)
-			}(key, index, nonce)
+				transactions = append(transactions, transaction)
+			}(key, j, nonce, accountsPercentage)
 		}
 	}
 
-	fmt.Printf("Sending %d transactions\n", len(transactions))
+	fmt.Printf("Sending %d transactions \n", len(transactions))
 	sendWg.Wait()
-	fmt.Printf("All %d transactions sent!", len(transactions))
+	fmt.Printf("All %d transactions sent! \n", len(transactions))
+	fmt.Printf("transactions length: %d\n", len(transactions))
+	fmt.Printf("results length: %d\n", len(results))
 
-	fmt.Printf("Waiting for %d transactions to be mined\n", len(transactions))
+	fmt.Printf("Waiting for %d transactions to be mined \n", len(transactions))
 	var waitWg sync.WaitGroup
-	for index, transaction := range transactions {
+	for i, transaction := range transactions {
 		waitWg.Add(1)
-		go func(index int, transaction *types.Transaction, result transactionResult) {
+		go func(index int, transaction *types.Transaction, result *transactionResult) {
 			defer waitWg.Done()
+
+			waitPercentage := float64(index+1) / float64(len(transactions)) * 100
+			fmt.Printf("%.2f%% - Waiting for transaction %d to be mined\n", waitPercentage, (index + 1))
 			// Wait for each transaction to be mined
-			fmt.Printf("Waiting for transaction %d to be mined\n", index)
 			receipt, receiptErr := bind.WaitMined(context.Background(), client, transaction)
 			if receiptErr != nil {
 				fmt.Fprintln(os.Stderr, receiptErr.Error())
 				return
 			}
-			fmt.Printf("Transaction %d mined\n", index)
+			fmt.Printf("%.2f%% - Transaction %d mined\n", waitPercentage, (index + 1))
 
 			executedAt := time.Now()
 			createdAtTime, _ := time.Parse("2006-01-02 15:04:05", result.CreatedAt)
@@ -252,9 +257,7 @@ func EvaluateAccount(rpcURL string, accountsDir string, password string, calldat
 			result.GasUsed = fmt.Sprintf("%d", receipt.GasUsed)
 			result.ExecutedAt = executedAt.Format("2006-01-02 15:04:05")
 			result.ExecutionTime = strconv.FormatFloat(duration.Seconds(), 'f', -1, 64)
-
-			results = append(results, result)
-		}(index, transaction, results[index])
+		}(i, transaction, &results[i])
 	}
 
 	fmt.Printf("Waiting for %d transactions to be mined\n", len(transactions))
@@ -317,7 +320,7 @@ func SendTransaction(client *ethclient.Client, key *keystore.Key, password strin
 
 	signedTransaction, signedTransactionErr := types.SignTx(transaction, types.NewLondonSigner(chainID), key.PrivateKey)
 	if signedTransactionErr != nil {
-		return signedTransaction, result, signedTransactionErr
+		return transactionResponse, result, signedTransactionErr
 	}
 
 	result = transactionResult{
