@@ -26,8 +26,8 @@ contract Staking2 {
     }
 
     function deposit(address _tokenAddress, uint256 _amount, uint256 _duration, address _receiver) external {
-        require(_receiver != address(0), "Staking.lock: receiver cannot be zero address");
-        require(_amount > 0, "Staking.lock: cannot deposit 0");
+        require(_receiver != address(0), "Staking.deposit: receiver cannot be zero address");
+        require(_amount > 0, "Staking.deposit: cannot deposit 0");
 
         IERC20 depositToken = IERC20(_tokenAddress);
         depositToken.transferFrom(msg.sender, address(this), _amount);
@@ -45,11 +45,11 @@ contract Staking2 {
     }
 
     function withdraw(uint256 _depositId, address _receiver) external {
-        require(_receiver != address(0), "Staking.unlock: receiver cannot be zero address");
+        require(_receiver != address(0), "Staking.withdraw: receiver cannot be zero address");
         uint256 depositCount = depositsOf[msg.sender].length;
-        require(_depositId < depositCount, "Staking.unlock: deposit does not exist");
+        require(_depositId < depositCount, "Staking.withdraw: deposit does not exist");
         Deposit memory userDeposit = depositsOf[msg.sender][_depositId];
-        require(block.timestamp >= userDeposit.end, "Staking.unlock: TOO SOON! YOU HAVE AWAKENED ME TOO SOON, EXECUTUS!");
+        require(block.timestamp >= userDeposit.end, "Staking.withdraw: TOO SOON! YOU HAVE AWAKENED ME TOO SOON, EXECUTUS!");
 
         // remove Deposit
         depositsOf[msg.sender][_depositId] = depositsOf[msg.sender][depositCount - 1];
