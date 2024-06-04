@@ -16,13 +16,17 @@ bindings/Staking/Staking.go: hardhat
 	mkdir -p bindings/Staking
 	~/seer/seer evm generate --package Staking --output bindings/Staking/Staking.go --hardhat web3/artifacts/contracts/staking/Staking.sol/Staking.json --cli --struct Staking
 
-bindings: bindings/Game7Token/Game7Token.go bindings/Staking/Staking.go
+bindings/Staking2/Staking2.go: hardhat
+	mkdir -p bindings/Staking2
+	~/seer/seer evm generate --package Staking2 --output bindings/Staking2/Staking2.go --hardhat web3/artifacts/contracts/staking/Staking2.sol/Staking2.json --cli --struct Staking2
+
+bindings: bindings/Game7Token/Game7Token.go bindings/Staking/Staking.go bindings/Staking2/Staking2.go
 
 test:
 	npx hardhat test
 
 clean:
-	rm -rf bindings/Game7Token/* bindings/Staking/* bin/*
+	rm -rf bindings/Game7Token/* bindings/Staking/* bindings/Staking2/* bin/*
 
 hardhat:
 	cd web3 && npm install && npx hardhat compile
