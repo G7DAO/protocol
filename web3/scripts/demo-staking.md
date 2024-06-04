@@ -23,6 +23,14 @@
 
 ### Demo
 
+- [ ] Show wallet balance
+```bash
+bin/game7 token balance-of \
+    --rpc $RPC \
+    --contract $TOKEN \
+    --arg-0 $DAO
+```
+
 - [ ]  Stake tokens
     
     ```bash

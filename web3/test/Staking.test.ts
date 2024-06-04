@@ -4,7 +4,7 @@ import { ethers } from "hardhat";
 import { toWei } from "../helpers/bignumber";
 import { bigint } from "hardhat/internal/core/params/argumentTypes";
 
-describe("Token contract", function () {
+describe("Staking contract", function () {
   let token: Game7Token;
   let staking: Staking;
   let deployer: Awaited<ReturnType<typeof ethers.getSigners>>[0];
