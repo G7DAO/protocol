@@ -6,10 +6,14 @@ import (
 	"math/big"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 
 	"github.com/G7DAO/protocol/bindings/Game7Token"
+	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
@@ -36,6 +40,67 @@ func BatchFundAccounts(client *ethclient.Client, key *keystore.Key, password str
 			}
 
 			_, result, resultErr := SendTransaction(client, key, password, calldata, recipient.Address, value, opts)
+			if resultErr != nil {
+				fmt.Fprintln(os.Stderr, resultErr.Error())
+				return
+			}
+
+			resultsChan <- result
+		}(recipient, i)
+	}
+
+	resultWg.Add(1)
+	go func() {
+		defer resultWg.Done()
+		for result := range resultsChan {
+			results = append(results, result)
+		}
+	}()
+
+	fmt.Println("Sending transactions...")
+	sendWg.Wait()
+	close(resultsChan)
+	resultWg.Wait()
+	fmt.Println("Done!")
+
+	return results, nil
+}
+
+func BatchFundAccountsERC20(client *ethclient.Client, key *keystore.Key, password string, tokenAddress string, recipients []Account, amount *big.Int) ([]TransactionResult, error) {
+	results := []TransactionResult{}
+	resultsChan := make(chan TransactionResult)
+
+	var sendWg sync.WaitGroup
+	var resultWg sync.WaitGroup
+
+	nonce, nonceErr := client.PendingNonceAt(context.Background(), key.Address)
+	if nonceErr != nil {
+		return results, nonceErr
+	}
+
+	parsedABI, err := abi.JSON(strings.NewReader(Game7Token.Game7TokenABI))
+	if err != nil {
+		fmt.Printf("Failed to parse ABI: %s", err)
+		return results, err
+	}
+
+	for i, recipient := range recipients {
+		fmt.Printf("%.2f%% - (%d of %d) Funding account %s \n", float64(i+1)/float64(len(recipients))*100, (i + 1), len(recipients), key.Address.Hex())
+		sendWg.Add(1)
+		go func(recipient Account, nonceValue int) {
+			defer sendWg.Done()
+
+			opts := OptTx{
+				Nonce: nonce + uint64(nonceValue),
+			}
+
+			calldata, calldataErr := parsedABI.Pack("transfer", common.HexToAddress(recipient.Address), amount)
+			if calldataErr != nil {
+				fmt.Fprintln(os.Stderr, calldataErr.Error())
+				return
+			}
+
+			_, result, resultErr := SendTransaction(client, key, password, calldata, tokenAddress, nil, opts)
 			if resultErr != nil {
 				fmt.Fprintln(os.Stderr, resultErr.Error())
 				return
@@ -102,6 +167,86 @@ func BatchDrainAccounts(client *ethclient.Client, accountsDir string, recipientA
 			}
 
 			_, result, resultErr := SendTransaction(client, key, password, []byte{}, recipientAddress, balance.Sub(balance, transactionCost), gasConfig)
+
+			if resultErr != nil {
+				fmt.Fprintln(os.Stderr, resultErr.Error())
+				return
+			}
+			resultsChan <- result
+		}(key, balance)
+	}
+
+	resultWg.Add(1)
+	go func() {
+		defer resultWg.Done()
+		for result := range resultsChan {
+			results = append(results, result)
+		}
+	}()
+
+	fmt.Println("Sending transactions...")
+	sendWg.Wait()
+	close(resultsChan)
+	resultWg.Wait()
+	fmt.Println("Done!")
+
+	return results, nil
+}
+
+func BatchDrainAccountsERC20(client *ethclient.Client, accountsDir string, recipientAddress string, password string, tokenAddress string) ([]TransactionResult, error) {
+	results := []TransactionResult{}
+	resultsChan := make(chan TransactionResult)
+	sendWg := sync.WaitGroup{}
+	resultWg := sync.WaitGroup{}
+
+	keyFiles, keyFilesErr := os.ReadDir(accountsDir)
+	if keyFilesErr != nil {
+		return results, keyFilesErr
+	}
+
+	parsedABI, err := abi.JSON(strings.NewReader(Game7Token.Game7TokenABI))
+	if err != nil {
+		fmt.Printf("Failed to parse ABI: %s", err)
+		return results, err
+	}
+
+	for i, keyFile := range keyFiles {
+		key, keysErr := Game7Token.KeyFromFile(filepath.Join(accountsDir, keyFile.Name()), password)
+		if keysErr != nil {
+			continue
+		}
+
+		contract, contractErr := Game7Token.NewGame7Token(common.HexToAddress(tokenAddress), client)
+		if contractErr != nil {
+			return results, contractErr
+		}
+		contract.BalanceOf(nil, key.Address)
+
+		session := Game7Token.Game7TokenCallerSession{
+			Contract: &contract.Game7TokenCaller,
+			CallOpts: bind.CallOpts{},
+		}
+
+		balance, balanceErr := session.BalanceOf(
+			key.Address,
+		)
+		if balanceErr != nil {
+			continue
+		}
+
+		fmt.Printf("%.2f%% - (%d of %d) Draining account %s \n", float64(i+1)/float64(len(keyFiles))*100, (i + 1), len(keyFiles), key.Address.Hex())
+
+		sendWg.Add(1)
+		go func(key *keystore.Key, balance *big.Int) {
+			defer sendWg.Done()
+
+			calldata, calldataErr := parsedABI.Pack("transfer", common.HexToAddress(recipientAddress), balance)
+			if calldataErr != nil {
+				fmt.Fprintln(os.Stderr, calldataErr.Error())
+				return
+			}
+
+			_, result, resultErr := SendTransaction(client, key, password, calldata, tokenAddress, nil, OptTx{})
 
 			if resultErr != nil {
 				fmt.Fprintln(os.Stderr, resultErr.Error())

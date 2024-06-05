@@ -54,6 +54,32 @@ func FundAccounts(rpcURL string, accountsDir string, keyFile string, password st
 	return results, nil
 }
 
+func FundAccountsERC20(rpcURL string, accountsDir string, keyFile string, password string, tokenAddress string, value *big.Int) ([]TransactionResult, error) {
+	results := []TransactionResult{}
+
+	recipients, recipientErr := ReadAccounts(accountsDir)
+	if recipientErr != nil {
+		return results, recipientErr
+	}
+
+	client, clientErr := ethclient.Dial(rpcURL)
+	if clientErr != nil {
+		return results, clientErr
+	}
+
+	key, keyErr := Game7Token.KeyFromFile(keyFile, password)
+	if keyErr != nil {
+		return results, keyErr
+	}
+
+	results, resultsErr := BatchFundAccountsERC20(client, key, password, tokenAddress, recipients, value)
+	if resultsErr != nil {
+		return results, resultsErr
+	}
+
+	return results, nil
+}
+
 func DrainAccounts(rpcURL string, accountsDir string, recipientAddress string, password string) ([]TransactionResult, error) {
 	results := []TransactionResult{}
 
@@ -63,6 +89,22 @@ func DrainAccounts(rpcURL string, accountsDir string, recipientAddress string, p
 	}
 
 	results, resultsErr := BatchDrainAccounts(client, accountsDir, recipientAddress, password)
+	if resultsErr != nil {
+		return results, resultsErr
+	}
+
+	return results, nil
+}
+
+func DrainAccountsERC20(rpcURL string, accountsDir string, recipientAddress string, password string, tokenAddress string) ([]TransactionResult, error) {
+	results := []TransactionResult{}
+
+	client, clientErr := ethclient.Dial(rpcURL)
+	if clientErr != nil {
+		return results, clientErr
+	}
+
+	results, resultsErr := BatchDrainAccountsERC20(client, accountsDir, recipientAddress, password, tokenAddress)
 	if resultsErr != nil {
 		return results, resultsErr
 	}
