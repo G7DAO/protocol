@@ -35,20 +35,6 @@ func CreateEvaluateCommand() *cobra.Command {
 	var accountsDir, calldataRaw, outfile, rpc, toRaw, valueRaw, password string
 	var transactionsPerAccount uint
 
-	type profile struct {
-		Accounts               []common.Address
-		RPC                    string
-		Calldata               string
-		To                     string
-		Value                  string
-		TransactionsPerAccount uint
-		ExecutionTime          int
-		BlockProductionTime    int
-		InitialBlockNumber     uint64
-		FinalBlockNumber       uint64
-		Transactions           []transactionResult
-	}
-
 	var value *big.Int
 	var to common.Address
 	var calldata []byte
@@ -85,33 +71,22 @@ func CreateEvaluateCommand() *cobra.Command {
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			startTime := time.Now()
-			transactions, accounts, duration, intialBlockNumber, finalBlockNumber, err := EvaluateAccount(rpc, accountsDir, password, calldata, to.String(), value, transactionsPerAccount)
+			transactions, accounts, err := EvaluateAccount(rpc, accountsDir, password, calldata, to.String(), value, transactionsPerAccount)
 			if err != nil {
 				return err
 			}
 			endTime := time.Now()
-			executionTime := endTime.Sub(startTime)
 
-			result := profile{
-				Accounts:               accounts,
-				RPC:                    rpc,
-				Calldata:               hex.EncodeToString(calldata),
-				To:                     to.String(),
-				Value:                  value.String(),
-				ExecutionTime:          int(executionTime.Seconds()),
-				BlockProductionTime:    int(duration.Seconds()),
-				InitialBlockNumber:     intialBlockNumber,
-				FinalBlockNumber:       finalBlockNumber,
-				TransactionsPerAccount: transactionsPerAccount,
-				Transactions:           transactions,
+			fmt.Printf("Processing results...\n")
+			chainPerfomance, chainPerfomanceErr := GetPerformanceFromTransactionResults(transactions, rpc, accounts, calldata, to, value, transactionsPerAccount, startTime, endTime)
+			if chainPerfomanceErr != nil {
+				return chainPerfomanceErr
 			}
 
-			resultBytes, marshalErr := json.Marshal(result)
+			resultBytes, marshalErr := json.Marshal(chainPerfomance)
 			if marshalErr != nil {
 				return marshalErr
 			}
-
-			//cmd.Println(string(resultBytes))
 
 			if outfile != "" {
 				writeErr := os.WriteFile(outfile, resultBytes, 0644)
@@ -119,6 +94,8 @@ func CreateEvaluateCommand() *cobra.Command {
 					return writeErr
 				}
 			}
+
+			fmt.Println("Done!")
 
 			return nil
 		},
