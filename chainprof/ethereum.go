@@ -160,7 +160,6 @@ func SendTransaction(client *ethclient.Client, key *keystore.Key, password strin
 	if sendTransactionErr != nil {
 		return nil, TransactionResult{}, sendTransactionErr
 	}
-
 	result := TransactionResult{
 		Hash:                 signedTransaction.Hash().Hex(),
 		MaxFeePerGas:         signedTransaction.GasFeeCap().String(),
