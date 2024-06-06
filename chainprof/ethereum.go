@@ -124,7 +124,7 @@ func SendTransaction(client *ethclient.Client, key *keystore.Key, password strin
 	}
 
 	if opts.MaxFeePerGas == nil {
-		opts.MaxFeePerGas = big.NewInt(10000000)
+		opts.MaxFeePerGas = big.NewInt(20000000)
 	}
 
 	if opts.MaxPriorityFeePerGas == nil {
