@@ -2,12 +2,13 @@
 pragma solidity ^0.8.24;
 
 import { IERC20 } from '../interfaces/IERC20.sol';
+import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title Game7 Staking
  * @author Game7 Engineering Team - engineering@game7.io
  */
-contract Staking2 {
+contract Staking2 is ReentrancyGuard {
 
     struct Deposit {
         address tokenAddress;
@@ -21,11 +22,14 @@ contract Staking2 {
     event Deposited(address indexed tokenAddress, address indexed receiver, address indexed from, uint256 duration, uint256 amount);
     event Withdrawn(uint256 indexed depositId, address indexed from, address indexed receiver);
 
+    constructor() {
+    }
+
     function getDepositCount(address user) external view returns (uint256) {
         return depositsOf[user].length;
     }
 
-    function deposit(address _tokenAddress, uint256 _amount, uint256 _duration, address _receiver) external {
+    function deposit(address _tokenAddress, uint256 _amount, uint256 _duration, address _receiver) external nonReentrant {
         require(_receiver != address(0), "Staking.deposit: receiver cannot be zero address");
         require(_amount > 0, "Staking.deposit: cannot deposit 0");
 
@@ -44,7 +48,7 @@ contract Staking2 {
         emit Deposited(_tokenAddress, _receiver, msg.sender, _duration, _amount);
     }
 
-    function withdraw(uint256 _depositId, address _receiver) external {
+    function withdraw(uint256 _depositId, address _receiver) external nonReentrant {
         require(_receiver != address(0), "Staking.withdraw: receiver cannot be zero address");
         uint256 depositCount = depositsOf[msg.sender].length;
         require(_depositId < depositCount, "Staking.withdraw: deposit does not exist");
