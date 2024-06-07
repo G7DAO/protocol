@@ -124,11 +124,19 @@ func SendTransaction(client *ethclient.Client, key *keystore.Key, password strin
 	}
 
 	if opts.MaxFeePerGas == nil {
-		opts.MaxFeePerGas = big.NewInt(20000000)
+		baseFee, baseFeeErr := client.SuggestGasPrice(context.Background())
+		if baseFeeErr != nil {
+			return nil, TransactionResult{}, baseFeeErr
+		}
+		opts.MaxFeePerGas = baseFee
 	}
 
 	if opts.MaxPriorityFeePerGas == nil {
-		opts.MaxPriorityFeePerGas = big.NewInt(1)
+		gasTipCap, gasTipCapErr := client.SuggestGasTipCap(context.Background())
+		if gasTipCapErr != nil {
+			return nil, TransactionResult{}, gasTipCapErr
+		}
+		opts.MaxPriorityFeePerGas = gasTipCap
 	}
 
 	if opts.Nonce == 0 {
