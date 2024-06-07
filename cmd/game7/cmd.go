@@ -13,6 +13,7 @@ import (
 	"github.com/G7DAO/protocol/bindings/ERC20Inbox"
 
 	"github.com/G7DAO/protocol/bindings/Game7Token"
+	"github.com/G7DAO/protocol/chainprof"
 	"github.com/G7DAO/protocol/cmd/game7/version"
 )
 
@@ -50,7 +51,9 @@ func CreateRootCommand() *cobra.Command {
 	erc20InboxCmd := ERC20Inbox.CreateERC20InboxCommand()
 	erc20InboxCmd.Use = "erc20-inbox"
 
-	rootCmd.AddCommand(completionCmd, versionCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd)
+	chainprofCmd := chainprof.CreateChainprofCommand()
+
+	rootCmd.AddCommand(completionCmd, versionCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, chainprofCmd)
 
 	// By default, cobra Command objects write to stderr. We have to forcibly set them to output to
 	// stdout.
