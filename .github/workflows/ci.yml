@@ -1,0 +1,22 @@
+name: Smart Contracts CI
+
+on:
+    - push
+
+jobs:
+    tests:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Install Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 18.18.0
+
+            - name: Install dependencies
+              run: cd web3 && npm install
+
+            - name: Run Hardhat tests
+              run: cd web3 && npx hardhat test
