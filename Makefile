@@ -7,6 +7,7 @@ rebuild: clean generate build
 bin/game7:
 	mkdir -p bin
 	go build -o bin/game7 ./cmd/game7
+	go build -o bin/chainprof ./cmd/chainprof
 
 bindings/Game7Token/Game7Token.go: hardhat
 	mkdir -p bindings/Game7Token
