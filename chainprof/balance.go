@@ -14,19 +14,23 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-func BatchFundAccounts(client *ethclient.Client, key *keystore.Key, password string, calldata []byte, recipients []Account, value *big.Int) ([]TransactionResult, error) {
+func BatchFundAccounts(client *ethclient.Client, key *keystore.Key, password string, calldata []byte, recipients []Account, value *big.Int) ([]*types.Transaction, []TransactionResult, error) {
 	results := []TransactionResult{}
+	transactions := []*types.Transaction{}
+
 	resultsChan := make(chan TransactionResult)
+	transactionsChan := make(chan *types.Transaction)
 
 	var sendWg sync.WaitGroup
 	var resultWg sync.WaitGroup
 
 	nonce, nonceErr := client.PendingNonceAt(context.Background(), key.Address)
 	if nonceErr != nil {
-		return results, nonceErr
+		return transactions, results, nonceErr
 	}
 
 	for i, recipient := range recipients {
@@ -39,13 +43,14 @@ func BatchFundAccounts(client *ethclient.Client, key *keystore.Key, password str
 				Nonce: nonce + uint64(nonceValue),
 			}
 
-			_, result, resultErr := SendTransaction(client, key, password, calldata, recipient.Address, value, opts)
+			transaction, result, resultErr := SendTransaction(client, key, password, calldata, recipient.Address, value, opts)
 			if resultErr != nil {
 				fmt.Fprintln(os.Stderr, resultErr.Error())
 				return
 			}
 
 			resultsChan <- result
+			transactionsChan <- transaction
 		}(recipient, i)
 	}
 
@@ -57,31 +62,42 @@ func BatchFundAccounts(client *ethclient.Client, key *keystore.Key, password str
 		}
 	}()
 
+	resultWg.Add(1)
+	go func() {
+		defer resultWg.Done()
+		for transaction := range transactionsChan {
+			transactions = append(transactions, transaction)
+		}
+	}()
+
 	fmt.Println("Sending transactions...")
 	sendWg.Wait()
 	close(resultsChan)
+	close(transactionsChan)
 	resultWg.Wait()
 	fmt.Println("Done!")
 
-	return results, nil
+	return transactions, results, nil
 }
 
-func BatchFundAccountsERC20(client *ethclient.Client, key *keystore.Key, password string, tokenAddress string, recipients []Account, amount *big.Int) ([]TransactionResult, error) {
+func BatchFundAccountsERC20(client *ethclient.Client, key *keystore.Key, password string, tokenAddress string, recipients []Account, amount *big.Int) ([]*types.Transaction, []TransactionResult, error) {
 	results := []TransactionResult{}
+	transactions := []*types.Transaction{}
 	resultsChan := make(chan TransactionResult)
+	transactionsChan := make(chan *types.Transaction)
 
 	var sendWg sync.WaitGroup
 	var resultWg sync.WaitGroup
 
 	nonce, nonceErr := client.PendingNonceAt(context.Background(), key.Address)
 	if nonceErr != nil {
-		return results, nonceErr
+		return transactions, results, nonceErr
 	}
 
 	parsedABI, err := abi.JSON(strings.NewReader(Game7Token.Game7TokenABI))
 	if err != nil {
 		fmt.Printf("Failed to parse ABI: %s", err)
-		return results, err
+		return transactions, results, err
 	}
 
 	for i, recipient := range recipients {
@@ -100,13 +116,14 @@ func BatchFundAccountsERC20(client *ethclient.Client, key *keystore.Key, passwor
 				return
 			}
 
-			_, result, resultErr := SendTransaction(client, key, password, calldata, tokenAddress, nil, opts)
+			transactions, result, resultErr := SendTransaction(client, key, password, calldata, tokenAddress, nil, opts)
 			if resultErr != nil {
 				fmt.Fprintln(os.Stderr, resultErr.Error())
 				return
 			}
 
 			resultsChan <- result
+			transactionsChan <- transactions
 		}(recipient, i)
 	}
 
@@ -118,24 +135,35 @@ func BatchFundAccountsERC20(client *ethclient.Client, key *keystore.Key, passwor
 		}
 	}()
 
+	resultWg.Add(1)
+	go func() {
+		defer resultWg.Done()
+		for transaction := range transactionsChan {
+			transactions = append(transactions, transaction)
+		}
+	}()
+
 	fmt.Println("Sending transactions...")
 	sendWg.Wait()
 	close(resultsChan)
+	close(transactionsChan)
 	resultWg.Wait()
 	fmt.Println("Done!")
 
-	return results, nil
+	return transactions, results, nil
 }
 
-func BatchDrainAccounts(client *ethclient.Client, accountsDir string, recipientAddress string, password string) ([]TransactionResult, error) {
+func BatchDrainAccounts(client *ethclient.Client, accountsDir string, recipientAddress string, password string) ([]*types.Transaction, []TransactionResult, error) {
 	results := []TransactionResult{}
+	transactions := []*types.Transaction{}
 	resultsChan := make(chan TransactionResult)
+	transactionsChan := make(chan *types.Transaction)
 	sendWg := sync.WaitGroup{}
 	resultWg := sync.WaitGroup{}
 
 	keyFiles, keyFilesErr := os.ReadDir(accountsDir)
 	if keyFilesErr != nil {
-		return results, keyFilesErr
+		return transactions, results, keyFilesErr
 	}
 
 	for i, keyFile := range keyFiles {
@@ -166,13 +194,14 @@ func BatchDrainAccounts(client *ethclient.Client, accountsDir string, recipientA
 				return
 			}
 
-			_, result, resultErr := SendTransaction(client, key, password, []byte{}, recipientAddress, balance.Sub(balance, transactionCost), gasConfig)
+			transaction, result, resultErr := SendTransaction(client, key, password, []byte{}, recipientAddress, balance.Sub(balance, transactionCost), gasConfig)
 
 			if resultErr != nil {
 				fmt.Fprintln(os.Stderr, resultErr.Error())
 				return
 			}
 			resultsChan <- result
+			transactionsChan <- transaction
 		}(key, balance)
 	}
 
@@ -184,30 +213,40 @@ func BatchDrainAccounts(client *ethclient.Client, accountsDir string, recipientA
 		}
 	}()
 
+	resultWg.Add(1)
+	go func() {
+		defer resultWg.Done()
+		for transaction := range transactionsChan {
+			transactions = append(transactions, transaction)
+		}
+	}()
+
 	fmt.Println("Sending transactions...")
 	sendWg.Wait()
 	close(resultsChan)
+	close(transactionsChan)
 	resultWg.Wait()
 	fmt.Println("Done!")
 
-	return results, nil
+	return transactions, results, nil
 }
 
-func BatchDrainAccountsERC20(client *ethclient.Client, accountsDir string, recipientAddress string, password string, tokenAddress string) ([]TransactionResult, error) {
+func BatchDrainAccountsERC20(client *ethclient.Client, accountsDir string, recipientAddress string, password string, tokenAddress string) ([]*types.Transaction, []TransactionResult, error) {
 	results := []TransactionResult{}
+	transactions := []*types.Transaction{}
 	resultsChan := make(chan TransactionResult)
+	transactionsChan := make(chan *types.Transaction)
 	sendWg := sync.WaitGroup{}
 	resultWg := sync.WaitGroup{}
 
 	keyFiles, keyFilesErr := os.ReadDir(accountsDir)
 	if keyFilesErr != nil {
-		return results, keyFilesErr
+		return transactions, results, keyFilesErr
 	}
 
 	parsedABI, err := abi.JSON(strings.NewReader(Game7Token.Game7TokenABI))
 	if err != nil {
-		fmt.Printf("Failed to parse ABI: %s", err)
-		return results, err
+		return transactions, results, err
 	}
 
 	for i, keyFile := range keyFiles {
@@ -218,7 +257,7 @@ func BatchDrainAccountsERC20(client *ethclient.Client, accountsDir string, recip
 
 		contract, contractErr := Game7Token.NewGame7Token(common.HexToAddress(tokenAddress), client)
 		if contractErr != nil {
-			return results, contractErr
+			return transactions, results, contractErr
 		}
 		contract.BalanceOf(nil, key.Address)
 
@@ -246,13 +285,14 @@ func BatchDrainAccountsERC20(client *ethclient.Client, accountsDir string, recip
 				return
 			}
 
-			_, result, resultErr := SendTransaction(client, key, password, calldata, tokenAddress, nil, OptTx{})
+			transaction, result, resultErr := SendTransaction(client, key, password, calldata, tokenAddress, nil, OptTx{})
 
 			if resultErr != nil {
 				fmt.Fprintln(os.Stderr, resultErr.Error())
 				return
 			}
 			resultsChan <- result
+			transactionsChan <- transaction
 		}(key, balance)
 	}
 
@@ -264,11 +304,20 @@ func BatchDrainAccountsERC20(client *ethclient.Client, accountsDir string, recip
 		}
 	}()
 
+	resultWg.Add(1)
+	go func() {
+		defer resultWg.Done()
+		for transaction := range transactionsChan {
+			transactions = append(transactions, transaction)
+		}
+	}()
+
 	fmt.Println("Sending transactions...")
 	sendWg.Wait()
 	close(resultsChan)
+	close(transactionsChan)
 	resultWg.Wait()
 	fmt.Println("Done!")
 
-	return results, nil
+	return transactions, results, nil
 }

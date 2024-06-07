@@ -47,10 +47,17 @@ func FundAccounts(rpcURL string, accountsDir string, keyFile string, password st
 		return results, keyErr
 	}
 
-	results, resultsErr := BatchFundAccounts(client, key, password, []byte{}, recipients, value)
+	transactions, results, resultsErr := BatchFundAccounts(client, key, password, []byte{}, recipients, value)
 	if resultsErr != nil {
 		return results, resultsErr
 	}
+
+	receipts, receiptsErr := BatchWaitForTransactionsToBeMined(client, transactions)
+	if receiptsErr != nil {
+		return results, receiptsErr
+	}
+
+	results = UpdateTransactionResultsWithReceipts(results, receipts)
 
 	return results, nil
 }
@@ -73,10 +80,17 @@ func FundAccountsERC20(rpcURL string, accountsDir string, keyFile string, passwo
 		return results, keyErr
 	}
 
-	results, resultsErr := BatchFundAccountsERC20(client, key, password, tokenAddress, recipients, value)
+	transactions, results, resultsErr := BatchFundAccountsERC20(client, key, password, tokenAddress, recipients, value)
 	if resultsErr != nil {
 		return results, resultsErr
 	}
+
+	receipts, receiptsErr := BatchWaitForTransactionsToBeMined(client, transactions)
+	if receiptsErr != nil {
+		return results, receiptsErr
+	}
+
+	results = UpdateTransactionResultsWithReceipts(results, receipts)
 
 	return results, nil
 }
@@ -89,10 +103,17 @@ func DrainAccounts(rpcURL string, accountsDir string, recipientAddress string, p
 		return results, clientErr
 	}
 
-	results, resultsErr := BatchDrainAccounts(client, accountsDir, recipientAddress, password)
+	transactions, results, resultsErr := BatchDrainAccounts(client, accountsDir, recipientAddress, password)
 	if resultsErr != nil {
 		return results, resultsErr
 	}
+
+	receipts, receiptsErr := BatchWaitForTransactionsToBeMined(client, transactions)
+	if receiptsErr != nil {
+		return results, receiptsErr
+	}
+
+	results = UpdateTransactionResultsWithReceipts(results, receipts)
 
 	return results, nil
 }
@@ -105,10 +126,17 @@ func DrainAccountsERC20(rpcURL string, accountsDir string, recipientAddress stri
 		return results, clientErr
 	}
 
-	results, resultsErr := BatchDrainAccountsERC20(client, accountsDir, recipientAddress, password, tokenAddress)
+	transactions, results, resultsErr := BatchDrainAccountsERC20(client, accountsDir, recipientAddress, password, tokenAddress)
 	if resultsErr != nil {
 		return results, resultsErr
 	}
+
+	receipts, receiptsErr := BatchWaitForTransactionsToBeMined(client, transactions)
+	if receiptsErr != nil {
+		return results, receiptsErr
+	}
+
+	results = UpdateTransactionResultsWithReceipts(results, receipts)
 
 	return results, nil
 }
