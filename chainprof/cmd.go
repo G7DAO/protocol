@@ -64,6 +64,7 @@ func CreateEvaluateCommand() *cobra.Command {
 					return fmt.Errorf("invalid value: %s", valueRaw)
 				}
 			} else {
+				fmt.Println("No value provided, defaulting to 0")
 				value.SetInt64(0)
 			}
 
@@ -107,7 +108,7 @@ func CreateEvaluateCommand() *cobra.Command {
 	evaluateCmd.Flags().StringVar(&outfile, "outfile", "", "File to write profile to")
 	evaluateCmd.Flags().StringVar(&rpc, "rpc", "", "RPC endpoint for the chain being profiled")
 	evaluateCmd.Flags().StringVar(&toRaw, "to", "", "Address to send profiling transactions to")
-	evaluateCmd.Flags().StringVar(&valueRaw, "value", "", "Value to send with profiling transactions")
+	evaluateCmd.Flags().StringVar(&valueRaw, "value", "", "Value to send with profiling transactions (default: 0)")
 	evaluateCmd.Flags().UintVar(&transactionsPerAccount, "transactions-per-account", 1, "Number of profiling transactions to send per account")
 
 	return evaluateCmd
