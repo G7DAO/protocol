@@ -59,12 +59,15 @@ jobs:
       - name: Build interface with seer
         run: seer evm generate --package Game7Token --output bindings/Game7Token/Game7Token.go --hardhat web3/artifacts/contracts/Token/Game7Token.sol/Game7Token.json --cli --struct Game7Token
 
+      - name: Set version as variable
+        run: echo "GITHUB_REF_NAME_VERSION=$(echo ${{ github.ref_name }} | cut -d '/' -f 2)" >> $GITHUB_ENV
+
       - name: Build binary for each valid (GOOS, GOARCH) pair
         env:
           GOOS: ${{ matrix.os }}
           GOARCH: ${{ matrix.arch }}
         run: |
-          BUILD_DIR="chainprof-${{ github.ref_name }}-${GOOS}-${GOARCH}"
+          BUILD_DIR="chainprof-${GITHUB_REF_NAME_VERSION}-${GOOS}-${GOARCH}"
           EXTENSION=""
           if [ "$GOOS" = "windows" ]; then
             EXTENSION=".exe"
@@ -79,6 +82,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_path: ./chainprof-${{ github.ref_name }}-${{ matrix.os }}-${{ matrix.arch }}.zip
-          asset_name: chainprof-${{ github.ref_name }}-${{ matrix.os }}-${{ matrix.arch }}.zip
+          asset_path: ./chainprof-${GITHUB_REF_NAME_VERSION}-${{ matrix.os }}-${{ matrix.arch }}.zip
+          asset_name: chainprof-${GITHUB_REF_NAME_VERSION}-${{ matrix.os }}-${{ matrix.arch }}.zip
           asset_content_type: application/zip
