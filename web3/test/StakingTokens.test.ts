@@ -5,6 +5,7 @@ import { toWei } from "../helpers/bignumber";
 
 describe("StakingTokens contract", function () {
   let token: Game7Token;
+  let tokenAddress: string; 
   let staking: StakingTokens;
   let deployer: Awaited<ReturnType<typeof ethers.getSigners>>[0];
   let user1: Awaited<ReturnType<typeof ethers.getSigners>>[0];
@@ -15,6 +16,7 @@ describe("StakingTokens contract", function () {
   beforeEach(async function () {
     const TokenFactory = await ethers.getContractFactory("Game7Token");
     token = await TokenFactory.deploy(totalSupply);
+    tokenAddress = await token.getAddress();
     const StakingFactory = await ethers.getContractFactory("StakingTokens");
     staking = await StakingFactory.deploy();
     [deployer, user1, user2] = await ethers.getSigners();
@@ -22,14 +24,15 @@ describe("StakingTokens contract", function () {
     await token.transfer(user1.address, toWei(100));
   });
 
-  describe("Deposit with no time lock", function () {
+  describe("Staking tokens", function () {
     const depositAmount = toWei(2);
+    const lockingPeriod = 3600; // 1 hour
 
-    it("should allow deposit/withdraw", async function () {
+    it("should allow deposit/withdraw with no locking period", async function () {
       const initialERC20Balance = await token.balanceOf(user1.address);
       const depositTokenCount = await staking.balanceOf(user1.address);
 
-      await staking.connect(user1).deposit(token.getAddress(), depositAmount, 0, user1.address);
+      await staking.connect(user1)["deposit(address,uint256,uint256)"](tokenAddress, depositAmount, 0);
       const depositTokenID = await staking.tokenOfOwnerByIndex(user1.address, depositTokenCount)
       const lastDeposit = await staking.getDeposit(depositTokenID);
 
@@ -43,24 +46,24 @@ describe("StakingTokens contract", function () {
       expect(lastDeposit.end).to.equal(timestamp);
       expect(await token.balanceOf(user1.address)).to.equal(initialERC20Balance - depositAmount);
 
+      const metadata = JSON.parse(await staking.metadataJSON(depositTokenID));
 
-      await staking.connect(user1).withdraw(depositTokenID, user1.address);
+      expect(metadata.attributes[0].value).to.equal(tokenAddress.toString().toLowerCase());
+      expect(metadata.attributes[1].value).to.equal(depositAmount);
+      expect(metadata.attributes[2].value).to.equal(timestamp);
+      expect(metadata.attributes[3].value).to.equal(timestamp);
+
+      await staking.connect(user1)["withdraw(uint256)"](depositTokenID);
 
       expect(await staking.balanceOf(user1.address)).to.equal(depositTokenCount);
       expect(await token.balanceOf(user1.address)).to.equal(initialERC20Balance);
     });
 
-  });
-
-  describe("Deposit with time lock", function () {
-    const depositAmount = toWei(2);
-    const lockingPeriod = 3600; // 1 hour
-
-    it("should allow deposit/withdraw", async function () {
+    it("should allow deposit/withdraw with locking period", async function () {
       const initialERC20Balance = await token.balanceOf(user1.address);
       const depositTokenCount = await staking.balanceOf(user1.address);
 
-      await staking.connect(user1).deposit(token.getAddress(), depositAmount, lockingPeriod, user1.address);
+      await staking.connect(user1)["deposit(address,uint256,uint256)"](tokenAddress, depositAmount, lockingPeriod);
       const depositTokenID = await staking.tokenOfOwnerByIndex(user1.address, depositTokenCount)
       const lastDeposit = await staking.getDeposit(depositTokenID);
 
@@ -74,8 +77,15 @@ describe("StakingTokens contract", function () {
       expect(lastDeposit.end).to.equal(timestamp + lockingPeriod);
       expect(await token.balanceOf(user1.address)).to.equal(initialERC20Balance - depositAmount);
 
+      const metadata = JSON.parse(await staking.metadataJSON(depositTokenID));
+
+      expect(metadata.attributes[0].value).to.equal(tokenAddress.toString().toLowerCase());
+      expect(metadata.attributes[1].value).to.equal(depositAmount);
+      expect(metadata.attributes[2].value).to.equal(timestamp);
+      expect(metadata.attributes[3].value).to.equal(timestamp + lockingPeriod);
+
       await expect(
-        staking.connect(user1).withdraw(depositTokenID, user1.address)
+        staking.connect(user1)["withdraw(uint256)"](depositTokenID)
       ).to.be.reverted;
 
       expect(await staking.balanceOf(user1.address)).to.equal(depositTokenCount + BigInt(1));
@@ -85,22 +95,17 @@ describe("StakingTokens contract", function () {
       expect(await token.balanceOf(user1.address)).to.equal(initialERC20Balance - depositAmount);
 
       await ethers.provider.send("evm_increaseTime", [lockingPeriod + 1]);
-      await staking.connect(user1).withdraw(depositTokenID, user1.address);
+      await staking.connect(user1)["withdraw(uint256)"](depositTokenID);
 
       expect(await staking.balanceOf(user1.address)).to.equal(depositTokenCount);
       expect(await token.balanceOf(user1.address)).to.equal(initialERC20Balance);
     });
 
-  });
-
-  describe("Deposit on behalf of another", function () {
-    const depositAmount = toWei(2);
-
-    it("should allow deposit/withdraw", async function () {
+    it("should allow deposit/withdraw on behalf of another account", async function () {
       const initialERC20Balance = await token.balanceOf(user1.address);
       const depositTokenCount = await staking.balanceOf(user2.address);
 
-      await staking.connect(user1).deposit(token.getAddress(), depositAmount, 0, user2.address);
+      await staking.connect(user1)["deposit(address,uint256,uint256,address)"](tokenAddress, depositAmount, 0, user2.address);
       const depositTokenID = await staking.tokenOfOwnerByIndex(user2.address, depositTokenCount)
       const lastDeposit = await staking.getDeposit(depositTokenID);
 
@@ -114,12 +119,18 @@ describe("StakingTokens contract", function () {
       expect(lastDeposit.end).to.equal(timestamp);
       expect(await token.balanceOf(user1.address)).to.equal(initialERC20Balance - depositAmount);
 
-      await staking.connect(user2).withdraw(depositTokenID, user1.address);
+      const metadata = JSON.parse(await staking.metadataJSON(depositTokenID));
+
+      expect(metadata.attributes[0].value).to.equal(tokenAddress.toString().toLowerCase());
+      expect(metadata.attributes[1].value).to.equal(depositAmount);
+      expect(metadata.attributes[2].value).to.equal(timestamp);
+      expect(metadata.attributes[3].value).to.equal(timestamp);
+
+      await staking.connect(user2)["withdraw(uint256,address)"](depositTokenID, user1.address);
 
       expect(await staking.balanceOf(user2.address)).to.equal(depositTokenCount);
       expect(await token.balanceOf(user1.address)).to.equal(initialERC20Balance);
     });
-
   });
 
 });
