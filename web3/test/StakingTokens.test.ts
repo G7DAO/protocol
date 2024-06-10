@@ -36,7 +36,10 @@ describe("StakingTokens contract", function () {
       const initialERC20Balance = await token.balanceOf(user1.address);
       const depositTokenCount = await staking.balanceOf(user1.address);
 
-      await staking.connect(user1)["deposit(address,uint256,uint256)"](tokenAddress, depositAmount, 0);
+      await expect(
+        staking.connect(user1)["deposit(address,uint256,uint256)"](tokenAddress, depositAmount, 0)
+      ).to.emit(staking, "Deposited").withArgs(tokenAddress, user1.address, user1.address, 0, depositAmount);
+
       const depositTokenID = await staking.tokenOfOwnerByIndex(user1.address, depositTokenCount)
       const lastDeposit = await staking.getDeposit(depositTokenID);
 
@@ -57,7 +60,9 @@ describe("StakingTokens contract", function () {
       expect(metadata.attributes[2].value).to.equal(timestamp);
       expect(metadata.attributes[3].value).to.equal(timestamp);
 
-      await staking.connect(user1)["withdraw(uint256)"](depositTokenID);
+      await expect(
+        staking.connect(user1)["withdraw(uint256)"](depositTokenID)
+      ).to.emit(staking, "Withdrawn").withArgs(depositTokenID, user1.address, user1.address);
 
       expect(await staking.balanceOf(user1.address)).to.equal(depositTokenCount);
       expect(await token.balanceOf(user1.address)).to.equal(initialERC20Balance);
@@ -69,7 +74,10 @@ describe("StakingTokens contract", function () {
       const initialERC20Balance = await token.balanceOf(user1.address);
       const depositTokenCount = await staking.balanceOf(user1.address);
 
-      await staking.connect(user1)["deposit(address,uint256,uint256)"](tokenAddress, depositAmount, lockingPeriod);
+      await expect(
+        staking.connect(user1)["deposit(address,uint256,uint256)"](tokenAddress, depositAmount, lockingPeriod)
+      ).to.emit(staking, "Deposited").withArgs(tokenAddress, user1.address, user1.address, lockingPeriod, depositAmount);
+
       const depositTokenID = await staking.tokenOfOwnerByIndex(user1.address, depositTokenCount)
       const lastDeposit = await staking.getDeposit(depositTokenID);
 
@@ -101,7 +109,10 @@ describe("StakingTokens contract", function () {
       expect(await token.balanceOf(user1.address)).to.equal(initialERC20Balance - depositAmount);
 
       await ethers.provider.send("evm_increaseTime", [lockingPeriod + 1]);
-      await staking.connect(user1)["withdraw(uint256)"](depositTokenID);
+
+      await expect(
+        staking.connect(user1)["withdraw(uint256)"](depositTokenID)
+      ).to.emit(staking, "Withdrawn").withArgs(depositTokenID, user1.address, user1.address);
 
       expect(await staking.balanceOf(user1.address)).to.equal(depositTokenCount);
       expect(await token.balanceOf(user1.address)).to.equal(initialERC20Balance);
@@ -112,7 +123,10 @@ describe("StakingTokens contract", function () {
       const initialERC20Balance = await token.balanceOf(user1.address);
       const depositTokenCount = await staking.balanceOf(user2.address);
 
-      await staking.connect(user1)["deposit(address,uint256,uint256,address)"](tokenAddress, depositAmount, 0, user2.address);
+      await expect(
+        staking.connect(user1)["deposit(address,uint256,uint256,address)"](tokenAddress, depositAmount, 0, user2.address)
+      ).to.emit(staking, "Deposited").withArgs(tokenAddress, user2.address, user1.address, 0, depositAmount);
+
       const depositTokenID = await staking.tokenOfOwnerByIndex(user2.address, depositTokenCount)
       const lastDeposit = await staking.getDeposit(depositTokenID);
 
@@ -133,7 +147,9 @@ describe("StakingTokens contract", function () {
       expect(metadata.attributes[2].value).to.equal(timestamp);
       expect(metadata.attributes[3].value).to.equal(timestamp);
 
-      await staking.connect(user2)["withdraw(uint256,address)"](depositTokenID, user1.address);
+      await expect(
+        staking.connect(user2)["withdraw(uint256,address)"](depositTokenID, user1.address)
+      ).to.emit(staking, "Withdrawn").withArgs(depositTokenID, user2.address, user1.address);
 
       expect(await staking.balanceOf(user2.address)).to.equal(depositTokenCount);
       expect(await token.balanceOf(user1.address)).to.equal(initialERC20Balance);
