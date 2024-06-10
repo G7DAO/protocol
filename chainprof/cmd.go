@@ -13,24 +13,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func CreateChainprofCommand() *cobra.Command {
-	chainprofCmd := &cobra.Command{
-		Use:   "chainprof",
-		Short: "Chain profiler",
-		Long:  "Chain profiler which can be used to profile the performance of a rollup.",
-		Run: func(cmd *cobra.Command, args []string) {
-			cmd.Help()
-		},
-	}
-
-	accountsCmd := CreateAccountsCommand()
-	evaluateCmd := CreateEvaluateCommand()
-
-	chainprofCmd.AddCommand(accountsCmd, evaluateCmd)
-
-	return chainprofCmd
-}
-
 func CreateEvaluateCommand() *cobra.Command {
 	var accountsDir, calldataRaw, outfile, rpc, toRaw, valueRaw, password string
 	var transactionsPerAccount uint
