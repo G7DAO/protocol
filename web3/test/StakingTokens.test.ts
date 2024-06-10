@@ -7,6 +7,7 @@ describe("StakingTokens contract", function () {
   let token: Game7Token;
   let tokenAddress: string; 
   let staking: StakingTokens;
+  let stakingAddress: string;
   let deployer: Awaited<ReturnType<typeof ethers.getSigners>>[0];
   let user1: Awaited<ReturnType<typeof ethers.getSigners>>[0];
   let user2: Awaited<ReturnType<typeof ethers.getSigners>>[0];
@@ -19,6 +20,7 @@ describe("StakingTokens contract", function () {
     tokenAddress = await token.getAddress();
     const StakingFactory = await ethers.getContractFactory("StakingTokens");
     staking = await StakingFactory.deploy();
+    stakingAddress = await staking.getAddress();
     [deployer, user1, user2] = await ethers.getSigners();
 
     await token.transfer(user1.address, toWei(100));
@@ -29,6 +31,8 @@ describe("StakingTokens contract", function () {
     const lockingPeriod = 3600; // 1 hour
 
     it("should allow deposit/withdraw with no locking period", async function () {
+      await token.connect(user1).approve(stakingAddress, toWei(100));
+
       const initialERC20Balance = await token.balanceOf(user1.address);
       const depositTokenCount = await staking.balanceOf(user1.address);
 
@@ -60,6 +64,8 @@ describe("StakingTokens contract", function () {
     });
 
     it("should allow deposit/withdraw with locking period", async function () {
+      await token.connect(user1).approve(stakingAddress, toWei(100));
+
       const initialERC20Balance = await token.balanceOf(user1.address);
       const depositTokenCount = await staking.balanceOf(user1.address);
 
@@ -102,6 +108,7 @@ describe("StakingTokens contract", function () {
     });
 
     it("should allow deposit/withdraw on behalf of another account", async function () {
+      await token.connect(user1).approve(stakingAddress, toWei(100));
       const initialERC20Balance = await token.balanceOf(user1.address);
       const depositTokenCount = await staking.balanceOf(user2.address);
 

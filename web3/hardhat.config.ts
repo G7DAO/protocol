@@ -6,7 +6,6 @@ import { ChainId, NetworkExplorer, NetworkName, rpcUrls } from "./constants/netw
 dotenv.config()
 
 const {
-  DEPLOYER_PRIVATE_KEY,
   ETHSCAN_API_KEY,
   ARB_SCAN_API_KEY,
 } = process.env
@@ -41,22 +40,18 @@ const config: HardhatUserConfig = {
     [NetworkName.Ethereum]: {
       chainId: ChainId.Ethereum,
       url: rpcUrls[ChainId.Ethereum],
-      accounts: [DEPLOYER_PRIVATE_KEY || ''],
     },
     [NetworkName.ArbitrumOne]: {
       chainId: ChainId.ArbitrumOne,
       url: rpcUrls[ChainId.ArbitrumOne],
-      accounts: [DEPLOYER_PRIVATE_KEY || ''],
     },
     [NetworkName.Game7OrbitArbSepolia]: {
       url: rpcUrls[ChainId.Game7OrbitArbSepolia],
-      accounts: [DEPLOYER_PRIVATE_KEY || ''],
       chainId: ChainId.Game7OrbitArbSepolia,
     },
     [NetworkName.Game7OrbitBaseSepolia]: {
-        url: rpcUrls[ChainId.Game7OrbitBaseSepolia],
-        accounts: [DEPLOYER_PRIVATE_KEY || ''],
-        chainId: ChainId.Game7OrbitBaseSepolia,
+      url: rpcUrls[ChainId.Game7OrbitBaseSepolia],
+      chainId: ChainId.Game7OrbitBaseSepolia,
     },
   },
 };

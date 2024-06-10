@@ -6,6 +6,7 @@ import { toWei } from "../helpers/bignumber";
 describe("Staking2 contract", function () {
   let token: Game7Token;
   let staking: Staking2;
+  let stakingAddress: string;
   let deployer: Awaited<ReturnType<typeof ethers.getSigners>>[0];
   let user1: Awaited<ReturnType<typeof ethers.getSigners>>[0];
   let user2: Awaited<ReturnType<typeof ethers.getSigners>>[0];
@@ -17,6 +18,7 @@ describe("Staking2 contract", function () {
     token = await TokenFactory.deploy(totalSupply);
     const StakingFactory = await ethers.getContractFactory("Staking2");
     staking = await StakingFactory.deploy();
+    stakingAddress = await staking.getAddress();
     [deployer, user1, user2] = await ethers.getSigners();
 
     await token.transfer(user1.address, toWei(100));
@@ -26,6 +28,8 @@ describe("Staking2 contract", function () {
     const depositAmount = toWei(2);
 
     it("should allow deposit/withdraw", async function () {
+      await token.connect(user1).approve(stakingAddress, toWei(100));
+
       const initialBalance = await token.balanceOf(user1.address);
       const depositCount = await staking.getDepositCount(user1.address);
       await staking.connect(user1).deposit(token.getAddress(), depositAmount, 0, user1.address);
@@ -55,6 +59,8 @@ describe("Staking2 contract", function () {
     const lockingPeriod = 3600; // 1 hour
 
     it("should allow deposit/withdraw", async function () {
+      await token.connect(user1).approve(stakingAddress, toWei(100));
+
       const initialBalance = await token.balanceOf(user1.address);
       const depositCount = await staking.getDepositCount(user1.address);
       await staking.connect(user1).deposit(token.getAddress(), depositAmount, lockingPeriod, user1.address);
@@ -92,6 +98,8 @@ describe("Staking2 contract", function () {
     const depositAmount = toWei(2);
 
     it("should allow deposit/withdraw", async function () {
+      await token.connect(user1).approve(stakingAddress, toWei(100));
+
       const initialBalance = await token.balanceOf(user1.address);
       const depositCount = await staking.getDepositCount(user2.address);
       await staking.connect(user1).deposit(token.getAddress(), depositAmount, 0, user2.address);

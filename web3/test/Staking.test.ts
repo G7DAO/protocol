@@ -7,6 +7,7 @@ import { bigint } from "hardhat/internal/core/params/argumentTypes";
 describe("Staking contract", function () {
   let token: Game7Token;
   let staking: Staking;
+  let stakingAddress: string;
   let deployer: Awaited<ReturnType<typeof ethers.getSigners>>[0];
   let user1: Awaited<ReturnType<typeof ethers.getSigners>>[0];
   let user2: Awaited<ReturnType<typeof ethers.getSigners>>[0];
@@ -18,6 +19,7 @@ describe("Staking contract", function () {
     token = await TokenFactory.deploy(totalSupply);
     const StakingFactory = await ethers.getContractFactory("Staking");
     staking = await StakingFactory.deploy(token.getAddress());
+    stakingAddress = await staking.getAddress();
     [deployer, user1, user2] = await ethers.getSigners();
 
     await token.transfer(user1.address, toWei(100));
@@ -34,6 +36,8 @@ describe("Staking contract", function () {
     const unstakeAmount = toWei(1);
 
     it("Should stake/unstake tokens for self", async function () {
+      await token.connect(user1).approve(stakingAddress, toWei(100));
+
       const initialBalance = await token.balanceOf(user1.address);
 
       await staking.connect(user1).stake(stakeAmount, user1.address);
@@ -48,6 +52,8 @@ describe("Staking contract", function () {
     });
 
     it("Should stake/unstake tokens on behalf of another", async function () {
+      await token.connect(user1).approve(stakingAddress, toWei(100));
+
       const initialBalance = await token.balanceOf(user1.address);
 
       await staking.connect(user1).stake(stakeAmount, user2.address);
@@ -67,6 +73,8 @@ describe("Staking contract", function () {
     const lockingPeriod = 3600; // 1 hour
 
     it("Should lock/unlock tokens for self", async function () {
+      await token.connect(user1).approve(stakingAddress, toWei(100));
+
       const initialBalance = await token.balanceOf(user1.address);
       const depositCount = await staking.getDepositCount(user1.address);
 
@@ -99,6 +107,8 @@ describe("Staking contract", function () {
     });
 
     it("Should lock/unlock tokens on behalf of another", async function () {
+      await token.connect(user1).approve(stakingAddress, toWei(100));
+
       const initialBalance = await token.balanceOf(user1.address);
       const depositCount = await staking.getDepositCount(user1.address);
 

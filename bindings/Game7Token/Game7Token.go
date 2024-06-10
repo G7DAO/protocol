@@ -46,8 +46,8 @@ var (
 
 // Game7TokenMetaData contains all meta data concerning the Game7Token contract.
 var Game7TokenMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_totalSupply\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"decimals\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"symbol\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
-	Bin: "0x608060405234801561001057600080fd5b50604051610baf380380610baf833981810160405281019061003291906100be565b80600160003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000208190555080600081905550506100eb565b600080fd5b6000819050919050565b61009b81610088565b81146100a657600080fd5b50565b6000815190506100b881610092565b92915050565b6000602082840312156100d4576100d3610083565b5b60006100e2848285016100a9565b91505092915050565b610ab5806100fa6000396000f3fe608060405234801561001057600080fd5b50600436106100935760003560e01c8063313ce56711610066578063313ce5671461013457806370a082311461015257806395d89b4114610182578063a9059cbb146101a0578063dd62ed3e146101d057610093565b806306fdde0314610098578063095ea7b3146100b657806318160ddd146100e657806323b872dd14610104575b600080fd5b6100a0610200565b6040516100ad9190610796565b60405180910390f35b6100d060048036038101906100cb9190610851565b610239565b6040516100dd91906108ac565b60405180910390f35b6100ee61032b565b6040516100fb91906108d6565b60405180910390f35b61011e600480360381019061011991906108f1565b610331565b60405161012b91906108ac565b60405180910390f35b61013c610676565b6040516101499190610960565b60405180910390f35b61016c6004803603810190610167919061097b565b61067b565b60405161017991906108d6565b60405180910390f35b61018a610693565b6040516101979190610796565b60405180910390f35b6101ba60048036038101906101b59190610851565b6106cc565b6040516101c791906108ac565b60405180910390f35b6101ea60048036038101906101e591906109a8565b6106e1565b6040516101f791906108d6565b60405180910390f35b6040518060400160405280600b81526020017f47616d653720546f6b656e00000000000000000000000000000000000000000081525081565b600081600260003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020819055508273ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff167f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9258460405161031991906108d6565b60405180910390a36001905092915050565b60005481565b600081600160008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002054101561037f57600080fd5b8373ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161415801561043857506000600260008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000205414155b1561055a5781600260008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000205410156104c657600080fd5b81600260008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008282546105529190610a17565b925050819055505b81600160008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008282546105a99190610a17565b9250508190555081600160008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008282546105ff9190610a4b565b925050819055508273ffffffffffffffffffffffffffffffffffffffff168473ffffffffffffffffffffffffffffffffffffffff167fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef8460405161066391906108d6565b60405180910390a3600190509392505050565b601281565b60016020528060005260406000206000915090505481565b6040518060400160405280600381526020017f473754000000000000000000000000000000000000000000000000000000000081525081565b60006106d9338484610331565b905092915050565b6002602052816000526040600020602052806000526040600020600091509150505481565b600081519050919050565b600082825260208201905092915050565b60005b83811015610740578082015181840152602081019050610725565b60008484015250505050565b6000601f19601f8301169050919050565b600061076882610706565b6107728185610711565b9350610782818560208601610722565b61078b8161074c565b840191505092915050565b600060208201905081810360008301526107b0818461075d565b905092915050565b600080fd5b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b60006107e8826107bd565b9050919050565b6107f8816107dd565b811461080357600080fd5b50565b600081359050610815816107ef565b92915050565b6000819050919050565b61082e8161081b565b811461083957600080fd5b50565b60008135905061084b81610825565b92915050565b60008060408385031215610868576108676107b8565b5b600061087685828601610806565b92505060206108878582860161083c565b9150509250929050565b60008115159050919050565b6108a681610891565b82525050565b60006020820190506108c1600083018461089d565b92915050565b6108d08161081b565b82525050565b60006020820190506108eb60008301846108c7565b92915050565b60008060006060848603121561090a576109096107b8565b5b600061091886828701610806565b935050602061092986828701610806565b925050604061093a8682870161083c565b9150509250925092565b600060ff82169050919050565b61095a81610944565b82525050565b60006020820190506109756000830184610951565b92915050565b600060208284031215610991576109906107b8565b5b600061099f84828501610806565b91505092915050565b600080604083850312156109bf576109be6107b8565b5b60006109cd85828601610806565b92505060206109de85828601610806565b9150509250929050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b6000610a228261081b565b9150610a2d8361081b565b9250828203905081811115610a4557610a446109e8565b5b92915050565b6000610a568261081b565b9150610a618361081b565b9250828201905080821115610a7957610a786109e8565b5b9291505056fea26469706673582212208112c8c80d0515e5d005742076e159cad6604723becbf4b6415cd6d10514056364736f6c63430008180033",
+	ABI: "[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_totalSupply\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"decimals\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"symbol\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
+	Bin: "0x608060405234801561001057600080fd5b50604051610d38380380610d38833981810160405281019061003291906100be565b80600160003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000208190555080600081905550506100eb565b600080fd5b6000819050919050565b61009b81610088565b81146100a657600080fd5b50565b6000815190506100b881610092565b92915050565b6000602082840312156100d4576100d3610083565b5b60006100e2848285016100a9565b91505092915050565b610c3e806100fa6000396000f3fe608060405234801561001057600080fd5b50600436106100935760003560e01c8063313ce56711610066578063313ce5671461013457806370a082311461015257806395d89b4114610182578063a9059cbb146101a0578063dd62ed3e146101d057610093565b806306fdde0314610098578063095ea7b3146100b657806318160ddd146100e657806323b872dd14610104575b600080fd5b6100a0610200565b6040516100ad9190610821565b60405180910390f35b6100d060048036038101906100cb91906108dc565b610239565b6040516100dd9190610937565b60405180910390f35b6100ee61032b565b6040516100fb9190610961565b60405180910390f35b61011e6004803603810190610119919061097c565b610331565b60405161012b9190610937565b60405180910390f35b61013c610701565b60405161014991906109eb565b60405180910390f35b61016c60048036038101906101679190610a06565b610706565b6040516101799190610961565b60405180910390f35b61018a61071e565b6040516101979190610821565b60405180910390f35b6101ba60048036038101906101b591906108dc565b610757565b6040516101c79190610937565b60405180910390f35b6101ea60048036038101906101e59190610a33565b61076c565b6040516101f79190610961565b60405180910390f35b6040518060400160405280600b81526020017f47616d653720546f6b656e00000000000000000000000000000000000000000081525081565b600081600260003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020819055508273ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff167f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925846040516103199190610961565b60405180910390a36001905092915050565b60005481565b600081600160008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000205410156103b5576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004016103ac90610ae5565b60405180910390fd5b8373ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161415801561048d57507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff600260008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000205414155b156105e55781600260008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020541015610551576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040161054890610b51565b60405180910390fd5b81600260008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008282546105dd9190610ba0565b925050819055505b81600160008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008282546106349190610ba0565b9250508190555081600160008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600082825461068a9190610bd4565b925050819055508273ffffffffffffffffffffffffffffffffffffffff168473ffffffffffffffffffffffffffffffffffffffff167fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef846040516106ee9190610961565b60405180910390a3600190509392505050565b601281565b60016020528060005260406000206000915090505481565b6040518060400160405280600381526020017f473754000000000000000000000000000000000000000000000000000000000081525081565b6000610764338484610331565b905092915050565b6002602052816000526040600020602052806000526040600020600091509150505481565b600081519050919050565b600082825260208201905092915050565b60005b838110156107cb5780820151818401526020810190506107b0565b60008484015250505050565b6000601f19601f8301169050919050565b60006107f382610791565b6107fd818561079c565b935061080d8185602086016107ad565b610816816107d7565b840191505092915050565b6000602082019050818103600083015261083b81846107e8565b905092915050565b600080fd5b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b600061087382610848565b9050919050565b61088381610868565b811461088e57600080fd5b50565b6000813590506108a08161087a565b92915050565b6000819050919050565b6108b9816108a6565b81146108c457600080fd5b50565b6000813590506108d6816108b0565b92915050565b600080604083850312156108f3576108f2610843565b5b600061090185828601610891565b9250506020610912858286016108c7565b9150509250929050565b60008115159050919050565b6109318161091c565b82525050565b600060208201905061094c6000830184610928565b92915050565b61095b816108a6565b82525050565b60006020820190506109766000830184610952565b92915050565b60008060006060848603121561099557610994610843565b5b60006109a386828701610891565b93505060206109b486828701610891565b92505060406109c5868287016108c7565b9150509250925092565b600060ff82169050919050565b6109e5816109cf565b82525050565b6000602082019050610a0060008301846109dc565b92915050565b600060208284031215610a1c57610a1b610843565b5b6000610a2a84828501610891565b91505092915050565b60008060408385031215610a4a57610a49610843565b5b6000610a5885828601610891565b9250506020610a6985828601610891565b9150509250929050565b7f45524332303a207472616e7366657220616d6f756e742065786365656473206260008201527f616c616e63650000000000000000000000000000000000000000000000000000602082015250565b6000610acf60268361079c565b9150610ada82610a73565b604082019050919050565b60006020820190508181036000830152610afe81610ac2565b9050919050565b7f45524332303a20696e73756666696369656e7420616c6c6f77616e6365000000600082015250565b6000610b3b601d8361079c565b9150610b4682610b05565b602082019050919050565b60006020820190508181036000830152610b6a81610b2e565b9050919050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b6000610bab826108a6565b9150610bb6836108a6565b9250828203905081811115610bce57610bcd610b71565b5b92915050565b6000610bdf826108a6565b9150610bea836108a6565b9250828201905080821115610c0257610c01610b71565b5b9291505056fea2646970667358221220c36ca78aa06d1720cd6b20b4740007e9bebf6be1e1d0787f09e68c7c48c5489964736f6c63430008180033",
 }
 
 // Game7TokenABI is the input ABI used to generate the binding from.
@@ -405,65 +405,65 @@ func (_Game7Token *Game7TokenCallerSession) TotalSupply() (*big.Int, error) {
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
-// Solidity: function approve(address spender, uint256 value) returns(bool)
-func (_Game7Token *Game7TokenTransactor) Approve(opts *bind.TransactOpts, spender common.Address, value *big.Int) (*types.Transaction, error) {
-	return _Game7Token.contract.Transact(opts, "approve", spender, value)
+// Solidity: function approve(address spender, uint256 amount) returns(bool)
+func (_Game7Token *Game7TokenTransactor) Approve(opts *bind.TransactOpts, spender common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _Game7Token.contract.Transact(opts, "approve", spender, amount)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
-// Solidity: function approve(address spender, uint256 value) returns(bool)
-func (_Game7Token *Game7TokenSession) Approve(spender common.Address, value *big.Int) (*types.Transaction, error) {
-	return _Game7Token.Contract.Approve(&_Game7Token.TransactOpts, spender, value)
+// Solidity: function approve(address spender, uint256 amount) returns(bool)
+func (_Game7Token *Game7TokenSession) Approve(spender common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _Game7Token.Contract.Approve(&_Game7Token.TransactOpts, spender, amount)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
-// Solidity: function approve(address spender, uint256 value) returns(bool)
-func (_Game7Token *Game7TokenTransactorSession) Approve(spender common.Address, value *big.Int) (*types.Transaction, error) {
-	return _Game7Token.Contract.Approve(&_Game7Token.TransactOpts, spender, value)
+// Solidity: function approve(address spender, uint256 amount) returns(bool)
+func (_Game7Token *Game7TokenTransactorSession) Approve(spender common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _Game7Token.Contract.Approve(&_Game7Token.TransactOpts, spender, amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
-// Solidity: function transfer(address to, uint256 value) returns(bool)
-func (_Game7Token *Game7TokenTransactor) Transfer(opts *bind.TransactOpts, to common.Address, value *big.Int) (*types.Transaction, error) {
-	return _Game7Token.contract.Transact(opts, "transfer", to, value)
+// Solidity: function transfer(address to, uint256 amount) returns(bool)
+func (_Game7Token *Game7TokenTransactor) Transfer(opts *bind.TransactOpts, to common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _Game7Token.contract.Transact(opts, "transfer", to, amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
-// Solidity: function transfer(address to, uint256 value) returns(bool)
-func (_Game7Token *Game7TokenSession) Transfer(to common.Address, value *big.Int) (*types.Transaction, error) {
-	return _Game7Token.Contract.Transfer(&_Game7Token.TransactOpts, to, value)
+// Solidity: function transfer(address to, uint256 amount) returns(bool)
+func (_Game7Token *Game7TokenSession) Transfer(to common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _Game7Token.Contract.Transfer(&_Game7Token.TransactOpts, to, amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
-// Solidity: function transfer(address to, uint256 value) returns(bool)
-func (_Game7Token *Game7TokenTransactorSession) Transfer(to common.Address, value *big.Int) (*types.Transaction, error) {
-	return _Game7Token.Contract.Transfer(&_Game7Token.TransactOpts, to, value)
+// Solidity: function transfer(address to, uint256 amount) returns(bool)
+func (_Game7Token *Game7TokenTransactorSession) Transfer(to common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _Game7Token.Contract.Transfer(&_Game7Token.TransactOpts, to, amount)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
-// Solidity: function transferFrom(address from, address to, uint256 value) returns(bool)
-func (_Game7Token *Game7TokenTransactor) TransferFrom(opts *bind.TransactOpts, from common.Address, to common.Address, value *big.Int) (*types.Transaction, error) {
-	return _Game7Token.contract.Transact(opts, "transferFrom", from, to, value)
+// Solidity: function transferFrom(address from, address to, uint256 amount) returns(bool)
+func (_Game7Token *Game7TokenTransactor) TransferFrom(opts *bind.TransactOpts, from common.Address, to common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _Game7Token.contract.Transact(opts, "transferFrom", from, to, amount)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
-// Solidity: function transferFrom(address from, address to, uint256 value) returns(bool)
-func (_Game7Token *Game7TokenSession) TransferFrom(from common.Address, to common.Address, value *big.Int) (*types.Transaction, error) {
-	return _Game7Token.Contract.TransferFrom(&_Game7Token.TransactOpts, from, to, value)
+// Solidity: function transferFrom(address from, address to, uint256 amount) returns(bool)
+func (_Game7Token *Game7TokenSession) TransferFrom(from common.Address, to common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _Game7Token.Contract.TransferFrom(&_Game7Token.TransactOpts, from, to, amount)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
-// Solidity: function transferFrom(address from, address to, uint256 value) returns(bool)
-func (_Game7Token *Game7TokenTransactorSession) TransferFrom(from common.Address, to common.Address, value *big.Int) (*types.Transaction, error) {
-	return _Game7Token.Contract.TransferFrom(&_Game7Token.TransactOpts, from, to, value)
+// Solidity: function transferFrom(address from, address to, uint256 amount) returns(bool)
+func (_Game7Token *Game7TokenTransactorSession) TransferFrom(from common.Address, to common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _Game7Token.Contract.TransferFrom(&_Game7Token.TransactOpts, from, to, amount)
 }
 
 // Game7TokenApprovalIterator is returned from FilterApproval and is used to iterate over the raw logs and unpacked data for Approval events raised by the Game7Token contract.
@@ -880,94 +880,6 @@ func CreateGame7TokenDeploymentCommand() *cobra.Command {
 	return cmd
 }
 
-func CreateAllowanceCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var arg0 common.Address
-	var arg0Raw string
-	var arg1 common.Address
-	var arg1Raw string
-
-	var capture0 *big.Int
-
-	cmd := &cobra.Command{
-		Use:   "allowance",
-		Short: "Call the Allowance view method on a Game7Token contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if arg0Raw == "" {
-				return fmt.Errorf("--arg-0 argument not specified")
-			} else if !common.IsHexAddress(arg0Raw) {
-				return fmt.Errorf("--arg-0 argument is not a valid Ethereum address")
-			}
-			arg0 = common.HexToAddress(arg0Raw)
-
-			if arg1Raw == "" {
-				return fmt.Errorf("--arg-1 argument not specified")
-			} else if !common.IsHexAddress(arg1Raw) {
-				return fmt.Errorf("--arg-1 argument is not a valid Ethereum address")
-			}
-			arg1 = common.HexToAddress(arg1Raw)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewGame7Token(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := Game7TokenCallerSession{
-				Contract: &contract.Game7TokenCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.Allowance(
-				arg0,
-				arg1,
-			)
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0.String())
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	cmd.Flags().StringVar(&arg0Raw, "arg-0", "", "arg-0 argument")
-	cmd.Flags().StringVar(&arg1Raw, "arg-1", "", "arg-1 argument")
-
-	return cmd
-}
 func CreateBalanceOfCommand() *cobra.Command {
 	var contractAddressRaw, rpc string
 	var contractAddress common.Address
@@ -1297,6 +1209,94 @@ func CreateTotalSupplyCommand() *cobra.Command {
 
 	return cmd
 }
+func CreateAllowanceCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var arg0 common.Address
+	var arg0Raw string
+	var arg1 common.Address
+	var arg1Raw string
+
+	var capture0 *big.Int
+
+	cmd := &cobra.Command{
+		Use:   "allowance",
+		Short: "Call the Allowance view method on a Game7Token contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if arg0Raw == "" {
+				return fmt.Errorf("--arg-0 argument not specified")
+			} else if !common.IsHexAddress(arg0Raw) {
+				return fmt.Errorf("--arg-0 argument is not a valid Ethereum address")
+			}
+			arg0 = common.HexToAddress(arg0Raw)
+
+			if arg1Raw == "" {
+				return fmt.Errorf("--arg-1 argument not specified")
+			} else if !common.IsHexAddress(arg1Raw) {
+				return fmt.Errorf("--arg-1 argument is not a valid Ethereum address")
+			}
+			arg1 = common.HexToAddress(arg1Raw)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewGame7Token(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := Game7TokenCallerSession{
+				Contract: &contract.Game7TokenCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.Allowance(
+				arg0,
+				arg1,
+			)
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0.String())
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	cmd.Flags().StringVar(&arg0Raw, "arg-0", "", "arg-0 argument")
+	cmd.Flags().StringVar(&arg1Raw, "arg-1", "", "arg-1 argument")
+
+	return cmd
+}
 
 func CreateApproveCommand() *cobra.Command {
 	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
@@ -1307,8 +1307,8 @@ func CreateApproveCommand() *cobra.Command {
 
 	var spender common.Address
 	var spenderRaw string
-	var value0 *big.Int
-	var value0Raw string
+	var amount *big.Int
+	var amountRaw string
 
 	cmd := &cobra.Command{
 		Use:   "approve",
@@ -1332,11 +1332,11 @@ func CreateApproveCommand() *cobra.Command {
 			}
 			spender = common.HexToAddress(spenderRaw)
 
-			if value0Raw == "" {
-				return fmt.Errorf("--value-0 argument not specified")
+			if amountRaw == "" {
+				return fmt.Errorf("--amount argument not specified")
 			}
-			value0 = new(big.Int)
-			value0.SetString(value0Raw, 0)
+			amount = new(big.Int)
+			amount.SetString(amountRaw, 0)
 
 			return nil
 		},
@@ -1377,7 +1377,7 @@ func CreateApproveCommand() *cobra.Command {
 
 			transaction, transactionErr := session.Approve(
 				spender,
-				value0,
+				amount,
 			)
 			if transactionErr != nil {
 				return transactionErr
@@ -1428,7 +1428,7 @@ func CreateApproveCommand() *cobra.Command {
 	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
 
 	cmd.Flags().StringVar(&spenderRaw, "spender", "", "spender argument")
-	cmd.Flags().StringVar(&value0Raw, "value-0", "", "value-0 argument")
+	cmd.Flags().StringVar(&amountRaw, "amount", "", "amount argument")
 
 	return cmd
 }
@@ -1441,8 +1441,8 @@ func CreateTransferCommand() *cobra.Command {
 
 	var to0 common.Address
 	var to0Raw string
-	var value0 *big.Int
-	var value0Raw string
+	var amount *big.Int
+	var amountRaw string
 
 	cmd := &cobra.Command{
 		Use:   "transfer",
@@ -1466,11 +1466,11 @@ func CreateTransferCommand() *cobra.Command {
 			}
 			to0 = common.HexToAddress(to0Raw)
 
-			if value0Raw == "" {
-				return fmt.Errorf("--value-0 argument not specified")
+			if amountRaw == "" {
+				return fmt.Errorf("--amount argument not specified")
 			}
-			value0 = new(big.Int)
-			value0.SetString(value0Raw, 0)
+			amount = new(big.Int)
+			amount.SetString(amountRaw, 0)
 
 			return nil
 		},
@@ -1511,7 +1511,7 @@ func CreateTransferCommand() *cobra.Command {
 
 			transaction, transactionErr := session.Transfer(
 				to0,
-				value0,
+				amount,
 			)
 			if transactionErr != nil {
 				return transactionErr
@@ -1562,7 +1562,7 @@ func CreateTransferCommand() *cobra.Command {
 	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
 
 	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument")
-	cmd.Flags().StringVar(&value0Raw, "value-0", "", "value-0 argument")
+	cmd.Flags().StringVar(&amountRaw, "amount", "", "amount argument")
 
 	return cmd
 }
@@ -1577,8 +1577,8 @@ func CreateTransferFromCommand() *cobra.Command {
 	var from0Raw string
 	var to0 common.Address
 	var to0Raw string
-	var value0 *big.Int
-	var value0Raw string
+	var amount *big.Int
+	var amountRaw string
 
 	cmd := &cobra.Command{
 		Use:   "transfer-from",
@@ -1609,11 +1609,11 @@ func CreateTransferFromCommand() *cobra.Command {
 			}
 			to0 = common.HexToAddress(to0Raw)
 
-			if value0Raw == "" {
-				return fmt.Errorf("--value-0 argument not specified")
+			if amountRaw == "" {
+				return fmt.Errorf("--amount argument not specified")
 			}
-			value0 = new(big.Int)
-			value0.SetString(value0Raw, 0)
+			amount = new(big.Int)
+			amount.SetString(amountRaw, 0)
 
 			return nil
 		},
@@ -1655,7 +1655,7 @@ func CreateTransferFromCommand() *cobra.Command {
 			transaction, transactionErr := session.TransferFrom(
 				from0,
 				to0,
-				value0,
+				amount,
 			)
 			if transactionErr != nil {
 				return transactionErr
@@ -1707,7 +1707,7 @@ func CreateTransferFromCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&from0Raw, "from-0", "", "from-0 argument")
 	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument")
-	cmd.Flags().StringVar(&value0Raw, "value-0", "", "value-0 argument")
+	cmd.Flags().StringVar(&amountRaw, "amount", "", "amount argument")
 
 	return cmd
 }
@@ -1846,9 +1846,6 @@ func CreateGame7TokenCommand() *cobra.Command {
 	cmdDeployGame7Token.GroupID = DeployGroup.ID
 	cmd.AddCommand(cmdDeployGame7Token)
 
-	cmdViewAllowance := CreateAllowanceCommand()
-	cmdViewAllowance.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewAllowance)
 	cmdViewBalanceOf := CreateBalanceOfCommand()
 	cmdViewBalanceOf.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewBalanceOf)
@@ -1864,6 +1861,9 @@ func CreateGame7TokenCommand() *cobra.Command {
 	cmdViewTotalSupply := CreateTotalSupplyCommand()
 	cmdViewTotalSupply.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewTotalSupply)
+	cmdViewAllowance := CreateAllowanceCommand()
+	cmdViewAllowance.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewAllowance)
 
 	cmdTransactApprove := CreateApproveCommand()
 	cmdTransactApprove.GroupID = TransactGroup.ID
