@@ -32,3 +32,6 @@ forge-artifacts
 
 # protocol
 bin/
+
+# Custom
+.secrets/
