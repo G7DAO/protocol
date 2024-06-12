@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@arbitrum/nitro-contracts": "^1.2.1",
+    "@arbitrum/sdk": "^3.4.1",
     "axios": "^1.6.8",
     "clsx": "^1.2.1",
     "dayjs": "^1.11.11",
