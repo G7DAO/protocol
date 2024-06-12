@@ -1,0 +1,195 @@
+.container {
+    margin-top: 100px;
+    margin-left: 32px;
+   display: flex;
+    background: #F2F4F7;
+    width: 660px;
+    border-radius: 8px;
+    padding: 20px;
+    gap: 20px;
+    flex-direction: column;
+}
+
+.directionContainer {
+
+    padding: 4px;
+    gap: 8px;
+    border-radius: 6px;
+    display: flex;
+    background: #F9FAFB;
+    border: 1px solid #F2F4F7;
+    width: 100%;
+}
+
+.selectedDirectionButton, .directionButton {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: Inter, serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    border: none;
+    cursor: pointer;
+}
+
+.selectedDirectionButton {
+    background: #FFEBEF;
+    color: #DD1534;
+}
+
+.directionButton {
+    background: transparent;
+    color: #667085;
+}
+
+.networksContainer {
+    display: flex;
+    place-self: stretch;
+    gap: 20px;
+}
+
+.networkSelect {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+}
+.label {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 18px;
+    color: #475467;
+}
+
+.networkSelectSelect {
+    padding: 1px 10px;
+    align-items: center;
+    gap: 8px;
+    align-self: stretch;
+
+    border-radius: 8px;
+    border: 1px solid #D0D5DD;
+    background: #FFF;
+
+    box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
+    color: #101828;
+
+    /* Text sm/Medium */
+    font-family: Inter, sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px; /* 142.857% */
+}
+
+.network {
+    padding: 9px 13px;
+    align-items: center;
+    gap: 8px;
+    align-self: stretch;
+    border-radius: 8px;
+    border: 1px solid #D0D5DD;
+    background: #FFF;
+    box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
+    color: #101828;
+
+    /* Text sm/Medium */
+    font-family: Inter, sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px; /* 142.857% */
+}
+
+
+.valueBlockContainer {
+    padding: 12px;
+    display: flex;
+    place-self: stretch;
+    justify-content: space-between;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: #F9FAFB;
+}
+
+.valueContainer {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.valueInput {
+    color: #475467;
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding-left: 0px;
+}
+
+.valueUSD, .balance {
+    color: #98A2B3;
+
+    /* Text xs/Medium */
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 18px; /* 150% */
+}
+
+.symbolContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 4px;
+
+}
+
+.symbol {
+    display: inline-flex;
+    padding: 10px 16px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+
+    border-radius: 20px;
+    border: 1px solid #D0D5DD;
+    background: #FFF;
+
+    /* Shadow/xs */
+    box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
+    color: #344054;
+
+    /* Text sm/Semibold */
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 20px; /* 142.857% */
+}
+
+.balanceContainer {
+    display: flex;
+    gap: 8px;
+}
+
+.maxButton {
+    color: #DD1534;
+    padding: 0;
+    /* Text xs/Medium */
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 18px; /* 150% */
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+
+
+
