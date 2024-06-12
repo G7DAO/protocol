@@ -30,7 +30,7 @@ const LoginPage = () => {
       password: data.password,
     });
     login(user);
-    navigate("/deployments");
+    navigate("/bridge");
   };
   return (
     <Box p="xl" w={isMobile ? "90%" : "40%"}>

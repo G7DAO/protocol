@@ -8,8 +8,8 @@ import DashboardLayout from "@/layouts/DashboardLayout/DashboardLayout";
 //Pages
 import LoginPage from "@/pages/LoginPage/LoginPage";
 import SignUpPage from "@/pages/SignUpPage/SignUpPage";
-import DeploymentsPage from "@/pages/DeploymentsPage/DeploymentsPage";
 import NotFoundPage from "@/pages/NotFoundPage/NotFoundPage";
+import BridgePage from "@/pages/BridgePage/BridgePage";
 
 const router = createBrowserRouter([
   {
@@ -32,8 +32,8 @@ const router = createBrowserRouter([
     element: <DashboardLayout />,
     children: [
       {
-        path: "/deployments/*",
-        element: <DeploymentsPage />,
+        path: "/bridge/*",
+        element: <BridgePage />,
       },
     ],
   },

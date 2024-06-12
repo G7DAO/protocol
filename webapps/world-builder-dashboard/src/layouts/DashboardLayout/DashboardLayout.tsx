@@ -33,30 +33,14 @@ const NAVIGATION_MENU: {
   description?: string;
 }[] = [
   {
-    name: "Deployments",
-    icon: "HomeLine" as IconName,
-    to: "/deployments",
+    name: "Bridge",
+    icon: "Wallet04" as IconName,
+    to: "/bridge",
   },
   {
-    name: "Analytics",
-    icon: "BarLineChart" as IconName,
-    to: "/analytics",
-  },
-  {
-    name: "Marketplace",
-    icon: "DownloadCloud01" as IconName,
-    to: "/marketplace",
-  },
-
-  {
-    name: "Wallets",
-    icon: "Wallet01" as IconName,
-    to: "/wallets",
-  },
-  {
-    name: "Users",
-    icon: "User01" as IconName,
-    to: "/users",
+    name: "Stake",
+    icon: "CoinsStacked03" as IconName,
+    to: "/stake",
   },
 ];
 
