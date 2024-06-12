@@ -11,9 +11,9 @@ const login = async ({ email, password }: LoginData): Promise<User> => {
   // return data.data;
   console.log(email, password);
   return Promise.resolve({
-    firstName: "Guille",
-    lastName: "Antico",
-    email: "guille@email.com",
+    firstName: "Game",
+    lastName: "Master",
+    email: "GM@example.com",
   } as User);
 };
 
