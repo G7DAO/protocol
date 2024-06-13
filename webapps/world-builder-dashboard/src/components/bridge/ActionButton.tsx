@@ -87,11 +87,14 @@ const ActionButton: React.FC<ActionButtonProps> = ({direction, amount, l3Network
     const queryClient = useQueryClient();
     const deposit = useMutation(
         () => {
-            console.log(amount)
             if (!(connectedAccount && walletProvider)) {
                 throw new Error("Wallet isn't connected");
             }
-            return sendDepositTransaction(amount, connectedAccount, l3Network, walletProvider);
+            if (window.ethereum) {
+                const provider = new ethers.providers.Web3Provider(window.ethereum); //can't use provider from the context because of 'underlying network changed' error after switch
+                return sendDepositTransaction(amount, connectedAccount, l3Network, provider);
+            }
+            throw new Error('no window.ethereum');
         },
         {
             onSuccess: (receipt: ethers.providers.TransactionReceipt) => {
