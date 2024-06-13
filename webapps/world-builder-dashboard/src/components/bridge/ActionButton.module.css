@@ -22,4 +22,22 @@
     line-height: 20px; /* 142.857% */
     text-transform: capitalize;
     cursor: pointer;
+    max-height: 40px;
+}
+
+@keyframes rotateAnimation {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.rotatable {
+    display: inline-block;
+    animation-duration: 2s;
+    animation-name: rotateAnimation;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
 }
