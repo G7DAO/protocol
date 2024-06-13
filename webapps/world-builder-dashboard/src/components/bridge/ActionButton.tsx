@@ -6,6 +6,7 @@ import {L3NetworkConfiguration} from "@/components/bridge/l3Networks";
 import {useMutation, useQueryClient} from "react-query";
 import {sendDepositTransaction} from "@/components/bridge/depositERC20";
 import {Icon} from "summon-ui";
+import {L2_CHAIN} from "../../../constants";
 
 
 interface ActionButtonProps {
@@ -15,7 +16,7 @@ interface ActionButtonProps {
 }
 const ActionButton: React.FC<ActionButtonProps> = ({direction, amount, l3Network}) => {
     const [isConnecting, setIsConnecting] = useState(false);
-    const {connectedAccount, walletProvider, checkConnection } = useBlockchainContext();
+    const {connectedAccount, walletProvider, checkConnection, switchChain } = useBlockchainContext();
 
     const getLabel = (): String | undefined => {
         if (isConnecting || deposit.isLoading) { return undefined }
@@ -52,7 +53,20 @@ const ActionButton: React.FC<ActionButtonProps> = ({direction, amount, l3Network
                 await connectWallet();
             }
             if (direction === 'DEPOSIT') {
-                deposit.mutate();
+                if (window.ethereum) {
+                    const provider = new ethers.providers.Web3Provider(window.ethereum);
+                    const currentChain = await provider.getNetwork()
+                    if (currentChain.chainId !== L2_CHAIN.chainId) {
+                        try {
+                            await switchChain(L2_CHAIN);
+                            deposit.mutate();
+                        } catch (error) {
+                            console.log(error);
+                        }
+                    } else {
+                        deposit.mutate();
+                    }
+                }
             }
             return;
         }
