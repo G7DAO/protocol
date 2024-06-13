@@ -14,6 +14,7 @@ interface BlockchainContextType {
     setL3RPC: (rpcUrl: string) => void;
     connectWallet: () => Promise<void>;
     tokenAddress: string;
+    checkConnection: () => void;
 }
 
 const BlockchainContext = createContext<BlockchainContextType | undefined>(undefined);
@@ -30,15 +31,16 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     const tokenAddress = "0x5f88d811246222F6CB54266C42cc1310510b9feA";
 
 
+
     useEffect(() => {
         setL2RPC(L2_RPC);
         setL3RPC(L3_RPC);
         const ethereum = window.ethereum;
-        if (ethereum && ethereum.on) {
+        if (ethereum) {
             const provider = new ethers.providers.Web3Provider(ethereum);
             setWalletProvider(provider);
-            handleAccountsChanged();
-
+        }
+        if (ethereum && ethereum.on) {
             ethereum.on('accountsChanged', handleAccountsChanged);
             return () => {
                 ethereum.removeListener && ethereum?.removeListener('accountsChanged', handleAccountsChanged);
@@ -47,16 +49,25 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
 
     }, [window.ethereum]);
 
+    useEffect(() => {
+        console.log({connectedAccount})
+    }, [connectedAccount]);
+
     const handleAccountsChanged = async () => {
         if (walletProvider) {
             const accounts = await walletProvider.listAccounts();
             if (accounts.length > 0) {
                 setConnectedAccount(accounts[0]);
             } else {
+                console.log('handleAccountsChanged', {accountsLength: accounts.length})
                 setConnectedAccount(undefined);
             }
         }
     };
+
+    useEffect(() => {
+        handleAccountsChanged();
+    }, [walletProvider]);
 
     const connectWallet = async () => {
         if (window.ethereum && !walletProvider) {
@@ -84,7 +95,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     return (
         <BlockchainContext.Provider value={{
             walletProvider, L2Provider, L3Provider, connectedAccount,
-            setL2RPC, setL3RPC, connectWallet, tokenAddress,
+            setL2RPC, setL3RPC, connectWallet, tokenAddress, checkConnection: handleAccountsChanged,
         }}>
             {children}
         </BlockchainContext.Provider>
