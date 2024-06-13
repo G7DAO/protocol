@@ -15,6 +15,21 @@ interface BlockchainContextType {
     connectWallet: () => Promise<void>;
     tokenAddress: string;
     checkConnection: () => void;
+    switchChain: (chain: ChainInterface) => Promise<void>;
+}
+
+export interface ChainInterface {
+    chainId: number;
+    name: string;
+    displayName?: string;
+    rpcs: Array<string>;
+    ABIScan?: { name: string; url: string };
+    nativeCurrency?: {
+        decimals: number;
+        name: string;
+        symbol: string;
+    };
+    blockExplorerUrls?: string[];
 }
 
 const BlockchainContext = createContext<BlockchainContextType | undefined>(undefined);
@@ -92,10 +107,41 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
         setL3Provider(providerL3);
     };
 
+
+
+    const switchChain = async (chain: ChainInterface)=>  {
+        if (!walletProvider) {
+            throw new Error("Wallet is not connected");
+        }
+        const hexChainId = ethers.utils.hexStripZeros(ethers.utils.hexlify(chain.chainId));
+        try {
+            await walletProvider.send('wallet_switchEthereumChain', [{ chainId: hexChainId }]);
+        } catch (error: any) {
+            if (error.code === 4902) {
+                try {
+                    // Chain not found, attempt to add it
+                    await walletProvider.send('wallet_addEthereumChain', [{
+                        chainId: hexChainId,
+                        chainName: chain.displayName || chain.name,
+                        nativeCurrency: chain.nativeCurrency,
+                        rpcUrls: chain.rpcs,
+                        blockExplorerUrls: chain.blockExplorerUrls
+                    }]);
+                } catch (addError) {
+                    console.error('Failed to add the Ethereum chain:', addError);
+                    throw addError;
+                }
+            } else {
+                console.error('Failed to switch the Ethereum chain:', error);
+                throw error;
+            }
+        }
+    }
+
     return (
         <BlockchainContext.Provider value={{
             walletProvider, L2Provider, L3Provider, connectedAccount,
-            setL2RPC, setL3RPC, connectWallet, tokenAddress, checkConnection: handleAccountsChanged,
+            setL2RPC, setL3RPC, connectWallet, tokenAddress, checkConnection: handleAccountsChanged, switchChain
         }}>
             {children}
         </BlockchainContext.Provider>
