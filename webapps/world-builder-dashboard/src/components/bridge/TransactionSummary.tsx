@@ -17,11 +17,12 @@ interface TransactionSummaryProps {
     transferTime: string;
     fee: number;
     value: number;
+    ethBalance: number;
     ethRate: number;
     tokenSymbol: string;
     tokenRate: number;
 }
-const TransactionSummary: React.FC<TransactionSummaryProps> = ({address, transferTime, fee, ethRate, tokenRate, tokenSymbol, value}) => {
+const TransactionSummary: React.FC<TransactionSummaryProps> = ({ethBalance, address, transferTime, fee, ethRate, tokenRate, tokenSymbol, value}) => {
 
   return (
       <div className={styles.container}>
@@ -40,6 +41,13 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({address, transfe
               <div className={styles.valueContainer}>
                   <div className={styles.value}>{`${fee} ETH`}</div>
                   <div className={styles.valueNote}>{formatCurrency(fee * ethRate)}</div>
+              </div>
+          </div>
+          <div className={styles.dataRow}>
+              <div className={styles.itemName}>ETH available</div>
+              <div className={styles.valueContainer}>
+                  <div className={styles.value}>{`${ethBalance} ETH`}</div>
+                  <div className={styles.valueNote}>{formatCurrency(ethBalance * ethRate)}</div>
               </div>
           </div>
           <div className={styles.dataRow}>

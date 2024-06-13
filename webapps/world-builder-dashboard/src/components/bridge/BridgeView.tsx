@@ -9,6 +9,7 @@ import TransactionSummary from "@/components/bridge/TransactionSummary";
 import ActionButton from "@/components/bridge/ActionButton";
 import {useBlockchainContext} from "@/components/bridge/BlockchainContext";
 import {ethers} from "ethers";
+import {estimateDepositFee} from "@/components/bridge/depositERC20";
 const SYMBOL = 'G7T';
 interface BridgeViewProps {
 }
@@ -21,8 +22,7 @@ const BridgeView: React.FC<BridgeViewProps> = ({}) => {
     const [selectedNetwork, setSelectedNetwork] = useState<L3NetworkConfiguration>(L3_NETWORKS[0]);
     const g7tUsdRate = useQuery(["rate"], () => 31166.75);
     const ethUsdRate = useQuery(["ethUsdRate"], () => 3572.09);
-    const feeEstimate = useQuery(["feeEstimate"], () => 0.000193765);
-    const { L2Provider, connectedAccount, tokenAddress } = useBlockchainContext();
+    const { L2Provider, L3Provider, connectedAccount, tokenAddress } = useBlockchainContext();
 
     const l2Balance = useQuery(
         ["l2Balance", connectedAccount],
@@ -30,7 +30,7 @@ const BridgeView: React.FC<BridgeViewProps> = ({}) => {
             if (!L2Provider || !connectedAccount) {
                 return "0";
             }
-
+            console.log("fetching l2 balance")
             const ERC20Contract = new ethers.Contract(
                 tokenAddress,
                 [
@@ -54,21 +54,32 @@ const BridgeView: React.FC<BridgeViewProps> = ({}) => {
         }
     );
 
-    // const l3Balance = useQuery(
-    //     ["l3Balance", connectedAccount, L3Provider],
-    //     async () => {
-    //         if (!L3Provider || !connectedAccount) {
-    //             return "0";
-    //         }
-    //         return L3Provider.getBalance(connectedAccount).then(balance =>
-    //             ethers.utils.formatEther(balance)
-    //         );
-    //     },
-    //     {
-    //         enabled: !!connectedAccount, // Only fetch when an account is connected
-    //         refetchInterval: 5000, // Refetch every 5 seconds
-    //     }
-    // );
+    const l3Balance = useQuery(
+        ["l3Balance", connectedAccount],
+        async () => {
+            if (!L3Provider || !connectedAccount) {
+                return "0";
+            }
+            const balance =  await L3Provider.getBalance(connectedAccount).then(balance =>
+                ethers.utils.formatEther(balance)
+            );
+            console.log(balance);
+            return balance;
+        },
+        {
+            enabled: !!connectedAccount, // Only fetch when an account is connected
+            refetchInterval: 50000, // Refetch every 5 seconds
+        }
+    );
+
+    const estimatedFee = useQuery(["estimatedFee", value], async () => {
+        if (!connectedAccount) {
+            return;
+        }
+        const est  = await estimateDepositFee(value, connectedAccount, selectedNetwork);
+        console.log(est);
+        return est;
+    })
 
 
 
@@ -98,8 +109,8 @@ const BridgeView: React.FC<BridgeViewProps> = ({}) => {
               </div>
           </div>
           <ValueToBridge title={'Deposit'} symbol={SYMBOL} value={value} setValue={setValue} balance={l2Balance.data ?? '0'} rate={g7tUsdRate.data ?? 0}/>
-          <TransactionSummary address={connectedAccount ?? '0x'} transferTime={'< min'} fee={feeEstimate.data ?? 0} value={Number(value)} ethRate={ethUsdRate.data ?? 0} tokenSymbol={SYMBOL} tokenRate={g7tUsdRate.data ?? 0} />
-          <ActionButton direction={direction} />
+          <TransactionSummary ethBalance={Number(l3Balance.data ?? 0)} address={connectedAccount ?? '0x'} transferTime={'< min'} fee={Number(estimatedFee.data ?? 0)} value={Number(value)} ethRate={ethUsdRate.data ?? 0} tokenSymbol={SYMBOL} tokenRate={g7tUsdRate.data ?? 0} />
+          <ActionButton direction={direction} l3Network={selectedNetwork} amount={value}/>
       </div>
   );
 };
