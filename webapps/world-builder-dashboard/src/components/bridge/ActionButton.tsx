@@ -2,14 +2,28 @@ import React, {useState} from 'react';
 import styles from "./ActionButton.module.css";
 import { ethers } from "ethers";
 import {useBlockchainContext} from "@/components/bridge/BlockchainContext";
+import {L3NetworkConfiguration} from "@/components/bridge/l3Networks";
+import {useMutation, useQueryClient} from "react-query";
+import {sendDepositTransaction} from "@/components/bridge/depositERC20";
+import {Icon} from "summon-ui";
 
 
 interface ActionButtonProps {
     direction: "DEPOSIT" | "WITHDRAW";
+    l3Network: L3NetworkConfiguration;
+    amount: string;
 }
-const ActionButton: React.FC<ActionButtonProps> = ({direction}) => {
+const ActionButton: React.FC<ActionButtonProps> = ({direction, amount, l3Network}) => {
     const [isConnecting, setIsConnecting] = useState(false);
-    const {connectedAccount} = useBlockchainContext();
+    const {connectedAccount, walletProvider, checkConnection } = useBlockchainContext();
+
+    const getLabel = (): String | undefined => {
+        if (isConnecting || deposit.isLoading) { return undefined }
+        if (!connectedAccount || !walletProvider) {
+            return 'Connect wallet'
+        }
+        return direction.toLowerCase();
+    }
 
     // Function to request connection to a MetaMask wallet
     const connectWallet = async () => {
@@ -31,13 +45,24 @@ const ActionButton: React.FC<ActionButtonProps> = ({direction}) => {
     };
 
     const handleClick = async () => {
-        if (typeof window.ethereum !== 'undefined') {
 
+        if (connectedAccount && walletProvider) {
+            const accounts = await walletProvider.listAccounts();
+            if (accounts.length === 0) {
+                await connectWallet();
+            }
+            if (direction === 'DEPOSIT') {
+                deposit.mutate();
+            }
+            return;
+        }
+        if (typeof window.ethereum !== 'undefined') {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const accounts = await provider.listAccounts();
             if (accounts.length === 0) {
                 await connectWallet();
             } else {
+                checkConnection();
                 console.log('Wallet already connected');
             }
         } else {
@@ -45,10 +70,27 @@ const ActionButton: React.FC<ActionButtonProps> = ({direction}) => {
         }
     };
 
+    const queryClient = useQueryClient();
+    const deposit = useMutation(
+        () => {
+            console.log(amount)
+            if (!(connectedAccount && walletProvider)) {
+                throw new Error("Wallet isn't connected");
+            }
+            return sendDepositTransaction(amount, connectedAccount, l3Network, walletProvider);
+        },
+        {
+            onSuccess: (receipt: ethers.providers.TransactionReceipt) => {
+                queryClient.refetchQueries("l2Balance")
+                console.log(receipt);
+            }
+        }
+    );
+
 
   return (
       <button className={styles.container} onClick={handleClick} disabled={isConnecting}>
-          {isConnecting ? "Connecting..." : connectedAccount ? direction.toLowerCase() : 'Connect wallet'}
+          {getLabel() ?? <Icon name={"Loading01"} color={'white'} className={styles.rotatable} /> }
       </button>
   );
 };
