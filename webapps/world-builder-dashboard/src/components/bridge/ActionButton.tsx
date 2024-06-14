@@ -1,12 +1,13 @@
 import React, {useState} from 'react';
 import styles from "./ActionButton.module.css";
 import { ethers } from "ethers";
-import {useBlockchainContext} from "@/components/bridge/BlockchainContext";
+import {ChainInterface, useBlockchainContext} from "@/components/bridge/BlockchainContext";
 import {L3NetworkConfiguration} from "@/components/bridge/l3Networks";
 import {useMutation, useQueryClient} from "react-query";
 import {sendDepositTransaction} from "@/components/bridge/depositERC20";
 import {Icon} from "summon-ui";
 import {L2_CHAIN} from "../../../constants";
+import {sendWithdrawTransaction} from "@/components/bridge/withdrawNativeToken";
 
 
 interface ActionButtonProps {
@@ -68,6 +69,28 @@ const ActionButton: React.FC<ActionButtonProps> = ({direction, amount, l3Network
                     }
                 }
             }
+            if (direction === 'WITHDRAW') {
+                if (window.ethereum) {
+                    const provider = new ethers.providers.Web3Provider(window.ethereum);
+                    const currentChain = await provider.getNetwork()
+                    if (currentChain.chainId !== l3Network.chainInfo.chainId) {
+                        try {
+                            const chainToSwitch: ChainInterface = {
+                                name: l3Network.chainInfo.chainName,
+                                chainId: l3Network.chainInfo.chainId,
+                                rpcs: l3Network.chainInfo.rpcs,
+
+                            }
+                            await switchChain(chainToSwitch);
+                            withdraw.mutate();
+                        } catch (error) {
+                            console.log(error);
+                        }
+                    } else {
+                        withdraw.mutate();
+                    }
+                }
+            }
             return;
         }
         if (typeof window.ethereum !== 'undefined') {
@@ -99,6 +122,21 @@ const ActionButton: React.FC<ActionButtonProps> = ({direction, amount, l3Network
         {
             onSuccess: (receipt: ethers.providers.TransactionReceipt) => {
                 queryClient.refetchQueries("l2Balance")
+                console.log(receipt);
+            }
+        }
+    );
+    const withdraw = useMutation(
+        () => {
+            if (!(connectedAccount && walletProvider)) {
+                throw new Error("Wallet isn't connected");
+            }
+            return sendWithdrawTransaction(amount, connectedAccount);
+            throw new Error('no window.ethereum');
+        },
+        {
+            onSuccess: (receipt: ethers.providers.TransactionReceipt) => {
+                queryClient.refetchQueries("l3balance")
                 console.log(receipt);
             }
         }
