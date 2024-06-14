@@ -34,7 +34,7 @@ contract StakingTokens is ERC721Enumerable, ReentrancyGuard {
         return _allDeposits[_tokenID];
     }
 
-    function _deposit(address _tokenAddress, uint256 _amount, uint256 _duration, address _receiver) internal {
+    function _depositERC20(address _tokenAddress, uint256 _amount, uint256 _duration, address _receiver) internal {
         require(_amount > 0, "Staking.deposit: cannot deposit 0");
 
         uint256 tokenID = nextDeposit;
@@ -56,13 +56,40 @@ contract StakingTokens is ERC721Enumerable, ReentrancyGuard {
         emit Deposited(_tokenAddress, _receiver, msg.sender, _duration, _amount);
     }
 
+    function _depositNative(uint256 _duration, address _receiver) internal {
+        uint256 _amount = msg.value;
+        require(_amount > 0, "Staking.deposit: cannot deposit 0");
+
+        uint256 tokenID = nextDeposit;
+        _mint(_receiver, tokenID);
+
+        _allDeposits[tokenID] = Deposit({
+                                        tokenAddress: address(0),
+                                        amount: _amount,
+                                        start: uint64(block.timestamp),
+                                        end: uint64(block.timestamp) + uint64(_duration)
+                                    });
+
+        nextDeposit += 1;
+
+        emit Deposited(address(0), _receiver, msg.sender, _duration, _amount);
+    }
+
     function deposit(address _tokenAddress, uint256 _amount, uint256 _duration) external nonReentrant {
-        _deposit(_tokenAddress, _amount, _duration, msg.sender);
+        _depositERC20(_tokenAddress, _amount, _duration, msg.sender);
     }
 
     function deposit(address _tokenAddress, uint256 _amount, uint256 _duration, address _receiver) external nonReentrant {
         require(_receiver != address(0), "Staking.deposit: receiver cannot be zero address");
-        _deposit(_tokenAddress, _amount, _duration, _receiver);
+        _depositERC20(_tokenAddress, _amount, _duration, _receiver);
+    }
+
+    function deposit(uint256 _duration) external payable nonReentrant {
+        _depositNative(_duration, msg.sender);
+    }
+
+    function deposit(uint256 _duration, address _receiver) external payable nonReentrant {
+        _depositNative(_duration, _receiver);
     }
     
     function _withdraw(uint256 _tokenID, address _receiver) internal {
@@ -74,9 +101,15 @@ contract StakingTokens is ERC721Enumerable, ReentrancyGuard {
         // remove Deposit
         _burn(_tokenID);
 
-        // return tokens
-        IERC20 depositToken = IERC20(userDeposit.tokenAddress);
-        depositToken.transferFrom(address(this), _receiver, userDeposit.amount);
+        // return deposit
+        if (userDeposit.tokenAddress == address(0)) {
+            (bool success, ) = _receiver.call{value: userDeposit.amount}("");
+            require(success, "Staking.withdraw: Native token transfer failed");
+        } else {
+            IERC20 depositToken = IERC20(userDeposit.tokenAddress);
+            depositToken.transferFrom(address(this), _receiver, userDeposit.amount);
+        }
+        
         emit Withdrawn(_tokenID, msg.sender, _receiver);
     }
 
