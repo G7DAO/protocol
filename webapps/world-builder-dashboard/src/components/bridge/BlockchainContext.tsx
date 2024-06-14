@@ -16,6 +16,8 @@ interface BlockchainContextType {
     tokenAddress: string;
     checkConnection: () => void;
     switchChain: (chain: ChainInterface) => Promise<void>;
+    L2_RPC: string;
+    L3_RPC: string;
 }
 
 export interface ChainInterface {
@@ -141,7 +143,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     return (
         <BlockchainContext.Provider value={{
             walletProvider, L2Provider, L3Provider, connectedAccount,
-            setL2RPC, setL3RPC, connectWallet, tokenAddress, checkConnection: handleAccountsChanged, switchChain
+            setL2RPC, setL3RPC, connectWallet, tokenAddress, checkConnection: handleAccountsChanged, switchChain, L2_RPC, L3_RPC,
         }}>
             {children}
         </BlockchainContext.Provider>
