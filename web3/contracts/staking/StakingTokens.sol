@@ -2,6 +2,7 @@
 pragma solidity ^0.8.24;
 
 import { IERC20 } from '../interfaces/IERC20.sol';
+import { IERC721 } from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import { ERC721 } from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import { ERC721Enumerable } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
@@ -109,7 +110,7 @@ contract StakingTokens is ERC721Enumerable, ReentrancyGuard {
             IERC20 depositToken = IERC20(userDeposit.tokenAddress);
             depositToken.transferFrom(address(this), _receiver, userDeposit.amount);
         }
-        
+
         emit Withdrawn(_tokenID, msg.sender, _receiver);
     }
 
@@ -162,5 +163,23 @@ contract StakingTokens is ERC721Enumerable, ReentrancyGuard {
 
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         return string(abi.encodePacked("data:application/json;base64,", Base64.encode(_metadata(tokenId))));
+    }
+
+
+    // Disabling transfers
+    function transferFrom(address /*from*/, address /*to*/, uint256 /*tokenId*/) public virtual override(ERC721, IERC721) {
+        revert("Transfer from disabled");
+    }
+
+    function safeTransferFrom(address /*from*/, address /*to*/, uint256 /*tokenId*/, bytes memory /*_data*/) public virtual override(ERC721, IERC721) {
+        revert("Safe transfer from disabled");
+    }
+
+    function approve(address /*to*/, uint256 /*tokenId*/) public virtual override(ERC721, IERC721) {
+        revert("Approve disabled");
+    }
+
+    function setApprovalForAll(address /*operator*/, bool /*approved*/) public virtual override(ERC721, IERC721) {
+        revert("Set approval for all disabled");
     }
 }
