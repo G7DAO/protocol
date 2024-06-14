@@ -1,0 +1,84 @@
+name: Prepare release
+
+on:
+    push:
+        tags:
+            - "chainprof-v*"
+
+jobs:
+    create_release:
+        runs-on: ubuntu-20.04
+        steps:
+            - uses: actions/create-release@v1
+              id: create_release
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  tag_name: ${{ github.ref }}
+                  release_name: "${{ github.ref_name }}"
+                  body: |
+                      Version ${{ github.ref_name }}.
+                  draft: true
+                  prerelease: false
+        outputs:
+            upload_url: ${{ steps.create_release.outputs.upload_url }}
+    upload_assets:
+        runs-on: ubuntu-20.04
+        needs: create_release
+        strategy:
+            fail-fast: true
+            matrix:
+                os: ["linux", "darwin", "windows"]
+                arch: ["386", "amd64", "arm64"]
+                exclude:
+                    - os: "darwin"
+                      arch: "arm"
+                    - os: "darwin"
+                      arch: "386"
+                    - os: "windows"
+                      arch: "arm"
+        steps:
+            - uses: actions/checkout@v3
+            - name: Install Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 18.18.0
+            - uses: actions/setup-go@v2
+              with:
+                  go-version: ^1.20.0
+
+            - name: Install dependencies
+              working-directory: ./web3
+              run: npm install
+            - name: Run Hardhat compile
+              working-directory: ./web3
+              run: npx hardhat compile
+            - name: Install seer
+              run: go install github.com/moonstream-to/seer@latest
+
+            - name: Build interface with seer
+              run: seer evm generate --package Game7Token --output bindings/Game7Token/Game7Token.go --hardhat web3/artifacts/contracts/Token/Game7Token.sol/Game7Token.json --cli --struct Game7Token
+
+            - name: Build binary for each valid (GOOS, GOARCH) pair
+              env:
+                  GOOS: ${{ matrix.os }}
+                  GOARCH: ${{ matrix.arch }}
+              run: |
+                  BUILD_DIR="${{ github.ref_name }}-${GOOS}-${GOARCH}"
+                  EXTENSION=""
+                  if [ "$GOOS" = "windows" ]; then
+                    EXTENSION=".exe"
+                  fi
+                  mkdir "$BUILD_DIR"
+                  cp README.md "$BUILD_DIR/README.md"
+                  go build -o "$BUILD_DIR/chainprof${EXTENSION}" ./cmd/chainprof
+                  zip -r "$BUILD_DIR.zip" "$BUILD_DIR"
+            - name: Upload release asset for each valid (GOOS, GOARH) pair
+              uses: actions/upload-release-asset@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  upload_url: ${{ needs.create_release.outputs.upload_url }}
+                  asset_path: ./${{ github.ref_name }}-${{ matrix.os }}-${{ matrix.arch }}.zip
+                  asset_name: ${{ github.ref_name }}-${{ matrix.os }}-${{ matrix.arch }}.zip
+                  asset_content_type: application/zip

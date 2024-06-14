@@ -1,12 +1,16 @@
 .PHONY: clean generate regenerate test docs redocs hardhat bindings
 
-build: hardhat bindings bin/game7
+build: hardhat bindings bin/game7 bin/chainprof
 
 rebuild: clean generate build
 
 bin/game7:
 	mkdir -p bin
 	go build -o bin/game7 ./cmd/game7
+
+bin/chainprof:
+	mkdir -p bin
+	go build -o bin/chainprof ./cmd/chainprof
 
 bindings/Game7Token/Game7Token.go: hardhat
 	mkdir -p bindings/Game7Token
