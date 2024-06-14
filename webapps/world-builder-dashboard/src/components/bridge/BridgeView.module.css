@@ -118,6 +118,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
+    max-width: 20ch;
 }
 
 .valueInput {
@@ -147,17 +148,19 @@
     flex-direction: column;
     justify-content: flex-end;
     gap: 4px;
+    align-items: flex-end;
 
 }
 
 .symbol {
+    width: fit-content;
     display: inline-flex;
     padding: 10px 16px;
     justify-content: center;
     align-items: center;
     gap: 8px;
 
-    border-radius: 20px;
+    border-radius: 8px;
     border: 1px solid #D0D5DD;
     background: #FFF;
 
