@@ -108,8 +108,8 @@ const BridgeView: React.FC<BridgeViewProps> = ({}) => {
                   <NetworkSelector networks={L3_NETWORKS} selectedNetwork={selectedNetwork} onChange={setSelectedNetwork} />
               </div>
           </div>
-          <ValueToBridge title={'Deposit'} symbol={SYMBOL} value={value} setValue={setValue} balance={l2Balance.data ?? '0'} rate={g7tUsdRate.data ?? 0}/>
-          <TransactionSummary ethBalance={Number(l3Balance.data ?? 0)} address={connectedAccount ?? '0x'} transferTime={'< min'} fee={Number(estimatedFee.data ?? 0)} value={Number(value)} ethRate={ethUsdRate.data ?? 0} tokenSymbol={SYMBOL} tokenRate={g7tUsdRate.data ?? 0} />
+          <ValueToBridge title={direction === 'DEPOSIT' ? 'Deposit' : 'Withdraw'} symbol={SYMBOL} value={value} setValue={setValue} balance={direction === 'DEPOSIT' ? (l2Balance.data ?? '0') : (l3Balance.data ?? '0')} rate={g7tUsdRate.data ?? 0}/>
+          <TransactionSummary direction={direction} ethBalance={Number(l3Balance.data ?? 0)} address={connectedAccount ?? '0x'} transferTime={'< min'} fee={Number(estimatedFee.data ?? 0)} value={Number(value)} ethRate={ethUsdRate.data ?? 0} tokenSymbol={SYMBOL} tokenRate={g7tUsdRate.data ?? 0} />
           <ActionButton direction={direction} l3Network={selectedNetwork} amount={value}/>
       </div>
   );
