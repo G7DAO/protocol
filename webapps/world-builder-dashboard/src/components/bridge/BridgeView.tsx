@@ -10,6 +10,7 @@ import ActionButton from "@/components/bridge/ActionButton";
 import {useBlockchainContext} from "@/components/bridge/BlockchainContext";
 import {ethers} from "ethers";
 import {estimateDepositFee} from "@/components/bridge/depositERC20";
+import {estimateWithdrawFee} from "@/components/bridge/withdrawNativeToken";
 const SYMBOL = 'G7T';
 interface BridgeViewProps {
 }
@@ -72,11 +73,20 @@ const BridgeView: React.FC<BridgeViewProps> = ({}) => {
         }
     );
 
-    const estimatedFee = useQuery(["estimatedFee", value], async () => {
+    const estimatedFee = useQuery(["estimatedFee", value, direction], async () => {
         if (!connectedAccount) {
             return;
         }
-        const est  = await estimateDepositFee(value, connectedAccount, selectedNetwork);
+        let est;
+        console.log(value, connectedAccount, L2Provider, direction)
+        if (direction === 'DEPOSIT') {
+            est  = await estimateDepositFee(value, connectedAccount, selectedNetwork);
+        } else {
+        if (L2Provider) {
+            est = await estimateWithdrawFee(value, connectedAccount, L2Provider);
+        }
+        }
+
         console.log(est);
         return est;
     })
