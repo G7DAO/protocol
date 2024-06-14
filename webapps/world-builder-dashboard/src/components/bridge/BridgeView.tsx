@@ -91,12 +91,24 @@ const BridgeView: React.FC<BridgeViewProps> = ({}) => {
         return est;
     })
 
-
+    const renderNetworkSelect = (isSource: boolean, direction: "DEPOSIT" | "WITHDRAW") => {
+        if ((isSource && direction === 'DEPOSIT') || (!isSource && direction === "WITHDRAW")) {
+            return (
+                <div className={styles.network}>
+                    {l2networks[0]}
+                </div>
+            )
+        } else {
+            return (
+                <NetworkSelector networks={L3_NETWORKS} selectedNetwork={selectedNetwork} onChange={setSelectedNetwork} />
+            )
+        }
+    }
 
 
     return (
-      <div className={styles.container}>
-          <div className={styles.directionContainer}>
+        <div className={styles.container}>
+            <div className={styles.directionContainer}>
               <button className={direction === "DEPOSIT" ? styles.selectedDirectionButton : styles.directionButton}
                       onClick={() => setDirection("DEPOSIT")}>Deposit
               </button>
@@ -108,14 +120,12 @@ const BridgeView: React.FC<BridgeViewProps> = ({}) => {
           <div className={styles.networksContainer}>
               <div className={styles.networkSelect}>
                   <label htmlFor="network-select-from" className={styles.label}>From</label>
-                  <div className={styles.network}>
-                      {l2networks[0]}
-                  </div>
+                  {renderNetworkSelect(true, direction)}
               </div>
               <Icon name={"ArrowRight"} top={'29px'} color={'#667085'}/>
               <div className={styles.networkSelect}>
                   <label htmlFor="network-select-to" className={styles.label}>To</label>
-                  <NetworkSelector networks={L3_NETWORKS} selectedNetwork={selectedNetwork} onChange={setSelectedNetwork} />
+                  {renderNetworkSelect(false, direction)}
               </div>
           </div>
           <ValueToBridge title={direction === 'DEPOSIT' ? 'Deposit' : 'Withdraw'} symbol={SYMBOL} value={value} setValue={setValue} balance={direction === 'DEPOSIT' ? (l2Balance.data ?? '0') : (l3Balance.data ?? '0')} rate={g7tUsdRate.data ?? 0}/>
