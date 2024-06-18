@@ -7,6 +7,7 @@ interface ChainInfo {
     parentChainId: number;
     nativeToken: string;
     rpcs: string[];
+    blockExplorerURSl: ["https://game7-testnet-custom.explorer.caldera.xyz/"];
 }
 
 interface CoreContracts {
@@ -97,7 +98,7 @@ export const L3_NETWORKS = [
             batchPoster: "0x3e3779347f9346a736CA18cC7EfDF50Cca3242A4",
             staker: "0x4673A108FaF60f96016d11f801beA6a6F569f3F7",
             chainOwner: "0x64EEAE6be58c5b68F5928A18c9F565e012A8a240",
-            chainName: "G7 testnet conduit",
+            chainName: "G7 Testnet Conduit",
             chainId: 7007007,
             parentChainId: 421614,
             nativeToken: "0x4EdD6ddeAf8f259dba75AC8C5C89ee7564201170",
