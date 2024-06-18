@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import styles from "./ActionButton.module.css";
-import { ethers } from "ethers";
+import {ethers} from "ethers";
 import {ChainInterface, useBlockchainContext} from "@/components/bridge/BlockchainContext";
 import {L3NetworkConfiguration} from "@/components/bridge/l3Networks";
 import {useMutation, useQueryClient} from "react-query";
@@ -20,7 +20,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({direction, amount, l3Network
     const {connectedAccount, walletProvider, checkConnection, switchChain } = useBlockchainContext();
 
     const getLabel = (): String | undefined => {
-        if (isConnecting || deposit.isLoading) { return undefined }
+        if (isConnecting || deposit.isLoading || withdraw.isLoading) { return undefined }
         if (!connectedAccount || !walletProvider) {
             return 'Connect wallet'
         }
@@ -49,48 +49,54 @@ const ActionButton: React.FC<ActionButtonProps> = ({direction, amount, l3Network
     const handleClick = async () => {
 
         if (connectedAccount && walletProvider) {
+            setIsConnecting(true);
+
             const accounts = await walletProvider.listAccounts();
             if (accounts.length === 0) {
                 await connectWallet();
             }
-            if (direction === 'DEPOSIT') {
+            const handleTransaction = async (targetChain: ChainInterface, mutate: () => void): Promise<void> => {
                 if (window.ethereum) {
                     const provider = new ethers.providers.Web3Provider(window.ethereum);
-                    const currentChain = await provider.getNetwork()
-                    if (currentChain.chainId !== L2_CHAIN.chainId) {
+                    const currentChain = await provider.getNetwork();
+                    if (currentChain.chainId !== targetChain.chainId) {
                         try {
-                            await switchChain(L2_CHAIN);
-                            deposit.mutate();
+                            await switchChain(targetChain);
+                            mutate();
                         } catch (error) {
-                            console.log(error);
+                            console.error('Error switching chain:', error);
                         }
                     } else {
-                        deposit.mutate();
+                        mutate();
                     }
+                } else {
+                    console.error('MetaMask is not installed!');
                 }
+            };
+
+            const handleDeposit = async (): Promise<void> => {
+                await handleTransaction(L2_CHAIN, deposit.mutate);
+            };
+
+            const handleWithdraw = async (): Promise<void> => {
+                const targetChain: ChainInterface = {
+                    name: l3Network.chainInfo.chainName,
+                    chainId: l3Network.chainInfo.chainId,
+                    rpcs: l3Network.chainInfo.rpcs,
+                };
+                await handleTransaction(targetChain, withdraw.mutate);
+            };
+
+
+
+            if (direction === 'DEPOSIT') {
+                await handleDeposit();
             }
             if (direction === 'WITHDRAW') {
-                if (window.ethereum) {
-                    const provider = new ethers.providers.Web3Provider(window.ethereum);
-                    const currentChain = await provider.getNetwork()
-                    if (currentChain.chainId !== l3Network.chainInfo.chainId) {
-                        try {
-                            const chainToSwitch: ChainInterface = {
-                                name: l3Network.chainInfo.chainName,
-                                chainId: l3Network.chainInfo.chainId,
-                                rpcs: l3Network.chainInfo.rpcs,
-
-                            }
-                            await switchChain(chainToSwitch);
-                            withdraw.mutate();
-                        } catch (error) {
-                            console.log(error);
-                        }
-                    } else {
-                        withdraw.mutate();
-                    }
-                }
+                await handleWithdraw();
             }
+
+            setIsConnecting(false)
             return;
         }
         if (typeof window.ethereum !== 'undefined') {
