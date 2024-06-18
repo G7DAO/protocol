@@ -1,0 +1,18 @@
+/* src/styles/global.css */
+
+:root {
+    --Blue-50: #EFF8FF;
+    --Blue-100: #D1E9FF;
+    --Blue-200: #B3D8FF;
+    --Blue-700: #175CD3;
+    --Warning-50: #FFFAEB;
+    --Warning-700: #B54708;
+    --Success-50: #ECFDF3;
+    --Success-700: #027A48;
+    --Gray-700: #344054;
+    --Gray-200: #EAECF0;
+
+    --Gray-600: #475467;
+
+
+}
