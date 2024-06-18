@@ -3,6 +3,7 @@ import { Box } from "summon-ui/mantine";
 import {useLocation, useNavigate} from "react-router-dom";
 import BridgeView from "@/components/bridge/BridgeView";
 import {BlockchainProvider} from "@/components/bridge/BlockchainContext";
+import WithdrawTransactions from "@/components/bridge/WithdrawTransactions";
 
 const BRIDGE_TABS = [
     {name: "Bridge", to: "/bridge"},
@@ -20,6 +21,7 @@ const BridgePage = () => {
                 <ContentHeader name='Bridge' tabs={{ list, value: location.pathname }}>
                 </ContentHeader>
                 {location.pathname === '/bridge' && <BridgeView />}
+                {location.pathname === '/bridge/transactions' && <WithdrawTransactions />}
             </Box>
         </BlockchainProvider>
     );

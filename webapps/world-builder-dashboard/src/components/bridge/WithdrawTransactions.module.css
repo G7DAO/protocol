@@ -1,0 +1,170 @@
+.container {
+    display: flex;
+    padding: 0 32px 32px 32px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    font-family: Inter, sans-serif;
+    margin-top: 100px;
+}
+
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+
+    border-radius: 12px;
+    border: 1px solid #EAECF0;
+    background:  #FFF;
+
+    /* Shadow/sm */
+    box-shadow: 0 1px 3px 0 rgba(16, 24, 40, 0.10), 0 1px 2px 0 rgba(16, 24, 40, 0.06);
+}
+
+
+.filtersContainer {
+    display: flex;
+    padding: 12px 16px;
+    align-items: flex-start;
+    gap: 16px;
+    align-self: stretch;
+}
+
+.filterButtons {
+    display: flex;
+    gap: 0;
+}
+
+.filterButtonLeft, .filterButtonRight {
+    background-color: transparent;
+    display: flex;
+    padding: 10px 16px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #D0D5DD;
+    color:  #344054;
+
+    /* Text sm/Semibold */
+    font-family: Inter, sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 20px; /* 142.857% */
+    /* Shadow/xs */
+    box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
+    transition: background-color 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.filterButtonLeft {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.filterButtonRight {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-left: 0.5px solid #D0D5DD;
+}
+
+.filterButtonSelected {
+    background-color: #F9FAFB;
+}
+
+.transactions {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.withdrawalContainer  {
+    display: flex;
+    background-color: #101828;
+}
+
+.withdrawsGrid {
+    display: grid;
+    grid-template-columns: repeat(6, auto);
+    /*gap: 10px;*/
+    width: 100%;
+}
+
+
+.gridItem {
+    display: flex;
+    height: 72px;
+    padding: 16px 24px;
+    align-items: center;
+    align-self: stretch;
+    color: var(--Gray-700, #344054);
+
+    /* Text sm/Regular */
+    font-family: Inter, sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px; /* 142.857% */
+    border-bottom: 1px solid var(--Gray-200, #EAECF0);
+
+}
+
+.transactionsHeader {
+    display: flex;
+    height: 44px;
+    padding: 12px 24px;
+    align-items: center;
+    gap: 12px;
+    align-self: stretch;
+    border-bottom: 1px solid #EAECF0;
+    border-top: 1px solid var(--Gray-200, #EAECF0);
+
+    background:  #FCFCFD;
+    color: var(--Gray-600, #475467);
+
+    /* Text xs/Medium */
+    font-family: Inter, sans-serif;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 18px; /* 150% */
+}
+
+.pending, .claimable, .settled {
+    display: inline-flex;
+    padding: 2px 6px 2px 8px;
+    align-items: center;
+    gap: 4px;
+    border-radius: 16px;
+
+    text-align: center;
+
+    /* Text xs/Medium */
+    font-family: Inter, sans-serif;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 18px; /* 150% */
+    mix-blend-mode: multiply;
+
+}
+
+.pending {
+    background: var(--Blue-50, #EFF8FF);
+    color: var(--Blue-700, #175CD3);
+
+}
+
+.claimable {
+    background: var(--Warning-50, #FFFAEB);
+    color: var(--Warning-700, #B54708);
+}
+
+.settled {
+    background: var(--Success-50, #ECFDF3);
+    color: var(--Success-700, #027A48);
+
+
+}

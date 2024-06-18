@@ -12,3 +12,5 @@ export const L2_CHAIN: ChainInterface = {
         symbol: 'ETH',
     },
 }
+
+export const L3_NATIVE_TOKEN_SYMBOL = 'G7T';
