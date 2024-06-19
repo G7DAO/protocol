@@ -165,6 +165,28 @@
 .settled {
     background: var(--Success-50, #ECFDF3);
     color: var(--Success-700, #027A48);
+}
 
+.claimButton {
+    display: flex;
+    padding: 10px 16px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
 
+    border-radius: 8px;
+    border: 1px solid var(--Primary-600, #EF233B);
+    background: var(--Primary-600, #EF233B);
+
+    /* Shadow/xs */
+    box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+    color: var(--Base-White, #FFF);
+
+    /* Text sm/Semibold */
+    font-family: Inter, sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 20px; /* 142.857% */
+    cursor: pointer;
 }
