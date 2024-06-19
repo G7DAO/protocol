@@ -3,12 +3,15 @@ import styles from "./WithdrawTransactions.module.css";
 import useL2ToL1MessageStatus from "@/hooks/useL2ToL1MessageStatus";
 import {L2_CHAIN, L3_NATIVE_TOKEN_SYMBOL} from "../../../constants";
 import {L3_NETWORKS} from "@/components/bridge/l3Networks";
-import {L2ToL1MessageStatus} from "@arbitrum/sdk";
+import {L2ToL1MessageStatus, L2ToL1MessageWriter, L2TransactionReceipt} from "@arbitrum/sdk";
+import {useMutation} from "react-query";
+import {ethers} from "ethers";
+import {useBlockchainContext} from "@/components/bridge/BlockchainContext";
 
 const timeAgo = (timestamp: number)  => {
   const now = new Date().getTime();
   const date = new Date(Number(timestamp) * 1000).getTime();
-  const timeDifference = Math.floor((now - date) / 1000); // Difference in seconds
+  const timeDifference = Math.floor((now - date) / 1000);
 
   const units = [
     { name: 'year',   inSeconds: 60 * 60 * 24 * 365 },
@@ -26,8 +29,30 @@ const timeAgo = (timestamp: number)  => {
       return `${value} ${unit.name}${value > 1 ? 's' : ''} ago`;
     }
   }
-
   return 'just now';
+}
+
+const ETA = (timestamp: number, delayInSeconds: number)  => {
+    const now = new Date().getTime();
+    const date = new Date(Number(timestamp) * 1000 + delayInSeconds * 1000).getTime();
+    const timeDifference = Math.floor((date - now) / 1000);
+    if (timeDifference < 0) { return '~now' }
+    const units = [
+        { name: 'year',   inSeconds: 60 * 60 * 24 * 365 },
+        { name: 'month',  inSeconds: 60 * 60 * 24 * 30 },
+        { name: 'day',    inSeconds: 60 * 60 * 24 },
+        { name: 'hour',   inSeconds: 60 * 60 },
+        { name: 'minute', inSeconds: 60 },
+        { name: 'second', inSeconds: 1 },
+    ];
+
+    for (const unit of units) {
+        const value = Math.floor(timeDifference / unit.inSeconds);
+        if (value >= 1) {
+            return `~${value} ${unit.name}${value > 1 ? 's' : ''}`;
+        }
+    }
+    return 'just now';
 }
 
 const networkName = (chainId: number) => {
@@ -35,13 +60,59 @@ const networkName = (chainId: number) => {
     return network?.chainInfo.chainName;
 }
 
+const networkRPC = (chainId: number) => {
+    const network = L3_NETWORKS.find((n) => n.chainInfo.chainId === chainId);
+    return network?.chainInfo.rpcs[0];
+}
+
+
 interface WithdrawalProps {
   txHash: string;
   chainId: number;
+  delay: number;
 }
-const Withdrawal: React.FC<WithdrawalProps> = ({txHash, chainId}) => {
+const Withdrawal: React.FC<WithdrawalProps> = ({txHash, chainId, delay}) => {
+    const l3RPC = networkRPC(chainId)
+  if (!l3RPC) {
+      console.log('L3 RPC undefined');
+      return <></>
+  }
+  const status = useL2ToL1MessageStatus(txHash, L2_CHAIN.rpcs[0], l3RPC);
+  const {switchChain} = useBlockchainContext();
 
-  const status = useL2ToL1MessageStatus(txHash, chainId);
+  const execute = useMutation(
+        async (l2Receipt: L2TransactionReceipt | undefined) => {
+            if (!l2Receipt) {
+                throw new Error("receipt undefined");
+            }
+            const l3Provider = new ethers.providers.JsonRpcProvider(l3RPC);
+            let provider;
+            if (window.ethereum) {
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                const currentChain = await provider.getNetwork();
+                if (currentChain.chainId !== L2_CHAIN.chainId) {
+                    await switchChain(L2_CHAIN);
+                    provider = new ethers.providers.Web3Provider(window.ethereum); //refresh provider
+                }
+            } else {
+                throw new Error('Wallet is not installed!');
+            }
+                const signer = provider.getSigner();
+            const messages: L2ToL1MessageWriter[] = (await l2Receipt.getL2ToL1Messages(signer)) as L2ToL1MessageWriter[];
+            const message = messages[0];
+            const res = await message.execute(l3Provider);
+            const rec = await res.wait();
+            console.log("Done! Your transaction is executed", rec);
+            return rec;
+        },
+        {
+            onSuccess: (data) => {
+                console.log(data);
+                status.refetch();
+            },
+        },
+    );
+
 
   return (
       <>
@@ -53,7 +124,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({txHash, chainId}) => {
           {status.data?.status === L2ToL1MessageStatus.CONFIRMED && <div className={styles.gridItem}><div className={styles.claimable}>Claimable</div> </div>}
           {status.data?.status === L2ToL1MessageStatus.UNCONFIRMED && <div className={styles.gridItem}><div className={styles.pending}>Pending</div> </div>}
 
-          <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
+          {status.data?.status === L2ToL1MessageStatus.UNCONFIRMED ? <div className={styles.gridItem}>{ETA(status.data?.timestamp, delay)}</div> : <button className={styles.claimButton} onClick={() => execute.mutate(status.data?.l2Receipt)}>Claim</button>}
       </>
   );
 };
