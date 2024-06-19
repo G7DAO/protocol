@@ -1,7 +1,6 @@
 import {useQuery} from "react-query";
 import {ethers} from "ethers";
-import {L2ToL1MessageStatus, L2ToL1MessageWriter, L2TransactionReceipt} from "@arbitrum/sdk";
-import {L3_NETWORKS} from "@/components/bridge/l3Networks";
+import {L2ToL1MessageReader, L2ToL1MessageStatus, L2TransactionReceipt} from "@arbitrum/sdk";
 
 const eventABI = [{
     anonymous: false,
@@ -20,18 +19,17 @@ const eventABI = [{
     type: "event",
 }];
 
-const useL2ToL1MessageStatus = (txHash: string, chainId: number) => {
+const useL2ToL1MessageStatus = (txHash: string, l2RPC: string, l3RPC: string) => {
     return useQuery(
-        ["withdrawalStatus", txHash, chainId],
+        ["withdrawalStatus", txHash, l2RPC, l3RPC],
         async () => {
-            console.log("checking status", txHash.slice(0, 6));
-            const l3Network = L3_NETWORKS.find((n) => n.chainInfo.chainId === chainId);
-            const l3Provider = new ethers.providers.JsonRpcProvider(l3Network?.chainInfo.rpcs[0]);
+            console.log("checking status", txHash.slice(0, 6), l2RPC, l3RPC);
+            const l3Provider = new ethers.providers.JsonRpcProvider(l3RPC);
+            const l2Provider =  new ethers.providers.JsonRpcProvider(l2RPC);
             const receipt = await l3Provider.getTransactionReceipt(txHash);
             const l2Receipt = new L2TransactionReceipt(receipt);
             const log = receipt.logs.find((l) => l.data !== "0x");
             let decodedLog;
-            let ethProvider;
 
             if (log) {
                 try {
@@ -42,21 +40,9 @@ const useL2ToL1MessageStatus = (txHash: string, chainId: number) => {
                 }
             }
 
-            if (typeof window.ethereum !== "undefined") {
-                ethProvider = new ethers.providers.Web3Provider(window.ethereum);
-            } else {
-                console.log("Please install MetaMask!");
-                return;
-            }
 
-            if (!ethProvider) {
-                console.log("!ethProvider");
-                return;
-            }
-
-            const signer = ethProvider.getSigner();
-            const messages: L2ToL1MessageWriter[] = await l2Receipt.getL2ToL1Messages(signer) as L2ToL1MessageWriter[];
-            const l2ToL1Msg: L2ToL1MessageWriter = messages[0];
+            const messages: L2ToL1MessageReader[] = (await l2Receipt.getL2ToL1Messages(l2Provider)) as L2ToL1MessageReader[];
+            const l2ToL1Msg: L2ToL1MessageReader = messages[0];
             const status: L2ToL1MessageStatus = await l2ToL1Msg.status(l3Provider);
 
             return {
@@ -66,6 +52,7 @@ const useL2ToL1MessageStatus = (txHash: string, chainId: number) => {
                 timestamp: decodedLog?.args?.timestamp,
                 confirmations: receipt.confirmations,
                 status,
+                l2Receipt,
             };
         },
         {
