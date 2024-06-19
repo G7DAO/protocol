@@ -7,6 +7,7 @@ import {L2ToL1MessageStatus, L2ToL1MessageWriter, L2TransactionReceipt} from "@a
 import {useMutation} from "react-query";
 import {ethers} from "ethers";
 import {useBlockchainContext} from "@/components/bridge/BlockchainContext";
+import { Skeleton } from 'summon-ui/mantine';
 
 const timeAgo = (timestamp: number)  => {
   const now = new Date().getTime();
@@ -112,19 +113,58 @@ const Withdrawal: React.FC<WithdrawalProps> = ({txHash, chainId, delay}) => {
             },
         },
     );
-
+if (!status.isLoading && !status.data) {
+    return <></>
+}
 
   return (
       <>
-          <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
-          <div className={styles.gridItem}>{`${status.data?.value} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
-          <div className={styles.gridItem}>{networkName(chainId) ?? ''}</div>
-          <div className={styles.gridItem}>{L2_CHAIN.displayName}</div>
-          {status.data?.status === L2ToL1MessageStatus.EXECUTED && <div className={styles.gridItem}><div className={styles.settled}>Settled</div> </div>}
-          {status.data?.status === L2ToL1MessageStatus.CONFIRMED && <div className={styles.gridItem}><div className={styles.claimable}>Claimable</div> </div>}
-          {status.data?.status === L2ToL1MessageStatus.UNCONFIRMED && <div className={styles.gridItem}><div className={styles.pending}>Pending</div> </div>}
-
-          {status.data?.status === L2ToL1MessageStatus.UNCONFIRMED ? <div className={styles.gridItem}>{ETA(status.data?.timestamp, delay)}</div> : <button className={styles.claimButton} onClick={() => execute.mutate(status.data?.l2Receipt)}>Claim</button>}
+          {status.isLoading ? (
+                      Array.from(Array(6)).map((_, idx) => (
+                          <div className={styles.gridItem}>
+                            <Skeleton key={idx} h="12px" w="100%" />
+                          </div>
+                      ))
+          ) : (
+              <>
+                  <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
+                  <div className={styles.gridItem}>{`${status.data?.value} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
+                  <div className={styles.gridItem}>{networkName(chainId) ?? ''}</div>
+                  <div className={styles.gridItem}>{L2_CHAIN.displayName}</div>
+                  {status.data?.status === L2ToL1MessageStatus.EXECUTED && (
+                      <>
+                          <div className={styles.gridItem}>
+                              <div className={styles.settled}>Settled</div>
+                          </div>
+                          <div className={styles.gridItem}>
+                              <div>{`${status.data.confirmations} confirmations`}</div>
+                          </div>
+                      </>
+                  )}
+                  {status.data?.status === L2ToL1MessageStatus.CONFIRMED && (
+                      <>
+                          <div className={styles.gridItem}>
+                              <div className={styles.claimable}>Claimable</div>
+                          </div>
+                          <div className={styles.gridItem}>
+                              <button className={styles.claimButton}
+                                      onClick={() => execute.mutate(status.data?.l2Receipt)}>Claim
+                              </button>
+                          </div>
+                      </>
+                  )}
+                  {status.data?.status === L2ToL1MessageStatus.UNCONFIRMED && (
+                      <>
+                          <div className={styles.gridItem}>
+                              <div className={styles.pending}>Pending</div>
+                          </div>
+                          <div className={styles.gridItem}>
+                              <div>{ETA(status.data?.timestamp, delay)}</div>
+                          </div>
+                      </>
+                  )}
+              </>
+          )}
       </>
   );
 };
