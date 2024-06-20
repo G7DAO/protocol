@@ -6,6 +6,7 @@
     --Blue-200: #B3D8FF;
     --Blue-700: #175CD3;
     --Warning-50: #FFFAEB;
+    --Warning-300: #FEC84B;
     --Warning-700: #B54708;
     --Success-50: #ECFDF3;
     --Success-700: #027A48;
@@ -14,5 +15,10 @@
     --Primary-600: #EF233B;
     --Gray-600: #475467;
     --Base-White: #FFF;
-
+    --Gray-300: #D0D5DD;
+    --Gray-100: #F2F4F7;
+    --Gray-blue-700: #363F72;
+    --Gray-blue-500: #4E5BA6;
+    --Gray-blue-300: #B3B8DB;
+    --Gray-blue-50: #F8F9FC;
 }
