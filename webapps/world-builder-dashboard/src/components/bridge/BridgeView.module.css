@@ -1,13 +1,15 @@
 .container {
-    margin-top: 100px;
-    margin-left: 32px;
-   display: flex;
-    background: #F2F4F7;
+    display: flex;
     width: 660px;
-    border-radius: 8px;
+    max-width: 660px;
     padding: 20px;
-    gap: 20px;
     flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+
+    border-radius: 8px;
+    border: 1px solid var(--Gray-200, #EAECF0);
+    background: var(--Gray-50, #F9FAFB);
 }
 
 .directionContainer {
@@ -16,7 +18,7 @@
     gap: 8px;
     border-radius: 6px;
     display: flex;
-    background: #F9FAFB;
+    background: #FFF;
     border: 1px solid #F2F4F7;
     width: 100%;
 }
@@ -34,19 +36,26 @@
 }
 
 .selectedDirectionButton {
-    background: #FFEBEF;
-    color: #DD1534;
+    border: 1px solid var(--Gray-200, #EAECF0);
+    background: var(--Gray-100, #F2F4F7);
 }
 
 .directionButton {
     background: transparent;
-    color: #667085;
+    color: var(--Gray-600, #475467);
 }
 
 .networksContainer {
     display: flex;
-    place-self: stretch;
+    padding: 12px;
+    justify-content: center;
+    align-items: center;
     gap: 20px;
+    align-self: stretch;
+
+    border-radius: 8px;
+    border: 1px solid var(--Gray-100, #F2F4F7);
+    background: #FFF;
 }
 
 .networkSelect {
@@ -84,6 +93,8 @@
 }
 
 .network {
+    max-height: 40px;
+    display: flex;
     padding: 9px 13px;
     align-items: center;
     gap: 8px;
@@ -110,7 +121,8 @@
     justify-content: space-between;
     flex-shrink: 0;
     border-radius: 8px;
-    background: #F9FAFB;
+    background-color: #FFF;
+
 }
 
 .valueContainer {
@@ -122,8 +134,9 @@
 }
 
 .valueInput {
+    width: 415px;
     color: #475467;
-    font-size: 40px;
+    font-size: 30px;
     font-style: normal;
     font-weight: 600;
     line-height: normal;
