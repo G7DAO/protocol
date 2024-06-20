@@ -1,6 +1,7 @@
 import { Combobox, InputBase, InputBaseProps, useCombobox } from 'summon-ui/mantine'
 import {L3NetworkConfiguration} from "@/components/bridge/l3Networks";
 import styles from './BridgeView.module.css';
+import {Icon} from "summon-ui";
 
 type NetworkSelectorProps = {
     networks: L3NetworkConfiguration[]
@@ -13,6 +14,9 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork }: NetworkSelecto
     const combobox = useCombobox({
         onDropdownClose: () => combobox.resetSelectedOption()
     })
+
+    const leftSection = <div style={{marginLeft: '-10px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', width: '24px', height: '24px', fontWeight: '900', fontSize: '13px', color: '#FFF', backgroundColor: '#EF233B'}}>L3</div>;
+
 
     return (
         <Combobox
@@ -32,7 +36,8 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork }: NetworkSelecto
                     className={styles.networkSelectSelect}
                     pointer
                     variant='unstyled'
-                    rightSection={networks.length > 1 ? <Combobox.Chevron /> : ""}
+                    leftSection={leftSection}
+                    rightSection={networks.length > 1 ? <Icon  name={'ChevronDown'} color={'#667085'}/> : ""}
                     rightSectionPointerEvents='none'
                     onClick={() => combobox.toggleDropdown()}
                 >
