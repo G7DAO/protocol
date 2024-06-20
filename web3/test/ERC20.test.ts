@@ -8,6 +8,7 @@ const TOKENS = [{ Token: 'Game7Token' }];
 
 const name = 'Game7 Token';
 const symbol = 'G7T';
+const decimals = 18;
 const initialSupply = BigInt(100n);
 
 describe('ERC20', function () {
@@ -21,7 +22,7 @@ describe('ERC20', function () {
         [holder, recipient] = await ethers.getSigners();
         const accounts =  await ethers.getSigners()
 
-        const token = await ethers.deployContract(Token, [initialSupply]);
+        const token = await ethers.deployContract(Token, [name, symbol, decimals, initialSupply]);
 
         return { accounts, holder, recipient, token };
       };
