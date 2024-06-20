@@ -12,17 +12,17 @@ bin/chainprof:
 	mkdir -p bin
 	go build -o bin/chainprof ./cmd/chainprof
 
-bindings/Game7Token/Game7Token.go: hardhat
-	mkdir -p bindings/Game7Token
-	seer evm generate --package Game7Token --output bindings/Game7Token/Game7Token.go --hardhat web3/artifacts/contracts/Token/Game7Token.sol/Game7Token.json --cli --struct Game7Token
+bindings/ERC20/ERC20.go: hardhat
+	mkdir -p bindings/ERC20
+	seer evm generate --package ERC20 --output bindings/ERC20/ERC20.go --hardhat web3/artifacts/contracts/Token/ERC20.sol/ERC20.json --cli --struct ERC20
 
-bindings: bindings/Game7Token/Game7Token.go
+bindings: bindings/ERC20/ERC20.go
 
 test:
 	npx hardhat test
 
 clean:
-	rm -rf bindings/Game7Token/* bin/*
+	rm -rf bindings/ERC20/* bin/*
 
 hardhat:
 	cd web3 && npm install && npx hardhat compile

@@ -4,10 +4,10 @@ pragma solidity ^0.8.24;
 import { IERC20 } from '../interfaces/IERC20.sol';
 
 /**
- * @title Game7 Token
+ * @title ERC20 Token
  * @author Game7 Engineering Team - engineering@game7.io
  */
-contract Game7Token is IERC20 {
+contract ERC20 is IERC20 {
     string public name;
     string public symbol;
     uint8 public decimals;

@@ -12,7 +12,7 @@ import (
 	"github.com/G7DAO/protocol/bindings/ArbitrumUpgradeExecutor"
 	"github.com/G7DAO/protocol/bindings/ERC20Inbox"
 
-	"github.com/G7DAO/protocol/bindings/Game7Token"
+	"github.com/G7DAO/protocol/bindings/ERC20"
 	"github.com/G7DAO/protocol/cmd/game7/version"
 )
 
@@ -29,7 +29,7 @@ func CreateRootCommand() *cobra.Command {
 	completionCmd := CreateCompletionCommand(rootCmd)
 	versionCmd := CreateVersionCommand()
 
-	tokenCmd := Game7Token.CreateGame7TokenCommand()
+	tokenCmd := ERC20.CreateERC20Command()
 	tokenCmd.Use = "token"
 
 	arbitrumL1OrbitCustomGatewayCmd := ArbitrumL1OrbitCustomGateway.CreateL1OrbitCustomGatewayCommand()

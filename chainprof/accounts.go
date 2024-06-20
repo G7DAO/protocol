@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/G7DAO/protocol/bindings/Game7Token"
+	"github.com/G7DAO/protocol/bindings/ERC20"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -42,7 +42,7 @@ func FundAccounts(rpcURL string, accountsDir string, keyFile string, password st
 		return results, clientErr
 	}
 
-	key, keyErr := Game7Token.KeyFromFile(keyFile, password)
+	key, keyErr := ERC20.KeyFromFile(keyFile, password)
 	if keyErr != nil {
 		return results, keyErr
 	}
@@ -75,7 +75,7 @@ func FundAccountsERC20(rpcURL string, accountsDir string, keyFile string, passwo
 		return results, clientErr
 	}
 
-	key, keyErr := Game7Token.KeyFromFile(keyFile, password)
+	key, keyErr := ERC20.KeyFromFile(keyFile, password)
 	if keyErr != nil {
 		return results, keyErr
 	}
@@ -159,7 +159,7 @@ func EvaluateAccount(rpcURL string, accountsDir string, password string, calldat
 	fmt.Printf("Sending %d transaction for %d accounts\n", transactionsPerAccount, len(keyFiles))
 
 	for i, keyFile := range keyFiles {
-		key, keyErr := Game7Token.KeyFromFile(filepath.Join(accountsDir, keyFile.Name()), password)
+		key, keyErr := ERC20.KeyFromFile(filepath.Join(accountsDir, keyFile.Name()), password)
 		if keyErr != nil {
 			return results, accounts, keyErr
 		}
