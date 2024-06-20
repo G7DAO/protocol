@@ -7,7 +7,7 @@ interface ChainInfo {
     parentChainId: number;
     nativeToken: string;
     rpcs: string[];
-    blockExplorerURSl: ["https://game7-testnet-custom.explorer.caldera.xyz/"];
+    blockExplorerURls?: ["https://game7-testnet-custom.explorer.caldera.xyz/"];
 }
 
 interface CoreContracts {
