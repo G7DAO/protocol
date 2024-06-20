@@ -4,10 +4,11 @@ import useL2ToL1MessageStatus from "@/hooks/useL2ToL1MessageStatus";
 import {L2_CHAIN, L3_NATIVE_TOKEN_SYMBOL} from "../../../constants";
 import {L3_NETWORKS} from "@/components/bridge/l3Networks";
 import {L2ToL1MessageStatus, L2ToL1MessageWriter, L2TransactionReceipt} from "@arbitrum/sdk";
-import {useMutation} from "react-query";
+import {useMutation, useQueryClient} from "react-query";
 import {ethers} from "ethers";
 import {useBlockchainContext} from "@/components/bridge/BlockchainContext";
 import { Skeleton } from 'summon-ui/mantine';
+import {Icon} from "summon-ui";
 
 const timeAgo = (timestamp: number)  => {
   const now = new Date().getTime();
@@ -22,7 +23,6 @@ const timeAgo = (timestamp: number)  => {
     { name: 'minute', inSeconds: 60 },
     { name: 'second', inSeconds: 1 },
   ];
-  console.log(timestamp, date, now, timeDifference);
 
   for (const unit of units) {
     const value = Math.floor(timeDifference / unit.inSeconds);
@@ -74,12 +74,14 @@ interface WithdrawalProps {
 }
 const Withdrawal: React.FC<WithdrawalProps> = ({txHash, chainId, delay}) => {
     const l3RPC = networkRPC(chainId)
+
   if (!l3RPC) {
       console.log('L3 RPC undefined');
       return <></>
   }
   const status = useL2ToL1MessageStatus(txHash, L2_CHAIN.rpcs[0], l3RPC);
   const {switchChain} = useBlockchainContext();
+  const queryClient = useQueryClient();
 
   const execute = useMutation(
         async (l2Receipt: L2TransactionReceipt | undefined) => {
@@ -109,8 +111,16 @@ const Withdrawal: React.FC<WithdrawalProps> = ({txHash, chainId, delay}) => {
         {
             onSuccess: (data) => {
                 console.log(data);
+                queryClient.refetchQueries(["ERC20BALANCE"]);
+                queryClient.refetchQueries(["nativeBalance"])
+                queryClient.setQueryData(["withdrawalStatus", txHash, L2_CHAIN.rpcs[0], l3RPC], (oldData: any) => {
+                    return {...oldData, status: L2ToL1MessageStatus.EXECUTED}
+                })
                 status.refetch();
             },
+            onError: (error: Error) => {
+                console.log(error);
+            }
         },
     );
 if (!status.isLoading && !status.data) {
@@ -148,7 +158,8 @@ if (!status.isLoading && !status.data) {
                           </div>
                           <div className={styles.gridItem}>
                               <button className={styles.claimButton}
-                                      onClick={() => execute.mutate(status.data?.l2Receipt)}>Claim
+                                      onClick={() => execute.mutate(status.data?.l2Receipt)}>
+                                  {execute.isLoading ? <Icon name={"Loading01"} color={'white'} className={styles.rotatable} /> : "Claim"}
                               </button>
                           </div>
                       </>
