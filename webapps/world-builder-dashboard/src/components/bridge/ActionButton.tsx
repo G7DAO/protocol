@@ -8,6 +8,7 @@ import {sendDepositTransaction} from "@/components/bridge/depositERC20";
 import {Icon} from "summon-ui";
 import {L2_CHAIN} from "../../../constants";
 import {sendWithdrawTransaction} from "@/components/bridge/withdrawNativeToken";
+import {L2ToL1MessageStatus} from "@arbitrum/sdk";
 
 
 interface ActionButtonProps {
@@ -55,19 +56,19 @@ const ActionButton: React.FC<ActionButtonProps> = ({direction, amount, l3Network
             if (accounts.length === 0) {
                 await connectWallet();
             }
-            const handleTransaction = async (targetChain: ChainInterface, mutate: () => void): Promise<void> => {
+            const handleTransaction = async (targetChain: ChainInterface, mutate: (amount: string) => void, amount: string): Promise<void> => {
                 if (window.ethereum) {
                     const provider = new ethers.providers.Web3Provider(window.ethereum);
                     const currentChain = await provider.getNetwork();
                     if (currentChain.chainId !== targetChain.chainId) {
                         try {
                             await switchChain(targetChain);
-                            mutate();
+                            mutate(amount);
                         } catch (error) {
                             console.error('Error switching chain:', error);
                         }
                     } else {
-                        mutate();
+                        mutate(amount);
                     }
                 } else {
                     console.error('MetaMask is not installed!');
@@ -75,7 +76,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({direction, amount, l3Network
             };
 
             const handleDeposit = async (): Promise<void> => {
-                await handleTransaction(L2_CHAIN, deposit.mutate);
+                await handleTransaction(L2_CHAIN, deposit.mutate, amount);
             };
 
             const handleWithdraw = async (): Promise<void> => {
@@ -84,7 +85,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({direction, amount, l3Network
                     chainId: l3Network.chainInfo.chainId,
                     rpcs: l3Network.chainInfo.rpcs,
                 };
-                await handleTransaction(targetChain, withdraw.mutate);
+                await handleTransaction(targetChain, withdraw.mutate, amount);
             };
 
 
@@ -115,7 +116,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({direction, amount, l3Network
 
     const queryClient = useQueryClient();
     const deposit = useMutation(
-        () => {
+        (amount: string) => {
             if (!(connectedAccount && walletProvider)) {
                 throw new Error("Wallet isn't connected");
             }
@@ -127,22 +128,41 @@ const ActionButton: React.FC<ActionButtonProps> = ({direction, amount, l3Network
         },
         {
             onSuccess: (receipt: ethers.providers.TransactionReceipt) => {
-                queryClient.refetchQueries("l2Balance")
+                queryClient.refetchQueries("ERC20Balance");
+                queryClient.refetchQueries("nativeBalance");
                 console.log(receipt);
             }
         }
     );
     const withdraw = useMutation(
-        () => {
+        (amount: string) => {
             if (!(connectedAccount && walletProvider)) {
                 throw new Error("Wallet isn't connected");
             }
             return sendWithdrawTransaction(amount, connectedAccount);
-            throw new Error('no window.ethereum');
         },
         {
-            onSuccess: (receipt: ethers.providers.TransactionReceipt) => {
-                queryClient.refetchQueries("l3balance")
+            onSuccess: async (receipt: ethers.providers.TransactionReceipt, variables) => {
+                try {
+                    const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`);
+                    let transactions = [];
+                    if (transactionsString) {
+                        transactions = JSON.parse(transactionsString);
+                    }
+                    transactions.push( {txHash: receipt.transactionHash, chainId: l3Network.chainInfo.chainId, delay: 15 * 60});
+                    localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(transactions));
+                } catch (e) {
+                    console.log(e)
+                }
+                queryClient.setQueryData(["withdrawalStatus", receipt.transactionHash, L2_CHAIN.rpcs[0], l3Network.chainInfo.rpcs[0]], () => {
+                    return {timestamp: (new Date()).getTime() / 1000, status: L2ToL1MessageStatus.UNCONFIRMED, value: variables, confirmations: 1 }
+                })
+                queryClient.setQueryData(["incomingMessages", connectedAccount], (oldData: any) => {
+                    console.log({oldData});
+                    return [...oldData, {txHash: receipt.transactionHash, chainId: l3Network.chainInfo.chainId, delay: 15 * 60, l2RPC: L2_CHAIN.rpcs[0], l3RPC: l3Network.chainInfo.rpcs[0]}]
+                })
+                // await queryClient.refetchQueries("incomingMessages");
+                queryClient.refetchQueries("nativeBalance");
                 console.log(receipt);
             }
         }
