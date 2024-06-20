@@ -5,7 +5,8 @@
     gap: 12px;
     font-family: Inter, sans-serif;
     border-radius: 8px;
-    background:  #F9FAFB;
+    background:  #FFF;
+    width: 100%;
 }
 
 .divider {

@@ -17,13 +17,13 @@ interface TransactionSummaryProps {
     transferTime: string;
     fee: number;
     value: number;
-    ethBalance: number;
+    gasBalance: number;
     ethRate: number;
     tokenSymbol: string;
     tokenRate: number;
     direction: "DEPOSIT" | "WITHDRAW";
 }
-const TransactionSummary: React.FC<TransactionSummaryProps> = ({direction, ethBalance, address, transferTime, fee, ethRate, tokenRate, tokenSymbol, value}) => {
+const TransactionSummary: React.FC<TransactionSummaryProps> = ({direction, gasBalance, address, transferTime, fee, ethRate, tokenRate, tokenSymbol, value}) => {
 
   return (
       <div className={styles.container}>
@@ -31,7 +31,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({direction, ethBa
           <div className={styles.divider}/>
           <div className={styles.dataRow}>
               <div className={styles.itemName}>-{'>'} To address</div>
-              <div className={styles.address}>{address}</div>
+              <div className={styles.address}>{`${address.slice(0, 6)}...${address.slice(-4)}`}</div>
           </div>
           <div className={styles.dataRow}>
               <div className={styles.itemName}>Transfer time</div>
@@ -44,13 +44,24 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({direction, ethBa
                   <div className={styles.valueNote}>{formatCurrency(fee * (direction === 'DEPOSIT' ? ethRate : tokenRate))}</div>
               </div>
           </div>
-          <div className={styles.dataRow}>
-              <div className={styles.itemName}>ETH available</div>
-              <div className={styles.valueContainer}>
-                  <div className={styles.value}>{`${ethBalance} ETH`}</div>
-                  <div className={styles.valueNote}>{formatCurrency(ethBalance * ethRate)}</div>
+          {direction === "DEPOSIT" && (
+              <div className={styles.dataRow}>
+                  <div className={styles.itemName}>ETH available</div>
+                  <div className={styles.valueContainer}>
+                      <div className={styles.value}>{`${gasBalance} ETH`}</div>
+                      <div className={styles.valueNote}>{formatCurrency(gasBalance * ethRate)}</div>
+                  </div>
               </div>
-          </div>
+          )}
+          {direction === "WITHDRAW" && (
+              <div className={styles.dataRow}>
+                  <div className={styles.itemName}>{`${tokenSymbol} available`}</div>
+                  <div className={styles.valueContainer}>
+                      <div className={styles.value}>{`${gasBalance} ${tokenSymbol}`}</div>
+                      <div className={styles.valueNote}>{formatCurrency(gasBalance * tokenRate)}</div>
+                  </div>
+              </div>
+          )}
           <div className={styles.dataRow}>
               <div className={styles.itemName}>You will receive</div>
               <div className={styles.valueContainer}>
