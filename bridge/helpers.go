@@ -29,6 +29,7 @@ func GetForwarderAddress(client *ethclient.Client, teleporterAddress common.Addr
 	return l2ForwarderAddress, nil
 }
 
+// Source: https://github.com/OffchainLabs/nitro-contracts/blob/main/src/bridge/Inbox.sol#L323
 func CalculateRetryableSubmissionFee(calldata []byte, baseFee *big.Int) (*big.Int, error) {
 	multiplier := big.NewInt(int64(1400 + 6*len(calldata)))
 	submissionFee := multiplier.Mul(multiplier, baseFee)
