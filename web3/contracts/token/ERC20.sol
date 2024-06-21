@@ -4,20 +4,25 @@ pragma solidity ^0.8.24;
 import { IERC20 } from '../interfaces/IERC20.sol';
 
 /**
- * @title Game7 Token
+ * @title ERC20 Token
  * @author Game7 Engineering Team - engineering@game7.io
  */
-contract Game7Token is IERC20 {
-    string public constant name = 'Game7 Token';
-    string public constant symbol = 'G7T';
-    uint8 public constant decimals = 18;
+contract ERC20 is IERC20 {
+    string public name;
+    string public symbol;
+    uint8 public decimals;
     uint256 public totalSupply;
 
     mapping(address => uint256) public balanceOf;
     mapping(address => mapping(address => uint256)) public allowance;
-    constructor(uint256 _totalSupply) {
+    constructor(string memory _tokenName, string memory _symbol, uint8 _decimals, uint256 _totalSupply) {
+        name = _tokenName;
+        symbol = _symbol;
+        decimals = _decimals;
+
         balanceOf[msg.sender] = _totalSupply;
         totalSupply = _totalSupply;
+        emit Transfer(address(0), msg.sender, _totalSupply);
     }
 
     function approve(address spender, uint256 amount) external returns (bool) {

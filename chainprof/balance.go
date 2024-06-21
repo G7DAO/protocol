@@ -9,7 +9,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/G7DAO/protocol/bindings/Game7Token"
+	"github.com/G7DAO/protocol/bindings/ERC20"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
@@ -94,7 +94,7 @@ func BatchFundAccountsERC20(client *ethclient.Client, key *keystore.Key, passwor
 		return transactions, results, nonceErr
 	}
 
-	parsedABI, err := abi.JSON(strings.NewReader(Game7Token.Game7TokenABI))
+	parsedABI, err := abi.JSON(strings.NewReader(ERC20.ERC20ABI))
 	if err != nil {
 		fmt.Printf("Failed to parse ABI: %s", err)
 		return transactions, results, err
@@ -167,7 +167,7 @@ func BatchDrainAccounts(client *ethclient.Client, accountsDir string, recipientA
 	}
 
 	for i, keyFile := range keyFiles {
-		key, keysErr := Game7Token.KeyFromFile(filepath.Join(accountsDir, keyFile.Name()), password)
+		key, keysErr := ERC20.KeyFromFile(filepath.Join(accountsDir, keyFile.Name()), password)
 		if keysErr != nil {
 			continue
 		}
@@ -244,25 +244,25 @@ func BatchDrainAccountsERC20(client *ethclient.Client, accountsDir string, recip
 		return transactions, results, keyFilesErr
 	}
 
-	parsedABI, err := abi.JSON(strings.NewReader(Game7Token.Game7TokenABI))
+	parsedABI, err := abi.JSON(strings.NewReader(ERC20.ERC20ABI))
 	if err != nil {
 		return transactions, results, err
 	}
 
 	for i, keyFile := range keyFiles {
-		key, keysErr := Game7Token.KeyFromFile(filepath.Join(accountsDir, keyFile.Name()), password)
+		key, keysErr := ERC20.KeyFromFile(filepath.Join(accountsDir, keyFile.Name()), password)
 		if keysErr != nil {
 			continue
 		}
 
-		contract, contractErr := Game7Token.NewGame7Token(common.HexToAddress(tokenAddress), client)
+		contract, contractErr := ERC20.NewERC20(common.HexToAddress(tokenAddress), client)
 		if contractErr != nil {
 			return transactions, results, contractErr
 		}
 		contract.BalanceOf(nil, key.Address)
 
-		session := Game7Token.Game7TokenCallerSession{
-			Contract: &contract.Game7TokenCaller,
+		session := ERC20.ERC20CallerSession{
+			Contract: &contract.ERC20Caller,
 			CallOpts: bind.CallOpts{},
 		}
 
