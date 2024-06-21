@@ -14,7 +14,7 @@ bin/chainprof:
 
 bindings/ERC20/ERC20.go: hardhat
 	mkdir -p bindings/ERC20
-	seer evm generate --package ERC20 --output bindings/ERC20/ERC20.go --hardhat web3/artifacts/contracts/Token/ERC20.sol/ERC20.json --cli --struct ERC20
+	seer evm generate --package ERC20 --output bindings/ERC20/ERC20.go --hardhat web3/artifacts/contracts/token/ERC20.sol/ERC20.json --cli --struct ERC20
 
 bindings: bindings/ERC20/ERC20.go
 
