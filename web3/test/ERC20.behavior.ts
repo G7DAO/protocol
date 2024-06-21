@@ -1,4 +1,4 @@
-import { ethers } from 'hardhat';
+// Source: https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/test/token/ERC20/ERC20.test.js
 import { expect } from 'chai';
 import { HardhatEthersSigner } from '../helpers/type';
 
