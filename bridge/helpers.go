@@ -72,6 +72,7 @@ func CalculateRequiredEth(gasParams RetryableGasParams, teleportationType Telepo
 	return requiredEth, requiredFeeToken
 }
 
+// Source: https://github.com/OffchainLabs/l1-l3-teleport-contracts/blob/820590ff81f85ca482c9d9aec6948c1277248950/contracts/lib/TeleportationType.sol#L13
 func GetTeleportationType(token common.Address, feeToken common.Address) (TeleportationType, error) {
 	if (token == common.Address{}) {
 		return Standard, fmt.Errorf("token address is empty")

@@ -4,23 +4,23 @@ This checklist describes how to bridge tokens
 
 ## Environment variables
 
-- [x] `export L1_RPC=<l1 rpc endpoint>`
-- [x] `export L2_RPC=<l2 rpc endpoint>`
-- [x] `export L3_RPC=<l3 rpc endpoint>`
-- [x] `export KEY=<path to keyfile of account to fund>`
-- [x] `export PASSWORD=<password for keyfile>`
-- [x] `export L1_TOKEN=<l1 token address>`
-- [x] `export L1L2_ROUTER=<l1l2 router address>`
-- [x] `export L2L3_ROUTER=<l2l3 router address>`
-- [x] `export L1L3_FEE_TOKEN=<l1l3 fee token address>`
-- [x] `export TELEPORTER=<teleporter address>`
-- [x] `export TO=<address to send funds to or call function>`
-- [x] `export L3_CALLDATA=<calldata for l3 function>`
-- [x] `export AMOUNT=<amount to send>`
+- [ ] `export L1_RPC=<l1 rpc endpoint>`
+- [ ] `export L2_RPC=<l2 rpc endpoint>`
+- [ ] `export L3_RPC=<l3 rpc endpoint>`
+- [ ] `export KEY=<path to keyfile of account to fund>`
+- [ ] `export PASSWORD=<password for keyfile>`
+- [ ] `export L1_TOKEN=<l1 token address>`
+- [ ] `export L1L2_ROUTER=<l1l2 router address>`
+- [ ] `export L2L3_ROUTER=<l2l3 router address>`
+- [ ] `export L1L3_FEE_TOKEN=<l1l3 fee token address>`
+- [ ] `export TELEPORTER=<teleporter address>`
+- [ ] `export TO=<address to send funds to or call function>`
+- [ ] `export L3_CALLDATA=<calldata for l3 function>`
+- [ ] `export AMOUNT=<amount to send>`
 
 ## Teleport Tokens from L1 to L3 and call arbitrary function
 
-- [x] Teleporting tokens from L1 to L2 and calling stake function
+- [ ] Teleporting tokens from L1 to L2 and calling stake function
 
 ```bash
 bin/game7 bridge l1-to-l3 \ 

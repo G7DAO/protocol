@@ -33,7 +33,7 @@ func CreateBridgeL2ToL3Command() *cobra.Command {
 	var numAccounts int
 
 	createCmd := &cobra.Command{
-		Use:   "bridge-l2-to-l3",
+		Use:   "l2-to-l3",
 		Short: "Bridge tokens from L2 to L3",
 		Long:  `Bridge tokens from L2 to L3 with a single transaction and arbitrary calldata`,
 
@@ -44,7 +44,8 @@ func CreateBridgeL2ToL3Command() *cobra.Command {
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return nil
+			// TODO: Implement this later
+			return errors.New("not implemented")
 		},
 	}
 
