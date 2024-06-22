@@ -10,5 +10,5 @@ var NODE_INTERFACE_ADDRESS = common.HexToAddress("0x0000000000000000000000000000
 
 // Source: https://github.com/OffchainLabs/arbitrum-sdk/blob/ha/teleporter-custom-fee-2/src/lib/assetBridger/l1l3Bridger.ts#L390
 var L2_FORWARDER_FACTORY_DEFAULT_GAS_LIMIT = uint64(1_000_000)
-var DEFAULT_GAS_LIMIT = uint64(150_000)
 var ONE_ETHER = big.NewInt(1_000_000_000_000_000_000)
+var SLIPPAGE_GAS_LIMIT = uint64(100_000)
