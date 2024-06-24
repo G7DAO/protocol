@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from "./BridgeView.module.css";
 
 const balanceString = (balance: string | undefined, symbol: string) => {
@@ -24,6 +24,18 @@ interface ValueToBridgeProps {
     rate: number,
 }
 const ValueToBridge: React.FC<ValueToBridgeProps> = ({title, setValue, value, balance, symbol, rate}) => {
+    // const [balanceRepresentation, setBalanceRepresentation] = useState('0');
+    // const [balanceHasChanged, setBalanceHasChanged] = useState(false);
+    //
+    // useEffect(() => {
+    //     if (balance !== balanceRepresentation && balance) {
+    //         setBalanceHasChanged(true);
+    //         setTimeout(() => {
+    //             setBalanceRepresentation(balance);
+    //             setBalanceHasChanged(false);
+    //         }, 1000)
+    //     }
+    // }, [balance]);
 
     return (
      <div className={styles.valueBlockContainer}>
