@@ -1,0 +1,47 @@
+diff --git a/node_modules/@arbitrum/sdk/dist/lib/dataEntities/networks.js b/node_modules/@arbitrum/sdk/dist/lib/dataEntities/networks.js
+index 6935967..46070b7 100644
+--- a/node_modules/@arbitrum/sdk/dist/lib/dataEntities/networks.js
++++ b/node_modules/@arbitrum/sdk/dist/lib/dataEntities/networks.js
+@@ -267,6 +267,42 @@ exports.networks = {
+         depositTimeout: 900000,
+         blockTime: constants_1.ARB_MINIMUM_BLOCK_TIME_IN_SECONDS,
+     },
++    1398587: {
++        chainID: 1398587,
++        confirmPeriodBlocks: 20,
++        ethBridge: {
++            bridge: '0x26Ea5f3EffEbb49BF3D27b756f3B99B0914a202f',
++            inbox: '0xaACd8bE2d9ac11545a2F0817aEE35058c70b44e5',
++            outbox: '0xDDfFefce2691353b84Cd60a7651a3c0F044a4ea1',
++            rollup: '0x90A8dc739e9986FBc4BE080680e832ee5EFEcb75',
++            sequencerInbox: '0xaed977F5D695eae231575560d635ECAb07283647',
++        },
++        explorerUrl: 'https://game7-testnet-custom.explorer.caldera.xyz',
++        isArbitrum: true,
++        isCustom: true,
++        name: 'Game7 Testnet',
++        partnerChainID: 421614,
++        retryableLifetimeSeconds: constants_1.SEVEN_DAYS_IN_SECONDS,
++        tokenBridge: {
++            l1CustomGateway: '0xeA7f73a6fFA8d08CB8FCFE12e58CF4951CD9f818',
++            l1ERC20Gateway: '0xE763bC0e5978f264b3F3F5787D58Dc531649e641',
++            l1GatewayRouter: '0x378f8B8727F4741b9404D6fF3A9D74cb662bF58D',
++            l1MultiCall: '0x3AFeb1Ea760EED35D224C531D531C30eC6aE13e5',
++            l1ProxyAdmin: '0xF80296627bc317A4A93801c9761B82A754882029',
++            l1Weth: '0x0000000000000000000000000000000000000000',
++            l1WethGateway: '0x0000000000000000000000000000000000000000',
++            l2CustomGateway: '0x54C38DBDb0318653E3D1dFf698C245eD35C3bB96',
++            l2ERC20Gateway: '0x8E57DeB813cD10c5303e97ca2fdE5C33463CaFDC',
++            l2GatewayRouter: '0xc5966E3958E55bAD8A3D6E71753dCE2DFfcc7e15',
++            l2Multicall: '0xD3e2587aDF118364EA931235BEAe4CeDFAa1d644',
++            l2ProxyAdmin: '0xB7D8c3Bba729E12F4CDd54c4C492cFA962cFcE6E',
++            l2Weth: '0x0000000000000000000000000000000000000000',
++            l2WethGateway: '0x0000000000000000000000000000000000000000',
++        },
++        nitroGenesisBlock: 0,
++        nitroGenesisL1Block: 0,
++        depositTimeout: 900000,
++    },
+ };
+ /**
+  * Determines if a chain is a parent of *any* other chain. Could be an L1 or an L2 chain.
