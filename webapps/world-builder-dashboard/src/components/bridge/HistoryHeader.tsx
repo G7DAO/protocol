@@ -1,9 +1,11 @@
 import React from 'react';
+import {useNavigate} from "react-router-dom";
+
 import styles from "./HistoryHeader.module.css";
 import {Icon} from "summon-ui";
+
 import {L2ToL1MessageStatusResult} from "@/hooks/useL2ToL1MessageStatus";
 import {L2ToL1MessageStatus} from "@arbitrum/sdk";
-import {useNavigate} from "react-router-dom";
 
 interface HistoryHeaderProps {
     messages: (L2ToL1MessageStatusResult | undefined)[] | undefined;
@@ -18,7 +20,7 @@ const numberOfConfirmed = (messages: (L2ToL1MessageStatusResult | undefined)[] )
     return messages.filter((m) => m?.status === L2ToL1MessageStatus.CONFIRMED).length;
 }
 const HistoryHeader: React.FC<HistoryHeaderProps> = ({messages}) => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   return (
   <div onClick={() => navigate('/bridge/transactions')}>
       {(!messages || !messages.some((m) => m?.status === L2ToL1MessageStatus.UNCONFIRMED || m?.status === L2ToL1MessageStatus.CONFIRMED)) && (

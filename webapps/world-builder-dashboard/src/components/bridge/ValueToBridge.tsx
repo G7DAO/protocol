@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import styles from "./BridgeView.module.css";
 
 const balanceString = (balance: string | undefined, symbol: string) => {

@@ -1,21 +1,23 @@
 import React, {useState} from 'react';
-import styles from "./ActionButton.module.css";
 import {ethers} from "ethers";
+
+import {useMutation, useQueryClient} from "react-query";
+import {L2ToL1MessageStatus} from "@arbitrum/sdk";
+
+import styles from "./ActionButton.module.css";
+import Loading01Icon from "@/assets/Loading01Icon";
+
+import {sendDepositTransaction} from "@/components/bridge/depositERC20";
+import {sendWithdrawTransaction} from "@/components/bridge/withdrawNativeToken";
 import {ChainInterface, useBlockchainContext} from "@/components/bridge/BlockchainContext";
 import {L3NetworkConfiguration} from "@/components/bridge/l3Networks";
-import {useMutation, useQueryClient} from "react-query";
-import {sendDepositTransaction} from "@/components/bridge/depositERC20";
 import {L2_CHAIN} from "../../../constants";
-import {sendWithdrawTransaction} from "@/components/bridge/withdrawNativeToken";
-import {L2ToL1MessageStatus} from "@arbitrum/sdk";
-import Loading01Icon from "@/assets/Loading01Icon";
 
 
 interface ActionButtonProps {
     direction: "DEPOSIT" | "WITHDRAW";
     l3Network: L3NetworkConfiguration;
     amount: string;
-    estimatedFee: string;
 }
 const ActionButton: React.FC<ActionButtonProps> = ({direction, amount, l3Network}) => {
     const [isConnecting, setIsConnecting] = useState(false);
@@ -26,18 +28,15 @@ const ActionButton: React.FC<ActionButtonProps> = ({direction, amount, l3Network
         if (!connectedAccount || !walletProvider) {
             return 'Connect wallet'
         }
-        return 'Submit'; //direction.toLowerCase();
+        return 'Submit';
     }
 
-    // Function to request connection to a MetaMask wallet
     const connectWallet = async () => {
         if (typeof window.ethereum !== 'undefined') {
             try {
                 setIsConnecting(true);
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
                 await provider.send("eth_requestAccounts", []);
-                const signer = provider.getSigner();
-                console.log('Connected account:', await signer.getAddress());
             } catch (error) {
                 console.error('Error connecting to wallet:', error);
             } finally {
@@ -123,7 +122,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({direction, amount, l3Network
                 throw new Error("Wallet isn't connected");
             }
             if (window.ethereum) {
-                const provider = new ethers.providers.Web3Provider(window.ethereum); //can't use provider from the context because of 'underlying network changed' error after switch
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
                 return sendDepositTransaction(amount, connectedAccount, l3Network, provider);
             }
             throw new Error('no window.ethereum');
@@ -131,16 +130,11 @@ const ActionButton: React.FC<ActionButtonProps> = ({direction, amount, l3Network
         {
             onSuccess: (receipt: ethers.providers.TransactionReceipt, amount) => {
                 queryClient.setQueryData(["ERC20Balance", tokenAddress, connectedAccount, L2_CHAIN.rpcs[0]], (oldData) => {
-                    console.log(oldData, amount);
                     return Number(oldData) - Number(amount);
                 });
                 queryClient.setQueryData(["nativeBalance", connectedAccount, l3Network.chainInfo.rpcs[0]], (oldData) => {
-                    console.log("L3balance:", oldData, amount);
                     return Number(oldData) + Number(amount);
                 });
-                // queryClient.invalidateQueries(["nativeBalance", connectedAccount, l3Network.chainInfo.rpcs[0]]);
-                // queryClient.refetchQueries(["ERC20Balance"]);
-                // queryClient.refetchQueries(["nativeBalance"]);
                 console.log(receipt);
             }
         }
@@ -171,7 +165,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({direction, amount, l3Network
                 queryClient.setQueryData(["incomingMessages", connectedAccount], (oldData: any) => {
                     return [{txHash: receipt.transactionHash, chainId: l3Network.chainInfo.chainId, delay: 15 * 60, l2RPC: L2_CHAIN.rpcs[0], l3RPC: l3Network.chainInfo.rpcs[0]}, ...oldData, ]
                 })
-                // await queryClient.refetchQueries("incomingMessages");
                 queryClient.refetchQueries("nativeBalance");
                 console.log(receipt);
             }
