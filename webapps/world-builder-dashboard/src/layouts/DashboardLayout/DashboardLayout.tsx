@@ -141,7 +141,6 @@ const renderBottomMenu = ({
 const DashboardLayout = () => {
   const isDev = useIsDevMode();
   const appVersion = useAppVersion();
-  console.log(isDev);
   return (
     <Box h="100%" mih="100vh" w="100%" className="overflow-y-scroll">
       <SummonUiDashboardLayout
