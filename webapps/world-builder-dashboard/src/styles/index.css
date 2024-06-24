@@ -1,9 +1,5 @@
 @layer base {
-  @font-face {
-    font-family: Gibson;
-    font-weight: 400;
-    src: url(/fonts/Gisbon.ttf);
-  }
+
 }
 
 @layer utilities {
