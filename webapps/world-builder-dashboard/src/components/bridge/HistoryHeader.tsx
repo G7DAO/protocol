@@ -8,6 +8,15 @@ import {useNavigate} from "react-router-dom";
 interface HistoryHeaderProps {
     messages: (L2ToL1MessageStatusResult | undefined)[] | undefined;
 }
+
+const numberOfUnconfirmed = (messages: (L2ToL1MessageStatusResult | undefined)[] ) => {
+    if (!messages) return 0;
+    return messages.filter((m) => m?.status === L2ToL1MessageStatus.UNCONFIRMED).length;
+}
+const numberOfConfirmed = (messages: (L2ToL1MessageStatusResult | undefined)[] ) => {
+    if (!messages) return 0;
+    return messages.filter((m) => m?.status === L2ToL1MessageStatus.CONFIRMED).length;
+}
 const HistoryHeader: React.FC<HistoryHeaderProps> = ({messages}) => {
     const navigate = useNavigate();
   return (
@@ -22,14 +31,14 @@ const HistoryHeader: React.FC<HistoryHeaderProps> = ({messages}) => {
       {messages && messages.some((m) => m?.status === L2ToL1MessageStatus.CONFIRMED) && (
           <div className={styles.claimable}>
               <Icon name={'AlertTriangle'} color={'#F79009'}/>
-              <div className={styles.claimableCaption}>{`You must claim `}<span style={{fontWeight: 600}}>{`${messages.filter((m) => m?.status === L2ToL1MessageStatus.CONFIRMED).length} transactions`}</span></div>
+              <div className={styles.claimableCaption}>{`You must claim `}<span style={{fontWeight: 600}}>{`${numberOfConfirmed(messages)} transaction${numberOfConfirmed(messages) === 1 ? '' : 's'}`}</span></div>
               <Icon name={"ArrowNarrowRight"} color={'#B54708'}/>
           </div>
       )}
       {messages && messages.some((m) => m?.status === L2ToL1MessageStatus.UNCONFIRMED) && !messages.some((m) => m?.status === L2ToL1MessageStatus.CONFIRMED) && (
           <div className={styles.pending}>
               <Icon name={'SwitchHorizontal01'} color={'#4E5BA6'}/>
-              <div className={styles.claimableCaption}>{`You have `}<span style={{fontWeight: 600}}>{`${messages.filter((m) => m?.status === L2ToL1MessageStatus.UNCONFIRMED).length} pending transactions`}</span></div>
+              <div className={styles.claimableCaption}>{`You have `}<span style={{fontWeight: 600}}>{`${numberOfUnconfirmed(messages)} pending transaction${numberOfUnconfirmed(messages) === 1 ? '' : 's'}`}</span></div>
               <Icon name={"ArrowNarrowRight"} color={'#363F72'}/>
           </div>
       )}
