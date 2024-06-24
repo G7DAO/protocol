@@ -11,8 +11,8 @@ const BridgePage = () => {
 
     return (
         <BlockchainProvider>
-            <Box px="md" bg={'#FFF'} h={'100vh'}>
-                <ContentHeader name='' tabs={{ list: [], value: location.pathname }}>
+            <Box px="md" bg={'#FFF'} h={'100vh'} pt={"5px"}>
+                <ContentHeader name='Bridge' tabs={{ list: [], value: location.pathname }}>
                 </ContentHeader>
                 {location.pathname === '/bridge' && <BridgeView />}
                 {location.pathname === '/bridge/transactions' && <WithdrawTransactions />}

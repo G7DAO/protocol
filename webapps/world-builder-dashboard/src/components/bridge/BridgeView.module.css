@@ -36,8 +36,8 @@
 }
 
 .selectedDirectionButton {
-    border: 1px solid var(--Gray-200, #EAECF0);
-    background: var(--Gray-100, #F2F4F7);
+    background: var(--Primary-600, #F2F4F7);
+    color: #FFF;
 }
 
 .directionButton {
@@ -146,7 +146,7 @@
     padding-left: 0px;
 }
 
-.valueUSD, .balance {
+.valueUSD, .balance, .balanceHasChanged {
     color: #98A2B3;
 
     /* Text xs/Medium */
@@ -154,6 +154,13 @@
     font-style: normal;
     font-weight: 500;
     line-height: 18px; /* 150% */
+    transition: all ease-in-out 1s;
+
+}
+
+.balanceHasChanged {
+    color: #414657;
+    /*transition: all ease-in-out 0.5s;*/
 }
 
 .symbolContainer {
