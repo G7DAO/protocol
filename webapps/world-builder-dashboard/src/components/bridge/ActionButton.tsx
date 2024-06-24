@@ -5,27 +5,28 @@ import {ChainInterface, useBlockchainContext} from "@/components/bridge/Blockcha
 import {L3NetworkConfiguration} from "@/components/bridge/l3Networks";
 import {useMutation, useQueryClient} from "react-query";
 import {sendDepositTransaction} from "@/components/bridge/depositERC20";
-import {Icon} from "summon-ui";
 import {L2_CHAIN} from "../../../constants";
 import {sendWithdrawTransaction} from "@/components/bridge/withdrawNativeToken";
 import {L2ToL1MessageStatus} from "@arbitrum/sdk";
+import Loading01Icon from "@/assets/Loading01Icon";
 
 
 interface ActionButtonProps {
     direction: "DEPOSIT" | "WITHDRAW";
     l3Network: L3NetworkConfiguration;
     amount: string;
+    estimatedFee: string;
 }
 const ActionButton: React.FC<ActionButtonProps> = ({direction, amount, l3Network}) => {
     const [isConnecting, setIsConnecting] = useState(false);
-    const {connectedAccount, walletProvider, checkConnection, switchChain } = useBlockchainContext();
+    const {connectedAccount, walletProvider, checkConnection, switchChain, tokenAddress } = useBlockchainContext();
 
     const getLabel = (): String | undefined => {
         if (isConnecting || deposit.isLoading || withdraw.isLoading) { return undefined }
         if (!connectedAccount || !walletProvider) {
             return 'Connect wallet'
         }
-        return direction.toLowerCase();
+        return 'Submit'; //direction.toLowerCase();
     }
 
     // Function to request connection to a MetaMask wallet
@@ -48,6 +49,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({direction, amount, l3Network
     };
 
     const handleClick = async () => {
+        if (isConnecting || deposit.isLoading || withdraw.isLoading) { return }
 
         if (connectedAccount && walletProvider) {
             setIsConnecting(true);
@@ -167,8 +169,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({direction, amount, l3Network
                     return {timestamp: (new Date()).getTime() / 1000, status: L2ToL1MessageStatus.UNCONFIRMED, value: variables, confirmations: 1 }
                 })
                 queryClient.setQueryData(["incomingMessages", connectedAccount], (oldData: any) => {
-                    console.log({oldData});
-                    return [...oldData, {txHash: receipt.transactionHash, chainId: l3Network.chainInfo.chainId, delay: 15 * 60, l2RPC: L2_CHAIN.rpcs[0], l3RPC: l3Network.chainInfo.rpcs[0]}]
+                    return [{txHash: receipt.transactionHash, chainId: l3Network.chainInfo.chainId, delay: 15 * 60, l2RPC: L2_CHAIN.rpcs[0], l3RPC: l3Network.chainInfo.rpcs[0]}, ...oldData, ]
                 })
                 // await queryClient.refetchQueries("incomingMessages");
                 queryClient.refetchQueries("nativeBalance");
@@ -179,8 +180,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({direction, amount, l3Network
 
 
   return (
-      <button className={styles.container} onClick={handleClick} disabled={isConnecting}>
-          {getLabel() ?? <Icon name={"Loading01"} color={'white'} className={styles.rotatable} /> }
+      <button className={styles.container} onClick={handleClick} disabled={getLabel() !== 'Connect wallet' && (!Number(amount) || Number(amount) <= 0)} >
+          {getLabel() ?? <Loading01Icon color={'white'} className={styles.rotatable} /> }
       </button>
   );
 };
