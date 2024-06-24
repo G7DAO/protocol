@@ -1,20 +1,20 @@
 @layer base {
-    @font-face {
-        font-family: Gibson;
-        font-weight: 400;
-        src: url(/fonts/Gisbon.ttf);
-    }
+  @font-face {
+    font-family: Gibson;
+    font-weight: 400;
+    src: url(/fonts/Gisbon.ttf);
+  }
 }
 
 @layer utilities {
-    /* Hide scrollbar for Chrome, Safari and Opera */
-    .no-scrollbar::-webkit-scrollbar {
-        display: none;
-    }
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 
-    /* Hide scrollbar for IE, Edge and Firefox */
-    .no-scrollbar {
-        -ms-overflow-style: none; /* IE and Edge */
-        scrollbar-width: none; /* Firefox */
-    }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
 }

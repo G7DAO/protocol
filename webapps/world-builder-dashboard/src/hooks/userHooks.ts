@@ -1,6 +1,6 @@
-import { LoginData, User } from "@/types";
-import { AxiosError } from "axios";
-import { useMutation } from "react-query";
+import { useMutation } from 'react-query'
+import { AxiosError } from 'axios'
+import { LoginData, User } from '@/types'
 
 const login = async ({ email, password }: LoginData): Promise<User> => {
   // @TODO uncomment when implemented
@@ -9,19 +9,18 @@ const login = async ({ email, password }: LoginData): Promise<User> => {
   //   password,
   // });
   // return data.data;
-  console.log(email, password);
+  console.log(email, password)
   return Promise.resolve({
-    firstName: "Game",
-    lastName: "Master",
-    email: "GM@example.com",
-  } as User);
-};
+    firstName: 'Game',
+    lastName: 'Master',
+    email: 'GM@example.com'
+  } as User)
+}
 
 const logout = async (): Promise<void> => {
   // await axiosInstance.post("/logout");
-  setTimeout(() => Promise.resolve(), 1000);
-};
+  setTimeout(() => Promise.resolve(), 1000)
+}
 
-export const useLogout = () => useMutation<void, AxiosError>(logout);
-export const useLogin = () =>
-  useMutation<User, AxiosError<any, any>, LoginData>(login);
+export const useLogout = () => useMutation<void, AxiosError>(logout)
+export const useLogin = () => useMutation<User, AxiosError<any, any>, LoginData>(login)

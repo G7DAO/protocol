@@ -1,61 +1,64 @@
-.container, .claimable, .pending {
-    display: flex;
-    max-width: 660px;
-    padding: 12px;
-    gap: 12px;
-    justify-content: space-between;
-    align-items: center;
-    align-self: stretch;
+.container,
+.claimable,
+.pending {
+  display: flex;
+  max-width: 660px;
+  padding: 12px;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+  align-self: stretch;
 
-    border-radius: 6px;
-    border: 1px solid var(--Gray-300, #D0D5DD);
-    background: var(--Gray-100, #F2F4F7);
-    color: var(--Gray-700, #344054);
-    font-family: Inter, sans-serif;
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 24px; /* 150% */
-    cursor: pointer;
+  border-radius: 6px;
+  border: 1px solid var(--Gray-300, #d0d5dd);
+  background: var(--Gray-100, #f2f4f7);
+  color: var(--Gray-700, #344054);
+  font-family: Inter, sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px; /* 150% */
+  cursor: pointer;
 }
 
 .claimable {
-    border-radius: 6px;
-    border: 1px solid var(--Warning-300, #FEC84B);
-    background: var(--Warning-50, #FFFAEB);
-    color: var(--Warning-700, #B54708);
+  border-radius: 6px;
+  border: 1px solid var(--Warning-300, #fec84b);
+  background: var(--Warning-50, #fffaeb);
+  color: var(--Warning-700, #b54708);
 
-    /* Text md/Semibold */
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 24px;
+  /* Text md/Semibold */
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px;
 }
-.claimableCaption, .pendingCaption {
-    width: 100%;
+.claimableCaption,
+.pendingCaption {
+  width: 100%;
 }
 
 .pending {
-    border-radius: 6px;
-    border: 1px solid var(--Gray-blue-300, #B3B8DB);
-    background: var(--Gray-blue-50, #F8F9FC);
-    color: var(--Gray-blue-700, #363F72);
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 24px; /* 150% */
+  border-radius: 6px;
+  border: 1px solid var(--Gray-blue-300, #b3b8db);
+  background: var(--Gray-blue-50, #f8f9fc);
+  color: var(--Gray-blue-700, #363f72);
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px; /* 150% */
 }
 
 .default {
-    color: var(--Gray-700, #344054);
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 24px; /* 150% */
-    justify-self: flex-start;
-    flex-grow: 2;
+  color: var(--Gray-700, #344054);
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px; /* 150% */
+  justify-self: flex-start;
+  flex-grow: 2;
 }
 
 .defaultIcon {
-    color: var(--Gray-700, #344054);
+  color: var(--Gray-700, #344054);
 }

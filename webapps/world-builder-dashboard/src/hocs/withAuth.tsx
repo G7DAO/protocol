@@ -1,26 +1,26 @@
-import { FC } from "react";
-import { Spinner } from "summon-ui";
-import { Box } from "summon-ui/mantine";
-import useAuth from "./useAuth";
+import { FC } from 'react'
+import useAuth from './useAuth'
+import { Spinner } from 'summon-ui'
+import { Box } from 'summon-ui/mantine'
 
 const withAuth = (WrappedComponent: FC) => {
   const NewComponent: FC = () => {
-    const { finishedAuthenticating } = useAuth();
+    const { finishedAuthenticating } = useAuth()
 
     if (!finishedAuthenticating) {
       return (
-        <Box className="h-screen">
+        <Box className='h-screen'>
           <Spinner />
         </Box>
-      );
+      )
     }
 
-    return <WrappedComponent />;
-  };
+    return <WrappedComponent />
+  }
 
-  NewComponent.displayName = "withAuth";
+  NewComponent.displayName = 'withAuth'
 
-  return NewComponent;
-};
+  return NewComponent
+}
 
-export default withAuth;
+export default withAuth

@@ -1,223 +1,222 @@
 .container {
-    display: flex;
-    padding: 0 32px 32px 32px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 24px;
-    font-family: Inter, sans-serif;
-    margin-top: 100px;
-    max-width: 1096px;
+  display: flex;
+  padding: 0 32px 32px 32px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  font-family: Inter, sans-serif;
+  margin-top: 100px;
+  max-width: 1096px;
 }
-
 
 .content {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: stretch;
 
-    border-radius: 12px;
-    border: 1px solid #EAECF0;
-    background:  #FFF;
+  border-radius: 12px;
+  border: 1px solid #eaecf0;
+  background: #fff;
 
-    /* Shadow/sm */
-    box-shadow: 0 1px 3px 0 rgba(16, 24, 40, 0.10), 0 1px 2px 0 rgba(16, 24, 40, 0.06);
+  /* Shadow/sm */
+  box-shadow:
+    0 1px 3px 0 rgba(16, 24, 40, 0.1),
+    0 1px 2px 0 rgba(16, 24, 40, 0.06);
 }
 
-
 .filtersContainer {
-    display: flex;
-    padding: 12px 16px;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    align-self: stretch;
+  display: flex;
+  padding: 12px 16px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  align-self: stretch;
 }
 
 .filterButtons {
-    display: flex;
-    gap: 0;
+  display: flex;
+  gap: 0;
 }
 
-.filterButtonLeft, .filterButtonRight {
-    background-color: transparent;
-    display: flex;
-    padding: 10px 16px;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    border: 1px solid #D0D5DD;
-    color:  #344054;
+.filterButtonLeft,
+.filterButtonRight {
+  background-color: transparent;
+  display: flex;
+  padding: 10px 16px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #d0d5dd;
+  color: #344054;
 
-    /* Text sm/Semibold */
-    font-family: Inter, sans-serif;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 600;
-    line-height: 20px; /* 142.857% */
-    /* Shadow/xs */
-    box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
-    transition: background-color 0.2s ease-in-out;
-    cursor: pointer;
+  /* Text sm/Semibold */
+  font-family: Inter, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px; /* 142.857% */
+  /* Shadow/xs */
+  box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
+  transition: background-color 0.2s ease-in-out;
+  cursor: pointer;
 }
 
 .filterButtonLeft {
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
 }
 
 .filterButtonRight {
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-    border-left: 0.5px solid #D0D5DD;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border-left: 0.5px solid #d0d5dd;
 }
 
 .filterButtonSelected {
-    background-color: #F9FAFB;
+  background-color: #f9fafb;
 }
 
 .transactions {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
-.withdrawalContainer  {
-    display: flex;
-    background-color: #101828;
+.withdrawalContainer {
+  display: flex;
+  background-color: #101828;
 }
 
 .withdrawsGrid {
-    display: grid;
-    grid-template-columns: repeat(6, auto);
-    /*gap: 10px;*/
-    width: 100%;
+  display: grid;
+  grid-template-columns: repeat(6, auto);
+  /*gap: 10px;*/
+  width: 100%;
 }
 
-
 .gridItem {
-    display: flex;
-    height: 72px;
-    padding: 16px 24px;
-    align-items: center;
-    align-self: stretch;
-    color: var(--Gray-700, #344054);
+  display: flex;
+  height: 72px;
+  padding: 16px 24px;
+  align-items: center;
+  align-self: stretch;
+  color: var(--Gray-700, #344054);
 
-    /* Text sm/Regular */
-    font-family: Inter, sans-serif;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 20px; /* 142.857% */
-    border-bottom: 1px solid var(--Gray-200, #EAECF0);
-
+  /* Text sm/Regular */
+  font-family: Inter, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 142.857% */
+  border-bottom: 1px solid var(--Gray-200, #eaecf0);
 }
 
 .transactionsHeader {
-    display: flex;
-    height: 44px;
-    padding: 12px 24px;
-    align-items: center;
-    gap: 12px;
-    align-self: stretch;
-    border-bottom: 1px solid #EAECF0;
-    border-top: 1px solid var(--Gray-200, #EAECF0);
+  display: flex;
+  height: 44px;
+  padding: 12px 24px;
+  align-items: center;
+  gap: 12px;
+  align-self: stretch;
+  border-bottom: 1px solid #eaecf0;
+  border-top: 1px solid var(--Gray-200, #eaecf0);
 
-    background:  #FCFCFD;
-    color: var(--Gray-600, #475467);
+  background: #fcfcfd;
+  color: var(--Gray-600, #475467);
 
-    /* Text xs/Medium */
-    font-family: Inter, sans-serif;
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 18px; /* 150% */
+  /* Text xs/Medium */
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 18px; /* 150% */
 }
 
-.pending, .claimable, .settled {
-    display: inline-flex;
-    padding: 2px 6px 2px 8px;
-    align-items: center;
-    gap: 4px;
-    border-radius: 16px;
+.pending,
+.claimable,
+.settled {
+  display: inline-flex;
+  padding: 2px 6px 2px 8px;
+  align-items: center;
+  gap: 4px;
+  border-radius: 16px;
 
-    text-align: center;
+  text-align: center;
 
-    /* Text xs/Medium */
-    font-family: Inter, sans-serif;
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 18px; /* 150% */
-    mix-blend-mode: multiply;
-
+  /* Text xs/Medium */
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 18px; /* 150% */
+  mix-blend-mode: multiply;
 }
 
 .pending {
-    background: var(--Blue-50, #EFF8FF);
-    color: var(--Blue-700, #175CD3);
-
+  background: var(--Blue-50, #eff8ff);
+  color: var(--Blue-700, #175cd3);
 }
 
 .claimable {
-    background: var(--Warning-50, #FFFAEB);
-    color: var(--Warning-700, #B54708);
+  background: var(--Warning-50, #fffaeb);
+  color: var(--Warning-700, #b54708);
 }
 
 .settled {
-    background: var(--Success-50, #ECFDF3);
-    color: var(--Success-700, #027A48);
+  background: var(--Success-50, #ecfdf3);
+  color: var(--Success-700, #027a48);
 }
 
 .claimButton {
-    height: 42px;
-    width: 72px;
-    display: flex;
-    padding: 10px 16px;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
+  height: 42px;
+  width: 72px;
+  display: flex;
+  padding: 10px 16px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
 
-    border-radius: 8px;
-    border: 1px solid var(--Primary-600, #EF233B);
-    background: var(--Primary-600, #EF233B);
+  border-radius: 8px;
+  border: 1px solid var(--Primary-600, #ef233b);
+  background: var(--Primary-600, #ef233b);
 
-    /* Shadow/xs */
-    box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-    color: var(--Base-White, #FFF);
+  /* Shadow/xs */
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  color: var(--Base-White, #fff);
 
-    /* Text sm/Semibold */
-    font-family: Inter, sans-serif;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 600;
-    line-height: 20px; /* 142.857% */
-    cursor: pointer;
+  /* Text sm/Semibold */
+  font-family: Inter, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px; /* 142.857% */
+  cursor: pointer;
 }
 
 @keyframes rotateAnimation {
-    0% {
-        transform: rotate(0deg) scale(0.9);
-    }
-    25% {
-        transform: rotate(90deg) scale(1.05);
-    }
-    50% {
-        transform: rotate(180deg) scale(1.2);
-    }
-    75% {
-        transform: rotate(270deg) scale(1.05);
-    }
-    100% {
-        transform: rotate(360deg) scale(0.9);
-    }
+  0% {
+    transform: rotate(0deg) scale(0.9);
+  }
+  25% {
+    transform: rotate(90deg) scale(1.05);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.2);
+  }
+  75% {
+    transform: rotate(270deg) scale(1.05);
+  }
+  100% {
+    transform: rotate(360deg) scale(0.9);
+  }
 }
 
 .rotatable {
-    display: inline-block;
-    animation-duration: 2s;
-    animation-name: rotateAnimation;
-    animation-fill-mode: forwards;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
+  display: inline-block;
+  animation-duration: 2s;
+  animation-name: rotateAnimation;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
 }

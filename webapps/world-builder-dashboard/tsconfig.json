@@ -6,12 +6,10 @@
     "module": "ESNext",
     "skipLibCheck": true,
     "types": [
-      "vite/client",
-//      "vitest/globals" //TODO: install vitest properly
+      "vite/client"
+      //      "vitest/globals" //TODO: install vitest properly
     ],
-    "typeRoots": [
-      "node_modules/@types"
-    ],
+    "typeRoots": ["node_modules/@types"],
     /* Bundler mode */
     "allowJs": false,
     "allowSyntheticDefaultImports": true,
@@ -23,9 +21,7 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
     /* Linting */
     "strict": true,
@@ -33,11 +29,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": [
-    "src",
-    "global.d.ts",
-    "reset.d.ts",
-    "src/**/*.d.ts"
-  ],
+  "include": ["src", "global.d.ts", "reset.d.ts", "src/**/*.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
