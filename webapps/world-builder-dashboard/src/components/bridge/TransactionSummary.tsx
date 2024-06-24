@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import parentStyles from './BridgeView.module.css'
 import styles from './TransactionSummary.module.css'
 
 const formatCurrency = (value: number) => {
@@ -44,7 +43,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
 
   return (
     <div className={styles.container}>
-      <div className={parentStyles.label}>Transaction Summary</div>
+      <div className={styles.header}>Transaction Summary</div>
       <div className={styles.divider} />
       <div
         className={styles.dataRow}

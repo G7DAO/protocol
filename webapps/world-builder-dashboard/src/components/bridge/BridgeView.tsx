@@ -113,7 +113,6 @@ const BridgeView: React.FC = () => {
           </div>
         </div>
         <ValueToBridge
-          title={direction === 'DEPOSIT' ? 'Deposit' : 'Withdraw'}
           symbol={L3_NATIVE_TOKEN_SYMBOL}
           value={value}
           setValue={setValue}
