@@ -2,22 +2,25 @@
 
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-const L3_RPC = "https://game7-testnet-custom.rpc.caldera.xyz/http";
+import {L3_NETWORKS, L3NetworkConfiguration} from "@/components/bridge/l3Networks";
+// const L3_RPC = "https://game7-testnet-custom.rpc.caldera.xyz/http";
 const L2_RPC = "https://sepolia-rollup.arbitrum.io/rpc";
 
 interface BlockchainContextType {
     walletProvider?: ethers.providers.Web3Provider;
     L2Provider?: ethers.providers.JsonRpcProvider;
-    L3Provider?: ethers.providers.JsonRpcProvider;
+    // L3Provider?: ethers.providers.JsonRpcProvider;
     connectedAccount?: string;
     setL2RPC: (rpcUrl: string) => void;
-    setL3RPC: (rpcUrl: string) => void;
+    // setL3RPC: (rpcUrl: string) => void;
     connectWallet: () => Promise<void>;
     tokenAddress: string;
     checkConnection: () => void;
     switchChain: (chain: ChainInterface) => Promise<void>;
     L2_RPC: string;
-    L3_RPC: string;
+    // L3_RPC: string;
+    selectedL3Network: L3NetworkConfiguration;
+    setSelectedL3Network: (network: L3NetworkConfiguration) => void;
 }
 
 export interface ChainInterface {
@@ -43,15 +46,19 @@ interface BlockchainProviderProps {
 export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children }) => {
     const [walletProvider, setWalletProvider] = useState<ethers.providers.Web3Provider>();
     const [L2Provider, setL2Provider] = useState<ethers.providers.JsonRpcProvider>();
-    const [L3Provider, setL3Provider] = useState<ethers.providers.JsonRpcProvider>();
+    const [selectedL3Network, _setSelectedL3Network] = useState<L3NetworkConfiguration>(L3_NETWORKS[0])
     const [connectedAccount, setConnectedAccount] = useState<string>();
     const tokenAddress = "0x5f88d811246222F6CB54266C42cc1310510b9feA";
+
+    const setSelectedL3Network = (network: L3NetworkConfiguration): void => {
+        _setSelectedL3Network(network);
+    }
 
 
 
     useEffect(() => {
         setL2RPC(L2_RPC);
-        setL3RPC(L3_RPC);
+        // setL3RPC(L3_RPC);
         const ethereum = window.ethereum;
         if (ethereum) {
             const provider = new ethers.providers.Web3Provider(ethereum);
@@ -66,17 +73,17 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
 
     }, [window.ethereum]);
 
-    useEffect(() => {
-        console.log({connectedAccount})
-    }, [connectedAccount]);
 
     const handleAccountsChanged = async () => {
-        if (walletProvider) {
-            const accounts = await walletProvider.listAccounts();
+        console.log('handleAccountsChange');
+        const ethereum = window.ethereum;
+        if (ethereum) {
+            const provider = new ethers.providers.Web3Provider(ethereum);
+            const accounts = await provider.listAccounts();
+            console.log(accounts);
             if (accounts.length > 0) {
                 setConnectedAccount(accounts[0]);
             } else {
-                console.log('handleAccountsChanged', {accountsLength: accounts.length})
                 setConnectedAccount(undefined);
             }
         }
@@ -104,10 +111,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
         setL2Provider(providerL2);
     };
 
-    const setL3RPC = (rpcUrl: string) => {
-        const providerL3 = new ethers.providers.JsonRpcProvider(rpcUrl);
-        setL3Provider(providerL3);
-    };
+
 
 
 
@@ -142,8 +146,8 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
 
     return (
         <BlockchainContext.Provider value={{
-            walletProvider, L2Provider, L3Provider, connectedAccount,
-            setL2RPC, setL3RPC, connectWallet, tokenAddress, checkConnection: handleAccountsChanged, switchChain, L2_RPC, L3_RPC,
+            walletProvider, L2Provider, connectedAccount,
+            setL2RPC, connectWallet, tokenAddress, checkConnection: handleAccountsChanged, switchChain, L2_RPC, selectedL3Network, setSelectedL3Network,
         }}>
             {children}
         </BlockchainContext.Provider>
