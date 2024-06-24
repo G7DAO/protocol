@@ -111,7 +111,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({txHash, chainId, delay}) => {
         {
             onSuccess: (data) => {
                 console.log(data);
-                queryClient.refetchQueries(["ERC20BALANCE"]);
+                queryClient.refetchQueries(["ERC20Balance"]);
                 queryClient.refetchQueries(["nativeBalance"])
                 queryClient.setQueryData(["withdrawalStatus", txHash, L2_CHAIN.rpcs[0], l3RPC], (oldData: any) => {
                     return {...oldData, status: L2ToL1MessageStatus.EXECUTED}
