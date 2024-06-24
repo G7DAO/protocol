@@ -1,15 +1,10 @@
 package bridge
 
 import (
-	"context"
 	"fmt"
 	"math/big"
-	"strings"
 
 	"github.com/G7DAO/protocol/bindings/L1Teleporter"
-	"github.com/G7DAO/protocol/bindings/NodeInterface"
-	"github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -38,8 +33,9 @@ func GetForwarderAddress(client *ethclient.Client, teleporterAddress common.Addr
 func CalculateRetryableSubmissionFee(calldata []byte, baseFee *big.Int) (*big.Int, error) {
 	multiplier := big.NewInt(int64(1400 + 6*len(calldata)))
 	submissionFee := multiplier.Mul(multiplier, baseFee)
+	increasedSubmissionFee := PercentIncrease(submissionFee, DEFAULT_SUBMISSION_FEE_PERCENT_INCREASE)
 
-	return submissionFee, nil
+	return increasedSubmissionFee, nil
 }
 
 func CalculateRequiredEth(gasParams RetryableGasParams, teleportationType TeleportationType) (*big.Int, *big.Int) {
@@ -90,33 +86,6 @@ func GetTeleportationType(token common.Address, feeToken common.Address) (Telepo
 	}
 }
 
-// Source: https://github.com/OffchainLabs/nitro-contracts/blob/main/src/node-interface/NodeInterface.sol#L25
-func CalculateRetryableGasLimit(client *ethclient.Client, sender common.Address, deposit *big.Int, to common.Address, l2CallValue *big.Int, excessFeeRefundAddress common.Address, callValueRefundAddress common.Address, calldata []byte) (uint64, error) {
-	nodeInterfaceAbi, nodeInterfaceAbiErr := abi.JSON(strings.NewReader(NodeInterface.NodeInterfaceABI))
-	if nodeInterfaceAbiErr != nil {
-		return uint64(0), nodeInterfaceAbiErr
-	}
-
-	retryableTicketCalldata, retryableTicketCalldataErr := nodeInterfaceAbi.Pack("estimateRetryableTicket", sender, deposit, to, l2CallValue, excessFeeRefundAddress, callValueRefundAddress, calldata)
-	if retryableTicketCalldataErr != nil {
-		return uint64(0), retryableTicketCalldataErr
-	}
-
-	estimateRetryableTicketCallMsg := ethereum.CallMsg{
-		From:  sender,
-		To:    &NODE_INTERFACE_ADDRESS,
-		Value: nil,
-		Data:  retryableTicketCalldata,
-	}
-
-	retryableTicketGasLimit, retryableTicketGasLimitErr := client.EstimateGas(context.Background(), estimateRetryableTicketCallMsg)
-	if retryableTicketGasLimitErr != nil {
-		return uint64(0), retryableTicketGasLimitErr
-	}
-
-	return retryableTicketGasLimit, nil
-}
-
 // Source: https://github.com/OffchainLabs/nitro/blob/057bf836fcf719e803b0486914bc957134f691fd/arbos/util/util.go#L204
 func RemapL1Address(l1Addr common.Address) common.Address {
 	AddressAliasOffset, success := new(big.Int).SetString("0x1111000000000000000000000000000000001111", 0)
@@ -129,4 +98,10 @@ func RemapL1Address(l1Addr common.Address) common.Address {
 		sumBytes = sumBytes[len(sumBytes)-20:]
 	}
 	return common.BytesToAddress(sumBytes)
+}
+
+func PercentIncrease(value *big.Int, percentage *big.Int) *big.Int {
+	multipliedValue := big.NewInt(0).Mul(value, percentage)
+	increase := big.NewInt(0).Div(multipliedValue, big.NewInt(100))
+	return big.NewInt(0).Add(value, increase)
 }

@@ -1,6 +1,7 @@
 package bridge
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"strings"
@@ -14,17 +15,17 @@ import (
 )
 
 func Teleport(teleporter common.Address, teleportParams *TeleportParams, keyFile string, password string, l1Rpc string, l2Rpc string, l3Rpc string) (*types.Transaction, error) {
-	l1Client, l1ClientErr := ethclient.Dial(l1Rpc)
+	l1Client, l1ClientErr := ethclient.DialContext(context.Background(), l1Rpc)
 	if l1ClientErr != nil {
 		return nil, l1ClientErr
 	}
 
-	l2Client, l2ClientErr := ethclient.Dial(l2Rpc)
+	l2Client, l2ClientErr := ethclient.DialContext(context.Background(), l2Rpc)
 	if l2ClientErr != nil {
 		return nil, l2ClientErr
 	}
 
-	l3Client, l3ClientErr := ethclient.Dial(l2Rpc)
+	l3Client, l3ClientErr := ethclient.DialContext(context.Background(), l3Rpc)
 	if l3ClientErr != nil {
 		return nil, l3ClientErr
 	}
