@@ -127,9 +127,18 @@ const ActionButton: React.FC<ActionButtonProps> = ({direction, amount, l3Network
             throw new Error('no window.ethereum');
         },
         {
-            onSuccess: (receipt: ethers.providers.TransactionReceipt) => {
-                queryClient.refetchQueries("ERC20Balance");
-                queryClient.refetchQueries("nativeBalance");
+            onSuccess: (receipt: ethers.providers.TransactionReceipt, amount) => {
+                queryClient.setQueryData(["ERC20Balance", tokenAddress, connectedAccount, L2_CHAIN.rpcs[0]], (oldData) => {
+                    console.log(oldData, amount);
+                    return Number(oldData) - Number(amount);
+                });
+                queryClient.setQueryData(["nativeBalance", connectedAccount, l3Network.chainInfo.rpcs[0]], (oldData) => {
+                    console.log("L3balance:", oldData, amount);
+                    return Number(oldData) + Number(amount);
+                });
+                // queryClient.invalidateQueries(["nativeBalance", connectedAccount, l3Network.chainInfo.rpcs[0]]);
+                // queryClient.refetchQueries(["ERC20Balance"]);
+                // queryClient.refetchQueries(["nativeBalance"]);
                 console.log(receipt);
             }
         }
