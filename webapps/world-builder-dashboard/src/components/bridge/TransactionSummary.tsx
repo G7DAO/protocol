@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styles from "./TransactionSummary.module.css";
 import parentStyles from './BridgeView.module.css'
 
@@ -25,13 +25,19 @@ interface TransactionSummaryProps {
 }
 const TransactionSummary: React.FC<TransactionSummaryProps> = ({direction, gasBalance, address, transferTime, fee, ethRate, tokenRate, tokenSymbol, value}) => {
 
+  const [showFullAddress, setShowFullAddress] = useState(false);
+  const getAddress = (address: string, showFullAddress: boolean) => {
+      if (showFullAddress) { return address }
+      return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  }
+
   return (
       <div className={styles.container}>
           <div className={parentStyles.label}>Transaction Summary</div>
           <div className={styles.divider}/>
-          <div className={styles.dataRow}>
+          <div className={styles.dataRow} onMouseEnter={() => setShowFullAddress(true)} onMouseLeave={() => setShowFullAddress(false)}>
               <div className={styles.itemName}>-{'>'} To address</div>
-              <div className={styles.address}>{`${address.slice(0, 6)}...${address.slice(-4)}`}</div>
+              <div className={styles.address}>{getAddress(address, showFullAddress)}</div>
           </div>
           <div className={styles.dataRow}>
               <div className={styles.itemName}>Transfer time</div>
