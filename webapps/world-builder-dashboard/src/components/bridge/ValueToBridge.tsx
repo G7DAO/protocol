@@ -1,5 +1,6 @@
-import React from 'react'
-import styles from './BridgeView.module.css'
+import React, {useState} from 'react'
+import styles from './ValueToBridge.module.css'
+import TokenSymbolIcon from "@/assets/TokenSymbolIcon";
 
 const balanceString = (balance: string | undefined, symbol: string) => {
   return `${balance ?? '0'} ${symbol} Available`
@@ -16,14 +17,13 @@ const formatCurrency = (value: number) => {
 }
 
 interface ValueToBridgeProps {
-  title: string
   symbol: string
   value: string
   setValue: (value: string) => void
   balance: string | undefined
   rate: number
 }
-const ValueToBridge: React.FC<ValueToBridgeProps> = ({ title, setValue, value, balance, symbol, rate }) => {
+const ValueToBridge: React.FC<ValueToBridgeProps> = ({ setValue, value, balance, symbol, rate }) => {
   // const [balanceRepresentation, setBalanceRepresentation] = useState('0');
   // const [balanceHasChanged, setBalanceHasChanged] = useState(false);
   //
@@ -37,23 +37,33 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({ title, setValue, value, b
   //     }
   // }, [balance]);
 
+  const [errorMsg] = useState("");
   return (
-    <div className={styles.valueBlockContainer}>
-      <div className={styles.valueContainer}>
-        <div className={styles.label}>{title}</div>
-        <input className={styles.valueInput} value={value} onChange={(e) => setValue(e.target.value)} />
-        <div className={styles.balance}>{formatCurrency(Number(value) * rate)}</div>
-      </div>
-      <div className={styles.symbolContainer}>
-        {symbol && <div className={styles.symbol}>{symbol}</div>}
-        <div className={styles.balanceContainer}>
-          <div className={styles.balance}>{balanceString(balance, symbol)}</div>
-          <button type={'button'} className={styles.maxButton} onClick={() => setValue(String(balance))}>
-            MAX
-          </button>
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <div className={styles.label}>Amount</div>
+          <div className={styles.label}>{errorMsg}</div>
+        </div>
+        <div className={styles.inputGroup}>
+          <input className={styles.input} value={value} onChange={(e) => setValue(e.target.value)} />
+          <button className={styles.maxButton} onClick={() => setValue(String(balance))}>MAX</button>
+          <div className={styles.tokenGroup}>
+            <TokenSymbolIcon />
+            <div className={styles.tokenSymbol}>
+              G7T
+            </div>
+          </div>
+        </div>
+        <div className={styles.header}>
+          <div className={styles.label}>
+            {formatCurrency(Number(value) * rate)}
+          </div>
+          <div className={styles.label}>
+            {balanceString(balance, symbol)}
+          </div>
         </div>
       </div>
-    </div>
+
   )
 }
 
