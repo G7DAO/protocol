@@ -7,7 +7,7 @@
     "skipLibCheck": true,
     "types": [
       "vite/client",
-      "vitest/globals"
+//      "vitest/globals" //TODO: install vitest properly
     ],
     "typeRoots": [
       "node_modules/@types"
