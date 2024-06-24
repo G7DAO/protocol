@@ -8,7 +8,7 @@ import {useMutation, useQueryClient} from "react-query";
 import {ethers} from "ethers";
 import {useBlockchainContext} from "@/components/bridge/BlockchainContext";
 import { Skeleton } from 'summon-ui/mantine';
-import {Icon} from "summon-ui";
+import Loading01Icon from "@/assets/Loading01Icon";
 
 const timeAgo = (timestamp: number)  => {
   const now = new Date().getTime();
@@ -159,7 +159,7 @@ if (!status.isLoading && !status.data) {
                           <div className={styles.gridItem}>
                               <button className={styles.claimButton}
                                       onClick={() => execute.mutate(status.data?.l2Receipt)}>
-                                  {execute.isLoading ? <Icon name={"Loading01"} color={'white'} className={styles.rotatable} /> : "Claim"}
+                                  {execute.isLoading ? <Loading01Icon color={'white'} className={styles.rotatable} /> : "Claim"}
                               </button>
                           </div>
                       </>
