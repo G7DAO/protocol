@@ -2,7 +2,9 @@
 
 This checklist describes how to bridge tokens
 
-## Environment variables
+## Teleport Tokens from L1 to L3 and call arbitrary function
+
+### Environment variables
 
 - [ ] `export L1_RPC=<l1 rpc endpoint>`
 - [ ] `export L2_RPC=<l2 rpc endpoint>`
@@ -18,9 +20,7 @@ This checklist describes how to bridge tokens
 - [ ] `export L3_CALLDATA=<calldata for l3 function>`
 - [ ] `export AMOUNT=<amount to send>`
 
-## Teleport Tokens from L1 to L3 and call arbitrary function
-
-- [ ] Teleporting tokens from L1 to L2 and calling stake function
+- [ ] Teleporting tokens from L1 to L3 and calling stake function
 
 ```bash
 bin/game7 bridge l1-to-l3 \ 
@@ -35,7 +35,47 @@ bin/game7 bridge l1-to-l3 \
     --to $TO \
     --amount $AMOUNT \
     --l3-calldata $L3_CALLDATA \ 
-    --key $KEY \
+    --keyfile $KEY \
+    --password $PASSWORD 
+```
+
+Output: Transaction Hash
+
+## Bridge native tokens from L1 to L2 and call arbitrary function
+
+### Environment variables
+
+- [ ] `export L1_RPC=<l1 rpc endpoint>`
+- [ ] `export L2_RPC=<l2 rpc endpoint>`
+- [ ] `export KEY=<path to keyfile of account to fund>`
+- [ ] `export PASSWORD=<password for keyfile>`
+- [ ] `export INBOX=<inbox address>`
+- [ ] `export TO=<address to send funds to or call function>`
+- [ ] `export L2_CALLDATA=<calldata for l2 function>`
+- [ ] `export AMOUNT=<amount to send>`
+- [ ] `export TOKEN=<native token address on L1>`
+
+- [ ] approve the amount to the inbox contract (maybe a little bit more than the amount to cover the gas fee)
+
+```bash
+bin/game7 token approve \ 
+    --spender $INBOX \
+    --rpc $L1_RPC \
+    --contract $TOKEN \
+    --amount $AMOUNT \
+```
+
+- [ ] bridge native tokens from L1 to L2 and calling stake function (works for L2 to L3 as well)
+
+```bash
+bin/game7 bridge l1-to-l2 \ 
+    --inbox $INBOX \
+    --l1-rpc $L1_RPC \
+    --l2-rpc $L2_RPC \
+    --to $TO \
+    --amount $AMOUNT \
+    --l2-calldata $L2_CALLDATA \ 
+    --keyfile $KEY \
     --password $PASSWORD 
 ```
 

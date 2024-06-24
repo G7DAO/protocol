@@ -19,39 +19,84 @@ func CreateBridgeCommand() *cobra.Command {
 		},
 	}
 
-	bridgeL2ToL3Cmd := CreateBridgeL2ToL3Command()
+	bridgeL1ToL2Cmd := CreateBridgeL1ToL2Command()
 	bridgeL1ToL3Cmd := CreateBridgeL1ToL3Command()
 
-	crossChainCmd.AddCommand(bridgeL2ToL3Cmd)
+	crossChainCmd.AddCommand(bridgeL1ToL2Cmd)
 	crossChainCmd.AddCommand(bridgeL1ToL3Cmd)
 
 	return crossChainCmd
 }
 
-func CreateBridgeL2ToL3Command() *cobra.Command {
-	var accountsDir, password string
-	var numAccounts int
+func CreateBridgeL1ToL2Command() *cobra.Command {
+	var keyFile, password, l1Rpc, l2Rpc, inboxRaw, toRaw, l2CallValueRaw, l2CalldataRaw string
+	var inboxAddress, to common.Address
+	var l2CallValue *big.Int
+	var l2Calldata []byte
 
 	createCmd := &cobra.Command{
-		Use:   "l2-to-l3",
-		Short: "Bridge tokens from L2 to L3",
-		Long:  `Bridge tokens from L2 to L3 with a single transaction and arbitrary calldata`,
+		Use:   "l1-to-l2",
+		Short: "Bridge tokens from L1 to L2",
+		Long:  `Bridge tokens from L1 to L2 with a single transaction and arbitrary calldata`,
 
 		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if accountsDir == "" {
-				return errors.New("--accounts-dir is required")
+			if !common.IsHexAddress(inboxRaw) {
+				return errors.New("invalid inbox address")
 			}
+			inboxAddress = common.HexToAddress(inboxRaw)
+
+			if !common.IsHexAddress(toRaw) {
+				return errors.New("invalid recipient address")
+			}
+			to = common.HexToAddress(toRaw)
+
+			l2CallValue = new(big.Int)
+			if l2CallValueRaw != "" {
+				_, ok := l2CallValue.SetString(l2CallValueRaw, 10)
+				if !ok {
+					return errors.New("invalid L2 call value")
+				}
+			} else {
+				fmt.Println("No L2 call value provided, defaulting to 0")
+				l2CallValue.SetInt64(0)
+			}
+
+			if l2CalldataRaw != "" {
+				var err error
+				l2Calldata, err = hex.DecodeString(l2CalldataRaw)
+				if err != nil {
+					return err
+				}
+			}
+
+			if keyFile == "" {
+				return errors.New("keyfile is required")
+			}
+
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// TODO: Implement this later
-			return errors.New("not implemented")
+			fmt.Println("Bridging from", inboxAddress.Hex(), "to", to.Hex())
+			transaction, transactionErr := Bridge(inboxAddress, keyFile, password, l1Rpc, l2Rpc, to, l2CallValue, l2Calldata)
+			if transactionErr != nil {
+				fmt.Fprintln(cmd.ErrOrStderr(), transactionErr.Error())
+				return transactionErr
+			}
+
+			fmt.Println("Transaction sent:", transaction.Hash().Hex())
+
+			return nil
 		},
 	}
 
-	createCmd.Flags().StringVarP(&accountsDir, "accounts-dir", "d", "", "Directory to create accounts in")
-	createCmd.Flags().StringVarP(&password, "password", "p", "", "Password to encrypt accounts with")
-	createCmd.Flags().IntVarP(&numAccounts, "num-accounts", "n", 1, "Number of accounts to create")
+	createCmd.Flags().StringVar(&password, "password", "", "Password to encrypt accounts with")
+	createCmd.Flags().StringVar(&keyFile, "keyfile", "", "Keyfile to sign transaction with")
+	createCmd.Flags().StringVar(&l1Rpc, "l1-rpc", "", "L1 RPC URL")
+	createCmd.Flags().StringVar(&l2Rpc, "l2-rpc", "", "L2 RPC URL")
+	createCmd.Flags().StringVar(&inboxRaw, "inbox", "", "Inbox address")
+	createCmd.Flags().StringVar(&toRaw, "to", "", "Recipient or contract address")
+	createCmd.Flags().StringVar(&l2CallValueRaw, "amount", "", "L2 call value")
+	createCmd.Flags().StringVar(&l2CalldataRaw, "l2-calldata", "", "Calldata to send")
 
 	return createCmd
 }
@@ -116,6 +161,10 @@ func CreateBridgeL1ToL3Command() *cobra.Command {
 				return fmt.Errorf("invalid teleporter address: %s", teleporterAddressRaw)
 			}
 			teleporterAddress = common.HexToAddress(teleporterAddressRaw)
+
+			if keyFile == "" {
+				return errors.New("keyfile is required")
+			}
 
 			return nil
 		},
