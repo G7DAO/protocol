@@ -1,0 +1,23 @@
+{
+  "trailingComma": "none",
+  "tabWidth": 2,
+  "semi": false,
+  "singleQuote": true,
+  "endOfLine": "lf",
+  "jsxSingleQuote": true,
+  "printWidth": 120,
+  "plugins": ["prettier-plugin-tailwindcss", "@trivago/prettier-plugin-sort-imports"],
+  "importOrder": [
+    "^react(.*)",
+    "^three(.*)",
+    "clsx",
+    "@router",
+    "<THIRD_PARTY_MODULES>",
+    "^@tanstack/(.*)$",
+    "^@(.*)$",
+    "^@assets/(.*)$",
+    "^[.]/[-a-zA-Z0-9_]+.css$",
+    "summon-ui/(.*).css",
+    "^[./]/styles/global.css"
+  ]
+}
