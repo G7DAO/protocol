@@ -131,7 +131,7 @@ if (!status.isLoading && !status.data) {
       <>
           {status.isLoading ? (
                       Array.from(Array(6)).map((_, idx) => (
-                          <div className={styles.gridItem}>
+                          <div className={styles.gridItem} key={idx}>
                             <Skeleton key={idx} h="12px" w="100%" />
                           </div>
                       ))
