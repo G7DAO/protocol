@@ -1,6 +1,7 @@
-import {useQuery, useQueries} from "react-query";
+import {useQuery, useQueries, UseQueryResult} from "react-query";
 import {ethers} from "ethers";
 import {L2ToL1MessageReader, L2ToL1MessageStatus, L2TransactionReceipt} from "@arbitrum/sdk";
+import {L3_NETWORKS} from "@/components/bridge/l3Networks";
 
 const eventABI = [{
     anonymous: false,
@@ -33,7 +34,6 @@ const useL2ToL1MessageStatus = (txHash: string, l2RPC: string, l3RPC: string) =>
     return useQuery(
         ["withdrawalStatus", txHash, l2RPC, l3RPC],
         async () => {
-            console.log("checking status", txHash.slice(0, 6), l2RPC, l3RPC);
             const l3Provider = new ethers.providers.JsonRpcProvider(l3RPC);
             const l2Provider =  new ethers.providers.JsonRpcProvider(l2RPC);
             const receipt = await l3Provider.getTransactionReceipt(txHash);
@@ -86,7 +86,6 @@ export const useL2ToL1MessagesStatus = (transactions: Transaction[] | undefined)
         transactions.map(({ txHash, l2RPC, l3RPC }) => ({
             queryKey: ["withdrawalStatus", txHash, l2RPC, l3RPC],
             queryFn: async () => {
-                console.log("checking status", txHash.slice(0, 6), l2RPC, l3RPC);
                 const l3Provider = new ethers.providers.JsonRpcProvider(l3RPC);
                 const l2Provider = new ethers.providers.JsonRpcProvider(l2RPC);
                 const receipt = await l3Provider.getTransactionReceipt(txHash);
@@ -121,5 +120,36 @@ export const useL2ToL1MessagesStatus = (transactions: Transaction[] | undefined)
         }))
     );
 };
+
+const getL3NetworkRPC = (chainId: number) => {
+    const network = L3_NETWORKS.find((n) => n.chainInfo.chainId === chainId);
+    return network?.chainInfo.rpcs[0];
+}
+
+export const useMessages = (
+    connectedAccount: string | undefined,
+    l2Chain: { rpcs: string[] },
+): UseQueryResult<Transaction[]> => {
+    return useQuery(
+        ["incomingMessages", connectedAccount],
+        () => {
+            if (!connectedAccount) {
+                return [];
+            }
+            const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`);
+            if (transactionsString) {
+                return JSON.parse(transactionsString).slice(-7).map((tx: any) => ({
+                    ...tx,
+                    l2RPC: l2Chain.rpcs[0],
+                    l3RPC: getL3NetworkRPC(tx.chainId) ?? ''
+                })).reverse();
+            } else {
+                return [];
+            }
+        },
+    );
+};
+
+
 
 export default useL2ToL1MessageStatus;
