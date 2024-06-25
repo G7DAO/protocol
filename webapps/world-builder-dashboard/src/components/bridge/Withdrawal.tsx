@@ -4,11 +4,13 @@ import { L2_CHAIN, L3_NATIVE_TOKEN_SYMBOL } from '../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import { ethers } from 'ethers'
 import { Skeleton } from 'summon-ui/mantine'
-import Loading01Icon from '@/assets/Loading01Icon'
+import IconLoading01 from '@/assets/IconLoading01'
 import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
 import { L3_NETWORKS } from '@/components/bridge/l3Networks'
 import useL2ToL1MessageStatus from '@/hooks/useL2ToL1MessageStatus'
 import { L2ToL1MessageStatus, L2ToL1MessageWriter, L2TransactionReceipt } from '@arbitrum/sdk'
+import IconLinkExternal02 from "@/assets/IconLinkExternal02";
+import IconArrowNarrowUp from "@/assets/IconArrowNarrowUp";
 
 const timeAgo = (timestamp: number) => {
   const now = new Date().getTime()
@@ -65,8 +67,18 @@ const networkName = (chainId: number) => {
 
 const networkRPC = (chainId: number) => {
   const network = L3_NETWORKS.find((n) => n.chainInfo.chainId === chainId)
-  return network?.chainInfo.rpcs[0]
+  return network?.chainInfo.rpcs[0];
 }
+
+const networkExplorer = (chainId: number): string | undefined => {
+  const network = L3_NETWORKS.find((n) => n.chainInfo.chainId === chainId)
+  if (network?.chainInfo.blockExplorerURLs) {
+    return network?.chainInfo.blockExplorerURLs[0] ?? undefined;
+  }
+  return;
+}
+
+
 
 interface WithdrawalProps {
   txHash: string
@@ -74,7 +86,13 @@ interface WithdrawalProps {
   delay: number
 }
 const Withdrawal: React.FC<WithdrawalProps> = ({ txHash, chainId, delay }) => {
-  const l3RPC = networkRPC(chainId)
+  const l3RPC = networkRPC(chainId);
+  const l3BlockExplorer = networkExplorer(chainId);
+  const l3ExplorerLink = `${l3BlockExplorer}/tx/${txHash}`;
+  const handleStatusClick = () => {
+    if (!l3ExplorerLink) { return }
+    window.open(l3ExplorerLink, "_blank");
+  }
 
   if (!l3RPC) {
     console.log('L3 RPC undefined')
@@ -131,13 +149,19 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ txHash, chainId, delay }) => {
   return (
     <>
       {status.isLoading ? (
-        Array.from(Array(6)).map((_, idx) => (
+        Array.from(Array(7)).map((_, idx) => (
           <div className={styles.gridItem} key={idx}>
             <Skeleton key={idx} h='12px' w='100%' />
           </div>
         ))
       ) : (
         <>
+          <div className={styles.gridItem}>
+            <div className={styles.typeWithdrawal}>
+              <IconArrowNarrowUp stroke={'#026AA2'} />
+              Withdraw
+            </div>
+          </div>
           <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
           <div className={styles.gridItem}>{`${status.data?.value} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
           <div className={styles.gridItem}>{networkName(chainId) ?? ''}</div>
@@ -145,7 +169,10 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ txHash, chainId, delay }) => {
           {status.data?.status === L2ToL1MessageStatus.EXECUTED && (
             <>
               <div className={styles.gridItem}>
-                <div className={styles.settled}>Settled</div>
+                <div className={styles.settled} onClick={handleStatusClick}>
+                  Settled
+                  {!!l3ExplorerLink && <IconLinkExternal02 stroke={'#027A48'}/>}
+                </div>
               </div>
               <div className={styles.gridItem}>
                 <div>{`${status.data.confirmations} confirmations`}</div>
@@ -155,11 +182,14 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ txHash, chainId, delay }) => {
           {status.data?.status === L2ToL1MessageStatus.CONFIRMED && (
             <>
               <div className={styles.gridItem}>
-                <div className={styles.claimable}>Claimable</div>
+                <div className={styles.claimable} onClick={handleStatusClick}>
+                  Claimable
+                  {!!l3ExplorerLink && <IconLinkExternal02 stroke={'#B54708'}/>}
+                </div>
               </div>
               <div className={styles.gridItem}>
                 <button className={styles.claimButton} onClick={() => execute.mutate(status.data?.l2Receipt)}>
-                  {execute.isLoading ? <Loading01Icon color={'white'} className={styles.rotatable} /> : 'Claim'}
+                  {execute.isLoading ? <IconLoading01 color={'white'} className={styles.rotatable} /> : 'Claim now'}
                 </button>
               </div>
             </>
@@ -167,7 +197,10 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ txHash, chainId, delay }) => {
           {status.data?.status === L2ToL1MessageStatus.UNCONFIRMED && (
             <>
               <div className={styles.gridItem}>
-                <div className={styles.pending}>Pending</div>
+                <div className={styles.pending} onClick={handleStatusClick}>
+                  Pending
+                  {!!l3ExplorerLink && <IconLinkExternal02 stroke={'#175CD3'}/>}
+                </div>
               </div>
               <div className={styles.gridItem}>
                 <div>{ETA(status.data?.timestamp, delay)}</div>
