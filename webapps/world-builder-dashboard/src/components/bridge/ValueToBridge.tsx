@@ -1,10 +1,8 @@
 import React, {useState} from 'react'
 import styles from './ValueToBridge.module.css'
-import TokenSymbolIcon from "@/assets/TokenSymbolIcon";
+import IconTokenSymbol from "@/assets/IconTokenSymbol";
 
-const balanceString = (balance: string | undefined, symbol: string) => {
-  return `${balance ?? '0'} ${symbol} Available`
-}
+
 
 const formatCurrency = (value: number) => {
   const formatter = new Intl.NumberFormat('en-US', {
@@ -22,8 +20,9 @@ interface ValueToBridgeProps {
   setValue: (value: string) => void
   balance: string | undefined
   rate: number
+  isFetchingBalance?: boolean
 }
-const ValueToBridge: React.FC<ValueToBridgeProps> = ({ setValue, value, balance, symbol, rate }) => {
+const ValueToBridge: React.FC<ValueToBridgeProps> = ({ setValue, value, balance, symbol, rate, isFetchingBalance }) => {
   // const [balanceRepresentation, setBalanceRepresentation] = useState('0');
   // const [balanceHasChanged, setBalanceHasChanged] = useState(false);
   //
@@ -48,7 +47,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({ setValue, value, balance,
           <input className={styles.input} value={value} onChange={(e) => setValue(e.target.value)} />
           <button className={styles.maxButton} onClick={() => setValue(String(balance))}>MAX</button>
           <div className={styles.tokenGroup}>
-            <TokenSymbolIcon />
+            <IconTokenSymbol />
             <div className={styles.tokenSymbol}>
               G7T
             </div>
@@ -58,8 +57,13 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({ setValue, value, balance,
           <div className={styles.label}>
             {formatCurrency(Number(value) * rate)}
           </div>
-          <div className={styles.label}>
-            {balanceString(balance, symbol)}
+          <div className={styles.available}>
+            <div className={`${styles.label} ${isFetchingBalance ? styles.blink : ''}`}>
+              {balance ?? '0'}
+            </div>
+            <div className={styles.label}>
+              {`${symbol} Available`}
+            </div>
           </div>
         </div>
       </div>

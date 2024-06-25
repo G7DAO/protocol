@@ -14,6 +14,11 @@
     align-self: stretch;
 }
 
+.available {
+    display: flex;
+    gap: 5px;
+}
+
 .label {
     color: var(--Gray-500, #667085);
 
@@ -22,6 +27,16 @@
     font-style: normal;
     font-weight: 500;
     line-height: 18px; /* 150% */
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+.blink {
+    animation: blink 1s infinite;
 }
 
 .errorMessage {
