@@ -5,7 +5,7 @@ import { L2_CHAIN, L3_NATIVE_TOKEN_SYMBOL } from '../../../constants'
 // Styles and Icons
 import styles from './BridgeView.module.css'
 import { Icon } from 'summon-ui'
-import ArbitrumOneIcon from '@/assets/ArbitrumOneIcon'
+import IconArbitrumOne from '@/assets/IconArbitrumOne'
 import ActionButton from '@/components/bridge/ActionButton'
 // Blockchain Context and Utility Functions
 import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
@@ -33,12 +33,12 @@ const BridgeView: React.FC = () => {
   const { data: ethUsdRate } = useEthUsdRate()
   const { L2Provider, connectedAccount, tokenAddress, L2_RPC, selectedL3Network, setSelectedL3Network } =
     useBlockchainContext()
-  const { data: l2Balance } = useERC20Balance({
+  const { data: l2Balance, isFetching: isFetchingL2Balance } = useERC20Balance({
     tokenAddress,
     account: connectedAccount,
     rpc: L2_RPC
   })
-  const { data: l3NativeBalance } = useNativeBalance({
+  const { data: l3NativeBalance, isFetching: isFetchingL3NativeBalance } = useNativeBalance({
     account: connectedAccount,
     rpc: selectedL3Network.chainInfo.rpcs[0]
   })
@@ -68,7 +68,7 @@ const BridgeView: React.FC = () => {
     if ((isSource && direction === 'DEPOSIT') || (!isSource && direction === 'WITHDRAW')) {
       return (
         <div className={styles.network}>
-          <ArbitrumOneIcon />
+          <IconArbitrumOne />
           {l2networks[0]}
         </div>
       )
@@ -80,8 +80,8 @@ const BridgeView: React.FC = () => {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '100px' }}>
-      <HistoryHeader messages={transactions ? transactions?.filter((t) => t).map((t) => t.data) : undefined} />
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '56px' }}>
+      {/*<HistoryHeader messages={transactions ? transactions?.filter((t) => t).map((t) => t.data) : undefined} />*/}
       <div className={styles.container}>
         <div className={styles.directionContainer}>
           <button
@@ -118,6 +118,7 @@ const BridgeView: React.FC = () => {
           setValue={setValue}
           balance={direction === 'DEPOSIT' ? l2Balance ?? '0' : l3NativeBalance ?? '0'}
           rate={g7tUsdRate.data ?? 0}
+          isFetchingBalance={direction === 'DEPOSIT' ? isFetchingL2Balance : isFetchingL3NativeBalance}
         />
         <TransactionSummary
           direction={direction}
