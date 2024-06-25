@@ -1,41 +1,22 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
 import { L2_CHAIN } from '../../../constants'
 import styles from './WithdrawTransactions.module.css'
-import { Icon } from 'summon-ui'
 import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
 import Withdrawal from '@/components/bridge/Withdrawal'
 import { useMessages } from '@/hooks/useL2ToL1MessageStatus'
+import Deposit from "@/components/bridge/Deposit";
 
 interface WithdrawTransactionsProps {}
 const WithdrawTransactions: React.FC<WithdrawTransactionsProps> = () => {
-  // const [filter, setFilter] = useState<'PENDING' | 'SETTLED'>("PENDING");
-  // const handleFilterClick = () => {
-  //     setFilter((prev) => prev === 'PENDING' ? 'SETTLED' : 'PENDING')
-  // }
 
-  const { connectedAccount } = useBlockchainContext()
+  const { connectedAccount, selectedL3Network } = useBlockchainContext()
   const messages = useMessages(connectedAccount, L2_CHAIN)
 
-  const headers = ['Time', 'Token', 'From', 'To', 'Status', '']
-  const navigate = useNavigate()
+  const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status']
 
   return (
     <div className={styles.container}>
       <div className={styles.content}>
-        <div className={styles.filtersContainer}>
-          <Icon name={'ArrowNarrowLeft'} onClick={() => navigate('/bridge')} />
-          {/*<div className={styles.filterButtons}>*/}
-          {/*    <button*/}
-          {/*        onClick={handleFilterClick}*/}
-          {/*        className={`${styles.filterButtonLeft} ${filter === 'PENDING' ? styles.filterButtonSelected : ""}`}>Pending*/}
-          {/*    </button>*/}
-          {/*    <button*/}
-          {/*        onClick={handleFilterClick}*/}
-          {/*        className={`${styles.filterButtonRight} ${filter === 'SETTLED' ? styles.filterButtonSelected : ""}`}>Settled*/}
-          {/*    </button>*/}
-          {/*</div>*/}
-        </div>
         {messages.data && (
           <div className={styles.transactions}>
             <div className={styles.withdrawsGrid}>
@@ -45,7 +26,11 @@ const WithdrawTransactions: React.FC<WithdrawTransactionsProps> = () => {
                 </div>
               ))}
               {messages.data.reverse().map((tx: any, idx: number) => (
-                <Withdrawal txHash={tx.txHash} chainId={tx.chainId} key={idx} delay={tx.delay} />
+                  !tx.isDeposit ? (
+                      <Withdrawal txHash={tx.txHash} chainId={tx.chainId} key={idx} delay={tx.delay} />
+                ) : (
+                    <Deposit txHash={tx.txHash} chainId={selectedL3Network.chainInfo.chainId} transaction={tx} />
+                )
               ))}
             </div>
           </div>
