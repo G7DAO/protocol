@@ -72,6 +72,28 @@ const useL2ToL1MessageStatus = (txHash: string, l2RPC: string, l3RPC: string) =>
   )
 }
 
+export const useDepositStatus = (deposit: any) => {
+  return useQuery(
+      ['withdrawalStatus', deposit],
+      async () => {
+        const {from, to, timestamp, amount, minedTimestamp } = deposit;
+
+        return {
+          from,
+          to,
+          value: amount,
+          timestamp,
+          minedTimestamp,
+        }
+      },
+      {
+        refetchInterval: 60000 * 3
+      }
+  )
+}
+
+
+
 export interface Transaction {
   txHash: string
   l2RPC: string
