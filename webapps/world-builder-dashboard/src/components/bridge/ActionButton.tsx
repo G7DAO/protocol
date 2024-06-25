@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from 'react-query'
 import { L2_CHAIN } from '../../../constants'
 import styles from './ActionButton.module.css'
 import { ethers } from 'ethers'
-import Loading01Icon from '@/assets/Loading01Icon'
+import IconLoading01 from '@/assets/IconLoading01'
 import { ChainInterface, useBlockchainContext } from '@/components/bridge/BlockchainContext'
 import { sendDepositTransaction } from '@/components/bridge/depositERC20'
 import { L3NetworkConfiguration } from '@/components/bridge/l3Networks'
@@ -131,13 +131,33 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, l3Networ
     },
     {
       onSuccess: (receipt: ethers.providers.TransactionReceipt, amount) => {
-        queryClient.setQueryData(['ERC20Balance', tokenAddress, connectedAccount, L2_CHAIN.rpcs[0]], (oldData) => {
-          return Number(oldData) - Number(amount)
-        })
-        queryClient.setQueryData(['nativeBalance', connectedAccount, l3Network.chainInfo.rpcs[0]], (oldData) => {
-          return Number(oldData) + Number(amount)
-        })
-        console.log(receipt)
+        try {
+          const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+          let transactions = []
+          if (transactionsString) {
+            transactions = JSON.parse(transactionsString)
+          }
+          transactions.push({
+            isDeposit: true,
+            timestamp: Date.now() / 1000,
+            minedTimestamp: Date.now() / 1000 - 7,
+            amount,
+            txHash: receipt.transactionHash,
+            chainId: l3Network.chainInfo.chainId,
+            delay: 60,
+            l2RPC: L2_CHAIN.rpcs[0],
+            l3RPC: l3Network.chainInfo.rpcs[0],
+            from: connectedAccount,
+            to: connectedAccount,
+          })
+          localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(transactions))
+        } catch (e) {
+          console.log(e)
+        }
+        console.log(receipt);
+        queryClient.refetchQueries(['ERC20Balance']);
+        queryClient.refetchQueries(['nativeBalance']);
+        queryClient.refetchQueries(['incomingMessages']);
       }
     }
   )
@@ -159,7 +179,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, l3Networ
           transactions.push({
             txHash: receipt.transactionHash,
             chainId: l3Network.chainInfo.chainId,
-            delay: 15 * 60
+            delay: 60 * 60
           })
           localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(transactions))
         } catch (e) {
@@ -181,14 +201,15 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, l3Networ
             {
               txHash: receipt.transactionHash,
               chainId: l3Network.chainInfo.chainId,
-              delay: 15 * 60,
+              delay: 60 * 60,
               l2RPC: L2_CHAIN.rpcs[0],
               l3RPC: l3Network.chainInfo.rpcs[0]
             },
             ...oldData
           ]
         })
-        queryClient.refetchQueries('nativeBalance')
+        queryClient.refetchQueries(['ERC20Balance']);
+        queryClient.refetchQueries(['nativeBalance']);
         console.log(receipt)
       }
     }
@@ -200,7 +221,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, l3Networ
       onClick={handleClick}
       disabled={getLabel() !== 'Connect wallet' && (!Number(amount) || Number(amount) <= 0)}
     >
-      {getLabel() ?? <Loading01Icon color={'white'} className={styles.rotatable} />}
+      {getLabel() ?? <IconLoading01 color={'white'} className={styles.rotatable} />}
     </button>
   )
 }
