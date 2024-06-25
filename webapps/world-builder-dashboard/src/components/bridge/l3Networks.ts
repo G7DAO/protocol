@@ -7,7 +7,7 @@ interface ChainInfo {
   parentChainId: number
   nativeToken: string
   rpcs: string[]
-  blockExplorerURls?: ['https://game7-testnet-custom.explorer.caldera.xyz/']
+  blockExplorerURls?: string
 }
 
 interface CoreContracts {
@@ -52,10 +52,11 @@ export const L3_NETWORKS = [
       staker: '0x4CA9B1A37881D3Cbe9a064B67aC28C0e49BFBEA2',
       chainOwner: '0x67b948946480f88507512374cba903faaa0d4bb3',
       chainId: 1398587,
-      chainName: 'G7 Testnet Caldera',
+      chainName: 'G7 Testnet',
       parentChainId: 421614,
       nativeToken: '0x5f88d811246222F6CB54266C42cc1310510b9feA',
-      rpcs: ['https://game7-testnet-custom.rpc.caldera.xyz/http']
+      rpcs: ['https://game7-testnet-custom.rpc.caldera.xyz/http'],
+      blockExplorerURLs: ['https://game7-testnet-custom.explorer.caldera.xyz']
     },
     coreContracts: {
       rollup: '0x90A8dc739e9986FBc4BE080680e832ee5EFEcb75',
