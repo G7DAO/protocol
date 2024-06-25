@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ArbitrumOneIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+const IconArbitrumOne: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' {...props}>
     <g clipPath='url(#clip0_7975_28742)'>
       <path
@@ -20,4 +20,4 @@ const ArbitrumOneIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   </svg>
 )
 
-export default ArbitrumOneIcon
+export default IconArbitrumOne
