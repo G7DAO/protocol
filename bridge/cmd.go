@@ -175,7 +175,7 @@ func CreateBridgeL1ToL3Command() *cobra.Command {
 				return transactionErr
 			}
 
-			fmt.Println("Transaction sent:", transaction.Hash().Hex())
+			fmt.Println("Done! Transaction hash:", transaction.Hash().Hex())
 
 			return nil
 		},

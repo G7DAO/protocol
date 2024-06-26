@@ -10,6 +10,7 @@ import (
 	"github.com/G7DAO/protocol/bindings/ERC20Inbox"
 	"github.com/G7DAO/protocol/bindings/NodeInterface"
 	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -68,12 +69,21 @@ func Bridge(inboxAddress common.Address, keyFile string, password string, l1Rpc 
 		fmt.Fprintln(os.Stderr, createRetryableTicketDataErr.Error())
 		return nil, createRetryableTicketDataErr
 	}
-
+	fmt.Println("Sending transaction...")
 	transaction, transactionErr := SendTransaction(l1Client, key, password, createRetryableTicketData, inboxAddress.Hex(), big.NewInt(0))
 	if transactionErr != nil {
 		fmt.Fprintln(os.Stderr, transactionErr.Error())
 		return nil, transactionErr
 	}
+	fmt.Println("Transaction sent! Transaction hash:", transaction.Hash().Hex())
+
+	fmt.Println("Waiting for transaction to be mined...")
+	_, receiptErr := bind.WaitMined(context.Background(), l1Client, transaction)
+	if receiptErr != nil {
+		fmt.Fprintln(os.Stderr, receiptErr.Error())
+		return nil, receiptErr
+	}
+	fmt.Println("Transaction mined!")
 
 	return transaction, nil
 }
