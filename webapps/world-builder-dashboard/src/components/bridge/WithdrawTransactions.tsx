@@ -2,13 +2,12 @@ import React from 'react'
 import { L2_CHAIN } from '../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
+import Deposit from '@/components/bridge/Deposit'
 import Withdrawal from '@/components/bridge/Withdrawal'
 import { useMessages } from '@/hooks/useL2ToL1MessageStatus'
-import Deposit from "@/components/bridge/Deposit";
 
 interface WithdrawTransactionsProps {}
 const WithdrawTransactions: React.FC<WithdrawTransactionsProps> = () => {
-
   const { connectedAccount, selectedL3Network } = useBlockchainContext()
   const messages = useMessages(connectedAccount, L2_CHAIN)
 
@@ -25,13 +24,15 @@ const WithdrawTransactions: React.FC<WithdrawTransactionsProps> = () => {
                   {h}
                 </div>
               ))}
-              {messages.data.reverse().map((tx: any, idx: number) => (
+              {messages.data
+                .reverse()
+                .map((tx: any, idx: number) =>
                   !tx.isDeposit ? (
-                      <Withdrawal txHash={tx.txHash} chainId={tx.chainId} key={idx} delay={tx.delay} />
-                ) : (
+                    <Withdrawal txHash={tx.txHash} chainId={tx.chainId} key={idx} delay={tx.delay} />
+                  ) : (
                     <Deposit txHash={tx.txHash} chainId={selectedL3Network.chainInfo.chainId} transaction={tx} />
-                )
-              ))}
+                  )
+                )}
             </div>
           </div>
         )}

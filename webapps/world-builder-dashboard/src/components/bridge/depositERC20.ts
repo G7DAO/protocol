@@ -1,8 +1,8 @@
-import { ethers, providers, utils } from 'ethers'
-import { L3NetworkConfiguration } from '@/components/bridge/l3Networks'
-import { convertToBigNumber } from '@/utils/web3utils'
-import { NodeInterface__factory } from '@arbitrum/sdk/dist/lib/abi/factories/NodeInterface__factory'
-import { NODE_INTERFACE_ADDRESS } from '@arbitrum/sdk/dist/lib/dataEntities/constants'
+import {ethers, providers, utils} from 'ethers'
+import {L3NetworkConfiguration} from '@/components/bridge/l3Networks'
+import {convertToBigNumber} from '@/utils/web3utils'
+import {NodeInterface__factory} from '@arbitrum/sdk/dist/lib/abi/factories/NodeInterface__factory'
+import {NODE_INTERFACE_ADDRESS} from '@arbitrum/sdk/dist/lib/dataEntities/constants'
 
 const L2_RPC = 'https://sepolia-rollup.arbitrum.io/rpc'
 const l2Provider = new providers.JsonRpcProvider(L2_RPC)
@@ -161,16 +161,13 @@ export const estimateDepositGas = async (amount: string, account: string, l3Netw
       const B = L1C.div(P)
 
       // G (Gas Limit) = L2G + B
-      const G = L2G.add(B)
-      console.log(G)
-      // throw new Error("QQ");
-      return G
+      return L2G.add(B)
     } catch (e: any) {
       console.log("Can't estimate gas: ", e.message)
     }
   }
 
-  return ethers.BigNumber.from('0x053d2d')
+  return ethers.BigNumber.from('0x053d2d'); //fallback for zero price (P);
 }
 
 export const sendDepositTransaction = async (

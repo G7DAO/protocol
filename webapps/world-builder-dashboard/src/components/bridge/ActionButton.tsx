@@ -17,7 +17,7 @@ interface ActionButtonProps {
 }
 const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, l3Network }) => {
   const [isConnecting, setIsConnecting] = useState(false)
-  const { connectedAccount, walletProvider, checkConnection, switchChain, tokenAddress } = useBlockchainContext()
+  const { connectedAccount, walletProvider, checkConnection, switchChain } = useBlockchainContext()
 
   const getLabel = (): String | undefined => {
     if (isConnecting || deposit.isLoading || withdraw.isLoading) {

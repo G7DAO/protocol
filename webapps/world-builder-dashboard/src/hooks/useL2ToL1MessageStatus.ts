@@ -164,7 +164,7 @@ export const useMessages = (
           ...tx,
           l2RPC: l2Chain.rpcs[0],
           l3RPC: getL3NetworkRPC(tx.chainId) ?? ''
-        }))
+        })).sort((a, b) => (a.isDeposit || (a.status === L2ToL1MessageStatus.EXECUTED)) && (!b.isDeposit || (b.status !== L2ToL1MessageStatus.EXECUTED)) ? -1 : 0)
         .reverse()
     } else {
       return []

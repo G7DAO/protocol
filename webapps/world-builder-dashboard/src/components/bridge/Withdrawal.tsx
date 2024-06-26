@@ -4,13 +4,13 @@ import { L2_CHAIN, L3_NATIVE_TOKEN_SYMBOL } from '../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import { ethers } from 'ethers'
 import { Skeleton } from 'summon-ui/mantine'
+import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
+import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import IconLoading01 from '@/assets/IconLoading01'
 import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
 import { L3_NETWORKS } from '@/components/bridge/l3Networks'
 import useL2ToL1MessageStatus from '@/hooks/useL2ToL1MessageStatus'
 import { L2ToL1MessageStatus, L2ToL1MessageWriter, L2TransactionReceipt } from '@arbitrum/sdk'
-import IconLinkExternal02 from "@/assets/IconLinkExternal02";
-import IconArrowNarrowUp from "@/assets/IconArrowNarrowUp";
 
 const timeAgo = (timestamp: number) => {
   const now = new Date().getTime()
@@ -67,18 +67,16 @@ const networkName = (chainId: number) => {
 
 const networkRPC = (chainId: number) => {
   const network = L3_NETWORKS.find((n) => n.chainInfo.chainId === chainId)
-  return network?.chainInfo.rpcs[0];
+  return network?.chainInfo.rpcs[0]
 }
 
 const networkExplorer = (chainId: number): string | undefined => {
   const network = L3_NETWORKS.find((n) => n.chainInfo.chainId === chainId)
   if (network?.chainInfo.blockExplorerURLs) {
-    return network?.chainInfo.blockExplorerURLs[0] ?? undefined;
+    return network?.chainInfo.blockExplorerURLs[0] ?? undefined
   }
-  return;
+  return
 }
-
-
 
 interface WithdrawalProps {
   txHash: string
@@ -86,12 +84,14 @@ interface WithdrawalProps {
   delay: number
 }
 const Withdrawal: React.FC<WithdrawalProps> = ({ txHash, chainId, delay }) => {
-  const l3RPC = networkRPC(chainId);
-  const l3BlockExplorer = networkExplorer(chainId);
-  const l3ExplorerLink = `${l3BlockExplorer}/tx/${txHash}`;
+  const l3RPC = networkRPC(chainId)
+  const l3BlockExplorer = networkExplorer(chainId)
+  const l3ExplorerLink = `${l3BlockExplorer}/tx/${txHash}`
   const handleStatusClick = () => {
-    if (!l3ExplorerLink) { return }
-    window.open(l3ExplorerLink, "_blank");
+    if (!l3ExplorerLink) {
+      return
+    }
+    window.open(l3ExplorerLink, '_blank')
   }
 
   if (!l3RPC) {
@@ -171,7 +171,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ txHash, chainId, delay }) => {
               <div className={styles.gridItem}>
                 <div className={styles.settled} onClick={handleStatusClick}>
                   Settled
-                  {!!l3ExplorerLink && <IconLinkExternal02 stroke={'#027A48'}/>}
+                  {!!l3ExplorerLink && <IconLinkExternal02 stroke={'#027A48'} />}
                 </div>
               </div>
               <div className={styles.gridItem}>
@@ -184,7 +184,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ txHash, chainId, delay }) => {
               <div className={styles.gridItem}>
                 <div className={styles.claimable} onClick={handleStatusClick}>
                   Claimable
-                  {!!l3ExplorerLink && <IconLinkExternal02 stroke={'#B54708'}/>}
+                  {!!l3ExplorerLink && <IconLinkExternal02 stroke={'#B54708'} />}
                 </div>
               </div>
               <div className={styles.gridItem}>
@@ -199,7 +199,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ txHash, chainId, delay }) => {
               <div className={styles.gridItem}>
                 <div className={styles.pending} onClick={handleStatusClick}>
                   Pending
-                  {!!l3ExplorerLink && <IconLinkExternal02 stroke={'#175CD3'}/>}
+                  {!!l3ExplorerLink && <IconLinkExternal02 stroke={'#175CD3'} />}
                 </div>
               </div>
               <div className={styles.gridItem}>

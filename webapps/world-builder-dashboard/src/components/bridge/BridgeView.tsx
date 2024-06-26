@@ -9,7 +9,7 @@ import IconArbitrumOne from '@/assets/IconArbitrumOne'
 import ActionButton from '@/components/bridge/ActionButton'
 // Blockchain Context and Utility Functions
 import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
-import HistoryHeader from '@/components/bridge/HistoryHeader'
+// import HistoryHeader from '@/components/bridge/HistoryHeader'
 // Components
 import NetworkSelector from '@/components/bridge/NetworkSelector'
 import TransactionSummary from '@/components/bridge/TransactionSummary'
