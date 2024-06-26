@@ -9,79 +9,49 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
  * @author Game7 Engineering Team - engineering@game7.io
  */
 contract TokenFaucet is Ownable {
-    address TOKEN_ADDRESS;
-    uint256 FAUCET_AMOUNT;
-    uint256 FAUCET_BLOCK_INTERVAL;
-    mapping(address => uint256) lastClaimedBlock;
+    address public tokenAddress;
+    uint256 public faucetAmount;
+    uint256 public faucetBlockInterval;
+    mapping(address => uint256) public lastClaimedBlock;
 
+    error TokenFaucetClaimIntervalNotPassed();
     constructor(
-        address _TOKEN_ADDRESS,
+        address _tokenAddress,
         address _owner,
-        uint256 _FAUCET_AMOUNT,
-        uint256 _FAUCET_BLOCK_INTERVAL
+        uint256 _faucetAmount,
+        uint256 _faucetBlockInternal
     ) Ownable(_owner) {
-        TOKEN_ADDRESS = _TOKEN_ADDRESS;
-        FAUCET_AMOUNT = _FAUCET_AMOUNT;
-        FAUCET_BLOCK_INTERVAL = _FAUCET_BLOCK_INTERVAL;
+        tokenAddress = _tokenAddress;
+        faucetAmount = _faucetAmount;
+        faucetBlockInterval = _faucetBlockInternal;
         transferOwnership(_owner);
-    }
-
-    function getTokenAddress() public view returns (address) {
-        return TOKEN_ADDRESS;
-    }
-
-    function getToken() internal view returns (IERC20) {
-        return IERC20(TOKEN_ADDRESS);
-    }
-
-    function getTokenBalance(address _address)
-        public
-        view
-        returns (uint256)
-    {
-        return getToken().balanceOf(_address);
-    }
-
-    function getLastClaimedBlock(address _address)
-        public
-        view
-        returns (uint256)
-    {
-        return lastClaimedBlock[_address];
     }
 
     function claim() public {
         uint256 current_block = block.number;
-        require(
-            current_block > lastClaimedBlock[msg.sender] + FAUCET_BLOCK_INTERVAL
-        );
-        getToken().transfer(msg.sender, FAUCET_AMOUNT);
+        if(current_block <= lastClaimedBlock[msg.sender] + faucetBlockInterval) {
+            revert TokenFaucetClaimIntervalNotPassed();
+        }
+
+        IERC20(tokenAddress).transfer(msg.sender, faucetAmount);
         lastClaimedBlock[msg.sender] = current_block;
     }
 
-    function getFaucetAmount() public view returns (uint256) {
-        return FAUCET_AMOUNT;
-    }
-
-    function getFaucetBlockInterval() public view returns (uint256) {
-        return FAUCET_BLOCK_INTERVAL;
-    }
-
-    function setFaucetBlockInterval(uint256 _FAUCET_BLOCK_INTERVAL)
+    function setFaucetBlockInterval(uint256 _faucetBlockInterval)
         public
         onlyOwner
     {
-        FAUCET_BLOCK_INTERVAL = _FAUCET_BLOCK_INTERVAL;
+        faucetBlockInterval = _faucetBlockInterval;
     }
 
-    function setFaucetAmount(uint256 _FAUCET_AMOUNT) public onlyOwner {
-        FAUCET_AMOUNT = _FAUCET_AMOUNT;
+    function setFaucetAmount(uint256 _faucetAmount) public onlyOwner {
+        faucetAmount = _faucetAmount;
     }
 
-    function setTokenAddress(address _TOKEN_ADDRESS)
+    function setTokenAddress(address _tokenAddress)
         public
         onlyOwner
     {
-        TOKEN_ADDRESS = _TOKEN_ADDRESS;
+        tokenAddress = _tokenAddress;
     }
 }

@@ -46,8 +46,8 @@ var (
 
 // TokenFaucetMetaData contains all meta data concerning the TokenFaucet contract.
 var TokenFaucetMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_TOKEN_ADDRESS\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_owner\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_FAUCET_AMOUNT\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_FAUCET_BLOCK_INTERVAL\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"claim\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getFaucetAmount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getFaucetBlockInterval\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_address\",\"type\":\"address\"}],\"name\":\"getLastClaimedBlock\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTokenAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_address\",\"type\":\"address\"}],\"name\":\"getTokenBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_FAUCET_AMOUNT\",\"type\":\"uint256\"}],\"name\":\"setFaucetAmount\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_FAUCET_BLOCK_INTERVAL\",\"type\":\"uint256\"}],\"name\":\"setFaucetBlockInterval\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_TOKEN_ADDRESS\",\"type\":\"address\"}],\"name\":\"setTokenAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
-	Bin: "0x60806040523480156200001157600080fd5b5060405162000e6038038062000e608339818101604052810190620000379190620003fe565b82600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1603620000ad5760006040517f1e4fbdf7000000000000000000000000000000000000000000000000000000008152600401620000a4919062000481565b60405180910390fd5b620000be816200012960201b60201c565b5083600160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555081600281905550806003819055506200011f83620001ed60201b60201c565b505050506200049e565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff169050816000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508173ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a35050565b620001fd6200028660201b60201c565b600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1603620002725760006040517f1e4fbdf700000000000000000000000000000000000000000000000000000000815260040162000269919062000481565b60405180910390fd5b62000283816200012960201b60201c565b50565b620002966200032860201b60201c565b73ffffffffffffffffffffffffffffffffffffffff16620002bc6200033060201b60201c565b73ffffffffffffffffffffffffffffffffffffffff16146200032657620002e86200032860201b60201c565b6040517f118cdaa70000000000000000000000000000000000000000000000000000000081526004016200031d919062000481565b60405180910390fd5b565b600033905090565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905090565b600080fd5b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b60006200038b826200035e565b9050919050565b6200039d816200037e565b8114620003a957600080fd5b50565b600081519050620003bd8162000392565b92915050565b6000819050919050565b620003d881620003c3565b8114620003e457600080fd5b50565b600081519050620003f881620003cd565b92915050565b600080600080608085870312156200041b576200041a62000359565b5b60006200042b87828801620003ac565b94505060206200043e87828801620003ac565b93505060406200045187828801620003e7565b92505060606200046487828801620003e7565b91505092959194509250565b6200047b816200037e565b82525050565b600060208201905062000498600083018462000470565b92915050565b6109b280620004ae6000396000f3fe608060405234801561001057600080fd5b50600436106100b45760003560e01c8063715018a611610071578063715018a61461016757806381d2fd9c146101715780638da5cb5b1461018d578063bc1cb46b146101ab578063ed27e1f1146101c9578063f2fde38b146101f9576100b4565b806310fe9ae8146100b957806315942e29146100d757806326a4e8d2146100f35780633aecd0e31461010f5780634e71d92d1461013f5780636da8f09314610149575b600080fd5b6100c1610215565b6040516100ce9190610743565b60405180910390f35b6100f160048036038101906100ec9190610799565b61023f565b005b61010d600480360381019061010891906107f2565b610251565b005b610129600480360381019061012491906107f2565b61029d565b604051610136919061082e565b60405180910390f35b610147610327565b005b610151610453565b60405161015e919061082e565b60405180910390f35b61016f61045d565b005b61018b60048036038101906101869190610799565b610471565b005b610195610483565b6040516101a29190610743565b60405180910390f35b6101b36104ac565b6040516101c0919061082e565b60405180910390f35b6101e360048036038101906101de91906107f2565b6104b6565b6040516101f0919061082e565b60405180910390f35b610213600480360381019061020e91906107f2565b6104ff565b005b6000600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905090565b610247610585565b8060038190555050565b610259610585565b80600160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555050565b60006102a761060c565b73ffffffffffffffffffffffffffffffffffffffff166370a08231836040518263ffffffff1660e01b81526004016102df9190610743565b602060405180830381865afa1580156102fc573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610320919061085e565b9050919050565b6000439050600354600460003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000205461037991906108ba565b811161038457600080fd5b61038c61060c565b73ffffffffffffffffffffffffffffffffffffffff1663a9059cbb336002546040518363ffffffff1660e01b81526004016103c89291906108ee565b6020604051808303816000875af11580156103e7573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061040b919061094f565b5080600460003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000208190555050565b6000600354905090565b610465610585565b61046f6000610636565b565b610479610585565b8060028190555050565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905090565b6000600254905090565b6000600460008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020549050919050565b610507610585565b600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16036105795760006040517f1e4fbdf70000000000000000000000000000000000000000000000000000000081526004016105709190610743565b60405180910390fd5b61058281610636565b50565b61058d6106fa565b73ffffffffffffffffffffffffffffffffffffffff166105ab610483565b73ffffffffffffffffffffffffffffffffffffffff161461060a576105ce6106fa565b6040517f118cdaa70000000000000000000000000000000000000000000000000000000081526004016106019190610743565b60405180910390fd5b565b6000600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905090565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff169050816000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508173ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a35050565b600033905090565b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b600061072d82610702565b9050919050565b61073d81610722565b82525050565b60006020820190506107586000830184610734565b92915050565b600080fd5b6000819050919050565b61077681610763565b811461078157600080fd5b50565b6000813590506107938161076d565b92915050565b6000602082840312156107af576107ae61075e565b5b60006107bd84828501610784565b91505092915050565b6107cf81610722565b81146107da57600080fd5b50565b6000813590506107ec816107c6565b92915050565b6000602082840312156108085761080761075e565b5b6000610816848285016107dd565b91505092915050565b61082881610763565b82525050565b6000602082019050610843600083018461081f565b92915050565b6000815190506108588161076d565b92915050565b6000602082840312156108745761087361075e565b5b600061088284828501610849565b91505092915050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b60006108c582610763565b91506108d083610763565b92508282019050808211156108e8576108e761088b565b5b92915050565b60006040820190506109036000830185610734565b610910602083018461081f565b9392505050565b60008115159050919050565b61092c81610917565b811461093757600080fd5b50565b60008151905061094981610923565b92915050565b6000602082840312156109655761096461075e565b5b60006109738482850161093a565b9150509291505056fea264697066735822122050f1311b069e59b75620647a9fd420553ba1ddba2605ed97b6140fc4ce66c8d464736f6c63430008180033",
+	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_tokenAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_owner\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_faucetAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_faucetBlockInternal\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"TokenFaucetClaimIntervalNotPassed\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"claim\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"faucetAmount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"faucetBlockInterval\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"lastClaimedBlock\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_faucetAmount\",\"type\":\"uint256\"}],\"name\":\"setFaucetAmount\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_faucetBlockInterval\",\"type\":\"uint256\"}],\"name\":\"setFaucetBlockInterval\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_tokenAddress\",\"type\":\"address\"}],\"name\":\"setTokenAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"tokenAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
+	Bin: "0x60806040523480156200001157600080fd5b5060405162000d3a38038062000d3a8339818101604052810190620000379190620003fe565b82600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1603620000ad5760006040517f1e4fbdf7000000000000000000000000000000000000000000000000000000008152600401620000a4919062000481565b60405180910390fd5b620000be816200012960201b60201c565b5083600160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555081600281905550806003819055506200011f83620001ed60201b60201c565b505050506200049e565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff169050816000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508173ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a35050565b620001fd6200028660201b60201c565b600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1603620002725760006040517f1e4fbdf700000000000000000000000000000000000000000000000000000000815260040162000269919062000481565b60405180910390fd5b62000283816200012960201b60201c565b50565b620002966200032860201b60201c565b73ffffffffffffffffffffffffffffffffffffffff16620002bc6200033060201b60201c565b73ffffffffffffffffffffffffffffffffffffffff16146200032657620002e86200032860201b60201c565b6040517f118cdaa70000000000000000000000000000000000000000000000000000000081526004016200031d919062000481565b60405180910390fd5b565b600033905090565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905090565b600080fd5b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b60006200038b826200035e565b9050919050565b6200039d816200037e565b8114620003a957600080fd5b50565b600081519050620003bd8162000392565b92915050565b6000819050919050565b620003d881620003c3565b8114620003e457600080fd5b50565b600081519050620003f881620003cd565b92915050565b600080600080608085870312156200041b576200041a62000359565b5b60006200042b87828801620003ac565b94505060206200043e87828801620003ac565b93505060406200045187828801620003e7565b92505060606200046487828801620003e7565b91505092959194509250565b6200047b816200037e565b82525050565b600060208201905062000498600083018462000470565b92915050565b61088c80620004ae6000396000f3fe608060405234801561001057600080fd5b50600436106100a95760003560e01c806381d2fd9c1161007157806381d2fd9c146101185780638da5cb5b146101345780639c281430146101525780639d76ea5814610170578063c19e82d51461018e578063f2fde38b146101be576100a9565b806315942e29146100ae57806320637abb146100ca57806326a4e8d2146100e85780634e71d92d14610104578063715018a61461010e575b600080fd5b6100c860048036038101906100c39190610659565b6101da565b005b6100d26101ec565b6040516100df9190610695565b60405180910390f35b61010260048036038101906100fd919061070e565b6101f2565b005b61010c61023e565b005b6101166103b2565b005b610132600480360381019061012d9190610659565b6103c6565b005b61013c6103d8565b604051610149919061074a565b60405180910390f35b61015a610401565b6040516101679190610695565b60405180910390f35b610178610407565b604051610185919061074a565b60405180910390f35b6101a860048036038101906101a3919061070e565b61042d565b6040516101b59190610695565b60405180910390f35b6101d860048036038101906101d3919061070e565b610445565b005b6101e26104cb565b8060038190555050565b60035481565b6101fa6104cb565b80600160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555050565b6000439050600354600460003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020546102909190610794565b81116102c8576040517f6fab395900000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1663a9059cbb336002546040518363ffffffff1660e01b81526004016103279291906107c8565b6020604051808303816000875af1158015610346573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061036a9190610829565b5080600460003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000208190555050565b6103ba6104cb565b6103c46000610552565b565b6103ce6104cb565b8060028190555050565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905090565b60025481565b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b60046020528060005260406000206000915090505481565b61044d6104cb565b600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16036104bf5760006040517f1e4fbdf70000000000000000000000000000000000000000000000000000000081526004016104b6919061074a565b60405180910390fd5b6104c881610552565b50565b6104d3610616565b73ffffffffffffffffffffffffffffffffffffffff166104f16103d8565b73ffffffffffffffffffffffffffffffffffffffff161461055057610514610616565b6040517f118cdaa7000000000000000000000000000000000000000000000000000000008152600401610547919061074a565b60405180910390fd5b565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff169050816000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508173ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a35050565b600033905090565b600080fd5b6000819050919050565b61063681610623565b811461064157600080fd5b50565b6000813590506106538161062d565b92915050565b60006020828403121561066f5761066e61061e565b5b600061067d84828501610644565b91505092915050565b61068f81610623565b82525050565b60006020820190506106aa6000830184610686565b92915050565b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b60006106db826106b0565b9050919050565b6106eb816106d0565b81146106f657600080fd5b50565b600081359050610708816106e2565b92915050565b6000602082840312156107245761072361061e565b5b6000610732848285016106f9565b91505092915050565b610744816106d0565b82525050565b600060208201905061075f600083018461073b565b92915050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b600061079f82610623565b91506107aa83610623565b92508282019050808211156107c2576107c1610765565b5b92915050565b60006040820190506107dd600083018561073b565b6107ea6020830184610686565b9392505050565b60008115159050919050565b610806816107f1565b811461081157600080fd5b50565b600081519050610823816107fd565b92915050565b60006020828403121561083f5761083e61061e565b5b600061084d84828501610814565b9150509291505056fea2646970667358221220e25e079bb5f8493eef6739925410cb05008adbe0df403804f8400f10dfaab19164736f6c63430008180033",
 }
 
 // TokenFaucetABI is the input ABI used to generate the binding from.
@@ -59,7 +59,7 @@ var TokenFaucetABI = TokenFaucetMetaData.ABI
 var TokenFaucetBin = TokenFaucetMetaData.Bin
 
 // DeployTokenFaucet deploys a new Ethereum contract, binding an instance of TokenFaucet to it.
-func DeployTokenFaucet(auth *bind.TransactOpts, backend bind.ContractBackend, _TOKEN_ADDRESS common.Address, _owner common.Address, _FAUCET_AMOUNT *big.Int, _FAUCET_BLOCK_INTERVAL *big.Int) (common.Address, *types.Transaction, *TokenFaucet, error) {
+func DeployTokenFaucet(auth *bind.TransactOpts, backend bind.ContractBackend, _tokenAddress common.Address, _owner common.Address, _faucetAmount *big.Int, _faucetBlockInternal *big.Int) (common.Address, *types.Transaction, *TokenFaucet, error) {
 	parsed, err := TokenFaucetMetaData.GetAbi()
 	if err != nil {
 		return common.Address{}, nil, nil, err
@@ -68,7 +68,7 @@ func DeployTokenFaucet(auth *bind.TransactOpts, backend bind.ContractBackend, _T
 		return common.Address{}, nil, nil, errors.New("GetABI returned nil")
 	}
 
-	address, tx, contract, err := bind.DeployContract(auth, *parsed, common.FromHex(TokenFaucetBin), backend, _TOKEN_ADDRESS, _owner, _FAUCET_AMOUNT, _FAUCET_BLOCK_INTERVAL)
+	address, tx, contract, err := bind.DeployContract(auth, *parsed, common.FromHex(TokenFaucetBin), backend, _tokenAddress, _owner, _faucetAmount, _faucetBlockInternal)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
@@ -217,12 +217,12 @@ func (_TokenFaucet *TokenFaucetTransactorRaw) Transact(opts *bind.TransactOpts, 
 	return _TokenFaucet.Contract.contract.Transact(opts, method, params...)
 }
 
-// GetFaucetAmount is a free data retrieval call binding the contract method 0xbc1cb46b.
+// FaucetAmount is a free data retrieval call binding the contract method 0x9c281430.
 //
-// Solidity: function getFaucetAmount() view returns(uint256)
-func (_TokenFaucet *TokenFaucetCaller) GetFaucetAmount(opts *bind.CallOpts) (*big.Int, error) {
+// Solidity: function faucetAmount() view returns(uint256)
+func (_TokenFaucet *TokenFaucetCaller) FaucetAmount(opts *bind.CallOpts) (*big.Int, error) {
 	var out []interface{}
-	err := _TokenFaucet.contract.Call(opts, &out, "getFaucetAmount")
+	err := _TokenFaucet.contract.Call(opts, &out, "faucetAmount")
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -234,26 +234,26 @@ func (_TokenFaucet *TokenFaucetCaller) GetFaucetAmount(opts *bind.CallOpts) (*bi
 
 }
 
-// GetFaucetAmount is a free data retrieval call binding the contract method 0xbc1cb46b.
+// FaucetAmount is a free data retrieval call binding the contract method 0x9c281430.
 //
-// Solidity: function getFaucetAmount() view returns(uint256)
-func (_TokenFaucet *TokenFaucetSession) GetFaucetAmount() (*big.Int, error) {
-	return _TokenFaucet.Contract.GetFaucetAmount(&_TokenFaucet.CallOpts)
+// Solidity: function faucetAmount() view returns(uint256)
+func (_TokenFaucet *TokenFaucetSession) FaucetAmount() (*big.Int, error) {
+	return _TokenFaucet.Contract.FaucetAmount(&_TokenFaucet.CallOpts)
 }
 
-// GetFaucetAmount is a free data retrieval call binding the contract method 0xbc1cb46b.
+// FaucetAmount is a free data retrieval call binding the contract method 0x9c281430.
 //
-// Solidity: function getFaucetAmount() view returns(uint256)
-func (_TokenFaucet *TokenFaucetCallerSession) GetFaucetAmount() (*big.Int, error) {
-	return _TokenFaucet.Contract.GetFaucetAmount(&_TokenFaucet.CallOpts)
+// Solidity: function faucetAmount() view returns(uint256)
+func (_TokenFaucet *TokenFaucetCallerSession) FaucetAmount() (*big.Int, error) {
+	return _TokenFaucet.Contract.FaucetAmount(&_TokenFaucet.CallOpts)
 }
 
-// GetFaucetBlockInterval is a free data retrieval call binding the contract method 0x6da8f093.
+// FaucetBlockInterval is a free data retrieval call binding the contract method 0x20637abb.
 //
-// Solidity: function getFaucetBlockInterval() view returns(uint256)
-func (_TokenFaucet *TokenFaucetCaller) GetFaucetBlockInterval(opts *bind.CallOpts) (*big.Int, error) {
+// Solidity: function faucetBlockInterval() view returns(uint256)
+func (_TokenFaucet *TokenFaucetCaller) FaucetBlockInterval(opts *bind.CallOpts) (*big.Int, error) {
 	var out []interface{}
-	err := _TokenFaucet.contract.Call(opts, &out, "getFaucetBlockInterval")
+	err := _TokenFaucet.contract.Call(opts, &out, "faucetBlockInterval")
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -265,26 +265,26 @@ func (_TokenFaucet *TokenFaucetCaller) GetFaucetBlockInterval(opts *bind.CallOpt
 
 }
 
-// GetFaucetBlockInterval is a free data retrieval call binding the contract method 0x6da8f093.
+// FaucetBlockInterval is a free data retrieval call binding the contract method 0x20637abb.
 //
-// Solidity: function getFaucetBlockInterval() view returns(uint256)
-func (_TokenFaucet *TokenFaucetSession) GetFaucetBlockInterval() (*big.Int, error) {
-	return _TokenFaucet.Contract.GetFaucetBlockInterval(&_TokenFaucet.CallOpts)
+// Solidity: function faucetBlockInterval() view returns(uint256)
+func (_TokenFaucet *TokenFaucetSession) FaucetBlockInterval() (*big.Int, error) {
+	return _TokenFaucet.Contract.FaucetBlockInterval(&_TokenFaucet.CallOpts)
 }
 
-// GetFaucetBlockInterval is a free data retrieval call binding the contract method 0x6da8f093.
+// FaucetBlockInterval is a free data retrieval call binding the contract method 0x20637abb.
 //
-// Solidity: function getFaucetBlockInterval() view returns(uint256)
-func (_TokenFaucet *TokenFaucetCallerSession) GetFaucetBlockInterval() (*big.Int, error) {
-	return _TokenFaucet.Contract.GetFaucetBlockInterval(&_TokenFaucet.CallOpts)
+// Solidity: function faucetBlockInterval() view returns(uint256)
+func (_TokenFaucet *TokenFaucetCallerSession) FaucetBlockInterval() (*big.Int, error) {
+	return _TokenFaucet.Contract.FaucetBlockInterval(&_TokenFaucet.CallOpts)
 }
 
-// GetLastClaimedBlock is a free data retrieval call binding the contract method 0xed27e1f1.
+// LastClaimedBlock is a free data retrieval call binding the contract method 0xc19e82d5.
 //
-// Solidity: function getLastClaimedBlock(address _address) view returns(uint256)
-func (_TokenFaucet *TokenFaucetCaller) GetLastClaimedBlock(opts *bind.CallOpts, _address common.Address) (*big.Int, error) {
+// Solidity: function lastClaimedBlock(address ) view returns(uint256)
+func (_TokenFaucet *TokenFaucetCaller) LastClaimedBlock(opts *bind.CallOpts, arg0 common.Address) (*big.Int, error) {
 	var out []interface{}
-	err := _TokenFaucet.contract.Call(opts, &out, "getLastClaimedBlock", _address)
+	err := _TokenFaucet.contract.Call(opts, &out, "lastClaimedBlock", arg0)
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -296,80 +296,18 @@ func (_TokenFaucet *TokenFaucetCaller) GetLastClaimedBlock(opts *bind.CallOpts, 
 
 }
 
-// GetLastClaimedBlock is a free data retrieval call binding the contract method 0xed27e1f1.
+// LastClaimedBlock is a free data retrieval call binding the contract method 0xc19e82d5.
 //
-// Solidity: function getLastClaimedBlock(address _address) view returns(uint256)
-func (_TokenFaucet *TokenFaucetSession) GetLastClaimedBlock(_address common.Address) (*big.Int, error) {
-	return _TokenFaucet.Contract.GetLastClaimedBlock(&_TokenFaucet.CallOpts, _address)
+// Solidity: function lastClaimedBlock(address ) view returns(uint256)
+func (_TokenFaucet *TokenFaucetSession) LastClaimedBlock(arg0 common.Address) (*big.Int, error) {
+	return _TokenFaucet.Contract.LastClaimedBlock(&_TokenFaucet.CallOpts, arg0)
 }
 
-// GetLastClaimedBlock is a free data retrieval call binding the contract method 0xed27e1f1.
+// LastClaimedBlock is a free data retrieval call binding the contract method 0xc19e82d5.
 //
-// Solidity: function getLastClaimedBlock(address _address) view returns(uint256)
-func (_TokenFaucet *TokenFaucetCallerSession) GetLastClaimedBlock(_address common.Address) (*big.Int, error) {
-	return _TokenFaucet.Contract.GetLastClaimedBlock(&_TokenFaucet.CallOpts, _address)
-}
-
-// GetTokenAddress is a free data retrieval call binding the contract method 0x10fe9ae8.
-//
-// Solidity: function getTokenAddress() view returns(address)
-func (_TokenFaucet *TokenFaucetCaller) GetTokenAddress(opts *bind.CallOpts) (common.Address, error) {
-	var out []interface{}
-	err := _TokenFaucet.contract.Call(opts, &out, "getTokenAddress")
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
-}
-
-// GetTokenAddress is a free data retrieval call binding the contract method 0x10fe9ae8.
-//
-// Solidity: function getTokenAddress() view returns(address)
-func (_TokenFaucet *TokenFaucetSession) GetTokenAddress() (common.Address, error) {
-	return _TokenFaucet.Contract.GetTokenAddress(&_TokenFaucet.CallOpts)
-}
-
-// GetTokenAddress is a free data retrieval call binding the contract method 0x10fe9ae8.
-//
-// Solidity: function getTokenAddress() view returns(address)
-func (_TokenFaucet *TokenFaucetCallerSession) GetTokenAddress() (common.Address, error) {
-	return _TokenFaucet.Contract.GetTokenAddress(&_TokenFaucet.CallOpts)
-}
-
-// GetTokenBalance is a free data retrieval call binding the contract method 0x3aecd0e3.
-//
-// Solidity: function getTokenBalance(address _address) view returns(uint256)
-func (_TokenFaucet *TokenFaucetCaller) GetTokenBalance(opts *bind.CallOpts, _address common.Address) (*big.Int, error) {
-	var out []interface{}
-	err := _TokenFaucet.contract.Call(opts, &out, "getTokenBalance", _address)
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// GetTokenBalance is a free data retrieval call binding the contract method 0x3aecd0e3.
-//
-// Solidity: function getTokenBalance(address _address) view returns(uint256)
-func (_TokenFaucet *TokenFaucetSession) GetTokenBalance(_address common.Address) (*big.Int, error) {
-	return _TokenFaucet.Contract.GetTokenBalance(&_TokenFaucet.CallOpts, _address)
-}
-
-// GetTokenBalance is a free data retrieval call binding the contract method 0x3aecd0e3.
-//
-// Solidity: function getTokenBalance(address _address) view returns(uint256)
-func (_TokenFaucet *TokenFaucetCallerSession) GetTokenBalance(_address common.Address) (*big.Int, error) {
-	return _TokenFaucet.Contract.GetTokenBalance(&_TokenFaucet.CallOpts, _address)
+// Solidity: function lastClaimedBlock(address ) view returns(uint256)
+func (_TokenFaucet *TokenFaucetCallerSession) LastClaimedBlock(arg0 common.Address) (*big.Int, error) {
+	return _TokenFaucet.Contract.LastClaimedBlock(&_TokenFaucet.CallOpts, arg0)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
@@ -401,6 +339,37 @@ func (_TokenFaucet *TokenFaucetSession) Owner() (common.Address, error) {
 // Solidity: function owner() view returns(address)
 func (_TokenFaucet *TokenFaucetCallerSession) Owner() (common.Address, error) {
 	return _TokenFaucet.Contract.Owner(&_TokenFaucet.CallOpts)
+}
+
+// TokenAddress is a free data retrieval call binding the contract method 0x9d76ea58.
+//
+// Solidity: function tokenAddress() view returns(address)
+func (_TokenFaucet *TokenFaucetCaller) TokenAddress(opts *bind.CallOpts) (common.Address, error) {
+	var out []interface{}
+	err := _TokenFaucet.contract.Call(opts, &out, "tokenAddress")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
+}
+
+// TokenAddress is a free data retrieval call binding the contract method 0x9d76ea58.
+//
+// Solidity: function tokenAddress() view returns(address)
+func (_TokenFaucet *TokenFaucetSession) TokenAddress() (common.Address, error) {
+	return _TokenFaucet.Contract.TokenAddress(&_TokenFaucet.CallOpts)
+}
+
+// TokenAddress is a free data retrieval call binding the contract method 0x9d76ea58.
+//
+// Solidity: function tokenAddress() view returns(address)
+func (_TokenFaucet *TokenFaucetCallerSession) TokenAddress() (common.Address, error) {
+	return _TokenFaucet.Contract.TokenAddress(&_TokenFaucet.CallOpts)
 }
 
 // Claim is a paid mutator transaction binding the contract method 0x4e71d92d.
@@ -447,65 +416,65 @@ func (_TokenFaucet *TokenFaucetTransactorSession) RenounceOwnership() (*types.Tr
 
 // SetFaucetAmount is a paid mutator transaction binding the contract method 0x81d2fd9c.
 //
-// Solidity: function setFaucetAmount(uint256 _FAUCET_AMOUNT) returns()
-func (_TokenFaucet *TokenFaucetTransactor) SetFaucetAmount(opts *bind.TransactOpts, _FAUCET_AMOUNT *big.Int) (*types.Transaction, error) {
-	return _TokenFaucet.contract.Transact(opts, "setFaucetAmount", _FAUCET_AMOUNT)
+// Solidity: function setFaucetAmount(uint256 _faucetAmount) returns()
+func (_TokenFaucet *TokenFaucetTransactor) SetFaucetAmount(opts *bind.TransactOpts, _faucetAmount *big.Int) (*types.Transaction, error) {
+	return _TokenFaucet.contract.Transact(opts, "setFaucetAmount", _faucetAmount)
 }
 
 // SetFaucetAmount is a paid mutator transaction binding the contract method 0x81d2fd9c.
 //
-// Solidity: function setFaucetAmount(uint256 _FAUCET_AMOUNT) returns()
-func (_TokenFaucet *TokenFaucetSession) SetFaucetAmount(_FAUCET_AMOUNT *big.Int) (*types.Transaction, error) {
-	return _TokenFaucet.Contract.SetFaucetAmount(&_TokenFaucet.TransactOpts, _FAUCET_AMOUNT)
+// Solidity: function setFaucetAmount(uint256 _faucetAmount) returns()
+func (_TokenFaucet *TokenFaucetSession) SetFaucetAmount(_faucetAmount *big.Int) (*types.Transaction, error) {
+	return _TokenFaucet.Contract.SetFaucetAmount(&_TokenFaucet.TransactOpts, _faucetAmount)
 }
 
 // SetFaucetAmount is a paid mutator transaction binding the contract method 0x81d2fd9c.
 //
-// Solidity: function setFaucetAmount(uint256 _FAUCET_AMOUNT) returns()
-func (_TokenFaucet *TokenFaucetTransactorSession) SetFaucetAmount(_FAUCET_AMOUNT *big.Int) (*types.Transaction, error) {
-	return _TokenFaucet.Contract.SetFaucetAmount(&_TokenFaucet.TransactOpts, _FAUCET_AMOUNT)
+// Solidity: function setFaucetAmount(uint256 _faucetAmount) returns()
+func (_TokenFaucet *TokenFaucetTransactorSession) SetFaucetAmount(_faucetAmount *big.Int) (*types.Transaction, error) {
+	return _TokenFaucet.Contract.SetFaucetAmount(&_TokenFaucet.TransactOpts, _faucetAmount)
 }
 
 // SetFaucetBlockInterval is a paid mutator transaction binding the contract method 0x15942e29.
 //
-// Solidity: function setFaucetBlockInterval(uint256 _FAUCET_BLOCK_INTERVAL) returns()
-func (_TokenFaucet *TokenFaucetTransactor) SetFaucetBlockInterval(opts *bind.TransactOpts, _FAUCET_BLOCK_INTERVAL *big.Int) (*types.Transaction, error) {
-	return _TokenFaucet.contract.Transact(opts, "setFaucetBlockInterval", _FAUCET_BLOCK_INTERVAL)
+// Solidity: function setFaucetBlockInterval(uint256 _faucetBlockInterval) returns()
+func (_TokenFaucet *TokenFaucetTransactor) SetFaucetBlockInterval(opts *bind.TransactOpts, _faucetBlockInterval *big.Int) (*types.Transaction, error) {
+	return _TokenFaucet.contract.Transact(opts, "setFaucetBlockInterval", _faucetBlockInterval)
 }
 
 // SetFaucetBlockInterval is a paid mutator transaction binding the contract method 0x15942e29.
 //
-// Solidity: function setFaucetBlockInterval(uint256 _FAUCET_BLOCK_INTERVAL) returns()
-func (_TokenFaucet *TokenFaucetSession) SetFaucetBlockInterval(_FAUCET_BLOCK_INTERVAL *big.Int) (*types.Transaction, error) {
-	return _TokenFaucet.Contract.SetFaucetBlockInterval(&_TokenFaucet.TransactOpts, _FAUCET_BLOCK_INTERVAL)
+// Solidity: function setFaucetBlockInterval(uint256 _faucetBlockInterval) returns()
+func (_TokenFaucet *TokenFaucetSession) SetFaucetBlockInterval(_faucetBlockInterval *big.Int) (*types.Transaction, error) {
+	return _TokenFaucet.Contract.SetFaucetBlockInterval(&_TokenFaucet.TransactOpts, _faucetBlockInterval)
 }
 
 // SetFaucetBlockInterval is a paid mutator transaction binding the contract method 0x15942e29.
 //
-// Solidity: function setFaucetBlockInterval(uint256 _FAUCET_BLOCK_INTERVAL) returns()
-func (_TokenFaucet *TokenFaucetTransactorSession) SetFaucetBlockInterval(_FAUCET_BLOCK_INTERVAL *big.Int) (*types.Transaction, error) {
-	return _TokenFaucet.Contract.SetFaucetBlockInterval(&_TokenFaucet.TransactOpts, _FAUCET_BLOCK_INTERVAL)
+// Solidity: function setFaucetBlockInterval(uint256 _faucetBlockInterval) returns()
+func (_TokenFaucet *TokenFaucetTransactorSession) SetFaucetBlockInterval(_faucetBlockInterval *big.Int) (*types.Transaction, error) {
+	return _TokenFaucet.Contract.SetFaucetBlockInterval(&_TokenFaucet.TransactOpts, _faucetBlockInterval)
 }
 
 // SetTokenAddress is a paid mutator transaction binding the contract method 0x26a4e8d2.
 //
-// Solidity: function setTokenAddress(address _TOKEN_ADDRESS) returns()
-func (_TokenFaucet *TokenFaucetTransactor) SetTokenAddress(opts *bind.TransactOpts, _TOKEN_ADDRESS common.Address) (*types.Transaction, error) {
-	return _TokenFaucet.contract.Transact(opts, "setTokenAddress", _TOKEN_ADDRESS)
+// Solidity: function setTokenAddress(address _tokenAddress) returns()
+func (_TokenFaucet *TokenFaucetTransactor) SetTokenAddress(opts *bind.TransactOpts, _tokenAddress common.Address) (*types.Transaction, error) {
+	return _TokenFaucet.contract.Transact(opts, "setTokenAddress", _tokenAddress)
 }
 
 // SetTokenAddress is a paid mutator transaction binding the contract method 0x26a4e8d2.
 //
-// Solidity: function setTokenAddress(address _TOKEN_ADDRESS) returns()
-func (_TokenFaucet *TokenFaucetSession) SetTokenAddress(_TOKEN_ADDRESS common.Address) (*types.Transaction, error) {
-	return _TokenFaucet.Contract.SetTokenAddress(&_TokenFaucet.TransactOpts, _TOKEN_ADDRESS)
+// Solidity: function setTokenAddress(address _tokenAddress) returns()
+func (_TokenFaucet *TokenFaucetSession) SetTokenAddress(_tokenAddress common.Address) (*types.Transaction, error) {
+	return _TokenFaucet.Contract.SetTokenAddress(&_TokenFaucet.TransactOpts, _tokenAddress)
 }
 
 // SetTokenAddress is a paid mutator transaction binding the contract method 0x26a4e8d2.
 //
-// Solidity: function setTokenAddress(address _TOKEN_ADDRESS) returns()
-func (_TokenFaucet *TokenFaucetTransactorSession) SetTokenAddress(_TOKEN_ADDRESS common.Address) (*types.Transaction, error) {
-	return _TokenFaucet.Contract.SetTokenAddress(&_TokenFaucet.TransactOpts, _TOKEN_ADDRESS)
+// Solidity: function setTokenAddress(address _tokenAddress) returns()
+func (_TokenFaucet *TokenFaucetTransactorSession) SetTokenAddress(_tokenAddress common.Address) (*types.Transaction, error) {
+	return _TokenFaucet.Contract.SetTokenAddress(&_TokenFaucet.TransactOpts, _tokenAddress)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
@@ -688,14 +657,14 @@ func CreateTokenFaucetDeploymentCommand() *cobra.Command {
 	var simulate bool
 	var timeout uint
 
-	var TOKEN_ADDRESS common.Address
-	var TOKEN_ADDRESSRaw string
+	var tokenAddress common.Address
+	var tokenAddressRaw string
 	var owner common.Address
 	var ownerRaw string
-	var FAUCET_AMOUNT *big.Int
-	var FAUCET_AMOUNTRaw string
-	var FAUCET_BLOCK_INTERVAL *big.Int
-	var FAUCET_BLOCK_INTERVALRaw string
+	var faucetAmount *big.Int
+	var faucetAmountRaw string
+	var faucetBlockInternal *big.Int
+	var faucetBlockInternalRaw string
 
 	cmd := &cobra.Command{
 		Use:   "deploy",
@@ -705,12 +674,12 @@ func CreateTokenFaucetDeploymentCommand() *cobra.Command {
 				return fmt.Errorf("--keystore not specified (this should be a path to an Ethereum account keystore file)")
 			}
 
-			if TOKEN_ADDRESSRaw == "" {
+			if tokenAddressRaw == "" {
 				return fmt.Errorf("--token-address argument not specified")
-			} else if !common.IsHexAddress(TOKEN_ADDRESSRaw) {
+			} else if !common.IsHexAddress(tokenAddressRaw) {
 				return fmt.Errorf("--token-address argument is not a valid Ethereum address")
 			}
-			TOKEN_ADDRESS = common.HexToAddress(TOKEN_ADDRESSRaw)
+			tokenAddress = common.HexToAddress(tokenAddressRaw)
 
 			if ownerRaw == "" {
 				return fmt.Errorf("--owner argument not specified")
@@ -719,17 +688,17 @@ func CreateTokenFaucetDeploymentCommand() *cobra.Command {
 			}
 			owner = common.HexToAddress(ownerRaw)
 
-			if FAUCET_AMOUNTRaw == "" {
+			if faucetAmountRaw == "" {
 				return fmt.Errorf("--faucet-amount argument not specified")
 			}
-			FAUCET_AMOUNT = new(big.Int)
-			FAUCET_AMOUNT.SetString(FAUCET_AMOUNTRaw, 0)
+			faucetAmount = new(big.Int)
+			faucetAmount.SetString(faucetAmountRaw, 0)
 
-			if FAUCET_BLOCK_INTERVALRaw == "" {
-				return fmt.Errorf("--faucet-block-interval argument not specified")
+			if faucetBlockInternalRaw == "" {
+				return fmt.Errorf("--faucet-block-internal argument not specified")
 			}
-			FAUCET_BLOCK_INTERVAL = new(big.Int)
-			FAUCET_BLOCK_INTERVAL.SetString(FAUCET_BLOCK_INTERVALRaw, 0)
+			faucetBlockInternal = new(big.Int)
+			faucetBlockInternal.SetString(faucetBlockInternalRaw, 0)
 
 			return nil
 		},
@@ -761,10 +730,10 @@ func CreateTokenFaucetDeploymentCommand() *cobra.Command {
 			address, deploymentTransaction, _, deploymentErr := DeployTokenFaucet(
 				transactionOpts,
 				client,
-				TOKEN_ADDRESS,
+				tokenAddress,
 				owner,
-				FAUCET_AMOUNT,
-				FAUCET_BLOCK_INTERVAL,
+				faucetAmount,
+				faucetBlockInternal,
 			)
 			if deploymentErr != nil {
 				return deploymentErr
@@ -812,15 +781,15 @@ func CreateTokenFaucetDeploymentCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
 	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
 
-	cmd.Flags().StringVar(&TOKEN_ADDRESSRaw, "token-address", "", "token-address argument")
+	cmd.Flags().StringVar(&tokenAddressRaw, "token-address", "", "token-address argument")
 	cmd.Flags().StringVar(&ownerRaw, "owner", "", "owner argument")
-	cmd.Flags().StringVar(&FAUCET_AMOUNTRaw, "faucet-amount", "", "faucet-amount argument")
-	cmd.Flags().StringVar(&FAUCET_BLOCK_INTERVALRaw, "faucet-block-interval", "", "faucet-block-interval argument")
+	cmd.Flags().StringVar(&faucetAmountRaw, "faucet-amount", "", "faucet-amount argument")
+	cmd.Flags().StringVar(&faucetBlockInternalRaw, "faucet-block-internal", "", "faucet-block-internal argument")
 
 	return cmd
 }
 
-func CreateGetFaucetBlockIntervalCommand() *cobra.Command {
+func CreateFaucetAmountCommand() *cobra.Command {
 	var contractAddressRaw, rpc string
 	var contractAddress common.Address
 	var timeout uint
@@ -831,8 +800,8 @@ func CreateGetFaucetBlockIntervalCommand() *cobra.Command {
 	var capture0 *big.Int
 
 	cmd := &cobra.Command{
-		Use:   "get-faucet-block-interval",
-		Short: "Call the GetFaucetBlockInterval view method on a TokenFaucet contract",
+		Use:   "faucet-amount",
+		Short: "Call the FaucetAmount view method on a TokenFaucet contract",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			if contractAddressRaw == "" {
 				return fmt.Errorf("--contract not specified")
@@ -863,7 +832,7 @@ func CreateGetFaucetBlockIntervalCommand() *cobra.Command {
 			}
 
 			var callErr error
-			capture0, callErr = session.GetFaucetBlockInterval()
+			capture0, callErr = session.FaucetAmount()
 			if callErr != nil {
 				return callErr
 			}
@@ -883,7 +852,7 @@ func CreateGetFaucetBlockIntervalCommand() *cobra.Command {
 
 	return cmd
 }
-func CreateGetLastClaimedBlockCommand() *cobra.Command {
+func CreateFaucetBlockIntervalCommand() *cobra.Command {
 	var contractAddressRaw, rpc string
 	var contractAddress common.Address
 	var timeout uint
@@ -891,14 +860,11 @@ func CreateGetLastClaimedBlockCommand() *cobra.Command {
 	var blockNumberRaw, fromAddressRaw string
 	var pending bool
 
-	var address common.Address
-	var addressRaw string
-
 	var capture0 *big.Int
 
 	cmd := &cobra.Command{
-		Use:   "get-last-claimed-block",
-		Short: "Call the GetLastClaimedBlock view method on a TokenFaucet contract",
+		Use:   "faucet-block-interval",
+		Short: "Call the FaucetBlockInterval view method on a TokenFaucet contract",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			if contractAddressRaw == "" {
 				return fmt.Errorf("--contract not specified")
@@ -906,13 +872,6 @@ func CreateGetLastClaimedBlockCommand() *cobra.Command {
 				return fmt.Errorf("--contract is not a valid Ethereum address")
 			}
 			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if addressRaw == "" {
-				return fmt.Errorf("--address argument not specified")
-			} else if !common.IsHexAddress(addressRaw) {
-				return fmt.Errorf("--address argument is not a valid Ethereum address")
-			}
-			address = common.HexToAddress(addressRaw)
 
 			return nil
 		},
@@ -936,8 +895,81 @@ func CreateGetLastClaimedBlockCommand() *cobra.Command {
 			}
 
 			var callErr error
-			capture0, callErr = session.GetLastClaimedBlock(
-				address,
+			capture0, callErr = session.FaucetBlockInterval()
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0.String())
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	return cmd
+}
+func CreateLastClaimedBlockCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var arg0 common.Address
+	var arg0Raw string
+
+	var capture0 *big.Int
+
+	cmd := &cobra.Command{
+		Use:   "last-claimed-block",
+		Short: "Call the LastClaimedBlock view method on a TokenFaucet contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if arg0Raw == "" {
+				return fmt.Errorf("--arg-0 argument not specified")
+			} else if !common.IsHexAddress(arg0Raw) {
+				return fmt.Errorf("--arg-0 argument is not a valid Ethereum address")
+			}
+			arg0 = common.HexToAddress(arg0Raw)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewTokenFaucet(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := TokenFaucetCallerSession{
+				Contract: &contract.TokenFaucetCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.LastClaimedBlock(
+				arg0,
 			)
 			if callErr != nil {
 				return callErr
@@ -956,147 +988,7 @@ func CreateGetLastClaimedBlockCommand() *cobra.Command {
 	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
 	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
 
-	cmd.Flags().StringVar(&addressRaw, "address", "", "address argument")
-
-	return cmd
-}
-func CreateGetTokenAddressCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var capture0 common.Address
-
-	cmd := &cobra.Command{
-		Use:   "get-token-address",
-		Short: "Call the GetTokenAddress view method on a TokenFaucet contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewTokenFaucet(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := TokenFaucetCallerSession{
-				Contract: &contract.TokenFaucetCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.GetTokenAddress()
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0.Hex())
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	return cmd
-}
-func CreateGetTokenBalanceCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var address common.Address
-	var addressRaw string
-
-	var capture0 *big.Int
-
-	cmd := &cobra.Command{
-		Use:   "get-token-balance",
-		Short: "Call the GetTokenBalance view method on a TokenFaucet contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if addressRaw == "" {
-				return fmt.Errorf("--address argument not specified")
-			} else if !common.IsHexAddress(addressRaw) {
-				return fmt.Errorf("--address argument is not a valid Ethereum address")
-			}
-			address = common.HexToAddress(addressRaw)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewTokenFaucet(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := TokenFaucetCallerSession{
-				Contract: &contract.TokenFaucetCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.GetTokenBalance(
-				address,
-			)
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0.String())
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	cmd.Flags().StringVar(&addressRaw, "address", "", "address argument")
+	cmd.Flags().StringVar(&arg0Raw, "arg-0", "", "arg-0 argument")
 
 	return cmd
 }
@@ -1163,7 +1055,7 @@ func CreateOwnerCommand() *cobra.Command {
 
 	return cmd
 }
-func CreateGetFaucetAmountCommand() *cobra.Command {
+func CreateTokenAddressCommand() *cobra.Command {
 	var contractAddressRaw, rpc string
 	var contractAddress common.Address
 	var timeout uint
@@ -1171,11 +1063,11 @@ func CreateGetFaucetAmountCommand() *cobra.Command {
 	var blockNumberRaw, fromAddressRaw string
 	var pending bool
 
-	var capture0 *big.Int
+	var capture0 common.Address
 
 	cmd := &cobra.Command{
-		Use:   "get-faucet-amount",
-		Short: "Call the GetFaucetAmount view method on a TokenFaucet contract",
+		Use:   "token-address",
+		Short: "Call the TokenAddress view method on a TokenFaucet contract",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			if contractAddressRaw == "" {
 				return fmt.Errorf("--contract not specified")
@@ -1206,12 +1098,12 @@ func CreateGetFaucetAmountCommand() *cobra.Command {
 			}
 
 			var callErr error
-			capture0, callErr = session.GetFaucetAmount()
+			capture0, callErr = session.TokenAddress()
 			if callErr != nil {
 				return callErr
 			}
 
-			cmd.Printf("0: %s\n", capture0.String())
+			cmd.Printf("0: %s\n", capture0.Hex())
 
 			return nil
 		},
@@ -1454,8 +1346,8 @@ func CreateSetFaucetAmountCommand() *cobra.Command {
 	var timeout uint
 	var contractAddress common.Address
 
-	var FAUCET_AMOUNT *big.Int
-	var FAUCET_AMOUNTRaw string
+	var faucetAmount *big.Int
+	var faucetAmountRaw string
 
 	cmd := &cobra.Command{
 		Use:   "set-faucet-amount",
@@ -1472,11 +1364,11 @@ func CreateSetFaucetAmountCommand() *cobra.Command {
 			}
 			contractAddress = common.HexToAddress(contractAddressRaw)
 
-			if FAUCET_AMOUNTRaw == "" {
+			if faucetAmountRaw == "" {
 				return fmt.Errorf("--faucet-amount argument not specified")
 			}
-			FAUCET_AMOUNT = new(big.Int)
-			FAUCET_AMOUNT.SetString(FAUCET_AMOUNTRaw, 0)
+			faucetAmount = new(big.Int)
+			faucetAmount.SetString(faucetAmountRaw, 0)
 
 			return nil
 		},
@@ -1516,7 +1408,7 @@ func CreateSetFaucetAmountCommand() *cobra.Command {
 			}
 
 			transaction, transactionErr := session.SetFaucetAmount(
-				FAUCET_AMOUNT,
+				faucetAmount,
 			)
 			if transactionErr != nil {
 				return transactionErr
@@ -1566,7 +1458,7 @@ func CreateSetFaucetAmountCommand() *cobra.Command {
 	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
 	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
 
-	cmd.Flags().StringVar(&FAUCET_AMOUNTRaw, "faucet-amount", "", "faucet-amount argument")
+	cmd.Flags().StringVar(&faucetAmountRaw, "faucet-amount", "", "faucet-amount argument")
 
 	return cmd
 }
@@ -1577,8 +1469,8 @@ func CreateSetFaucetBlockIntervalCommand() *cobra.Command {
 	var timeout uint
 	var contractAddress common.Address
 
-	var FAUCET_BLOCK_INTERVAL *big.Int
-	var FAUCET_BLOCK_INTERVALRaw string
+	var faucetBlockInterval *big.Int
+	var faucetBlockIntervalRaw string
 
 	cmd := &cobra.Command{
 		Use:   "set-faucet-block-interval",
@@ -1595,11 +1487,11 @@ func CreateSetFaucetBlockIntervalCommand() *cobra.Command {
 			}
 			contractAddress = common.HexToAddress(contractAddressRaw)
 
-			if FAUCET_BLOCK_INTERVALRaw == "" {
+			if faucetBlockIntervalRaw == "" {
 				return fmt.Errorf("--faucet-block-interval argument not specified")
 			}
-			FAUCET_BLOCK_INTERVAL = new(big.Int)
-			FAUCET_BLOCK_INTERVAL.SetString(FAUCET_BLOCK_INTERVALRaw, 0)
+			faucetBlockInterval = new(big.Int)
+			faucetBlockInterval.SetString(faucetBlockIntervalRaw, 0)
 
 			return nil
 		},
@@ -1639,7 +1531,7 @@ func CreateSetFaucetBlockIntervalCommand() *cobra.Command {
 			}
 
 			transaction, transactionErr := session.SetFaucetBlockInterval(
-				FAUCET_BLOCK_INTERVAL,
+				faucetBlockInterval,
 			)
 			if transactionErr != nil {
 				return transactionErr
@@ -1689,7 +1581,7 @@ func CreateSetFaucetBlockIntervalCommand() *cobra.Command {
 	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
 	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
 
-	cmd.Flags().StringVar(&FAUCET_BLOCK_INTERVALRaw, "faucet-block-interval", "", "faucet-block-interval argument")
+	cmd.Flags().StringVar(&faucetBlockIntervalRaw, "faucet-block-interval", "", "faucet-block-interval argument")
 
 	return cmd
 }
@@ -1700,8 +1592,8 @@ func CreateSetTokenAddressCommand() *cobra.Command {
 	var timeout uint
 	var contractAddress common.Address
 
-	var TOKEN_ADDRESS common.Address
-	var TOKEN_ADDRESSRaw string
+	var tokenAddress common.Address
+	var tokenAddressRaw string
 
 	cmd := &cobra.Command{
 		Use:   "set-token-address",
@@ -1718,12 +1610,12 @@ func CreateSetTokenAddressCommand() *cobra.Command {
 			}
 			contractAddress = common.HexToAddress(contractAddressRaw)
 
-			if TOKEN_ADDRESSRaw == "" {
+			if tokenAddressRaw == "" {
 				return fmt.Errorf("--token-address argument not specified")
-			} else if !common.IsHexAddress(TOKEN_ADDRESSRaw) {
+			} else if !common.IsHexAddress(tokenAddressRaw) {
 				return fmt.Errorf("--token-address argument is not a valid Ethereum address")
 			}
-			TOKEN_ADDRESS = common.HexToAddress(TOKEN_ADDRESSRaw)
+			tokenAddress = common.HexToAddress(tokenAddressRaw)
 
 			return nil
 		},
@@ -1763,7 +1655,7 @@ func CreateSetTokenAddressCommand() *cobra.Command {
 			}
 
 			transaction, transactionErr := session.SetTokenAddress(
-				TOKEN_ADDRESS,
+				tokenAddress,
 			)
 			if transactionErr != nil {
 				return transactionErr
@@ -1813,7 +1705,7 @@ func CreateSetTokenAddressCommand() *cobra.Command {
 	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
 	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
 
-	cmd.Flags().StringVar(&TOKEN_ADDRESSRaw, "token-address", "", "token-address argument")
+	cmd.Flags().StringVar(&tokenAddressRaw, "token-address", "", "token-address argument")
 
 	return cmd
 }
@@ -2076,24 +1968,21 @@ func CreateTokenFaucetCommand() *cobra.Command {
 	cmdDeployTokenFaucet.GroupID = DeployGroup.ID
 	cmd.AddCommand(cmdDeployTokenFaucet)
 
-	cmdViewGetFaucetBlockInterval := CreateGetFaucetBlockIntervalCommand()
-	cmdViewGetFaucetBlockInterval.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewGetFaucetBlockInterval)
-	cmdViewGetLastClaimedBlock := CreateGetLastClaimedBlockCommand()
-	cmdViewGetLastClaimedBlock.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewGetLastClaimedBlock)
-	cmdViewGetTokenAddress := CreateGetTokenAddressCommand()
-	cmdViewGetTokenAddress.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewGetTokenAddress)
-	cmdViewGetTokenBalance := CreateGetTokenBalanceCommand()
-	cmdViewGetTokenBalance.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewGetTokenBalance)
+	cmdViewFaucetAmount := CreateFaucetAmountCommand()
+	cmdViewFaucetAmount.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewFaucetAmount)
+	cmdViewFaucetBlockInterval := CreateFaucetBlockIntervalCommand()
+	cmdViewFaucetBlockInterval.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewFaucetBlockInterval)
+	cmdViewLastClaimedBlock := CreateLastClaimedBlockCommand()
+	cmdViewLastClaimedBlock.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewLastClaimedBlock)
 	cmdViewOwner := CreateOwnerCommand()
 	cmdViewOwner.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewOwner)
-	cmdViewGetFaucetAmount := CreateGetFaucetAmountCommand()
-	cmdViewGetFaucetAmount.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewGetFaucetAmount)
+	cmdViewTokenAddress := CreateTokenAddressCommand()
+	cmdViewTokenAddress.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewTokenAddress)
 
 	cmdTransactClaim := CreateClaimCommand()
 	cmdTransactClaim.GroupID = TransactGroup.ID
