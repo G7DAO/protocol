@@ -6,7 +6,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @title Token Faucet
- * @author Game7 Engineering Team - engineering@game7.io
+ * @author Game7 Engineering Team - worldbuilder@game7.io
  */
 contract TokenFaucet is Ownable {
     address public tokenAddress;
@@ -27,6 +27,9 @@ contract TokenFaucet is Ownable {
         transferOwnership(_owner);
     }
 
+    /**
+     * @notice Claim tokens from the faucet
+     */
     function claim() public {
         uint256 current_block = block.number;
         if(current_block <= lastClaimedBlock[msg.sender] + faucetBlockInterval) {
@@ -37,6 +40,11 @@ contract TokenFaucet is Ownable {
         lastClaimedBlock[msg.sender] = current_block;
     }
 
+    /**
+     * @notice Set the faucet block interval
+     * @dev Only the owner can call this function
+     * @param _faucetBlockInterval The block interval between claims
+     */
     function setFaucetBlockInterval(uint256 _faucetBlockInterval)
         public
         onlyOwner
@@ -44,14 +52,38 @@ contract TokenFaucet is Ownable {
         faucetBlockInterval = _faucetBlockInterval;
     }
 
+    /**
+     * @notice Set the faucet amount
+     * @dev Only the owner can call this function
+     * @param _faucetAmount The amount of tokens to send
+     */
     function setFaucetAmount(uint256 _faucetAmount) public onlyOwner {
         faucetAmount = _faucetAmount;
     }
 
+    /**
+     * @notice Set the token address
+     * @dev Only the owner can call this function
+     * @param _tokenAddress The address of the token to set
+     */
     function setTokenAddress(address _tokenAddress)
         public
         onlyOwner
     {
         tokenAddress = _tokenAddress;
+    }
+
+    /**
+     * @notice Rescue tokens from the contract
+     * @dev Only the owner can call this function
+     * @param _token The address of the token to rescue
+     * @param _to The address to send the rescued tokens to
+     * @param _amount The amount of tokens to rescue
+     */
+    function rescueTokens(address _token, address _to, uint256 _amount)
+        public
+        onlyOwner
+    {
+        IERC20(_token).transfer(_to, _amount);
     }
 }

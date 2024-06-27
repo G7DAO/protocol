@@ -38,6 +38,9 @@ describe("TokenFaucet", function () {
 
   it("Should deploy the TokenFaucet", async function () {
     expect(await tokenFaucet.tokenAddress()).to.equal(tokenAddress);
+    expect(await tokenFaucet.owner()).to.equal(owner.address);
+    expect(await tokenFaucet.faucetAmount()).to.equal(faucetAmount);
+    expect(await tokenFaucet.faucetBlockInterval()).to.equal(blockInterval);
   });
 
   it("Should set and get faucet amount", async function () {
@@ -85,6 +88,16 @@ describe("TokenFaucet", function () {
     await tokenFaucet.claim();
     await expect(tokenFaucet.claim()).to.be.revertedWithCustomError(tokenFaucet, "TokenFaucetClaimIntervalNotPassed");
   });
+
+  it("Should allow claiming tokens if block interval passed", async function () {
+    const tokenFaucetAddress = await tokenFaucet.getAddress();
+    await token.transfer(tokenFaucetAddress, initialSupply);
+    await expect(tokenFaucet.claim()).to.emit(token, "Transfer").withArgs(tokenFaucetAddress, owner.address, faucetAmount);
+    for(let i = 0; i < blockInterval; i++) {
+      await ethers.provider.send("evm_mine", []);
+    }
+    await expect(tokenFaucet.claim()).to.emit(token, "Transfer").withArgs(tokenFaucetAddress, owner.address, faucetAmount);
+  })
 
   it("Should transfer ownership", async function () {
     await expect(tokenFaucet.transferOwnership(addr1.address)).to.emit(tokenFaucet, "OwnershipTransferred").withArgs(owner.address, addr1.address);
