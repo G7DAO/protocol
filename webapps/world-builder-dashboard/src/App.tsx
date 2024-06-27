@@ -6,6 +6,7 @@ import utc from 'dayjs/plugin/utc'
 import { ThemeProvider, AssetsProvider, Tenant } from 'summon-ui'
 import { IntlProvider } from 'summon-ui/intl'
 import { Notifications } from 'summon-ui/mantine'
+import { BlockchainProvider } from '@/components/bridge/BlockchainContext'
 import en from '@/lang/en.json'
 import { AuthProvider } from '@/providers/AuthProvider'
 import router from '@/router'
@@ -47,23 +48,25 @@ const { name, lang, uiTheme } = TENANT_CONFIG
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AssetsProvider tenant={name as Tenant}>
-        <IntlProvider
-          intlConf={{
-            currentLang: lang as LangKey,
-            messagesConf: {
-              ...enMessages
-            }
-          }}
-        >
-          <ThemeProvider uiTheme={uiTheme}>
-            <Notifications position='top-right' zIndex={1000} styles={NOTIFICATIONS_STYLES} />
-            <AuthProvider>
-              <RouterProvider router={router} />
-            </AuthProvider>
-          </ThemeProvider>
-        </IntlProvider>
-      </AssetsProvider>
+      <BlockchainProvider>
+        <AssetsProvider tenant={name as Tenant}>
+          <IntlProvider
+            intlConf={{
+              currentLang: lang as LangKey,
+              messagesConf: {
+                ...enMessages
+              }
+            }}
+          >
+            <ThemeProvider uiTheme={uiTheme}>
+              <Notifications position='top-right' zIndex={1000} styles={NOTIFICATIONS_STYLES} />
+              <AuthProvider>
+                <RouterProvider router={router} />
+              </AuthProvider>
+            </ThemeProvider>
+          </IntlProvider>
+        </AssetsProvider>
+      </BlockchainProvider>
     </QueryClientProvider>
   )
 }
