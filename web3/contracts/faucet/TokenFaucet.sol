@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.24;
 
 import {IERC20} from "../interfaces/IERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
@@ -13,17 +13,19 @@ contract TokenFaucet is Ownable {
     uint256 public faucetAmount;
     uint256 public faucetBlockInterval;
     mapping(address => uint256) public lastClaimedBlock;
+    uint64 public constant DEFAULT_GAS_LIMIT = 21000;
 
     error TokenFaucetClaimIntervalNotPassed();
+
     constructor(
         address _tokenAddress,
         address _owner,
         uint256 _faucetAmount,
-        uint256 _faucetBlockInternal
+        uint256 _faucetBlockInterval
     ) Ownable(_owner) {
         tokenAddress = _tokenAddress;
         faucetAmount = _faucetAmount;
-        faucetBlockInterval = _faucetBlockInternal;
+        faucetBlockInterval = _faucetBlockInterval;
         transferOwnership(_owner);
     }
 
@@ -35,9 +37,8 @@ contract TokenFaucet is Ownable {
         if(current_block <= lastClaimedBlock[msg.sender] + faucetBlockInterval) {
             revert TokenFaucetClaimIntervalNotPassed();
         }
-
-        IERC20(tokenAddress).transfer(msg.sender, faucetAmount);
         lastClaimedBlock[msg.sender] = current_block;
+        IERC20(tokenAddress).transfer(msg.sender, faucetAmount);
     }
 
     /**
