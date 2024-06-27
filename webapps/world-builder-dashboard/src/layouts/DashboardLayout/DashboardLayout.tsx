@@ -1,18 +1,13 @@
 import { ReactNode } from 'react'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
+import styles from './DashboardLayout.module.css'
 import { DashboardLayout as SummonUiDashboardLayout, Icon, IconName } from 'summon-ui'
-import { Box, NavLink, Stack, Badge, Flex, Avatar, Text } from 'summon-ui/mantine'
+import { Box, NavLink, Stack, Badge } from 'summon-ui/mantine'
+import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
 import withAuth from '@/hocs/withAuth'
-import { useAuthState } from '@/providers/AuthProvider'
 import { useAppVersion, useIsDevMode } from '@/utils/utils'
 
-const BOTTOM_MENU = [
-  {
-    name: 'Settings',
-    to: '/settings',
-    icon: 'Settings01' as IconName
-  }
-]
+const BOTTOM_MENU: { name: string; to: string; icon: IconName }[] = []
 const NAVIGATION_MENU: {
   name: string
   icon: IconName
@@ -68,12 +63,8 @@ const renderBottomMenu = ({
   isCollapsed: boolean
   closeMobileMenu: () => void
 }): ReactNode => {
-  const navigate = useNavigate()
-  const { user, logout } = useAuthState()
-  const handleLogout = () => {
-    logout()
-    navigate('/')
-  }
+  const { connectedAccount } = useBlockchainContext()
+
   return (
     <>
       <Stack gap={4} align={isCollapsed ? 'center' : 'stretch'} w='100%' mb={42}>
@@ -89,29 +80,10 @@ const renderBottomMenu = ({
             {...(isCollapsed ? {} : { label: link.name })}
           />
         ))}
+        {connectedAccount && (
+          <div className={styles.web3address}>{`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}</div>
+        )}
       </Stack>
-
-      <Flex
-        justify='space-between'
-        align='center'
-        direction={isCollapsed ? 'column' : 'row'}
-        gap={isCollapsed ? 'sm' : 0}
-      >
-        <Flex align='center' gap='lg'>
-          <Avatar
-            size='md'
-            radius='sm'
-            src='https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-1.png'
-          />
-          {!isCollapsed && user && (
-            <Stack gap={2}>
-              <Text size='md'>{`${user.firstName} ${user.lastName}`}</Text>
-              <Text size='sm'>{user.email}</Text>
-            </Stack>
-          )}
-        </Flex>
-        <Icon name='LogOut01' size='md' variant='subtle' onClick={handleLogout} />
-      </Flex>
     </>
   )
 }
