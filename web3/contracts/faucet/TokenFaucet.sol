@@ -13,7 +13,6 @@ contract TokenFaucet is Ownable {
     uint256 public faucetAmount;
     uint256 public faucetBlockInterval;
     mapping(address => uint256) public lastClaimedBlock;
-    uint64 public constant DEFAULT_GAS_LIMIT = 21000;
 
     error TokenFaucetClaimIntervalNotPassed();
 
