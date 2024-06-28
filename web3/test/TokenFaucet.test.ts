@@ -30,6 +30,7 @@ describe("TokenFaucet", function () {
     tokenFaucet = await TokenFaucet.deploy(
       tokenAddress,
       owner.address,
+      ethers.ZeroAddress,
       faucetAmount,
       blockInterval
     );
