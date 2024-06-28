@@ -16,6 +16,7 @@ const config: HardhatUserConfig = {
     apiKey: {
       [NetworkName.Ethereum]: ETHSCAN_API_KEY || '',
       [NetworkName.ArbitrumOne]: ARB_SCAN_API_KEY || '',
+      [NetworkName.ArbitrumSepolia]: ARB_SCAN_API_KEY || '',
     },
     customChains: [
       {
@@ -53,6 +54,10 @@ const config: HardhatUserConfig = {
       url: rpcUrls[ChainId.Game7OrbitBaseSepolia],
       chainId: ChainId.Game7OrbitBaseSepolia,
     },
+    [NetworkName.ArbitrumSepolia]: {
+      url: rpcUrls[ChainId.ArbitrumSepolia],
+      chainId: ChainId.ArbitrumSepolia,
+    }
   },
 };
 

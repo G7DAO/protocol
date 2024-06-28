@@ -49,9 +49,9 @@ contract TokenFaucet is Ownable {
     }
 
     /**
-     * @notice Claim tokens from the faucet on L2
+     * @notice Claim tokens from the faucet on L3
      */
-    function claimL2() public blockInterval {
+    function claimL3() public blockInterval {
         IERC20(tokenAddress).approve(inboxAddress, faucetAmount);
         IERC20Inbox(inboxAddress).createRetryableTicket(
             msg.sender,
@@ -94,8 +94,8 @@ contract TokenFaucet is Ownable {
     }
 
     /**
-     * @notice Deposit eth from L1 to L2 to address of the sender if sender is an EOA, and to its aliased address if the sender is a contract
-     * @dev This does not trigger the fallback function when receiving in the L2 side.
+     * @notice Deposit eth from L2 to L3 to address of the sender if sender is an EOA, and to its aliased address if the sender is a contract
+     * @dev This does not trigger the fallback function when receiving in the L3 side.
      *      Look into retryable tickets if you are interested in this functionality.
      * @dev This function should not be called inside contract constructors
      */
