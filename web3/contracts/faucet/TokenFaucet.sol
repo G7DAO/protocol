@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.24;
 
-import {IERC20} from "../interfaces/IERC20.sol";
-import {IERC20Inbox} from "../interfaces/IERC20Inbox.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import { IERC20 } from "../interfaces/IERC20.sol";
+import { IERC20Inbox } from "../interfaces/IERC20Inbox.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @title Token Faucet
@@ -20,12 +20,13 @@ contract TokenFaucet is Ownable {
 
     modifier blockInterval() {
         uint256 current_block = block.number;
-        if(current_block <= lastClaimedBlock[msg.sender] + faucetBlockInterval) {
+        if (current_block <= lastClaimedBlock[msg.sender] + faucetBlockInterval) {
             revert TokenFaucetClaimIntervalNotPassed();
         }
         _;
         lastClaimedBlock[msg.sender] = current_block;
     }
+
     constructor(
         address _tokenAddress,
         address _owner,
@@ -40,7 +41,7 @@ contract TokenFaucet is Ownable {
         transferOwnership(_owner);
     }
 
-      /**
+    /**
      * @notice Claim tokens from the faucet
      */
     function claim() public blockInterval {
@@ -70,10 +71,7 @@ contract TokenFaucet is Ownable {
      * @dev Only the owner can call this function
      * @param _faucetBlockInterval The block interval between claims
      */
-    function setFaucetBlockInterval(uint256 _faucetBlockInterval)
-        public
-        onlyOwner
-    {
+    function setFaucetBlockInterval(uint256 _faucetBlockInterval) public onlyOwner {
         faucetBlockInterval = _faucetBlockInterval;
     }
 
@@ -91,12 +89,9 @@ contract TokenFaucet is Ownable {
      * @dev Only the owner can call this function
      * @param _tokenAddress The address of the token to set
      */
-    function setTokenAddress(address _tokenAddress)
-        public
-        onlyOwner
-    {
+    function setTokenAddress(address _tokenAddress) public onlyOwner {
         tokenAddress = _tokenAddress;
-    } 
+    }
 
     /**
      * @notice Deposit eth from L1 to L2 to address of the sender if sender is an EOA, and to its aliased address if the sender is a contract
@@ -104,10 +99,7 @@ contract TokenFaucet is Ownable {
      *      Look into retryable tickets if you are interested in this functionality.
      * @dev This function should not be called inside contract constructors
      */
-    function setInboxAddress(address _inboxAddress)
-        public
-        onlyOwner
-    {
+    function setInboxAddress(address _inboxAddress) public onlyOwner {
         inboxAddress = _inboxAddress;
     }
 
@@ -118,10 +110,7 @@ contract TokenFaucet is Ownable {
      * @param _to The address to send the rescued tokens to
      * @param _amount The amount of tokens to rescue
      */
-    function rescueTokens(address _token, address _to, uint256 _amount)
-        public
-        onlyOwner
-    {
+    function rescueTokens(address _token, address _to, uint256 _amount) public onlyOwner {
         IERC20(_token).transfer(_to, _amount);
     }
 }
