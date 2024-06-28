@@ -14,6 +14,7 @@ contract TokenFaucet is Ownable {
     address public inboxAddress;
     uint256 public faucetAmount;
     uint256 public faucetBlockInterval;
+    uint256 public DEFAULT_GAS_LIMIT = 21000;
     mapping(address => uint256) public lastClaimedBlock;
 
     error TokenFaucetClaimIntervalNotPassed();
@@ -52,16 +53,17 @@ contract TokenFaucet is Ownable {
      * @notice Claim tokens from the faucet on L3
      */
     function claimL3() public blockInterval {
-        IERC20(tokenAddress).approve(inboxAddress, faucetAmount);
+        uint256 _tokenTotalFeeAmount = (DEFAULT_GAS_LIMIT * block.basefee) + faucetAmount;
+        IERC20(tokenAddress).approve(inboxAddress, _tokenTotalFeeAmount);
         IERC20Inbox(inboxAddress).createRetryableTicket(
             msg.sender,
             faucetAmount,
             0,
             address(this),
             address(this),
-            0,
+            DEFAULT_GAS_LIMIT,
             block.basefee,
-            faucetAmount,
+            _tokenTotalFeeAmount,
             ""
         );
     }
