@@ -100,9 +100,9 @@ func CreateGenerateKeyFileCommand() *cobra.Command {
 		},
 	}
 
-	createCmd.Flags().StringVar(&privateKeyRaw, "private-key", "", "Private key to sign transaction with")
-	createCmd.Flags().StringVar(&keyfileDir, "output", "", "Directory to output keyfile to")
-	createCmd.Flags().StringVar(&password, "password", "", "Password to encrypt keyfile with")
+	createCmd.Flags().StringVarP(&privateKeyRaw, "private-key", "k", "", "Private key to sign transaction with")
+	createCmd.Flags().StringVarP(&keyfileDir, "output", "o", "", "Directory to output keyfile to")
+	createCmd.Flags().StringVarP(&password, "password", "p", "", "Password to encrypt keyfile with")
 
 	return createCmd
 }
