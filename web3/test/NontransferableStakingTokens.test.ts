@@ -300,4 +300,66 @@ describe("NontransferableStakingTokens contract", function () {
     });
   });
 
+  describe("Token nontransferability", function () {
+    const depositAmount = ethers.parseEther("1.0");
+    const lockingPeriod = 3600; // 1 hour
+
+    it("should not allow transer of staking positions", async function () {
+      await token.connect(user1).approve(stakingAddress, ethers.parseEther("10.0"));
+
+      const initialERC20Balance = await token.balanceOf(user1.address);
+      const depositTokenCount = await staking.balanceOf(user1.address);
+
+      await expect(
+        staking.connect(user1)["deposit(address,uint256,uint256)"](tokenAddress, depositAmount, 0)
+      ).to.emit(staking, "Deposited").withArgs(tokenAddress, user1.address, user1.address, 0, depositAmount);
+
+      const depositTokenID = await staking.tokenOfOwnerByIndex(user1.address, depositTokenCount)
+      const lastDeposit = await staking.getDeposit(depositTokenID);
+
+      const blockNumber = await ethers.provider.getBlockNumber();
+      const block = await ethers.provider.getBlock(blockNumber);
+      const timestamp = block?.timestamp || 0;
+
+      expect(await staking.balanceOf(user1.address)).to.equal(depositTokenCount + BigInt(1));
+      expect(lastDeposit.tokenAddress).to.equal(tokenAddress.toString());
+      expect(lastDeposit.amount).to.equal(depositAmount);
+      expect(lastDeposit.start).to.equal(timestamp);
+      expect(lastDeposit.end).to.equal(timestamp);
+      expect(await token.balanceOf(user1.address)).to.equal(initialERC20Balance - depositAmount);
+
+      const metadata = JSON.parse(await staking.metadataJSON(depositTokenID));
+
+      expect(metadata.attributes[0].value).to.equal(tokenAddress.toString().toLowerCase());
+      expect(metadata.attributes[1].value).to.equal(depositAmount);
+      expect(metadata.attributes[2].value).to.equal(timestamp);
+      expect(metadata.attributes[3].value).to.equal(timestamp);
+
+      // Attempt to transfer
+      await expect(
+        staking.connect(user1).transferFrom(user1.address, user2.address, depositTokenID)
+      ).to.be.reverted;
+      await expect(
+        staking.connect(user1)["safeTransferFrom(address,address,uint256)"](user1.address, user2.address, depositTokenID)
+      ).to.be.reverted;
+      await expect(
+        staking.connect(user1)["safeTransferFrom(address,address,uint256,bytes)"](user1.address, user2.address, depositTokenID, "0x")
+      ).to.be.reverted;
+      await expect(
+        staking.connect(user1).approve(user2.address, depositTokenID)
+      ).to.be.reverted;
+      await expect(
+        staking.connect(user1).setApprovalForAll(user2.address, true)
+      ).to.be.reverted;
+
+      await expect(
+        staking.connect(user1)["withdraw(uint256)"](depositTokenID)
+      ).to.emit(staking, "Withdrawn").withArgs(depositTokenID, user1.address, user1.address);
+
+      expect(await staking.balanceOf(user1.address)).to.equal(depositTokenCount);
+      expect(await token.balanceOf(user1.address)).to.equal(initialERC20Balance); 
+    });
+
+  });
+
 });
