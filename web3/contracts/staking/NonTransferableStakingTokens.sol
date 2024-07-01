@@ -10,10 +10,10 @@ import { Base64 } from "@openzeppelin/contracts/utils/Base64.sol";
 import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 
 /**
- * @title Game7 Staking Tokens
+ * @title Game7 Nontransferable Staking Tokens
  * @author Game7 Engineering Team - engineering@game7.io
  */
-contract StakingTokens is ERC721Enumerable, ReentrancyGuard {
+contract NontransferableStakingTokens is ERC721Enumerable, ReentrancyGuard {
 
     struct Deposit {
         address tokenAddress;
@@ -163,5 +163,23 @@ contract StakingTokens is ERC721Enumerable, ReentrancyGuard {
 
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         return string(abi.encodePacked("data:application/json;base64,", Base64.encode(_metadata(tokenId))));
+    }
+
+
+    // Disabling transfers
+    function transferFrom(address /*from*/, address /*to*/, uint256 /*tokenId*/) public virtual override(ERC721, IERC721) {
+        revert("Transfer from disabled");
+    }
+
+    function safeTransferFrom(address /*from*/, address /*to*/, uint256 /*tokenId*/, bytes memory /*_data*/) public virtual override(ERC721, IERC721) {
+        revert("Safe transfer from disabled");
+    }
+
+    function approve(address /*to*/, uint256 /*tokenId*/) public virtual override(ERC721, IERC721) {
+        revert("Approve disabled");
+    }
+
+    function setApprovalForAll(address /*operator*/, bool /*approved*/) public virtual override(ERC721, IERC721) {
+        revert("Set approval for all disabled");
     }
 }

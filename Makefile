@@ -17,13 +17,17 @@ bindings/StakingTokens/StakingTokens.go: hardhat
 	mkdir -p bindings/StakingTokens
 	seer evm generate --package StakingTokens --output bindings/StakingTokens/StakingTokens.go --hardhat web3/artifacts/contracts/staking/StakingTokens.sol/StakingTokens.json --cli --struct StakingTokens
 
-bindings: bindings/ERC20/ERC20.go bindings/StakingTokens/StakingTokens.go
+bindings/NontransferableStakingTokens/NontransferableStakingTokens.go: hardhat
+	mkdir -p bindings/NontransferableStakingTokens
+	seer evm generate --package NontransferableStakingTokens --output bindings/NontransferableStakingTokens/NontransferableStakingTokens.go --hardhat web3/artifacts/contracts/staking/NontransferableStakingTokens.sol/NontransferableStakingTokens.json --cli --struct NontransferableStakingTokens
+
+bindings: bindings/ERC20/ERC20.go bindings/StakingTokens/StakingTokens.go bindings/NontransferableStakingTokens/NontransferableStakingTokens.go
 
 test:
 	npx hardhat test
 
 clean:
-	rm -rf bindings/ERC20/* bin/* bindings/TokenFaucet/* bindings/StakingTokens/*
+	rm -rf bindings/ERC20/* bin/* bindings/TokenFaucet/* bindings/StakingTokens/* bindings/NontransferableStakingTokens/*
 
 hardhat:
 	cd web3 && npm install && npx hardhat compile
