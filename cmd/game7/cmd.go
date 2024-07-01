@@ -5,6 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/G7DAO/protocol/accounts"
 	"github.com/G7DAO/protocol/bindings/ArbSys"
 	"github.com/G7DAO/protocol/bindings/ArbitrumL1OrbitCustomGateway"
 	"github.com/G7DAO/protocol/bindings/ArbitrumL1OrbitGatewayRouter"
@@ -58,7 +59,10 @@ func CreateRootCommand() *cobra.Command {
 	faucetCmd := TokenFaucet.CreateTokenFaucetCommand()
 	faucetCmd.Use = "faucet"
 
-	rootCmd.AddCommand(completionCmd, versionCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd)
+	accountsCmd := accounts.CreateAccountsCommand()
+	accountsCmd.Use = "accounts"
+
+	rootCmd.AddCommand(completionCmd, versionCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd, accountsCmd)
 
 	// By default, cobra Command objects write to stderr. We have to forcibly set them to output to
 	// stdout.
