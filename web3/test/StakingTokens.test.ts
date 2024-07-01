@@ -1,13 +1,17 @@
-import { Game7Token, StakingTokens } from "../typechain-types";
+import { ERC20, StakingTokens } from "../typechain-types";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { toWei } from "../helpers/bignumber";
 import { latest } from "@nomicfoundation/hardhat-network-helpers/dist/src/helpers/time";
 
 const zeroAddress = "0x0000000000000000000000000000000000000000";
+const name = 'Game7 Token';
+const symbol = 'G7T';
+const decimals = 18;
+const initialSupply = ethers.parseEther("100.0");
 
 describe("StakingTokens contract", function () {
-  let token: Game7Token;
+  let token: ERC20;
   let tokenAddress: string; 
   let staking: StakingTokens;
   let stakingAddress: string;
@@ -15,27 +19,24 @@ describe("StakingTokens contract", function () {
   let user1: Awaited<ReturnType<typeof ethers.getSigners>>[0];
   let user2: Awaited<ReturnType<typeof ethers.getSigners>>[0];
 
-  const totalSupply = toWei(1000);
-
   beforeEach(async function () {
-    const TokenFactory = await ethers.getContractFactory("Game7Token");
-    token = await TokenFactory.deploy(totalSupply);
+    token = await ethers.deployContract("ERC20", [name, symbol, decimals, initialSupply]);
     tokenAddress = await token.getAddress();
     const StakingFactory = await ethers.getContractFactory("StakingTokens");
     staking = await StakingFactory.deploy();
     stakingAddress = await staking.getAddress();
     [deployer, user1, user2] = await ethers.getSigners();
 
-    await token.transfer(user1.address, ethers.parseEther("100"));
-    await deployer.sendTransaction({to: user1.address, value: toWei(100)});
+    await token.connect(deployer).transfer(user1.address, ethers.parseEther("10.0"));
+    await deployer.sendTransaction({to: user1.address, value: ethers.parseEther("10.0")});
   });
 
   describe("Staking ERC20", function () {
-    const depositAmount = toWei(2);
+    const depositAmount = ethers.parseEther("1.0");
     const lockingPeriod = 3600; // 1 hour
 
     it("should allow deposit/withdraw with no locking period", async function () {
-      await token.connect(user1).approve(stakingAddress, toWei(100));
+      await token.connect(user1).approve(stakingAddress, ethers.parseEther("10.0"));
 
       const initialERC20Balance = await token.balanceOf(user1.address);
       const depositTokenCount = await staking.balanceOf(user1.address);
@@ -74,7 +75,7 @@ describe("StakingTokens contract", function () {
     });
 
     it("should allow deposit/withdraw with locking period", async function () {
-      await token.connect(user1).approve(stakingAddress, toWei(100));
+      await token.connect(user1).approve(stakingAddress, ethers.parseEther("10.0"));
 
       const initialERC20Balance = await token.balanceOf(user1.address);
       const depositTokenCount = await staking.balanceOf(user1.address);
@@ -125,7 +126,7 @@ describe("StakingTokens contract", function () {
     });
 
     it("should allow deposit/withdraw on behalf of another account", async function () {
-      await token.connect(user1).approve(stakingAddress, toWei(100));
+      await token.connect(user1).approve(stakingAddress, ethers.parseEther("10.0"));
       const initialERC20Balance = await token.balanceOf(user1.address);
       const depositTokenCount = await staking.balanceOf(user2.address);
 

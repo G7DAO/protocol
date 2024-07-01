@@ -11,10 +11,10 @@ import (
 	"github.com/G7DAO/protocol/bindings/ArbitrumL2CustomGateway"
 	"github.com/G7DAO/protocol/bindings/ArbitrumUpgradeExecutor"
 	"github.com/G7DAO/protocol/bindings/ERC20Inbox"
+	"github.com/G7DAO/protocol/bindings/TokenFaucet"
+	"github.com/G7DAO/protocol/bridge"
 
-	"github.com/G7DAO/protocol/bindings/Game7Token"
-	"github.com/G7DAO/protocol/bindings/Staking"
-	"github.com/G7DAO/protocol/bindings/Staking2"
+	"github.com/G7DAO/protocol/bindings/ERC20"
 	"github.com/G7DAO/protocol/bindings/StakingTokens"
 	"github.com/G7DAO/protocol/cmd/game7/version"
 )
@@ -32,14 +32,8 @@ func CreateRootCommand() *cobra.Command {
 	completionCmd := CreateCompletionCommand(rootCmd)
 	versionCmd := CreateVersionCommand()
 
-	tokenCmd := Game7Token.CreateGame7TokenCommand()
+	tokenCmd := ERC20.CreateERC20Command()
 	tokenCmd.Use = "token"
-
-	stakingCmd := Staking.CreateStakingCommand()
-	stakingCmd.Use = "staking"
-
-	staking2Cmd := Staking2.CreateStaking2Command()
-	staking2Cmd.Use = "staking2"
 
 	stakingTokensCmd := StakingTokens.CreateStakingTokensCommand()
 	stakingTokensCmd.Use = "staking-tokens"
@@ -62,7 +56,13 @@ func CreateRootCommand() *cobra.Command {
 	erc20InboxCmd := ERC20Inbox.CreateERC20InboxCommand()
 	erc20InboxCmd.Use = "erc20-inbox"
 
-	rootCmd.AddCommand(completionCmd, versionCmd, stakingCmd, staking2Cmd, stakingTokensCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd)
+	bridgeCmd := bridge.CreateBridgeCommand()
+	bridgeCmd.Use = "bridge"
+
+	faucetCmd := TokenFaucet.CreateTokenFaucetCommand()
+	faucetCmd.Use = "faucet"
+
+	rootCmd.AddCommand(completionCmd, versionCmd, tokenCmd, stakingTokensCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd)
 
 	// By default, cobra Command objects write to stderr. We have to forcibly set them to output to
 	// stdout.
