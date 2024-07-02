@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 
 import { HardhatEthersSigner } from "../helpers/type";
-import { ERC20 } from "../typechain-types";
+import { ERC20, UniswapV2Pair__factory } from "../typechain-types";
 import { UniswapV2Factory } from "../typechain-types";
 import { UniswapV2Pair } from "../typechain-types";
 
@@ -28,13 +28,11 @@ describe("UniswapV2", function () {
   let factory: UniswapV2Factory;
   let factoryAddress: string;
 
-  let v2Pair: UniswapV2Pair;
-  let pairAddress: string;
 
 
   beforeEach(async function () {
     [owner, addr1, addr2] = await ethers.getSigners();
-
+    UniswapV2Pair__factory.createInterface;
     token0 = await ethers.deployContract("ERC20", [name, symbol, decimals, initialSupply]);
     token0Address = await token0.getAddress();
     await token0.waitForDeployment();
@@ -50,14 +48,18 @@ describe("UniswapV2", function () {
     factoryAddress = await factory.getAddress();
     await factory.waitForDeployment();
     //create V2 LP
-    await factory.createPair(token0Address, token1Address);
+    const v2PairAbi = UniswapV2Pair__factory.createInterface();
+    const pairAddress = await factory.createPair(token0Address, token1Address)
+    const v2Pair = await new ethers.Contract(pairAddress.toString(), v2PairAbi, ethers.provider);
+    
   });
 
   it("Should return null pairing", async function(){
     expect(await factory.getPair("0x0000000000000000000000000000000000000000", "0x0000000000000000000000000000000000000000")).to.equal("0x0000000000000000000000000000000000000000");
   });
-  it("Should creat new ERC20 LP contract", async function(){
+  it("Should return non-null address", async function(){
     expect((await factory.getPair(token0Address, token1Address))).to.not.equal("0x0000000000000000000000000000000000000000")
   });
+
 
 });
