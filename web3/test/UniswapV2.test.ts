@@ -1,18 +1,12 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
-
 import { HardhatEthersSigner } from "../helpers/type";
 import { ERC20, UniswapV2Pair__factory } from "../typechain-types";
 import { UniswapV2Factory } from "../typechain-types";
 import { UniswapV2Pair } from "../typechain-types";
 
+const initialSupply = BigInt(100000000000);
 
-const name = 'Game7 Token';
-const symbol = 'G7T';
-const decimals = 18;
-const initialSupply = BigInt(10000);
-const name1 = 'TestToken'
-const symbol1 = 'TT'
 
 describe("UniswapV2", function () {
 
@@ -24,20 +18,15 @@ describe("UniswapV2", function () {
   let token0Address: string;
   let token1: ERC20;
   let token1Address: string;
-
-  let factory: UniswapV2Factory;
-  let factoryAddress: string;
-
-
+  let factory: any;
+  let v2Pair: any;
 
   beforeEach(async function () {
     [owner, addr1, addr2] = await ethers.getSigners();
-    UniswapV2Pair__factory.createInterface;
-    token0 = await ethers.deployContract("ERC20", [name, symbol, decimals, initialSupply]);
-    token0Address = await token0.getAddress();
-    await token0.waitForDeployment();
 
-    token1 = await ethers.deployContract("ERC20", [name1, symbol1, decimals, initialSupply]);
+    token0 = await ethers.deployContract("ERC20", ['Token0', 'TKN0', 18, initialSupply]);
+    token0Address = await token0.getAddress();
+    token1 = await ethers.deployContract("ERC20", ['Token1', 'TKN1', 18, initialSupply]);
     token1Address = await token1.getAddress();
     await token1.waitForDeployment();
 
@@ -45,21 +34,51 @@ describe("UniswapV2", function () {
     factory = await UniswapV2Factory.deploy(
         owner.address
     );
-    factoryAddress = await factory.getAddress();
+
     await factory.waitForDeployment();
     //create V2 LP
-    const v2PairAbi = UniswapV2Pair__factory.createInterface();
-    const pairAddress = await factory.createPair(token0Address, token1Address)
-    const v2Pair = await new ethers.Contract(pairAddress.toString(), v2PairAbi, ethers.provider);
-    
+
+    await factory.createPair(token0Address, token1Address);
+    const pairAddress = await factory.getPair(token0Address, token1Address);
+    v2Pair = await ethers.getContractAt('UniswapV2Pair',pairAddress) as UniswapV2Pair;
+
   });
 
   it("Should return null pairing", async function(){
     expect(await factory.getPair("0x0000000000000000000000000000000000000000", "0x0000000000000000000000000000000000000000")).to.equal("0x0000000000000000000000000000000000000000");
   });
   it("Should return non-null address", async function(){
-    expect((await factory.getPair(token0Address, token1Address))).to.not.equal("0x0000000000000000000000000000000000000000")
+    expect((await factory.getPair(token0.getAddress(), token1.getAddress()))).to.not.equal("0x0000000000000000000000000000000000000000")
   });
+  it("Should transfer tokens to v2Pair", async function(){
+    const pairAddress = await factory.getPair(token0.getAddress(), token1.getAddress());
+    await token0.transfer(pairAddress, BigInt(10));
+    expect(await token0.balanceOf(pairAddress)).to.equal(BigInt(10));
+    await token1.transfer(pairAddress, BigInt(10));
+    expect(await token1.balanceOf(pairAddress)).to.equal(BigInt(10));
+    
+  });
+  
+  it("Should Mint LP tokens to owner", async function(){
+    const pairAddress = await factory.getPair(token0Address, token1Address);
+    await token0.transfer(pairAddress, BigInt(100000));
+    await token1.transfer(pairAddress, BigInt(100000));
+    await expect(v2Pair.mint(owner.address)).to.emit(v2Pair, "Mint").withArgs(owner.address, BigInt(100000),BigInt(100000));
+  });
+
+  it("Should transfer and sync tokens", async function () {
+    const pairAddress = await factory.getPair(token0Address, token1Address);
+    await token0.transfer(pairAddress, BigInt(100000));
+    await token1.transfer(pairAddress, BigInt(100000));
+    await v2Pair.mint(token0Address);
+    await token0.transfer(pairAddress, BigInt(100000));
+    expect(await token0.balanceOf(pairAddress)).to.equal(BigInt(200000));
+    //Removes unsync tokens from LP pair.
+    await v2Pair.skim(token0Address);
+    expect(await token0.balanceOf(pairAddress)).to.equal(BigInt(100000));
+    await v2Pair.sync();
+  });
+
 
 
 });
