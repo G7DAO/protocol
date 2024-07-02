@@ -76,7 +76,10 @@ describe("UniswapV2", function () {
     //Removes unsync tokens from LP pair.
     await v2Pair.skim(token0Address);
     expect(await token0.balanceOf(pairAddress)).to.equal(BigInt(100000));
+    await token0.transfer(pairAddress, BigInt(100000));
     await v2Pair.sync();
+    await v2Pair.skim(token0Address);
+    expect(await token0.balanceOf(pairAddress)).to.equal(BigInt(200000));
   });
 
 
