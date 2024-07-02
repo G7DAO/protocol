@@ -6,9 +6,9 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/ethereum/go-ethereum/accounts/keystore"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pborman/uuid"
-	"github.com/quan8/go-ethereum/accounts/keystore"
-	"github.com/quan8/go-ethereum/crypto"
 	"github.com/spf13/cobra"
 )
 
