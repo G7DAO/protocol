@@ -11,7 +11,16 @@ const {
 } = process.env
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.24",
+  solidity: {
+    compilers: [
+      {version: "0.8.24",
+      },
+      {
+        version: "0.5.16",
+        settings: {},
+      },
+    ],
+  },
   etherscan: {
     apiKey: {
       [NetworkName.Ethereum]: ETHSCAN_API_KEY || '',

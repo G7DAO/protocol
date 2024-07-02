@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import { Ownable__factory, TokenFaucet } from "../typechain-types";
 import { HardhatEthersSigner } from "../helpers/type";
-import { ERC20 } from "../typechain-types/token";
+import { ERC20 } from "../typechain-types";
 
 const name = 'Game7 Token';
 const symbol = 'G7T';
