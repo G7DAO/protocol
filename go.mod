@@ -4,7 +4,7 @@ go 1.21.5
 
 require (
 	github.com/ethereum/go-ethereum v1.14.3
-	github.com/pborman/uuid v1.2.1
+	github.com/google/uuid v1.3.0
 	github.com/spf13/cobra v1.8.0
 	golang.org/x/term v0.20.0
 )
@@ -26,7 +26,6 @@ require (
 	github.com/ethereum/c-kzg-4844 v1.0.0 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
-	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/holiman/uint256 v1.2.4 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
