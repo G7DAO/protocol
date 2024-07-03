@@ -17,7 +17,7 @@ This checklist describes how to deploy the Game7 Token Faucet.
 ## Environment variables
 
 - [ ] `export RPC=<rpc url of the chain>`
-- [ ] `export KEY=./.secrets/dao-dev.json`
+- [ ] `export KEY=<path to keyfile of caller account>`
 - [ ] `export DAO=<path to keyfile of caller account>`
 - [ ] `export TOKEN0=<address of the Token contract>`
 - [ ] `export TOKEN1=<address of the Token contract>`
