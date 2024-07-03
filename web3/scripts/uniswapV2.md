@@ -1,4 +1,4 @@
-# Deploy Game7 Token Faucet contract
+# Deploy Game7 Dex contract
 
 This checklist describes how to deploy the Game7 Token Faucet.
 ## RPC urls
