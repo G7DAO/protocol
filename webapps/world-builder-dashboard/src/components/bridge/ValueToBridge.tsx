@@ -21,19 +21,6 @@ interface ValueToBridgeProps {
   isFetchingBalance?: boolean
 }
 const ValueToBridge: React.FC<ValueToBridgeProps> = ({ setValue, value, balance, symbol, rate, isFetchingBalance }) => {
-  // const [balanceRepresentation, setBalanceRepresentation] = useState('0');
-  // const [balanceHasChanged, setBalanceHasChanged] = useState(false);
-  //
-  // useEffect(() => {
-  //     if (balance !== balanceRepresentation && balance) {
-  //         setBalanceHasChanged(true);
-  //         setTimeout(() => {
-  //             setBalanceRepresentation(balance);
-  //             setBalanceHasChanged(false);
-  //         }, 1000)
-  //     }
-  // }, [balance]);
-
   const [errorMsg] = useState('')
   return (
     <div className={styles.container}>
@@ -54,7 +41,8 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({ setValue, value, balance,
       <div className={styles.header}>
         <div className={styles.label}>{formatCurrency(Number(value) * rate)}</div>
         <div className={styles.available}>
-          <div className={`${styles.label} ${isFetchingBalance ? styles.blink : ''}`}>{balance ?? '0'}</div>
+          <div className={`${styles.label} ${isFetchingBalance ? styles.blink : ''}`}>{balance ?? '0'}</div>{' '}
+          {/*TODO how to display undefined balance */}
           <div className={styles.label}>{`${symbol} Available`}</div>
         </div>
       </div>
