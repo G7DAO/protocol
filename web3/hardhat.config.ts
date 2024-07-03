@@ -19,6 +19,10 @@ const config: HardhatUserConfig = {
         version: "0.5.16",
         settings: {},
       },
+      {
+        version: "0.6.6",
+        settings: {},
+      },
     ],
   },
   etherscan: {
