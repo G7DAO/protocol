@@ -13,6 +13,8 @@ import (
 	"github.com/G7DAO/protocol/bindings/ArbitrumUpgradeExecutor"
 	"github.com/G7DAO/protocol/bindings/ERC20Inbox"
 	"github.com/G7DAO/protocol/bindings/TokenFaucet"
+	"github.com/G7DAO/protocol/bindings/UniswapV2Factory"
+	"github.com/G7DAO/protocol/bindings/UniswapV2Pair"
 	"github.com/G7DAO/protocol/bridge"
 
 	"github.com/G7DAO/protocol/bindings/ERC20"
@@ -62,7 +64,26 @@ func CreateRootCommand() *cobra.Command {
 	accountsCmd := accounts.CreateAccountsCommand()
 	accountsCmd.Use = "accounts"
 
-	rootCmd.AddCommand(completionCmd, versionCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd, accountsCmd)
+	uniswapV2PairCmd := UniswapV2Pair.CreateUniswapV2PairCommand()
+	uniswapV2PairCmd.Use = "uniswap-v2-pair"
+
+	uniswapV2FactoryCmd := UniswapV2Factory.CreateUniswapV2FactoryCommand()
+	uniswapV2FactoryCmd.Use = "uniswap-v2-factory"
+
+	rootCmd.AddCommand(completionCmd,
+		versionCmd,
+		tokenCmd,
+		arbitrumL1OrbitCustomGatewayCmd,
+		arbitrumL2CustomGatewayCmd,
+		arbitrumUpgradeExecutorCmd,
+		arbitrumL1OrbitGatewayRouterCmd,
+		arbSysCmd,
+		erc20InboxCmd,
+		bridgeCmd,
+		faucetCmd,
+		accountsCmd,
+		uniswapV2PairCmd,
+		uniswapV2FactoryCmd)
 
 	// By default, cobra Command objects write to stderr. We have to forcibly set them to output to
 	// stdout.
