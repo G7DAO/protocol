@@ -21,7 +21,7 @@ describe("UniswapV2", function () {
   let factory: any;
   let v2Pair: any;
 
-  beforeEach(async function () {
+  before(async function () {
     [owner, addr1, addr2] = await ethers.getSigners();
 
     token0 = await ethers.deployContract("ERC20", ['Token0', 'TKN0', 18, initialSupply]);
@@ -37,7 +37,6 @@ describe("UniswapV2", function () {
 
     await factory.waitForDeployment();
     //create V2 LP
-
     await factory.createPair(token0Address, token1Address);
     const pairAddress = await factory.getPair(token0Address, token1Address);
     v2Pair = await ethers.getContractAt('UniswapV2Pair',pairAddress) as UniswapV2Pair;
@@ -52,31 +51,26 @@ describe("UniswapV2", function () {
   });
   it("Should transfer tokens to v2Pair", async function(){
     const pairAddress = await factory.getPair(token0.getAddress(), token1.getAddress());
-    await token0.transfer(pairAddress, BigInt(10));
-    expect(await token0.balanceOf(pairAddress)).to.equal(BigInt(10));
-    await token1.transfer(pairAddress, BigInt(10));
-    expect(await token1.balanceOf(pairAddress)).to.equal(BigInt(10));
+    await token0.transfer(pairAddress, BigInt(100000));
+    expect(await token0.balanceOf(pairAddress)).to.equal(BigInt(100000));
+    await token1.transfer(pairAddress, BigInt(100000));
+    expect(await token1.balanceOf(pairAddress)).to.equal(BigInt(100000));
     
   });
   
   it("Should Mint LP tokens to owner", async function(){
-    const pairAddress = await factory.getPair(token0Address, token1Address);
-    await token0.transfer(pairAddress, BigInt(100000));
-    await token1.transfer(pairAddress, BigInt(100000));
     await expect(v2Pair.mint(owner.address)).to.emit(v2Pair, "Mint").withArgs(owner.address, BigInt(100000),BigInt(100000));
   });
 
   it("Should transfer and sync tokens", async function () {
     const pairAddress = await factory.getPair(token0Address, token1Address);
     await token0.transfer(pairAddress, BigInt(100000));
-    await token1.transfer(pairAddress, BigInt(100000));
-    await v2Pair.mint(token0Address);
-    await token0.transfer(pairAddress, BigInt(100000));
     expect(await token0.balanceOf(pairAddress)).to.equal(BigInt(200000));
-    //Removes unsync tokens from LP pair.
+    //Removes, skims any token0 and token1 not in reserves.
     await v2Pair.skim(token0Address);
     expect(await token0.balanceOf(pairAddress)).to.equal(BigInt(100000));
     await token0.transfer(pairAddress, BigInt(100000));
+    //sync takes any token0 and token1 not in reserves and puts them in reserves
     await v2Pair.sync();
     await v2Pair.skim(token0Address);
     expect(await token0.balanceOf(pairAddress)).to.equal(BigInt(200000));
