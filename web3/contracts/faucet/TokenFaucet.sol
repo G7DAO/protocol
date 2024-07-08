@@ -20,12 +20,11 @@ contract TokenFaucet is Ownable {
     error TokenFaucetClaimIntervalNotPassed();
 
     modifier timeInterval() {
-        uint256 current_timestamp = block.timestamp;
-        if (current_timestamp <= lastClaimedTimestamp[msg.sender] + faucetTimeInterval) {
+        if (block.timestamp <= lastClaimedTimestamp[msg.sender] + faucetTimeInterval) {
             revert TokenFaucetClaimIntervalNotPassed();
         }
         _;
-        lastClaimedTimestamp[msg.sender] = current_timestamp;
+        lastClaimedTimestamp[msg.sender] = block.timestamp;
     }
 
     constructor(

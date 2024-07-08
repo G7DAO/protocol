@@ -12,6 +12,9 @@ const {
 
 const config: HardhatUserConfig = {
   solidity: "0.8.24",
+  gasReporter: {
+    enabled: true,
+  },
   etherscan: {
     apiKey: {
       [NetworkName.Ethereum]: ETHSCAN_API_KEY || '',
