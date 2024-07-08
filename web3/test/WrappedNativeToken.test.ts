@@ -84,7 +84,7 @@ describe('WrappedNativeToken', function () {
         it('should deposit', async function () {
           const previousBalance = await this.token.balanceOf(this.holder.address);
           const value = 1n;
-          await this.deposit(this.holder, value);
+          await expect(this.deposit(this.holder, value)).to.emit(this.token, 'Deposit').withArgs(this.holder.address, value);
           expect(await this.token.balanceOf(this.holder.address)).to.equal(previousBalance+value);
         });
 
@@ -105,8 +105,8 @@ describe('WrappedNativeToken', function () {
           it('should withdraw', async function () {
             const previousBalance = await this.token.balanceOf(this.holder.address);
             const value = 1n;
-            await this.deposit(this.holder, value);
-            await this.withdraw(this.holder, value);
+            await expect(this.deposit(this.holder, value)).to.emit(this.token, 'Deposit').withArgs(this.holder.address, value);
+            await expect(this.withdraw(this.holder, value)).to.emit(this.token, 'Withdrawal').withArgs(this.holder.address, value);
             expect(await this.token.balanceOf(this.holder.address)).to.equal(previousBalance);
           });
         });
