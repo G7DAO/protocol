@@ -13,19 +13,19 @@ contract TokenFaucet is Ownable {
     address public tokenAddress;
     address public inboxAddress;
     uint256 public faucetAmount;
-    uint256 public faucetBlockInterval;
+    uint256 public faucetTimeInterval;
     uint256 public DEFAULT_GAS_LIMIT = 21000;
-    mapping(address => uint256) public lastClaimedBlock;
+    mapping(address => uint256) public lastClaimedTimestamp;
 
     error TokenFaucetClaimIntervalNotPassed();
 
-    modifier blockInterval() {
-        uint256 current_block = block.number;
-        if (current_block <= lastClaimedBlock[msg.sender] + faucetBlockInterval) {
+    modifier timeInterval() {
+        uint256 current_timestamp = block.timestamp;
+        if (current_timestamp <= lastClaimedTimestamp[msg.sender] + faucetTimeInterval) {
             revert TokenFaucetClaimIntervalNotPassed();
         }
         _;
-        lastClaimedBlock[msg.sender] = current_block;
+        lastClaimedTimestamp[msg.sender] = current_timestamp;
     }
 
     constructor(
@@ -33,26 +33,26 @@ contract TokenFaucet is Ownable {
         address _owner,
         address _inboxAddress,
         uint256 _faucetAmount,
-        uint256 _faucetBlockInterval
+        uint256 _faucetTimeInterval
     ) Ownable(_owner) {
         tokenAddress = _tokenAddress;
         inboxAddress = _inboxAddress;
         faucetAmount = _faucetAmount;
-        faucetBlockInterval = _faucetBlockInterval;
+        faucetTimeInterval = _faucetTimeInterval;
         transferOwnership(_owner);
     }
 
     /**
      * @notice Claim tokens from the faucet
      */
-    function claim() public blockInterval {
+    function claim() public timeInterval {
         IERC20(tokenAddress).transfer(msg.sender, faucetAmount);
     }
 
     /**
      * @notice Claim tokens from the faucet on L3
      */
-    function claimL3() public blockInterval {
+    function claimL3() public timeInterval {
         uint256 _tokenTotalFeeAmount = (DEFAULT_GAS_LIMIT * block.basefee) + faucetAmount;
         IERC20(tokenAddress).approve(inboxAddress, _tokenTotalFeeAmount);
         IERC20Inbox(inboxAddress).createRetryableTicket(
@@ -69,12 +69,12 @@ contract TokenFaucet is Ownable {
     }
 
     /**
-     * @notice Set the faucet block interval
+     * @notice Set the faucet time interval
      * @dev Only the owner can call this function
-     * @param _faucetBlockInterval The block interval between claims
+     * @param _faucetTimeInterval The time interval between claims
      */
-    function setFaucetBlockInterval(uint256 _faucetBlockInterval) public onlyOwner {
-        faucetBlockInterval = _faucetBlockInterval;
+    function setFaucetTimeInterval(uint256 _faucetTimeInterval) public onlyOwner {
+        faucetTimeInterval = _faucetTimeInterval;
     }
 
     /**
