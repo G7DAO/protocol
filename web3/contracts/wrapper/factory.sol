@@ -15,8 +15,6 @@ contract Factory {
         address _contract;
         uint256 tokenId;
     }
-
-
     constructor(){}
 
     function create20(address _contract, uint256 tokenId)public returns(address token){
@@ -31,7 +29,7 @@ contract Factory {
             assembly {
             token := create2(0, add(bytecode, 32), mload(bytecode), salt)
             }
-            DEXW1155(token).initialize(_contract, tokenId);
+            DEXW1155(token).initialize(_contract, tokenId, _name, _symbol);
         }
     }
 }
