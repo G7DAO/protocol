@@ -9,7 +9,7 @@ This checklist describes how to deploy the Game7 Token Faucet.
 - [ ] `export KEY=<path to keyfile of caller account>`
 - [ ] `export TOKEN=<address of the Game7 Token contract>`
 - [ ] `export FAUCET_AMOUNT=<amount of tokens to send to each wallet>`
-- [ ] `export BLOCK_INTERVAL=<block interval for faucet>`
+- [ ] `export TIME_INTERVAL=<time interval for faucet>`
 - [ ] `export INBOX=<address of the Arbitrum inbox address>`
 - [ ] `export OWNER=<address of the owner of the faucet>`
 - [ ] `export FAUCET=<address of the faucet>`
@@ -22,7 +22,7 @@ This checklist describes how to deploy the Game7 Token Faucet.
 ```bash
 bin/game7 faucet deploy \
     --faucet-amount $FAUCET_AMOUNT \
-    --faucet-block-interval $BLOCK_INTERVAL \
+    --faucet-time-interval $TIME_INTERVAL \
     --inbox-address $INBOX \
     --token-address $TOKEN \
     --owner $OWNER \
