@@ -5,7 +5,7 @@ import { shouldBehaveLikeERC20, shouldBehaveLikeERC20Transfer, shouldBehaveLikeE
 import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
 import { HardhatEthersSigner } from '../helpers/type';
 
-const TOKENS = [{ Token: 'ERC20' }];
+const TOKENS = [{ Token: 'contracts/token/ERC20.sol:ERC20' }];
 
 const name = 'Game7 Token';
 const symbol = 'G7T';

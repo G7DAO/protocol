@@ -16,6 +16,7 @@ import (
 	"github.com/G7DAO/protocol/bridge"
 
 	"github.com/G7DAO/protocol/bindings/ERC20"
+	"github.com/G7DAO/protocol/bindings/WrappedNativeToken"
 	"github.com/G7DAO/protocol/cmd/game7/version"
 )
 
@@ -62,7 +63,10 @@ func CreateRootCommand() *cobra.Command {
 	accountsCmd := accounts.CreateAccountsCommand()
 	accountsCmd.Use = "accounts"
 
-	rootCmd.AddCommand(completionCmd, versionCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd, accountsCmd)
+	wrappedNativeTokenCmd := WrappedNativeToken.CreateWrappedNativeTokenCommand()
+	wrappedNativeTokenCmd.Use = "wrapped-native-token"
+
+	rootCmd.AddCommand(completionCmd, versionCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd, accountsCmd, wrappedNativeTokenCmd)
 
 	// By default, cobra Command objects write to stderr. We have to forcibly set them to output to
 	// stdout.
