@@ -6,9 +6,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/pborman/uuid"
-	"github.com/quan8/go-ethereum/accounts/keystore"
-	"github.com/quan8/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/accounts/keystore"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/google/uuid"
 	"github.com/spf13/cobra"
 )
 
@@ -66,7 +66,11 @@ func CreateGenerateKeyFileCommand() *cobra.Command {
 			}
 
 			// Create the keyfile object with a random UUID.
-			id := uuid.NewRandom()
+			id, idErr := uuid.NewRandom()
+			if idErr != nil {
+				fmt.Printf("Error generating UUID: %v", idErr)
+				return idErr
+			}
 			key := &keystore.Key{
 				Id:         id,
 				Address:    crypto.PubkeyToAddress(privateKey.PublicKey),
