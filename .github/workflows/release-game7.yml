@@ -63,7 +63,7 @@ jobs:
               run: seer evm generate --package TokenFaucet --output bindings/TokenFaucet/TokenFaucet.go --hardhat web3/artifacts/contracts/faucet/TokenFaucet.sol/TokenFaucet.json --cli --struct TokenFaucet
 
             - name: Build WrappedNativeToken interface with seer
-              run: seer evm generate --package WrappedNativeToken --output bindings/WrappedNativeToken/WrappedNativeToken.go --hardhat web3/artifacts/contracts/faucet/WrappedNativeToken.sol/WrappedNativeToken.json --cli --struct WrappedNativeToken
+              run: seer evm generate --package WrappedNativeToken --output bindings/WrappedNativeToken/WrappedNativeToken.go --hardhat web3/artifacts/contracts/token/WrappedNativeToken.sol/WrappedNativeToken.json --cli --struct WrappedNativeToken
 
             - name: Build binary for each valid (GOOS, GOARCH) pair
               env:
