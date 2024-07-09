@@ -10,7 +10,7 @@ import { IERC20 } from '../interfaces/IERC20.sol';
 contract WrappedNativeToken is IERC20 {
     string public name;
     string public symbol;
-    uint8 public decimals;
+    uint8 public constant decimals = 18;
 
     mapping(address => uint256) public balanceOf;
     mapping(address => mapping(address => uint256)) public allowance;
@@ -18,10 +18,9 @@ contract WrappedNativeToken is IERC20 {
     event Deposit(address indexed _to, uint _amount);
     event Withdrawal(address indexed from, uint _amount);
 
-    constructor(string memory _tokenName, string memory _symbol, uint8 _decimals) {
+    constructor(string memory _tokenName, string memory _symbol) {
         name = _tokenName;
         symbol = _symbol;
-        decimals = _decimals;
     }
 
     function approve(address spender, uint256 amount) external returns (bool) {

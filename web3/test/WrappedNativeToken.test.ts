@@ -23,7 +23,7 @@ describe('WrappedNativeToken', function () {
         [holder, recipient] = await ethers.getSigners();
         const accounts =  await ethers.getSigners()
 
-        const token = await ethers.deployContract(Token, [name, symbol, decimals]);
+        const token = await ethers.deployContract(Token, [name, symbol]);
 
         // bump the native token (eth) balance of the holder
         await holder.sendTransaction({ to: (await token.getAddress()), value: initialSupply });
@@ -33,6 +33,10 @@ describe('WrappedNativeToken', function () {
 
       beforeEach(async function () {
         Object.assign(this, await loadFixture(fixture));
+      });
+
+      it('should not deploy with value', async function () {
+        await expect(ethers.deployContract(Token, [name, symbol], { value: initialSupply })).to.be.revertedWithoutReason();
       });
 
       shouldBehaveLikeERC20(initialSupply);
