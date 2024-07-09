@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-interface Wrapper1155Factory {
+interface IWrapper1155Factory {
     struct tokenData{
         address _contract;
         uint256 tokenId;

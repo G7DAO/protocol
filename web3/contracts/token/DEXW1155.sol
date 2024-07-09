@@ -57,15 +57,16 @@ contract DEXW1155 is IDEXW1155, ERC20, ERC1155Holder,ReentrancyGuard{
     }
 
     /// @notice Deposit ERC1155 tokenId to get wrapped ERC1155 as ERC20
-    function deposit1155(address from, address to, uint256 amount) override external{
+    function deposit1155(address from, address to, uint256 amount) override external returns(uint256 _amount){
         IERC1155(_erc1155).safeTransferFrom(from, address(this), _tokenId, amount, "0x0");
-        _mint(to, amount * 1 ether);
+        _amount = amount * 1 ether;
+        _mint(to, _amount);
 
     }
 
     /// @notice Withdraw ERC1155 tokenId by sending in ERC20
-    function withdraw1155(address from, address to, uint256 amount) override external nonReentrant{
-        uint256 _amountMod = (amount % (1 ether)) * 1 ether;
+    function withdraw1155(address from, address to, uint256 amount) override external nonReentrant returns(uint256 _amountMod){
+        _amountMod = (amount % (1 ether)) * 1 ether;
         uint256 _amount = _amountMod * 1 ether;
         transferFrom(from, address(this), _amount);
         _burn(address(this), _amount);

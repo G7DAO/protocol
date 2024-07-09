@@ -931,6 +931,264 @@ func CreateUniswapV2Router02DeploymentCommand() *cobra.Command {
 	return cmd
 }
 
+func CreateGetAmountsOutCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var amountIn *big.Int
+	var amountInRaw string
+	var path []common.Address
+	var pathRaw string
+
+	var capture0 []*big.Int
+
+	cmd := &cobra.Command{
+		Use:   "get-amounts-out",
+		Short: "Call the GetAmountsOut view method on a UniswapV2Router02 contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if amountInRaw == "" {
+				return fmt.Errorf("--amount-in argument not specified")
+			}
+			amountIn = new(big.Int)
+			amountIn.SetString(amountInRaw, 0)
+
+			if pathRaw == "" {
+				return fmt.Errorf("--path argument not specified")
+			} else if strings.HasPrefix(pathRaw, "@") {
+				filename := strings.TrimPrefix(pathRaw, "@")
+				contents, readErr := os.ReadFile(filename)
+				if readErr != nil {
+					return readErr
+				}
+				unmarshalErr := json.Unmarshal(contents, &path)
+				if unmarshalErr != nil {
+					return unmarshalErr
+				}
+			} else {
+				unmarshalErr := json.Unmarshal([]byte(pathRaw), &path)
+				if unmarshalErr != nil {
+					return unmarshalErr
+				}
+			}
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewUniswapV2Router02(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := UniswapV2Router02CallerSession{
+				Contract: &contract.UniswapV2Router02Caller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.GetAmountsOut(
+				amountIn,
+				path,
+			)
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %v\n", capture0)
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	cmd.Flags().StringVar(&amountInRaw, "amount-in", "", "amount-in argument")
+	cmd.Flags().StringVar(&pathRaw, "path", "", "path argument")
+
+	return cmd
+}
+func CreateQuoteCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var amountA *big.Int
+	var amountARaw string
+	var reserveA *big.Int
+	var reserveARaw string
+	var reserveB *big.Int
+	var reserveBRaw string
+
+	var capture0 *big.Int
+
+	cmd := &cobra.Command{
+		Use:   "quote",
+		Short: "Call the Quote view method on a UniswapV2Router02 contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if amountARaw == "" {
+				return fmt.Errorf("--amount-a argument not specified")
+			}
+			amountA = new(big.Int)
+			amountA.SetString(amountARaw, 0)
+
+			if reserveARaw == "" {
+				return fmt.Errorf("--reserve-a argument not specified")
+			}
+			reserveA = new(big.Int)
+			reserveA.SetString(reserveARaw, 0)
+
+			if reserveBRaw == "" {
+				return fmt.Errorf("--reserve-b argument not specified")
+			}
+			reserveB = new(big.Int)
+			reserveB.SetString(reserveBRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewUniswapV2Router02(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := UniswapV2Router02CallerSession{
+				Contract: &contract.UniswapV2Router02Caller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.Quote(
+				amountA,
+				reserveA,
+				reserveB,
+			)
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0.String())
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	cmd.Flags().StringVar(&amountARaw, "amount-a", "", "amount-a argument")
+	cmd.Flags().StringVar(&reserveARaw, "reserve-a", "", "reserve-a argument")
+	cmd.Flags().StringVar(&reserveBRaw, "reserve-b", "", "reserve-b argument")
+
+	return cmd
+}
+func CreateWethCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var capture0 common.Address
+
+	cmd := &cobra.Command{
+		Use:   "weth",
+		Short: "Call the WETH view method on a UniswapV2Router02 contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewUniswapV2Router02(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := UniswapV2Router02CallerSession{
+				Contract: &contract.UniswapV2Router02Caller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.WETH()
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0.Hex())
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	return cmd
+}
 func CreateFactoryCommand() *cobra.Command {
 	var contractAddressRaw, rpc string
 	var contractAddress common.Address
@@ -1285,266 +1543,8 @@ func CreateGetAmountsInCommand() *cobra.Command {
 
 	return cmd
 }
-func CreateGetAmountsOutCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
 
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var amountIn *big.Int
-	var amountInRaw string
-	var path []common.Address
-	var pathRaw string
-
-	var capture0 []*big.Int
-
-	cmd := &cobra.Command{
-		Use:   "get-amounts-out",
-		Short: "Call the GetAmountsOut view method on a UniswapV2Router02 contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if amountInRaw == "" {
-				return fmt.Errorf("--amount-in argument not specified")
-			}
-			amountIn = new(big.Int)
-			amountIn.SetString(amountInRaw, 0)
-
-			if pathRaw == "" {
-				return fmt.Errorf("--path argument not specified")
-			} else if strings.HasPrefix(pathRaw, "@") {
-				filename := strings.TrimPrefix(pathRaw, "@")
-				contents, readErr := os.ReadFile(filename)
-				if readErr != nil {
-					return readErr
-				}
-				unmarshalErr := json.Unmarshal(contents, &path)
-				if unmarshalErr != nil {
-					return unmarshalErr
-				}
-			} else {
-				unmarshalErr := json.Unmarshal([]byte(pathRaw), &path)
-				if unmarshalErr != nil {
-					return unmarshalErr
-				}
-			}
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewUniswapV2Router02(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := UniswapV2Router02CallerSession{
-				Contract: &contract.UniswapV2Router02Caller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.GetAmountsOut(
-				amountIn,
-				path,
-			)
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %v\n", capture0)
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	cmd.Flags().StringVar(&amountInRaw, "amount-in", "", "amount-in argument")
-	cmd.Flags().StringVar(&pathRaw, "path", "", "path argument")
-
-	return cmd
-}
-func CreateQuoteCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var amountA *big.Int
-	var amountARaw string
-	var reserveA *big.Int
-	var reserveARaw string
-	var reserveB *big.Int
-	var reserveBRaw string
-
-	var capture0 *big.Int
-
-	cmd := &cobra.Command{
-		Use:   "quote",
-		Short: "Call the Quote view method on a UniswapV2Router02 contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if amountARaw == "" {
-				return fmt.Errorf("--amount-a argument not specified")
-			}
-			amountA = new(big.Int)
-			amountA.SetString(amountARaw, 0)
-
-			if reserveARaw == "" {
-				return fmt.Errorf("--reserve-a argument not specified")
-			}
-			reserveA = new(big.Int)
-			reserveA.SetString(reserveARaw, 0)
-
-			if reserveBRaw == "" {
-				return fmt.Errorf("--reserve-b argument not specified")
-			}
-			reserveB = new(big.Int)
-			reserveB.SetString(reserveBRaw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewUniswapV2Router02(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := UniswapV2Router02CallerSession{
-				Contract: &contract.UniswapV2Router02Caller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.Quote(
-				amountA,
-				reserveA,
-				reserveB,
-			)
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0.String())
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	cmd.Flags().StringVar(&amountARaw, "amount-a", "", "amount-a argument")
-	cmd.Flags().StringVar(&reserveARaw, "reserve-a", "", "reserve-a argument")
-	cmd.Flags().StringVar(&reserveBRaw, "reserve-b", "", "reserve-b argument")
-
-	return cmd
-}
-func CreateWethCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var capture0 common.Address
-
-	cmd := &cobra.Command{
-		Use:   "weth",
-		Short: "Call the WETH view method on a UniswapV2Router02 contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewUniswapV2Router02(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := UniswapV2Router02CallerSession{
-				Contract: &contract.UniswapV2Router02Caller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.WETH()
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0.Hex())
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	return cmd
-}
-
-func CreateRemoveLiquidityEthsupportingFeeOnTransferTokensCommand() *cobra.Command {
+func CreateRemoveLiquidityEthCommand() *cobra.Command {
 	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
 	var gasLimit uint64
 	var simulate bool
@@ -1565,8 +1565,8 @@ func CreateRemoveLiquidityEthsupportingFeeOnTransferTokensCommand() *cobra.Comma
 	var deadlineRaw string
 
 	cmd := &cobra.Command{
-		Use:   "remove-liquidity-eth-supporting-fee-on-transfer-tokens",
-		Short: "Execute the RemoveLiquidityETHSupportingFeeOnTransferTokens method on a UniswapV2Router02 contract",
+		Use:   "remove-liquidity-eth",
+		Short: "Execute the RemoveLiquidityETH method on a UniswapV2Router02 contract",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			if keyfile == "" {
 				return fmt.Errorf("--keystore not specified")
@@ -1654,7 +1654,7 @@ func CreateRemoveLiquidityEthsupportingFeeOnTransferTokensCommand() *cobra.Comma
 				TransactOpts: *transactionOpts,
 			}
 
-			transaction, transactionErr := session.RemoveLiquidityETHSupportingFeeOnTransferTokens(
+			transaction, transactionErr := session.RemoveLiquidityETH(
 				token,
 				liquidity,
 				amountTokenMin,
@@ -1946,6 +1946,850 @@ func CreateRemoveLiquidityWithPermitCommand() *cobra.Command {
 	cmd.Flags().Uint8Var(&v, "v", 0, "v argument")
 	cmd.Flags().StringVar(&rRaw, "r", "", "r argument")
 	cmd.Flags().StringVar(&sRaw, "s", "", "s argument")
+
+	return cmd
+}
+func CreateSwapExactTokensForTokensSupportingFeeOnTransferTokensCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var amountIn *big.Int
+	var amountInRaw string
+	var amountOutMin *big.Int
+	var amountOutMinRaw string
+	var path []common.Address
+	var pathRaw string
+	var to0 common.Address
+	var to0Raw string
+	var deadline *big.Int
+	var deadlineRaw string
+
+	cmd := &cobra.Command{
+		Use:   "swap-exact-tokens-for-tokens-supporting-fee-on-transfer-tokens",
+		Short: "Execute the SwapExactTokensForTokensSupportingFeeOnTransferTokens method on a UniswapV2Router02 contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if amountInRaw == "" {
+				return fmt.Errorf("--amount-in argument not specified")
+			}
+			amountIn = new(big.Int)
+			amountIn.SetString(amountInRaw, 0)
+
+			if amountOutMinRaw == "" {
+				return fmt.Errorf("--amount-out-min argument not specified")
+			}
+			amountOutMin = new(big.Int)
+			amountOutMin.SetString(amountOutMinRaw, 0)
+
+			if pathRaw == "" {
+				return fmt.Errorf("--path argument not specified")
+			} else if strings.HasPrefix(pathRaw, "@") {
+				filename := strings.TrimPrefix(pathRaw, "@")
+				contents, readErr := os.ReadFile(filename)
+				if readErr != nil {
+					return readErr
+				}
+				unmarshalErr := json.Unmarshal(contents, &path)
+				if unmarshalErr != nil {
+					return unmarshalErr
+				}
+			} else {
+				unmarshalErr := json.Unmarshal([]byte(pathRaw), &path)
+				if unmarshalErr != nil {
+					return unmarshalErr
+				}
+			}
+
+			if to0Raw == "" {
+				return fmt.Errorf("--to-0 argument not specified")
+			} else if !common.IsHexAddress(to0Raw) {
+				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
+			}
+			to0 = common.HexToAddress(to0Raw)
+
+			if deadlineRaw == "" {
+				return fmt.Errorf("--deadline argument not specified")
+			}
+			deadline = new(big.Int)
+			deadline.SetString(deadlineRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewUniswapV2Router02(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := UniswapV2Router02TransactorSession{
+				Contract:     &contract.UniswapV2Router02Transactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.SwapExactTokensForTokensSupportingFeeOnTransferTokens(
+				amountIn,
+				amountOutMin,
+				path,
+				to0,
+				deadline,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&amountInRaw, "amount-in", "", "amount-in argument")
+	cmd.Flags().StringVar(&amountOutMinRaw, "amount-out-min", "", "amount-out-min argument")
+	cmd.Flags().StringVar(&pathRaw, "path", "", "path argument")
+	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument")
+	cmd.Flags().StringVar(&deadlineRaw, "deadline", "", "deadline argument")
+
+	return cmd
+}
+func CreateReceiveCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	cmd := &cobra.Command{
+		Use:   "receive",
+		Short: "Execute the Receive method on a UniswapV2Router02 contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewUniswapV2Router02(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := UniswapV2Router02TransactorSession{
+				Contract:     &contract.UniswapV2Router02Transactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.Receive()
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	return cmd
+}
+func CreateAddLiquidityCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var tokenA common.Address
+	var tokenARaw string
+	var tokenB common.Address
+	var tokenBRaw string
+	var amountADesired *big.Int
+	var amountADesiredRaw string
+	var amountBDesired *big.Int
+	var amountBDesiredRaw string
+	var amountAMin *big.Int
+	var amountAMinRaw string
+	var amountBMin *big.Int
+	var amountBMinRaw string
+	var to0 common.Address
+	var to0Raw string
+	var deadline *big.Int
+	var deadlineRaw string
+
+	cmd := &cobra.Command{
+		Use:   "add-liquidity",
+		Short: "Execute the AddLiquidity method on a UniswapV2Router02 contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if tokenARaw == "" {
+				return fmt.Errorf("--token-a argument not specified")
+			} else if !common.IsHexAddress(tokenARaw) {
+				return fmt.Errorf("--token-a argument is not a valid Ethereum address")
+			}
+			tokenA = common.HexToAddress(tokenARaw)
+
+			if tokenBRaw == "" {
+				return fmt.Errorf("--token-b argument not specified")
+			} else if !common.IsHexAddress(tokenBRaw) {
+				return fmt.Errorf("--token-b argument is not a valid Ethereum address")
+			}
+			tokenB = common.HexToAddress(tokenBRaw)
+
+			if amountADesiredRaw == "" {
+				return fmt.Errorf("--amount-a-desired argument not specified")
+			}
+			amountADesired = new(big.Int)
+			amountADesired.SetString(amountADesiredRaw, 0)
+
+			if amountBDesiredRaw == "" {
+				return fmt.Errorf("--amount-b-desired argument not specified")
+			}
+			amountBDesired = new(big.Int)
+			amountBDesired.SetString(amountBDesiredRaw, 0)
+
+			if amountAMinRaw == "" {
+				return fmt.Errorf("--amount-a-min argument not specified")
+			}
+			amountAMin = new(big.Int)
+			amountAMin.SetString(amountAMinRaw, 0)
+
+			if amountBMinRaw == "" {
+				return fmt.Errorf("--amount-b-min argument not specified")
+			}
+			amountBMin = new(big.Int)
+			amountBMin.SetString(amountBMinRaw, 0)
+
+			if to0Raw == "" {
+				return fmt.Errorf("--to-0 argument not specified")
+			} else if !common.IsHexAddress(to0Raw) {
+				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
+			}
+			to0 = common.HexToAddress(to0Raw)
+
+			if deadlineRaw == "" {
+				return fmt.Errorf("--deadline argument not specified")
+			}
+			deadline = new(big.Int)
+			deadline.SetString(deadlineRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewUniswapV2Router02(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := UniswapV2Router02TransactorSession{
+				Contract:     &contract.UniswapV2Router02Transactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.AddLiquidity(
+				tokenA,
+				tokenB,
+				amountADesired,
+				amountBDesired,
+				amountAMin,
+				amountBMin,
+				to0,
+				deadline,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&tokenARaw, "token-a", "", "token-a argument")
+	cmd.Flags().StringVar(&tokenBRaw, "token-b", "", "token-b argument")
+	cmd.Flags().StringVar(&amountADesiredRaw, "amount-a-desired", "", "amount-a-desired argument")
+	cmd.Flags().StringVar(&amountBDesiredRaw, "amount-b-desired", "", "amount-b-desired argument")
+	cmd.Flags().StringVar(&amountAMinRaw, "amount-a-min", "", "amount-a-min argument")
+	cmd.Flags().StringVar(&amountBMinRaw, "amount-b-min", "", "amount-b-min argument")
+	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument")
+	cmd.Flags().StringVar(&deadlineRaw, "deadline", "", "deadline argument")
+
+	return cmd
+}
+func CreateRemoveLiquidityCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var tokenA common.Address
+	var tokenARaw string
+	var tokenB common.Address
+	var tokenBRaw string
+	var liquidity *big.Int
+	var liquidityRaw string
+	var amountAMin *big.Int
+	var amountAMinRaw string
+	var amountBMin *big.Int
+	var amountBMinRaw string
+	var to0 common.Address
+	var to0Raw string
+	var deadline *big.Int
+	var deadlineRaw string
+
+	cmd := &cobra.Command{
+		Use:   "remove-liquidity",
+		Short: "Execute the RemoveLiquidity method on a UniswapV2Router02 contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if tokenARaw == "" {
+				return fmt.Errorf("--token-a argument not specified")
+			} else if !common.IsHexAddress(tokenARaw) {
+				return fmt.Errorf("--token-a argument is not a valid Ethereum address")
+			}
+			tokenA = common.HexToAddress(tokenARaw)
+
+			if tokenBRaw == "" {
+				return fmt.Errorf("--token-b argument not specified")
+			} else if !common.IsHexAddress(tokenBRaw) {
+				return fmt.Errorf("--token-b argument is not a valid Ethereum address")
+			}
+			tokenB = common.HexToAddress(tokenBRaw)
+
+			if liquidityRaw == "" {
+				return fmt.Errorf("--liquidity argument not specified")
+			}
+			liquidity = new(big.Int)
+			liquidity.SetString(liquidityRaw, 0)
+
+			if amountAMinRaw == "" {
+				return fmt.Errorf("--amount-a-min argument not specified")
+			}
+			amountAMin = new(big.Int)
+			amountAMin.SetString(amountAMinRaw, 0)
+
+			if amountBMinRaw == "" {
+				return fmt.Errorf("--amount-b-min argument not specified")
+			}
+			amountBMin = new(big.Int)
+			amountBMin.SetString(amountBMinRaw, 0)
+
+			if to0Raw == "" {
+				return fmt.Errorf("--to-0 argument not specified")
+			} else if !common.IsHexAddress(to0Raw) {
+				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
+			}
+			to0 = common.HexToAddress(to0Raw)
+
+			if deadlineRaw == "" {
+				return fmt.Errorf("--deadline argument not specified")
+			}
+			deadline = new(big.Int)
+			deadline.SetString(deadlineRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewUniswapV2Router02(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := UniswapV2Router02TransactorSession{
+				Contract:     &contract.UniswapV2Router02Transactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.RemoveLiquidity(
+				tokenA,
+				tokenB,
+				liquidity,
+				amountAMin,
+				amountBMin,
+				to0,
+				deadline,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&tokenARaw, "token-a", "", "token-a argument")
+	cmd.Flags().StringVar(&tokenBRaw, "token-b", "", "token-b argument")
+	cmd.Flags().StringVar(&liquidityRaw, "liquidity", "", "liquidity argument")
+	cmd.Flags().StringVar(&amountAMinRaw, "amount-a-min", "", "amount-a-min argument")
+	cmd.Flags().StringVar(&amountBMinRaw, "amount-b-min", "", "amount-b-min argument")
+	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument")
+	cmd.Flags().StringVar(&deadlineRaw, "deadline", "", "deadline argument")
+
+	return cmd
+}
+func CreateRemoveLiquidityEthsupportingFeeOnTransferTokensCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var token common.Address
+	var tokenRaw string
+	var liquidity *big.Int
+	var liquidityRaw string
+	var amountTokenMin *big.Int
+	var amountTokenMinRaw string
+	var amountETHMin *big.Int
+	var amountETHMinRaw string
+	var to0 common.Address
+	var to0Raw string
+	var deadline *big.Int
+	var deadlineRaw string
+
+	cmd := &cobra.Command{
+		Use:   "remove-liquidity-eth-supporting-fee-on-transfer-tokens",
+		Short: "Execute the RemoveLiquidityETHSupportingFeeOnTransferTokens method on a UniswapV2Router02 contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if tokenRaw == "" {
+				return fmt.Errorf("--token argument not specified")
+			} else if !common.IsHexAddress(tokenRaw) {
+				return fmt.Errorf("--token argument is not a valid Ethereum address")
+			}
+			token = common.HexToAddress(tokenRaw)
+
+			if liquidityRaw == "" {
+				return fmt.Errorf("--liquidity argument not specified")
+			}
+			liquidity = new(big.Int)
+			liquidity.SetString(liquidityRaw, 0)
+
+			if amountTokenMinRaw == "" {
+				return fmt.Errorf("--amount-token-min argument not specified")
+			}
+			amountTokenMin = new(big.Int)
+			amountTokenMin.SetString(amountTokenMinRaw, 0)
+
+			if amountETHMinRaw == "" {
+				return fmt.Errorf("--amount-eth-min argument not specified")
+			}
+			amountETHMin = new(big.Int)
+			amountETHMin.SetString(amountETHMinRaw, 0)
+
+			if to0Raw == "" {
+				return fmt.Errorf("--to-0 argument not specified")
+			} else if !common.IsHexAddress(to0Raw) {
+				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
+			}
+			to0 = common.HexToAddress(to0Raw)
+
+			if deadlineRaw == "" {
+				return fmt.Errorf("--deadline argument not specified")
+			}
+			deadline = new(big.Int)
+			deadline.SetString(deadlineRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewUniswapV2Router02(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := UniswapV2Router02TransactorSession{
+				Contract:     &contract.UniswapV2Router02Transactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.RemoveLiquidityETHSupportingFeeOnTransferTokens(
+				token,
+				liquidity,
+				amountTokenMin,
+				amountETHMin,
+				to0,
+				deadline,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&tokenRaw, "token", "", "token argument")
+	cmd.Flags().StringVar(&liquidityRaw, "liquidity", "", "liquidity argument")
+	cmd.Flags().StringVar(&amountTokenMinRaw, "amount-token-min", "", "amount-token-min argument")
+	cmd.Flags().StringVar(&amountETHMinRaw, "amount-eth-min", "", "amount-eth-min argument")
+	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument")
+	cmd.Flags().StringVar(&deadlineRaw, "deadline", "", "deadline argument")
 
 	return cmd
 }
@@ -2470,7 +3314,7 @@ func CreateSwapExactTokensForTokensCommand() *cobra.Command {
 
 	return cmd
 }
-func CreateRemoveLiquidityEthCommand() *cobra.Command {
+func CreateAddLiquidityEthCommand() *cobra.Command {
 	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
 	var gasLimit uint64
 	var simulate bool
@@ -2479,8 +3323,8 @@ func CreateRemoveLiquidityEthCommand() *cobra.Command {
 
 	var token common.Address
 	var tokenRaw string
-	var liquidity *big.Int
-	var liquidityRaw string
+	var amountTokenDesired *big.Int
+	var amountTokenDesiredRaw string
 	var amountTokenMin *big.Int
 	var amountTokenMinRaw string
 	var amountETHMin *big.Int
@@ -2491,8 +3335,8 @@ func CreateRemoveLiquidityEthCommand() *cobra.Command {
 	var deadlineRaw string
 
 	cmd := &cobra.Command{
-		Use:   "remove-liquidity-eth",
-		Short: "Execute the RemoveLiquidityETH method on a UniswapV2Router02 contract",
+		Use:   "add-liquidity-eth",
+		Short: "Execute the AddLiquidityETH method on a UniswapV2Router02 contract",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			if keyfile == "" {
 				return fmt.Errorf("--keystore not specified")
@@ -2512,11 +3356,11 @@ func CreateRemoveLiquidityEthCommand() *cobra.Command {
 			}
 			token = common.HexToAddress(tokenRaw)
 
-			if liquidityRaw == "" {
-				return fmt.Errorf("--liquidity argument not specified")
+			if amountTokenDesiredRaw == "" {
+				return fmt.Errorf("--amount-token-desired argument not specified")
 			}
-			liquidity = new(big.Int)
-			liquidity.SetString(liquidityRaw, 0)
+			amountTokenDesired = new(big.Int)
+			amountTokenDesired.SetString(amountTokenDesiredRaw, 0)
 
 			if amountTokenMinRaw == "" {
 				return fmt.Errorf("--amount-token-min argument not specified")
@@ -2580,9 +3424,9 @@ func CreateRemoveLiquidityEthCommand() *cobra.Command {
 				TransactOpts: *transactionOpts,
 			}
 
-			transaction, transactionErr := session.RemoveLiquidityETH(
+			transaction, transactionErr := session.AddLiquidityETH(
 				token,
-				liquidity,
+				amountTokenDesired,
 				amountTokenMin,
 				amountETHMin,
 				to0,
@@ -2637,7 +3481,7 @@ func CreateRemoveLiquidityEthCommand() *cobra.Command {
 	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
 
 	cmd.Flags().StringVar(&tokenRaw, "token", "", "token argument")
-	cmd.Flags().StringVar(&liquidityRaw, "liquidity", "", "liquidity argument")
+	cmd.Flags().StringVar(&amountTokenDesiredRaw, "amount-token-desired", "", "amount-token-desired argument")
 	cmd.Flags().StringVar(&amountTokenMinRaw, "amount-token-min", "", "amount-token-min argument")
 	cmd.Flags().StringVar(&amountETHMinRaw, "amount-eth-min", "", "amount-eth-min argument")
 	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument")
@@ -2792,6 +3636,225 @@ func CreateRemoveLiquidityEthwithPermitCommand() *cobra.Command {
 			}
 
 			transaction, transactionErr := session.RemoveLiquidityETHWithPermit(
+				token,
+				liquidity,
+				amountTokenMin,
+				amountETHMin,
+				to0,
+				deadline,
+				approveMax,
+				v,
+				r,
+				s,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&tokenRaw, "token", "", "token argument")
+	cmd.Flags().StringVar(&liquidityRaw, "liquidity", "", "liquidity argument")
+	cmd.Flags().StringVar(&amountTokenMinRaw, "amount-token-min", "", "amount-token-min argument")
+	cmd.Flags().StringVar(&amountETHMinRaw, "amount-eth-min", "", "amount-eth-min argument")
+	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument")
+	cmd.Flags().StringVar(&deadlineRaw, "deadline", "", "deadline argument")
+	cmd.Flags().StringVar(&approveMaxRaw, "approve-max", "", "approve-max argument (true, t, y, yes, 1 OR false, f, n, no, 0)")
+	cmd.Flags().Uint8Var(&v, "v", 0, "v argument")
+	cmd.Flags().StringVar(&rRaw, "r", "", "r argument")
+	cmd.Flags().StringVar(&sRaw, "s", "", "s argument")
+
+	return cmd
+}
+func CreateRemoveLiquidityEthwithPermitSupportingFeeOnTransferTokensCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var token common.Address
+	var tokenRaw string
+	var liquidity *big.Int
+	var liquidityRaw string
+	var amountTokenMin *big.Int
+	var amountTokenMinRaw string
+	var amountETHMin *big.Int
+	var amountETHMinRaw string
+	var to0 common.Address
+	var to0Raw string
+	var deadline *big.Int
+	var deadlineRaw string
+	var approveMax bool
+	var approveMaxRaw string
+	var v uint8
+
+	var r [32]byte
+	var rRaw string
+	var s [32]byte
+	var sRaw string
+
+	cmd := &cobra.Command{
+		Use:   "remove-liquidity-eth-with-permit-supporting-fee-on-transfer-tokens",
+		Short: "Execute the RemoveLiquidityETHWithPermitSupportingFeeOnTransferTokens method on a UniswapV2Router02 contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if tokenRaw == "" {
+				return fmt.Errorf("--token argument not specified")
+			} else if !common.IsHexAddress(tokenRaw) {
+				return fmt.Errorf("--token argument is not a valid Ethereum address")
+			}
+			token = common.HexToAddress(tokenRaw)
+
+			if liquidityRaw == "" {
+				return fmt.Errorf("--liquidity argument not specified")
+			}
+			liquidity = new(big.Int)
+			liquidity.SetString(liquidityRaw, 0)
+
+			if amountTokenMinRaw == "" {
+				return fmt.Errorf("--amount-token-min argument not specified")
+			}
+			amountTokenMin = new(big.Int)
+			amountTokenMin.SetString(amountTokenMinRaw, 0)
+
+			if amountETHMinRaw == "" {
+				return fmt.Errorf("--amount-eth-min argument not specified")
+			}
+			amountETHMin = new(big.Int)
+			amountETHMin.SetString(amountETHMinRaw, 0)
+
+			if to0Raw == "" {
+				return fmt.Errorf("--to-0 argument not specified")
+			} else if !common.IsHexAddress(to0Raw) {
+				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
+			}
+			to0 = common.HexToAddress(to0Raw)
+
+			if deadlineRaw == "" {
+				return fmt.Errorf("--deadline argument not specified")
+			}
+			deadline = new(big.Int)
+			deadline.SetString(deadlineRaw, 0)
+
+			approveMaxRawLower := strings.ToLower(approveMaxRaw)
+			switch approveMaxRawLower {
+			case "true", "t", "y", "yes", "1":
+				approveMax = true
+			case "false", "f", "n", "no", "0":
+				approveMax = false
+			default:
+				return fmt.Errorf("--approve-max argument is not valid (value: %s)", approveMaxRaw)
+			}
+
+			var hexDecoderErr error
+
+			var intermediaterLeaf []byte
+			intermediaterLeaf, hexDecoderErr = hex.DecodeString(rRaw)
+			if hexDecoderErr != nil {
+				return hexDecoderErr
+			}
+			r = [32]byte(intermediaterLeaf[:32])
+
+			var hexDecodesErr error
+
+			var intermediatesLeaf []byte
+			intermediatesLeaf, hexDecodesErr = hex.DecodeString(sRaw)
+			if hexDecodesErr != nil {
+				return hexDecodesErr
+			}
+			s = [32]byte(intermediatesLeaf[:32])
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewUniswapV2Router02(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := UniswapV2Router02TransactorSession{
+				Contract:     &contract.UniswapV2Router02Transactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.RemoveLiquidityETHWithPermitSupportingFeeOnTransferTokens(
 				token,
 				liquidity,
 				amountTokenMin,
@@ -3031,673 +4094,6 @@ func CreateSwapEthforExactTokensCommand() *cobra.Command {
 
 	return cmd
 }
-func CreateReceiveCommand() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	cmd := &cobra.Command{
-		Use:   "receive",
-		Short: "Execute the Receive method on a UniswapV2Router02 contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewUniswapV2Router02(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := UniswapV2Router02TransactorSession{
-				Contract:     &contract.UniswapV2Router02Transactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.Receive()
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	return cmd
-}
-func CreateAddLiquidityCommand() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	var tokenA common.Address
-	var tokenARaw string
-	var tokenB common.Address
-	var tokenBRaw string
-	var amountADesired *big.Int
-	var amountADesiredRaw string
-	var amountBDesired *big.Int
-	var amountBDesiredRaw string
-	var amountAMin *big.Int
-	var amountAMinRaw string
-	var amountBMin *big.Int
-	var amountBMinRaw string
-	var to0 common.Address
-	var to0Raw string
-	var deadline *big.Int
-	var deadlineRaw string
-
-	cmd := &cobra.Command{
-		Use:   "add-liquidity",
-		Short: "Execute the AddLiquidity method on a UniswapV2Router02 contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if tokenARaw == "" {
-				return fmt.Errorf("--token-a argument not specified")
-			} else if !common.IsHexAddress(tokenARaw) {
-				return fmt.Errorf("--token-a argument is not a valid Ethereum address")
-			}
-			tokenA = common.HexToAddress(tokenARaw)
-
-			if tokenBRaw == "" {
-				return fmt.Errorf("--token-b argument not specified")
-			} else if !common.IsHexAddress(tokenBRaw) {
-				return fmt.Errorf("--token-b argument is not a valid Ethereum address")
-			}
-			tokenB = common.HexToAddress(tokenBRaw)
-
-			if amountADesiredRaw == "" {
-				return fmt.Errorf("--amount-a-desired argument not specified")
-			}
-			amountADesired = new(big.Int)
-			amountADesired.SetString(amountADesiredRaw, 0)
-
-			if amountBDesiredRaw == "" {
-				return fmt.Errorf("--amount-b-desired argument not specified")
-			}
-			amountBDesired = new(big.Int)
-			amountBDesired.SetString(amountBDesiredRaw, 0)
-
-			if amountAMinRaw == "" {
-				return fmt.Errorf("--amount-a-min argument not specified")
-			}
-			amountAMin = new(big.Int)
-			amountAMin.SetString(amountAMinRaw, 0)
-
-			if amountBMinRaw == "" {
-				return fmt.Errorf("--amount-b-min argument not specified")
-			}
-			amountBMin = new(big.Int)
-			amountBMin.SetString(amountBMinRaw, 0)
-
-			if to0Raw == "" {
-				return fmt.Errorf("--to-0 argument not specified")
-			} else if !common.IsHexAddress(to0Raw) {
-				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
-			}
-			to0 = common.HexToAddress(to0Raw)
-
-			if deadlineRaw == "" {
-				return fmt.Errorf("--deadline argument not specified")
-			}
-			deadline = new(big.Int)
-			deadline.SetString(deadlineRaw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewUniswapV2Router02(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := UniswapV2Router02TransactorSession{
-				Contract:     &contract.UniswapV2Router02Transactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.AddLiquidity(
-				tokenA,
-				tokenB,
-				amountADesired,
-				amountBDesired,
-				amountAMin,
-				amountBMin,
-				to0,
-				deadline,
-			)
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	cmd.Flags().StringVar(&tokenARaw, "token-a", "", "token-a argument")
-	cmd.Flags().StringVar(&tokenBRaw, "token-b", "", "token-b argument")
-	cmd.Flags().StringVar(&amountADesiredRaw, "amount-a-desired", "", "amount-a-desired argument")
-	cmd.Flags().StringVar(&amountBDesiredRaw, "amount-b-desired", "", "amount-b-desired argument")
-	cmd.Flags().StringVar(&amountAMinRaw, "amount-a-min", "", "amount-a-min argument")
-	cmd.Flags().StringVar(&amountBMinRaw, "amount-b-min", "", "amount-b-min argument")
-	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument")
-	cmd.Flags().StringVar(&deadlineRaw, "deadline", "", "deadline argument")
-
-	return cmd
-}
-func CreateAddLiquidityEthCommand() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	var token common.Address
-	var tokenRaw string
-	var amountTokenDesired *big.Int
-	var amountTokenDesiredRaw string
-	var amountTokenMin *big.Int
-	var amountTokenMinRaw string
-	var amountETHMin *big.Int
-	var amountETHMinRaw string
-	var to0 common.Address
-	var to0Raw string
-	var deadline *big.Int
-	var deadlineRaw string
-
-	cmd := &cobra.Command{
-		Use:   "add-liquidity-eth",
-		Short: "Execute the AddLiquidityETH method on a UniswapV2Router02 contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if tokenRaw == "" {
-				return fmt.Errorf("--token argument not specified")
-			} else if !common.IsHexAddress(tokenRaw) {
-				return fmt.Errorf("--token argument is not a valid Ethereum address")
-			}
-			token = common.HexToAddress(tokenRaw)
-
-			if amountTokenDesiredRaw == "" {
-				return fmt.Errorf("--amount-token-desired argument not specified")
-			}
-			amountTokenDesired = new(big.Int)
-			amountTokenDesired.SetString(amountTokenDesiredRaw, 0)
-
-			if amountTokenMinRaw == "" {
-				return fmt.Errorf("--amount-token-min argument not specified")
-			}
-			amountTokenMin = new(big.Int)
-			amountTokenMin.SetString(amountTokenMinRaw, 0)
-
-			if amountETHMinRaw == "" {
-				return fmt.Errorf("--amount-eth-min argument not specified")
-			}
-			amountETHMin = new(big.Int)
-			amountETHMin.SetString(amountETHMinRaw, 0)
-
-			if to0Raw == "" {
-				return fmt.Errorf("--to-0 argument not specified")
-			} else if !common.IsHexAddress(to0Raw) {
-				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
-			}
-			to0 = common.HexToAddress(to0Raw)
-
-			if deadlineRaw == "" {
-				return fmt.Errorf("--deadline argument not specified")
-			}
-			deadline = new(big.Int)
-			deadline.SetString(deadlineRaw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewUniswapV2Router02(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := UniswapV2Router02TransactorSession{
-				Contract:     &contract.UniswapV2Router02Transactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.AddLiquidityETH(
-				token,
-				amountTokenDesired,
-				amountTokenMin,
-				amountETHMin,
-				to0,
-				deadline,
-			)
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	cmd.Flags().StringVar(&tokenRaw, "token", "", "token argument")
-	cmd.Flags().StringVar(&amountTokenDesiredRaw, "amount-token-desired", "", "amount-token-desired argument")
-	cmd.Flags().StringVar(&amountTokenMinRaw, "amount-token-min", "", "amount-token-min argument")
-	cmd.Flags().StringVar(&amountETHMinRaw, "amount-eth-min", "", "amount-eth-min argument")
-	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument")
-	cmd.Flags().StringVar(&deadlineRaw, "deadline", "", "deadline argument")
-
-	return cmd
-}
-func CreateRemoveLiquidityCommand() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	var tokenA common.Address
-	var tokenARaw string
-	var tokenB common.Address
-	var tokenBRaw string
-	var liquidity *big.Int
-	var liquidityRaw string
-	var amountAMin *big.Int
-	var amountAMinRaw string
-	var amountBMin *big.Int
-	var amountBMinRaw string
-	var to0 common.Address
-	var to0Raw string
-	var deadline *big.Int
-	var deadlineRaw string
-
-	cmd := &cobra.Command{
-		Use:   "remove-liquidity",
-		Short: "Execute the RemoveLiquidity method on a UniswapV2Router02 contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if tokenARaw == "" {
-				return fmt.Errorf("--token-a argument not specified")
-			} else if !common.IsHexAddress(tokenARaw) {
-				return fmt.Errorf("--token-a argument is not a valid Ethereum address")
-			}
-			tokenA = common.HexToAddress(tokenARaw)
-
-			if tokenBRaw == "" {
-				return fmt.Errorf("--token-b argument not specified")
-			} else if !common.IsHexAddress(tokenBRaw) {
-				return fmt.Errorf("--token-b argument is not a valid Ethereum address")
-			}
-			tokenB = common.HexToAddress(tokenBRaw)
-
-			if liquidityRaw == "" {
-				return fmt.Errorf("--liquidity argument not specified")
-			}
-			liquidity = new(big.Int)
-			liquidity.SetString(liquidityRaw, 0)
-
-			if amountAMinRaw == "" {
-				return fmt.Errorf("--amount-a-min argument not specified")
-			}
-			amountAMin = new(big.Int)
-			amountAMin.SetString(amountAMinRaw, 0)
-
-			if amountBMinRaw == "" {
-				return fmt.Errorf("--amount-b-min argument not specified")
-			}
-			amountBMin = new(big.Int)
-			amountBMin.SetString(amountBMinRaw, 0)
-
-			if to0Raw == "" {
-				return fmt.Errorf("--to-0 argument not specified")
-			} else if !common.IsHexAddress(to0Raw) {
-				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
-			}
-			to0 = common.HexToAddress(to0Raw)
-
-			if deadlineRaw == "" {
-				return fmt.Errorf("--deadline argument not specified")
-			}
-			deadline = new(big.Int)
-			deadline.SetString(deadlineRaw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewUniswapV2Router02(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := UniswapV2Router02TransactorSession{
-				Contract:     &contract.UniswapV2Router02Transactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.RemoveLiquidity(
-				tokenA,
-				tokenB,
-				liquidity,
-				amountAMin,
-				amountBMin,
-				to0,
-				deadline,
-			)
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	cmd.Flags().StringVar(&tokenARaw, "token-a", "", "token-a argument")
-	cmd.Flags().StringVar(&tokenBRaw, "token-b", "", "token-b argument")
-	cmd.Flags().StringVar(&liquidityRaw, "liquidity", "", "liquidity argument")
-	cmd.Flags().StringVar(&amountAMinRaw, "amount-a-min", "", "amount-a-min argument")
-	cmd.Flags().StringVar(&amountBMinRaw, "amount-b-min", "", "amount-b-min argument")
-	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument")
-	cmd.Flags().StringVar(&deadlineRaw, "deadline", "", "deadline argument")
-
-	return cmd
-}
 func CreateSwapExactEthforTokensSupportingFeeOnTransferTokensCommand() *cobra.Command {
 	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
 	var gasLimit uint64
@@ -3862,579 +4258,6 @@ func CreateSwapExactEthforTokensSupportingFeeOnTransferTokensCommand() *cobra.Co
 	cmd.Flags().StringVar(&pathRaw, "path", "", "path argument")
 	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument")
 	cmd.Flags().StringVar(&deadlineRaw, "deadline", "", "deadline argument")
-
-	return cmd
-}
-func CreateSwapExactTokensForTokensSupportingFeeOnTransferTokensCommand() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	var amountIn *big.Int
-	var amountInRaw string
-	var amountOutMin *big.Int
-	var amountOutMinRaw string
-	var path []common.Address
-	var pathRaw string
-	var to0 common.Address
-	var to0Raw string
-	var deadline *big.Int
-	var deadlineRaw string
-
-	cmd := &cobra.Command{
-		Use:   "swap-exact-tokens-for-tokens-supporting-fee-on-transfer-tokens",
-		Short: "Execute the SwapExactTokensForTokensSupportingFeeOnTransferTokens method on a UniswapV2Router02 contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if amountInRaw == "" {
-				return fmt.Errorf("--amount-in argument not specified")
-			}
-			amountIn = new(big.Int)
-			amountIn.SetString(amountInRaw, 0)
-
-			if amountOutMinRaw == "" {
-				return fmt.Errorf("--amount-out-min argument not specified")
-			}
-			amountOutMin = new(big.Int)
-			amountOutMin.SetString(amountOutMinRaw, 0)
-
-			if pathRaw == "" {
-				return fmt.Errorf("--path argument not specified")
-			} else if strings.HasPrefix(pathRaw, "@") {
-				filename := strings.TrimPrefix(pathRaw, "@")
-				contents, readErr := os.ReadFile(filename)
-				if readErr != nil {
-					return readErr
-				}
-				unmarshalErr := json.Unmarshal(contents, &path)
-				if unmarshalErr != nil {
-					return unmarshalErr
-				}
-			} else {
-				unmarshalErr := json.Unmarshal([]byte(pathRaw), &path)
-				if unmarshalErr != nil {
-					return unmarshalErr
-				}
-			}
-
-			if to0Raw == "" {
-				return fmt.Errorf("--to-0 argument not specified")
-			} else if !common.IsHexAddress(to0Raw) {
-				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
-			}
-			to0 = common.HexToAddress(to0Raw)
-
-			if deadlineRaw == "" {
-				return fmt.Errorf("--deadline argument not specified")
-			}
-			deadline = new(big.Int)
-			deadline.SetString(deadlineRaw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewUniswapV2Router02(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := UniswapV2Router02TransactorSession{
-				Contract:     &contract.UniswapV2Router02Transactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.SwapExactTokensForTokensSupportingFeeOnTransferTokens(
-				amountIn,
-				amountOutMin,
-				path,
-				to0,
-				deadline,
-			)
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	cmd.Flags().StringVar(&amountInRaw, "amount-in", "", "amount-in argument")
-	cmd.Flags().StringVar(&amountOutMinRaw, "amount-out-min", "", "amount-out-min argument")
-	cmd.Flags().StringVar(&pathRaw, "path", "", "path argument")
-	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument")
-	cmd.Flags().StringVar(&deadlineRaw, "deadline", "", "deadline argument")
-
-	return cmd
-}
-func CreateSwapTokensForExactTokensCommand() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	var amountOut *big.Int
-	var amountOutRaw string
-	var amountInMax *big.Int
-	var amountInMaxRaw string
-	var path []common.Address
-	var pathRaw string
-	var to0 common.Address
-	var to0Raw string
-	var deadline *big.Int
-	var deadlineRaw string
-
-	cmd := &cobra.Command{
-		Use:   "swap-tokens-for-exact-tokens",
-		Short: "Execute the SwapTokensForExactTokens method on a UniswapV2Router02 contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if amountOutRaw == "" {
-				return fmt.Errorf("--amount-out argument not specified")
-			}
-			amountOut = new(big.Int)
-			amountOut.SetString(amountOutRaw, 0)
-
-			if amountInMaxRaw == "" {
-				return fmt.Errorf("--amount-in-max argument not specified")
-			}
-			amountInMax = new(big.Int)
-			amountInMax.SetString(amountInMaxRaw, 0)
-
-			if pathRaw == "" {
-				return fmt.Errorf("--path argument not specified")
-			} else if strings.HasPrefix(pathRaw, "@") {
-				filename := strings.TrimPrefix(pathRaw, "@")
-				contents, readErr := os.ReadFile(filename)
-				if readErr != nil {
-					return readErr
-				}
-				unmarshalErr := json.Unmarshal(contents, &path)
-				if unmarshalErr != nil {
-					return unmarshalErr
-				}
-			} else {
-				unmarshalErr := json.Unmarshal([]byte(pathRaw), &path)
-				if unmarshalErr != nil {
-					return unmarshalErr
-				}
-			}
-
-			if to0Raw == "" {
-				return fmt.Errorf("--to-0 argument not specified")
-			} else if !common.IsHexAddress(to0Raw) {
-				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
-			}
-			to0 = common.HexToAddress(to0Raw)
-
-			if deadlineRaw == "" {
-				return fmt.Errorf("--deadline argument not specified")
-			}
-			deadline = new(big.Int)
-			deadline.SetString(deadlineRaw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewUniswapV2Router02(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := UniswapV2Router02TransactorSession{
-				Contract:     &contract.UniswapV2Router02Transactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.SwapTokensForExactTokens(
-				amountOut,
-				amountInMax,
-				path,
-				to0,
-				deadline,
-			)
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	cmd.Flags().StringVar(&amountOutRaw, "amount-out", "", "amount-out argument")
-	cmd.Flags().StringVar(&amountInMaxRaw, "amount-in-max", "", "amount-in-max argument")
-	cmd.Flags().StringVar(&pathRaw, "path", "", "path argument")
-	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument")
-	cmd.Flags().StringVar(&deadlineRaw, "deadline", "", "deadline argument")
-
-	return cmd
-}
-func CreateRemoveLiquidityEthwithPermitSupportingFeeOnTransferTokensCommand() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	var token common.Address
-	var tokenRaw string
-	var liquidity *big.Int
-	var liquidityRaw string
-	var amountTokenMin *big.Int
-	var amountTokenMinRaw string
-	var amountETHMin *big.Int
-	var amountETHMinRaw string
-	var to0 common.Address
-	var to0Raw string
-	var deadline *big.Int
-	var deadlineRaw string
-	var approveMax bool
-	var approveMaxRaw string
-	var v uint8
-
-	var r [32]byte
-	var rRaw string
-	var s [32]byte
-	var sRaw string
-
-	cmd := &cobra.Command{
-		Use:   "remove-liquidity-eth-with-permit-supporting-fee-on-transfer-tokens",
-		Short: "Execute the RemoveLiquidityETHWithPermitSupportingFeeOnTransferTokens method on a UniswapV2Router02 contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if tokenRaw == "" {
-				return fmt.Errorf("--token argument not specified")
-			} else if !common.IsHexAddress(tokenRaw) {
-				return fmt.Errorf("--token argument is not a valid Ethereum address")
-			}
-			token = common.HexToAddress(tokenRaw)
-
-			if liquidityRaw == "" {
-				return fmt.Errorf("--liquidity argument not specified")
-			}
-			liquidity = new(big.Int)
-			liquidity.SetString(liquidityRaw, 0)
-
-			if amountTokenMinRaw == "" {
-				return fmt.Errorf("--amount-token-min argument not specified")
-			}
-			amountTokenMin = new(big.Int)
-			amountTokenMin.SetString(amountTokenMinRaw, 0)
-
-			if amountETHMinRaw == "" {
-				return fmt.Errorf("--amount-eth-min argument not specified")
-			}
-			amountETHMin = new(big.Int)
-			amountETHMin.SetString(amountETHMinRaw, 0)
-
-			if to0Raw == "" {
-				return fmt.Errorf("--to-0 argument not specified")
-			} else if !common.IsHexAddress(to0Raw) {
-				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
-			}
-			to0 = common.HexToAddress(to0Raw)
-
-			if deadlineRaw == "" {
-				return fmt.Errorf("--deadline argument not specified")
-			}
-			deadline = new(big.Int)
-			deadline.SetString(deadlineRaw, 0)
-
-			approveMaxRawLower := strings.ToLower(approveMaxRaw)
-			switch approveMaxRawLower {
-			case "true", "t", "y", "yes", "1":
-				approveMax = true
-			case "false", "f", "n", "no", "0":
-				approveMax = false
-			default:
-				return fmt.Errorf("--approve-max argument is not valid (value: %s)", approveMaxRaw)
-			}
-
-			var hexDecoderErr error
-
-			var intermediaterLeaf []byte
-			intermediaterLeaf, hexDecoderErr = hex.DecodeString(rRaw)
-			if hexDecoderErr != nil {
-				return hexDecoderErr
-			}
-			r = [32]byte(intermediaterLeaf[:32])
-
-			var hexDecodesErr error
-
-			var intermediatesLeaf []byte
-			intermediatesLeaf, hexDecodesErr = hex.DecodeString(sRaw)
-			if hexDecodesErr != nil {
-				return hexDecodesErr
-			}
-			s = [32]byte(intermediatesLeaf[:32])
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewUniswapV2Router02(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := UniswapV2Router02TransactorSession{
-				Contract:     &contract.UniswapV2Router02Transactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.RemoveLiquidityETHWithPermitSupportingFeeOnTransferTokens(
-				token,
-				liquidity,
-				amountTokenMin,
-				amountETHMin,
-				to0,
-				deadline,
-				approveMax,
-				v,
-				r,
-				s,
-			)
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	cmd.Flags().StringVar(&tokenRaw, "token", "", "token argument")
-	cmd.Flags().StringVar(&liquidityRaw, "liquidity", "", "liquidity argument")
-	cmd.Flags().StringVar(&amountTokenMinRaw, "amount-token-min", "", "amount-token-min argument")
-	cmd.Flags().StringVar(&amountETHMinRaw, "amount-eth-min", "", "amount-eth-min argument")
-	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument")
-	cmd.Flags().StringVar(&deadlineRaw, "deadline", "", "deadline argument")
-	cmd.Flags().StringVar(&approveMaxRaw, "approve-max", "", "approve-max argument (true, t, y, yes, 1 OR false, f, n, no, 0)")
-	cmd.Flags().Uint8Var(&v, "v", 0, "v argument")
-	cmd.Flags().StringVar(&rRaw, "r", "", "r argument")
-	cmd.Flags().StringVar(&sRaw, "s", "", "s argument")
 
 	return cmd
 }
@@ -4792,6 +4615,183 @@ func CreateSwapTokensForExactEthCommand() *cobra.Command {
 
 	return cmd
 }
+func CreateSwapTokensForExactTokensCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var amountOut *big.Int
+	var amountOutRaw string
+	var amountInMax *big.Int
+	var amountInMaxRaw string
+	var path []common.Address
+	var pathRaw string
+	var to0 common.Address
+	var to0Raw string
+	var deadline *big.Int
+	var deadlineRaw string
+
+	cmd := &cobra.Command{
+		Use:   "swap-tokens-for-exact-tokens",
+		Short: "Execute the SwapTokensForExactTokens method on a UniswapV2Router02 contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if amountOutRaw == "" {
+				return fmt.Errorf("--amount-out argument not specified")
+			}
+			amountOut = new(big.Int)
+			amountOut.SetString(amountOutRaw, 0)
+
+			if amountInMaxRaw == "" {
+				return fmt.Errorf("--amount-in-max argument not specified")
+			}
+			amountInMax = new(big.Int)
+			amountInMax.SetString(amountInMaxRaw, 0)
+
+			if pathRaw == "" {
+				return fmt.Errorf("--path argument not specified")
+			} else if strings.HasPrefix(pathRaw, "@") {
+				filename := strings.TrimPrefix(pathRaw, "@")
+				contents, readErr := os.ReadFile(filename)
+				if readErr != nil {
+					return readErr
+				}
+				unmarshalErr := json.Unmarshal(contents, &path)
+				if unmarshalErr != nil {
+					return unmarshalErr
+				}
+			} else {
+				unmarshalErr := json.Unmarshal([]byte(pathRaw), &path)
+				if unmarshalErr != nil {
+					return unmarshalErr
+				}
+			}
+
+			if to0Raw == "" {
+				return fmt.Errorf("--to-0 argument not specified")
+			} else if !common.IsHexAddress(to0Raw) {
+				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
+			}
+			to0 = common.HexToAddress(to0Raw)
+
+			if deadlineRaw == "" {
+				return fmt.Errorf("--deadline argument not specified")
+			}
+			deadline = new(big.Int)
+			deadline.SetString(deadlineRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewUniswapV2Router02(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := UniswapV2Router02TransactorSession{
+				Contract:     &contract.UniswapV2Router02Transactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.SwapTokensForExactTokens(
+				amountOut,
+				amountInMax,
+				path,
+				to0,
+				deadline,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&amountOutRaw, "amount-out", "", "amount-out argument")
+	cmd.Flags().StringVar(&amountInMaxRaw, "amount-in-max", "", "amount-in-max argument")
+	cmd.Flags().StringVar(&pathRaw, "path", "", "path argument")
+	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument")
+	cmd.Flags().StringVar(&deadlineRaw, "deadline", "", "deadline argument")
+
+	return cmd
+}
 
 var ErrNoRPCURL error = errors.New("no RPC URL provided -- please pass an RPC URL from the command line or set the UNISWAP_V_2_ROUTER_02_RPC_URL environment variable")
 
@@ -4927,6 +4927,15 @@ func CreateUniswapV2Router02Command() *cobra.Command {
 	cmdDeployUniswapV2Router02.GroupID = DeployGroup.ID
 	cmd.AddCommand(cmdDeployUniswapV2Router02)
 
+	cmdViewGetAmountsOut := CreateGetAmountsOutCommand()
+	cmdViewGetAmountsOut.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewGetAmountsOut)
+	cmdViewQuote := CreateQuoteCommand()
+	cmdViewQuote.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewQuote)
+	cmdViewWETH := CreateWethCommand()
+	cmdViewWETH.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewWETH)
 	cmdViewFactory := CreateFactoryCommand()
 	cmdViewFactory.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewFactory)
@@ -4939,22 +4948,28 @@ func CreateUniswapV2Router02Command() *cobra.Command {
 	cmdViewGetAmountsIn := CreateGetAmountsInCommand()
 	cmdViewGetAmountsIn.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewGetAmountsIn)
-	cmdViewGetAmountsOut := CreateGetAmountsOutCommand()
-	cmdViewGetAmountsOut.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewGetAmountsOut)
-	cmdViewQuote := CreateQuoteCommand()
-	cmdViewQuote.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewQuote)
-	cmdViewWETH := CreateWethCommand()
-	cmdViewWETH.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewWETH)
 
-	cmdTransactRemoveLiquidityETHSupportingFeeOnTransferTokens := CreateRemoveLiquidityEthsupportingFeeOnTransferTokensCommand()
-	cmdTransactRemoveLiquidityETHSupportingFeeOnTransferTokens.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactRemoveLiquidityETHSupportingFeeOnTransferTokens)
+	cmdTransactRemoveLiquidityETH := CreateRemoveLiquidityEthCommand()
+	cmdTransactRemoveLiquidityETH.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactRemoveLiquidityETH)
 	cmdTransactRemoveLiquidityWithPermit := CreateRemoveLiquidityWithPermitCommand()
 	cmdTransactRemoveLiquidityWithPermit.GroupID = TransactGroup.ID
 	cmd.AddCommand(cmdTransactRemoveLiquidityWithPermit)
+	cmdTransactSwapExactTokensForTokensSupportingFeeOnTransferTokens := CreateSwapExactTokensForTokensSupportingFeeOnTransferTokensCommand()
+	cmdTransactSwapExactTokensForTokensSupportingFeeOnTransferTokens.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactSwapExactTokensForTokensSupportingFeeOnTransferTokens)
+	cmdTransactReceive := CreateReceiveCommand()
+	cmdTransactReceive.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactReceive)
+	cmdTransactAddLiquidity := CreateAddLiquidityCommand()
+	cmdTransactAddLiquidity.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactAddLiquidity)
+	cmdTransactRemoveLiquidity := CreateRemoveLiquidityCommand()
+	cmdTransactRemoveLiquidity.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactRemoveLiquidity)
+	cmdTransactRemoveLiquidityETHSupportingFeeOnTransferTokens := CreateRemoveLiquidityEthsupportingFeeOnTransferTokensCommand()
+	cmdTransactRemoveLiquidityETHSupportingFeeOnTransferTokens.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactRemoveLiquidityETHSupportingFeeOnTransferTokens)
 	cmdTransactSwapExactETHForTokens := CreateSwapExactEthforTokensCommand()
 	cmdTransactSwapExactETHForTokens.GroupID = TransactGroup.ID
 	cmd.AddCommand(cmdTransactSwapExactETHForTokens)
@@ -4964,45 +4979,30 @@ func CreateUniswapV2Router02Command() *cobra.Command {
 	cmdTransactSwapExactTokensForTokens := CreateSwapExactTokensForTokensCommand()
 	cmdTransactSwapExactTokensForTokens.GroupID = TransactGroup.ID
 	cmd.AddCommand(cmdTransactSwapExactTokensForTokens)
-	cmdTransactRemoveLiquidityETH := CreateRemoveLiquidityEthCommand()
-	cmdTransactRemoveLiquidityETH.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactRemoveLiquidityETH)
-	cmdTransactRemoveLiquidityETHWithPermit := CreateRemoveLiquidityEthwithPermitCommand()
-	cmdTransactRemoveLiquidityETHWithPermit.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactRemoveLiquidityETHWithPermit)
-	cmdTransactSwapETHForExactTokens := CreateSwapEthforExactTokensCommand()
-	cmdTransactSwapETHForExactTokens.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactSwapETHForExactTokens)
-	cmdTransactReceive := CreateReceiveCommand()
-	cmdTransactReceive.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactReceive)
-	cmdTransactAddLiquidity := CreateAddLiquidityCommand()
-	cmdTransactAddLiquidity.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactAddLiquidity)
 	cmdTransactAddLiquidityETH := CreateAddLiquidityEthCommand()
 	cmdTransactAddLiquidityETH.GroupID = TransactGroup.ID
 	cmd.AddCommand(cmdTransactAddLiquidityETH)
-	cmdTransactRemoveLiquidity := CreateRemoveLiquidityCommand()
-	cmdTransactRemoveLiquidity.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactRemoveLiquidity)
-	cmdTransactSwapExactETHForTokensSupportingFeeOnTransferTokens := CreateSwapExactEthforTokensSupportingFeeOnTransferTokensCommand()
-	cmdTransactSwapExactETHForTokensSupportingFeeOnTransferTokens.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactSwapExactETHForTokensSupportingFeeOnTransferTokens)
-	cmdTransactSwapExactTokensForTokensSupportingFeeOnTransferTokens := CreateSwapExactTokensForTokensSupportingFeeOnTransferTokensCommand()
-	cmdTransactSwapExactTokensForTokensSupportingFeeOnTransferTokens.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactSwapExactTokensForTokensSupportingFeeOnTransferTokens)
-	cmdTransactSwapTokensForExactTokens := CreateSwapTokensForExactTokensCommand()
-	cmdTransactSwapTokensForExactTokens.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactSwapTokensForExactTokens)
+	cmdTransactRemoveLiquidityETHWithPermit := CreateRemoveLiquidityEthwithPermitCommand()
+	cmdTransactRemoveLiquidityETHWithPermit.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactRemoveLiquidityETHWithPermit)
 	cmdTransactRemoveLiquidityETHWithPermitSupportingFeeOnTransferTokens := CreateRemoveLiquidityEthwithPermitSupportingFeeOnTransferTokensCommand()
 	cmdTransactRemoveLiquidityETHWithPermitSupportingFeeOnTransferTokens.GroupID = TransactGroup.ID
 	cmd.AddCommand(cmdTransactRemoveLiquidityETHWithPermitSupportingFeeOnTransferTokens)
+	cmdTransactSwapETHForExactTokens := CreateSwapEthforExactTokensCommand()
+	cmdTransactSwapETHForExactTokens.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactSwapETHForExactTokens)
+	cmdTransactSwapExactETHForTokensSupportingFeeOnTransferTokens := CreateSwapExactEthforTokensSupportingFeeOnTransferTokensCommand()
+	cmdTransactSwapExactETHForTokensSupportingFeeOnTransferTokens.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactSwapExactETHForTokensSupportingFeeOnTransferTokens)
 	cmdTransactSwapExactTokensForETH := CreateSwapExactTokensForEthCommand()
 	cmdTransactSwapExactTokensForETH.GroupID = TransactGroup.ID
 	cmd.AddCommand(cmdTransactSwapExactTokensForETH)
 	cmdTransactSwapTokensForExactETH := CreateSwapTokensForExactEthCommand()
 	cmdTransactSwapTokensForExactETH.GroupID = TransactGroup.ID
 	cmd.AddCommand(cmdTransactSwapTokensForExactETH)
+	cmdTransactSwapTokensForExactTokens := CreateSwapTokensForExactTokensCommand()
+	cmdTransactSwapTokensForExactTokens.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactSwapTokensForExactTokens)
 
 	return cmd
 }
