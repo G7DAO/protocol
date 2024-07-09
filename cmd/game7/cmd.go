@@ -15,6 +15,8 @@ import (
 	"github.com/G7DAO/protocol/bindings/TokenFaucet"
 	"github.com/G7DAO/protocol/bindings/UniswapV2Factory"
 	"github.com/G7DAO/protocol/bindings/UniswapV2Pair"
+	"github.com/G7DAO/protocol/bindings/UniswapV2Router02"
+
 	"github.com/G7DAO/protocol/bridge"
 
 	"github.com/G7DAO/protocol/bindings/ERC20"
@@ -70,6 +72,9 @@ func CreateRootCommand() *cobra.Command {
 	uniswapV2FactoryCmd := UniswapV2Factory.CreateUniswapV2FactoryCommand()
 	uniswapV2FactoryCmd.Use = "uniswap-v2-factory"
 
+	uniswapV2Router02Cmd := UniswapV2Router02.CreateUniswapV2Router02Command()
+	uniswapV2Router02Cmd.Use = "uniswap-v2-router-02"
+
 	rootCmd.AddCommand(completionCmd,
 		versionCmd,
 		tokenCmd,
@@ -83,7 +88,8 @@ func CreateRootCommand() *cobra.Command {
 		faucetCmd,
 		accountsCmd,
 		uniswapV2PairCmd,
-		uniswapV2FactoryCmd)
+		uniswapV2FactoryCmd,
+		uniswapV2Router02Cmd)
 
 	// By default, cobra Command objects write to stderr. We have to forcibly set them to output to
 	// stdout.

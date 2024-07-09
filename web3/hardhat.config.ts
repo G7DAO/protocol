@@ -11,7 +11,6 @@ const {
 } = process.env
 
 const config: HardhatUserConfig = {
-<<<<<<< HEAD
   solidity: {
     compilers: [
       {version: "0.8.24",
@@ -42,11 +41,6 @@ const config: HardhatUserConfig = {
         settings: {},
       },
     ],
-=======
-  solidity: "0.8.24",
-  gasReporter: {
-    enabled: true,
->>>>>>> origin
   },
   etherscan: {
     apiKey: {

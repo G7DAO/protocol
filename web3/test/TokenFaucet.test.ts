@@ -2,13 +2,9 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import { TokenFaucet } from "../typechain-types";
 import { HardhatEthersSigner } from "../helpers/type";
-<<<<<<< HEAD
-import { ERC20 } from "../typechain-types";
-=======
 import { ERC20 } from "../typechain-types/token";
 import { ONE_DAY } from "../constants/time";
 import { time } from "@nomicfoundation/hardhat-network-helpers";
->>>>>>> origin
 
 const name = 'Game7 Token';
 const symbol = 'G7T';
