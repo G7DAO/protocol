@@ -16,13 +16,17 @@ bindings/TokenFaucet/TokenFaucet.go: hardhat
 	mkdir -p bindings/TokenFaucet
 	seer evm generate --package TokenFaucet --output bindings/TokenFaucet/TokenFaucet.go --hardhat web3/artifacts/contracts/faucet/TokenFaucet.sol/TokenFaucet.json --cli --struct TokenFaucet
 
-bindings: bindings/ERC20/ERC20.go bindings/TokenFaucet/TokenFaucet.go
+bindings/WrappedNativeToken/WrappedNativeToken.go: hardhat
+	mkdir -p bindings/WrappedNativeToken
+	seer evm generate --package WrappedNativeToken --output bindings/WrappedNativeToken/WrappedNativeToken.go --hardhat web3/artifacts/contracts/token/WrappedNativeToken.sol/WrappedNativeToken.json --cli --struct WrappedNativeToken
+
+bindings: bindings/ERC20/ERC20.go bindings/TokenFaucet/TokenFaucet.go bindings/WrappedNativeToken/WrappedNativeToken.go
 
 test:
 	npx hardhat test
 
 clean:
-	rm -rf bindings/ERC20/* bin/* bindings/TokenFaucet/*
+	rm -rf bindings/ERC20/* bin/* bindings/TokenFaucet/* bindings/WrappedNativeToken/*
 
 hardhat:
 	cd web3 && npm install && npx hardhat compile
