@@ -2,16 +2,9 @@
 pragma solidity =0.6.6;
 
 import '@uniswap/v2-periphery/contracts/UniswapV2Router02.sol';
-import '../interfaces/IWrapper1155Factory.sol';
 
-contract Game7Router is UniswapV2Router02 {
+contract UniswapV2Router is UniswapV2Router02 {
 
-    address public immutable wrapperFactory;
-
-    constructor(address _v2Factory, address _WETH, address _wrapperFactory) UniswapV2Router02(_v2Factory, _WETH) public {
-        wrapperFactory = _wrapperFactory;
-
-    }
-
+    constructor(address _v2Factory, address _WETH) UniswapV2Router02(_v2Factory, _WETH) public{}
 
 }
