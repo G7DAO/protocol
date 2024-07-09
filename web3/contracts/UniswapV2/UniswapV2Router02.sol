@@ -2,6 +2,7 @@
 pragma solidity =0.6.6;
 
 import '@uniswap/v2-periphery/contracts/UniswapV2Router02.sol';
+import '../interfaces/IWrapper1155Factory.sol';
 
 contract Game7Router is UniswapV2Router02 {
 
