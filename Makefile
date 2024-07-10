@@ -28,14 +28,18 @@ bindings/UniswapV2Router02.go: hardhat
 	mkdir -p bindings/UniswapV2Router02
 	seer evm generate --package UniswapV2Router02 --output bindings/UniswapV2Router02/UniswapV2Router02.go --hardhat web3/artifacts/@uniswap/v2-periphery/contracts/UniswapV2Router02.sol/UniswapV2Router02.json --cli --struct UniswapV2Router02
 
-bindings: bindings/ERC20/ERC20.go bindings/Uniswap.go bindings/UniswapV2Factory.go bindings/TokenFaucet/TokenFaucet.go bindings/UniswapV2Router02.go
+bindings/Wrapper1155Factory.go: hardhat
+	mkdir -p bindings/Wrapper1155Factory
+	seer evm generate --package Wrapper1155Factory --output bindings/Wrapper1155Factory/Wrapper1155Factory.go --hardhat web3/artifacts/contracts/wrapper/Wrapper1155Factory.sol/Wrapper1155Factory.json --cli --struct Wrapper1155Factory
+
+bindings: bindings/ERC20/ERC20.go bindings/Uniswap.go bindings/UniswapV2Factory.go bindings/TokenFaucet/TokenFaucet.go bindings/UniswapV2Router02.go bindings/Wrapper1155Factory.go
 
 
 test:
 	npx hardhat test
 
 clean:
-	rm -rf bindings/ERC20/* bin/* bindings/TokenFaucet/* bindings/UniswapV2Factory/* bindings/UniswapV2Pair*
+	rm -rf bindings/ERC20/* bin/* bindings/TokenFaucet/* bindings/UniswapV2Factory/* bindings/UniswapV2Pair* 
 
 hardhat:
 	cd web3 && npm install && npx hardhat compile

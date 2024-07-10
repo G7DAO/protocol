@@ -16,6 +16,7 @@ import (
 	"github.com/G7DAO/protocol/bindings/UniswapV2Factory"
 	"github.com/G7DAO/protocol/bindings/UniswapV2Pair"
 	"github.com/G7DAO/protocol/bindings/UniswapV2Router02"
+	"github.com/G7DAO/protocol/bindings/Wrapper1155Factory"
 
 	"github.com/G7DAO/protocol/bridge"
 
@@ -75,6 +76,9 @@ func CreateRootCommand() *cobra.Command {
 	uniswapV2Router02Cmd := UniswapV2Router02.CreateUniswapV2Router02Command()
 	uniswapV2Router02Cmd.Use = "uniswap-v2-router-02"
 
+	wrapper1155FactoryCmd := Wrapper1155Factory.CreateWrapper1155FactoryCommand()
+	wrapper1155FactoryCmd.Use = "wrapper-1155-factory"
+
 	rootCmd.AddCommand(completionCmd,
 		versionCmd,
 		tokenCmd,
@@ -89,7 +93,8 @@ func CreateRootCommand() *cobra.Command {
 		accountsCmd,
 		uniswapV2PairCmd,
 		uniswapV2FactoryCmd,
-		uniswapV2Router02Cmd)
+		uniswapV2Router02Cmd,
+		wrapper1155FactoryCmd)
 
 	// By default, cobra Command objects write to stderr. We have to forcibly set them to output to
 	// stdout.

@@ -19,7 +19,7 @@ contract DEXW1155 is IDEXW1155, ERC20, ERC1155Holder,ReentrancyGuard{
         _;
     }
 
-    constructor()ERC20("Game7", "Game7"){
+    constructor()ERC20("Wrapper1155", "Wrapper1155"){
 
         _creator = msg.sender;
     }
