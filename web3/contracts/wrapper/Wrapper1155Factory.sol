@@ -15,6 +15,7 @@ contract Wrapper1155Factory {
         address _contract;
         uint256 tokenId;
     }
+
     constructor(){}
 
     function get1155Wrapper(address _contract, uint256 tokenid) external view returns(address token){

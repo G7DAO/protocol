@@ -14,6 +14,9 @@ This checklist describes how to deploy the Game7 Dex-Demo using uniswap verison 
     "WrappedNativeTokens": {
         "Game7 Test net" : "0x6B885D96916D18CD78E44B42C6489CA6f8794565",
     },
+    "ETHERMeasurments": {
+        "ether": "1000000000000000000",
+    },
 }
 ```
 

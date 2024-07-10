@@ -52,7 +52,7 @@ contract DEXW1155 is IDEXW1155, ERC20, ERC1155Holder,ReentrancyGuard{
     //Remove forgotten erc20 tokens
     function skim20(address to) external nonReentrant returns(uint256 amount){
         amount = balanceOf(address(this));
-        transfer(to, amount);
+        _transfer(address(this), to, amount);
 
     }
 
