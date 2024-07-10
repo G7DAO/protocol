@@ -23,14 +23,14 @@ contract WrapperRouter is WrapperFunctions, ReentrancyGuard{
 
     //functions liquidity add and remove, eth and non-eth
 
-    function addliquidity1155_1155(unwrapped1155Params memory token0, unwrapped1155Params memory token1,address to, uint deadline) external nonReentrant returns(uint256){
+    function addliquidity1155_1155(unwrapped1155Params memory token0, unwrapped1155Params memory token1,address to, uint deadline) external nonReentrant returns(uint256 liquidityAdded){
         (address _token0, uint256 _amount0Desired) = wrap1155(token0._contract, address(this), token0.amountDesired, token0.tokenId);
         (address _token1, uint256 _amount1Desired) = wrap1155(token1._contract, address(this), token1.amountDesired, token1.tokenId); 
         
         _approveRouter(_token0, _amount0Desired);
         _approveRouter(_token1, _amount1Desired);
 
-        IUniswapV2Router02(uniswapV2router).addLiquidity(_token0, _token1, _amount0Desired, _amount1Desired, token0.amountMinium * 1 ether, token1.amountMinium * 1 ether, to, deadline);
+        (,,liquidityAdded) = IUniswapV2Router02(uniswapV2router).addLiquidity(_token0, _token1, _amount0Desired, _amount1Desired, token0.amountMinium * 1 ether, token1.amountMinium * 1 ether, to, deadline);
                     
     }
 
