@@ -21,6 +21,7 @@ import (
 	"github.com/G7DAO/protocol/bridge"
 
 	"github.com/G7DAO/protocol/bindings/ERC20"
+	"github.com/G7DAO/protocol/bindings/WrappedNativeToken"
 	"github.com/G7DAO/protocol/cmd/game7/version"
 )
 
@@ -67,6 +68,9 @@ func CreateRootCommand() *cobra.Command {
 	accountsCmd := accounts.CreateAccountsCommand()
 	accountsCmd.Use = "accounts"
 
+	wrappedNativeTokenCmd := WrappedNativeToken.CreateWrappedNativeTokenCommand()
+	wrappedNativeTokenCmd.Use = "wrapped-native-token"
+
 	uniswapV2PairCmd := UniswapV2Pair.CreateUniswapV2PairCommand()
 	uniswapV2PairCmd.Use = "uniswap-v2-pair"
 
@@ -94,7 +98,8 @@ func CreateRootCommand() *cobra.Command {
 		uniswapV2PairCmd,
 		uniswapV2FactoryCmd,
 		uniswapV2Router02Cmd,
-		wrapper1155FactoryCmd)
+		wrapper1155FactoryCmd,
+		wrappedNativeTokenCmd)
 
 	// By default, cobra Command objects write to stderr. We have to forcibly set them to output to
 	// stdout.

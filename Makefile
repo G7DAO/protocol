@@ -32,14 +32,18 @@ bindings/Wrapper1155Factory.go: hardhat
 	mkdir -p bindings/Wrapper1155Factory
 	seer evm generate --package Wrapper1155Factory --output bindings/Wrapper1155Factory/Wrapper1155Factory.go --hardhat web3/artifacts/contracts/wrapper/Wrapper1155Factory.sol/Wrapper1155Factory.json --cli --struct Wrapper1155Factory
 
-bindings: bindings/ERC20/ERC20.go bindings/Uniswap.go bindings/UniswapV2Factory.go bindings/TokenFaucet/TokenFaucet.go bindings/UniswapV2Router02.go bindings/Wrapper1155Factory.go
+bindings/WrappedNativeToken/WrappedNativeToken.go: hardhat
+	mkdir -p bindings/WrappedNativeToken
+	seer evm generate --package WrappedNativeToken --output bindings/WrappedNativeToken/WrappedNativeToken.go --hardhat web3/artifacts/contracts/token/WrappedNativeToken.sol/WrappedNativeToken.json --cli --struct WrappedNativeToken
 
+bindings: bindings/ERC20/ERC20.go bindings/Uniswap.go bindings/UniswapV2Factory.go bindings/TokenFaucet/TokenFaucet.go bindings/UniswapV2Router02.go bindings/Wrapper1155Factory.go
+ bindings/WrappedNativeToken/WrappedNativeToken.go
 
 test:
 	npx hardhat test
 
 clean:
-	rm -rf bindings/ERC20/* bin/* bindings/TokenFaucet/* bindings/UniswapV2Factory/* bindings/UniswapV2Pair* 
+	rm -rf bindings/ERC20/* bin/* bindings/TokenFaucet/* bindings/UniswapV2Factory/* bindings/UniswapV2Pair*  bindings/WrappedNativeToken/*
 
 hardhat:
 	cd web3 && npm install && npx hardhat compile

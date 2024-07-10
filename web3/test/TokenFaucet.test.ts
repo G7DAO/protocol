@@ -24,7 +24,7 @@ describe("TokenFaucet", function () {
   beforeEach(async function () {
     [owner, addr1, addr2] = await ethers.getSigners();
 
-    token = await ethers.deployContract("ERC20", [name, symbol, decimals, initialSupply]);
+    token = await ethers.deployContract("contracts/token/ERC20.sol:ERC20", [name, symbol, decimals, initialSupply]);
     tokenAddress = await token.getAddress();
     await token.waitForDeployment();
 
