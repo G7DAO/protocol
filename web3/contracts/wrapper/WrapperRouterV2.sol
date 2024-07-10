@@ -34,6 +34,14 @@ contract WrapperRouter is WrapperFunctions, ReentrancyGuard{
                     
     }
 
+    function addLiquidity1155_ETH(unwrapped1155Params memory token, uint amountETHMin, address to, uint deadline) external nonReentrant payable returns(uint liquidityAdded){
+        (address _token, uint256 _amountDesired) = wrap1155(token._contract, address(this), token.amountDesired, token.tokenId);
+        _approveRouter(_token, _amountDesired);
+
+        (,,liquidityAdded) = IUniswapV2Router02(uniswapV2router).addLiquidityETH{value: msg.value}(_token, _amountDesired, token.amountMinium * 1 ether, amountETHMin, to, deadline);
+
+    }
+
 
     //functions swaps, from 1155 to (1155, 20, eth)
     //functions swaps, from 20/eth to (1155)
