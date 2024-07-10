@@ -29,3 +29,5 @@ coverage.json
 out
 cache_forge
 forge-artifacts
+
+package-lock.json
