@@ -1,6 +1,6 @@
 # Deploy Game7 Dex contract
 
-This checklist describes how to deploy the Game7 Token Faucet.
+This checklist describes how to deploy the Game7 Dex-Demo using uniswap verison 2 of proof of liquidity.
 ## RPC urls
 
 ```json
@@ -10,6 +10,9 @@ This checklist describes how to deploy the Game7 Token Faucet.
         "ArbitrumSepolia": "https://sepolia-rollup.arbitrum.io/rpc",
         "ArbitrumOrbitConduit": "https://rpc-game7-arb-anytrust-wcj9hysn7y.t.conduit.xyz",
         "ArbitrumOrbitCaldera": "https://game7-testnet.hub.caldera.xyz/",
+    },
+    "WrappedNativeTokens": {
+        "Game7 Test net" : "0x6B885D96916D18CD78E44B42C6489CA6f8794565",
     },
 }
 ```
@@ -22,7 +25,7 @@ This checklist describes how to deploy the Game7 Token Faucet.
 - [ ] `export TOKEN0=<address of the Token contract>` 
 - [ ] `export TOKEN1=<address of the Token contract>`
 - [ ] `export FACTORYV2=<address of the Factory contract>`
-- [ ] `export WETH=<address of the WETH contract>`
+- [ ] `export WNT=<address of the Native Token Wrapper contract>`
 - [ ] `export ROUTER02=<address of the ROUTER02>`
 - [ ] `export V2PAIR=<address of the V2Pair contract>`
 - [ ] `export LIQUIDITYAMOUNT0=<amount of token0 to add to liquidity>`
@@ -59,6 +62,18 @@ bin/game7 token deploy \
   --rpc $RPC \
   --keyfile $KEY
 ```
+- [ ] Deploy WrappedNativeToken if needed
+- [ ] Local variable `export WNTNAME = <Insert Wrapped Native Token name>`
+- [ ] Local variable `export WNTSYMBOL = <Insert Wrapped Native Token symbol>`
+
+``` bash
+bin/game7 wrapped-native-token deploy \
+    --rpc $RPC \
+    --keyfile $KEY \
+    --symbol $WNTSYMBOL \
+    --token-name $WNTNAME
+```
+
 - [ ] Deploy UniswapV2Factory contract
 
 ```bash
@@ -73,7 +88,7 @@ bin/game7 uniswap-v2-factory deploy \
 ```bash
 bin/game7 uniswap-v2-router-02 deploy \
     --factory $FACTORY \
-    --weth $WETH \
+    --weth $WNT \
     --rpc $RPC \
     --keyfile $KEY
 ```
@@ -155,11 +170,10 @@ bin/game7 uniswap-v2-factory get-pair \
 bin/game7 uniswap-v2-factory create-pair \
     --contract $FACTORYV2 \
     --token-a $TOKEN0 \
-    --token-b $WETH \
+    --token-b $WNT \
     --rpc $RPC \
     --keyfile $KEY
 ```
-
 ```bash 
 bin/game7 token approve \
     --contract $TOKEN0 \
@@ -168,7 +182,6 @@ bin/game7 token approve \
     --spender $ROUTER02 \
     --amount $LIQUIDITYTOADD0
 ```
-
 ```bash
 bin/game7 uniswap-v2-router-02 add-liquidity-eth \
     --contract $ROUTER02 \
@@ -182,5 +195,23 @@ bin/game7 uniswap-v2-router-02 add-liquidity-eth \
     --value $ETHVALUE \
     --to-0 $CALLER \
     --deadline $DEADLINE
+
+```
+
+- [ ] Perform swap from Eth to token
+- [ ] Set local variables
+-- `export PATH=<path in which the swap will take>` example "[WETH,TOKEN0]"
+-- `export AMOUNTOUTMIN=<minium to recieve also known as slippage>`
+-- `export VALUE=<Amount of eth sent>`
+```Bash
+bin/game7 uniswap-v2-router-02 swap-exact-eth-for-tokens \
+    --contract $ROUTER02 \
+    --rpc $RPC \
+    --keyfile $KEY \
+    --amount-out-min AMOUNTOUTMIN \
+    --deadline $DEADLINE \
+    --path $PATH \
+    --to $DAO \
+    --value $VALUE
 
 ```

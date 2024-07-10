@@ -12,11 +12,13 @@ import (
 	"github.com/G7DAO/protocol/bindings/ArbitrumL2CustomGateway"
 	"github.com/G7DAO/protocol/bindings/ArbitrumUpgradeExecutor"
 	"github.com/G7DAO/protocol/bindings/ERC20Inbox"
+	"github.com/G7DAO/protocol/bindings/TestERC1155"
 	"github.com/G7DAO/protocol/bindings/TokenFaucet"
 	"github.com/G7DAO/protocol/bindings/UniswapV2Factory"
 	"github.com/G7DAO/protocol/bindings/UniswapV2Pair"
 	"github.com/G7DAO/protocol/bindings/UniswapV2Router02"
 	"github.com/G7DAO/protocol/bindings/Wrapper1155Factory"
+	"github.com/G7DAO/protocol/bindings/WrapperFunctions"
 
 	"github.com/G7DAO/protocol/bridge"
 
@@ -83,6 +85,12 @@ func CreateRootCommand() *cobra.Command {
 	wrapper1155FactoryCmd := Wrapper1155Factory.CreateWrapper1155FactoryCommand()
 	wrapper1155FactoryCmd.Use = "wrapper-1155-factory"
 
+	TestERC1155Cmd := TestERC1155.CreateTestERC1155Command()
+	TestERC1155Cmd.Use = "test-erc-1155"
+
+	WrapperFunctionsCmd := WrapperFunctions.CreateWrapperFunctionsCommand()
+	WrapperFunctionsCmd.Use = "wrapper-functions"
+
 	rootCmd.AddCommand(completionCmd,
 		versionCmd,
 		tokenCmd,
@@ -99,7 +107,9 @@ func CreateRootCommand() *cobra.Command {
 		uniswapV2FactoryCmd,
 		uniswapV2Router02Cmd,
 		wrapper1155FactoryCmd,
-		wrappedNativeTokenCmd)
+		wrappedNativeTokenCmd,
+		TestERC1155Cmd,
+		WrapperFunctionsCmd)
 
 	// By default, cobra Command objects write to stderr. We have to forcibly set them to output to
 	// stdout.
