@@ -78,7 +78,7 @@ describe('Staker', function () {
         expect(TotalPools).to.equal(0);
 
         const nativeTokenType = await staker.NATIVE_TOKEN_TYPE();
-        expect(nativeTokenType).to.equal(0);
+        expect(nativeTokenType).to.equal(1);
 
         const erc20TokenType = await staker.ERC20_TOKEN_TYPE();
         expect(erc20TokenType).to.equal(20);

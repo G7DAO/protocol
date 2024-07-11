@@ -20,15 +20,18 @@ import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
  * Built by the Game7 World Builder team: worldbuilder - at - game7.io
  */
 contract Staker is ERC721Enumerable, ReentrancyGuard {
-    /// @title StakingPool
-    /// @notice StakingPool represents a staking position that users can adopt.
-    /// @notice Anybody can permissionlessly create a staking pool on the Staker contract. The creator
-    /// of a pool is automatically designated as its administrator. The current administrator of a pool
-    /// can transfer its administration privileges to another account.
-    /// @notice The administrator of a staking pool is the only account that can change certain parameters
-    /// of the pool, such as whether positions under that staking pool are transferable, the length of
-    /// the lockup period for positions staked under that pool, and the length of the cooldown period for
-    /// withdrawals for positions staked under that pool.
+    /**
+     * StakingPool represents a staking position that users can adopt.
+     *
+     * Anybody can permissionlessly create a staking pool on the Staker contract. The creator
+     * of a pool is automatically designated as its administrator. The current administrator of a pool
+     * can transfer its administration privileges to another account.
+     *
+     * The administrator of a staking pool is the only account that can change certain parameters
+     * of the pool, such as whether positions under that staking pool are transferable, the length of
+     * the lockup period for positions staked under that pool, and the length of the cooldown period for
+     * withdrawals for positions staked under that pool.
+     */
     struct StakingPool {
         address administrator;
         uint256 tokenType;
@@ -40,7 +43,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
     }
 
     // Valid token types for StakingPool.tokenType
-    uint256 public constant NATIVE_TOKEN_TYPE = 0;
+    uint256 public constant NATIVE_TOKEN_TYPE = 1;
     uint256 public constant ERC20_TOKEN_TYPE = 20;
     uint256 public constant ERC721_TOKEN_TYPE = 721;
     uint256 public constant ERC1155_TOKEN_TYPE = 1155;
