@@ -1,4 +1,9 @@
 {
+  "scripts": {
+    "test": "hardhat test",
+    "compile": "hardhat compile",
+    "extract-abis": "./extract-abis.sh"
+  },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "hardhat": "^2.22.4"

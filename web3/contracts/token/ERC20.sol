@@ -6,6 +6,7 @@ import { IERC20 } from '../interfaces/IERC20.sol';
 /**
  * @title ERC20 Token
  * @author Game7 Engineering Team - engineering@game7.io
+ * @dev Adapted from WETH9: https://etherscan.io/address/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2#code
  */
 contract ERC20 is IERC20 {
     string public name;
