@@ -42,6 +42,21 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         uint256 cooldownSeconds;
     }
 
+    /**
+     * Position represents the parameters of a staking position:
+     * - the staking pool ID under which the deposit was made
+     * - the amount of tokens deposited under that staking pool
+     * - the timestamp at which the deposit was made
+     *
+     * The address of the depositor is the owner of the ERC721 token representing this deposit, and
+     * is not stored within this struct.
+     */
+    struct Position {
+        uint256 poolID;
+        uint256 amount;
+        uint64 stakeTimestamp;
+    }
+
     // Valid token types for StakingPool.tokenType
     uint256 public constant NATIVE_TOKEN_TYPE = 1;
     uint256 public constant ERC20_TOKEN_TYPE = 20;
@@ -50,7 +65,11 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
 
     uint256 public TotalPools;
 
+    // Pool ID => StakingPool struct
     mapping(uint256 => StakingPool) public Pools;
+
+    // Token ID of tokens on this ERC721 contract => Position struct
+    mapping(uint256 => Position) public Positions;
 
     event StakingPoolCreated(
         uint256 indexed poolID,
