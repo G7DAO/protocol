@@ -154,6 +154,31 @@ describe('Staker', function () {
         expect(numPools).to.equal(101);
     });
 
+    it('should not support the creation and management of tokens with an unknown type', async function () {
+        const { anyone, staker } = await loadFixture(setupFixture);
+
+        await staker.connect(anyone);
+
+        const unknownType =
+            (await staker.NATIVE_TOKEN_TYPE()) +
+            (await staker.ERC20_TOKEN_TYPE()) +
+            (await staker.ERC721_TOKEN_TYPE()) +
+            (await staker.ERC1155_TOKEN_TYPE());
+
+        const tokenAddress = ethers.ZeroAddress;
+        const tokenID = 0;
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        await expect(
+            staker.createPool(unknownType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds)
+        ).to.revertedWithCustomError(staker, 'InvalidTokenType');
+
+        const TotalPools = await staker.TotalPools();
+        expect(TotalPools).to.equal(0);
+    });
+
     it('should support creation and management of native token staking pools', async function () {
         const { anyone, staker } = await loadFixture(setupFixture);
 
