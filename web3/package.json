@@ -2,7 +2,8 @@
   "scripts": {
     "test": "hardhat test",
     "compile": "hardhat compile",
-    "extract-abis": "./extract-abis.sh"
+    "extract-abis": "./extract-abis.sh",
+    "typechain": "hardhat typechain"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
