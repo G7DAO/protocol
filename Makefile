@@ -18,15 +18,15 @@ bindings/TokenFaucet/TokenFaucet.go: hardhat
 
 bindings/Uniswap.go: hardhat
 	mkdir -p bindings/UniswapV2Pair
-	seer evm generate --package UniswapV2Pair --output bindings/UniswapV2Pair/UniswapV2Pair.go --hardhat web3/artifacts/@uniswap/v2-core/contracts/UniswapV2Pair.sol/UniswapV2Pair.json --cli --struct UniswapV2Pair
+	seer evm generate --package UniswapV2Pair --output bindings/UniswapV2Pair/UniswapV2Pair.go --hardhat web3/artifacts/contracts/uniswapv2/v2-core/contracts/UniswapV2Pair.sol/UniswapV2Pair.json --cli --struct UniswapV2Pair
 	
 bindings/UniswapV2Factory.go: hardhat
 	mkdir -p bindings/UniswapV2Factory
-	seer evm generate --package UniswapV2Factory --output bindings/UniswapV2Factory/UniswapV2Factory.go --hardhat web3/artifacts/@uniswap/v2-core/contracts/UniswapV2Factory.sol/UniswapV2Factory.json --cli --struct UniswapV2Factory
+	seer evm generate --package UniswapV2Factory --output bindings/UniswapV2Factory/UniswapV2Factory.go --hardhat web3/artifacts/contracts/uniswapv2/v2-core/contracts/UniswapV2Factory.sol/UniswapV2Factory.json --cli --struct UniswapV2Factory
 
 bindings/UniswapV2Router02.go: hardhat
 	mkdir -p bindings/UniswapV2Router02
-	seer evm generate --package UniswapV2Router02 --output bindings/UniswapV2Router02/UniswapV2Router02.go --hardhat web3/artifacts/@uniswap/v2-periphery/contracts/UniswapV2Router02.sol/UniswapV2Router02.json --cli --struct UniswapV2Router02
+	seer evm generate --package UniswapV2Router02 --output bindings/UniswapV2Router02/UniswapV2Router02.go --hardhat web3/artifacts/contracts/uniswapv2/v2-periphery/contracts/UniswapV2Router02.sol/UniswapV2Router02.json --cli --struct UniswapV2Router02
 
 bindings/Wrapper1155Factory.go: hardhat
 	mkdir -p bindings/Wrapper1155Factory
@@ -53,7 +53,7 @@ test:
 	npx hardhat test
 
 clean:
-	rm -rf bindings/ERC20/* bin/* bindings/TokenFaucet/* bindings/UniswapV2Factory/* bindings/UniswapV2Pair*  bindings/WrappedNativeToken/*
+	rm -rf bindings/ERC20/* bin/* bindings/TokenFaucet/* bindings/UniswapV2Factory/* bindings/UniswapV2Pair/*  bindings/WrappedNativeToken/*
 
 hardhat:
 	cd web3 && npm install && npx hardhat compile

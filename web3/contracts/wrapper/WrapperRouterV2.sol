@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
+import "../uniswapv2/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 import "./WrapperFunctions.sol";
 
 contract WrapperRouter is WrapperFunctions, ReentrancyGuard{
