@@ -144,7 +144,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         );
     }
 
-    function transferPool(uint256 poolID, address newAdministrator) external {
+    function transferPoolAdministration(uint256 poolID, address newAdministrator) external {
         StakingPool storage pool = Pools[poolID];
         if (msg.sender != pool.administrator) {
             revert NonAdministrator();

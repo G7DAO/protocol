@@ -778,4 +778,36 @@ describe('Staker', function () {
         expect(pool.lockupSeconds).to.equal(lockupSeconds);
         expect(pool.cooldownSeconds).to.equal(cooldownSeconds);
     });
+
+    it('should allow the administrator of a staking pool transfer its administration to another address', async function () {
+        const { admin0, stakerWithAdmin0, user0, poolID } = await loadFixture(setupERC1155StakingPoolFixture);
+
+        let pool = await stakerWithAdmin0.Pools(poolID);
+        expect(pool.administrator).to.equal(admin0.address);
+        expect(user0.address).to.not.equal(admin0.address);
+
+        await expect(stakerWithAdmin0.transferPoolAdministration(poolID, user0.address))
+            .to.emit(stakerWithAdmin0, 'StakingPoolConfigured')
+            .withArgs(poolID, user0.address, pool.transferable, pool.lockupSeconds, pool.cooldownSeconds);
+
+        pool = await stakerWithAdmin0.Pools(poolID);
+        expect(pool.administrator).to.equal(user0.address);
+    });
+
+    it('should not allow a non-administrator for a pool to transfer its administration to another address', async function () {
+        const { admin0, stakerWithAdmin0, user0, poolID } = await loadFixture(setupERC1155StakingPoolFixture);
+
+        let pool = await stakerWithAdmin0.Pools(poolID);
+        expect(pool.administrator).to.equal(admin0.address);
+        expect(user0.address).to.not.equal(admin0.address);
+
+        const stakerWithUser0 = stakerWithAdmin0.connect(user0);
+        await expect(stakerWithUser0.transferPoolAdministration(poolID, user0.address)).to.be.revertedWithCustomError(
+            stakerWithUser0,
+            'NonAdministrator'
+        );
+
+        pool = await stakerWithUser0.Pools(poolID);
+        expect(pool.administrator).to.equal(admin0.address);
+    });
 });
