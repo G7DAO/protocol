@@ -90,12 +90,13 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
                 revert InvalidConfiguration();
             }
         } else if (tokenType == ERC1155_TOKEN_TYPE) {
-            if (tokenAddress == address(0) || tokenID == 0) {
+            if (tokenAddress == address(0)) {
                 revert InvalidConfiguration();
             }
         } else {
             revert InvalidTokenType();
         }
+
         Pools[TotalPools] = StakingPool({
             administrator: msg.sender,
             tokenType: tokenType,
@@ -105,8 +106,10 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
             lockupSeconds: lockupSeconds,
             cooldownSeconds: cooldownSeconds
         });
+
         emit StakingPoolCreated(TotalPools, tokenType, tokenAddress, tokenID);
         emit StakingPoolConfigured(TotalPools, msg.sender, transferable, lockupSeconds, cooldownSeconds);
+
         TotalPools++;
     }
 
