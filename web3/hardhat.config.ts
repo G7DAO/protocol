@@ -5,6 +5,9 @@ import { ChainId, NetworkExplorer, NetworkName, rpcUrls } from "./constants/netw
 
 dotenv.config()
 
+const yes = ["true", "t", "yes", "y", "1"]
+const GAS_PROFILER = yes.includes((process.env.GAS_PROFILER || "").toLowerCase());
+
 const {
   ETHSCAN_API_KEY,
   ARB_SCAN_API_KEY,
@@ -13,7 +16,7 @@ const {
 const config: HardhatUserConfig = {
   solidity: "0.8.24",
   gasReporter: {
-    enabled: true,
+    enabled: GAS_PROFILER,
   },
   etherscan: {
     apiKey: {
