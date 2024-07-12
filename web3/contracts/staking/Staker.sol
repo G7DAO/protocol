@@ -105,6 +105,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
     error UnauthorizedForPosition(address owner, address sender);
     error InitiateUnstakeFirst(uint256 cooldownSeconds);
     error LockupNotExpired(uint256 expiresAt);
+    error PositionNotTransferable(uint256 positionTokenID);
 
     constructor() ERC721("Game7 Staker", "G7STAKER") {}
 
@@ -115,6 +116,20 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
     // We don't implement onERC1155BatchReceived because staking operates on a single tokenID.
     function onERC1155Received(address, address, uint256, uint256, bytes calldata) external pure returns (bytes4) {
         return IERC1155Receiver.onERC1155Received.selector;
+    }
+
+    // If a pool is configured so that its positions are non-trasnsferable, then we must disable transfer
+    // functionality on the position tokens.
+    // Since our ERC721 functionality is inherited from OpenZeppelin's ERC721 contract, we can override
+    // this functionality in the transferFrom function. Both safeTransferFrom methods on the OpenZeppelin
+    // ERC721 rely on transferFrom to perform the actual transfer.
+    function transferFrom(address from, address to, uint256 tokenId) public override(ERC721, IERC721) {
+        Position storage position = Positions[tokenId];
+        StakingPool storage pool = Pools[position.poolID];
+        if (!pool.transferable) {
+            revert PositionNotTransferable(tokenId);
+        }
+        super.transferFrom(from, to, tokenId);
     }
 
     function createPool(
@@ -392,13 +407,6 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
 
         metadata = abi.encodePacked(
             metadata,
-            ',{"display_type":"number","trait_type":"Transferable","value":"',
-            pool.transferable ? "true" : "false",
-            '"}'
-        );
-
-        metadata = abi.encodePacked(
-            metadata,
             ",",
             pool.tokenType == ERC721_TOKEN_TYPE
                 ? '{"trait_type":"Staked Token ID","value":"'
@@ -420,18 +428,6 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
             Strings.toString(position.stakeTimestamp + pool.lockupSeconds),
             "}"
         );
-
-        if (position.unstakeInitiatedAt > 0) {
-            metadata = abi.encodePacked(
-                metadata,
-                ',{"display_type":"number","trait_type":"Unstake initiated at","value":',
-                Strings.toString(position.unstakeInitiatedAt),
-                "}",
-                ',{"display_type":"number","trait_type":"Cooldown expires at","value":',
-                Strings.toString(position.unstakeInitiatedAt + pool.cooldownSeconds),
-                "}"
-            );
-        }
 
         metadata = abi.encodePacked(metadata, "]}");
     }
