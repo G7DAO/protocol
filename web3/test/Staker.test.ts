@@ -944,19 +944,21 @@ describe('Staker', function () {
 
                 const expectedPositionTokenID = await staker.TotalPositions();
 
-                const userAddress = await user0.getAddress();
-                const stakerAddress = await staker.getAddress();
-
                 const stakeTx: TransactionResponse = await stake(user0, staker, poolID, amountOrTokenID);
                 const stakeBlock = await stakeTx.getBlock();
 
-                const position = await staker.Positions(expectedPositionTokenID);
+                const position0 = await staker.Positions(expectedPositionTokenID);
+                expect(position0.unstakeInitiatedAt).to.equal(0);
+
                 time.increase(lockupSeconds - 1);
 
                 const stakerWithUser0 = staker.connect(user0);
                 await expect(stakerWithUser0.initiateUnstake(expectedPositionTokenID))
                     .to.revertedWithCustomError(stakerWithUser0, 'LockupNotExpired')
                     .withArgs(stakeBlock!.timestamp + lockupSeconds);
+
+                const position1 = await staker.Positions(expectedPositionTokenID);
+                expect(position1.unstakeInitiatedAt).to.equal(0);
             });
 
             it('can initiate unstake as soon as lockup has expired', async function () {
@@ -964,9 +966,6 @@ describe('Staker', function () {
                     await loadFixture(setup);
 
                 const expectedPositionTokenID = await staker.TotalPositions();
-
-                const userAddress = await user0.getAddress();
-                const stakerAddress = await staker.getAddress();
 
                 const stakeTx: TransactionResponse = await stake(user0, staker, poolID, amountOrTokenID);
                 const stakeBlock = await stakeTx.getBlock();
@@ -988,9 +987,6 @@ describe('Staker', function () {
                     await loadFixture(setup);
 
                 const expectedPositionTokenID = await staker.TotalPositions();
-
-                const userAddress = await user0.getAddress();
-                const stakerAddress = await staker.getAddress();
 
                 const stakeTx: TransactionResponse = await stake(user0, staker, poolID, amountOrTokenID);
                 const stakeBlock = await stakeTx.getBlock();
