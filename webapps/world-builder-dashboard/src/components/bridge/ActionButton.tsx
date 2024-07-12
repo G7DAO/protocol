@@ -76,7 +76,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, l3Networ
             mutate(amount)
           }
         } else {
-          console.error('MetaMask is not installed!')
+          console.error('Wallet is not installed!')
         }
       }
 
@@ -133,6 +133,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, l3Networ
       onSuccess: (receipt: ethers.providers.TransactionReceipt, amount) => {
         try {
           const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+
           let transactions = []
           if (transactionsString) {
             transactions = JSON.parse(transactionsString)
@@ -148,16 +149,16 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, l3Networ
             l2RPC: L2_CHAIN.rpcs[0],
             l3RPC: l3Network.chainInfo.rpcs[0],
             from: connectedAccount,
-            to: connectedAccount,
+            to: connectedAccount
           })
           localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(transactions))
         } catch (e) {
           console.log(e)
         }
-        console.log(receipt);
-        queryClient.refetchQueries(['ERC20Balance']);
-        queryClient.refetchQueries(['nativeBalance']);
-        queryClient.refetchQueries(['incomingMessages']);
+        console.log(receipt)
+        queryClient.refetchQueries(['ERC20Balance'])
+        queryClient.refetchQueries(['nativeBalance'])
+        queryClient.refetchQueries(['incomingMessages'])
       }
     }
   )
@@ -208,8 +209,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, l3Networ
             ...oldData
           ]
         })
-        queryClient.refetchQueries(['ERC20Balance']);
-        queryClient.refetchQueries(['nativeBalance']);
+        queryClient.refetchQueries(['ERC20Balance'])
+        queryClient.refetchQueries(['nativeBalance'])
         console.log(receipt)
       }
     }
