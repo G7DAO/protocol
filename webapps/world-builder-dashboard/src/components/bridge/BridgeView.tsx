@@ -1,7 +1,7 @@
 // Libraries
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useQuery } from 'react-query'
-import { L2_CHAIN, L3_NATIVE_TOKEN_SYMBOL } from '../../../constants'
+import { L3_NATIVE_TOKEN_SYMBOL } from '../../../constants'
 // Styles and Icons
 import styles from './BridgeView.module.css'
 import { Icon } from 'summon-ui'
@@ -9,7 +9,6 @@ import IconArbitrumOne from '@/assets/IconArbitrumOne'
 import ActionButton from '@/components/bridge/ActionButton'
 // Blockchain Context and Utility Functions
 import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
-// import HistoryHeader from '@/components/bridge/HistoryHeader'
 // Components
 import NetworkSelector from '@/components/bridge/NetworkSelector'
 import TransactionSummary from '@/components/bridge/TransactionSummary'
@@ -17,10 +16,9 @@ import ValueToBridge from '@/components/bridge/ValueToBridge'
 import { estimateDepositFee } from '@/components/bridge/depositERC20'
 import { L3_NETWORKS } from '@/components/bridge/l3Networks'
 import { estimateWithdrawFee } from '@/components/bridge/withdrawNativeToken'
-import useERC20Balance from '@/hooks/useERC20Balance'
 // Hooks and Constants
+import useERC20Balance from '@/hooks/useERC20Balance'
 import useEthUsdRate from '@/hooks/useEthUsdRate'
-import { useL2ToL1MessagesStatus, useMessages } from '@/hooks/useL2ToL1MessageStatus'
 import useNativeBalance from '@/hooks/useNativeBalance'
 
 const BridgeView: React.FC = () => {
@@ -28,7 +26,6 @@ const BridgeView: React.FC = () => {
   const [value, setValue] = useState('0')
   const l2networks = ['Arbitrum Sepolia']
 
-  // const [selectedNetwork, setSelectedNetwork] = useState<L3NetworkConfiguration>(L3_NETWORKS[0]);
   const g7tUsdRate = useQuery(['rate'], () => 31166.75)
   const { data: ethUsdRate } = useEthUsdRate()
   const { L2Provider, connectedAccount, tokenAddress, L2_RPC, selectedL3Network, setSelectedL3Network } =
@@ -43,11 +40,6 @@ const BridgeView: React.FC = () => {
     rpc: selectedL3Network.chainInfo.rpcs[0]
   })
   const { data: l2NativeBalance } = useNativeBalance({ account: connectedAccount, rpc: L2_RPC })
-
-  useEffect(() => {}, [l3NativeBalance])
-
-  const messages = useMessages(connectedAccount, L2_CHAIN)
-  const transactions = useL2ToL1MessagesStatus(messages.data)
 
   const estimatedFee = useQuery(['estimatedFee', value, direction], async () => {
     if (!connectedAccount) {
@@ -81,7 +73,6 @@ const BridgeView: React.FC = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '56px' }}>
-      {/*<HistoryHeader messages={transactions ? transactions?.filter((t) => t).map((t) => t.data) : undefined} />*/}
       <div className={styles.container}>
         <div className={styles.directionContainer}>
           <button
