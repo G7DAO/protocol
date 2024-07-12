@@ -1,5 +1,13 @@
 /* src/styles/global.css */
 
+button {
+  cursor: pointer;
+}
+
+div {
+  line-height: 0;
+}
+
 :root {
   --Blue-50: #eff8ff;
   --Blue-100: #d1e9ff;
