@@ -377,6 +377,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         metadata = abi.encodePacked(
             '{"token_id":"',
             Strings.toString(positionTokenID),
+            // TODO: Change image URI
             '","image": "https://badges.moonstream.to/test/staking_logo.png"',
             ',"external_url":"https://game7.io"',
             ',"metadata_version":1,"attributes": ['
