@@ -2,11 +2,15 @@
 pragma solidity ^0.8.24;
 
 import { Base64 } from "@openzeppelin/contracts/utils/Base64.sol";
-import { IERC20 } from "../interfaces/IERC20.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IERC721 } from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import { IERC721Receiver } from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import { IERC1155 } from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+import { IERC1155Receiver } from "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 import { ERC721 } from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import { ERC721Enumerable } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 
 /**
@@ -20,6 +24,8 @@ import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
  * Built by the Game7 World Builder team: worldbuilder - at - game7.io
  */
 contract Staker is ERC721Enumerable, ReentrancyGuard {
+    using SafeERC20 for IERC20;
+
     /**
      * StakingPool represents a staking position that users can adopt.
      *
@@ -45,7 +51,8 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
     /**
      * Position represents the parameters of a staking position:
      * - the staking pool ID under which the deposit was made
-     * - the amount of tokens deposited under that staking pool
+     * - the amount of tokens deposited under that staking pool (for non-ERC721 token types),
+     *   or the tokenID for staking positions involving ERC721 tokens
      * - the timestamp at which the deposit was made
      *
      * The address of the depositor is the owner of the ERC721 token representing this deposit, and
@@ -53,8 +60,9 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
      */
     struct Position {
         uint256 poolID;
-        uint256 amount;
-        uint64 stakeTimestamp;
+        uint256 amountOrTokenID;
+        uint256 stakeTimestamp;
+        uint256 unstakeInitiatedAt;
     }
 
     // Valid token types for StakingPool.tokenType
@@ -64,11 +72,12 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
     uint256 public constant ERC1155_TOKEN_TYPE = 1155;
 
     uint256 public TotalPools;
+    uint256 public TotalPositions;
 
     // Pool ID => StakingPool struct
     mapping(uint256 => StakingPool) public Pools;
 
-    // Token ID of tokens on this ERC721 contract => Position struct
+    // Token ID of position tokens on this ERC721 contract => Position struct
     mapping(uint256 => Position) public Positions;
 
     event StakingPoolCreated(
@@ -84,12 +93,29 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         uint256 lockupSeconds,
         uint256 cooldownSeconds
     );
+    event Staked(uint256 positionTokenID, address indexed owner, uint256 indexed poolID, uint256 amountOrTokenID);
+    event UnstakeInitiated(uint256 positionTokenID, address indexed owner);
+    event Unstaked(uint256 positionTokenID, address indexed owner, uint256 indexed poolID, uint256 amountOrTokenID);
 
     error InvalidTokenType();
     error InvalidConfiguration();
     error NonAdministrator();
+    error IncorrectTokenType(uint256 poolID, uint256 poolTokenType, uint256 tokenTypeArg);
+    error NothingToStake();
+    error UnauthorizedForPosition(address owner, address sender);
+    error InitiateUnstakeFirst(uint256 cooldownSeconds);
+    error LockupNotExpired(uint256 expiresAt);
 
     constructor() ERC721("Game7 Staker", "G7STAKER") {}
+
+    function onERC721Received(address, address, uint256, bytes calldata) external pure returns (bytes4) {
+        return IERC721Receiver.onERC721Received.selector;
+    }
+
+    // We don't implement onERC1155BatchReceived because staking operates on a single tokenID.
+    function onERC1155Received(address, address, uint256, uint256, bytes calldata) external pure returns (bytes4) {
+        return IERC1155Receiver.onERC1155Received.selector;
+    }
 
     function createPool(
         uint256 tokenType,
@@ -179,5 +205,162 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
             pool.lockupSeconds,
             pool.cooldownSeconds
         );
+    }
+
+    function stakeNative(uint256 poolID) external payable {
+        StakingPool storage pool = Pools[poolID];
+        if (pool.tokenType != NATIVE_TOKEN_TYPE) {
+            revert IncorrectTokenType(poolID, pool.tokenType, NATIVE_TOKEN_TYPE);
+        }
+
+        if (msg.value == 0) {
+            revert NothingToStake();
+        }
+
+        uint256 positionTokenID = TotalPositions++;
+        _mint(msg.sender, positionTokenID);
+
+        Positions[positionTokenID] = Position({
+            poolID: poolID,
+            amountOrTokenID: msg.value,
+            stakeTimestamp: block.timestamp,
+            unstakeInitiatedAt: 0
+        });
+
+        emit Staked(positionTokenID, msg.sender, poolID, msg.value);
+    }
+
+    function stakeERC20(uint256 poolID, uint256 amount) external nonReentrant {
+        StakingPool storage pool = Pools[poolID];
+        if (pool.tokenType != ERC20_TOKEN_TYPE) {
+            revert IncorrectTokenType(poolID, pool.tokenType, ERC20_TOKEN_TYPE);
+        }
+
+        if (amount == 0) {
+            revert NothingToStake();
+        }
+
+        IERC20(pool.tokenAddress).safeTransferFrom(msg.sender, address(this), amount);
+
+        uint256 positionTokenID = TotalPositions++;
+        _mint(msg.sender, positionTokenID);
+
+        Positions[positionTokenID] = Position({
+            poolID: poolID,
+            amountOrTokenID: amount,
+            stakeTimestamp: block.timestamp,
+            unstakeInitiatedAt: 0
+        });
+
+        emit Staked(positionTokenID, msg.sender, poolID, amount);
+    }
+
+    function stakeERC721(uint256 poolID, uint256 tokenID) external nonReentrant {
+        StakingPool storage pool = Pools[poolID];
+        if (pool.tokenType != ERC721_TOKEN_TYPE) {
+            revert IncorrectTokenType(poolID, pool.tokenType, ERC721_TOKEN_TYPE);
+        }
+
+        IERC721(pool.tokenAddress).safeTransferFrom(msg.sender, address(this), tokenID);
+
+        uint256 positionTokenID = TotalPositions++;
+        _mint(msg.sender, positionTokenID);
+
+        Positions[positionTokenID] = Position({
+            poolID: poolID,
+            amountOrTokenID: tokenID,
+            stakeTimestamp: block.timestamp,
+            unstakeInitiatedAt: 0
+        });
+
+        emit Staked(positionTokenID, msg.sender, poolID, tokenID);
+    }
+
+    function stakeERC1155(uint256 poolID, uint256 amount) external nonReentrant {
+        StakingPool storage pool = Pools[poolID];
+        if (pool.tokenType != ERC1155_TOKEN_TYPE) {
+            revert IncorrectTokenType(poolID, pool.tokenType, ERC1155_TOKEN_TYPE);
+        }
+
+        if (amount == 0) {
+            revert NothingToStake();
+        }
+
+        IERC1155(pool.tokenAddress).safeTransferFrom(msg.sender, address(this), pool.tokenID, amount, "");
+
+        uint256 positionTokenID = TotalPositions++;
+        _mint(msg.sender, positionTokenID);
+
+        Positions[positionTokenID] = Position({
+            poolID: poolID,
+            amountOrTokenID: amount,
+            stakeTimestamp: block.timestamp,
+            unstakeInitiatedAt: 0
+        });
+
+        emit Staked(positionTokenID, msg.sender, poolID, amount);
+    }
+
+    function initiateUnstake(uint256 positionTokenID) external {
+        address positionOwner = ownerOf(positionTokenID);
+        if (positionOwner != msg.sender) {
+            revert UnauthorizedForPosition(positionOwner, msg.sender);
+        }
+
+        Position storage position = Positions[positionTokenID];
+        StakingPool storage pool = Pools[position.poolID];
+
+        // Enforce lockup period
+        if (block.timestamp < position.stakeTimestamp +  pool.lockupSeconds) {
+            revert LockupNotExpired(position.stakeTimestamp + pool.lockupSeconds);
+        }
+
+        if (position.unstakeInitiatedAt == 0) {
+            position.unstakeInitiatedAt = block.timestamp;
+        }
+
+        emit UnstakeInitiated(positionTokenID, msg.sender);
+    }
+
+    function unstake(uint256 positionTokenID) external nonReentrant {
+        {
+            address positionOwner = ownerOf(positionTokenID);
+            if (positionOwner != msg.sender) {
+                revert UnauthorizedForPosition(positionOwner, msg.sender);
+            }
+        }
+
+        Position storage position = Positions[positionTokenID];
+        StakingPool storage pool = Pools[position.poolID];
+
+        // Enforce cooldown, but only if the pool has a cooldown period.
+        if (pool.cooldownSeconds > 0) {
+            if (block.timestamp - position.unstakeInitiatedAt < pool.cooldownSeconds) {
+                revert InitiateUnstakeFirst(pool.cooldownSeconds);
+            }
+        }
+
+        // Enforce lockup period
+        if (block.timestamp < position.stakeTimestamp + pool.lockupSeconds) {
+            revert LockupNotExpired(position.stakeTimestamp + pool.lockupSeconds);
+        }
+
+        // Delete position data and burn the position token
+        uint256 amountOrTokenID = position.amountOrTokenID;
+        delete Positions[positionTokenID];
+        _burn(positionTokenID);
+
+        // Return the staked tokens.
+        if (pool.tokenType == NATIVE_TOKEN_TYPE) {
+            payable(msg.sender).transfer(amountOrTokenID);
+        } else if (pool.tokenType == ERC20_TOKEN_TYPE) {
+            IERC20(pool.tokenAddress).safeTransfer(msg.sender, amountOrTokenID);
+        } else if (pool.tokenType == ERC721_TOKEN_TYPE) {
+            IERC721(pool.tokenAddress).safeTransferFrom(address(this), msg.sender, amountOrTokenID);
+        } else if (pool.tokenType == ERC1155_TOKEN_TYPE) {
+            IERC1155(pool.tokenAddress).safeTransferFrom(address(this), msg.sender, pool.tokenID, amountOrTokenID, "");
+        }
+
+        emit Unstaked(positionTokenID, msg.sender, position.poolID, amountOrTokenID);
     }
 }

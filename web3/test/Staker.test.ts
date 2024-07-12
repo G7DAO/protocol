@@ -1,7 +1,12 @@
 import { ethers } from 'hardhat';
 import { expect } from 'chai';
-import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
-import { boolean, json } from 'hardhat/internal/core/params/argumentTypes';
+import { loadFixture, time } from '@nomicfoundation/hardhat-network-helpers';
+import { MockERC20 as MockERC20T } from '../typechain-types/contracts/mock/tokens.sol/MockERC20';
+import { MockERC721 as MockERC721T } from '../typechain-types/contracts/mock/tokens.sol/MockERC721';
+import { MockERC1155 as MockERC1155T } from '../typechain-types/contracts/mock/tokens.sol/MockERC1155';
+import { Staker as StakerT } from '../typechain-types/contracts/staking/Staker';
+import { HardhatEthersSigner } from '../helpers/type';
+import { TransactionResponse } from 'ethers';
 
 describe('Staker', function () {
     async function setupFixture() {
@@ -587,7 +592,7 @@ describe('Staker', function () {
         expect(pool.cooldownSeconds).to.equal(cooldownSeconds + 1);
     });
 
-    describe("should allow a pool's administrator to modify any subset of its configurable parameters in a single transaction", async function () {
+    describe("should allow a pool's administrator to modify any subset of its configurable parameters in a single transaction", function () {
         it('changeTransferability = true, changeLockup = true, changeCooldown = true', async function () {
             const { admin0, stakerWithAdmin0, poolID, transferable, lockupSeconds, cooldownSeconds } =
                 await loadFixture(setupERC1155StakingPoolFixture);
@@ -834,5 +839,180 @@ describe('Staker', function () {
 
         pool = await stakerWithUser0.Pools(poolID);
         expect(pool.administrator).to.equal(admin0.address);
+    });
+
+    describe('staking and unstaking', function () {
+        describe('Native token', function () {
+            async function setup() {
+                const { admin0, erc20, erc721, erc1155, staker, user0 } = await loadFixture(setupFixture);
+                const stakerWithAdmin0 = staker.connect(admin0);
+
+                const nativeTokenType = await stakerWithAdmin0.NATIVE_TOKEN_TYPE();
+                const tokenAddress = ethers.ZeroAddress;
+                const tokenID = 0;
+                const lockupSeconds = 3600;
+                const cooldownSeconds = 300;
+
+                await stakerWithAdmin0.createPool(
+                    nativeTokenType,
+                    tokenAddress,
+                    tokenID,
+                    true,
+                    lockupSeconds,
+                    cooldownSeconds
+                );
+
+                const poolID = (await stakerWithAdmin0.TotalPools()) - BigInt(1);
+                return { admin0, erc20, erc721, erc1155, staker, user0, lockupSeconds, cooldownSeconds, poolID };
+            }
+
+            async function stake(
+                user: HardhatEthersSigner,
+                stakerContract: StakerT,
+                poolID: bigint,
+                amountOrTokenID: bigint
+            ): Promise<TransactionResponse> {
+                const stakerWithUser = stakerContract.connect(user);
+                return await stakerWithUser.stakeNative(poolID, { value: amountOrTokenID });
+            }
+
+            async function balance(account: string): Promise<bigint> {
+                return ethers.provider.getBalance(account);
+            }
+
+            const amountOrTokenID = BigInt(1);
+
+            it('can stake non-zero value', async function () {
+                const { admin0, erc20, erc721, erc1155, staker, user0, lockupSeconds, cooldownSeconds, poolID } =
+                    await loadFixture(setup);
+
+                const expectedPositionTokenID = await staker.TotalPositions();
+
+                const userAddress = await user0.getAddress();
+                const stakerAddress = await staker.getAddress();
+
+                const userBalanceInitial = await balance(userAddress);
+                const contractBalanceInitial = await balance(stakerAddress);
+
+                const stakeTx: TransactionResponse = await stake(user0, staker, poolID, amountOrTokenID);
+                expect(stakeTx)
+                    .to.emit(staker, 'Staked')
+                    .withArgs(expectedPositionTokenID, userAddress, poolID, amountOrTokenID);
+
+                const stakeTxReceipt = await stakeTx.wait();
+                expect(stakeTxReceipt).to.not.be.null;
+
+                const stakeBlock = await stakeTx.getBlock();
+                expect(stakeBlock).to.not.be.null;
+                const stakeTimestamp = stakeBlock!.timestamp;
+
+                const userBalanceFinal = await balance(userAddress);
+                const contractBalanceFinal = await balance(stakerAddress);
+
+                const numPositions = await staker.TotalPositions();
+                expect(numPositions).to.equal(expectedPositionTokenID + BigInt(1));
+
+                const positionOwner = await staker.ownerOf(expectedPositionTokenID);
+                expect(positionOwner).to.equal(userAddress);
+
+                const position = await staker.Positions(expectedPositionTokenID);
+                expect(position.poolID).to.equal(poolID);
+                expect(position.amountOrTokenID).to.equal(amountOrTokenID);
+                expect(position.stakeTimestamp).to.equal(stakeTimestamp);
+                expect(position.unstakeInitiatedAt).to.equal(0);
+
+                // NOTE: The following expectations are custom to this test
+                expect(userBalanceFinal + amountOrTokenID + stakeTxReceipt!.gasUsed * stakeTx.gasPrice).to.equal(
+                    userBalanceInitial
+                );
+                expect(contractBalanceInitial + amountOrTokenID).to.equal(contractBalanceFinal);
+            });
+
+            it('cannot stake zero value', async function () {
+                const { admin0, erc20, erc721, erc1155, staker, user0, lockupSeconds, cooldownSeconds, poolID } =
+                    await loadFixture(setup);
+
+                await expect(stake(user0, staker, poolID, BigInt(0))).to.revertedWithCustomError(
+                    staker,
+                    'NothingToStake'
+                );
+            });
+
+            it('cannot initiate unstake before lockup has expired', async function () {
+                const { admin0, erc20, erc721, erc1155, staker, user0, lockupSeconds, cooldownSeconds, poolID } =
+                    await loadFixture(setup);
+
+                const expectedPositionTokenID = await staker.TotalPositions();
+
+                const userAddress = await user0.getAddress();
+                const stakerAddress = await staker.getAddress();
+
+                const stakeTx: TransactionResponse = await stake(user0, staker, poolID, amountOrTokenID);
+                const stakeBlock = await stakeTx.getBlock();
+
+                const position = await staker.Positions(expectedPositionTokenID);
+                time.increase(lockupSeconds - 1);
+
+                const stakerWithUser0 = staker.connect(user0);
+                await expect(stakerWithUser0.initiateUnstake(expectedPositionTokenID))
+                    .to.revertedWithCustomError(stakerWithUser0, 'LockupNotExpired')
+                    .withArgs(stakeBlock!.timestamp + lockupSeconds);
+            });
+
+            it('can initiate unstake as soon as lockup has expired', async function () {
+                const { admin0, erc20, erc721, erc1155, staker, user0, lockupSeconds, cooldownSeconds, poolID } =
+                    await loadFixture(setup);
+
+                const expectedPositionTokenID = await staker.TotalPositions();
+
+                const userAddress = await user0.getAddress();
+                const stakerAddress = await staker.getAddress();
+
+                const stakeTx: TransactionResponse = await stake(user0, staker, poolID, amountOrTokenID);
+                const stakeBlock = await stakeTx.getBlock();
+
+                const position0 = await staker.Positions(expectedPositionTokenID);
+                expect(position0.unstakeInitiatedAt).to.equal(0);
+
+                time.increase(lockupSeconds);
+
+                const stakerWithUser0 = staker.connect(user0);
+                await stakerWithUser0.initiateUnstake(expectedPositionTokenID);
+
+                const position1 = await staker.Positions(expectedPositionTokenID);
+                expect(position1.unstakeInitiatedAt).to.equal(stakeBlock!.timestamp + lockupSeconds);
+            });
+
+            it('can initiate idempotently after lockup has expired', async function () {
+                const { admin0, erc20, erc721, erc1155, staker, user0, lockupSeconds, cooldownSeconds, poolID } =
+                    await loadFixture(setup);
+
+                const expectedPositionTokenID = await staker.TotalPositions();
+
+                const userAddress = await user0.getAddress();
+                const stakerAddress = await staker.getAddress();
+
+                const stakeTx: TransactionResponse = await stake(user0, staker, poolID, amountOrTokenID);
+                const stakeBlock = await stakeTx.getBlock();
+
+                const position0 = await staker.Positions(expectedPositionTokenID);
+                expect(position0.unstakeInitiatedAt).to.equal(0);
+
+                time.increase(lockupSeconds);
+
+                const stakerWithUser0 = staker.connect(user0);
+
+                await stakerWithUser0.initiateUnstake(expectedPositionTokenID);
+
+                const position1 = await staker.Positions(expectedPositionTokenID);
+                expect(position1.unstakeInitiatedAt).to.equal(stakeBlock!.timestamp + lockupSeconds);
+
+                time.increase(1);
+                await stakerWithUser0.initiateUnstake(expectedPositionTokenID);
+
+                const position2 = await staker.Positions(expectedPositionTokenID);
+                expect(position2.unstakeInitiatedAt).to.equal(stakeBlock!.timestamp + lockupSeconds);
+            });
+        });
     });
 });
