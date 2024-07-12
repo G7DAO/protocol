@@ -311,7 +311,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         StakingPool storage pool = Pools[position.poolID];
 
         // Enforce lockup period
-        if (block.timestamp < position.stakeTimestamp +  pool.lockupSeconds) {
+        if (block.timestamp < position.stakeTimestamp + pool.lockupSeconds) {
             revert LockupNotExpired(position.stakeTimestamp + pool.lockupSeconds);
         }
 
@@ -362,5 +362,84 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         }
 
         emit Unstaked(positionTokenID, msg.sender, position.poolID, amountOrTokenID);
+    }
+
+    function metadataBytes(uint256 positionTokenID) public view returns (bytes memory metadata) {
+        Position storage position = Positions[positionTokenID];
+        StakingPool storage pool = Pools[position.poolID];
+
+        if (pool.tokenType == 0) {
+            // This means that the position does not exist.
+            revert InvalidTokenType();
+        }
+
+        // Preamble
+        metadata = abi.encodePacked(
+            '{"token_id":"',
+            Strings.toString(positionTokenID),
+            '","image": "https://badges.moonstream.to/test/staking_logo.png"',
+            ',"external_url":"https://game7.io"',
+            ',"metadata_version":1,"attributes": ['
+        );
+
+        metadata = abi.encodePacked(
+            metadata,
+            '{"trait_type":"Pool ID","value":"',
+            Strings.toString(position.poolID),
+            '"}'
+        );
+
+        metadata = abi.encodePacked(
+            metadata,
+            ',{"display_type":"number","trait_type":"Transferable","value":"',
+            pool.transferable ? "true" : "false",
+            '"}'
+        );
+
+        metadata = abi.encodePacked(
+            metadata,
+            ",",
+            pool.tokenType == ERC721_TOKEN_TYPE
+                ? '{"trait_type":"Staked Token ID","value":"'
+                : '{"trait_type":"Staked Amount","value":"',
+            Strings.toString(position.amountOrTokenID),
+            '"}'
+        );
+
+        metadata = abi.encodePacked(
+            metadata,
+            ',{"display_type":"number","trait_type":"Staked at","value":',
+            Strings.toString(position.stakeTimestamp),
+            "}"
+        );
+
+        metadata = abi.encodePacked(
+            metadata,
+            ',{"display_type":"number","trait_type":"Lockup expires at","value":',
+            Strings.toString(position.stakeTimestamp + pool.lockupSeconds),
+            "}"
+        );
+
+        if (position.unstakeInitiatedAt > 0) {
+            metadata = abi.encodePacked(
+                metadata,
+                ',{"display_type":"number","trait_type":"Unstake initiated at","value":',
+                Strings.toString(position.unstakeInitiatedAt),
+                "}",
+                ',{"display_type":"number","trait_type":"Cooldown expires at","value":',
+                Strings.toString(position.unstakeInitiatedAt + pool.cooldownSeconds),
+                "}"
+            );
+        }
+
+        metadata = abi.encodePacked(metadata, "]}");
+    }
+
+    function metadataJSON(uint256 positionTokenID) public view returns (string memory) {
+        return string(metadataBytes(positionTokenID));
+    }
+
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
+        return string(abi.encodePacked("data:application/json;base64,", Base64.encode(metadataBytes(tokenId))));
     }
 }
