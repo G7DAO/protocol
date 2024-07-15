@@ -3,7 +3,7 @@ import { ethers } from "hardhat";
 import { mine } from "@nomicfoundation/hardhat-network-helpers";
 import { time } from "@nomicfoundation/hardhat-network-helpers";
 import { HardhatEthersSigner } from "../helpers/type";
-import { ERC20 } from "../typechain-types";
+import { ERC20 } from "../typechain-types/contracts/token";
 import { UniswapV2Factory } from "../typechain-types";
 import { UniswapV2Pair } from "../typechain-types";
 
@@ -17,9 +17,9 @@ describe("UniswapV2", function () {
   let addr1: HardhatEthersSigner;
   let addr2: HardhatEthersSigner;
   
-  let token0: ERC20;
+  let token0: any;
   let token0Address: string;
-  let token1: ERC20;
+  let token1: any;
   let token1Address: string;
   let factory: any;
   let factoryAddress: string
@@ -32,9 +32,9 @@ describe("UniswapV2", function () {
 
     [owner, addr1, addr2] = await ethers.getSigners();
 
-    token0 = await ethers.deployContract("ERC20", ['Token0', 'TKN0', 18, initialSupply]);
+    token0 = await ethers.deployContract("contracts/token/ERC20.sol:ERC20", ['Token0', 'TKN0', 18, initialSupply]);
     token0Address = await token0.getAddress();
-    token1 = await ethers.deployContract("ERC20", ['Token1', 'TKN1', 18, initialSupply]);
+    token1 = await ethers.deployContract("contracts/token/ERC20.sol:ERC20", ['Token1', 'TKN1', 18, initialSupply]);
     token1Address = await token1.getAddress();
     await token1.waitForDeployment();
 
@@ -50,8 +50,6 @@ describe("UniswapV2", function () {
     await factory.createPair(token0Address, token1Address);
     const pairAddress = await factory.getPair(token0Address, token1Address);
     v2Pair = await ethers.getContractAt('UniswapV2Pair',pairAddress) as UniswapV2Pair;
-
-
   });
 
   it("Should return null pairing", async function(){
