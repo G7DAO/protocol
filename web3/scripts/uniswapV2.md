@@ -159,7 +159,6 @@ bin/game7 uniswap-v2-pair mint \
     --to-0 $CALLER
 ```
 
-
 - [ ] Add liquidity through router
 ```bash
 

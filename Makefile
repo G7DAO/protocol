@@ -28,26 +28,11 @@ bindings/UniswapV2Router02.go: hardhat
 	mkdir -p bindings/UniswapV2Router02
 	seer evm generate --package UniswapV2Router02 --output bindings/UniswapV2Router02/UniswapV2Router02.go --hardhat web3/artifacts/contracts/uniswapv2/v2-periphery/contracts/UniswapV2Router02.sol/UniswapV2Router02.json --cli --struct UniswapV2Router02
 
-bindings/Wrapper1155Factory.go: hardhat
-	mkdir -p bindings/Wrapper1155Factory
-	seer evm generate --package Wrapper1155Factory --output bindings/Wrapper1155Factory/Wrapper1155Factory.go --hardhat web3/artifacts/contracts/wrapper/Wrapper1155Factory.sol/Wrapper1155Factory.json --cli --struct Wrapper1155Factory
-
-bindings/TestERC1155.go: hardhat
-	mkdir -p bindings/TestERC1155
-	seer evm generate --package TestERC1155 --output bindings/TestERC1155/TestERC1155.go --hardhat web3/artifacts/contracts/wrapper/TestERC1155.sol/TestERC1155.json --cli --struct TestERC1155
-
-bindings/WrapperFunctions.go: hardhat
-	mkdir -p bindings/WrapperFunctions
-	seer evm generate --package WrapperFunctions --output bindings/WrapperFunctions/WrapperFunctions.go --hardhat web3/artifacts/contracts/wrapper/WrapperFunctions.sol/WrapperFunctions.json --cli --struct WrapperFunctions
-
-
 bindings/WrappedNativeToken/WrappedNativeToken.go: hardhat
 	mkdir -p bindings/WrappedNativeToken
 	seer evm generate --package WrappedNativeToken --output bindings/WrappedNativeToken/WrappedNativeToken.go --hardhat web3/artifacts/contracts/token/WrappedNativeToken.sol/WrappedNativeToken.json --cli --struct WrappedNativeToken
 
-
-
-bindings: bindings/WrapperFunctions.go bindings/ERC20/ERC20.go bindings/Uniswap.go bindings/UniswapV2Factory.go bindings/TokenFaucet/TokenFaucet.go bindings/UniswapV2Router02.go bindings/Wrapper1155Factory.go bindings/WrappedNativeToken/WrappedNativeToken.go bindings/TestERC1155.go
+bindings:  bindings/ERC20/ERC20.go bindings/Uniswap.go bindings/UniswapV2Factory.go bindings/TokenFaucet/TokenFaucet.go bindings/UniswapV2Router02.go bindings/WrappedNativeToken/WrappedNativeToken.go
 
 test:
 	npx hardhat test
