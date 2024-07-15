@@ -134,7 +134,7 @@ bin/game7 uniswap-v2-factory get-pair \
 export TOKEN0="0xf861273b98c2A2205f9979df2d6fa3B85e29d61B"
 export TOKEN1="0xE6AE953adc45ED9dF04FfD66E5fc5b3379a0a7F5"
 export AMOUNT="1000000000000000000000"
-export V2PAIR="`<getPair from factory>`"
+export V2PAIR="0xc26326a76ae7A13E1Fd7Be5CB5570C28dcB243b7"
 export CALLER="0x9ed191DB1829371F116Deb9748c26B49467a592A"
 
 
@@ -209,10 +209,10 @@ bin/game7 uniswap-v2-router-02 add-liquidity \
 
 export TOKEN0="0xf861273b98c2A2205f9979df2d6fa3B85e29d61B"
 export ROUTER02="0x76d1828860C4c5AE2962fa9A8590F28f005dB27e"
-export AMOUNTADESIRED="1000000000000000000000"
-export AMOUNTAMIN="500000000000000000000"
+export AMOUNTADESIRED="10000000000000000000"
+export AMOUNTAMIN="1000000000000000"
 export CALLER="0x9ed191DB1829371F116Deb9748c26B49467a592A"
-export ETHVALUE="500000000000000000"
+export ETHVALUE="100000000000000000"
 export AMOUNTETHMIN="1"
 export DEADLINE="2720663843"
 
@@ -255,7 +255,7 @@ bin/game7 uniswap-v2-router-02 swap-exact-eth-for-tokens \
     --contract $ROUTER02 \
     --rpc $RPC \
     --keyfile $KEY \
-    --amount-out-min $SAMOUNTOUTMIN \
+    --amount-out-min $AMOUNTOUTMIN \
     --deadline $DEADLINE \
     --path $PATH \
     --to-0 $CALLER \
