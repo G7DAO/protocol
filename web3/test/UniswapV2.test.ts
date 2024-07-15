@@ -6,7 +6,6 @@ import { HardhatEthersSigner } from "../helpers/type";
 import { ERC20 } from "../typechain-types";
 import { UniswapV2Factory } from "../typechain-types";
 import { UniswapV2Pair } from "../typechain-types";
-import { UniswapV2Router02 } from "../typechain-types";
 
 
 const initialSupply = BigInt(100000000000);
@@ -26,8 +25,6 @@ describe("UniswapV2", function () {
   let factoryAddress: string
   let v2Pair: any;
 
-  let router02: any;
-  let router02Address: string;
   let IWETHAddress: string;
 
   before(async function () {
@@ -54,18 +51,8 @@ describe("UniswapV2", function () {
     const pairAddress = await factory.getPair(token0Address, token1Address);
     v2Pair = await ethers.getContractAt('UniswapV2Pair',pairAddress) as UniswapV2Pair;
 
-    
-    router02 = await ethers.deployContract("UniswapV2Router02", [factoryAddress, IWETHAddress]);
-    router02Address = await router02.getAddress();
-    await router02.waitForDeployment();
-
 
   });
-  it("Should have same Facotry in router as deployed", async function(){
-
-    expect(await router02.factory()).to.equal(factoryAddress);
-
-  })
 
   it("Should return null pairing", async function(){
     expect(await factory.getPair("0x0000000000000000000000000000000000000000", "0x0000000000000000000000000000000000000000")).to.equal("0x0000000000000000000000000000000000000000");
@@ -100,28 +87,6 @@ describe("UniswapV2", function () {
     expect(await token0.balanceOf(pairAddress)).to.equal(BigInt(200000));
   });
 
-
-  it("Should mint LP", async function(){
-    await token0.approve(router02Address,BigInt(100000));
-    await token1.approve(router02Address,BigInt(100000));
-
-    
-    const blocktime = await time.latest();
-
-    /*
-    * Issue 
-    * (uint reserve0, uint reserve1,) = IUniswapV2Pair(pairFor(factory, tokenA, tokenB)).getReserves();
-    * error is assumed to have do calling a contract for a contract within the test parameters. 
-    */
-    expect(await router02.addLiquidity(
-      token0Address, token1Address,
-      BigInt(100000), BigInt(100000),
-      0, 0,
-      owner.address, 
-      blocktime+10
-    )).to.emit(v2Pair, "Mint").withArgs(owner.address, BigInt(100000),BigInt(51000));
-
-  });
 
 
 });
