@@ -1,7 +1,13 @@
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 31px;
+  margin-bottom: 24px;
+}
+
 .title {
   color: var(--Gray-900, #101828);
-  margin-top: 32px;
-  margin-bottom: 24px;
+
 
   /* Display sm/Semibold */
   font-size: 30px;
