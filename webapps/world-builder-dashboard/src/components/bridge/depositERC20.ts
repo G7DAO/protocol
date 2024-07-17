@@ -1,30 +1,104 @@
-import {ethers, providers, utils} from 'ethers'
-import {L3NetworkConfiguration} from '@/components/bridge/l3Networks'
-import {convertToBigNumber} from '@/utils/web3utils'
-import {NodeInterface__factory} from '@arbitrum/sdk/dist/lib/abi/factories/NodeInterface__factory'
-import {NODE_INTERFACE_ADDRESS} from '@arbitrum/sdk/dist/lib/dataEntities/constants'
+import { ethers, providers, utils } from 'ethers'
+import { HighNetworkInterface, NetworkInterface } from '@/components/bridge/BlockchainContext'
+import { convertToBigNumber } from '@/utils/web3utils'
+import { NodeInterface__factory } from '@arbitrum/sdk/dist/lib/abi/factories/NodeInterface__factory'
+import { NODE_INTERFACE_ADDRESS } from '@arbitrum/sdk/dist/lib/dataEntities/constants'
 
-const L2_RPC = 'https://sepolia-rollup.arbitrum.io/rpc'
-const l2Provider = new providers.JsonRpcProvider(L2_RPC)
+// const L2_RPC = 'https://sepolia-rollup.arbitrum.io/rpc'
+// const l2Provider = new providers.JsonRpcProvider(L2_RPC)
 
-const ERC20_INBOX_ABI = [
+const L1_GATEWAY_ROUTER_ABI = [
   {
     inputs: [
       {
-        internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256'
-      }
-    ],
-    name: 'depositERC20',
-    outputs: [
+        internalType: 'address',
+        name: '_token',
+        type: 'address'
+      },
+      {
+        internalType: 'address',
+        name: '_to',
+        type: 'address'
+      },
       {
         internalType: 'uint256',
-        name: '',
+        name: '_amount',
         type: 'uint256'
+      },
+      {
+        internalType: 'uint256',
+        name: '_maxGas',
+        type: 'uint256'
+      },
+      {
+        internalType: 'uint256',
+        name: '_gasPriceBid',
+        type: 'uint256'
+      },
+      {
+        internalType: 'bytes',
+        name: '_data',
+        type: 'bytes'
       }
     ],
-    stateMutability: 'nonpayable',
+    name: 'outboundTransfer',
+    outputs: [
+      {
+        internalType: 'bytes',
+        name: '',
+        type: 'bytes'
+      }
+    ],
+    stateMutability: 'payable',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_token',
+        type: 'address'
+      },
+      {
+        internalType: 'address',
+        name: '_refundTo',
+        type: 'address'
+      },
+      {
+        internalType: 'address',
+        name: '_to',
+        type: 'address'
+      },
+      {
+        internalType: 'uint256',
+        name: '_amount',
+        type: 'uint256'
+      },
+      {
+        internalType: 'uint256',
+        name: '_maxGas',
+        type: 'uint256'
+      },
+      {
+        internalType: 'uint256',
+        name: '_gasPriceBid',
+        type: 'uint256'
+      },
+      {
+        internalType: 'bytes',
+        name: '_data',
+        type: 'bytes'
+      }
+    ],
+    name: 'outboundTransferCustomRefund',
+    outputs: [
+      {
+        internalType: 'bytes',
+        name: '',
+        type: 'bytes'
+      }
+    ],
+    stateMutability: 'payable',
     type: 'function'
   }
 ]
@@ -42,12 +116,25 @@ const generateRandomNumber = () => {
   return parseFloat(`${integerPart}.${firstTwoDigits}${randomFractionalDigits}`)
 }
 
-export const estimateDepositFee = async (amount: string, account: string, l3Network: L3NetworkConfiguration) => {
-  const destinationAddress = l3Network.coreContracts.inbox
+export const estimateDepositFee = async (
+  amount: string,
+  account: string,
+  lowNetwork: NetworkInterface,
+  highNetwork: HighNetworkInterface
+) => {
+  const destinationAddress = highNetwork.l1GatewayRouter ?? ''
 
   const ethAmount = convertToBigNumber(amount)
-  const ERC20InboxContract = new ethers.Contract(l3Network.coreContracts.inbox, ERC20_INBOX_ABI, l2Provider)
-  const tx = await ERC20InboxContract.populateTransaction.depositERC20(ethAmount)
+  const l2Provider = new providers.JsonRpcProvider(lowNetwork.rpcs[0])
+  const L1GatewatyContract = new ethers.Contract(highNetwork.l1GatewayRouter ?? '', L1_GATEWAY_ROUTER_ABI, l2Provider)
+  const tx = await L1GatewatyContract.populateTransaction.outboundTransfer(
+    lowNetwork.g7TokenAddress,
+    account,
+    ethAmount,
+    0,
+    0,
+    '0x'
+  )
   const data = tx.data
 
   const nodeInterface = NodeInterface__factory.connect(NODE_INTERFACE_ADDRESS, l2Provider)
@@ -114,15 +201,32 @@ export const estimateDepositFee = async (amount: string, account: string, l3Netw
   return String(generateRandomNumber())
 }
 
-export const estimateDepositGas = async (amount: string, account: string, l3Network: L3NetworkConfiguration) => {
-  const destinationAddress = l3Network.coreContracts.inbox
+const estimateDepositERC20Gas = async (
+  amount: string,
+  account: string,
+  lowNetwork: NetworkInterface,
+  highNetwork: HighNetworkInterface
+) => {
+  const destinationAddress = highNetwork.l1GatewayRouter ?? ''
 
   const ethAmount = convertToBigNumber(amount)
-  const ERC20InboxContract = new ethers.Contract(l3Network.coreContracts.inbox, ERC20_INBOX_ABI, l2Provider)
-  const tx = await ERC20InboxContract.populateTransaction.depositERC20(ethAmount)
+  const lowNetworkProvider = new providers.JsonRpcProvider(lowNetwork.rpcs[0])
+  const L1GatewatyContract = new ethers.Contract(
+    highNetwork.l1GatewayRouter ?? '',
+    L1_GATEWAY_ROUTER_ABI,
+    lowNetworkProvider
+  )
+  const tx = await L1GatewatyContract.populateTransaction.outboundTransfer(
+    lowNetwork.g7TokenAddress,
+    account,
+    ethAmount,
+    0,
+    0,
+    '0x'
+  )
   const data = tx.data
 
-  const nodeInterface = NodeInterface__factory.connect(NODE_INTERFACE_ADDRESS, l2Provider)
+  const nodeInterface = NodeInterface__factory.connect(NODE_INTERFACE_ADDRESS, lowNetworkProvider)
   if (data) {
     try {
       const gasEstimateComponents = await nodeInterface.callStatic.gasEstimateComponents(
@@ -167,27 +271,39 @@ export const estimateDepositGas = async (amount: string, account: string, l3Netw
     }
   }
 
-  return ethers.BigNumber.from('0x053d2d'); //fallback for zero price (P);
+  return ethers.BigNumber.from('0x093d2d') //fallback for zero price (P);
 }
 
-export const sendDepositTransaction = async (
+export const sendDepositERC20Transaction = async (
   amount: string,
   account: string,
-  l3Network: L3NetworkConfiguration,
-  l2Provider: ethers.providers.Web3Provider
+  lowNetwork: NetworkInterface,
+  highNetwork: HighNetworkInterface,
+  lowNetworkProvider: ethers.providers.Web3Provider
 ) => {
-  const destinationAddress = l3Network.coreContracts.inbox
   const ethAmount = convertToBigNumber(amount)
-  const ERC20InboxContract = new ethers.Contract(destinationAddress, ERC20_INBOX_ABI, l2Provider.getSigner(account))
-  const gasEstimate = await estimateDepositGas(amount, account, l3Network)
+  // const l2Provider = new providers.JsonRpcProvider(lowNetwork.rpcs[0])
+  const L1GatewatyContract = new ethers.Contract(
+    highNetwork.l1GatewayRouter ?? '',
+    L1_GATEWAY_ROUTER_ABI,
+    lowNetworkProvider
+  )
+  const gasEstimate = await estimateDepositERC20Gas(amount, account, lowNetwork, highNetwork)
   console.log(gasEstimate)
   // const gasLimit = ethers.utils.parseEther(gasEstimate);
   // console.log(gasLimit);
-  const txRequest = await ERC20InboxContract.populateTransaction.depositERC20(ethAmount, {
-    gasLimit: gasEstimate
-  })
+  const txRequest = await L1GatewatyContract.populateTransaction.outboundTransferCustomRefund(
+    lowNetwork.g7TokenAddress,
+    account,
+    account,
+    ethAmount,
+    0,
+    0,
+    '0x',
+    { gasLimit: gasEstimate }
+  )
 
-  const txResponse = await l2Provider.getSigner(account).sendTransaction(txRequest)
+  const txResponse = await lowNetworkProvider.getSigner(account).sendTransaction(txRequest)
 
   console.log('Transaction hash:', txResponse.hash)
 
