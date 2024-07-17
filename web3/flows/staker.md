@@ -308,6 +308,23 @@ any attempt they make to configure the pool should raise an error with signature
     error NonAdministrator();
 ```
 
+#### `STAKER-*`: A non-administrator (of any pool) should not be able to transfer administration of that pool to another account
+
+Any attempt should revert with
+
+```
+    error NonAdministrator();
+```
+
+#### `STAKER-*`: A non-administrator of a staking pool should not be able to transfer administration of that pool to another account, even if they are an administrator of another pool
+
+Any attempt should revert with
+
+```
+    error NonAdministrator();
+```
+
+
 ### Staking and unstaking tokens
 
 #### `STAKER-19`: A holder should be able to stake any number of native tokens into a native token staking position.
