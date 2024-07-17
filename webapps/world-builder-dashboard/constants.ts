@@ -1,5 +1,19 @@
 import { NetworkInterface, HighNetworkInterface } from './src/components/bridge/BlockchainContext'
 
+export const L1_NETWORK: NetworkInterface = {
+  chainId: 11155111,
+  name: 'sepolia',
+  displayName: 'Sepolia',
+  rpcs: ['https://ethereum-sepolia-rpc.publicnode.com'],
+  blockExplorerUrls: ['https://sepolia.etherscan.io'],
+  nativeCurrency: {
+    decimals: 18,
+    name: 'ETH',
+    symbol: 'ETH'
+  },
+  g7TokenAddress: '0xe2ef69e4af84dbefb0a75f8491f27a52bf047b01'
+}
+
 export const L2_NETWORK: HighNetworkInterface = {
   chainId: 421614,
   name: 'arbitrumSepolia',
@@ -11,20 +25,9 @@ export const L2_NETWORK: HighNetworkInterface = {
     name: 'ETH',
     symbol: 'ETH'
   },
-  inbox: '0xaAe29B0366299461418F5324a79Afc425BE5ae21'
-}
-
-export const L1_NETWORK: NetworkInterface = {
-  chainId: 11155111,
-  name: 'sepolia',
-  displayName: 'Sepolia',
-  rpcs: ['https://ethereum-sepolia-rpc.publicnode.com'],
-  blockExplorerUrls: ['https://sepolia.etherscan.io'],
-  nativeCurrency: {
-    decimals: 18,
-    name: 'ETH',
-    symbol: 'ETH'
-  }
+  inbox: '0xaAe29B0366299461418F5324a79Afc425BE5ae21',
+  g7TokenAddress: '0x10adbf84548f923577be12146eac104c899d1e75',
+  l1GatewayRouter: '0xcE18836b233C83325Cc8848CA4487e94C6288264'
 }
 
 export const L3_NETWORK: HighNetworkInterface = {
@@ -38,7 +41,8 @@ export const L3_NETWORK: HighNetworkInterface = {
     name: 'G7T',
     symbol: 'G7T'
   },
-  inbox: '0xE6470bb72291c39073AEd67a30ff93B69c1f47De'
+  inbox: '0xE6470bb72291c39073AEd67a30ff93B69c1f47De',
+  g7TokenAddress: '0x0000000000000000000000000000000000000000'
 }
 
 export const L3_NATIVE_TOKEN_SYMBOL = 'G7T'
