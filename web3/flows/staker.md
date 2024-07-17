@@ -353,7 +353,7 @@ This should emit a `Staked` event:
 It should also emit an ERC721 `Transfer` event representing the staking position token being minted to the holder.
 
 
-#### `STAKER-21`: A holder should be able to stake any number of ERC721 tokens into an ERC721 staking position.
+#### `STAKER-21`: A holder should be able to stake an ERC721 token into an ERC721 staking position.
 
 The ERC721 token staked should be transferred from the holder's account to the `Staker` contract.
 

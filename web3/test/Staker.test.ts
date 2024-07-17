@@ -638,4 +638,354 @@ describe('Staker', function () {
         expect(pool.lockupSeconds).to.equal(lockupSeconds + 1);
         expect(pool.cooldownSeconds).to.equal(cooldownSeconds + 1);
     });
+
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-113: A non-administrator should not be able to transfer administration of a pool to another account.', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 300;
+
+        const { staker, user0, admin0, erc20PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+
+        // Verify admin0 is the initial administrator of the ERC20 pool
+        const pool = await staker.Pools(erc20PoolID);
+        expect(pool.administrator).to.equal(await admin0.getAddress());
+
+        // Attempt to transfer administration of the ERC20 pool with user0
+        await expect(
+            stakerWithUser0.transferPoolAdministration(erc20PoolID, await user0.getAddress())
+        ).to.be.revertedWithCustomError(staker, 'NonAdministrator');
+
+        // Verify that the administrator of the ERC20 pool did not change
+        const poolAfter = await staker.Pools(erc20PoolID);
+        expect(poolAfter.administrator).to.equal(await admin0.getAddress());
+    });
+
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-114: A non-administrator of a staking pool should not be able to transfer administration of that pool to another account, even if they are an administrator of another pool.', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 300;
+
+        const { staker, user0, admin0, stakerWithAdmin0, erc20PoolID, erc721PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+
+        // Transfer administration of the ERC721 pool to user0
+        await stakerWithAdmin0.transferPoolAdministration(erc721PoolID, await user0.getAddress());
+
+        // Verify user0 is now the administrator of the ERC721 pool
+        const poolERC721 = await staker.Pools(erc721PoolID);
+        expect(poolERC721.administrator).to.equal(await user0.getAddress());
+
+        // Verify admin0 is still the administrator of the ERC20 pool
+        const poolERC20 = await staker.Pools(erc20PoolID);
+        expect(poolERC20.administrator).to.equal(await admin0.getAddress());
+
+        // Attempt to transfer administration of the ERC20 pool with user0
+        await expect(
+            stakerWithUser0.transferPoolAdministration(erc20PoolID, await user0.getAddress())
+        ).to.be.revertedWithCustomError(staker, 'NonAdministrator');
+
+        // Verify that the administrator of the ERC20 pool did not change
+        const poolERC20After = await staker.Pools(erc20PoolID);
+        expect(poolERC20After.administrator).to.equal(await admin0.getAddress());
+    });
+
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-19: A holder should be able to stake any number of native tokens into a native token staking position.', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 300;
+
+        const { staker, user0, nativePoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+        const stakeAmount = ethers.parseEther('1');
+
+        // Check balances before staking
+        const stakerBalanceBefore = await ethers.provider.getBalance(await staker.getAddress());
+        const user0BalanceBefore = await ethers.provider.getBalance(await user0.getAddress());
+
+        // Stake native tokens
+        const tx = await stakerWithUser0.stakeNative(nativePoolID, { value: stakeAmount });
+        const txReceipt = await tx.wait();
+        expect(txReceipt).to.not.be.null;
+
+        // Check balances after staking
+        const stakerBalanceAfter = await ethers.provider.getBalance(await staker.getAddress());
+        const user0BalanceAfter = await ethers.provider.getBalance(await user0.getAddress());
+
+        expect(stakerBalanceAfter).to.equal(stakerBalanceBefore + stakeAmount);
+        expect(user0BalanceBefore).to.equal(user0BalanceAfter + stakeAmount + txReceipt!.fee);
+
+        // Verify the Staked event
+        await expect(tx)
+            .to.emit(staker, 'Staked')
+            .withArgs(
+                0, // positionTokenID
+                await user0.getAddress(),
+                nativePoolID,
+                stakeAmount
+            );
+
+        // Verify the ERC721 Transfer event
+        await expect(tx)
+            .to.emit(staker, 'Transfer')
+            .withArgs(ethers.ZeroAddress, await user0.getAddress(), 0);
+
+        // Get block timestamp
+        const block = await ethers.provider.getBlock(txReceipt!.blockNumber);
+        expect(block).to.not.be.null;
+        const blockTimestamp = block!.timestamp;
+
+        // Verify the position
+        const position = await staker.Positions(0);
+        expect(position.poolID).to.equal(nativePoolID);
+        expect(position.amountOrTokenID).to.equal(stakeAmount);
+        expect(position.stakeTimestamp).to.equal(blockTimestamp);
+        expect(position.unstakeInitiatedAt).to.equal(0);
+    });
+
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-20: A holder should be able to stake any number of ERC20 tokens into an ERC20 staking position.', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 300;
+
+        const { staker, erc20, user0, erc20PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+        const stakeAmount = ethers.parseUnits('100', 18);
+
+        // Mint ERC20 tokens to user0
+        await erc20.mint(await user0.getAddress(), stakeAmount);
+
+        // Approve staker contract to spend ERC20 tokens
+        await erc20.connect(user0).approve(await staker.getAddress(), stakeAmount);
+
+        // Check balances before staking
+        const stakerBalanceBefore = await erc20.balanceOf(await staker.getAddress());
+        const user0BalanceBefore = await erc20.balanceOf(await user0.getAddress());
+
+        // Stake ERC20 tokens
+        const tx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+
+        // Check balances after staking
+        const stakerBalanceAfter = await erc20.balanceOf(await staker.getAddress());
+        const user0BalanceAfter = await erc20.balanceOf(await user0.getAddress());
+
+        expect(stakerBalanceAfter).to.equal(stakerBalanceBefore + stakeAmount);
+        expect(user0BalanceAfter).to.equal(user0BalanceBefore - stakeAmount);
+
+        // Verify the Staked event
+        await expect(tx)
+            .to.emit(staker, 'Staked')
+            .withArgs(
+                0, // positionTokenID
+                await user0.getAddress(),
+                erc20PoolID,
+                stakeAmount
+            );
+
+        // Verify the ERC721 Transfer event
+        await expect(tx)
+            .to.emit(staker, 'Transfer')
+            .withArgs(ethers.ZeroAddress, await user0.getAddress(), 0);
+
+        // Get block timestamp
+        const txReceipt = await tx.wait();
+        expect(txReceipt).to.not.be.null;
+        const block = await ethers.provider.getBlock(txReceipt!.blockNumber);
+        expect(block).to.not.be.null;
+        const blockTimestamp = block!.timestamp;
+
+        // Verify the position
+        const position = await staker.Positions(0);
+        expect(position.poolID).to.equal(erc20PoolID);
+        expect(position.amountOrTokenID).to.equal(stakeAmount);
+        expect(position.stakeTimestamp).to.equal(blockTimestamp);
+        expect(position.unstakeInitiatedAt).to.equal(0);
+    });
+
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-21: A holder should be able to stake an ERC721 token into an ERC721 staking position.', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 300;
+
+        const { staker, erc721, user0, erc721PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+        const tokenId = 1;
+
+        // Mint ERC721 token to user0
+        await erc721.mint(await user0.getAddress(), tokenId);
+
+        // Approve staker contract to transfer ERC721 token
+        await erc721.connect(user0).approve(await staker.getAddress(), tokenId);
+
+        // Check ownership before staking
+        expect(await erc721.ownerOf(tokenId)).to.equal(await user0.getAddress());
+
+        // Stake ERC721 token
+        const tx = await stakerWithUser0.stakeERC721(erc721PoolID, tokenId);
+
+        // Check ownership after staking
+        expect(await erc721.ownerOf(tokenId)).to.equal(await staker.getAddress());
+
+        // Verify the Staked event
+        await expect(tx)
+            .to.emit(staker, 'Staked')
+            .withArgs(
+                0, // positionTokenID
+                await user0.getAddress(),
+                erc721PoolID,
+                tokenId
+            );
+
+        // Verify the ERC721 Transfer event
+        await expect(tx)
+            .to.emit(staker, 'Transfer')
+            .withArgs(ethers.ZeroAddress, await user0.getAddress(), 0);
+
+        // Get block timestamp
+        const txReceipt = await tx.wait();
+        expect(txReceipt).to.not.be.null;
+        const block = await ethers.provider.getBlock(txReceipt!.blockNumber);
+        expect(block).to.not.be.null;
+        const blockTimestamp = block!.timestamp;
+
+        // Verify the position
+        const position = await staker.Positions(0);
+        expect(position.poolID).to.equal(erc721PoolID);
+        expect(position.amountOrTokenID).to.equal(tokenId);
+        expect(position.stakeTimestamp).to.equal(blockTimestamp);
+        expect(position.unstakeInitiatedAt).to.equal(0);
+    });
+
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-22: A holder should be able to stake any number of ERC1155 tokens into an ERC1155 staking position.', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 300;
+
+        const { staker, erc1155, user0, erc1155PoolID, erc1155TokenID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+        const stakeAmount = 100n;
+
+        // Mint ERC1155 tokens to user0
+        await erc1155.mint(await user0.getAddress(), erc1155TokenID, stakeAmount);
+
+        // Approve staker contract to transfer ERC1155 tokens
+        await erc1155.connect(user0).setApprovalForAll(await staker.getAddress(), true);
+
+        // Check balances before staking
+        const stakerBalanceBefore = await erc1155.balanceOf(await staker.getAddress(), erc1155TokenID);
+        const user0BalanceBefore = await erc1155.balanceOf(await user0.getAddress(), erc1155TokenID);
+
+        // Stake ERC1155 tokens
+        const tx = await stakerWithUser0.stakeERC1155(erc1155PoolID, stakeAmount);
+
+        // Check balances after staking
+        const stakerBalanceAfter = await erc1155.balanceOf(await staker.getAddress(), erc1155TokenID);
+        const user0BalanceAfter = await erc1155.balanceOf(await user0.getAddress(), erc1155TokenID);
+
+        expect(stakerBalanceAfter).to.equal(stakerBalanceBefore + stakeAmount);
+        expect(user0BalanceAfter).to.equal(user0BalanceBefore - stakeAmount);
+
+        // Verify the Staked event
+        await expect(tx)
+            .to.emit(staker, 'Staked')
+            .withArgs(
+                0, // positionTokenID
+                await user0.getAddress(),
+                erc1155PoolID,
+                stakeAmount
+            );
+
+        // Verify the ERC721 Transfer event
+        await expect(tx)
+            .to.emit(staker, 'Transfer')
+            .withArgs(ethers.ZeroAddress, await user0.getAddress(), 0);
+
+        // Get block timestamp
+        const txReceipt = await tx.wait();
+        expect(txReceipt).to.not.be.null;
+        const block = await ethers.provider.getBlock(txReceipt!.blockNumber);
+        expect(block).to.not.be.null;
+        const blockTimestamp = block!.timestamp;
+
+        // Verify the position
+        const position = await staker.Positions(0);
+        expect(position.poolID).to.equal(erc1155PoolID);
+        expect(position.amountOrTokenID).to.equal(stakeAmount);
+        expect(position.stakeTimestamp).to.equal(blockTimestamp);
+        expect(position.unstakeInitiatedAt).to.equal(0);
+    });
+
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-23: Staking position tokens for transferable staking pools should be transferable.', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 300;
+
+        const { staker, user0, user1, nativePoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+        const stakeAmount = ethers.parseEther('1.2345'); // Using a unique stake amount
+
+        // Get total positions before staking
+        const totalPositionsBefore = await staker.TotalPositions();
+
+        // Stake native tokens
+        const tx = await stakerWithUser0.stakeNative(nativePoolID, { value: stakeAmount });
+        const txReceipt = await tx.wait();
+        expect(txReceipt).to.not.be.null;
+
+        // Get total positions after staking
+        const totalPositionsAfter = await staker.TotalPositions();
+
+        // Verify that total positions have increased by 1
+        expect(totalPositionsAfter).to.equal(totalPositionsBefore + 1n);
+
+        // Get the position token ID of the newly minted token
+        const positionTokenID = totalPositionsBefore;
+
+        // Verify the position
+        const position = await staker.Positions(positionTokenID);
+        expect(position.poolID).to.equal(nativePoolID);
+        expect(position.amountOrTokenID).to.equal(stakeAmount);
+        const block = await ethers.provider.getBlock(txReceipt!.blockNumber);
+        expect(block).to.not.be.null;
+        const blockTimestamp = block!.timestamp;
+        expect(position.stakeTimestamp).to.equal(blockTimestamp);
+        expect(position.unstakeInitiatedAt).to.equal(0);
+
+        // Verify initial owner of the position token
+        expect(await staker.ownerOf(positionTokenID)).to.equal(await user0.getAddress());
+
+        // Transfer the position token from user0 to user1
+        await stakerWithUser0.transferFrom(await user0.getAddress(), await user1.getAddress(), positionTokenID);
+
+        // Verify the new owner of the position token
+        expect(await staker.ownerOf(positionTokenID)).to.equal(await user1.getAddress());
+    });
 });
