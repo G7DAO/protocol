@@ -75,7 +75,18 @@ bin/game7 uniswap-v2-factory deploy \
     --keyfile $KEY
 
 ```
+- [ ] Set Factory feeToo address
 
+``` bash
+export FEETO="0x9ed191DB1829371F116Deb9748c26B49467a592A"
+export FACTORYV2="0x22B929389682DE34BaCb4a535eb9ef571994F8fF"
+
+bin/game7 uniswap-v2-factory set-fee-to \
+    --contract $FACTORYV2 \
+    --fee-to $FEETO \
+    --rpc $RPC \
+    --keyfile $KEY
+```
 - [x] Deploy UniswapV2Router02
 - [x] Set init code hash line 24 in uniswapv2/v2-periphery/contracts/libraries/UniswapV2Library.sol then compile
 
