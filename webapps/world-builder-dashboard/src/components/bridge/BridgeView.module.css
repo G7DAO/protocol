@@ -10,6 +10,32 @@
   border-radius: 8px;
   border: 1px solid var(--Gray-200, #eaecf0);
   background: var(--Gray-50, #f9fafb);
+  margin-top: 56px;
+}
+
+
+.headerContainer {
+  display: flex;
+  gap: 4px;
+  flex-direction: column;
+}
+
+.title {
+  color: var(--Gray-900, #101828);
+
+  /* Text lg/Semibold */
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 28px; /* 155.556% */
+}
+
+.subtitle {
+  color: var(--Gray-600, #475467);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 142.857% */
 }
 
 .directionContainer {
@@ -93,7 +119,7 @@
 }
 
 .network {
-  max-height: 40px;
+  max-height: 44px;
   display: flex;
   padding: 9px 13px;
   align-items: center;
