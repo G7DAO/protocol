@@ -1,12 +1,16 @@
-.PHONY: clean generate regenerate test docs redocs hardhat bindings
+.PHONY: clean generate regenerate test docs redocs hardhat bindings test-graffiti test-web3
 
-build: hardhat bindings bin/game7
+build: hardhat bindings bin/game7 bin/graffiti
 
 rebuild: clean generate build
 
 bin/game7:
 	mkdir -p bin
 	go build -o bin/game7 ./cmd/game7
+
+bin/graffiti:
+	mkdir -p bin
+	go build -o bin/graffiti ./cmd/graffiti
 
 bindings/ERC20/ERC20.go: hardhat
 	mkdir -p bindings/ERC20
@@ -26,16 +30,16 @@ bindings/Staker/Staker.go: hardhat
 
 bindings: bindings/ERC20/ERC20.go bindings/TokenFaucet/TokenFaucet.go bindings/WrappedNativeToken/WrappedNativeToken.go bindings/Staker/Staker.go
 
-test:
+test-web3:
 	npx hardhat test
+
+test-graffiti:
+	go test ./cmd/graffiti
+
+test: test-web3 test-graffiti
 
 clean:
 	rm -rf bindings/ERC20/* bin/* bindings/TokenFaucet/* bindings/WrappedNativeToken/* bindings/Staker/*
 
 hardhat:
 	cd web3 && npm install && npx hardhat compile
-
-docs:
-	forge doc
-
-redocs: clean docs
