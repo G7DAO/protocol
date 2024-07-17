@@ -332,9 +332,8 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
 
         if (position.unstakeInitiatedAt == 0) {
             position.unstakeInitiatedAt = block.timestamp;
+            emit UnstakeInitiated(positionTokenID, msg.sender);
         }
-
-        emit UnstakeInitiated(positionTokenID, msg.sender);
     }
 
     function unstake(uint256 positionTokenID) external nonReentrant {

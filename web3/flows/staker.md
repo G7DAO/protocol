@@ -833,6 +833,390 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
+### `STAKER-*`: If a native token staking pool has a cooldown, a position holder should be able to initiate an unstake after the lockup period has expired
+
+The position's `unstakeInitiatedAt` member should reflect the block timestamp of when the unstake was initiated:
+
+```
+    struct Position {
+        uint256 poolID;
+        uint256 amountOrTokenID;
+        uint256 stakeTimestamp;
+        uint256 unstakeInitiatedAt;
+    }
+```
+
+The transaction should emit an `UnstakeInitiated` event:
+
+```
+    event UnstakeInitiated(uint256 positionTokenID, address indexed owner);
+```
+
+### `STAKER-*`: If an ERC20 staking pool has a cooldown, a position holder should be able to initiate an unstake after the lockup period has expired
+
+The position's `unstakeInitiatedAt` member should reflect the block timestamp of when the unstake was initiated:
+
+```
+    struct Position {
+        uint256 poolID;
+        uint256 amountOrTokenID;
+        uint256 stakeTimestamp;
+        uint256 unstakeInitiatedAt;
+    }
+```
+
+The transaction should emit an `UnstakeInitiated` event:
+
+```
+    event UnstakeInitiated(uint256 positionTokenID, address indexed owner);
+```
+
+### `STAKER-*`: If an ERC721 staking pool has a cooldown, a position holder should be able to initiate an unstake after the lockup period has expired
+
+The position's `unstakeInitiatedAt` member should reflect the block timestamp of when the unstake was initiated:
+
+```
+    struct Position {
+        uint256 poolID;
+        uint256 amountOrTokenID;
+        uint256 stakeTimestamp;
+        uint256 unstakeInitiatedAt;
+    }
+```
+
+The transaction should emit an `UnstakeInitiated` event:
+
+```
+    event UnstakeInitiated(uint256 positionTokenID, address indexed owner);
+```
+
+### `STAKER-*`: If an ERC1155 staking pool has a cooldown, a position holder should be able to initiate an unstake after the lockup period has expired
+
+The position's `unstakeInitiatedAt` member should reflect the block timestamp of when the unstake was initiated:
+
+```
+    struct Position {
+        uint256 poolID;
+        uint256 amountOrTokenID;
+        uint256 stakeTimestamp;
+        uint256 unstakeInitiatedAt;
+    }
+```
+
+The transaction should emit an `UnstakeInitiated` event:
+
+```
+    event UnstakeInitiated(uint256 positionTokenID, address indexed owner);
+```
+
+### `STAKER-*`: If a native token staking pool has a cooldown, if a position holder has successfully initiated an unstake but not completed that unstake, any further initiations of the unstake will be idempotent
+
+This means that the `unstakeInitiatedAt` member of the position will not change, and will reflect the block
+timestamp of the original `initiateUnstake` transaction. No `UnstakeInitiated` event will be emitted.
+
+### `STAKER-*`: If an ERC20 staking pool has a cooldown, if a position holder has successfully initiated an unstake but not completed that unstake, any further initiations of the unstake will be idempotent
+
+This means that the `unstakeInitiatedAt` member of the position will not change, and will reflect the block
+timestamp of the original `initiateUnstake` transaction. No `UnstakeInitiated` event will be emitted.
+
+### `STAKER-*`: If an ERC721 staking pool has a cooldown, if a position holder has successfully initiated an unstake but not completed that unstake, any further initiations of the unstake will be idempotent
+
+This means that the `unstakeInitiatedAt` member of the position will not change, and will reflect the block
+timestamp of the original `initiateUnstake` transaction. No `UnstakeInitiated` event will be emitted.
+
+### `STAKER-*`: If an ERC1155 staking pool has a cooldown, if a position holder has successfully initiated an unstake but not completed that unstake, any further initiations of the unstake will be idempotent
+
+This means that the `unstakeInitiatedAt` member of the position will not change, and will reflect the block
+timestamp of the original `initiateUnstake` transaction. No `UnstakeInitiated` event will be emitted.
+
+### `STAKER-*`: If a native token staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has not expired, then the position holder cannot complete the unstake
+
+Any attempt to do so should raise the following error:
+
+```
+    error InitiateUnstakeFirst(uint256 cooldownSeconds);
+```
+
+### `STAKER-*`: If an ERC20 staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has not expired, then the position holder cannot complete the unstake
+
+Any attempt to do so should raise the following error:
+
+```
+    error InitiateUnstakeFirst(uint256 cooldownSeconds);
+```
+
+### `STAKER-*`: If an ERC721 staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has not expired, then the position holder cannot complete the unstake
+
+Any attempt to do so should raise the following error:
+
+```
+    error InitiateUnstakeFirst(uint256 cooldownSeconds);
+```
+
+### `STAKER-*`: If an ERC1155 staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has not expired, then the position holder cannot complete the unstake
+
+Any attempt to do so should raise the following error:
+
+```
+    error InitiateUnstakeFirst(uint256 cooldownSeconds);
+```
+
+### `STAKER-*`: If a native token staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has not expired, then a position non-holder cannot complete the unstake
+
+Any attempt to do so should raise the following error:
+
+```
+    error UnauthorizedForPosition(address owner, address sender);
+```
+
+### `STAKER-*`: If an ERC20 staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has not expired, then a position non-holder cannot complete the unstake
+
+Any attempt to do so should raise the following error:
+
+```
+    error UnauthorizedForPosition(address owner, address sender);
+```
+
+### `STAKER-*`: If an ERC721 staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has not expired, then a position non-holder cannot complete the unstake
+
+Any attempt to do so should raise the following error:
+
+```
+    error UnauthorizedForPosition(address owner, address sender);
+```
+
+### `STAKER-*`: If an ERC1155 staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has not expired, then a position non-holder cannot complete the unstake
+
+Any attempt to do so should raise the following error:
+
+```
+    error UnauthorizedForPosition(address owner, address sender);
+```
+
+### `STAKER-*`: If a native token staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has not expired, then a position non-holder cannot complete the unstake, even if they were the original creator of the position
+
+Any attempt to do so should raise the following error:
+
+```
+    error UnauthorizedForPosition(address owner, address sender);
+```
+
+### `STAKER-*`: If an ERC20 staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has not expired, then a position non-holder cannot complete the unstake, even if they were the original creator of the position
+
+Any attempt to do so should raise the following error:
+
+```
+    error UnauthorizedForPosition(address owner, address sender);
+```
+
+### `STAKER-*`: If an ERC721 staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has not expired, then a position non-holder cannot complete the unstake, even if they were the original creator of the position
+
+Any attempt to do so should raise the following error:
+
+```
+    error UnauthorizedForPosition(address owner, address sender);
+```
+
+### `STAKER-*`: If an ERC1155 staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has not expired, then a position non-holder cannot complete the unstake, even if they were the original creator of the position
+
+Any attempt to do so should raise the following error:
+
+```
+    error UnauthorizedForPosition(address owner, address sender);
+```
+
+### `STAKER-*`: If a native token staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has expired, then the position holder can unstake and the position token is burned when the staking position is transferable
+
+The amount of native token staked into the position should be transferred from the `Staker` contract to
+the position holder.
+
+The position token should be burned.
+
+The transaction shoul emit an `Unstaked` event:
+
+```
+    event Unstaked(uint256 positionTokenID, address indexed owner, uint256 indexed poolID, uint256 amountOrTokenID);
+```
+
+The transaction should emit an ERC721 `Transfer` event signifying that the poition token was burned.
+
+
+### `STAKER-*`: If an ERC20 staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has expired, then the position holder can unstake and the position token is burned when the staking position is transferable
+
+The amount of ERC20 tokens staked into the position should be transferred from the `Staker` contract to
+the position holder.
+
+The position token should be burned.
+
+The transaction shoul emit an `Unstaked` event:
+
+```
+    event Unstaked(uint256 positionTokenID, address indexed owner, uint256 indexed poolID, uint256 amountOrTokenID);
+```
+
+The transaction should emit an ERC721 `Transfer` event signifying that the poition token was burned.
+
+
+### `STAKER-*`: If an ERC721 staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has expired, then the position holder can unstake and the position token is burned when the staking position is transferable
+
+The ERC721 token staked into the position should be transferred from the `Staker` contract to
+the position holder.
+
+The position token should be burned.
+
+The transaction shoul emit an `Unstaked` event:
+
+```
+    event Unstaked(uint256 positionTokenID, address indexed owner, uint256 indexed poolID, uint256 amountOrTokenID);
+```
+
+The transaction should emit an ERC721 `Transfer` event signifying that the poition token was burned.
+
+
+### `STAKER-*`: If an ERC1155 staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has expired, then the position holder can unstake and the position token is burned when the staking position is transferable
+
+The amount of ERC1155 tokens staked into the position should be transferred from the `Staker` contract to
+the position holder.
+
+The position token should be burned.
+
+The transaction shoul emit an `Unstaked` event:
+
+```
+    event Unstaked(uint256 positionTokenID, address indexed owner, uint256 indexed poolID, uint256 amountOrTokenID);
+```
+
+The transaction should emit an ERC721 `Transfer` event signifying that the poition token was burned.
+
+
+### `STAKER-*`: If a native token staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has expired, then the position holder can unstake and the position token is burned when the staking position is non-transferable
+
+The amount of native token staked into the position should be transferred from the `Staker` contract to
+the position holder.
+
+The position token should be burned.
+
+The transaction shoul emit an `Unstaked` event:
+
+```
+    event Unstaked(uint256 positionTokenID, address indexed owner, uint256 indexed poolID, uint256 amountOrTokenID);
+```
+
+The transaction should emit an ERC721 `Transfer` event signifying that the poition token was burned.
+
+
+### `STAKER-*`: If an ERC20 staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has expired, then the position holder can unstake and the position token is burned when the staking position is non-transferable
+
+The amount of ERC20 tokens staked into the position should be transferred from the `Staker` contract to
+the position holder.
+
+The position token should be burned.
+
+The transaction shoul emit an `Unstaked` event:
+
+```
+    event Unstaked(uint256 positionTokenID, address indexed owner, uint256 indexed poolID, uint256 amountOrTokenID);
+```
+
+The transaction should emit an ERC721 `Transfer` event signifying that the poition token was burned.
+
+
+### `STAKER-*`: If an ERC721 staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has expired, then the position holder can unstake and the position token is burned when the staking position is non-transferable
+
+The ERC721 token staked into the position should be transferred from the `Staker` contract to
+the position holder.
+
+The position token should be burned.
+
+The transaction shoul emit an `Unstaked` event:
+
+```
+    event Unstaked(uint256 positionTokenID, address indexed owner, uint256 indexed poolID, uint256 amountOrTokenID);
+```
+
+The transaction should emit an ERC721 `Transfer` event signifying that the poition token was burned.
+
+### `STAKER-*`: If an ERC1155 staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has expired, then the position holder can unstake and the position token is burned when the staking position is non-transferable
+
+The amount of ERC1155 tokens staked into the position should be transferred from the `Staker` contract to
+the position holder.
+
+The position token should be burned.
+
+The transaction shoul emit an `Unstaked` event:
+
+```
+    event Unstaked(uint256 positionTokenID, address indexed owner, uint256 indexed poolID, uint256 amountOrTokenID);
+```
+
+The transaction should emit an ERC721 `Transfer` event signifying that the poition token was burned.
+
+
+### `STAKER-*`: If a native token staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has expired, then a position non-holder cannot complete the unstake
+
+Any attempt to do so should raise the following error:
+
+```
+    error UnauthorizedForPosition(address owner, address sender);
+```
+
+### `STAKER-*`: If an ERC20 staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has expired, then a position non-holder cannot complete the unstake
+
+Any attempt to do so should raise the following error:
+
+```
+    error UnauthorizedForPosition(address owner, address sender);
+```
+
+### `STAKER-*`: If an ERC721 staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has expired, then a position non-holder cannot complete the unstake
+
+Any attempt to do so should raise the following error:
+
+```
+    error UnauthorizedForPosition(address owner, address sender);
+```
+
+### `STAKER-*`: If an ERC1155 staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has expired, then a position non-holder cannot complete the unstake
+
+Any attempt to do so should raise the following error:
+
+```
+    error UnauthorizedForPosition(address owner, address sender);
+```
+
+### `STAKER-*`: If a native token staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has expired, then a position non-holder cannot complete the unstake, even if they were the original creator of the position
+
+Any attempt to do so should raise the following error:
+
+```
+    error UnauthorizedForPosition(address owner, address sender);
+```
+
+### `STAKER-*`: If an ERC20 staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has expired, then a position non-holder cannot complete the unstake, even if they were the original creator of the position
+
+Any attempt to do so should raise the following error:
+
+```
+    error UnauthorizedForPosition(address owner, address sender);
+```
+
+### `STAKER-*`: If an ERC721 staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has expired, then a position non-holder cannot complete the unstake, even if they were the original creator of the position
+
+Any attempt to do so should raise the following error:
+
+```
+    error UnauthorizedForPosition(address owner, address sender);
+```
+
+### `STAKER-*`: If an ERC1155 staking pool has a cooldown, if a position holder has successfully initiated an unstake, and if the cooldown period has expired, then a position non-holder cannot complete the unstake, even if they were the original creator of the position
+
+Any attempt to do so should raise the following error:
+
+```
+    error UnauthorizedForPosition(address owner, address sender);
+```
+
+
 ## Adding new flows
 
 Label the new flows using the syntax `TAG-modifier` with `STAKER` as the `TAG` and `*` as the modifier.
