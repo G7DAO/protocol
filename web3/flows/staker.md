@@ -5,13 +5,15 @@ contract.
 
 This document is used as part of the World Builder team's testing process: https://docs.google.com/document/d/1OEW46qwIq1_W3V8u8JDZvrM1ElxwiGEs6LLPdsYXndA/edit?usp=sharing
 
-## Deployment and setup
+## Flows
 
-### `STAKER-*`: Anybody should be able to deploy a Staker contract.
+### Deployment and setup
+
+#### `STAKER-1`: Anybody should be able to deploy a Staker contract.
 
 Any account should be able to deploy a `Staker` contract. The constructor should not revert.
 
-### `STAKER-*`: The `Staker` implements ERC721
+#### `STAKER-2`: The `Staker` implements ERC721
 
 `Staker` implements the ERC721 token standard. Specifically, it implements the following interfaces:
 1. `ERC721`
@@ -26,7 +28,7 @@ After deployment, its `supportsInterface` method should return `true` when queri
 The ERC721 metadata must also be set correctly. The `name()` method should return `"Game7 Staker"`, and
 the `symbol()` method should return `"G7STAKER"`.
 
-### `STAKER-*`: Token types
+#### `STAKER-3`: Token types
 
 `Staker` uses special `uint256` values to denote the different types of tokens it accepts as stakes.
 
@@ -38,7 +40,7 @@ These special values are:
 
 ## Creating staking pools
 
-### `STAKER-*`: Any account should be able to create a staking pool for native tokens
+#### `STAKER-4`: Any account should be able to create a staking pool for native tokens
 
 Any account should be able to create a staking pool for native tokens. That the staking pool is for
 native tokens should be reflected in the pool parameters.
@@ -56,7 +58,7 @@ The creation of the staking pool should emit a `StakingPoolCreated` event of the
     );
 ```
 
-### `STAKER-*`: Any account should be able to create a staking pool for ERC20 tokens
+#### `STAKER-5`: Any account should be able to create a staking pool for ERC20 tokens
 
 Any account should be able to create a staking pool for ERC20 tokens. That the staking pool is for
 ERC20 tokens should be reflected in the pool parameters.
@@ -74,7 +76,7 @@ The creation of the staking pool should emit a `StakingPoolCreated` event of the
     );
 ```
 
-### `STAKER-*`: Any account should be able to create a staking pool for ERC721 tokens
+#### `STAKER-6`: Any account should be able to create a staking pool for ERC721 tokens
 
 Any account should be able to create a staking pool for ERC721 tokens. That the staking pool is for
 ERC721 tokens should be reflected in the pool parameters.
@@ -92,7 +94,7 @@ The creation of the staking pool should emit a `StakingPoolCreated` event of the
     );
 ```
 
-### `STAKER-*`: Any account should be able to create a staking pool for ERC1155 tokens
+#### `STAKER-7`: Any account should be able to create a staking pool for ERC1155 tokens
 
 Any account should be able to create a staking pool for ERC1155 tokens. That the staking pool is for
 ERC1155 tokens should be reflected in the pool parameters.
@@ -110,11 +112,11 @@ The creation of the staking pool should emit a `StakingPoolCreated` event of the
     );
 ```
 
-### `STAKER-*`: Staking pool IDs should start at `0` and increase sequentially
+#### `STAKER-8`: Staking pool IDs should start at `0` and increase sequentially
 
 This behavior should not depend on the pool configuration.
 
-### `STAKER-*`: It should not be possible to create a staking pool for a token of an unknown type
+#### `STAKER-9`: It should not be possible to create a staking pool for a token of an unknown type
 
 If a user tries to call `createPool` using a type that isn't one of `1` (native token), `20` (ERC20),
 `721` (ERC721), or `1155` (ERC1155), the message should revert with an error having the following signature:
@@ -123,7 +125,7 @@ If a user tries to call `createPool` using a type that isn't one of `1` (native 
     error InvalidTokenType();
 ```
 
-### `STAKER-*`: It should not be possible to create native token staking pools with non-zero token address or token ID
+#### `STAKER-10`: It should not be possible to create native token staking pools with non-zero token address or token ID
 
 `createPool` has the following signature:
 
@@ -145,7 +147,7 @@ message should revert with an error having the following signature:
     error InvalidConfiguration();
 ```
 
-### `STAKER-*`: It should not be possible to create ERC20 token staking pools with zero token address or non-zero token ID
+#### `STAKER-11`: It should not be possible to create ERC20 token staking pools with zero token address or non-zero token ID
 
 `createPool` has the following signature:
 
@@ -167,7 +169,7 @@ the message should revert with an error having the following signature:
     error InvalidConfiguration();
 ```
 
-### `STAKER-*`:  It should not be possible to create ERC721 token staking pools with zero token address or non-zero token ID
+#### `STAKER-12`:  It should not be possible to create ERC721 token staking pools with zero token address or non-zero token ID
 
 `createPool` has the following signature:
 
@@ -189,7 +191,7 @@ the message should revert with an error having the following signature:
     error InvalidConfiguration();
 ```
 
-### `STAKER-*`:  It should not be possible to create ERC1155 token staking pools with zero token address
+#### `STAKER-13`:  It should not be possible to create ERC1155 token staking pools with zero token address
 
 `createPool` has the following signature:
 
@@ -211,14 +213,14 @@ should revert with an error having the following signature:
     error InvalidConfiguration();
 ```
 
-### `STAKER-*`: It should be possible to create ERC1155 token staking pools in which the token ID is zero
+#### `STAKER-14`: It should be possible to create ERC1155 token staking pools in which the token ID is zero
 
 This is a specific test that there is no check for the non-zeroness of the token ID being performed on the
 creation of ERC1155 staking pools.
 
 ## Administration of staking pools
 
-### `STAKER-*`: An administrator should be able to modify any subset of the configuration parameters on a pool in a single transaction
+#### `STAKER-15`: An administrator should be able to modify any subset of the configuration parameters on a pool in a single transaction
 
 The current configuration of the staking pool with ID `poolID` can be viewed by calling `Pools(poolID)`. The return value is
 a struct of this form:
@@ -267,7 +269,7 @@ Successful configuration changes should emit an event with the following signatu
     );
 ```
 
-### `STAKER-*`: A non-administrator (of any pool) should not be able to change any of the parameters of a staking pool
+#### `STAKER-16`: A non-administrator (of any pool) should not be able to change any of the parameters of a staking pool
 
 Messages from a non-administrator to make such a change should revert with the following error:
 
@@ -275,7 +277,7 @@ Messages from a non-administrator to make such a change should revert with the f
     error NonAdministrator();
 ```
 
-### `STAKER-*`: A non-administrator (of any pool) should not be able to change any of the parameters of a staking pool, even if they are administrators of a different pool
+#### `STAKER-17`: A non-administrator (of any pool) should not be able to change any of the parameters of a staking pool, even if they are administrators of a different pool
 
 Messages from a non-administrator to make such a change should revert with the following error:
 
@@ -283,7 +285,7 @@ Messages from a non-administrator to make such a change should revert with the f
     error NonAdministrator();
 ```
 
-### `STAKER-*`: An administrator of a staking pool should be able to transfer administration of that pool to another account
+#### `STAKER-18`: An administrator of a staking pool should be able to transfer administration of that pool to another account
 
 This should emit a `StakingPoolConfigured` event, which has the following signature:
 
@@ -306,5 +308,16 @@ any attempt they make to configure the pool should raise an error with signature
     error NonAdministrator();
 ```
 
-## Staking tokens
+### Staking tokens
 
+
+## Adding new flows
+
+Label the new flows using the syntax `TAG-modifier` with `STAKER` as the `TAG` and `*` as the modifier.
+Then run [`graffiti`](../../cmd/graffiti/cmd.go) on this file using:
+
+```bash
+graffiti number -i web3/flows/staker.md -o web3/flows/staker.md -t STAKER
+```
+
+This will automatically number the new flows while preserving the numbering of the existing flows.
