@@ -988,4 +988,76 @@ describe('Staker', function () {
         // Verify the new owner of the position token
         expect(await staker.ownerOf(positionTokenID)).to.equal(await user1.getAddress());
     });
+
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-24: Staking position tokens for non-transferable staking pools should not be transferable.', async function () {
+        const transferable = false;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 300;
+
+        const { staker, user0, user1, nativePoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+        const stakeAmount = ethers.parseEther('5.6789'); // Using a unique and distinctive stake amount
+
+        // Get total positions before staking
+        const totalPositionsBefore = await staker.TotalPositions();
+
+        // Stake native tokens
+        const tx = await stakerWithUser0.stakeNative(nativePoolID, { value: stakeAmount });
+        const txReceipt = await tx.wait();
+        expect(txReceipt).to.not.be.null;
+
+        // Get total positions after staking
+        const totalPositionsAfter = await staker.TotalPositions();
+
+        // Verify that total positions have increased by 1
+        expect(totalPositionsAfter).to.equal(totalPositionsBefore + 1n);
+
+        // Get the position token ID of the newly minted token
+        const positionTokenID = totalPositionsBefore;
+
+        // Verify the position
+        const position = await staker.Positions(positionTokenID);
+        expect(position.poolID).to.equal(nativePoolID);
+        expect(position.amountOrTokenID).to.equal(stakeAmount);
+        const block = await ethers.provider.getBlock(txReceipt!.blockNumber);
+        expect(block).to.not.be.null;
+        const blockTimestamp = block!.timestamp;
+        expect(position.stakeTimestamp).to.equal(blockTimestamp);
+        expect(position.unstakeInitiatedAt).to.equal(0);
+
+        // Verify initial owner of the position token
+        expect(await staker.ownerOf(positionTokenID)).to.equal(await user0.getAddress());
+
+        // Attempt to transfer the position token using transferFrom
+        await expect(stakerWithUser0.transferFrom(await user0.getAddress(), await user1.getAddress(), positionTokenID))
+            .to.be.revertedWithCustomError(staker, 'PositionNotTransferable')
+            .withArgs(positionTokenID);
+
+        // Attempt to transfer the position token using safeTransferFrom
+        await expect(
+            stakerWithUser0['safeTransferFrom(address,address,uint256)'](
+                await user0.getAddress(),
+                await user1.getAddress(),
+                positionTokenID
+            )
+        )
+            .to.be.revertedWithCustomError(staker, 'PositionNotTransferable')
+            .withArgs(positionTokenID);
+
+        // Attempt to transfer the position token using safeTransferFrom with data
+        await expect(
+            stakerWithUser0['safeTransferFrom(address,address,uint256,bytes)'](
+                await user0.getAddress(),
+                await user1.getAddress(),
+                positionTokenID,
+                '0x'
+            )
+        )
+            .to.be.revertedWithCustomError(staker, 'PositionNotTransferable')
+            .withArgs(positionTokenID);
+    });
 });
