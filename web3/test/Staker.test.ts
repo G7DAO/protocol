@@ -8,1007 +8,634 @@ import { Staker as StakerT } from '../typechain-types/contracts/staking/Staker';
 import { HardhatEthersSigner } from '../helpers/type';
 import { TransactionResponse } from 'ethers';
 
-describe('Staker', function () {
-    async function setupFixture() {
-        const [anyone, admin0, admin1, user0, user1, user2] = await ethers.getSigners();
+async function setupFixture() {
+    const [anyone, admin0, admin1, user0, user1, user2] = await ethers.getSigners();
 
-        const Staker = await ethers.getContractFactory('Staker');
-        const staker = await Staker.deploy();
+    const Staker = await ethers.getContractFactory('Staker');
+    const staker = await Staker.deploy();
 
-        const ERC20 = await ethers.getContractFactory('MockERC20');
-        const erc20 = await ERC20.deploy();
+    const ERC20 = await ethers.getContractFactory('MockERC20');
+    const erc20 = await ERC20.deploy();
 
-        const ERC721 = await ethers.getContractFactory('MockERC721');
-        const erc721 = await ERC721.deploy();
+    const ERC721 = await ethers.getContractFactory('MockERC721');
+    const erc721 = await ERC721.deploy();
 
-        const ERC1155 = await ethers.getContractFactory('MockERC1155');
-        const erc1155 = await ERC1155.deploy();
+    const ERC1155 = await ethers.getContractFactory('MockERC1155');
+    const erc1155 = await ERC1155.deploy();
 
-        return { staker, erc20, erc721, erc1155, anyone, admin0, admin1, user0, user1, user2 };
-    }
+    return { staker, erc20, erc721, erc1155, anyone, admin0, admin1, user0, user1, user2 };
+}
 
-    async function setupERC1155StakingPoolFixture() {
-        const { admin0, anyone, erc1155, staker, user0 } = await loadFixture(setupFixture);
+function setupStakingPoolsFixture(transferable: boolean, lockupSeconds: number, cooldownSeconds: number) {
+    async function fixture() {
+        const { staker, erc20, erc721, erc1155, anyone, admin0, admin1, user0, user1, user2 } =
+            await loadFixture(setupFixture);
 
         const stakerWithAdmin0 = staker.connect(admin0);
 
-        const erc1155TokenType = await staker.ERC1155_TOKEN_TYPE();
-
-        const tokenAddress = await erc1155.getAddress();
-        const tokenID = 1;
-        const transferable = true;
-        const lockupSeconds = 3600;
-        const cooldownSeconds = 0;
-
         await stakerWithAdmin0.createPool(
-            erc1155TokenType,
-            tokenAddress,
-            tokenID,
+            await stakerWithAdmin0.NATIVE_TOKEN_TYPE(),
+            ethers.ZeroAddress,
+            0,
             transferable,
             lockupSeconds,
             cooldownSeconds
         );
-        const poolID = 0;
-        expect(await stakerWithAdmin0.TotalPools()).to.equal(poolID + 1);
-        const pool = await stakerWithAdmin0.Pools(poolID);
-        expect(pool.administrator).to.equal(admin0.address);
+        const nativePoolID = (await staker.TotalPools()) - BigInt(1);
 
-        await erc1155.connect(admin0);
-
-        await erc1155.mint(admin0.address, tokenID, 1000);
-        await erc1155.mint(user0.address, tokenID, 10);
-
-        return {
-            admin0,
-            anyone,
-            erc1155,
-            staker,
-            stakerWithAdmin0,
-            user0,
-            poolID,
+        await stakerWithAdmin0.createPool(
+            await stakerWithAdmin0.ERC20_TOKEN_TYPE(),
+            await erc20.getAddress(),
+            0,
             transferable,
             lockupSeconds,
-            cooldownSeconds,
+            cooldownSeconds
+        );
+        const erc20PoolID = (await staker.TotalPools()) - BigInt(1);
+
+        await stakerWithAdmin0.createPool(
+            await stakerWithAdmin0.ERC721_TOKEN_TYPE(),
+            await erc721.getAddress(),
+            0,
+            transferable,
+            lockupSeconds,
+            cooldownSeconds
+        );
+        const erc721PoolID = (await staker.TotalPools()) - BigInt(1);
+
+        const erc1155TokenID = 1;
+        await stakerWithAdmin0.createPool(
+            await stakerWithAdmin0.ERC1155_TOKEN_TYPE(),
+            await erc1155.getAddress(),
+            erc1155TokenID,
+            transferable,
+            lockupSeconds,
+            cooldownSeconds
+        );
+        const erc1155PoolID = (await staker.TotalPools()) - BigInt(1);
+
+        return {
+            staker,
+            erc20,
+            erc721,
+            erc1155,
+            anyone,
+            admin0,
+            admin1,
+            user0,
+            user1,
+            user2,
+            stakerWithAdmin0,
+            nativePoolID,
+            erc20PoolID,
+            erc721PoolID,
+            erc1155TokenID,
+            erc1155PoolID,
         };
     }
 
-    it('should deploy', async function () {
-        const { staker } = await loadFixture(setupFixture);
+    return fixture;
+}
 
-        const stakerAddress = await staker.getAddress();
-        expect(stakerAddress).to.be.properAddress;
-        expect(stakerAddress).to.not.equal(ethers.ZeroAddress);
-
-        const TotalPools = await staker.TotalPools();
-        expect(TotalPools).to.equal(0);
-
-        const nativeTokenType = await staker.NATIVE_TOKEN_TYPE();
-        expect(nativeTokenType).to.equal(1);
-
-        const erc20TokenType = await staker.ERC20_TOKEN_TYPE();
-        expect(erc20TokenType).to.equal(20);
-
-        const erc721TokenType = await staker.ERC721_TOKEN_TYPE();
-        expect(erc721TokenType).to.equal(721);
-
-        const erc1155TokenType = await staker.ERC1155_TOKEN_TYPE();
-        expect(erc1155TokenType).to.equal(1155);
+describe('Staker', function () {
+    it('STAKER-1: Anybody should be able to deploy a Staker contract.', async function () {
+        const { staker } = await setupFixture();
+        expect(await staker.getAddress()).to.be.properAddress;
     });
 
-    it('should incrementally increase the pool ID for every subsequent pool created', async function () {
-        const { anyone, staker } = await loadFixture(setupFixture);
+    it('STAKER-2: The Staker implements ERC721', async function () {
+        const { staker } = await setupFixture();
+        // 1. `0x80ac58cd` (interface ID for `ERC721`)
+        expect(await staker.supportsInterface('0x80ac58cd')).to.be.true;
+        // 2. `0x5b5e139f` (interface ID for `ERC721Metadata`)
+        expect(await staker.supportsInterface('0x5b5e139f')).to.be.true;
+        // 3. `0x780e9d63` (interface ID for `ERC721Enumerable`)
+        expect(await staker.supportsInterface('0x780e9d63')).to.be.true;
+    });
 
-        await staker.connect(anyone);
+    it('STAKER-3: Token types', async function () {
+        const { staker } = await setupFixture();
+        expect(await staker.NATIVE_TOKEN_TYPE()).to.equal(1);
+        expect(await staker.ERC20_TOKEN_TYPE()).to.equal(20);
+        expect(await staker.ERC721_TOKEN_TYPE()).to.equal(721);
+        expect(await staker.ERC1155_TOKEN_TYPE()).to.equal(1155);
+    });
 
-        const nativeTokenType = await staker.NATIVE_TOKEN_TYPE();
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-4: Any account should be able to create a staking pool for native tokens.', async function () {
+        const { staker, anyone } = await loadFixture(setupFixture);
+        const stakerWithAnyone = staker.connect(anyone);
 
-        const tokenAddress = ethers.ZeroAddress;
-        const tokenID = 0;
-        const transferable = true;
-        // We'll use this to test appropriate creation - this will go up by 1 on each pool.
-        let lockupSeconds = 0;
-        const cooldownSeconds = 0;
+        const tx = await stakerWithAnyone.createPool(
+            await stakerWithAnyone.NATIVE_TOKEN_TYPE(),
+            ethers.ZeroAddress,
+            0,
+            true,
+            0,
+            0
+        );
 
-        let poolID = lockupSeconds;
-
-        await expect(
-            staker.createPool(nativeTokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds)
-        )
+        await expect(tx)
             .to.emit(staker, 'StakingPoolCreated')
-            .withArgs(poolID, nativeTokenType, tokenAddress, tokenID)
-            .and.to.emit(staker, 'StakingPoolConfigured')
-            .withArgs(poolID, anyone.address, transferable, lockupSeconds, cooldownSeconds);
+            .withArgs(
+                0, // poolID should be 0 for the first pool
+                await stakerWithAnyone.NATIVE_TOKEN_TYPE(),
+                ethers.ZeroAddress,
+                0
+            );
 
-        let pool = await staker.Pools(poolID);
-        expect(pool.tokenType).to.equal(nativeTokenType);
-        expect(pool.tokenAddress).to.equal(tokenAddress);
-        expect(pool.tokenID).to.equal(tokenID);
-        expect(pool.transferable).to.equal(transferable);
-        expect(pool.lockupSeconds).to.equal(lockupSeconds);
-        expect(pool.cooldownSeconds).to.equal(cooldownSeconds);
-        expect(pool.administrator).to.equal(anyone.address);
-
-        let numPools: bigint;
-
-        while (lockupSeconds < 100) {
-            lockupSeconds++;
-            poolID = lockupSeconds;
-
-            numPools = await staker.TotalPools();
-            expect(numPools).to.equal(poolID);
-
-            await expect(
-                staker.createPool(nativeTokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds)
-            )
-                .to.emit(staker, 'StakingPoolCreated')
-                .withArgs(poolID, nativeTokenType, tokenAddress, tokenID)
-                .and.to.emit(staker, 'StakingPoolConfigured')
-                .withArgs(poolID, anyone.address, transferable, lockupSeconds, cooldownSeconds);
-
-            pool = await staker.Pools(poolID);
-            expect(pool.tokenType).to.equal(nativeTokenType);
-            expect(pool.tokenAddress).to.equal(tokenAddress);
-            expect(pool.tokenID).to.equal(tokenID);
-            expect(pool.transferable).to.equal(transferable);
-            expect(pool.lockupSeconds).to.equal(lockupSeconds);
-            expect(pool.cooldownSeconds).to.equal(cooldownSeconds);
-            expect(pool.administrator).to.equal(anyone.address);
-        }
-
-        numPools = await staker.TotalPools();
-        expect(numPools).to.equal(101);
+        const pool = await staker.Pools(0);
+        expect(pool.tokenType).to.equal(await stakerWithAnyone.NATIVE_TOKEN_TYPE());
+        expect(pool.tokenAddress).to.equal(ethers.ZeroAddress);
+        expect(pool.tokenID).to.equal(0);
+        expect(pool.transferable).to.equal(true);
+        expect(pool.lockupSeconds).to.equal(0);
+        expect(pool.cooldownSeconds).to.equal(0);
     });
 
-    it('should not support the creation and management of tokens with an unknown type', async function () {
-        const { anyone, staker } = await loadFixture(setupFixture);
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-5: Any account should be able to create a staking pool for ERC20 tokens.', async function () {
+        const { staker, erc20, anyone } = await loadFixture(setupFixture);
+        const stakerWithAnyone = staker.connect(anyone);
 
-        await staker.connect(anyone);
+        const tx = await stakerWithAnyone.createPool(
+            await stakerWithAnyone.ERC20_TOKEN_TYPE(),
+            await erc20.getAddress(),
+            0,
+            true,
+            0,
+            0
+        );
 
-        const unknownType =
+        await expect(tx)
+            .to.emit(staker, 'StakingPoolCreated')
+            .withArgs(
+                0, // poolID should be 0 as the chain state is reset
+                await stakerWithAnyone.ERC20_TOKEN_TYPE(),
+                await erc20.getAddress(),
+                0
+            );
+
+        const pool = await staker.Pools(0);
+        expect(pool.tokenType).to.equal(await stakerWithAnyone.ERC20_TOKEN_TYPE());
+        expect(pool.tokenAddress).to.equal(await erc20.getAddress());
+        expect(pool.tokenID).to.equal(0);
+        expect(pool.transferable).to.equal(true);
+        expect(pool.lockupSeconds).to.equal(0);
+        expect(pool.cooldownSeconds).to.equal(0);
+    });
+
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-6: Any account should be able to create a staking pool for ERC721 tokens.', async function () {
+        const { staker, erc721, anyone } = await loadFixture(setupFixture);
+        const stakerWithAnyone = staker.connect(anyone);
+
+        const tx = await stakerWithAnyone.createPool(
+            await stakerWithAnyone.ERC721_TOKEN_TYPE(),
+            await erc721.getAddress(),
+            0,
+            true,
+            0,
+            0
+        );
+
+        await expect(tx)
+            .to.emit(staker, 'StakingPoolCreated')
+            .withArgs(0, await stakerWithAnyone.ERC721_TOKEN_TYPE(), await erc721.getAddress(), 0);
+
+        const pool = await staker.Pools(0);
+        expect(pool.tokenType).to.equal(await stakerWithAnyone.ERC721_TOKEN_TYPE());
+        expect(pool.tokenAddress).to.equal(await erc721.getAddress());
+        expect(pool.tokenID).to.equal(0);
+        expect(pool.transferable).to.equal(true);
+        expect(pool.lockupSeconds).to.equal(0);
+        expect(pool.cooldownSeconds).to.equal(0);
+    });
+
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-7: Any account should be able to create a staking pool for ERC1155 tokens.', async function () {
+        const { staker, erc1155, anyone } = await loadFixture(setupFixture);
+        const stakerWithAnyone = staker.connect(anyone);
+
+        const erc1155TokenID = 1;
+        const tx = await stakerWithAnyone.createPool(
+            await stakerWithAnyone.ERC1155_TOKEN_TYPE(),
+            await erc1155.getAddress(),
+            erc1155TokenID,
+            true,
+            0,
+            0
+        );
+
+        await expect(tx)
+            .to.emit(staker, 'StakingPoolCreated')
+            .withArgs(0, await stakerWithAnyone.ERC1155_TOKEN_TYPE(), await erc1155.getAddress(), erc1155TokenID);
+
+        const pool = await staker.Pools(0);
+        expect(pool.tokenType).to.equal(await stakerWithAnyone.ERC1155_TOKEN_TYPE());
+        expect(pool.tokenAddress).to.equal(await erc1155.getAddress());
+        expect(pool.tokenID).to.equal(erc1155TokenID);
+        expect(pool.transferable).to.equal(true);
+        expect(pool.lockupSeconds).to.equal(0);
+        expect(pool.cooldownSeconds).to.equal(0);
+    });
+
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-8: Staking pool IDs should start at 0 and increase sequentially, with correct token types.', async function () {
+        const { staker, erc20, erc721, erc1155, anyone } = await loadFixture(setupFixture);
+        const stakerWithAnyone = staker.connect(anyone);
+
+        await stakerWithAnyone.createPool(
+            await stakerWithAnyone.NATIVE_TOKEN_TYPE(),
+            ethers.ZeroAddress,
+            0,
+            true,
+            0,
+            0
+        );
+        let poolID = (await staker.TotalPools()) - 1n;
+        expect(poolID).to.equal(0n);
+        let pool = await staker.Pools(poolID);
+        expect(pool.tokenType).to.equal(await stakerWithAnyone.NATIVE_TOKEN_TYPE());
+
+        await stakerWithAnyone.createPool(
+            await stakerWithAnyone.ERC20_TOKEN_TYPE(),
+            await erc20.getAddress(),
+            0,
+            true,
+            0,
+            0
+        );
+        poolID = (await staker.TotalPools()) - 1n;
+        expect(poolID).to.equal(1n);
+        pool = await staker.Pools(poolID);
+        expect(pool.tokenType).to.equal(await stakerWithAnyone.ERC20_TOKEN_TYPE());
+
+        await stakerWithAnyone.createPool(
+            await stakerWithAnyone.ERC721_TOKEN_TYPE(),
+            await erc721.getAddress(),
+            0,
+            true,
+            0,
+            0
+        );
+        poolID = (await staker.TotalPools()) - 1n;
+        expect(poolID).to.equal(2n);
+        pool = await staker.Pools(poolID);
+        expect(pool.tokenType).to.equal(await stakerWithAnyone.ERC721_TOKEN_TYPE());
+
+        await stakerWithAnyone.createPool(
+            await stakerWithAnyone.ERC1155_TOKEN_TYPE(),
+            await erc1155.getAddress(),
+            1,
+            true,
+            0,
+            0
+        );
+        poolID = (await staker.TotalPools()) - 1n;
+        expect(poolID).to.equal(3n);
+        pool = await staker.Pools(poolID);
+        expect(pool.tokenType).to.equal(await stakerWithAnyone.ERC1155_TOKEN_TYPE());
+    });
+
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-9: It should not be possible to create a staking pool for a token of an unknown type.', async function () {
+        const { staker, anyone } = await loadFixture(setupFixture);
+        const stakerWithAnyone = staker.connect(anyone);
+
+        const invalidTokenType =
             (await staker.NATIVE_TOKEN_TYPE()) +
             (await staker.ERC20_TOKEN_TYPE()) +
             (await staker.ERC721_TOKEN_TYPE()) +
-            (await staker.ERC1155_TOKEN_TYPE());
-
-        const tokenAddress = ethers.ZeroAddress;
-        const tokenID = 0;
-        const transferable = true;
-        const lockupSeconds = 3600;
-        const cooldownSeconds = 0;
+            (await staker.ERC1155_TOKEN_TYPE()) +
+            1n;
 
         await expect(
-            staker.createPool(unknownType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds)
-        ).to.revertedWithCustomError(staker, 'InvalidTokenType');
-
-        const TotalPools = await staker.TotalPools();
-        expect(TotalPools).to.equal(0);
+            stakerWithAnyone.createPool(invalidTokenType, ethers.ZeroAddress, 0, true, 0, 0)
+        ).to.be.revertedWithCustomError(staker, 'InvalidTokenType');
     });
 
-    it('should support creation and management of native token staking pools', async function () {
-        const { anyone, staker } = await loadFixture(setupFixture);
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-10: It should not be possible to create native token staking pools with non-zero token address or token ID.', async function () {
+        const { staker, anyone, user0 } = await loadFixture(setupFixture);
+        const stakerWithAnyone = staker.connect(anyone);
 
-        await staker.connect(anyone);
-
-        const nativeTokenType = await staker.NATIVE_TOKEN_TYPE();
-
-        const tokenAddress = ethers.ZeroAddress;
-        const tokenID = 0;
-        const transferable = true;
-        const lockupSeconds = 3600;
-        const cooldownSeconds = 0;
-
+        // Non-zero token ID
         await expect(
-            staker.createPool(nativeTokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds)
-        )
-            .to.emit(staker, 'StakingPoolCreated')
-            .withArgs(0, nativeTokenType, tokenAddress, tokenID)
-            .and.to.emit(staker, 'StakingPoolConfigured')
-            .withArgs(0, anyone.address, transferable, lockupSeconds, cooldownSeconds);
+            stakerWithAnyone.createPool(await stakerWithAnyone.NATIVE_TOKEN_TYPE(), ethers.ZeroAddress, 1, true, 0, 0)
+        ).to.be.revertedWithCustomError(staker, 'InvalidConfiguration');
 
-        const TotalPools = await staker.TotalPools();
-        expect(TotalPools).to.equal(1);
-
-        const poolID = 0;
-
-        let pool = await staker.Pools(poolID);
-        expect(pool.tokenType).to.equal(nativeTokenType);
-        expect(pool.tokenAddress).to.equal(tokenAddress);
-        expect(pool.tokenID).to.equal(tokenID);
-        expect(pool.transferable).to.equal(transferable);
-        expect(pool.lockupSeconds).to.equal(lockupSeconds);
-        expect(pool.cooldownSeconds).to.equal(cooldownSeconds);
-        expect(pool.administrator).to.equal(anyone.address);
-
+        // Non-zero token address
         await expect(
-            staker.updatePoolConfiguration(
-                poolID,
+            stakerWithAnyone.createPool(
+                await stakerWithAnyone.NATIVE_TOKEN_TYPE(),
+                await user0.getAddress(), // Non-zero address
+                0,
                 true,
-                !transferable,
-                true,
-                lockupSeconds + 1,
-                true,
-                cooldownSeconds + 1
+                0,
+                0
             )
-        )
-            .to.emit(staker, 'StakingPoolConfigured')
-            .withArgs(poolID, anyone.address, !transferable, lockupSeconds + 1, cooldownSeconds + 1);
-        pool = await staker.Pools(poolID);
-        expect(pool.transferable).to.equal(!transferable);
-        expect(pool.lockupSeconds).to.equal(lockupSeconds + 1);
-        expect(pool.cooldownSeconds).to.equal(cooldownSeconds + 1);
-    });
-
-    it('should not allow the creation of native token staking pools with non-zero token address', async function () {
-        const { anyone, erc20, staker } = await loadFixture(setupFixture);
-
-        await staker.connect(anyone);
-
-        const nativeTokenType = await staker.NATIVE_TOKEN_TYPE();
-
-        const tokenAddress = await erc20.getAddress();
-        const tokenID = 0;
-        const transferable = true;
-        const lockupSeconds = 3600;
-        const cooldownSeconds = 0;
-
-        await expect(
-            staker.createPool(nativeTokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds)
-        ).to.be.revertedWithCustomError(staker, 'InvalidConfiguration');
-
-        const TotalPools = await staker.TotalPools();
-        expect(TotalPools).to.equal(0);
-    });
-
-    it('should not allow the creation of native token staking pools with non-zero token ID', async function () {
-        const { anyone, staker } = await loadFixture(setupFixture);
-
-        await staker.connect(anyone);
-
-        const nativeTokenType = await staker.NATIVE_TOKEN_TYPE();
-
-        const tokenAddress = ethers.ZeroAddress;
-        const tokenID = 42;
-        const transferable = true;
-        const lockupSeconds = 3600;
-        const cooldownSeconds = 0;
-
-        await expect(
-            staker.createPool(nativeTokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds)
-        ).to.be.revertedWithCustomError(staker, 'InvalidConfiguration');
-
-        const TotalPools = await staker.TotalPools();
-        expect(TotalPools).to.equal(0);
-    });
-
-    it('should support creation and management of ERC20 token staking pools', async function () {
-        const { anyone, erc20, staker } = await loadFixture(setupFixture);
-
-        await staker.connect(anyone);
-
-        const erc20TokenType = await staker.ERC20_TOKEN_TYPE();
-
-        const tokenAddress = await erc20.getAddress();
-        const tokenID = 0;
-        const transferable = true;
-        const lockupSeconds = 3600;
-        const cooldownSeconds = 0;
-
-        await expect(
-            staker.createPool(erc20TokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds)
-        )
-            .to.emit(staker, 'StakingPoolCreated')
-            .withArgs(0, erc20TokenType, tokenAddress, tokenID)
-            .and.to.emit(staker, 'StakingPoolConfigured')
-            .withArgs(0, anyone.address, transferable, lockupSeconds, cooldownSeconds);
-
-        const TotalPools = await staker.TotalPools();
-        expect(TotalPools).to.equal(1);
-
-        const poolID = 0;
-
-        let pool = await staker.Pools(poolID);
-        expect(pool.tokenType).to.equal(erc20TokenType);
-        expect(pool.tokenAddress).to.equal(tokenAddress);
-        expect(pool.tokenID).to.equal(tokenID);
-        expect(pool.transferable).to.equal(transferable);
-        expect(pool.lockupSeconds).to.equal(lockupSeconds);
-        expect(pool.cooldownSeconds).to.equal(cooldownSeconds);
-        expect(pool.administrator).to.equal(anyone.address);
-
-        await expect(
-            staker.updatePoolConfiguration(
-                poolID,
-                true,
-                !transferable,
-                true,
-                lockupSeconds + 1,
-                true,
-                cooldownSeconds + 1
-            )
-        )
-            .to.emit(staker, 'StakingPoolConfigured')
-            .withArgs(poolID, anyone.address, !transferable, lockupSeconds + 1, cooldownSeconds + 1);
-        pool = await staker.Pools(poolID);
-        expect(pool.transferable).to.equal(!transferable);
-        expect(pool.lockupSeconds).to.equal(lockupSeconds + 1);
-        expect(pool.cooldownSeconds).to.equal(cooldownSeconds + 1);
-    });
-
-    it('should not support creation of ERC20 token staking pools with zero token address', async function () {
-        const { anyone, staker } = await loadFixture(setupFixture);
-
-        await staker.connect(anyone);
-
-        const erc20TokenType = await staker.ERC20_TOKEN_TYPE();
-
-        const tokenAddress = ethers.ZeroAddress;
-        const tokenID = 0;
-        const transferable = true;
-        const lockupSeconds = 3600;
-        const cooldownSeconds = 0;
-
-        await expect(
-            staker.createPool(erc20TokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds)
-        ).to.be.revertedWithCustomError(staker, 'InvalidConfiguration');
-
-        const TotalPools = await staker.TotalPools();
-        expect(TotalPools).to.equal(0);
-    });
-
-    it('should not support creation of ERC20 token staking pools with non-zero token ID', async function () {
-        const { anyone, erc20, staker } = await loadFixture(setupFixture);
-
-        await staker.connect(anyone);
-
-        const erc20TokenType = await staker.ERC20_TOKEN_TYPE();
-
-        const tokenAddress = await erc20.getAddress();
-        const tokenID = 42;
-        const transferable = true;
-        const lockupSeconds = 3600;
-        const cooldownSeconds = 0;
-
-        await expect(
-            staker.createPool(erc20TokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds)
-        ).to.be.revertedWithCustomError(staker, 'InvalidConfiguration');
-
-        const TotalPools = await staker.TotalPools();
-        expect(TotalPools).to.equal(0);
-    });
-
-    it('should support creation and management of ERC721 token staking pools', async function () {
-        const { anyone, erc721, staker } = await loadFixture(setupFixture);
-
-        await staker.connect(anyone);
-
-        const erc721TokenType = await staker.ERC721_TOKEN_TYPE();
-
-        const tokenAddress = await erc721.getAddress();
-        const tokenID = 0;
-        const transferable = true;
-        const lockupSeconds = 3600;
-        const cooldownSeconds = 0;
-
-        await expect(
-            staker.createPool(erc721TokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds)
-        )
-            .to.emit(staker, 'StakingPoolCreated')
-            .withArgs(0, erc721TokenType, tokenAddress, tokenID)
-            .and.to.emit(staker, 'StakingPoolConfigured')
-            .withArgs(0, anyone.address, transferable, lockupSeconds, cooldownSeconds);
-
-        const TotalPools = await staker.TotalPools();
-        expect(TotalPools).to.equal(1);
-
-        const poolID = 0;
-
-        let pool = await staker.Pools(poolID);
-        expect(pool.tokenType).to.equal(erc721TokenType);
-        expect(pool.tokenAddress).to.equal(tokenAddress);
-        expect(pool.tokenID).to.equal(tokenID);
-        expect(pool.transferable).to.equal(transferable);
-        expect(pool.lockupSeconds).to.equal(lockupSeconds);
-        expect(pool.cooldownSeconds).to.equal(cooldownSeconds);
-        expect(pool.administrator).to.equal(anyone.address);
-
-        await expect(
-            staker.updatePoolConfiguration(
-                poolID,
-                true,
-                !transferable,
-                true,
-                lockupSeconds + 1,
-                true,
-                cooldownSeconds + 1
-            )
-        )
-            .to.emit(staker, 'StakingPoolConfigured')
-            .withArgs(poolID, anyone.address, !transferable, lockupSeconds + 1, cooldownSeconds + 1);
-        pool = await staker.Pools(poolID);
-        expect(pool.transferable).to.equal(!transferable);
-        expect(pool.lockupSeconds).to.equal(lockupSeconds + 1);
-        expect(pool.cooldownSeconds).to.equal(cooldownSeconds + 1);
-    });
-
-    it('should not support creation of ERC721 token staking pools with zero token address', async function () {
-        const { anyone, staker } = await loadFixture(setupFixture);
-
-        await staker.connect(anyone);
-
-        const erc721TokenType = await staker.ERC721_TOKEN_TYPE();
-
-        const tokenAddress = ethers.ZeroAddress;
-        const tokenID = 0;
-        const transferable = true;
-        const lockupSeconds = 3600;
-        const cooldownSeconds = 0;
-
-        await expect(
-            staker.createPool(erc721TokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds)
         ).to.be.revertedWithCustomError(staker, 'InvalidConfiguration');
     });
 
-    it('should not support creation of ERC721 token staking pools with non-zero token ID', async function () {
-        const { anyone, erc721, staker } = await loadFixture(setupFixture);
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-11: It should not be possible to create ERC20 token staking pools with zero token address or non-zero token ID.', async function () {
+        const { staker, erc20, anyone } = await loadFixture(setupFixture);
+        const stakerWithAnyone = staker.connect(anyone);
 
-        await staker.connect(anyone);
-
-        const erc721TokenType = await staker.ERC721_TOKEN_TYPE();
-
-        const tokenAddress = await erc721.getAddress();
-        const tokenID = 42;
-        const transferable = true;
-        const lockupSeconds = 3600;
-        const cooldownSeconds = 0;
-
+        // Zero token address
         await expect(
-            staker.createPool(erc721TokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds)
+            stakerWithAnyone.createPool(await stakerWithAnyone.ERC20_TOKEN_TYPE(), ethers.ZeroAddress, 0, true, 0, 0)
+        ).to.be.revertedWithCustomError(staker, 'InvalidConfiguration');
+
+        // Non-zero token ID
+        await expect(
+            stakerWithAnyone.createPool(
+                await stakerWithAnyone.ERC20_TOKEN_TYPE(),
+                await erc20.getAddress(),
+                1,
+                true,
+                0,
+                0
+            )
         ).to.be.revertedWithCustomError(staker, 'InvalidConfiguration');
     });
 
-    it('should support creation and management of ERC1155 token staking pools', async function () {
-        const { anyone, erc1155, staker } = await loadFixture(setupFixture);
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-12: It should not be possible to create ERC721 token staking pools with zero token address or non-zero token ID.', async function () {
+        const { staker, erc721, anyone } = await loadFixture(setupFixture);
+        const stakerWithAnyone = staker.connect(anyone);
 
-        await staker.connect(anyone);
-
-        const erc1155TokenType = await staker.ERC1155_TOKEN_TYPE();
-
-        const tokenAddress = await erc1155.getAddress();
-        const tokenID = 1;
-        const transferable = true;
-        const lockupSeconds = 3600;
-        const cooldownSeconds = 0;
-
+        // Zero token address
         await expect(
-            staker.createPool(erc1155TokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds)
-        )
-            .to.emit(staker, 'StakingPoolCreated')
-            .withArgs(0, erc1155TokenType, tokenAddress, tokenID)
-            .and.to.emit(staker, 'StakingPoolConfigured')
-            .withArgs(0, anyone.address, transferable, lockupSeconds, cooldownSeconds);
+            stakerWithAnyone.createPool(await stakerWithAnyone.ERC721_TOKEN_TYPE(), ethers.ZeroAddress, 0, true, 0, 0)
+        ).to.be.revertedWithCustomError(staker, 'InvalidConfiguration');
 
-        const TotalPools = await staker.TotalPools();
-        expect(TotalPools).to.equal(1);
-
-        const poolID = 0;
-
-        let pool = await staker.Pools(poolID);
-        expect(pool.tokenType).to.equal(erc1155TokenType);
-        expect(pool.tokenAddress).to.equal(tokenAddress);
-        expect(pool.tokenID).to.equal(tokenID);
-        expect(pool.transferable).to.equal(transferable);
-        expect(pool.lockupSeconds).to.equal(lockupSeconds);
-        expect(pool.cooldownSeconds).to.equal(cooldownSeconds);
-        expect(pool.administrator).to.equal(anyone.address);
-
+        // Non-zero token ID
         await expect(
-            staker.updatePoolConfiguration(
-                poolID,
+            stakerWithAnyone.createPool(
+                await stakerWithAnyone.ERC721_TOKEN_TYPE(),
+                await erc721.getAddress(),
+                1,
                 true,
-                !transferable,
-                true,
-                lockupSeconds + 1,
-                true,
-                cooldownSeconds + 1
+                0,
+                0
             )
-        )
-            .to.emit(staker, 'StakingPoolConfigured')
-            .withArgs(poolID, anyone.address, !transferable, lockupSeconds + 1, cooldownSeconds + 1);
-        pool = await staker.Pools(poolID);
-        expect(pool.transferable).to.equal(!transferable);
-        expect(pool.lockupSeconds).to.equal(lockupSeconds + 1);
-        expect(pool.cooldownSeconds).to.equal(cooldownSeconds + 1);
+        ).to.be.revertedWithCustomError(staker, 'InvalidConfiguration');
     });
 
-    it('should not support creation of ERC1155 token staking pools with zero token address', async function () {
-        const { anyone, staker } = await loadFixture(setupFixture);
-
-        await staker.connect(anyone);
-
-        const erc1155TokenType = await staker.ERC1155_TOKEN_TYPE();
-
-        const tokenAddress = ethers.ZeroAddress;
-        const tokenID = 1;
-        const transferable = true;
-        const lockupSeconds = 3600;
-        const cooldownSeconds = 0;
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-13: It should not be possible to create ERC1155 token staking pools with zero token address.', async function () {
+        const { staker, anyone } = await loadFixture(setupFixture);
+        const stakerWithAnyone = staker.connect(anyone);
 
         await expect(
-            staker.createPool(erc1155TokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds)
-        ).to.revertedWithCustomError(staker, 'InvalidConfiguration');
+            stakerWithAnyone.createPool(await stakerWithAnyone.ERC1155_TOKEN_TYPE(), ethers.ZeroAddress, 1, true, 0, 0)
+        ).to.be.revertedWithCustomError(staker, 'InvalidConfiguration');
     });
 
-    it('should support creation and management of ERC1155 token staking pools with zero token ID', async function () {
-        const { anyone, erc1155, staker } = await loadFixture(setupFixture);
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-14: It should be possible to create ERC1155 token staking pools in which the token ID is zero.', async function () {
+        const { staker, erc1155, anyone } = await loadFixture(setupFixture);
+        const stakerWithAnyone = staker.connect(anyone);
 
-        await staker.connect(anyone);
-
-        const erc1155TokenType = await staker.ERC1155_TOKEN_TYPE();
-
-        const tokenAddress = await erc1155.getAddress();
-        const tokenID = 0;
-        const transferable = true;
-        const lockupSeconds = 3600;
-        const cooldownSeconds = 0;
-
-        await expect(
-            staker.createPool(erc1155TokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds)
-        )
-            .to.emit(staker, 'StakingPoolCreated')
-            .withArgs(0, erc1155TokenType, tokenAddress, tokenID)
-            .and.to.emit(staker, 'StakingPoolConfigured')
-            .withArgs(0, anyone.address, transferable, lockupSeconds, cooldownSeconds);
-
-        const TotalPools = await staker.TotalPools();
-        expect(TotalPools).to.equal(1);
-
-        const poolID = 0;
-
-        let pool = await staker.Pools(poolID);
-        expect(pool.tokenType).to.equal(erc1155TokenType);
-        expect(pool.tokenAddress).to.equal(tokenAddress);
-        expect(pool.tokenID).to.equal(tokenID);
-        expect(pool.transferable).to.equal(transferable);
-        expect(pool.lockupSeconds).to.equal(lockupSeconds);
-        expect(pool.cooldownSeconds).to.equal(cooldownSeconds);
-        expect(pool.administrator).to.equal(anyone.address);
-
-        await expect(
-            staker.updatePoolConfiguration(
-                poolID,
-                true,
-                !transferable,
-                true,
-                lockupSeconds + 1,
-                true,
-                cooldownSeconds + 1
-            )
-        )
-            .to.emit(staker, 'StakingPoolConfigured')
-            .withArgs(poolID, anyone.address, !transferable, lockupSeconds + 1, cooldownSeconds + 1);
-        pool = await staker.Pools(poolID);
-        expect(pool.transferable).to.equal(!transferable);
-        expect(pool.lockupSeconds).to.equal(lockupSeconds + 1);
-        expect(pool.cooldownSeconds).to.equal(cooldownSeconds + 1);
-    });
-
-    describe("should allow a pool's administrator to modify any subset of its configurable parameters in a single transaction", function () {
-        it('changeTransferability = true, changeLockup = true, changeCooldown = true', async function () {
-            const { admin0, stakerWithAdmin0, poolID, transferable, lockupSeconds, cooldownSeconds } =
-                await loadFixture(setupERC1155StakingPoolFixture);
-
-            await expect(
-                stakerWithAdmin0.updatePoolConfiguration(
-                    poolID,
-                    true,
-                    !transferable,
-                    true,
-                    lockupSeconds + 1,
-                    true,
-                    cooldownSeconds + 1
-                )
-            )
-                .to.emit(stakerWithAdmin0, 'StakingPoolConfigured')
-                .withArgs(poolID, admin0.address, !transferable, lockupSeconds + 1, cooldownSeconds + 1);
-
-            const pool = await stakerWithAdmin0.Pools(poolID);
-            expect(pool.transferable).to.equal(!transferable);
-            expect(pool.lockupSeconds).to.equal(lockupSeconds + 1);
-            expect(pool.cooldownSeconds).to.equal(cooldownSeconds + 1);
-        });
-        it('changeTransferability = true, changeLockup = true, changeCooldown = false', async function () {
-            const { admin0, stakerWithAdmin0, poolID, transferable, lockupSeconds, cooldownSeconds } =
-                await loadFixture(setupERC1155StakingPoolFixture);
-
-            await expect(
-                stakerWithAdmin0.updatePoolConfiguration(
-                    poolID,
-                    true,
-                    !transferable,
-                    true,
-                    lockupSeconds + 1,
-                    false,
-                    cooldownSeconds + 1
-                )
-            )
-                .to.emit(stakerWithAdmin0, 'StakingPoolConfigured')
-                .withArgs(poolID, admin0.address, !transferable, lockupSeconds + 1, cooldownSeconds);
-
-            const pool = await stakerWithAdmin0.Pools(poolID);
-            expect(pool.transferable).to.equal(!transferable);
-            expect(pool.lockupSeconds).to.equal(lockupSeconds + 1);
-            expect(pool.cooldownSeconds).to.equal(cooldownSeconds);
-        });
-        it('changeTransferability = true, changeLockup = false, changeCooldown = true', async function () {
-            const { admin0, stakerWithAdmin0, poolID, transferable, lockupSeconds, cooldownSeconds } =
-                await loadFixture(setupERC1155StakingPoolFixture);
-
-            await expect(
-                stakerWithAdmin0.updatePoolConfiguration(
-                    poolID,
-                    true,
-                    !transferable,
-                    false,
-                    lockupSeconds + 1,
-                    true,
-                    cooldownSeconds + 1
-                )
-            )
-                .to.emit(stakerWithAdmin0, 'StakingPoolConfigured')
-                .withArgs(poolID, admin0.address, !transferable, lockupSeconds, cooldownSeconds + 1);
-
-            const pool = await stakerWithAdmin0.Pools(poolID);
-            expect(pool.transferable).to.equal(!transferable);
-            expect(pool.lockupSeconds).to.equal(lockupSeconds);
-            expect(pool.cooldownSeconds).to.equal(cooldownSeconds + 1);
-        });
-        it('changeTransferability = true, changeLockup = false, changeCooldown = false', async function () {
-            const { admin0, stakerWithAdmin0, poolID, transferable, lockupSeconds, cooldownSeconds } =
-                await loadFixture(setupERC1155StakingPoolFixture);
-
-            await expect(
-                stakerWithAdmin0.updatePoolConfiguration(
-                    poolID,
-                    true,
-                    !transferable,
-                    false,
-                    lockupSeconds + 1,
-                    false,
-                    cooldownSeconds + 1
-                )
-            )
-                .to.emit(stakerWithAdmin0, 'StakingPoolConfigured')
-                .withArgs(poolID, admin0.address, !transferable, lockupSeconds, cooldownSeconds);
-
-            const pool = await stakerWithAdmin0.Pools(poolID);
-            expect(pool.transferable).to.equal(!transferable);
-            expect(pool.lockupSeconds).to.equal(lockupSeconds);
-            expect(pool.cooldownSeconds).to.equal(cooldownSeconds);
-        });
-        it('changeTransferability = false, changeLockup = true, changeCooldown = true', async function () {
-            const { admin0, stakerWithAdmin0, poolID, transferable, lockupSeconds, cooldownSeconds } =
-                await loadFixture(setupERC1155StakingPoolFixture);
-
-            await expect(
-                stakerWithAdmin0.updatePoolConfiguration(
-                    poolID,
-                    false,
-                    !transferable,
-                    true,
-                    lockupSeconds + 1,
-                    true,
-                    cooldownSeconds + 1
-                )
-            )
-                .to.emit(stakerWithAdmin0, 'StakingPoolConfigured')
-                .withArgs(poolID, admin0.address, transferable, lockupSeconds + 1, cooldownSeconds + 1);
-
-            const pool = await stakerWithAdmin0.Pools(poolID);
-            expect(pool.transferable).to.equal(transferable);
-            expect(pool.lockupSeconds).to.equal(lockupSeconds + 1);
-            expect(pool.cooldownSeconds).to.equal(cooldownSeconds + 1);
-        });
-        it('changeTransferability = false, changeLockup = true, changeCooldown = false', async function () {
-            const { admin0, stakerWithAdmin0, poolID, transferable, lockupSeconds, cooldownSeconds } =
-                await loadFixture(setupERC1155StakingPoolFixture);
-
-            await expect(
-                stakerWithAdmin0.updatePoolConfiguration(
-                    poolID,
-                    false,
-                    !transferable,
-                    true,
-                    lockupSeconds + 1,
-                    false,
-                    cooldownSeconds + 1
-                )
-            )
-                .to.emit(stakerWithAdmin0, 'StakingPoolConfigured')
-                .withArgs(poolID, admin0.address, transferable, lockupSeconds + 1, cooldownSeconds);
-
-            const pool = await stakerWithAdmin0.Pools(poolID);
-            expect(pool.transferable).to.equal(transferable);
-            expect(pool.lockupSeconds).to.equal(lockupSeconds + 1);
-            expect(pool.cooldownSeconds).to.equal(cooldownSeconds);
-        });
-        it('changeTransferability = false, changeLockup = false, changeCooldown = true', async function () {
-            const { admin0, stakerWithAdmin0, poolID, transferable, lockupSeconds, cooldownSeconds } =
-                await loadFixture(setupERC1155StakingPoolFixture);
-
-            await expect(
-                stakerWithAdmin0.updatePoolConfiguration(
-                    poolID,
-                    false,
-                    transferable,
-                    false,
-                    lockupSeconds + 1,
-                    true,
-                    cooldownSeconds + 1
-                )
-            )
-                .to.emit(stakerWithAdmin0, 'StakingPoolConfigured')
-                .withArgs(poolID, admin0.address, transferable, lockupSeconds, cooldownSeconds + 1);
-
-            const pool = await stakerWithAdmin0.Pools(poolID);
-            expect(pool.transferable).to.equal(transferable);
-            expect(pool.lockupSeconds).to.equal(lockupSeconds);
-            expect(pool.cooldownSeconds).to.equal(cooldownSeconds + 1);
-        });
-        it('changeTransferability = false, changeLockup = false, changeCooldown = false', async function () {
-            const { admin0, stakerWithAdmin0, poolID, transferable, lockupSeconds, cooldownSeconds } =
-                await loadFixture(setupERC1155StakingPoolFixture);
-
-            await expect(
-                stakerWithAdmin0.updatePoolConfiguration(
-                    poolID,
-                    false,
-                    transferable,
-                    false,
-                    lockupSeconds + 1,
-                    false,
-                    cooldownSeconds + 1
-                )
-            )
-                .to.emit(stakerWithAdmin0, 'StakingPoolConfigured')
-                .withArgs(poolID, admin0.address, transferable, lockupSeconds, cooldownSeconds);
-
-            const pool = await stakerWithAdmin0.Pools(poolID);
-            expect(pool.transferable).to.equal(transferable);
-            expect(pool.lockupSeconds).to.equal(lockupSeconds);
-            expect(pool.cooldownSeconds).to.equal(cooldownSeconds);
-        });
-    });
-
-    it("should not allow anyone who is not a pool's administrator make any changes to the its configuration", async function () {
-        const { admin0, stakerWithAdmin0, user0, poolID, transferable, lockupSeconds, cooldownSeconds } =
-            await loadFixture(setupERC1155StakingPoolFixture);
-
-        let pool = await stakerWithAdmin0.Pools(poolID);
-        expect(pool.administrator).to.equal(admin0.address);
-        expect(user0.address).to.not.equal(admin0.address);
-        expect(pool.transferable).to.equal(transferable);
-        expect(pool.lockupSeconds).to.equal(lockupSeconds);
-        expect(pool.cooldownSeconds).to.equal(cooldownSeconds);
-
-        const stakerWithUser0 = stakerWithAdmin0.connect(user0);
-        await expect(
-            stakerWithUser0.updatePoolConfiguration(
-                poolID,
-                true,
-                !transferable,
-                true,
-                lockupSeconds + 1,
-                true,
-                cooldownSeconds + 1
-            )
-        ).to.be.revertedWithCustomError(stakerWithUser0, 'NonAdministrator');
-
-        pool = await stakerWithUser0.Pools(poolID);
-        expect(pool.transferable).to.equal(transferable);
-        expect(pool.lockupSeconds).to.equal(lockupSeconds);
-        expect(pool.cooldownSeconds).to.equal(cooldownSeconds);
-    });
-
-    it('should allow the administrator of a staking pool transfer its administration to another address', async function () {
-        const { admin0, stakerWithAdmin0, user0, poolID } = await loadFixture(setupERC1155StakingPoolFixture);
-
-        let pool = await stakerWithAdmin0.Pools(poolID);
-        expect(pool.administrator).to.equal(admin0.address);
-        expect(user0.address).to.not.equal(admin0.address);
-
-        await expect(stakerWithAdmin0.transferPoolAdministration(poolID, user0.address))
-            .to.emit(stakerWithAdmin0, 'StakingPoolConfigured')
-            .withArgs(poolID, user0.address, pool.transferable, pool.lockupSeconds, pool.cooldownSeconds);
-
-        pool = await stakerWithAdmin0.Pools(poolID);
-        expect(pool.administrator).to.equal(user0.address);
-    });
-
-    it('should not allow a non-administrator for a pool to transfer its administration to another address', async function () {
-        const { admin0, stakerWithAdmin0, user0, poolID } = await loadFixture(setupERC1155StakingPoolFixture);
-
-        let pool = await stakerWithAdmin0.Pools(poolID);
-        expect(pool.administrator).to.equal(admin0.address);
-        expect(user0.address).to.not.equal(admin0.address);
-
-        const stakerWithUser0 = stakerWithAdmin0.connect(user0);
-        await expect(stakerWithUser0.transferPoolAdministration(poolID, user0.address)).to.be.revertedWithCustomError(
-            stakerWithUser0,
-            'NonAdministrator'
+        const tx = await stakerWithAnyone.createPool(
+            await stakerWithAnyone.ERC1155_TOKEN_TYPE(),
+            await erc1155.getAddress(),
+            0, // Token ID is zero
+            true,
+            0,
+            0
         );
 
-        pool = await stakerWithUser0.Pools(poolID);
-        expect(pool.administrator).to.equal(admin0.address);
+        await expect(tx)
+            .to.emit(staker, 'StakingPoolCreated')
+            .withArgs(0, await stakerWithAnyone.ERC1155_TOKEN_TYPE(), await erc1155.getAddress(), 0);
+
+        const pool = await staker.Pools(0);
+        expect(pool.tokenType).to.equal(await stakerWithAnyone.ERC1155_TOKEN_TYPE());
+        expect(pool.tokenAddress).to.equal(await erc1155.getAddress());
+        expect(pool.tokenID).to.equal(0);
+        expect(pool.transferable).to.equal(true);
+        expect(pool.lockupSeconds).to.equal(0);
+        expect(pool.cooldownSeconds).to.equal(0);
     });
 
-    describe('staking and unstaking', function () {
-        describe('Native token', function () {
-            async function setup() {
-                const { admin0, erc20, erc721, erc1155, staker, user0 } = await loadFixture(setupFixture);
-                const stakerWithAdmin0 = staker.connect(admin0);
+    it('STAKER-15: An administrator should be able to modify any subset of the configuration parameters on a pool in a single transaction', async function () {
+        const initialTransferable = true;
+        const initialLockupSeconds = 3600;
+        const initialCooldownSeconds = 300;
 
-                const nativeTokenType = await stakerWithAdmin0.NATIVE_TOKEN_TYPE();
-                const tokenAddress = ethers.ZeroAddress;
-                const tokenID = 0;
-                const lockupSeconds = 3600;
-                const cooldownSeconds = 300;
+        const { admin0, stakerWithAdmin0, erc20PoolID } = await loadFixture(
+            setupStakingPoolsFixture(initialTransferable, initialLockupSeconds, initialCooldownSeconds)
+        );
 
-                await stakerWithAdmin0.createPool(
-                    nativeTokenType,
-                    tokenAddress,
-                    tokenID,
-                    true,
-                    lockupSeconds,
-                    cooldownSeconds
+        let poolInitial = await stakerWithAdmin0.Pools(erc20PoolID);
+        expect(poolInitial.administrator).to.equal(await admin0.getAddress());
+
+        const subsets = [
+            [false, false, true],
+            [false, true, false],
+            [false, true, true],
+            [true, false, false],
+            [true, false, true],
+            [true, true, false],
+            [true, true, true],
+        ];
+
+        for (const [changeTransferable, changeLockupSeconds, changeCooldownSeconds] of subsets) {
+            const poolBefore = await stakerWithAdmin0.Pools(erc20PoolID);
+            const tx = await stakerWithAdmin0.updatePoolConfiguration(
+                erc20PoolID,
+                changeTransferable,
+                !poolBefore.transferable,
+                changeLockupSeconds,
+                poolBefore.lockupSeconds + 1n,
+                changeCooldownSeconds,
+                poolBefore.cooldownSeconds + 1n
+            );
+            await expect(tx)
+                .to.emit(stakerWithAdmin0, 'StakingPoolConfigured')
+                .withArgs(
+                    erc20PoolID,
+                    await admin0.getAddress(),
+                    changeTransferable ? !poolBefore.transferable : poolBefore.transferable,
+                    changeLockupSeconds ? poolBefore.lockupSeconds + 1n : poolBefore.lockupSeconds,
+                    changeCooldownSeconds ? poolBefore.cooldownSeconds + 1n : poolBefore.cooldownSeconds
                 );
 
-                const poolID = (await stakerWithAdmin0.TotalPools()) - BigInt(1);
-                return { admin0, erc20, erc721, erc1155, staker, user0, lockupSeconds, cooldownSeconds, poolID };
+            const poolAfter = await stakerWithAdmin0.Pools(erc20PoolID);
+
+            if (changeTransferable) {
+                expect(poolAfter.transferable).to.equal(!poolBefore.transferable);
+            } else {
+                expect(poolAfter.transferable).to.equal(poolBefore.transferable);
             }
 
-            async function stake(
-                user: HardhatEthersSigner,
-                stakerContract: StakerT,
-                poolID: bigint,
-                amountOrTokenID: bigint
-            ): Promise<TransactionResponse> {
-                const stakerWithUser = stakerContract.connect(user);
-                return await stakerWithUser.stakeNative(poolID, { value: amountOrTokenID });
+            if (changeLockupSeconds) {
+                expect(poolAfter.lockupSeconds).to.equal(poolBefore.lockupSeconds + 1n);
+            } else {
+                expect(poolAfter.lockupSeconds).to.equal(poolBefore.lockupSeconds);
             }
 
-            async function balance(account: string): Promise<bigint> {
-                return ethers.provider.getBalance(account);
+            if (changeCooldownSeconds) {
+                expect(poolAfter.cooldownSeconds).to.equal(poolBefore.cooldownSeconds + 1n);
+            } else {
+                expect(poolAfter.cooldownSeconds).to.equal(poolBefore.cooldownSeconds);
             }
+        }
+    });
 
-            const amountOrTokenID = BigInt(1);
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-16: A non-administrator (of any pool) should not be able to change any of the parameters of a staking pool.', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 300;
 
-            it('can stake non-zero value', async function () {
-                const { admin0, erc20, erc721, erc1155, staker, user0, lockupSeconds, cooldownSeconds, poolID } =
-                    await loadFixture(setup);
+        const { staker, user0, admin0, nativePoolID, erc20PoolID, erc721PoolID, erc1155PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
 
-                const expectedPositionTokenID = await staker.TotalPositions();
+        const stakerWithUser0 = staker.connect(user0);
+        const poolIDs = [nativePoolID, erc20PoolID, erc721PoolID, erc1155PoolID];
 
-                const userAddress = await user0.getAddress();
-                const stakerAddress = await staker.getAddress();
+        for (const poolID of poolIDs) {
+            // Verify that user0 is not the administrator of the pool
+            const pool = await staker.Pools(poolID);
+            expect(pool.administrator).to.equal(await admin0.getAddress());
 
-                const userBalanceInitial = await balance(userAddress);
-                const contractBalanceInitial = await balance(stakerAddress);
+            await expect(
+                stakerWithUser0.updatePoolConfiguration(
+                    poolID,
+                    true, // changeTransferability
+                    !transferable, // new transferable value
+                    true, // changeLockup
+                    lockupSeconds + 1, // new lockupSeconds
+                    true, // changeCooldown
+                    cooldownSeconds + 1 // new cooldownSeconds
+                )
+            ).to.be.revertedWithCustomError(staker, 'NonAdministrator');
 
-                const stakeTx: TransactionResponse = await stake(user0, staker, poolID, amountOrTokenID);
-                expect(stakeTx)
-                    .to.emit(staker, 'Staked')
-                    .withArgs(expectedPositionTokenID, userAddress, poolID, amountOrTokenID);
+            // Verify that the parameters did not change
+            const poolAfter = await staker.Pools(poolID);
+            expect(poolAfter.transferable).to.equal(transferable);
+            expect(poolAfter.lockupSeconds).to.equal(lockupSeconds);
+            expect(poolAfter.cooldownSeconds).to.equal(cooldownSeconds);
+        }
+    });
 
-                const stakeTxReceipt = await stakeTx.wait();
-                expect(stakeTxReceipt).to.not.be.null;
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-17: A non-administrator (of any pool) should not be able to change any of the parameters of a staking pool, even if they are administrators of a different pool.', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 300;
 
-                const stakeBlock = await stakeTx.getBlock();
-                expect(stakeBlock).to.not.be.null;
-                const stakeTimestamp = stakeBlock!.timestamp;
+        const { staker, user0, admin0, stakerWithAdmin0, erc20PoolID, erc721PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
 
-                const userBalanceFinal = await balance(userAddress);
-                const contractBalanceFinal = await balance(stakerAddress);
+        const stakerWithUser0 = staker.connect(user0);
 
-                const numPositions = await staker.TotalPositions();
-                expect(numPositions).to.equal(expectedPositionTokenID + BigInt(1));
+        // Transfer administration of the ERC721 pool to user0
+        await stakerWithAdmin0.transferPoolAdministration(erc721PoolID, await user0.getAddress());
 
-                const positionOwner = await staker.ownerOf(expectedPositionTokenID);
-                expect(positionOwner).to.equal(userAddress);
+        // Verify user0 is now the administrator of the ERC721 pool
+        const poolERC721 = await staker.Pools(erc721PoolID);
+        expect(poolERC721.administrator).to.equal(await user0.getAddress());
 
-                const position = await staker.Positions(expectedPositionTokenID);
-                expect(position.poolID).to.equal(poolID);
-                expect(position.amountOrTokenID).to.equal(amountOrTokenID);
-                expect(position.stakeTimestamp).to.equal(stakeTimestamp);
-                expect(position.unstakeInitiatedAt).to.equal(0);
+        // Verify admin0 is still the administrator of the ERC20 pool
+        const poolERC20 = await staker.Pools(erc20PoolID);
+        expect(poolERC20.administrator).to.equal(await admin0.getAddress());
 
-                // NOTE: The following expectations are custom to this test
-                expect(userBalanceFinal + amountOrTokenID + stakeTxReceipt!.gasUsed * stakeTx.gasPrice).to.equal(
-                    userBalanceInitial
-                );
-                expect(contractBalanceInitial + amountOrTokenID).to.equal(contractBalanceFinal);
-            });
+        // Attempt to change the configuration of the ERC20 pool with user0
+        await expect(
+            stakerWithUser0.updatePoolConfiguration(
+                erc20PoolID,
+                true, // changeTransferability
+                !transferable, // new transferable value
+                true, // changeLockup
+                lockupSeconds + 1, // new lockupSeconds
+                true, // changeCooldown
+                cooldownSeconds + 1 // new cooldownSeconds
+            )
+        ).to.be.revertedWithCustomError(staker, 'NonAdministrator');
 
-            it('cannot stake zero value', async function () {
-                const { admin0, erc20, erc721, erc1155, staker, user0, lockupSeconds, cooldownSeconds, poolID } =
-                    await loadFixture(setup);
+        // Verify that the parameters of the ERC20 pool did not change
+        const poolERC20After = await staker.Pools(erc20PoolID);
+        expect(poolERC20After.transferable).to.equal(transferable);
+        expect(poolERC20After.lockupSeconds).to.equal(lockupSeconds);
+        expect(poolERC20After.cooldownSeconds).to.equal(cooldownSeconds);
+    });
 
-                await expect(stake(user0, staker, poolID, BigInt(0))).to.revertedWithCustomError(
-                    staker,
-                    'NothingToStake'
-                );
-            });
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-18: An administrator of a staking pool should be able to transfer administration of that pool to another account.', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 300;
 
-            it('cannot initiate unstake before lockup has expired', async function () {
-                const { admin0, erc20, erc721, erc1155, staker, user0, lockupSeconds, cooldownSeconds, poolID } =
-                    await loadFixture(setup);
+        const { staker, user0, admin0, stakerWithAdmin0, erc20PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
 
-                const expectedPositionTokenID = await staker.TotalPositions();
+        // Verify admin0 is the initial administrator of the ERC20 pool
+        let pool = await staker.Pools(erc20PoolID);
+        expect(pool.administrator).to.equal(await admin0.getAddress());
 
-                const stakeTx: TransactionResponse = await stake(user0, staker, poolID, amountOrTokenID);
-                const stakeBlock = await stakeTx.getBlock();
+        // Transfer administration of the ERC20 pool to user0
+        const tx = await stakerWithAdmin0.transferPoolAdministration(erc20PoolID, await user0.getAddress());
 
-                const position0 = await staker.Positions(expectedPositionTokenID);
-                expect(position0.unstakeInitiatedAt).to.equal(0);
+        // Check for the emitted event with expected arguments
+        await expect(tx)
+            .to.emit(staker, 'StakingPoolConfigured')
+            .withArgs(
+                erc20PoolID,
+                await user0.getAddress(),
+                pool.transferable,
+                pool.lockupSeconds,
+                pool.cooldownSeconds
+            );
 
-                time.increase(lockupSeconds - 1);
+        // Verify user0 is now the administrator of the ERC20 pool
+        pool = await staker.Pools(erc20PoolID);
+        expect(pool.administrator).to.equal(await user0.getAddress());
 
-                const stakerWithUser0 = staker.connect(user0);
-                await expect(stakerWithUser0.initiateUnstake(expectedPositionTokenID))
-                    .to.revertedWithCustomError(stakerWithUser0, 'LockupNotExpired')
-                    .withArgs(stakeBlock!.timestamp + lockupSeconds);
+        // Verify admin0 can no longer configure the ERC20 pool
+        await expect(
+            stakerWithAdmin0.updatePoolConfiguration(
+                erc20PoolID,
+                true, // changeTransferability
+                !transferable, // new transferable value
+                true, // changeLockup
+                lockupSeconds + 1, // new lockupSeconds
+                true, // changeCooldown
+                cooldownSeconds + 1 // new cooldownSeconds
+            )
+        ).to.be.revertedWithCustomError(staker, 'NonAdministrator');
 
-                const position1 = await staker.Positions(expectedPositionTokenID);
-                expect(position1.unstakeInitiatedAt).to.equal(0);
-            });
+        // Verify that the parameters of the ERC20 pool did not change
+        pool = await staker.Pools(erc20PoolID);
+        expect(pool.transferable).to.equal(transferable);
+        expect(pool.lockupSeconds).to.equal(lockupSeconds);
+        expect(pool.cooldownSeconds).to.equal(cooldownSeconds);
 
-            it('can initiate unstake as soon as lockup has expired', async function () {
-                const { admin0, erc20, erc721, erc1155, staker, user0, lockupSeconds, cooldownSeconds, poolID } =
-                    await loadFixture(setup);
+        // Verify user0 can configure the ERC20 pool
+        const stakerWithUser0 = staker.connect(user0);
+        await expect(
+            stakerWithUser0.updatePoolConfiguration(
+                erc20PoolID,
+                true, // changeTransferability
+                !transferable, // new transferable value
+                true, // changeLockup
+                lockupSeconds + 1, // new lockupSeconds
+                true, // changeCooldown
+                cooldownSeconds + 1 // new cooldownSeconds
+            )
+        ).to.emit(staker, 'StakingPoolConfigured');
 
-                const expectedPositionTokenID = await staker.TotalPositions();
-
-                const stakeTx: TransactionResponse = await stake(user0, staker, poolID, amountOrTokenID);
-                const stakeBlock = await stakeTx.getBlock();
-
-                const position0 = await staker.Positions(expectedPositionTokenID);
-                expect(position0.unstakeInitiatedAt).to.equal(0);
-
-                time.increase(lockupSeconds);
-
-                const stakerWithUser0 = staker.connect(user0);
-                await stakerWithUser0.initiateUnstake(expectedPositionTokenID);
-
-                const position1 = await staker.Positions(expectedPositionTokenID);
-                expect(position1.unstakeInitiatedAt).to.equal(stakeBlock!.timestamp + lockupSeconds);
-            });
-
-            it('can initiate idempotently after lockup has expired', async function () {
-                const { admin0, erc20, erc721, erc1155, staker, user0, lockupSeconds, cooldownSeconds, poolID } =
-                    await loadFixture(setup);
-
-                const expectedPositionTokenID = await staker.TotalPositions();
-
-                const stakeTx: TransactionResponse = await stake(user0, staker, poolID, amountOrTokenID);
-                const stakeBlock = await stakeTx.getBlock();
-
-                const position0 = await staker.Positions(expectedPositionTokenID);
-                expect(position0.unstakeInitiatedAt).to.equal(0);
-
-                time.increase(lockupSeconds);
-
-                const stakerWithUser0 = staker.connect(user0);
-
-                await stakerWithUser0.initiateUnstake(expectedPositionTokenID);
-
-                const position1 = await staker.Positions(expectedPositionTokenID);
-                expect(position1.unstakeInitiatedAt).to.equal(stakeBlock!.timestamp + lockupSeconds);
-
-                time.increase(1);
-                await stakerWithUser0.initiateUnstake(expectedPositionTokenID);
-
-                const position2 = await staker.Positions(expectedPositionTokenID);
-                expect(position2.unstakeInitiatedAt).to.equal(stakeBlock!.timestamp + lockupSeconds);
-            });
-        });
+        // Verify that the parameters of the ERC20 pool have changed
+        pool = await staker.Pools(erc20PoolID);
+        expect(pool.transferable).to.equal(!transferable);
+        expect(pool.lockupSeconds).to.equal(lockupSeconds + 1);
+        expect(pool.cooldownSeconds).to.equal(cooldownSeconds + 1);
     });
 });
