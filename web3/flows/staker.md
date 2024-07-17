@@ -310,7 +310,7 @@ any attempt they make to configure the pool should raise an error with signature
 
 ### Staking and unstaking tokens
 
-### `STAKER-*`: A holder should be able to stake any number of native tokens into a native token staking position.
+### `STAKER-19`: A holder should be able to stake any number of native tokens into a native token staking position.
 
 The amount of native token staked should be transferred from the holder's account to the `Staker` contract.
 
@@ -323,7 +323,7 @@ This should emit a `Staked` event:
 It should also emit an ERC721 `Transfer` event representing the staking position token being minted to the holder.
 
 
-### `STAKER-*`: A holder should be able to stake any number of ERC20 tokens into an ERC20 staking position.
+### `STAKER-20`: A holder should be able to stake any number of ERC20 tokens into an ERC20 staking position.
 
 The amount of ERC20 token staked should be transferred from the holder's account to the `Staker` contract.
 
@@ -336,7 +336,7 @@ This should emit a `Staked` event:
 It should also emit an ERC721 `Transfer` event representing the staking position token being minted to the holder.
 
 
-### `STAKER-*`: A holder should be able to stake any number of ERC721 tokens into an ERC721 staking position.
+### `STAKER-21`: A holder should be able to stake any number of ERC721 tokens into an ERC721 staking position.
 
 The ERC721 token staked should be transferred from the holder's account to the `Staker` contract.
 
@@ -349,7 +349,7 @@ This should emit a `Staked` event:
 It should also emit an ERC721 `Transfer` event representing the staking position token being minted to the holder.
 
 
-### `STAKER-*`: A holder should be able to stake any number of ERC1155 tokens into an ERC1155 staking position.
+### `STAKER-22`: A holder should be able to stake any number of ERC1155 tokens into an ERC1155 staking position.
 
 The amount of ERC1155 token staked should be transferred from the holder's account to the `Staker` contract.
 
@@ -361,12 +361,12 @@ This should emit a `Staked` event:
 
 It should also emit an ERC721 `Transfer` event representing the staking position token being minted to the holder.
 
-### `STAKER-*`: Staking position tokens for transferable staking pools should be transferable
+### `STAKER-23`: Staking position tokens for transferable staking pools should be transferable
 
 If a staking pool is marked as transferable, the ERC721 tokens representing staking positions in that pool should
 be transferable.
 
-### `STAKER-*`: Staking position tokens for non-transferable staking pools should not be transferable
+### `STAKER-24`: Staking position tokens for non-transferable staking pools should not be transferable
 
 If a staking pool is marked as non-transferable, the ERC721 tokens representing staking positions in that pool should not
 be transferable.
@@ -377,7 +377,7 @@ Any attempt to transfer such a token should fail with the following error:
     error PositionNotTransferable(uint256 positionTokenID);
 ```
 
-### `STAKER-*`: If a native token staking pool does not have a cooldown, the user who staked into that position should be able to unstake after the lockup period assuming they still hold the position token
+### `STAKER-25`: If a native token staking pool does not have a cooldown, the user who staked into that position should be able to unstake after the lockup period assuming they still hold the position token
 
 Unstaking should transfer the position's amount worth of native tokens from the `Staker` contract back to the holder.
 
@@ -390,7 +390,7 @@ The unstake operation should emit the `Unstaked` event:
     event Unstaked(uint256 positionTokenID, address indexed owner, uint256 indexed poolID, uint256 amountOrTokenID);
 ```
 
-### `STAKER-*`: If an ERC20 staking pool does not have a cooldown, the user who staked into that position should be able to unstake after the lockup period assuming they still hold the position token
+### `STAKER-26`: If an ERC20 staking pool does not have a cooldown, the user who staked into that position should be able to unstake after the lockup period assuming they still hold the position token
 
 Unstaking should transfer the position's amount worth of ERC20 tokens from the `Staker` contract back to the holder.
 
@@ -403,7 +403,7 @@ The unstake operation should emit the `Unstaked` event:
     event Unstaked(uint256 positionTokenID, address indexed owner, uint256 indexed poolID, uint256 amountOrTokenID);
 ```
 
-### `STAKER-*`: If an ERC721 staking pool does not have a cooldown, the user who staked into that position should be able to unstake after the lockup period assuming they still hold the position token
+### `STAKER-27`: If an ERC721 staking pool does not have a cooldown, the user who staked into that position should be able to unstake after the lockup period assuming they still hold the position token
 
 Unstaking should transfer the position's amount worth of ERC721 tokens from the `Staker` contract back to the holder.
 
@@ -416,7 +416,7 @@ The unstake operation should emit the `Unstaked` event:
     event Unstaked(uint256 positionTokenID, address indexed owner, uint256 indexed poolID, uint256 amountOrTokenID);
 ```
 
-### `STAKER-*`: If an ERC1155 staking pool does not have a cooldown, the user who staked into that position should be able to unstake after the lockup period assuming they still hold the position token
+### `STAKER-28`: If an ERC1155 staking pool does not have a cooldown, the user who staked into that position should be able to unstake after the lockup period assuming they still hold the position token
 
 Unstaking should transfer the position's amount worth of ERC1155 tokens from the `Staker` contract back to the holder.
 
@@ -429,7 +429,7 @@ The unstake operation should emit the `Unstaked` event:
     event Unstaked(uint256 positionTokenID, address indexed owner, uint256 indexed poolID, uint256 amountOrTokenID);
 ```
 
-### `STAKER-*`: If a native token staking pool does not have a cooldown, a user who holds the position token but who isn't the original holder should be able to unstake after the lockup period
+### `STAKER-29`: If a native token staking pool does not have a cooldown, a user who holds the position token but who isn't the original holder should be able to unstake after the lockup period
 
 Unstaking should transfer the position's amount worth of native tokens from the `Staker` contract back to the holder.
 
@@ -442,7 +442,7 @@ The unstake operation should emit the `Unstaked` event:
     event Unstaked(uint256 positionTokenID, address indexed owner, uint256 indexed poolID, uint256 amountOrTokenID);
 ```
 
-### `STAKER-*`: If an ERC20 staking pool does not have a cooldown, a user who holds the position token but who isn't the original holder should be able to unstake after the lockup period
+### `STAKER-30`: If an ERC20 staking pool does not have a cooldown, a user who holds the position token but who isn't the original holder should be able to unstake after the lockup period
 
 Unstaking should transfer the position's amount worth of ERC20 tokens from the `Staker` contract back to the holder.
 
@@ -455,7 +455,7 @@ The unstake operation should emit the `Unstaked` event:
     event Unstaked(uint256 positionTokenID, address indexed owner, uint256 indexed poolID, uint256 amountOrTokenID);
 ```
 
-### `STAKER-*`: If an ERC721 staking pool does not have a cooldown, a user who holds the position token but who isn't the original holder should be able to unstake after the lockup period
+### `STAKER-31`: If an ERC721 staking pool does not have a cooldown, a user who holds the position token but who isn't the original holder should be able to unstake after the lockup period
 
 Unstaking should transfer the position's amount worth of ERC721 tokens from the `Staker` contract back to the holder.
 
@@ -468,7 +468,7 @@ The unstake operation should emit the `Unstaked` event:
     event Unstaked(uint256 positionTokenID, address indexed owner, uint256 indexed poolID, uint256 amountOrTokenID);
 ```
 
-### `STAKER-*`: If an ERC1155 staking pool does not have a cooldown, a user who holds the position token but who isn't the original holder should be able to unstake after the lockup period
+### `STAKER-32`: If an ERC1155 staking pool does not have a cooldown, a user who holds the position token but who isn't the original holder should be able to unstake after the lockup period
 
 Unstaking should transfer the position's amount worth of ERC1155 tokens from the `Staker` contract back to the holder.
 
@@ -482,7 +482,7 @@ The unstake operation should emit the `Unstaked` event:
 ```
 
 
-### `STAKER-*`: If a native token staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool even after the lockup period
+### `STAKER-33`: If a native token staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool even after the lockup period
 
 Any attempt to do so should result in the following error:
 
@@ -490,7 +490,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If an ERC20 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool even after the lockup period
+### `STAKER-34`: If an ERC20 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool even after the lockup period
 
 Any attempt to do so should result in the following error:
 
@@ -498,7 +498,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If an ERC721 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool even after the lockup period
+### `STAKER-35`: If an ERC721 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool even after the lockup period
 
 Any attempt to do so should result in the following error:
 
@@ -506,7 +506,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If an ERC1155 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool even after the lockup period
+### `STAKER-36`: If an ERC1155 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool even after the lockup period
 
 Any attempt to do so should result in the following error:
 
@@ -514,7 +514,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If a native token staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool even after the lockup period, even if they were the original holder
+### `STAKER-37`: If a native token staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool even after the lockup period, even if they were the original holder
 
 Any attempt to do so should result in the following error:
 
@@ -522,7 +522,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If an ERC20 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool even after the lockup period, even if they were the original holder
+### `STAKER-38`: If an ERC20 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool even after the lockup period, even if they were the original holder
 
 Any attempt to do so should result in the following error:
 
@@ -530,7 +530,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If an ERC721 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool even after the lockup period, even if they were the original holder
+### `STAKER-39`: If an ERC721 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool even after the lockup period, even if they were the original holder
 
 Any attempt to do so should result in the following error:
 
@@ -538,7 +538,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If an ERC1155 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool even after the lockup period, even if they were the original holder
+### `STAKER-40`: If an ERC1155 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool even after the lockup period, even if they were the original holder
 
 Any attempt to do so should result in the following error:
 
@@ -546,7 +546,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If a native token staking pool has a cooldown, a position holder who did create the position and who has not initiated an unstake should not be able to unstake their position even after the lockup period
+### `STAKER-41`: If a native token staking pool has a cooldown, a position holder who did create the position and who has not initiated an unstake should not be able to unstake their position even after the lockup period
 
 Any attempt to do so should result in the following error:
 
@@ -554,7 +554,7 @@ Any attempt to do so should result in the following error:
     error InitiateUnstakeFirst(uint256 cooldownSeconds);
 ```
 
-### `STAKER-*`: If an ERC20 staking pool has a cooldown, a position holder who did create the position and who has not initiated an unstake should not be able to unstake their position even after the lockup period
+### `STAKER-42`: If an ERC20 staking pool has a cooldown, a position holder who did create the position and who has not initiated an unstake should not be able to unstake their position even after the lockup period
 
 Any attempt to do so should result in the following error:
 
@@ -562,7 +562,7 @@ Any attempt to do so should result in the following error:
     error InitiateUnstakeFirst(uint256 cooldownSeconds);
 ```
 
-### `STAKER-*`: If an ERC721 staking pool has a cooldown, a position holder who did create the position and who has not initiated an unstake should not be able to unstake their position even after the lockup period
+### `STAKER-43`: If an ERC721 staking pool has a cooldown, a position holder who did create the position and who has not initiated an unstake should not be able to unstake their position even after the lockup period
 
 Any attempt to do so should result in the following error:
 
@@ -570,7 +570,7 @@ Any attempt to do so should result in the following error:
     error InitiateUnstakeFirst(uint256 cooldownSeconds);
 ```
 
-### `STAKER-*`: If an ERC1155 staking pool has a cooldown, a position holder who did create the position and who has not initiated an unstake should not be able to unstake their position even after the lockup period
+### `STAKER-44`: If an ERC1155 staking pool has a cooldown, a position holder who did create the position and who has not initiated an unstake should not be able to unstake their position even after the lockup period
 
 Any attempt to do so should result in the following error:
 
@@ -579,7 +579,7 @@ Any attempt to do so should result in the following error:
 ```
 
 
-### `STAKER-*`: If a native token staking pool has a cooldown, a position holder who didn't create the position and who has not initiated an unstake should not be able to unstake their position even after the lockup period
+### `STAKER-45`: If a native token staking pool has a cooldown, a position holder who didn't create the position and who has not initiated an unstake should not be able to unstake their position even after the lockup period
 
 Any attempt to do so should result in the following error:
 
@@ -587,7 +587,7 @@ Any attempt to do so should result in the following error:
     error InitiateUnstakeFirst(uint256 cooldownSeconds);
 ```
 
-### `STAKER-*`: If an ERC20 staking pool has a cooldown, a position holder who didn't create the position and who has not initiated an unstake should not be able to unstake their position even after the lockup period
+### `STAKER-46`: If an ERC20 staking pool has a cooldown, a position holder who didn't create the position and who has not initiated an unstake should not be able to unstake their position even after the lockup period
 
 Any attempt to do so should result in the following error:
 
@@ -595,7 +595,7 @@ Any attempt to do so should result in the following error:
     error InitiateUnstakeFirst(uint256 cooldownSeconds);
 ```
 
-### `STAKER-*`: If an ERC721 staking pool has a cooldown, a position holder who didn't create the position and who has not initiated an unstake should not be able to unstake their position even after the lockup period
+### `STAKER-47`: If an ERC721 staking pool has a cooldown, a position holder who didn't create the position and who has not initiated an unstake should not be able to unstake their position even after the lockup period
 
 Any attempt to do so should result in the following error:
 
@@ -603,7 +603,7 @@ Any attempt to do so should result in the following error:
     error InitiateUnstakeFirst(uint256 cooldownSeconds);
 ```
 
-### `STAKER-*`: If an ERC1155 staking pool has a cooldown, a position holder who didn't create the position and who has not initiated an unstake should not be able to unstake their position even after the lockup period
+### `STAKER-48`: If an ERC1155 staking pool has a cooldown, a position holder who didn't create the position and who has not initiated an unstake should not be able to unstake their position even after the lockup period
 
 Any attempt to do so should result in the following error:
 
