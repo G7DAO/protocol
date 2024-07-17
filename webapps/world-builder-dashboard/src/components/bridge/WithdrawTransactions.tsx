@@ -1,5 +1,5 @@
 import React from 'react'
-import { L2_CHAIN } from '../../../constants'
+import { L2_NETWORK } from '../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
 import Deposit from '@/components/bridge/Deposit'
@@ -9,7 +9,7 @@ import { useMessages } from '@/hooks/useL2ToL1MessageStatus'
 interface WithdrawTransactionsProps {}
 const WithdrawTransactions: React.FC<WithdrawTransactionsProps> = () => {
   const { connectedAccount, selectedL3Network } = useBlockchainContext()
-  const messages = useMessages(connectedAccount, L2_CHAIN)
+  const messages = useMessages(connectedAccount, L2_NETWORK)
 
   const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status']
 

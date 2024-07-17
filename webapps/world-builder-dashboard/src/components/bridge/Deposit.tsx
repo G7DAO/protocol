@@ -1,5 +1,5 @@
 import React from 'react'
-import { L2_CHAIN, L3_NATIVE_TOKEN_SYMBOL } from '../../../constants'
+import { L2_NETWORK, L3_NATIVE_TOKEN_SYMBOL } from '../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import { Skeleton } from 'summon-ui/mantine'
 import IconArrowNarrowDown from '@/assets/IconArrowNarrowDown'
@@ -36,7 +36,7 @@ const networkName = (chainId: number) => {
 }
 
 const networkExplorer = (): string | undefined => {
-  const network = L2_CHAIN
+  const network = L2_NETWORK
   if (network?.blockExplorerUrls) {
     return network?.blockExplorerUrls[0] ?? undefined
   }
@@ -82,7 +82,7 @@ const Deposit: React.FC<DepositProps> = ({ txHash, chainId, transaction }) => {
           </div>
           <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
           <div className={styles.gridItem}>{`${status.data?.value} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
-          <div className={styles.gridItem}>{L2_CHAIN.displayName}</div>
+          <div className={styles.gridItem}>{L2_NETWORK.displayName}</div>
           <div className={styles.gridItem}>{networkName(chainId) ?? ''}</div>
           <>
             <div className={styles.gridItem}>

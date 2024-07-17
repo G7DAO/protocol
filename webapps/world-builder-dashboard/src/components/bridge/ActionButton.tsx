@@ -1,23 +1,25 @@
 import React, { useState } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
-import { L2_CHAIN } from '../../../constants'
+import { L3_NETWORK } from '../../../constants'
 import styles from './ActionButton.module.css'
 import { ethers } from 'ethers'
 import IconLoading01 from '@/assets/IconLoading01'
-import { ChainInterface, useBlockchainContext } from '@/components/bridge/BlockchainContext'
-import { sendDepositTransaction } from '@/components/bridge/depositERC20'
-import { L3NetworkConfiguration } from '@/components/bridge/l3Networks'
+import { HighNetworkInterface, NetworkInterface, useBlockchainContext } from '@/components/bridge/BlockchainContext'
+import { sendDepositERC20Transaction } from '@/components/bridge/depositERC20'
+import { sendDepositERC20ToNativeTransaction } from '@/components/bridge/depositERC20ToNative'
+import { sendWithdrawERC20Transaction } from '@/components/bridge/withdrawERC20'
 import { sendWithdrawTransaction } from '@/components/bridge/withdrawNativeToken'
 import { L2ToL1MessageStatus } from '@arbitrum/sdk'
 
 interface ActionButtonProps {
   direction: 'DEPOSIT' | 'WITHDRAW'
-  l3Network: L3NetworkConfiguration
+  l3Network: HighNetworkInterface
   amount: string
 }
-const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, l3Network }) => {
+const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount }) => {
   const [isConnecting, setIsConnecting] = useState(false)
-  const { connectedAccount, walletProvider, checkConnection, switchChain } = useBlockchainContext()
+  const { connectedAccount, walletProvider, checkConnection, switchChain, selectedHighNetwork, selectedLowNetwork } =
+    useBlockchainContext()
 
   const getLabel = (): String | undefined => {
     if (isConnecting || deposit.isLoading || withdraw.isLoading) {
@@ -58,7 +60,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, l3Networ
         await connectWallet()
       }
       const handleTransaction = async (
-        targetChain: ChainInterface,
+        targetChain: NetworkInterface,
         mutate: (amount: string) => void,
         amount: string
       ): Promise<void> => {
@@ -81,16 +83,11 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, l3Networ
       }
 
       const handleDeposit = async (): Promise<void> => {
-        await handleTransaction(L2_CHAIN, deposit.mutate, amount)
+        await handleTransaction(selectedLowNetwork, deposit.mutate, amount)
       }
 
       const handleWithdraw = async (): Promise<void> => {
-        const targetChain: ChainInterface = {
-          name: l3Network.chainInfo.chainName,
-          chainId: l3Network.chainInfo.chainId,
-          rpcs: l3Network.chainInfo.rpcs
-        }
-        await handleTransaction(targetChain, withdraw.mutate, amount)
+        await handleTransaction(selectedHighNetwork, withdraw.mutate, amount)
       }
 
       if (direction === 'DEPOSIT') {
@@ -125,7 +122,10 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, l3Networ
       }
       if (window.ethereum) {
         const provider = new ethers.providers.Web3Provider(window.ethereum)
-        return sendDepositTransaction(amount, connectedAccount, l3Network, provider)
+        if (selectedHighNetwork.chainId === L3_NETWORK.chainId) {
+          return sendDepositERC20ToNativeTransaction(amount, connectedAccount, selectedHighNetwork, provider)
+        }
+        return sendDepositERC20Transaction(amount, connectedAccount, selectedLowNetwork, selectedHighNetwork, provider)
       }
       throw new Error('no window.ethereum')
     },
@@ -144,10 +144,10 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, l3Networ
             minedTimestamp: Date.now() / 1000 - 7,
             amount,
             txHash: receipt.transactionHash,
-            chainId: l3Network.chainInfo.chainId,
+            chainId: selectedHighNetwork.chainId,
             delay: 60,
-            l2RPC: L2_CHAIN.rpcs[0],
-            l3RPC: l3Network.chainInfo.rpcs[0],
+            l2RPC: selectedLowNetwork.rpcs[0],
+            l3RPC: selectedHighNetwork.rpcs[0],
             from: connectedAccount,
             to: connectedAccount
           })
@@ -167,6 +167,9 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, l3Networ
       if (!(connectedAccount && walletProvider)) {
         throw new Error("Wallet isn't connected")
       }
+      if (selectedHighNetwork.chainId !== L3_NETWORK.chainId) {
+        return sendWithdrawERC20Transaction(amount, connectedAccount)
+      }
       return sendWithdrawTransaction(amount, connectedAccount)
     },
     {
@@ -179,7 +182,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, l3Networ
           }
           transactions.push({
             txHash: receipt.transactionHash,
-            chainId: l3Network.chainInfo.chainId,
+            chainId: selectedHighNetwork.chainId,
             delay: 60 * 60
           })
           localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(transactions))
@@ -187,7 +190,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, l3Networ
           console.log(e)
         }
         queryClient.setQueryData(
-          ['withdrawalStatus', receipt.transactionHash, L2_CHAIN.rpcs[0], l3Network.chainInfo.rpcs[0]],
+          ['withdrawalStatus', receipt.transactionHash, selectedLowNetwork.rpcs[0], selectedHighNetwork.rpcs[0]],
           () => {
             return {
               timestamp: new Date().getTime() / 1000,
@@ -201,10 +204,10 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, l3Networ
           return [
             {
               txHash: receipt.transactionHash,
-              chainId: l3Network.chainInfo.chainId,
+              chainId: selectedHighNetwork.chainId,
               delay: 60 * 60,
-              l2RPC: L2_CHAIN.rpcs[0],
-              l3RPC: l3Network.chainInfo.rpcs[0]
+              l2RPC: selectedLowNetwork.rpcs[0],
+              l3RPC: selectedHighNetwork.rpcs[0]
             },
             ...oldData
           ]

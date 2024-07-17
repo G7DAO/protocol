@@ -1,6 +1,6 @@
 import React from 'react'
 import { useMutation, useQueryClient } from 'react-query'
-import { L2_CHAIN, L3_NATIVE_TOKEN_SYMBOL } from '../../../constants'
+import { L1_NETWORK, L2_NETWORK, L3_NATIVE_TOKEN_SYMBOL, L3_NETWORK } from '../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import { ethers } from 'ethers'
 import { Skeleton } from 'summon-ui/mantine'
@@ -66,14 +66,14 @@ const networkName = (chainId: number) => {
 }
 
 const networkRPC = (chainId: number) => {
-  const network = L3_NETWORKS.find((n) => n.chainInfo.chainId === chainId)
-  return network?.chainInfo.rpcs[0]
+  const network = [L3_NETWORK, L2_NETWORK].find((n) => n.chainId === chainId)
+  return network?.rpcs[0]
 }
 
 const networkExplorer = (chainId: number): string | undefined => {
-  const network = L3_NETWORKS.find((n) => n.chainInfo.chainId === chainId)
-  if (network?.chainInfo.blockExplorerURLs) {
-    return network?.chainInfo.blockExplorerURLs[0] ?? undefined
+  const network = [L3_NETWORK, L2_NETWORK].find((n) => n.chainId === chainId)
+  if (network?.blockExplorerUrls) {
+    return network?.blockExplorerUrls[0] ?? undefined
   }
   return
 }
@@ -98,7 +98,9 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ txHash, chainId, delay }) => {
     console.log('L3 RPC undefined')
     return <></>
   }
-  const status = useL2ToL1MessageStatus(txHash, L2_CHAIN.rpcs[0], l3RPC)
+  const targetRPC = L1_NETWORK.rpcs[0]
+  const targetChain = L1_NETWORK
+  const status = useL2ToL1MessageStatus(txHash, targetRPC, l3RPC)
   const { switchChain } = useBlockchainContext()
   const queryClient = useQueryClient()
 
@@ -112,8 +114,8 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ txHash, chainId, delay }) => {
       if (window.ethereum) {
         provider = new ethers.providers.Web3Provider(window.ethereum)
         const currentChain = await provider.getNetwork()
-        if (currentChain.chainId !== L2_CHAIN.chainId) {
-          await switchChain(L2_CHAIN)
+        if (currentChain.chainId !== targetChain.chainId) {
+          await switchChain(targetChain)
           provider = new ethers.providers.Web3Provider(window.ethereum) //refresh provider
         }
       } else {
@@ -122,6 +124,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ txHash, chainId, delay }) => {
       const signer = provider.getSigner()
       const messages: L2ToL1MessageWriter[] = (await l2Receipt.getL2ToL1Messages(signer)) as L2ToL1MessageWriter[]
       const message = messages[0]
+      console.log(messages)
       const res = await message.execute(l3Provider)
       const rec = await res.wait()
       console.log('Done! Your transaction is executed', rec)
@@ -132,7 +135,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ txHash, chainId, delay }) => {
         console.log(data)
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
-        queryClient.setQueryData(['withdrawalStatus', txHash, L2_CHAIN.rpcs[0], l3RPC], (oldData: any) => {
+        queryClient.setQueryData(['withdrawalStatus', txHash, L2_NETWORK.rpcs[0], l3RPC], (oldData: any) => {
           return { ...oldData, status: L2ToL1MessageStatus.EXECUTED }
         })
         status.refetch()
@@ -165,7 +168,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ txHash, chainId, delay }) => {
           <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
           <div className={styles.gridItem}>{`${status.data?.value} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
           <div className={styles.gridItem}>{networkName(chainId) ?? ''}</div>
-          <div className={styles.gridItem}>{L2_CHAIN.displayName}</div>
+          <div className={styles.gridItem}>{L2_NETWORK.displayName}</div>
           {status.data?.status === L2ToL1MessageStatus.EXECUTED && (
             <>
               <div className={styles.gridItem}>
