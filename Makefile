@@ -34,7 +34,7 @@ test-web3:
 	npx hardhat test
 
 test-graffiti:
-	go test ./cmd/graffiti
+	go test ./cmd/graffiti -v
 
 test: test-web3 test-graffiti
 

@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestFindLabels(t *testing.T) {
+func TestParseLabels(t *testing.T) {
 	text := `
 This is a test file containing some labels, like LABEL-123.
 
@@ -15,13 +15,13 @@ WILDCARD-*
 Labels need to have a sequence of lowercase characters and digits after the hyphen. Strings like INCOMPLETE- do not match.
 `
 
-	expected := []Label{
+	expected := []ParsedLabel{
 		{TagStartPosition: 50, TagEndPosition: 55, ModifierStartPosition: 56, ModifierEndPosition: 59, Tag: "LABEL", Modifier: "123", ModifierIsInt: true, ModifierAsInt: 123},
 		{TagStartPosition: 62, TagEndPosition: 74, ModifierStartPosition: 75, ModifierEndPosition: 76, Tag: "ANOTHERLABEL", Modifier: "x", ModifierIsInt: false},
 		{TagStartPosition: 78, TagEndPosition: 86, ModifierStartPosition: 87, ModifierEndPosition: 88, Tag: "WILDCARD", Modifier: "*", ModifierIsInt: false},
 	}
 
-	labels := FindLabels([]byte(text))
+	labels := ParseLabels([]byte(text))
 
 	if len(labels) != len(expected) {
 		t.Fatalf("Expected %d labels, got %d", len(expected), len(labels))
@@ -61,12 +61,12 @@ Labels need to have a sequence of lowercase characters and digits after the hyph
 	}
 }
 
-func TestFindLabelsWithBackticks(t *testing.T) {
+func TestParseLabelsWithBackticks(t *testing.T) {
 	text := "### `TAG-5`: lol"
 
-	expected := Label{TagStartPosition: 5, TagEndPosition: 8, ModifierStartPosition: 9, ModifierEndPosition: 10, Tag: "TAG", Modifier: "5", ModifierIsInt: true, ModifierAsInt: 5}
+	expected := ParsedLabel{TagStartPosition: 5, TagEndPosition: 8, ModifierStartPosition: 9, ModifierEndPosition: 10, Tag: "TAG", Modifier: "5", ModifierIsInt: true, ModifierAsInt: 5}
 
-	labels := FindLabels([]byte(text))
+	labels := ParseLabels([]byte(text))
 
 	if len(labels) != 1 {
 		t.Fatalf("Expected 1 label, got %d", len(labels))
@@ -104,12 +104,12 @@ func TestFindLabelsWithBackticks(t *testing.T) {
 	}
 }
 
-func TestFindLabelsDoesNotRecognizeModifiersWithUppercaseCharacters(t *testing.T) {
+func TestParseLabelsDoesNotRecognizeModifiersWithUppercaseCharacters(t *testing.T) {
 	text := "### `TAG-ANOTHERTAG-5`: lol"
 
-	expected := Label{TagStartPosition: 9, TagEndPosition: 19, ModifierStartPosition: 20, ModifierEndPosition: 21, Tag: "ANOTHERTAG", Modifier: "5", ModifierIsInt: true, ModifierAsInt: 5}
+	expected := ParsedLabel{TagStartPosition: 9, TagEndPosition: 19, ModifierStartPosition: 20, ModifierEndPosition: 21, Tag: "ANOTHERTAG", Modifier: "5", ModifierIsInt: true, ModifierAsInt: 5}
 
-	labels := FindLabels([]byte(text))
+	labels := ParseLabels([]byte(text))
 
 	if len(labels) != 1 {
 		t.Fatalf("Expected 1 label, got %d", len(labels))
@@ -147,7 +147,7 @@ func TestFindLabelsDoesNotRecognizeModifiersWithUppercaseCharacters(t *testing.T
 	}
 }
 
-func TestFindLabelsWithLineNumbers(t *testing.T) {
+func TestParseLabelsWithLineNumbers(t *testing.T) {
 	text := `
 This is a test file containing some labels, like LABEL-123.
 
@@ -158,13 +158,13 @@ WILDCARD-*
 Labels need to have a sequence of lowercase characters and digits after the hyphen. Strings like INCOMPLETE- do not match.
 `
 
-	expected := []Label{
+	expected := []ParsedLabel{
 		{TagStartPosition: 49, TagEndPosition: 54, ModifierStartPosition: 55, ModifierEndPosition: 58, Tag: "LABEL", Modifier: "123", ModifierIsInt: true, ModifierAsInt: 123, IncludesLineNumbers: true, LineNumber: 2},
 		{TagStartPosition: 0, TagEndPosition: 12, ModifierStartPosition: 13, ModifierEndPosition: 14, Tag: "ANOTHERLABEL", Modifier: "x", ModifierIsInt: false, IncludesLineNumbers: true, LineNumber: 4},
 		{TagStartPosition: 0, TagEndPosition: 8, ModifierStartPosition: 9, ModifierEndPosition: 10, Tag: "WILDCARD", Modifier: "*", ModifierIsInt: false, IncludesLineNumbers: true, LineNumber: 6},
 	}
 
-	labels := FindLabelsWithLineNumbers([]byte(text))
+	labels := ParseLabelsWithLineNumbers([]byte(text))
 
 	if len(labels) != len(expected) {
 		t.Fatalf("Expected %d labels, got %d", len(expected), len(labels))
@@ -211,9 +211,9 @@ TAG-51
 TAG-x
 `
 
-	labels := FindLabels([]byte(text))
+	labels := ParseLabels([]byte(text))
 
-	expectedLabels := []Label{
+	expectedLabels := []ParsedLabel{
 		{TagStartPosition: 1, TagEndPosition: 4, ModifierStartPosition: 5, ModifierEndPosition: 6, Tag: "TAG", Modifier: "1", ModifierIsInt: true, ModifierAsInt: 1},
 		{TagStartPosition: 7, TagEndPosition: 10, ModifierStartPosition: 11, ModifierEndPosition: 13, Tag: "TAG", Modifier: "51", ModifierIsInt: true, ModifierAsInt: 51},
 		{TagStartPosition: 14, TagEndPosition: 17, ModifierStartPosition: 18, ModifierEndPosition: 19, Tag: "TAG", Modifier: "2", ModifierIsInt: true, ModifierAsInt: 2},

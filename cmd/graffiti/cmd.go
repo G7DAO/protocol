@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -29,7 +31,8 @@ func CreateRootCommand() *cobra.Command {
 
 	tagsCmd := CreateTagsCommand()
 	numberCmd := CreateNumberCommand()
-	rootCmd.AddCommand(tagsCmd, numberCmd)
+	matchCmd := CreateMatchCommand()
+	rootCmd.AddCommand(tagsCmd, numberCmd, matchCmd)
 
 	// By default, cobra Command objects write to stderr. We have to forcibly set them to output to
 	// stdout.
@@ -67,7 +70,7 @@ func CreateTagsCommand() *cobra.Command {
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			tags := FindTags(content, true)
+			tags := ParseTags(content, true)
 			linesNeeded := map[int]bool{}
 			lines := map[int]string{}
 			if showLines {
@@ -165,6 +168,81 @@ func CreateNumberCommand() *cobra.Command {
 	numberCmd.Flags().StringVarP(&outfileRaw, "outfile", "o", "", "The file to which to write the content with numbering applied. If not provided, writes to stdout.")
 
 	return numberCmd
+}
+
+func CreateMatchCommand() *cobra.Command {
+	var sourceFileRaw, tag, targetFileRaw string
+	var source, target []byte
+	var missing bool
+
+	matchCmd := &cobra.Command{
+		Use:   "match",
+		Short: "Match the labels in a file with a given tag",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if tag == "" {
+				return errors.New("-t/--tag must be provided")
+			}
+
+			if sourceFileRaw == "" {
+				return errors.New("-s/--source must be provided")
+			}
+
+			if targetFileRaw == "" {
+				return errors.New("-T/--target must be provided")
+			}
+
+			sourceFile, sourceFileErr := os.Open(sourceFileRaw)
+			if sourceFileErr != nil {
+				return sourceFileErr
+			}
+			defer sourceFile.Close()
+			var readErr error
+			source, readErr = io.ReadAll(sourceFile)
+			if readErr != nil {
+				return readErr
+			}
+
+			targetFile, targetFileErr := os.Open(targetFileRaw)
+			if targetFileErr != nil {
+				return targetFileErr
+			}
+			defer targetFile.Close()
+			target, readErr = io.ReadAll(targetFile)
+			return readErr
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			sourceMatches := Match(source, tag, true)
+			targetMatches := Match(target, tag, true)
+
+			for label, parsedLabels := range sourceMatches {
+				sourceLines := make([]string, len(parsedLabels))
+				for i, parsedLabel := range parsedLabels {
+					sourceLines[i] = fmt.Sprintf("%d", parsedLabel.LineNumber)
+				}
+				parsedLabelsFromTarget, existsInTarget := targetMatches[label]
+				if existsInTarget {
+					if !missing {
+						targetLines := make([]string, len(parsedLabelsFromTarget))
+						for i, parsedLabel := range parsedLabelsFromTarget {
+							targetLines[i] = fmt.Sprintf("%d", parsedLabel.LineNumber)
+						}
+						cmd.Printf("- - -\nSource label: %s\nOccurs in source on lines: %s\nOccurs in target on lines: %s\n", label, strings.Join(sourceLines, ", "), strings.Join(targetLines, ", "))
+					}
+				} else {
+					cmd.Printf("- - -\nSource label: %s\nOccurs in source on lines: %s\nDoes not occur in target\n", label, strings.Join(sourceLines, ", "))
+				}
+			}
+
+			return nil
+		},
+	}
+
+	matchCmd.Flags().StringVarP(&sourceFileRaw, "source", "s", "", "The file containing the labels to be matched against.")
+	matchCmd.Flags().StringVarP(&targetFileRaw, "target", "T", "", "The file containing the labels to be matched.")
+	matchCmd.Flags().StringVarP(&tag, "tag", "t", "", "The tag to filter labels on.")
+	matchCmd.Flags().BoolVarP(&missing, "missing", "m", false, "Only show labels that are in the source file but not in the target file.")
+
+	return matchCmd
 }
 
 func CreateCompletionCommand(rootCmd *cobra.Command) *cobra.Command {

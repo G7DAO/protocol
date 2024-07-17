@@ -10,7 +10,7 @@ import (
 
 // Represents a parsed label.
 // A label has the form TAG-modifier - see LabelRegexp for full details.
-type Label struct {
+type ParsedLabel struct {
 	TagStartPosition      int
 	TagEndPosition        int
 	ModifierStartPosition int
@@ -35,13 +35,13 @@ type Label struct {
 var LabelRegexp *regexp.Regexp = regexp.MustCompile(`([A-Z]+[A-Z0-9]+)-([\*a-z0-9]+)`)
 
 // Finds all labels (as defined by LabelRegexp) in the given content.
-func FindLabels(content []byte) []Label {
+func ParseLabels(content []byte) []ParsedLabel {
 	matches := LabelRegexp.FindAllSubmatchIndex(content, -1)
 
-	labels := make([]Label, len(matches))
+	labels := make([]ParsedLabel, len(matches))
 
 	for i, match := range matches {
-		labels[i] = Label{
+		labels[i] = ParsedLabel{
 			TagStartPosition:      match[2],
 			TagEndPosition:        match[3],
 			ModifierStartPosition: match[4],
@@ -62,17 +62,22 @@ func FindLabels(content []byte) []Label {
 	return labels
 }
 
+// Returns the string representation of a parsed label.
+func Label(p ParsedLabel) string {
+	return fmt.Sprintf("%s-%s", p.Tag, p.Modifier)
+}
+
 // Finds all the labels in the given content, and also marks their line numbers.
-func FindLabelsWithLineNumbers(content []byte) []Label {
+func ParseLabelsWithLineNumbers(content []byte) []ParsedLabel {
 	contentReader := bytes.NewReader(content)
 	scanner := bufio.NewScanner(contentReader)
 
-	labels := []Label{}
+	labels := []ParsedLabel{}
 
 	currentLine := 0
 	for scanner.Scan() {
 		currentLine++
-		lineLabels := FindLabels(scanner.Bytes())
+		lineLabels := ParseLabels(scanner.Bytes())
 		for _, lineLabel := range lineLabels {
 			lineLabel.IncludesLineNumbers = true
 			lineLabel.LineNumber = currentLine
@@ -85,19 +90,19 @@ func FindLabelsWithLineNumbers(content []byte) []Label {
 
 // Groups the labels in the given content by their tags.
 // If lines = true, parses labels relative to its line in the content, otherwise parses absolutely.
-func FindTags(content []byte, lines bool) map[string][]Label {
-	var labels []Label
+func ParseTags(content []byte, lines bool) map[string][]ParsedLabel {
+	var labels []ParsedLabel
 	if lines {
-		labels = FindLabelsWithLineNumbers(content)
+		labels = ParseLabelsWithLineNumbers(content)
 	} else {
-		labels = FindLabels(content)
+		labels = ParseLabels(content)
 	}
 
-	tagIndex := make(map[string][]Label)
+	tagIndex := make(map[string][]ParsedLabel)
 
 	for _, label := range labels {
 		if _, ok := tagIndex[label.Tag]; !ok {
-			tagIndex[label.Tag] = []Label{}
+			tagIndex[label.Tag] = []ParsedLabel{}
 		}
 		tagIndex[label.Tag] = append(tagIndex[label.Tag], label)
 	}
@@ -113,10 +118,10 @@ func FindTags(content []byte, lines bool) map[string][]Label {
 // If a label with the given tag has a modifier which is larger than the total number of labels with
 // the given tag, then that could create a gap. graffiti does not renumber already numbered labels.
 // Note that the modifier end positions in the resulting labels reflect the pre-numbering positions.
-func Number(labels []Label) []Label {
+func Number(labels []ParsedLabel) []ParsedLabel {
 	existingNumbers := map[int]bool{}
 
-	numberedLabels := make([]Label, len(labels))
+	numberedLabels := make([]ParsedLabel, len(labels))
 
 	for _, label := range labels {
 		if label.ModifierIsInt {
@@ -127,7 +132,7 @@ func Number(labels []Label) []Label {
 	currentNumber := 1
 	for i, label := range labels {
 		if label.ModifierIsInt {
-			numberedLabels[i] = Label{
+			numberedLabels[i] = ParsedLabel{
 				TagStartPosition:      label.TagStartPosition,
 				TagEndPosition:        label.TagEndPosition,
 				ModifierStartPosition: label.ModifierStartPosition,
@@ -143,7 +148,7 @@ func Number(labels []Label) []Label {
 			for existingNumbers[currentNumber] {
 				currentNumber++
 			}
-			numberedLabels[i] = Label{
+			numberedLabels[i] = ParsedLabel{
 				TagStartPosition:      label.TagStartPosition,
 				TagEndPosition:        label.TagEndPosition,
 				ModifierStartPosition: label.ModifierStartPosition,
@@ -170,7 +175,7 @@ func ApplyNumbering(content []byte, tag string) []byte {
 	updatedContent := make([]byte, len(content))
 	copy(updatedContent, content)
 
-	tagLabels := FindTags(content, false)
+	tagLabels := ParseTags(content, false)
 	labels, ok := tagLabels[tag]
 	if !ok {
 		return content
@@ -184,4 +189,26 @@ func ApplyNumbering(content []byte, tag string) []byte {
 	}
 
 	return updatedContent
+}
+
+// Indexes all labels parsed from the given content by their string representations.
+func Match(content []byte, tag string, lines bool) map[string][]ParsedLabel {
+	var contentLabels []ParsedLabel
+	if lines {
+		contentLabels = ParseLabelsWithLineNumbers(content)
+	} else {
+		contentLabels = ParseLabels(content)
+	}
+
+	contentMatches := map[string][]ParsedLabel{}
+	for _, label := range contentLabels {
+		if label.Tag == tag {
+			if _, ok := contentMatches[Label(label)]; !ok {
+				contentMatches[Label(label)] = []ParsedLabel{}
+			}
+			contentMatches[Label(label)] = append(contentMatches[Label(label)], label)
+		}
+	}
+
+	return contentMatches
 }
