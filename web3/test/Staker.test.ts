@@ -1199,4 +1199,69 @@ describe('Staker', function () {
             .to.be.revertedWithCustomError(staker, 'ERC721NonexistentToken')
             .withArgs(positionTokenID);
     });
+
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-27: If an ERC721 staking pool does not have a cooldown, the user who staked into that position should be able to unstake after the lockup period assuming they still hold the position token.', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, erc721, user0, erc721PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+        const tokenId = 1n;
+
+        // Mint ERC721 token to user0
+        await erc721.mint(await user0.getAddress(), tokenId);
+
+        // Approve staker contract to transfer ERC721 token
+        await erc721.connect(user0).approve(await staker.getAddress(), tokenId);
+
+        // Check ownership before staking
+        expect(await erc721.ownerOf(tokenId)).to.equal(await user0.getAddress());
+
+        // Stake ERC721 token
+        const tx = await stakerWithUser0.stakeERC721(erc721PoolID, tokenId);
+        const txReceipt = await tx.wait();
+        expect(txReceipt).to.not.be.null;
+
+        // Get the position token ID of the newly minted token
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+
+        // Check ownership after staking
+        expect(await erc721.ownerOf(tokenId)).to.equal(await staker.getAddress());
+
+        // Fast-forward time by lockup period
+        await time.increase(lockupSeconds);
+
+        // Unstake the position
+        const unstakeTx = await stakerWithUser0.unstake(positionTokenID);
+        const unstakeTxReceipt = await unstakeTx.wait();
+        expect(unstakeTxReceipt).to.not.be.null;
+
+        // Check ownership after unstaking
+        expect(await erc721.ownerOf(tokenId)).to.equal(await user0.getAddress());
+
+        // Verify the Unstaked event
+        await expect(unstakeTx)
+            .to.emit(staker, 'Unstaked')
+            .withArgs(positionTokenID, await user0.getAddress(), erc721PoolID, tokenId);
+
+        // Verify the ERC721 Transfer event (burn)
+        await expect(unstakeTx)
+            .to.emit(staker, 'Transfer')
+            .withArgs(await user0.getAddress(), ethers.ZeroAddress, positionTokenID);
+
+        // Verify the position token has been burned
+        await expect(staker.ownerOf(positionTokenID))
+            .to.be.revertedWithCustomError(staker, 'ERC721NonexistentToken')
+            .withArgs(positionTokenID);
+
+        // Attempt to unstake the same position again and expect it to fail
+        await expect(stakerWithUser0.unstake(positionTokenID))
+            .to.be.revertedWithCustomError(staker, 'ERC721NonexistentToken')
+            .withArgs(positionTokenID);
+    });
 });
