@@ -545,7 +545,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If a native token staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool before the lockup period expires
+### `STAKER-49`: If a native token staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool before the lockup period expires
 
 Any attempt to do so should result in the following error:
 
@@ -553,7 +553,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If an ERC20 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool before the lockup period expires
+### `STAKER-50`: If an ERC20 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool before the lockup period expires
 
 Any attempt to do so should result in the following error:
 
@@ -561,7 +561,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If an ERC721 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool before the lockup period expires
+### `STAKER-51`: If an ERC721 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool before the lockup period expires
 
 Any attempt to do so should result in the following error:
 
@@ -569,7 +569,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If an ERC1155 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool before the lockup period expires
+### `STAKER-52`: If an ERC1155 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool before the lockup period expires
 
 Any attempt to do so should result in the following error:
 
@@ -577,7 +577,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If a native token staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool before the lockup period expires, even if they were the original holder
+### `STAKER-53`: If a native token staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool before the lockup period expires, even if they were the original holder
 
 Any attempt to do so should result in the following error:
 
@@ -585,7 +585,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If an ERC20 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool before the lockup period expires, even if they were the original holder
+### `STAKER-54`: If an ERC20 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool before the lockup period expires, even if they were the original holder
 
 Any attempt to do so should result in the following error:
 
@@ -593,7 +593,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If an ERC721 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool before the lockup period, even if they were the original holder
+### `STAKER-55`: If an ERC721 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool before the lockup period, even if they were the original holder
 
 Any attempt to do so should result in the following error:
 
@@ -601,7 +601,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If an ERC1155 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool before the lockup period, even if they were the original holder
+### `STAKER-56`: If an ERC1155 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool before the lockup period, even if they were the original holder
 
 Any attempt to do so should result in the following error:
 
@@ -609,7 +609,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If a native token staking pool does not have a cooldown, a user who holds the position token should not be able to unstake a position in that staking pool before the lockup period expires
+### `STAKER-57`: If a native token staking pool does not have a cooldown, a user who holds the position token should not be able to unstake a position in that staking pool before the lockup period expires
 
 Any attempt to do so should result in the following error:
 
@@ -617,7 +617,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If an ERC20 staking pool does not have a cooldown, a user who holds the position token should not be able to unstake a position in that staking pool before the lockup period expires
+### `STAKER-58`: If an ERC20 staking pool does not have a cooldown, a user who holds the position token should not be able to unstake a position in that staking pool before the lockup period expires
 
 Any attempt to do so should result in the following error:
 
@@ -625,7 +625,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If an ERC721 staking pool does not have a cooldown, a user who holds the position token should not be able to unstake a position in that staking pool before the lockup period
+### `STAKER-59`: If an ERC721 staking pool does not have a cooldown, a user who holds the position token should not be able to unstake a position in that staking pool before the lockup period
 
 Any attempt to do so should result in the following error:
 
@@ -633,7 +633,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If an ERC1155 staking pool does not have a cooldown, a user who holds the position token should not be able to unstake a position in that staking pool before the lockup period
+### `STAKER-60`: If an ERC1155 staking pool does not have a cooldown, a user who holds the position token should not be able to unstake a position in that staking pool before the lockup period
 
 Any attempt to do so should result in the following error:
 
@@ -705,7 +705,7 @@ Any attempt to do so should result in the following error:
     error InitiateUnstakeFirst(uint256 cooldownSeconds);
 ```
 
-### `STAKER-*`: If a native token staking pool has a cooldown, a position holder who didn't create the position should not be able to initiate an unstake before the lockup period has expired
+### `STAKER-61`: If a native token staking pool has a cooldown, a position holder who didn't create the position should not be able to initiate an unstake before the lockup period has expired
 
 Any attempt to do so should result in the following error:
 
@@ -713,7 +713,7 @@ Any attempt to do so should result in the following error:
     error LockupNotExpired(uint256 expiresAt);
 ```
 
-### `STAKER-*`: If an ERC20 staking pool has a cooldown, a position holder who didn't create the position should not be able to initiate an unstake before the lockup period has expired
+### `STAKER-62`: If an ERC20 staking pool has a cooldown, a position holder who didn't create the position should not be able to initiate an unstake before the lockup period has expired
 
 Any attempt to do so should result in the following error:
 
@@ -721,7 +721,7 @@ Any attempt to do so should result in the following error:
     error LockupNotExpired(uint256 expiresAt);
 ```
 
-### `STAKER-*`: If an ERC721 staking pool has a cooldown, a position holder who didn't create the position should not be able to initiate an unstake before the lockup period has expired
+### `STAKER-63`: If an ERC721 staking pool has a cooldown, a position holder who didn't create the position should not be able to initiate an unstake before the lockup period has expired
 
 Any attempt to do so should result in the following error:
 
@@ -729,7 +729,7 @@ Any attempt to do so should result in the following error:
     error LockupNotExpired(uint256 expiresAt);
 ```
 
-### `STAKER-*`: If an ERC1155 staking pool has a cooldown, a position holder who didn't create the position should not be able to initiate an unstake before the lockup period has expired
+### `STAKER-64`: If an ERC1155 staking pool has a cooldown, a position holder who didn't create the position should not be able to initiate an unstake before the lockup period has expired
 
 Any attempt to do so should result in the following error:
 
@@ -737,7 +737,7 @@ Any attempt to do so should result in the following error:
     error LockupNotExpired(uint256 expiresAt);
 ```
 
-### `STAKER-*`: If a native token staking pool has a cooldown, a position holder who did create the position should not be able to initiate an unstake before the lockup period has expired
+### `STAKER-65`: If a native token staking pool has a cooldown, a position holder who did create the position should not be able to initiate an unstake before the lockup period has expired
 
 Any attempt to do so should result in the following error:
 
@@ -745,7 +745,7 @@ Any attempt to do so should result in the following error:
     error LockupNotExpired(uint256 expiresAt);
 ```
 
-### `STAKER-*`: If an ERC20 staking pool has a cooldown, a position holder who did create the position should not be able to initiate an unstake before the lockup period has expired
+### `STAKER-66`: If an ERC20 staking pool has a cooldown, a position holder who did create the position should not be able to initiate an unstake before the lockup period has expired
 
 Any attempt to do so should result in the following error:
 
@@ -753,7 +753,7 @@ Any attempt to do so should result in the following error:
     error LockupNotExpired(uint256 expiresAt);
 ```
 
-### `STAKER-*`: If an ERC721 staking pool has a cooldown, a position holder who did create the position should not be able to initiate an unstake before the lockup period has expired
+### `STAKER-67`: If an ERC721 staking pool has a cooldown, a position holder who did create the position should not be able to initiate an unstake before the lockup period has expired
 
 Any attempt to do so should result in the following error:
 
@@ -761,7 +761,7 @@ Any attempt to do so should result in the following error:
     error LockupNotExpired(uint256 expiresAt);
 ```
 
-### `STAKER-*`: If an ERC1155 staking pool has a cooldown, a position holder who did create the position should not be able to initiate an unstake before the lockup period has expired
+### `STAKER-68`: If an ERC1155 staking pool has a cooldown, a position holder who did create the position should not be able to initiate an unstake before the lockup period has expired
 
 Any attempt to do so should result in the following error:
 
@@ -769,7 +769,7 @@ Any attempt to do so should result in the following error:
     error LockupNotExpired(uint256 expiresAt);
 ```
 
-### `STAKER-*`: If a native token staking pool has a cooldown, a position non-holder should not be able to initiate an unstake before the lockup period has expired
+### `STAKER-69`: If a native token staking pool has a cooldown, a position non-holder should not be able to initiate an unstake before the lockup period has expired
 
 Any attempt to do so should result in the following error:
 
@@ -777,7 +777,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If an ERC20 staking pool has a cooldown, a position non-holder should not be able to initiate an unstake before the lockup period has expired
+### `STAKER-70`: If an ERC20 staking pool has a cooldown, a position non-holder should not be able to initiate an unstake before the lockup period has expired
 
 Any attempt to do so should result in the following error:
 
@@ -785,7 +785,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If an ERC721 staking pool has a cooldown, a position non-holder should not be able to initiate an unstake before the lockup period has expired
+### `STAKER-71`: If an ERC721 staking pool has a cooldown, a position non-holder should not be able to initiate an unstake before the lockup period has expired
 
 Any attempt to do so should result in the following error:
 
@@ -793,7 +793,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If an ERC1155 staking pool has a cooldown, a position non-holder should not be able to initiate an unstake before the lockup period has expired
+### `STAKER-72`: If an ERC1155 staking pool has a cooldown, a position non-holder should not be able to initiate an unstake before the lockup period has expired
 
 Any attempt to do so should result in the following error:
 
@@ -801,7 +801,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If a native token staking pool has a cooldown, a position non-holder should not be able to initiate an unstake after the lockup period has expired
+### `STAKER-73`: If a native token staking pool has a cooldown, a position non-holder should not be able to initiate an unstake after the lockup period has expired
 
 Any attempt to do so should result in the following error:
 
@@ -809,7 +809,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If an ERC20 staking pool has a cooldown, a position non-holder should not be able to initiate an unstake after the lockup period has expired
+### `STAKER-74`: If an ERC20 staking pool has a cooldown, a position non-holder should not be able to initiate an unstake after the lockup period has expired
 
 Any attempt to do so should result in the following error:
 
@@ -817,7 +817,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If an ERC721 staking pool has a cooldown, a position non-holder should not be able to initiate an unstake after the lockup period has expired
+### `STAKER-75`: If an ERC721 staking pool has a cooldown, a position non-holder should not be able to initiate an unstake after the lockup period has expired
 
 Any attempt to do so should result in the following error:
 
@@ -825,7 +825,7 @@ Any attempt to do so should result in the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-### `STAKER-*`: If an ERC1155 staking pool has a cooldown, a position non-holder should not be able to initiate an unstake after the lockup period has expired
+### `STAKER-76`: If an ERC1155 staking pool has a cooldown, a position non-holder should not be able to initiate an unstake after the lockup period has expired
 
 Any attempt to do so should result in the following error:
 
