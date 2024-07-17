@@ -1060,4 +1060,143 @@ describe('Staker', function () {
             .to.be.revertedWithCustomError(staker, 'PositionNotTransferable')
             .withArgs(positionTokenID);
     });
+
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-25: If a native token staking pool does not have a cooldown, the user who staked into that position should be able to unstake after the lockup period assuming they still hold the position token.', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, user0, nativePoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+        const stakeAmount = ethers.parseEther('2.3456'); // Using a unique and distinctive stake amount
+
+        // Stake native tokens
+        const tx = await stakerWithUser0.stakeNative(nativePoolID, { value: stakeAmount });
+        const txReceipt = await tx.wait();
+        expect(txReceipt).to.not.be.null;
+
+        // Get the position token ID of the newly minted token
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+
+        // Check balances after staking
+        const stakerBalanceAfterStaking = await ethers.provider.getBalance(await staker.getAddress());
+        const user0BalanceAfterStaking = await ethers.provider.getBalance(await user0.getAddress());
+
+        // Fast-forward time by lockup period
+        await time.increase(lockupSeconds);
+
+        // Unstake the position
+        const unstakeTx = await stakerWithUser0.unstake(positionTokenID);
+        const unstakeTxReceipt = await unstakeTx.wait();
+        expect(unstakeTxReceipt).to.not.be.null;
+
+        // Check balances after unstaking
+        const stakerBalanceAfterUnstaking = await ethers.provider.getBalance(await staker.getAddress());
+        const user0BalanceAfterUnstaking = await ethers.provider.getBalance(await user0.getAddress());
+
+        const gasCost = unstakeTxReceipt!.fee;
+
+        expect(stakerBalanceAfterUnstaking).to.equal(stakerBalanceAfterStaking - stakeAmount);
+        expect(user0BalanceAfterUnstaking + gasCost).to.equal(user0BalanceAfterStaking + stakeAmount);
+
+        // Verify the Unstaked event
+        await expect(unstakeTx)
+            .to.emit(staker, 'Unstaked')
+            .withArgs(positionTokenID, await user0.getAddress(), nativePoolID, stakeAmount);
+
+        // Verify the ERC721 Transfer event (burn)
+        await expect(unstakeTx)
+            .to.emit(staker, 'Transfer')
+            .withArgs(await user0.getAddress(), ethers.ZeroAddress, positionTokenID);
+
+        // Verify the position token has been burned
+        await expect(staker.ownerOf(positionTokenID))
+            .to.be.revertedWithCustomError(staker, 'ERC721NonexistentToken')
+            .withArgs(positionTokenID);
+
+        // TODO(zomglings): This should probably be its own flow.
+        // Attempt to unstake the same position again and expect it to fail
+        await expect(stakerWithUser0.unstake(positionTokenID))
+            .to.be.revertedWithCustomError(staker, 'ERC721NonexistentToken')
+            .withArgs(positionTokenID);
+    });
+
+    // Test written with the aid of ChatGPT 4o
+    it('STAKER-26: If an ERC20 staking pool does not have a cooldown, the user who staked into that position should be able to unstake after the lockup period assuming they still hold the position token.', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, erc20, user0, erc20PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+        const stakeAmount = 100n;
+
+        // Mint ERC20 tokens to user0
+        await erc20.mint(await user0.getAddress(), stakeAmount);
+
+        // Approve staker contract to transfer ERC20 tokens
+        await erc20.connect(user0).approve(await staker.getAddress(), stakeAmount);
+
+        // Check balances before staking
+        const stakerBalanceBefore = await erc20.balanceOf(await staker.getAddress());
+        const user0BalanceBefore = await erc20.balanceOf(await user0.getAddress());
+
+        // Stake ERC20 tokens
+        const tx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const txReceipt = await tx.wait();
+        expect(txReceipt).to.not.be.null;
+
+        // Get the position token ID of the newly minted token
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+
+        // Check balances after staking
+        const stakerBalanceAfterStaking = await erc20.balanceOf(await staker.getAddress());
+        const user0BalanceAfterStaking = await erc20.balanceOf(await user0.getAddress());
+
+        expect(stakerBalanceAfterStaking).to.equal(stakerBalanceBefore + stakeAmount);
+        expect(user0BalanceAfterStaking).to.equal(user0BalanceBefore - stakeAmount);
+
+        // Fast-forward time by lockup period
+        await time.increase(lockupSeconds);
+
+        // Unstake the position
+        const unstakeTx = await stakerWithUser0.unstake(positionTokenID);
+        const unstakeTxReceipt = await unstakeTx.wait();
+        expect(unstakeTxReceipt).to.not.be.null;
+
+        // Check balances after unstaking
+        const stakerBalanceAfterUnstaking = await erc20.balanceOf(await staker.getAddress());
+        const user0BalanceAfterUnstaking = await erc20.balanceOf(await user0.getAddress());
+
+        expect(stakerBalanceAfterUnstaking).to.equal(stakerBalanceAfterStaking - stakeAmount);
+        expect(user0BalanceAfterUnstaking).to.equal(user0BalanceAfterStaking + stakeAmount);
+
+        // Verify the Unstaked event
+        await expect(unstakeTx)
+            .to.emit(staker, 'Unstaked')
+            .withArgs(positionTokenID, await user0.getAddress(), erc20PoolID, stakeAmount);
+
+        // Verify the ERC721 Transfer event (burn)
+        await expect(unstakeTx)
+            .to.emit(staker, 'Transfer')
+            .withArgs(await user0.getAddress(), ethers.ZeroAddress, positionTokenID);
+
+        // Verify the position token has been burned
+        await expect(staker.ownerOf(positionTokenID))
+            .to.be.revertedWithCustomError(staker, 'ERC721NonexistentToken')
+            .withArgs(positionTokenID);
+
+        // TODO(zomglings): This should probably be its own flow.
+        // Attempt to unstake the same position again and expect it to fail
+        await expect(stakerWithUser0.unstake(positionTokenID))
+            .to.be.revertedWithCustomError(staker, 'ERC721NonexistentToken')
+            .withArgs(positionTokenID);
+    });
 });

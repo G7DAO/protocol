@@ -1233,7 +1233,6 @@ Any attempt to do so should raise the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
-
 ## Adding new flows
 
 Label the new flows using the syntax `TAG-modifier` with `STAKER` as the `TAG` and `*` as the modifier.

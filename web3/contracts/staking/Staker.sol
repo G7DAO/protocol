@@ -361,6 +361,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
 
         // Delete position data and burn the position token
         uint256 amountOrTokenID = position.amountOrTokenID;
+        emit Unstaked(positionTokenID, msg.sender, position.poolID, amountOrTokenID);
         delete Positions[positionTokenID];
         _burn(positionTokenID);
 
@@ -374,8 +375,6 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         } else if (pool.tokenType == ERC1155_TOKEN_TYPE) {
             IERC1155(pool.tokenAddress).safeTransferFrom(address(this), msg.sender, pool.tokenID, amountOrTokenID, "");
         }
-
-        emit Unstaked(positionTokenID, msg.sender, position.poolID, amountOrTokenID);
     }
 
     function metadataBytes(uint256 positionTokenID) public view returns (bytes memory metadata) {
