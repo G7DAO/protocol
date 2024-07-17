@@ -1,5 +1,6 @@
 // BlockchainContext.tsx
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react'
+import { DEFAULT_HIGH_NETWORK, DEFAULT_LOW_NETWORK } from '../../../constants'
 import { ethers } from 'ethers'
 import { L3_NETWORKS, L3NetworkConfiguration } from '@/components/bridge/l3Networks'
 
@@ -16,14 +17,18 @@ interface BlockchainContextType {
   connectWallet: () => Promise<void>
   tokenAddress: string
   checkConnection: () => void
-  switchChain: (chain: ChainInterface) => Promise<void>
+  switchChain: (chain: NetworkInterface) => Promise<void>
   L2_RPC: string
   // L3_RPC: string;
   selectedL3Network: L3NetworkConfiguration
   setSelectedL3Network: (network: L3NetworkConfiguration) => void
+  selectedLowNetwork: NetworkInterface
+  setSelectedLowNetwork: (network: NetworkInterface) => void
+  selectedHighNetwork: HighNetworkInterface
+  setSelectedHighNetwork: (network: HighNetworkInterface) => void
 }
 
-export interface ChainInterface {
+export interface NetworkInterface {
   chainId: number
   name: string
   displayName?: string
@@ -35,6 +40,13 @@ export interface ChainInterface {
     symbol: string
   }
   blockExplorerUrls?: string[]
+  g7TokenAddress: string
+  l2Router?: string
+  l1GatewayRouter?: string
+}
+
+export interface HighNetworkInterface extends NetworkInterface {
+  inbox: string
 }
 
 const BlockchainContext = createContext<BlockchainContextType | undefined>(undefined)
@@ -47,6 +59,9 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   const [walletProvider, setWalletProvider] = useState<ethers.providers.Web3Provider>()
   const [L2Provider, setL2Provider] = useState<ethers.providers.JsonRpcProvider>()
   const [selectedL3Network, _setSelectedL3Network] = useState<L3NetworkConfiguration>(L3_NETWORKS[0])
+  const [selectedLowNetwork, setSelectedLowNetwork] = useState<NetworkInterface>(DEFAULT_LOW_NETWORK)
+  const [selectedHighNetwork, setSelectedHighNetwork] = useState<HighNetworkInterface>(DEFAULT_HIGH_NETWORK)
+
   const [connectedAccount, setConnectedAccount] = useState<string>()
   const tokenAddress = '0x5f88d811246222F6CB54266C42cc1310510b9feA'
 
@@ -107,7 +122,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     setL2Provider(providerL2)
   }
 
-  const switchChain = async (chain: ChainInterface) => {
+  const switchChain = async (chain: NetworkInterface) => {
     if (!walletProvider) {
       throw new Error('Wallet is not connected')
     }
@@ -151,7 +166,11 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
         switchChain,
         L2_RPC,
         selectedL3Network,
-        setSelectedL3Network
+        setSelectedL3Network,
+        selectedLowNetwork,
+        setSelectedLowNetwork,
+        selectedHighNetwork,
+        setSelectedHighNetwork
       }}
     >
       {children}
