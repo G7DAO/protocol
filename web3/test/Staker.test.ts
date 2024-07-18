@@ -1945,7 +1945,7 @@ describe('Staker', function () {
     });
 
     // Test written with the aid of ChatGPT 4o
-    it("STAKER-36: If an ERC1155 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool even after the lockup period, even if they were the original holder.", async function () {
+    it("STAKER-40: If an ERC1155 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool even after the lockup period, even if they were the original holder.", async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 0;
