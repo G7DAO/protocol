@@ -98,8 +98,8 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ txHash, chainId, delay }) => {
     console.log('L3 RPC undefined')
     return <></>
   }
-  const targetRPC = L1_NETWORK.rpcs[0]
-  const targetChain = L1_NETWORK
+  const targetRPC = chainId === L2_NETWORK.chainId ? L1_NETWORK.rpcs[0] : L2_NETWORK.rpcs[0]
+  const targetChain = chainId === L2_NETWORK.chainId ? L1_NETWORK : L2_NETWORK
   const status = useL2ToL1MessageStatus(txHash, targetRPC, l3RPC)
   const { switchChain } = useBlockchainContext()
   const queryClient = useQueryClient()
@@ -159,7 +159,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ txHash, chainId, delay }) => {
         ))
       ) : (
         <>
-          <div className={styles.gridItem}>
+          <div className={styles.gridItem} title={txHash}>
             <div className={styles.typeWithdrawal}>
               <IconArrowNarrowUp stroke={'#026AA2'} />
               Withdraw
