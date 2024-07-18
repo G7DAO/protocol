@@ -1,4 +1,5 @@
 import { NetworkInterface, HighNetworkInterface } from './src/components/bridge/BlockchainContext'
+import {BigNumber} from "ethers";
 
 export const L1_NETWORK: NetworkInterface = {
   chainId: 11155111,
@@ -48,3 +49,6 @@ export const L3_NETWORK: HighNetworkInterface = {
 export const L3_NATIVE_TOKEN_SYMBOL = 'G7T'
 export const DEFAULT_LOW_NETWORK = L1_NETWORK
 export const DEFAULT_HIGH_NETWORK = L2_NETWORK
+
+export const MaxUint256: BigNumber = (/*#__PURE__*/BigNumber.from("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"));
+
