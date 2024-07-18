@@ -1,11 +1,60 @@
+diff --git a/node_modules/@arbitrum/sdk/dist/lib/assetBridger/erc20Bridger.js b/node_modules/@arbitrum/sdk/dist/lib/assetBridger/erc20Bridger.js
+index 482fbe1..c774b68 100644
+--- a/node_modules/@arbitrum/sdk/dist/lib/assetBridger/erc20Bridger.js
++++ b/node_modules/@arbitrum/sdk/dist/lib/assetBridger/erc20Bridger.js
+@@ -410,7 +410,7 @@ class Erc20Bridger extends assetBridger_1.AssetBridger {
+         const l1Provider = signerOrProvider_1.SignerProviderUtils.getProviderOrThrow(params.l1Signer);
+         const tokenDeposit = (0, transactionRequest_1.isL1ToL2TransactionRequest)(params)
+             ? params
+-            : await this.getDepositRequest(Object.assign(Object.assign({}, params), { l1Provider, from: await params.l1Signer.getAddress() }));
++            : await this.getDepositRequest(Object.assign(Object.assign({}, params), { l1Provider, from: params.from ?? await params.l1Signer.getAddress() }));
+         const tx = await params.l1Signer.sendTransaction(Object.assign(Object.assign({}, tokenDeposit.txRequest), params.overrides));
+         return L1Transaction_1.L1TransactionReceipt.monkeyPatchContractCallWait(tx);
+     }
 diff --git a/node_modules/@arbitrum/sdk/dist/lib/dataEntities/networks.js b/node_modules/@arbitrum/sdk/dist/lib/dataEntities/networks.js
-index 6935967..46070b7 100644
+index 6935967..097674a 100644
 --- a/node_modules/@arbitrum/sdk/dist/lib/dataEntities/networks.js
 +++ b/node_modules/@arbitrum/sdk/dist/lib/dataEntities/networks.js
-@@ -267,6 +267,42 @@ exports.networks = {
+@@ -267,6 +267,78 @@ exports.networks = {
          depositTimeout: 900000,
          blockTime: constants_1.ARB_MINIMUM_BLOCK_TIME_IN_SECONDS,
      },
++    13746: {
++        chainID: 13746,
++        confirmPeriodBlocks: 20,
++        ethBridge: {
++            bridge: '0xC7EEB897bA9bc3fA071C3871e7F4Cf1Ae7570f16',
++            inbox: '0xE6470bb72291c39073AEd67a30ff93B69c1f47De',
++            outbox: '0x64105c6C3D494469D5F21323F0E917563489d9f5',
++            rollup: '0x6cf5bFffc54cDd13B4747e8DF2C72ce8A95043c0',
++            sequencerInbox: '0xAe2caC32b0eF386Ab683459648eDFC78F7FF8F1e',
++        },
++        explorerUrl: 'https://explorer-game7-testnet-0ilneybprf.t.conduit.xyz',
++        isArbitrum: true,
++        isCustom: true,
++        name: 'conduit-orbit-deployer',
++        partnerChainID: 421614,
++        retryableLifetimeSeconds: constants_1.SEVEN_DAYS_IN_SECONDS,
++        tokenBridge: {
++            l1CustomGateway: '0x81aCB22000A2A81D26E7e1ed5a8f51930A31598E',
++            l1ERC20Gateway: '0x4A24f98D6fB62Ce8eA8f6C2D5AF9c8BF1c853fD7',
++            l1GatewayRouter: '0x73EeAEEC11473534a2249c851e4b245E61Da8732',
++            l1MultiCall: '0xce1CAd780c529e66e3aa6D952a1ED9A6447791c1',
++            l1ProxyAdmin: '0x8767Ea2Ce21ac4e624F8a36948BD5EA23A3288D9',
++            l1Weth: '0x0000000000000000000000000000000000000000',
++            l1WethGateway: '0x0000000000000000000000000000000000000000',
++            l2CustomGateway: '0xe6c5Ab297E022A592a3fF26984cc6352C7cD0f92',
++            l2ERC20Gateway: '0x9b43912709756DcFd34A64D4362b579928fDcC26',
++            l2GatewayRouter: '0xDA379C01a484fB9F0875730430a418eB8AAFdca2',
++            l2Multicall: '0x27c4a2f1B1685F0AD1ea2227F56606066Aa95Bd0',
++            l2ProxyAdmin: '0x07424574dbF6508D1c79755ab8f1ba3883cc38f3',
++            l2Weth: '0x0000000000000000000000000000000000000000',
++            l2WethGateway: '0x0000000000000000000000000000000000000000',
++        },
++        nitroGenesisBlock: 0,
++        nitroGenesisL1Block: 0,
++        depositTimeout: 900000,
++    },
 +    1398587: {
 +        chainID: 1398587,
 +        confirmPeriodBlocks: 20,
