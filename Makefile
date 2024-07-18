@@ -31,7 +31,7 @@ bindings/Staker/Staker.go: hardhat
 bindings: bindings/ERC20/ERC20.go bindings/TokenFaucet/TokenFaucet.go bindings/WrappedNativeToken/WrappedNativeToken.go bindings/Staker/Staker.go
 
 test-web3:
-	npx hardhat test
+	cd web3 && npx hardhat test
 
 test-graffiti:
 	go test ./cmd/graffiti -v

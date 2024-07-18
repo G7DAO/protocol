@@ -1820,6 +1820,9 @@ describe('Staker', function () {
         await stakerWithUser0.transferFrom(await user0.getAddress(), await user1.getAddress(), positionTokenID);
 
         // Fast-forward time by lockup period
+        // TODO(zomglings): Replace all instances of time.increase and time.increaseTo with time.setNextBlockTimestamp, which is more precise.
+        // This will require some more complicated refactoring to get the block number out of the staking transaction - see STAKER-57 implementation
+        // for an example of this.
         await time.increase(lockupSeconds);
 
         // Check balances before attempting to unstake
@@ -2014,13 +2017,17 @@ describe('Staker', function () {
         const stakeAmount = ethers.parseEther('1');
 
         // Stake native tokens
-        await stakerWithUser0.stakeNative(nativePoolID, { value: stakeAmount });
+        const stakeTx = await stakerWithUser0.stakeNative(nativePoolID, { value: stakeAmount });
+        const stakeTxReceipt = await stakeTx.wait();
+        expect(stakeTxReceipt).to.not.be.null;
+        const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        expect(stakeBlock).to.not.be.null;
 
         // Get the position token ID of the newly minted token
         const positionTokenID = (await staker.TotalPositions()) - 1n;
 
         // Fast-forward to 1 second before the lockup period expires
-        await time.increase(lockupSeconds - 1);
+        await time.setNextBlockTimestamp(stakeBlock!.timestamp + lockupSeconds - 1);
 
         // Check balances before attempting to unstake
         const stakerBalanceBeforeUnstakeAttempt = await ethers.provider.getBalance(await staker.getAddress());
@@ -2069,13 +2076,17 @@ describe('Staker', function () {
         await erc20.connect(user0).approve(await staker.getAddress(), stakeAmount);
 
         // Stake ERC20 tokens
-        await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const stakeTxReceipt = await stakeTx.wait();
+        expect(stakeTxReceipt).to.not.be.null;
+        const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        expect(stakeBlock).to.not.be.null;
 
         // Get the position token ID of the newly minted token
         const positionTokenID = (await staker.TotalPositions()) - 1n;
 
         // Fast-forward to 1 second before the lockup period expires
-        await time.increase(lockupSeconds - 1);
+        await time.setNextBlockTimestamp(stakeBlock!.timestamp + lockupSeconds - 1);
 
         // Check balances before attempting to unstake
         const stakerBalanceBeforeUnstakeAttempt = await erc20.balanceOf(await staker.getAddress());
@@ -2120,14 +2131,18 @@ describe('Staker', function () {
         // Approve staker contract to transfer ERC721 token
         await erc721.connect(user0).approve(await staker.getAddress(), tokenId);
 
-        // Stake ERC721 token
-        await stakerWithUser0.stakeERC721(erc721PoolID, tokenId);
+        // Stake ERC721 tokens
+        const stakeTx = await stakerWithUser0.stakeERC721(erc721PoolID, tokenId);
+        const stakeTxReceipt = await stakeTx.wait();
+        expect(stakeTxReceipt).to.not.be.null;
+        const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        expect(stakeBlock).to.not.be.null;
 
         // Get the position token ID of the newly minted token
         const positionTokenID = (await staker.TotalPositions()) - 1n;
 
         // Fast-forward to 1 second before the lockup period expires
-        await time.increase(lockupSeconds - 1);
+        await time.setNextBlockTimestamp(stakeBlock!.timestamp + lockupSeconds - 1);
 
         // Verify user1 does not own the position token
         expect(await staker.ownerOf(positionTokenID)).to.equal(await user0.getAddress());
@@ -2161,13 +2176,17 @@ describe('Staker', function () {
         await erc1155.connect(user0).setApprovalForAll(await staker.getAddress(), true);
 
         // Stake ERC1155 tokens
-        await stakerWithUser0.stakeERC1155(erc1155PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC1155(erc1155PoolID, stakeAmount);
+        const stakeTxReceipt = await stakeTx.wait();
+        expect(stakeTxReceipt).to.not.be.null;
+        const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        expect(stakeBlock).to.not.be.null;
 
         // Get the position token ID of the newly minted token
         const positionTokenID = (await staker.TotalPositions()) - 1n;
 
         // Fast-forward to 1 second before the lockup period expires
-        await time.increase(lockupSeconds - 1);
+        await time.setNextBlockTimestamp(stakeBlock!.timestamp + lockupSeconds - 1);
 
         // Check balances before attempting to unstake
         const stakerBalanceBeforeUnstakeAttempt = await erc1155.balanceOf(await staker.getAddress(), erc1155TokenID);
@@ -2191,5 +2210,402 @@ describe('Staker', function () {
         expect(stakerBalanceAfterUnstakeAttempt).to.equal(stakerBalanceBeforeUnstakeAttempt);
         expect(user0BalanceAfterUnstakeAttempt).to.equal(user0BalanceBeforeUnstakeAttempt);
         expect(user1BalanceAfterUnstakeAttempt).to.equal(user1BalanceBeforeUnstakeAttempt);
+    });
+
+    // Test written with the aid of ChatGPT 4o
+    it("STAKER-53: If a native token staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool before the lockup period expires, even if they were the original holder", async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, user0, user1, nativePoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+        const stakeAmount = ethers.parseEther('2.3456'); // Unique and distinctive stake amount
+
+        // Stake native tokens
+        const stakeTx = await stakerWithUser0.stakeNative(nativePoolID, { value: stakeAmount });
+        const stakeTxReceipt = await stakeTx.wait();
+        expect(stakeTxReceipt).to.not.be.null;
+        const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        expect(stakeBlock).to.not.be.null;
+
+        // Get the position token ID of the newly minted token
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+
+        // Transfer the position token to user1
+        await stakerWithUser0.transferFrom(await user0.getAddress(), await user1.getAddress(), positionTokenID);
+
+        // Ensure the position holder is no longer user0
+        expect(await staker.ownerOf(positionTokenID)).to.equal(await user1.getAddress());
+
+        // Fast-forward to 1 second before the lockup period expires
+        await time.setNextBlockTimestamp(stakeBlock!.timestamp + lockupSeconds - 1);
+
+        // Check balances before attempting to unstake
+        const stakerBalanceBeforeUnstakeAttempt = await ethers.provider.getBalance(await staker.getAddress());
+        const user0BalanceBeforeUnstakeAttempt = await ethers.provider.getBalance(await user0.getAddress());
+        const user1BalanceBeforeUnstakeAttempt = await ethers.provider.getBalance(await user1.getAddress());
+
+        // Attempt to unstake the position before lockup period expires and expect it to fail
+        await expect(staker.connect(user0).unstake(positionTokenID))
+            .to.be.revertedWithCustomError(staker, 'UnauthorizedForPosition')
+            .withArgs(await user1.getAddress(), await user0.getAddress());
+
+        // Check balances after attempting to unstake
+        const stakerBalanceAfterUnstakeAttempt = await ethers.provider.getBalance(await staker.getAddress());
+        const user0BalanceAfterUnstakeAttempt = await ethers.provider.getBalance(await user0.getAddress());
+        const user1BalanceAfterUnstakeAttempt = await ethers.provider.getBalance(await user1.getAddress());
+
+        // Balance expectations
+        expect(stakerBalanceAfterUnstakeAttempt).to.equal(stakerBalanceBeforeUnstakeAttempt);
+        expect(user1BalanceAfterUnstakeAttempt).to.equal(user1BalanceBeforeUnstakeAttempt);
+        // TODO(zomglings): Doing this because it's hard to calculate gas fees for reverted transaction.
+        // This properly tests the flow, but it would be good to come back to this and make the expectation
+        // for an exact amount.
+        expect(user0BalanceAfterUnstakeAttempt).to.be.lessThanOrEqual(user0BalanceBeforeUnstakeAttempt); // Less due to gas fees
+    });
+
+    // Test written with the aid of ChatGPT 4o
+    it("STAKER-54: If an ERC20 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool before the lockup period expires, even if they were the original holder", async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, erc20, user0, user1, erc20PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakeAmount = 100n;
+
+        // Mint ERC20 tokens to user0
+        await erc20.mint(await user0.getAddress(), stakeAmount);
+
+        // Approve staker contract to transfer ERC20 tokens
+        await erc20.connect(user0).approve(await staker.getAddress(), stakeAmount);
+
+        const stakerWithUser0 = staker.connect(user0);
+
+        // Stake ERC20 tokens
+        const stakeTx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const stakeTxReceipt = await stakeTx.wait();
+        expect(stakeTxReceipt).to.not.be.null;
+        const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        expect(stakeBlock).to.not.be.null;
+
+        // Get the position token ID of the newly minted token
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+
+        // Transfer the position token to user1
+        await stakerWithUser0.transferFrom(await user0.getAddress(), await user1.getAddress(), positionTokenID);
+
+        // Fast-forward to 1 second before the lockup period expires
+        await time.setNextBlockTimestamp(stakeBlock!.timestamp + lockupSeconds - 1);
+
+        // Ensure the position holder is no longer user0
+        expect(await staker.ownerOf(positionTokenID)).to.equal(await user1.getAddress());
+
+        // Check balances before attempting to unstake
+        const stakerBalanceBeforeUnstakeAttempt = await erc20.balanceOf(await staker.getAddress());
+        const user0BalanceBeforeUnstakeAttempt = await erc20.balanceOf(await user0.getAddress());
+        const user1BalanceBeforeUnstakeAttempt = await erc20.balanceOf(await user1.getAddress());
+
+        // Attempt to unstake the position before lockup period expires and expect it to fail
+        await expect(staker.connect(user0).unstake(positionTokenID))
+            .to.be.revertedWithCustomError(staker, 'UnauthorizedForPosition')
+            .withArgs(await user1.getAddress(), await user0.getAddress());
+
+        // Check balances after attempting to unstake
+        const stakerBalanceAfterUnstakeAttempt = await erc20.balanceOf(await staker.getAddress());
+        const user0BalanceAfterUnstakeAttempt = await erc20.balanceOf(await user0.getAddress());
+        const user1BalanceAfterUnstakeAttempt = await erc20.balanceOf(await user1.getAddress());
+
+        // Ensure balances are unchanged
+        expect(stakerBalanceAfterUnstakeAttempt).to.equal(stakerBalanceBeforeUnstakeAttempt);
+        expect(user0BalanceAfterUnstakeAttempt).to.equal(user0BalanceBeforeUnstakeAttempt);
+        expect(user1BalanceAfterUnstakeAttempt).to.equal(user1BalanceBeforeUnstakeAttempt);
+    });
+
+    // Test written with the aid of ChatGPT 4.0
+    it("STAKER-55: If an ERC721 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool before the lockup period expires, even if they were the original holder", async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, erc721, user0, user1, erc721PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+        const tokenId = 1n;
+
+        await erc721.mint(await user0.getAddress(), tokenId);
+        await erc721.connect(user0).approve(await staker.getAddress(), tokenId);
+
+        // Stake ERC721 tokens
+        const stakeTx = await stakerWithUser0.stakeERC721(erc721PoolID, tokenId);
+        const stakeTxReceipt = await stakeTx.wait();
+        expect(stakeTxReceipt).to.not.be.null;
+        const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        expect(stakeBlock).to.not.be.null;
+
+        // Get the position token ID of the newly minted token
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+
+        await stakerWithUser0.transferFrom(await user0.getAddress(), await user1.getAddress(), positionTokenID);
+
+        // Fast-forward to 1 second before the lockup period expires
+        await time.setNextBlockTimestamp(stakeBlock!.timestamp + lockupSeconds - 1);
+
+        expect(await staker.ownerOf(positionTokenID)).to.equal(await user1.getAddress());
+
+        await expect(staker.connect(user0).unstake(positionTokenID))
+            .to.be.revertedWithCustomError(staker, 'UnauthorizedForPosition')
+            .withArgs(await user1.getAddress(), await user0.getAddress());
+
+        expect(await erc721.ownerOf(tokenId)).to.equal(await staker.getAddress());
+    });
+
+    // Test written with the aid of ChatGPT 4.0
+    it("STAKER-56: If an ERC1155 staking pool does not have a cooldown, a user who doesn't hold the position token should not be able to unstake a position in that staking pool before the lockup period expires, even if they were the original holder.", async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, erc1155, user0, user1, erc1155PoolID, erc1155TokenID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+        const stakeAmount = 100n;
+
+        await erc1155.mint(await user0.getAddress(), erc1155TokenID, stakeAmount);
+        await erc1155.connect(user0).setApprovalForAll(await staker.getAddress(), true);
+
+        // Stake ERC1155 tokens
+        const stakeTx = await stakerWithUser0.stakeERC1155(erc1155PoolID, stakeAmount);
+        const stakeTxReceipt = await stakeTx.wait();
+        expect(stakeTxReceipt).to.not.be.null;
+        const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        expect(stakeBlock).to.not.be.null;
+
+        // Get the position token ID of the newly minted token
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+
+        await stakerWithUser0.transferFrom(await user0.getAddress(), await user1.getAddress(), positionTokenID);
+
+        // Fast-forward to 1 second before the lockup period expires
+        await time.setNextBlockTimestamp(stakeBlock!.timestamp + lockupSeconds - 1);
+
+        const stakerBalanceBeforeUnstakeAttempt = await erc1155.balanceOf(await staker.getAddress(), erc1155TokenID);
+        const user0BalanceBeforeUnstakeAttempt = await erc1155.balanceOf(await user0.getAddress(), erc1155TokenID);
+        const user1BalanceBeforeUnstakeAttempt = await erc1155.balanceOf(await user1.getAddress(), erc1155TokenID);
+
+        expect(await staker.ownerOf(positionTokenID)).to.equal(await user1.getAddress());
+
+        await expect(staker.connect(user0).unstake(positionTokenID))
+            .to.be.revertedWithCustomError(staker, 'UnauthorizedForPosition')
+            .withArgs(await user1.getAddress(), await user0.getAddress());
+
+        const stakerBalanceAfterUnstakeAttempt = await erc1155.balanceOf(await staker.getAddress(), erc1155TokenID);
+        const user0BalanceAfterUnstakeAttempt = await erc1155.balanceOf(await user0.getAddress(), erc1155TokenID);
+        const user1BalanceAfterUnstakeAttempt = await erc1155.balanceOf(await user1.getAddress(), erc1155TokenID);
+
+        expect(stakerBalanceAfterUnstakeAttempt).to.equal(stakerBalanceBeforeUnstakeAttempt);
+        expect(user0BalanceAfterUnstakeAttempt).to.equal(user0BalanceBeforeUnstakeAttempt);
+        expect(user1BalanceAfterUnstakeAttempt).to.equal(user1BalanceBeforeUnstakeAttempt);
+    });
+
+    // Test written with the aid of ChatGPT 4.0
+    it('STAKER-57: If a native token staking pool does not have a cooldown, a user who holds the position token should not be able to unstake a position in that staking pool before the lockup period expires', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, user0, nativePoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+        const stakeAmount = ethers.parseEther('1');
+
+        // Stake native tokens
+        const stakeTx = await stakerWithUser0.stakeNative(nativePoolID, { value: stakeAmount });
+        const stakeTxReceipt = await stakeTx.wait();
+        expect(stakeTxReceipt).to.not.be.null;
+        const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        expect(stakeBlock).to.not.be.null;
+
+        // Get the position token ID of the newly minted token
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+
+        // Ensure the position holder is no longer user0
+        expect(await staker.ownerOf(positionTokenID)).to.equal(await user0.getAddress());
+
+        // Fast-forward to 1 second before the lockup period expires
+        await time.setNextBlockTimestamp(stakeBlock!.timestamp + lockupSeconds - 1);
+
+        // Check balances before attempting to unstake
+        const stakerBalanceBeforeUnstakeAttempt = await ethers.provider.getBalance(await staker.getAddress());
+        const user0BalanceBeforeUnstakeAttempt = await ethers.provider.getBalance(await user0.getAddress());
+
+        // Attempt to unstake the position and expect it to fail
+        await expect(stakerWithUser0.unstake(positionTokenID))
+            .to.be.revertedWithCustomError(staker, 'LockupNotExpired')
+            .withArgs(stakeBlock!.timestamp + lockupSeconds);
+
+        // Check balances after attempting to unstake
+        const stakerBalanceAfterUnstakeAttempt = await ethers.provider.getBalance(await staker.getAddress());
+        const user0BalanceAfterUnstakeAttempt = await ethers.provider.getBalance(await user0.getAddress());
+
+        // Ensure balances are unchanged
+        expect(stakerBalanceAfterUnstakeAttempt).to.equal(stakerBalanceBeforeUnstakeAttempt);
+        expect(user0BalanceAfterUnstakeAttempt).to.be.lessThanOrEqual(user0BalanceBeforeUnstakeAttempt);
+    });
+
+    it('STAKER-58: If an ERC20 staking pool does not have a cooldown, a user who holds the position token should not be able to unstake a position in that staking pool before the lockup period expires', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, erc20, user0, erc20PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakeAmount = 100n;
+
+        // Mint ERC20 tokens to user0
+        await erc20.mint(await user0.getAddress(), stakeAmount);
+
+        // Approve staker contract to transfer ERC20 tokens
+        await erc20.connect(user0).approve(await staker.getAddress(), stakeAmount);
+
+        const stakerWithUser0 = staker.connect(user0);
+
+        // Stake ERC20 tokens
+        const stakeTx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const stakeTxReceipt = await stakeTx.wait();
+        expect(stakeTxReceipt).to.not.be.null;
+        const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        expect(stakeBlock).to.not.be.null;
+
+        // Get the position token ID of the newly minted token
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+
+        // Ensure the position holder is user0
+        expect(await staker.ownerOf(positionTokenID)).to.equal(await user0.getAddress());
+
+        // Fast-forward to 1 second before the lockup period expires
+        await time.setNextBlockTimestamp(stakeBlock!.timestamp + lockupSeconds - 1);
+
+        // Check balances before attempting to unstake
+        const stakerBalanceBeforeUnstakeAttempt = await erc20.balanceOf(await staker.getAddress());
+        const user0BalanceBeforeUnstakeAttempt = await erc20.balanceOf(await user0.getAddress());
+
+        // Attempt to unstake the position and expect it to fail
+        await expect(stakerWithUser0.unstake(positionTokenID))
+            .to.be.revertedWithCustomError(staker, 'LockupNotExpired')
+            .withArgs(stakeBlock!.timestamp + lockupSeconds);
+
+        // Check balances after attempting to unstake
+        const stakerBalanceAfterUnstakeAttempt = await erc20.balanceOf(await staker.getAddress());
+        const user0BalanceAfterUnstakeAttempt = await erc20.balanceOf(await user0.getAddress());
+
+        // Ensure balances are unchanged
+        expect(stakerBalanceAfterUnstakeAttempt).to.equal(stakerBalanceBeforeUnstakeAttempt);
+        expect(user0BalanceAfterUnstakeAttempt).to.equal(user0BalanceBeforeUnstakeAttempt);
+    });
+
+    it('STAKER-59: If an ERC721 staking pool does not have a cooldown, a user who holds the position token should not be able to unstake a position in that staking pool before the lockup period expires', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, erc721, user0, erc721PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+        const tokenId = 1n;
+
+        // Mint ERC721 token to user0
+        await erc721.mint(await user0.getAddress(), tokenId);
+        await erc721.connect(user0).approve(await staker.getAddress(), tokenId);
+
+        // Stake ERC721 tokens
+        const stakeTx = await stakerWithUser0.stakeERC721(erc721PoolID, tokenId);
+        const stakeTxReceipt = await stakeTx.wait();
+        expect(stakeTxReceipt).to.not.be.null;
+        const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        expect(stakeBlock).to.not.be.null;
+
+        // Get the position token ID of the newly minted token
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+
+        // Ensure the position holder is user0
+        expect(await staker.ownerOf(positionTokenID)).to.equal(await user0.getAddress());
+
+        // Fast-forward to 1 second before the lockup period expires
+        await time.setNextBlockTimestamp(stakeBlock!.timestamp + lockupSeconds - 1);
+
+        // Attempt to unstake the position and expect it to fail
+        await expect(stakerWithUser0.unstake(positionTokenID))
+            .to.be.revertedWithCustomError(staker, 'LockupNotExpired')
+            .withArgs(stakeBlock!.timestamp + lockupSeconds);
+
+        // Ensure ERC721 token ownership remains with the staker contract
+        expect(await erc721.ownerOf(tokenId)).to.equal(await staker.getAddress());
+    });
+
+    it('STAKER-60: If an ERC1155 staking pool does not have a cooldown, a user who holds the position token should not be able to unstake a position in that staking pool before the lockup period expires', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, erc1155, user0, erc1155PoolID, erc1155TokenID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+        const stakeAmount = 100n;
+
+        // Mint ERC1155 tokens to user0
+        await erc1155.mint(await user0.getAddress(), erc1155TokenID, stakeAmount);
+        await erc1155.connect(user0).setApprovalForAll(await staker.getAddress(), true);
+
+        // Stake ERC1155 tokens
+        const stakeTx = await stakerWithUser0.stakeERC1155(erc1155PoolID, stakeAmount);
+        const stakeTxReceipt = await stakeTx.wait();
+        expect(stakeTxReceipt).to.not.be.null;
+        const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        expect(stakeBlock).to.not.be.null;
+
+        // Get the position token ID of the newly minted token
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+
+        // Ensure the position holder is user0
+        expect(await staker.ownerOf(positionTokenID)).to.equal(await user0.getAddress());
+
+        // Fast-forward to 1 second before the lockup period expires
+        await time.setNextBlockTimestamp(stakeBlock!.timestamp + lockupSeconds - 1);
+
+        // Check balances before attempting to unstake
+        const stakerBalanceBeforeUnstakeAttempt = await erc1155.balanceOf(await staker.getAddress(), erc1155TokenID);
+        const user0BalanceBeforeUnstakeAttempt = await erc1155.balanceOf(await user0.getAddress(), erc1155TokenID);
+
+        // Attempt to unstake the position and expect it to fail
+        await expect(stakerWithUser0.unstake(positionTokenID))
+            .to.be.revertedWithCustomError(staker, 'LockupNotExpired')
+            .withArgs(stakeBlock!.timestamp + lockupSeconds);
+
+        // Check balances after attempting to unstake
+        const stakerBalanceAfterUnstakeAttempt = await erc1155.balanceOf(await staker.getAddress(), erc1155TokenID);
+        const user0BalanceAfterUnstakeAttempt = await erc1155.balanceOf(await user0.getAddress(), erc1155TokenID);
+
+        // Ensure balances are unchanged
+        expect(stakerBalanceAfterUnstakeAttempt).to.equal(stakerBalanceBeforeUnstakeAttempt);
+        expect(user0BalanceAfterUnstakeAttempt).to.equal(user0BalanceBeforeUnstakeAttempt);
     });
 });
