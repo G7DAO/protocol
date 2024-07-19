@@ -1,4 +1,5 @@
 import { useQuery } from 'react-query'
+import { ZERO_ADDRESS } from '../../constants'
 import { ethers } from 'ethers'
 
 interface UseERC20BalanceProps {
@@ -11,7 +12,7 @@ const useERC20Balance = ({ tokenAddress, account, rpc }: UseERC20BalanceProps) =
   return useQuery(
     ['ERC20Balance', tokenAddress, account, rpc],
     async () => {
-      if (!account) {
+      if (!account || tokenAddress === ZERO_ADDRESS) {
         return '0'
       }
       const provider = new ethers.providers.JsonRpcProvider(rpc)
