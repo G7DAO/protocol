@@ -349,6 +349,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
 
         // Enforce cooldown, but only if the pool has a cooldown period.
         if (pool.cooldownSeconds > 0) {
+            // This branch doesn't enforce the lockup period as that has already been enforced in `initiateUnstake`.
             if (
                 position.unstakeInitiatedAt == 0 || block.timestamp < position.unstakeInitiatedAt + pool.cooldownSeconds
             ) {
