@@ -354,11 +354,11 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
             ) {
                 revert InitiateUnstakeFirst(pool.cooldownSeconds);
             }
-        }
-
-        // Enforce lockup period
-        if (block.timestamp < position.stakeTimestamp + pool.lockupSeconds) {
-            revert LockupNotExpired(position.stakeTimestamp + pool.lockupSeconds);
+        } else {
+            // Enforce lockup period
+            if (block.timestamp < position.stakeTimestamp + pool.lockupSeconds) {
+                revert LockupNotExpired(position.stakeTimestamp + pool.lockupSeconds);
+            }
         }
 
         // Delete position data and burn the position token
