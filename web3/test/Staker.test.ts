@@ -2608,4 +2608,53 @@ describe('Staker', function () {
         expect(stakerBalanceAfterUnstakeAttempt).to.equal(stakerBalanceBeforeUnstakeAttempt);
         expect(user0BalanceAfterUnstakeAttempt).to.equal(user0BalanceBeforeUnstakeAttempt);
     });
+
+    it('STAKER-41: If a native token staking pool has a cooldown, a position holder who did create the position and who has not initiated an unstake should not be able to unstake their position even after the lockup period', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 1800;
+
+        const { staker, user0, nativePoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const nativePool = await staker.Pools(nativePoolID);
+        expect(nativePool.cooldownSeconds).to.be.greaterThan(0);
+
+        const stakerWithUser0 = staker.connect(user0);
+        const stakeAmount = ethers.parseEther('1');
+
+        // Stake native tokens
+        const stakeTx = await stakerWithUser0.stakeNative(nativePoolID, { value: stakeAmount });
+        const stakeTxReceipt = await stakeTx.wait();
+        expect(stakeTxReceipt).to.not.be.null;
+        const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        expect(stakeBlock).to.not.be.null;
+
+        // Get the position token ID of the newly minted token
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+
+        // Ensure the position holder is user0
+        expect(await staker.ownerOf(positionTokenID)).to.equal(await user0.getAddress());
+
+        // Fast-forward time to the lockup period expiration
+        await time.setNextBlockTimestamp(stakeBlock!.timestamp + lockupSeconds);
+
+        // Record balances before attempting to unstake
+        const stakerBalanceBefore = await ethers.provider.getBalance(await staker.getAddress());
+        const user0BalanceBefore = await ethers.provider.getBalance(await user0.getAddress());
+
+        // Attempt to unstake the position and expect it to fail
+        await expect(stakerWithUser0.unstake(positionTokenID))
+            .to.be.revertedWithCustomError(staker, 'InitiateUnstakeFirst')
+            .withArgs(cooldownSeconds);
+
+        // Record balances after attempting to unstake
+        const stakerBalanceAfter = await ethers.provider.getBalance(await staker.getAddress());
+        const user0BalanceAfter = await ethers.provider.getBalance(await user0.getAddress());
+
+        // Invariants: ensure no changes occurred in the balances
+        expect(stakerBalanceAfter).to.equal(stakerBalanceBefore);
+        expect(user0BalanceAfter).to.be.lessThanOrEqual(user0BalanceBefore);
+    });
 });
