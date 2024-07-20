@@ -9,7 +9,7 @@ describe('Staker', function () {
         const lockupSeconds = 3600;
         const cooldownSeconds = 1800;
 
-        const { staker, erc721, user0, user1, erc721PoolID } = await loadFixture(
+        const { staker, erc721, user0, erc721PoolID } = await loadFixture(
             setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
         );
 
@@ -59,7 +59,7 @@ describe('Staker', function () {
         const lockupSeconds = 3600;
         const cooldownSeconds = 1800;
 
-        const { staker, erc1155, user0, user1, erc1155PoolID, erc1155TokenID } = await loadFixture(
+        const { staker, erc1155, user0, erc1155PoolID, erc1155TokenID } = await loadFixture(
             setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
         );
 
@@ -71,10 +71,6 @@ describe('Staker', function () {
 
         // Approve staker contract to transfer ERC1155 tokens
         await erc1155.connect(user0).setApprovalForAll(await staker.getAddress(), true);
-
-        // Check balances before staking
-        const stakerBalanceBefore = await erc1155.balanceOf(await staker.getAddress(), erc1155TokenID);
-        const user0BalanceBefore = await erc1155.balanceOf(await user0.getAddress(), erc1155TokenID);
 
         // Stake ERC1155 tokens
         const stakeTx = await stakerWithUser0.stakeERC1155(erc1155PoolID, stakeAmount);
