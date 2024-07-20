@@ -1233,6 +1233,27 @@ Any attempt to do so should raise the following error:
     error UnauthorizedForPosition(address owner, address sender);
 ```
 
+### Position NFT metadata
+
+#### `STAKER-113`: The ERC721 representing an ERC721 staking position have as its metadata URI a data URI representing an appropriate JSON object
+
+The metadata should indicate:
+
+1. The pool ID under which the position was opened
+2. The token ID of the ERC721 token staked into the position
+3. The time at which the positon was opened
+4. The time at which the lockup on the position expires
+
+#### `STAKER-114`: The ERC721 representing a non-ERC721 staking position have as its metadata URI a data URI representing an appropriate JSON object
+
+The metadata should indicate:
+
+1. The pool ID under which the position was opened
+2. The amount of tokens
+3. The time at which the positon was opened
+4. The time at which the lockup on the position expires
+
+
 ## Adding new flows
 
 Label the new flows using the syntax `TAG-modifier` with `STAKER` as the `TAG` and `*` as the modifier.
