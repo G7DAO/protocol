@@ -187,10 +187,6 @@ func CreateMatchCommand() *cobra.Command {
 				return errors.New("-s/--source must be provided")
 			}
 
-			if targetFileRaw == "" {
-				return errors.New("-T/--target must be provided")
-			}
-
 			sourceFile, sourceFileErr := os.Open(sourceFileRaw)
 			if sourceFileErr != nil {
 				return sourceFileErr
@@ -202,11 +198,17 @@ func CreateMatchCommand() *cobra.Command {
 				return readErr
 			}
 
-			targetFile, targetFileErr := os.Open(targetFileRaw)
-			if targetFileErr != nil {
-				return targetFileErr
+			var targetFile *os.File
+			var targetFileErr error
+			if targetFileRaw == "" {
+				targetFile = os.Stdin
+			} else {
+				targetFile, targetFileErr = os.Open(targetFileRaw)
+				if targetFileErr != nil {
+					return targetFileErr
+				}
+				defer targetFile.Close()
 			}
-			defer targetFile.Close()
 			target, readErr = io.ReadAll(targetFile)
 			return readErr
 		},
