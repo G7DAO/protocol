@@ -222,7 +222,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         );
     }
 
-    function stakeNative(uint256 poolID) external payable {
+    function stakeNative(uint256 poolID) external payable returns (uint256 positionTokenID) {
         StakingPool storage pool = Pools[poolID];
         if (pool.tokenType != NATIVE_TOKEN_TYPE) {
             revert IncorrectTokenType(poolID, pool.tokenType, NATIVE_TOKEN_TYPE);
@@ -232,7 +232,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
             revert NothingToStake();
         }
 
-        uint256 positionTokenID = TotalPositions++;
+        positionTokenID = TotalPositions++;
         _mint(msg.sender, positionTokenID);
 
         Positions[positionTokenID] = Position({
@@ -245,7 +245,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         emit Staked(positionTokenID, msg.sender, poolID, msg.value);
     }
 
-    function stakeERC20(uint256 poolID, uint256 amount) external nonReentrant {
+    function stakeERC20(uint256 poolID, uint256 amount) external nonReentrant returns (uint256 positionTokenID) {
         StakingPool storage pool = Pools[poolID];
         if (pool.tokenType != ERC20_TOKEN_TYPE) {
             revert IncorrectTokenType(poolID, pool.tokenType, ERC20_TOKEN_TYPE);
@@ -257,7 +257,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
 
         IERC20(pool.tokenAddress).safeTransferFrom(msg.sender, address(this), amount);
 
-        uint256 positionTokenID = TotalPositions++;
+        positionTokenID = TotalPositions++;
         _mint(msg.sender, positionTokenID);
 
         Positions[positionTokenID] = Position({
@@ -270,7 +270,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         emit Staked(positionTokenID, msg.sender, poolID, amount);
     }
 
-    function stakeERC721(uint256 poolID, uint256 tokenID) external nonReentrant {
+    function stakeERC721(uint256 poolID, uint256 tokenID) external nonReentrant returns (uint256 positionTokenID) {
         StakingPool storage pool = Pools[poolID];
         if (pool.tokenType != ERC721_TOKEN_TYPE) {
             revert IncorrectTokenType(poolID, pool.tokenType, ERC721_TOKEN_TYPE);
@@ -278,7 +278,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
 
         IERC721(pool.tokenAddress).safeTransferFrom(msg.sender, address(this), tokenID);
 
-        uint256 positionTokenID = TotalPositions++;
+        positionTokenID = TotalPositions++;
         _mint(msg.sender, positionTokenID);
 
         Positions[positionTokenID] = Position({
@@ -291,7 +291,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         emit Staked(positionTokenID, msg.sender, poolID, tokenID);
     }
 
-    function stakeERC1155(uint256 poolID, uint256 amount) external nonReentrant {
+    function stakeERC1155(uint256 poolID, uint256 amount) external nonReentrant returns (uint256 positionTokenID) {
         StakingPool storage pool = Pools[poolID];
         if (pool.tokenType != ERC1155_TOKEN_TYPE) {
             revert IncorrectTokenType(poolID, pool.tokenType, ERC1155_TOKEN_TYPE);
@@ -303,7 +303,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
 
         IERC1155(pool.tokenAddress).safeTransferFrom(msg.sender, address(this), pool.tokenID, amount, "");
 
-        uint256 positionTokenID = TotalPositions++;
+        positionTokenID = TotalPositions++;
         _mint(msg.sender, positionTokenID);
 
         Positions[positionTokenID] = Position({
