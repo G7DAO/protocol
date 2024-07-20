@@ -11,9 +11,10 @@ The Game 7 Protocol is a comprehensive mono repository that includes all the ess
 ## Repository Structure
 
 - **frontend**: This directory contains the codebase for the user interface of the Game 7 Protocol. Built with modern web technologies, it offers a seamless and intuitive user experience.
-  
+
 - **backend**: This directory houses the server-side logic, including APIs, database management, and other essential backend services. It ensures robust and secure data handling for the protocol.
-  
+
 - **web3**: This directory includes all the web3 components, such as smart contracts, that power the Game 7 Protocol. These contracts are written in Solidity and are responsible for the decentralized logic of the game, ensuring transparency and security.
 
-- **cmd**: This directory contains the command-line interface (CLI) for the Game 7 Protocol. It provides a convenient way to interact with the protocol from the command line.
+- **cmd**: This directory contains the command-line interfaces (CLI) for the Game 7 Protocol. It provides a convenient way to interact with the protocol from the command line. The directory also contains some other command-line
+utilities used in the development of the protocol.
