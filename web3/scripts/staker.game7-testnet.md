@@ -116,3 +116,88 @@ Result:
 ```
 0: {0x0000000000000000000000000000000000000000 1 0x0000000000000000000000000000000000000000 0 true 60 0}
 ```
+
+### Staking into the pool
+
+- [x] Check the number of staking positions that exist on the contract
+
+```bash
+bin/game7 staker total-supply \
+    --contract $STAKER \
+    --rpc $RPC
+```
+
+Result:
+
+```
+0: 0
+```
+
+- [x] Stake 1000000000000000000 wei worth of TG7 into the pool
+
+```bash
+bin/game7 staker stake-native \
+    --contract $STAKER \
+    --rpc $RPC \
+    --keyfile $SENDER \
+    --pool-id $NATIVE_TOKEN_STAKING_POOL_ID \
+    --value 1000000000000000000
+```
+
+Transaction: [`0x54c29d4bb3c7aff7e290a0fcdf9b07eba2fabfbda3c09201ecb9f127d4851e1d`](https://explorer-game7-testnet-0ilneybprf.t.conduit.xyz/tx/0x54c29d4bb3c7aff7e290a0fcdf9b07eba2fabfbda3c09201ecb9f127d4851e1d)
+
+- [x] Check the number of staking positions that exist on the contract
+
+```bash
+bin/game7 staker total-supply \
+    --contract $STAKER \
+    --rpc $RPC
+```
+
+Result:
+
+```
+0: 1
+```
+
+- [x] Check the owner of position token with ID 0
+
+```bash
+bin/game7 staker owner-of \
+    --contract $STAKER \
+    --rpc $RPC \
+    --token-id 0
+```
+
+Result:
+
+```
+0: 0x9ed191DB1829371F116Deb9748c26B49467a592A
+```
+
+- [x] Read the position information for this position
+
+```bash
+bin/game7 staker positions \
+    --contract $STAKER \
+    --rpc $RPC \
+    --arg-0 0
+```
+
+Result:
+
+```
+0: {0 1000000000000000000 1721529000 0}
+```
+
+- [x] Unstake the position
+
+```bash
+bin/game7 staker unstake \
+    --contract $STAKER \
+    --rpc $RPC \
+    --keyfile $SENDER \
+    --position-token-id 0
+```
+
+Transaction: [`0xb6e7968c15e651fbd0055bb3a7fc1d8f5d2affaa7c5b9942a979e8f0b4d8918d`](https://explorer-game7-testnet-0ilneybprf.t.conduit.xyz/tx/0xb6e7968c15e651fbd0055bb3a7fc1d8f5d2affaa7c5b9942a979e8f0b4d8918d)
