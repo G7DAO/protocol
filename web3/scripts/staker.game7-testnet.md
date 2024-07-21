@@ -6,8 +6,8 @@
 
 Deployed in transaction [`0xfaaf6455fa781fb85e4dde990ffb951b7e367245817e5ad5cf5f36e93346dff7`](https://explorer-game7-testnet-0ilneybprf.t.conduit.xyz/tx/0xfaaf6455fa781fb85e4dde990ffb951b7e367245817e5ad5cf5f36e93346dff7).
 
-Staking pool for native token with a 60 second lockup and no cooldown has pool ID `0`. This pool is owned by the
-zero address, and cannot be modified.
+Staking pool for native token with a 60 second lockup and no cooldown has pool ID `0`. Positions in this
+staking pool are transferable. This pool is owned by the zero address, and cannot be modified.
 
 ### Set up environment variables
 
