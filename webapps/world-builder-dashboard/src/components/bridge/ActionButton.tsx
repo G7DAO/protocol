@@ -5,7 +5,7 @@ import styles from './ActionButton.module.css'
 import { ethers } from 'ethers'
 import IconLoading01 from '@/assets/IconLoading01'
 import { HighNetworkInterface, NetworkInterface, useBlockchainContext } from '@/components/bridge/BlockchainContext'
-import { sendDepositERC20Transaction } from '@/components/bridge/depositERC20'
+import { depositERC20ArbitrumSDK, DepositRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
 import { sendDepositERC20ToNativeTransaction } from '@/components/bridge/depositERC20ToNative'
 import { sendWithdrawERC20Transaction } from '@/components/bridge/withdrawERC20'
 import { sendWithdrawTransaction } from '@/components/bridge/withdrawNativeToken'
@@ -125,12 +125,14 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount }) => {
         if (selectedHighNetwork.chainId === L3_NETWORK.chainId) {
           return sendDepositERC20ToNativeTransaction(amount, connectedAccount, selectedHighNetwork, provider)
         }
-        return sendDepositERC20Transaction(amount, connectedAccount, selectedLowNetwork, selectedHighNetwork, provider)
+        // return sendDepositERC20Transaction(amount, connectedAccount, selectedLowNetwork, selectedHighNetwork, provider)
+        const signer = provider.getSigner()
+        return depositERC20ArbitrumSDK(selectedLowNetwork, selectedHighNetwork, amount, signer)
       }
       throw new Error('no window.ethereum')
     },
     {
-      onSuccess: (receipt: ethers.providers.TransactionReceipt, amount) => {
+      onSuccess: (deposit: DepositRecord) => {
         try {
           const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
 
@@ -138,24 +140,12 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount }) => {
           if (transactionsString) {
             transactions = JSON.parse(transactionsString)
           }
-          transactions.push({
-            isDeposit: true,
-            timestamp: Date.now() / 1000,
-            minedTimestamp: Date.now() / 1000 - 7,
-            amount,
-            txHash: receipt.transactionHash,
-            chainId: selectedHighNetwork.chainId,
-            delay: 60,
-            l2RPC: selectedLowNetwork.rpcs[0],
-            l3RPC: selectedHighNetwork.rpcs[0],
-            from: connectedAccount,
-            to: connectedAccount
-          })
+          transactions.push({ ...deposit, isDeposit: true })
           localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(transactions))
         } catch (e) {
           console.log(e)
         }
-        console.log(receipt)
+        console.log(deposit)
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
         queryClient.refetchQueries(['incomingMessages'])
