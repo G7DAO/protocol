@@ -51,10 +51,10 @@ const BridgeView: React.FC = () => {
     account: connectedAccount,
     rpc: selectedHighNetwork.rpcs[0]
   })
-  // const { data: l3NativeBalance, isFetching: isFetchingL3NativeBalance } = useNativeBalance({
-  //   account: connectedAccount,
-  //   rpc: L3_NETWORK.rpcs[0]
-  // })
+  const { data: l3NativeBalance, isFetching: isFetchingL3NativeBalance } = useNativeBalance({
+    account: connectedAccount,
+    rpc: L3_NETWORK.rpcs[0]
+  })
   const { data: lowNetworkNativeBalance } = useNativeBalance({
     account: connectedAccount,
     rpc: selectedLowNetwork.rpcs[0]
@@ -96,7 +96,7 @@ const BridgeView: React.FC = () => {
     } else {
       return (
         <NetworkSelector
-          networks={[L2_NETWORK]}
+          networks={[L2_NETWORK, L3_NETWORK]}
           selectedNetwork={selectedHighNetwork}
           onChange={setSelectedHighNetwork}
         />
@@ -143,9 +143,19 @@ const BridgeView: React.FC = () => {
         symbol={L3_NATIVE_TOKEN_SYMBOL}
         value={value}
         setValue={setValue}
-        balance={direction === 'DEPOSIT' ? lowNetworkBalance ?? '0' : highNetworkBalance ?? '0'}
+        balance={
+          direction === 'DEPOSIT'
+            ? lowNetworkBalance ?? '0'
+            : (selectedHighNetwork.chainId === L3_NETWORK.chainId ? l3NativeBalance : highNetworkBalance) ?? '0'
+        }
         rate={g7tUsdRate.data ?? 0}
-        isFetchingBalance={direction === 'DEPOSIT' ? isFetchingLowNetworkBalance : isFetchingHighNetworkBalance}
+        isFetchingBalance={
+          direction === 'DEPOSIT'
+            ? isFetchingLowNetworkBalance
+            : selectedHighNetwork.chainId === L3_NETWORK.chainId
+              ? isFetchingL3NativeBalance
+              : isFetchingHighNetworkBalance
+        }
       />
       <TransactionSummary
         direction={direction}
