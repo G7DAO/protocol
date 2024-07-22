@@ -20,7 +20,7 @@ export const L2_NETWORK: HighNetworkInterface = {
   name: 'arbitrumSepolia',
   displayName: 'Arbitrum Sepolia',
   rpcs: ['https://sepolia-rollup.arbitrum.io/rpc'],
-  blockExplorerUrls: ['https://sepolia.arbiscan.io/'],
+  blockExplorerUrls: ['https://sepolia.arbiscan.io'],
   nativeCurrency: {
     decimals: 18,
     name: 'ETH',
@@ -54,3 +54,5 @@ export const MaxUint256: BigNumber = /*#__PURE__*/ BigNumber.from(
   '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
 )
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+export const LOW_NETWORKS = [L1_NETWORK, L2_NETWORK]
+export const HIGH_NETWORKS = [L2_NETWORK, L3_NETWORK]
