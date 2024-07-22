@@ -1275,6 +1275,56 @@ This should be true for all pairs of possible pools.
 
 It can be tested with a single pair of pools.
 
+### `STAKER-120`: If a pool administrator changes the pool configuration before a user has unstaked or while that user is in the process of unstaking, the updated configuration applies to the user
+
+For pools without cooldowns, the new `lockupSeconds` setting applies to all unstaked users.
+
+For pools with cooldowns, for users who have not yet initiated a cooldown, the new `lockupSeconds` setting applies to determine when it is possible for them to `initiateUnstake`.
+
+For pools with cooldowns, for users who have initiated a cooldown already, the new `cooldownSeconds` setting applies.
+
+Position tokens are no longer transferable even if they were transferable, and were transferred! before.
+
+Position tokens that were not transferable before become transferable if so configured.
+
+### `STAKER-121`: Position tokens from transferable pools can be staked back into the `Staker`
+
+Because `Staker` positions are ERC721 tokens, as long as the pool under which a position has been opened is transferable,
+the position can be staked back into the contract.
+
+### `STAKER-122`: A user must call the correct `stake*` method to stake their tokens.
+
+If a pool has a `tokenType` which doesn't match the `stake*` method that a user is calling, the contract
+should revert with:
+
+```
+    error IncorrectTokenType(uint256 poolID, uint256 poolTokenType, uint256 tokenTypeArg);
+```
+
+### `STAKER-123`: When a user calls `stakeNative`, they must stake a non-zero number of tokens
+
+Otherwise, their transaction should revert with:
+
+```
+    error NothingToStake();
+```
+
+### `STAKER-124`: When a user calls `stakeERC20`, they must stake a non-zero number of tokens
+
+Otherwise, their transaction should revert with:
+
+```
+    error NothingToStake();
+```
+
+### `STAKER-125`: When a user calls `stakeERC1155`, they must stake a non-zero number of tokens
+
+Otherwise, their transaction should revert with:
+
+```
+    error NothingToStake();
+```
+
 ## Adding new flows
 
 Label the new flows using the syntax `TAG-modifier` with `STAKER` as the `TAG` and `*` as the modifier.
