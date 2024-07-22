@@ -1,68 +1,30 @@
 import React from 'react'
-import { L2_NETWORK, L3_NATIVE_TOKEN_SYMBOL } from '../../../constants'
+import { HIGH_NETWORKS, L3_NATIVE_TOKEN_SYMBOL, LOW_NETWORKS } from '../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import { Skeleton } from 'summon-ui/mantine'
 import IconArrowNarrowDown from '@/assets/IconArrowNarrowDown'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
-import { L3_NETWORKS } from '@/components/bridge/l3Networks'
+import { DepositRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
 import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
+import { ETA, timeAgo } from '@/utils/timeFormat'
 
-const timeAgo = (timestamp: number) => {
-  const now = new Date().getTime()
-  const date = new Date(Number(timestamp) * 1000).getTime()
-  const timeDifference = Math.floor((now - date) / 1000)
-
-  const units = [
-    { name: 'year', inSeconds: 60 * 60 * 24 * 365 },
-    { name: 'month', inSeconds: 60 * 60 * 24 * 30 },
-    { name: 'day', inSeconds: 60 * 60 * 24 },
-    { name: 'hour', inSeconds: 60 * 60 },
-    { name: 'minute', inSeconds: 60 },
-    { name: 'second', inSeconds: 1 }
-  ]
-
-  for (const unit of units) {
-    const value = Math.floor(timeDifference / unit.inSeconds)
-    if (value >= 1) {
-      return `${value} ${unit.name}${value > 1 ? 's' : ''} ago`
-    }
-  }
-  return 'just now'
-}
-
-const networkName = (chainId: number) => {
-  const network = L3_NETWORKS.find((n) => n.chainInfo.chainId === chainId)
-  return network?.chainInfo.chainName
-}
-
-const networkExplorer = (): string | undefined => {
-  const network = L2_NETWORK
+const getBlockExplorerUrl = (chainId: number) => {
+  const network = [...LOW_NETWORKS, ...HIGH_NETWORKS].find((n) => n.chainId === chainId)
   if (network?.blockExplorerUrls) {
-    return network?.blockExplorerUrls[0] ?? undefined
+    return network.blockExplorerUrls[0]
   }
-  return
 }
 
 interface DepositProps {
-  txHash: string
-  chainId: number
-  transaction: any
+  deposit: DepositRecord
 }
-const Deposit: React.FC<DepositProps> = ({ txHash, chainId, transaction }) => {
-  const l2BlockExplorer = networkExplorer()
-  const l3ExplorerLink = `${l2BlockExplorer}/tx/${txHash}`
-  const handleStatusClick = () => {
-    if (!l3ExplorerLink) {
-      return
-    }
-    window.open(l3ExplorerLink, '_blank')
+const Deposit: React.FC<DepositProps> = ({ deposit }) => {
+  const depositInfo = {
+    from: LOW_NETWORKS.find((n) => n.chainId === deposit.lowNetworkChainId)?.name ?? '',
+    to: HIGH_NETWORKS.find((n) => n.chainId === deposit.highNetworkChainId)?.name ?? ''
   }
 
-  const status = useDepositStatus(transaction)
-
-  if (!status.isLoading && !status.data) {
-    return <></>
-  }
+  const status = useDepositStatus(deposit)
 
   return (
     <>
@@ -80,19 +42,35 @@ const Deposit: React.FC<DepositProps> = ({ txHash, chainId, transaction }) => {
               <IconArrowNarrowDown stroke={'#3538CD'} />
             </div>
           </div>
-          <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
-          <div className={styles.gridItem}>{`${status.data?.value} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
-          <div className={styles.gridItem}>{L2_NETWORK.displayName}</div>
-          <div className={styles.gridItem}>{networkName(chainId) ?? ''}</div>
+          <div className={styles.gridItem}>{timeAgo(deposit.lowNetworkTimestamp)}</div>
+          <div className={styles.gridItem}>{`${deposit.amount} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
+          <div className={styles.gridItem}>{depositInfo.from}</div>
+          <div className={styles.gridItem}>{depositInfo.to}</div>
           <>
-            <div className={styles.gridItem}>
-              <div className={styles.settled} onClick={handleStatusClick}>
-                Settled
-                {!!l3ExplorerLink && <IconLinkExternal02 stroke={'#027A48'} />}
+            <a
+              href={`${getBlockExplorerUrl(deposit.lowNetworkChainId)}/tx/${deposit.lowNetworkHash}`}
+              target={'_blank'}
+            >
+              <div className={styles.gridItem}>
+                {status.data && status.data.l2Result?.complete ? (
+                  <div className={styles.settled}>
+                    Settled
+                    <IconLinkExternal02 stroke={'#027A48'} />
+                  </div>
+                ) : (
+                  <div className={styles.pending}>
+                    Pending
+                    <IconLinkExternal02 stroke={'#175CD3'} />
+                  </div>
+                )}
               </div>
-            </div>
+            </a>
             <div className={styles.gridItem}>
-              <div></div>
+              {status.data && status.data.highNetworkTimestamp ? (
+                <div>{timeAgo(status.data.highNetworkTimestamp)}</div>
+              ) : (
+                <div>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)}</div>
+              )}
             </div>
           </>
         </>

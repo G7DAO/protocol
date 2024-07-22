@@ -8,7 +8,7 @@ import { useMessages } from '@/hooks/useL2ToL1MessageStatus'
 
 interface WithdrawTransactionsProps {}
 const WithdrawTransactions: React.FC<WithdrawTransactionsProps> = () => {
-  const { connectedAccount, selectedL3Network } = useBlockchainContext()
+  const { connectedAccount } = useBlockchainContext()
   const messages = useMessages(connectedAccount, L2_NETWORK)
 
   const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status']
@@ -30,7 +30,7 @@ const WithdrawTransactions: React.FC<WithdrawTransactionsProps> = () => {
                   !tx.isDeposit ? (
                     <Withdrawal txHash={tx.txHash} chainId={tx.chainId} key={idx} delay={tx.delay} />
                   ) : (
-                    <Deposit txHash={tx.txHash} chainId={selectedL3Network.chainInfo.chainId} transaction={tx} />
+                    <>{tx.lowNetworkHash && <Deposit deposit={tx} />}</>
                   )
                 )}
             </div>
