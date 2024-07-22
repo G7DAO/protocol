@@ -10,55 +10,8 @@ import IconLoading01 from '@/assets/IconLoading01'
 import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
 import { L3_NETWORKS } from '@/components/bridge/l3Networks'
 import useL2ToL1MessageStatus from '@/hooks/useL2ToL1MessageStatus'
+import { ETA, timeAgo } from '@/utils/timeFormat'
 import { L2ToL1MessageStatus, L2ToL1MessageWriter, L2TransactionReceipt } from '@arbitrum/sdk'
-
-const timeAgo = (timestamp: number) => {
-  const now = new Date().getTime()
-  const date = new Date(Number(timestamp) * 1000).getTime()
-  const timeDifference = Math.floor((now - date) / 1000)
-
-  const units = [
-    { name: 'year', inSeconds: 60 * 60 * 24 * 365 },
-    { name: 'month', inSeconds: 60 * 60 * 24 * 30 },
-    { name: 'day', inSeconds: 60 * 60 * 24 },
-    { name: 'hour', inSeconds: 60 * 60 },
-    { name: 'minute', inSeconds: 60 },
-    { name: 'second', inSeconds: 1 }
-  ]
-
-  for (const unit of units) {
-    const value = Math.floor(timeDifference / unit.inSeconds)
-    if (value >= 1) {
-      return `${value} ${unit.name}${value > 1 ? 's' : ''} ago`
-    }
-  }
-  return 'just now'
-}
-
-const ETA = (timestamp: number, delayInSeconds: number) => {
-  const now = new Date().getTime()
-  const date = new Date(Number(timestamp) * 1000 + delayInSeconds * 1000).getTime()
-  const timeDifference = Math.floor((date - now) / 1000)
-  if (timeDifference < 0) {
-    return '~now'
-  }
-  const units = [
-    { name: 'year', inSeconds: 60 * 60 * 24 * 365 },
-    { name: 'month', inSeconds: 60 * 60 * 24 * 30 },
-    { name: 'day', inSeconds: 60 * 60 * 24 },
-    { name: 'hour', inSeconds: 60 * 60 },
-    { name: 'minute', inSeconds: 60 },
-    { name: 'second', inSeconds: 1 }
-  ]
-
-  for (const unit of units) {
-    const value = Math.floor(timeDifference / unit.inSeconds)
-    if (value >= 1) {
-      return `~${value} ${unit.name}${value > 1 ? 's' : ''}`
-    }
-  }
-  return 'just now'
-}
 
 const networkName = (chainId: number) => {
   const network = L3_NETWORKS.find((n) => n.chainInfo.chainId === chainId)
