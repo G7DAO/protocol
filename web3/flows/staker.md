@@ -1253,6 +1253,27 @@ The metadata should indicate:
 3. The time at which the positon was opened
 4. The time at which the lockup on the position expires
 
+#### `STAKER-115`: `CurrentAmountInPool` and `CurrentPositionsInPool` should accurate reflect the amount of tokens and number of positions currently open under a native token staking pool
+
+These functions are called via `CurrentAmountInPool(poolID)` and `CurrentPositionsInPool(poolID)`.
+
+#### `STAKER-116`: `CurrentAmountInPool` and `CurrentPositionsInPool` should accurate reflect the amount of tokens and number of positions currently open under an ERC20 staking pool
+
+These functions are called via `CurrentAmountInPool(poolID)` and `CurrentPositionsInPool(poolID)`.
+
+#### `STAKER-117`: `CurrentAmountInPool` and `CurrentPositionsInPool` should accurate reflect the amount of tokens and number of positions currently open under an ERC721 staking pool
+
+These functions are called via `CurrentAmountInPool(poolID)` and `CurrentPositionsInPool(poolID)`.
+
+#### `STAKER-118`: `CurrentAmountInPool` and `CurrentPositionsInPool` should accurate reflect the amount of tokens and number of positions currently open under an ERC1155 staking pool
+
+These functions are called via `CurrentAmountInPool(poolID)` and `CurrentPositionsInPool(poolID)`.
+
+### `STAKER-119`: `CurrentAmountInPool` and `CurrentPositionsInPool` should not be affected by positions opened under other pools
+
+This should be true for all pairs of possible pools.
+
+It can be tested with a single pair of pools.
 
 ## Adding new flows
 

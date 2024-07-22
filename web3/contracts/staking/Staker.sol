@@ -74,6 +74,9 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
     uint256 public TotalPools;
     uint256 public TotalPositions;
 
+    mapping(uint256 => uint256) public CurrentAmountInPool;
+    mapping(uint256 => uint256) public CurrentPositionsInPool;
+
     // Pool ID => StakingPool struct
     mapping(uint256 => StakingPool) public Pools;
 
@@ -242,6 +245,9 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
             unstakeInitiatedAt: 0
         });
 
+        CurrentAmountInPool[poolID] += msg.value;
+        CurrentPositionsInPool[poolID]++;
+
         emit Staked(positionTokenID, msg.sender, poolID, msg.value);
     }
 
@@ -267,6 +273,9 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
             unstakeInitiatedAt: 0
         });
 
+        CurrentAmountInPool[poolID] += amount;
+        CurrentPositionsInPool[poolID]++;
+
         emit Staked(positionTokenID, msg.sender, poolID, amount);
     }
 
@@ -287,6 +296,9 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
             stakeTimestamp: block.timestamp,
             unstakeInitiatedAt: 0
         });
+
+        CurrentAmountInPool[poolID]++;
+        CurrentPositionsInPool[poolID]++;
 
         emit Staked(positionTokenID, msg.sender, poolID, tokenID);
     }
@@ -312,6 +324,9 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
             stakeTimestamp: block.timestamp,
             unstakeInitiatedAt: 0
         });
+
+        CurrentAmountInPool[poolID] += amount;
+        CurrentPositionsInPool[poolID]++;
 
         emit Staked(positionTokenID, msg.sender, poolID, amount);
     }
@@ -361,6 +376,14 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
                 revert LockupNotExpired(position.stakeTimestamp + pool.lockupSeconds);
             }
         }
+
+        // Reduce statistics tracking tokens and positions open under each pool.
+        if (pool.tokenType == ERC721_TOKEN_TYPE) {
+            CurrentAmountInPool[position.poolID]--;
+        } else {
+            CurrentAmountInPool[position.poolID] -= position.amountOrTokenID;
+        }
+        CurrentPositionsInPool[position.poolID]--;
 
         // Delete position data and burn the position token
         uint256 amountOrTokenID = position.amountOrTokenID;
