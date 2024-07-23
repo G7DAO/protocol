@@ -1,4 +1,7 @@
-export const timeAgo = (timestamp: number) => {
+export const timeAgo = (timestamp: number | undefined) => {
+  if (!timestamp) {
+    return ''
+  }
   const now = new Date().getTime()
   const date = new Date(Number(timestamp) * 1000).getTime()
   const timeDifference = Math.floor((now - date) / 1000)
