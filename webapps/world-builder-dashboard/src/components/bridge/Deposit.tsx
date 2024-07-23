@@ -7,21 +7,15 @@ import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import { DepositRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
 import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
 import { ETA, timeAgo } from '@/utils/timeFormat'
-
-const getBlockExplorerUrl = (chainId: number) => {
-  const network = [...LOW_NETWORKS, ...HIGH_NETWORKS].find((n) => n.chainId === chainId)
-  if (network?.blockExplorerUrls) {
-    return network.blockExplorerUrls[0]
-  }
-}
+import { getBlockExplorerUrl } from '@/utils/web3utils'
 
 interface DepositProps {
   deposit: DepositRecord
 }
 const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   const depositInfo = {
-    from: LOW_NETWORKS.find((n) => n.chainId === deposit.lowNetworkChainId)?.name ?? '',
-    to: HIGH_NETWORKS.find((n) => n.chainId === deposit.highNetworkChainId)?.name ?? ''
+    from: LOW_NETWORKS.find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
+    to: HIGH_NETWORKS.find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
   }
 
   const status = useDepositStatus(deposit)
@@ -50,6 +44,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
             <a
               href={`${getBlockExplorerUrl(deposit.lowNetworkChainId)}/tx/${deposit.lowNetworkHash}`}
               target={'_blank'}
+              className={styles.explorerLink}
             >
               <div className={styles.gridItem}>
                 {status.data && status.data.l2Result?.complete ? (
