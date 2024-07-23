@@ -1,4 +1,17 @@
+import { L2_NETWORK, L3_NETWORK } from '../../../constants'
 import { ethers } from 'ethers'
+
+export interface WithdrawRecord {
+  amount: string
+  lowNetworkChainId: number
+  highNetworkChainId: number
+  highNetworkHash: string
+  lowNetworkHash?: string
+  highNetworkTimestamp: number
+  lowNetworkBlockNumber?: number
+  complete?: boolean
+  challengePeriod: number //seconds
+}
 
 const arbSysAddress = '0x0000000000000000000000000000000000000064'
 const arbSysABI = [
@@ -23,7 +36,7 @@ const arbSysABI = [
   }
 ]
 
-export const sendWithdrawTransaction = async (amountInNative: string, destination: string) => {
+export const sendWithdrawTransaction = async (amountInNative: string, destination: string): Promise<WithdrawRecord> => {
   try {
     if (!window.ethereum) {
       throw new Error('no provider')
@@ -46,8 +59,14 @@ export const sendWithdrawTransaction = async (amountInNative: string, destinatio
     const receipt = await txResponse.wait()
     console.log('Transaction receipt:', receipt)
     console.log('Transaction hash:', receipt.transactionHash)
-
-    return receipt
+    return {
+      amount: amountInNative,
+      lowNetworkChainId: L2_NETWORK.chainId,
+      highNetworkChainId: L3_NETWORK.chainId,
+      highNetworkHash: txResponse.hash,
+      highNetworkTimestamp: Date.now() / 1000,
+      challengePeriod: 60 * 60
+    }
   } catch (error) {
     console.error('Transaction failed:', error)
     throw error
