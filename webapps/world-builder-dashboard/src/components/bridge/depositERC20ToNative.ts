@@ -1,8 +1,10 @@
 import { ethers, providers, utils } from 'ethers'
-import { HighNetworkInterface } from '@/components/bridge/BlockchainContext'
+import { HighNetworkInterface, NetworkInterface } from '@/components/bridge/BlockchainContext'
+import { DepositRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
 import { convertToBigNumber } from '@/utils/web3utils'
 import { NodeInterface__factory } from '@arbitrum/sdk/dist/lib/abi/factories/NodeInterface__factory'
 import { NODE_INTERFACE_ADDRESS } from '@arbitrum/sdk/dist/lib/dataEntities/constants'
+import { Signer } from '@ethersproject/abstract-signer'
 
 const L2_RPC = 'https://sepolia-rollup.arbitrum.io/rpc'
 const l2Provider = new providers.JsonRpcProvider(L2_RPC)
@@ -171,27 +173,29 @@ const estimateDepositERC20ToNativeGas = async (amount: string, account: string, 
     }
   }
 
-  return ethers.BigNumber.from('0x053d2d') //fallback for zero price (P);
+  return ethers.BigNumber.from('0x346d32') //fallback for zero price (P);
 }
 
 export const sendDepositERC20ToNativeTransaction = async (
+  lowNetwork: NetworkInterface,
+  highNetwork: HighNetworkInterface,
   amount: string,
-  account: string,
-  l3Network: HighNetworkInterface,
-  l2Provider: ethers.providers.Web3Provider
-) => {
-  const destinationAddress = l3Network.inbox
+  l2Signer: Signer,
+  account: string
+): Promise<DepositRecord> => {
+  const destinationAddress = highNetwork.inbox
   const ethAmount = convertToBigNumber(amount)
-  const ERC20InboxContract = new ethers.Contract(destinationAddress, ERC20_INBOX_ABI, l2Provider.getSigner(account))
-  const gasEstimate = await estimateDepositERC20ToNativeGas(amount, account, l3Network)
+  const ERC20InboxContract = new ethers.Contract(destinationAddress, ERC20_INBOX_ABI, l2Signer)
+  const gasEstimate = await estimateDepositERC20ToNativeGas(amount, account, highNetwork)
   console.log(gasEstimate)
+
   // const gasLimit = ethers.utils.parseEther(gasEstimate);
   // console.log(gasLimit);
   const txRequest = await ERC20InboxContract.populateTransaction.depositERC20(ethAmount, {
     gasLimit: gasEstimate
   })
 
-  const txResponse = await l2Provider.getSigner(account).sendTransaction(txRequest)
+  const txResponse = await l2Signer.sendTransaction(txRequest)
 
   console.log('Transaction hash:', txResponse.hash)
 
@@ -199,5 +203,12 @@ export const sendDepositERC20ToNativeTransaction = async (
   const receipt = await txResponse.wait()
   console.log('Transaction was mined in block', receipt.blockNumber)
 
-  return receipt
+  return {
+    amount,
+    lowNetworkChainId: lowNetwork.chainId,
+    highNetworkChainId: highNetwork.chainId,
+    lowNetworkHash: txResponse.hash,
+    lowNetworkTimestamp: Date.now() / 1000,
+    retryableCreationTimeout: 15 * 60
+  }
 }
