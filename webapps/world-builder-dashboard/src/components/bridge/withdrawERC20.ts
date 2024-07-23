@@ -1,4 +1,4 @@
-import { L1_NETWORK } from '../../../constants'
+import { L1_NETWORK, L2_NETWORK } from '../../../constants'
 import { ethers } from 'ethers'
 
 const L2GatewayRouterABI = [
@@ -66,7 +66,14 @@ export const sendWithdrawERC20Transaction = async (amountInNative: string, desti
     console.log('Transaction receipt:', receipt)
     console.log('Transaction hash:', receipt.transactionHash)
 
-    return receipt
+    return {
+      amount: amountInNative,
+      lowNetworkChainId: L1_NETWORK.chainId,
+      highNetworkChainId: L2_NETWORK.chainId,
+      highNetworkHash: txResponse.hash,
+      highNetworkTimestamp: Date.now() / 1000,
+      challengePeriod: 60 * 60
+    }
   } catch (error) {
     console.error('Transaction failed:', error)
     throw error
