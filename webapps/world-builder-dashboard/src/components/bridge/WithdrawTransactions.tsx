@@ -28,9 +28,9 @@ const WithdrawTransactions: React.FC<WithdrawTransactionsProps> = () => {
                 .reverse()
                 .map((tx: any, idx: number) =>
                   !tx.isDeposit ? (
-                    <Withdrawal txHash={tx.txHash} chainId={tx.chainId} key={idx} delay={tx.delay} />
+                    <Withdrawal withdrawal={tx} key={idx} />
                   ) : (
-                    <>{tx.lowNetworkHash && <Deposit deposit={tx} />}</>
+                    <>{tx.lowNetworkHash && <Deposit deposit={tx} key={idx} />}</>
                   )
                 )}
             </div>
