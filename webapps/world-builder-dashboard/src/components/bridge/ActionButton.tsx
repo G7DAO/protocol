@@ -8,7 +8,7 @@ import { HighNetworkInterface, NetworkInterface, useBlockchainContext } from '@/
 import { depositERC20ArbitrumSDK, DepositRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
 import { sendDepositERC20ToNativeTransaction } from '@/components/bridge/depositERC20ToNative'
 import { sendWithdrawERC20Transaction } from '@/components/bridge/withdrawERC20'
-import { sendWithdrawTransaction } from '@/components/bridge/withdrawNativeToken'
+import { sendWithdrawTransaction, WithdrawRecord } from '@/components/bridge/withdrawNativeToken'
 import { L2ToL1MessageStatus } from '@arbitrum/sdk'
 
 interface ActionButtonProps {
@@ -122,11 +122,17 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount }) => {
       }
       if (window.ethereum) {
         const provider = new ethers.providers.Web3Provider(window.ethereum)
+        const signer = provider.getSigner()
         if (selectedHighNetwork.chainId === L3_NETWORK.chainId) {
-          return sendDepositERC20ToNativeTransaction(amount, connectedAccount, selectedHighNetwork, provider)
+          return sendDepositERC20ToNativeTransaction(
+            selectedLowNetwork,
+            selectedHighNetwork as HighNetworkInterface,
+            amount,
+            signer,
+            connectedAccount
+          )
         }
         // return sendDepositERC20Transaction(amount, connectedAccount, selectedLowNetwork, selectedHighNetwork, provider)
-        const signer = provider.getSigner()
         return depositERC20ArbitrumSDK(selectedLowNetwork, selectedHighNetwork, amount, signer)
       }
       throw new Error('no window.ethereum')
@@ -149,6 +155,9 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount }) => {
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
         queryClient.refetchQueries(['incomingMessages'])
+      },
+      onError: (e: Error) => {
+        console.log(e)
       }
     }
   )
@@ -163,48 +172,38 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount }) => {
       return sendWithdrawTransaction(amount, connectedAccount)
     },
     {
-      onSuccess: async (receipt: ethers.providers.TransactionReceipt, variables) => {
+      onSuccess: async (record: WithdrawRecord) => {
         try {
           const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
           let transactions = []
           if (transactionsString) {
             transactions = JSON.parse(transactionsString)
           }
-          transactions.push({
-            txHash: receipt.transactionHash,
-            chainId: selectedHighNetwork.chainId,
-            delay: 60 * 60
-          })
+          transactions.push(record)
           localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(transactions))
         } catch (e) {
           console.log(e)
         }
         queryClient.setQueryData(
-          ['withdrawalStatus', receipt.transactionHash, selectedLowNetwork.rpcs[0], selectedHighNetwork.rpcs[0]],
+          ['withdrawalStatus', record.highNetworkHash, selectedLowNetwork.rpcs[0], selectedHighNetwork.rpcs[0]],
           () => {
             return {
               timestamp: new Date().getTime() / 1000,
               status: L2ToL1MessageStatus.UNCONFIRMED,
-              value: variables,
+              value: record.amount,
               confirmations: 1
             }
           }
         )
         queryClient.setQueryData(['incomingMessages', connectedAccount], (oldData: any) => {
-          return [
-            {
-              txHash: receipt.transactionHash,
-              chainId: selectedHighNetwork.chainId,
-              delay: 60 * 60,
-              l2RPC: selectedLowNetwork.rpcs[0],
-              l3RPC: selectedHighNetwork.rpcs[0]
-            },
-            ...oldData
-          ]
+          if (oldData) {
+            return [record, ...oldData]
+          }
+          return [record]
         })
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
-        console.log(receipt)
+        console.log(record)
       }
     }
   )
