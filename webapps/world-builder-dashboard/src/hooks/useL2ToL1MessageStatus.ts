@@ -1,8 +1,9 @@
 import { useQuery, useQueries, UseQueryResult } from 'react-query'
-import { HIGH_NETWORKS, LOW_NETWORKS } from '../../constants'
+import { HIGH_NETWORKS, L2_NETWORK, LOW_NETWORKS } from '../../constants'
 import { ethers, providers } from 'ethers'
 import { DepositRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
 import { L3_NETWORKS } from '@/components/bridge/l3Networks'
+import { WithdrawRecord } from '@/components/bridge/withdrawNativeToken'
 import { L1TransactionReceipt, L2ToL1MessageReader, L2ToL1MessageStatus, L2TransactionReceipt } from '@arbitrum/sdk'
 import { L1ContractCallTransactionReceipt } from '@arbitrum/sdk/dist/lib/message/L1Transaction'
 
@@ -35,37 +36,33 @@ export interface L2ToL1MessageStatusResult {
   l2Receipt?: L2TransactionReceipt
 }
 
-const useL2ToL1MessageStatus = (txHash: string, l2RPC: string, l3RPC: string) => {
+const useL2ToL1MessageStatus = (withdrawal: WithdrawRecord) => {
   return useQuery(
-    ['withdrawalStatus', txHash, l2RPC, l3RPC],
+    ['withdrawalStatus', withdrawal],
     async () => {
-      const l3Provider = new ethers.providers.JsonRpcProvider(l3RPC)
-      const l2Provider = new ethers.providers.JsonRpcProvider(l2RPC)
-      const receipt = await l3Provider.getTransactionReceipt(txHash)
-      const l2Receipt = new L2TransactionReceipt(receipt)
-      const log = receipt.logs.find((l) => l.data !== '0x')
-      let decodedLog
-
-      if (log) {
-        try {
-          const iface = new ethers.utils.Interface(eventABI)
-          decodedLog = iface.parseLog(log)
-        } catch (e) {
-          console.log(log, e)
-        }
+      const { lowNetworkChainId, highNetworkChainId, highNetworkHash, amount, highNetworkTimestamp } = withdrawal
+      console.log(withdrawal)
+      const lowNetwork = LOW_NETWORKS.find((n) => n.chainId === lowNetworkChainId)
+      const highNetwork = HIGH_NETWORKS.find((n) => n.chainId === highNetworkChainId)
+      if (!highNetwork || !lowNetwork) {
+        return undefined
       }
 
+      const l3Provider = new providers.JsonRpcProvider(highNetwork.rpcs[0])
+      const l2Provider = new providers.JsonRpcProvider(lowNetwork.rpcs[0])
+
+      const receipt = await l3Provider.getTransactionReceipt(highNetworkHash)
+      const l2Receipt = new L2TransactionReceipt(receipt)
       const messages: L2ToL1MessageReader[] = (await l2Receipt.getL2ToL1Messages(l2Provider)) as L2ToL1MessageReader[]
       const l2ToL1Msg: L2ToL1MessageReader = messages[0]
       const status: L2ToL1MessageStatus = await l2ToL1Msg.status(l3Provider)
-
+      console.log(l2Receipt, l2ToL1Msg)
       return {
-        from: decodedLog?.args?.caller,
-        to: decodedLog?.args?.destination,
-        value: ethers.utils.formatEther(decodedLog?.args?.callvalue ?? '0'),
-        timestamp: decodedLog?.args?.timestamp,
-        confirmations: receipt.confirmations,
         status,
+        from: highNetwork.displayName,
+        to: lowNetwork.displayName,
+        timestamp: highNetworkTimestamp,
+        amount,
         l2Receipt
       }
     },
@@ -80,10 +77,15 @@ export const useDepositStatus = (deposit: DepositRecord) => {
     ['depositStatus', deposit],
     async () => {
       //cancelled transaction: 0xc78c90171080a42fa53d752f055466ed0f05928dc95d38e2ac75094ffec48c2a
-      const { lowNetworkChainId, highNetworkChainId, lowNetworkHash } = deposit
+      const { lowNetworkChainId, highNetworkChainId, lowNetworkHash, lowNetworkTimestamp } = deposit
+      if (lowNetworkChainId === L2_NETWORK.chainId) {
+        return {
+          l2Result: { complete: true },
+          highNetworkTimestamp: lowNetworkTimestamp
+        }
+      }
       const lowNetwork = LOW_NETWORKS.find((n) => n.chainId === lowNetworkChainId)
       const highNetwork = HIGH_NETWORKS.find((n) => n.chainId === highNetworkChainId)
-      console.log(lowNetwork, highNetwork)
       if (!lowNetwork) {
         return undefined
       }
