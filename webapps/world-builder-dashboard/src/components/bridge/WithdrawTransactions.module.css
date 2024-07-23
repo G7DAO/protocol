@@ -234,6 +234,10 @@
   width: 100px;
 }
 
+.explorerLink {
+  text-decoration: none;
+}
+
 @keyframes rotateAnimation {
   0% {
     transform: rotate(0deg) scale(0.9);
