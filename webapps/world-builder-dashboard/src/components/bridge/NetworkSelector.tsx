@@ -4,12 +4,12 @@ import { Icon } from 'summon-ui'
 import { Combobox, InputBase, InputBaseProps, useCombobox } from 'summon-ui/mantine'
 import IconArbitrumOne from '@/assets/IconArbitrumOne'
 import IconEthereum from '@/assets/IconEthereum'
-import { NetworkInterface } from '@/components/bridge/BlockchainContext'
+import { HighNetworkInterface, NetworkInterface } from '@/components/bridge/BlockchainContext'
 
 type NetworkSelectorProps = {
   networks: NetworkInterface[]
   selectedNetwork: NetworkInterface
-  onChange: (network: NetworkInterface) => void
+  onChange: (network: NetworkInterface | HighNetworkInterface) => void
 } & InputBaseProps
 
 const NetworkSelector = ({ networks, onChange, selectedNetwork }: NetworkSelectorProps) => {

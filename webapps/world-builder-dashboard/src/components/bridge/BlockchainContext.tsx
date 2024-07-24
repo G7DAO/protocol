@@ -24,8 +24,8 @@ interface BlockchainContextType {
   setSelectedL3Network: (network: L3NetworkConfiguration) => void
   selectedLowNetwork: NetworkInterface
   setSelectedLowNetwork: (network: NetworkInterface) => void
-  selectedHighNetwork: HighNetworkInterface
-  setSelectedHighNetwork: (network: HighNetworkInterface) => void
+  selectedHighNetwork: NetworkInterface
+  setSelectedHighNetwork: (network: NetworkInterface) => void
 }
 
 export interface NetworkInterface {
@@ -60,7 +60,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   const [L2Provider, setL2Provider] = useState<ethers.providers.JsonRpcProvider>()
   const [selectedL3Network, _setSelectedL3Network] = useState<L3NetworkConfiguration>(L3_NETWORKS[0])
   const [selectedLowNetwork, setSelectedLowNetwork] = useState<NetworkInterface>(DEFAULT_LOW_NETWORK)
-  const [selectedHighNetwork, setSelectedHighNetwork] = useState<HighNetworkInterface>(DEFAULT_HIGH_NETWORK)
+  const [selectedHighNetwork, setSelectedHighNetwork] = useState<NetworkInterface>(DEFAULT_HIGH_NETWORK)
 
   const [connectedAccount, setConnectedAccount] = useState<string>()
   const tokenAddress = '0x5f88d811246222F6CB54266C42cc1310510b9feA'
@@ -86,12 +86,10 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   }, [window.ethereum])
 
   const handleAccountsChanged = async () => {
-    console.log('handleAccountsChange')
     const ethereum = window.ethereum
     if (ethereum) {
       const provider = new ethers.providers.Web3Provider(ethereum)
       const accounts = await provider.listAccounts()
-      console.log(accounts)
       if (accounts.length > 0) {
         setConnectedAccount(accounts[0])
       } else {
