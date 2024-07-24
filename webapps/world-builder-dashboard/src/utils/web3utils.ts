@@ -14,3 +14,7 @@ export const getBlockExplorerUrl = (chainId: number) => {
     return network.blockExplorerUrls[0]
   }
 }
+
+export const getNetwork = (chainId: number) => {
+  return [...LOW_NETWORKS, ...HIGH_NETWORKS].find((n) => n.chainId === chainId)
+}
