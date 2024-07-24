@@ -1,15 +1,38 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styles from './NotificationsButton.module.css'
+import { Modal, Popover } from 'summon-ui/mantine'
 import IconBell from '@/assets/IconBell'
+import { NetworkInterface } from '@/components/bridge/BlockchainContext'
+import NotificationsDropModal from '@/components/bridge/NotificationsDropModal'
 
-interface NotificationsButtonProps {}
-const NotificationsButton: React.FC<NotificationsButtonProps> = ({}) => {
+export interface BridgeNotification {
+  type: 'WITHDRAWAL' | 'DEPOSIT'
+  status: 'COMPLETED' | 'CLAIMABLE' | 'FAILED'
+  timestamp: number
+  amount: string
+  to: number
+  seen: boolean
+}
+
+interface NotificationsButtonProps {
+  notifications: BridgeNotification[]
+}
+const NotificationsButton: React.FC<NotificationsButtonProps> = ({ notifications }) => {
   return (
-    <button className={styles.container}>
-      <IconBell />
-      <div className={styles.label}>Notifications</div>
-      <div className={styles.badge}>2</div>
-    </button>
+    <Popover width={300} shadow='md' position='bottom-end' offset={16} radius={'8px'}>
+      <Popover.Target>
+        <button className={styles.container}>
+          <IconBell />
+          <div className={styles.label}>Notifications</div>
+          {notifications.filter((n) => !n.seen).length > 0 && (
+            <div className={styles.badge}>{notifications.filter((n) => !n.seen).length}</div>
+          )}
+        </button>
+      </Popover.Target>
+      <Popover.Dropdown>
+        <NotificationsDropModal notifications={notifications} />
+      </Popover.Dropdown>
+    </Popover>
   )
 }
 
