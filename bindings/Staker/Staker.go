@@ -46,8 +46,8 @@ var (
 
 // StakerMetaData contains all meta data concerning the Staker contract.
 var StakerMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"target\",\"type\":\"address\"}],\"name\":\"AddressEmptyCode\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"AddressInsufficientBalance\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ERC721EnumerableForbiddenBatchMint\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"ERC721IncorrectOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"ERC721InsufficientApproval\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"approver\",\"type\":\"address\"}],\"name\":\"ERC721InvalidApprover\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"ERC721InvalidOperator\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"ERC721InvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"receiver\",\"type\":\"address\"}],\"name\":\"ERC721InvalidReceiver\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"ERC721InvalidSender\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"ERC721NonexistentToken\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"ERC721OutOfBoundsIndex\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"FailedInnerCall\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"poolTokenType\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"tokenTypeArg\",\"type\":\"uint256\"}],\"name\":\"IncorrectTokenType\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"cooldownSeconds\",\"type\":\"uint256\"}],\"name\":\"InitiateUnstakeFirst\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidConfiguration\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidTokenType\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"expiresAt\",\"type\":\"uint256\"}],\"name\":\"LockupNotExpired\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NonAdministrator\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NothingToStake\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"}],\"name\":\"PositionNotTransferable\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ReentrancyGuardReentrantCall\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"}],\"name\":\"SafeERC20FailedOperation\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"UnauthorizedForPosition\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"approved\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"ApprovalForAll\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amountOrTokenID\",\"type\":\"uint256\"}],\"name\":\"Staked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"administrator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"transferable\",\"type\":\"bool\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"lockupSeconds\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"cooldownSeconds\",\"type\":\"uint256\"}],\"name\":\"StakingPoolConfigured\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenType\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenID\",\"type\":\"uint256\"}],\"name\":\"StakingPoolCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"UnstakeInitiated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amountOrTokenID\",\"type\":\"uint256\"}],\"name\":\"Unstaked\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"ERC1155_TOKEN_TYPE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"ERC20_TOKEN_TYPE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"ERC721_TOKEN_TYPE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"NATIVE_TOKEN_TYPE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"Pools\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"administrator\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenType\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenID\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"transferable\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"lockupSeconds\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"cooldownSeconds\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"Positions\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amountOrTokenID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"stakeTimestamp\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"unstakeInitiatedAt\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"TotalPools\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"TotalPositions\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenType\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenID\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"transferable\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"lockupSeconds\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"cooldownSeconds\",\"type\":\"uint256\"}],\"name\":\"createPool\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"getApproved\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"}],\"name\":\"initiateUnstake\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"isApprovedForAll\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"}],\"name\":\"metadataBytes\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"metadata\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"}],\"name\":\"metadataJSON\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"onERC1155Received\",\"outputs\":[{\"internalType\":\"bytes4\",\"name\":\"\",\"type\":\"bytes4\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"onERC721Received\",\"outputs\":[{\"internalType\":\"bytes4\",\"name\":\"\",\"type\":\"bytes4\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"ownerOf\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"safeTransferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"safeTransferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"setApprovalForAll\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"stakeERC1155\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"stakeERC20\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"tokenID\",\"type\":\"uint256\"}],\"name\":\"stakeERC721\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"}],\"name\":\"stakeNative\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"symbol\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"tokenByIndex\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"tokenOfOwnerByIndex\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"tokenURI\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"newAdministrator\",\"type\":\"address\"}],\"name\":\"transferPoolAdministration\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"}],\"name\":\"unstake\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"changeTransferability\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"transferable\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"changeLockup\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"lockupSeconds\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"changeCooldown\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"cooldownSeconds\",\"type\":\"uint256\"}],\"name\":\"updatePoolConfiguration\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
-	Bin: "0x60806040523480156200001157600080fd5b506040518060400160405280600c81526020017f47616d6537205374616b657200000000000000000000000000000000000000008152506040518060400160405280600881526020017f47375354414b455200000000000000000000000000000000000000000000000081525081600090816200008f91906200032c565b508060019081620000a191906200032c565b5050506001600a8190555062000413565b600081519050919050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b7f4e487b7100000000000000000000000000000000000000000000000000000000600052602260045260246000fd5b600060028204905060018216806200013457607f821691505b6020821081036200014a5762000149620000ec565b5b50919050565b60008190508160005260206000209050919050565b60006020601f8301049050919050565b600082821b905092915050565b600060088302620001b47fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8262000175565b620001c0868362000175565b95508019841693508086168417925050509392505050565b6000819050919050565b6000819050919050565b60006200020d620002076200020184620001d8565b620001e2565b620001d8565b9050919050565b6000819050919050565b6200022983620001ec565b62000241620002388262000214565b84845462000182565b825550505050565b600090565b6200025862000249565b620002658184846200021e565b505050565b5b818110156200028d57620002816000826200024e565b6001810190506200026b565b5050565b601f821115620002dc57620002a68162000150565b620002b18462000165565b81016020851015620002c1578190505b620002d9620002d08562000165565b8301826200026a565b50505b505050565b600082821c905092915050565b60006200030160001984600802620002e1565b1980831691505092915050565b60006200031c8383620002ee565b9150826002028217905092915050565b6200033782620000b2565b67ffffffffffffffff811115620003535762000352620000bd565b5b6200035f82546200011b565b6200036c82828562000291565b600060209050601f831160018114620003a457600084156200038f578287015190505b6200039b85826200030e565b8655506200040b565b601f198416620003b48662000150565b60005b82811015620003de57848901518255600182019150602085019450602081019050620003b7565b86831015620003fe5784890151620003fa601f891682620002ee565b8355505b6001600288020188555050505b505050505050565b6155b180620004236000396000f3fe6080604052600436106102195760003560e01c806370a0823111610123578063ae5ac921116100ab578063e63c6bf01161006f578063e63c6bf01461086f578063e985e9c51461089f578063f09e76a1146108dc578063f23a6e6114610907578063f60476f21461094457610219565b8063ae5ac92114610778578063b2db30e9146107a1578063b88d4fde146107de578063c87b56dd14610807578063d2ba44091461084457610219565b806377bd2e78116100f257806377bd2e78146106a5578063911e476c146106d057806395d89b41146106f9578063a22cb46514610724578063abd4ce781461074d57610219565b806370a08231146105a857806370e40272146105e557806373caf0f71461062257806373dfccca1461066257610219565b80632f745c59116101a6578063424b931111610175578063424b93111461049d57806342842e0e146104c85780634f6ccce7146104f15780636352211e1461052e5780636fafa1e91461056b57610219565b80632f745c59146103cf57806337d9e9cc1461040c5780633ab0f1c1146104495780633db263191461047457610219565b8063095ea7b3116101ed578063095ea7b3146102ec578063150b7a021461031557806318160ddd1461035257806323b872dd1461037d5780632e17de78146103a657610219565b80627d0cec1461021e57806301ffc9a71461024757806306fdde0314610284578063081812fc146102af575b600080fd5b34801561022a57600080fd5b5061024560048036038101906102409190613fa4565b610981565b005b34801561025357600080fd5b5061026e6004803603810190610269919061409e565b610afe565b60405161027b91906140da565b60405180910390f35b34801561029057600080fd5b50610299610b78565b6040516102a69190614185565b60405180910390f35b3480156102bb57600080fd5b506102d660048036038101906102d191906141a7565b610c0a565b6040516102e39190614215565b60405180910390f35b3480156102f857600080fd5b50610313600480360381019061030e919061425c565b610c26565b005b34801561032157600080fd5b5061033c60048036038101906103379190614301565b610c3c565b6040516103499190614398565b60405180910390f35b34801561035e57600080fd5b50610367610c51565b60405161037491906143c2565b60405180910390f35b34801561038957600080fd5b506103a4600480360381019061039f91906143dd565b610c5e565b005b3480156103b257600080fd5b506103cd60048036038101906103c891906141a7565b610cf5565b005b3480156103db57600080fd5b506103f660048036038101906103f1919061425c565b61114a565b60405161040391906143c2565b60405180910390f35b34801561041857600080fd5b50610433600480360381019061042e9190614430565b6111f3565b60405161044091906143c2565b60405180910390f35b34801561045557600080fd5b5061045e6113d4565b60405161046b91906143c2565b60405180910390f35b34801561048057600080fd5b5061049b60048036038101906104969190614470565b6113da565b005b3480156104a957600080fd5b506104b261152e565b6040516104bf91906143c2565b60405180910390f35b3480156104d457600080fd5b506104ef60048036038101906104ea91906143dd565b611534565b005b3480156104fd57600080fd5b50610518600480360381019061051391906141a7565b611554565b60405161052591906143c2565b60405180910390f35b34801561053a57600080fd5b50610555600480360381019061055091906141a7565b6115ca565b6040516105629190614215565b60405180910390f35b34801561057757600080fd5b50610592600480360381019061058d9190614430565b6115dc565b60405161059f91906143c2565b60405180910390f35b3480156105b457600080fd5b506105cf60048036038101906105ca91906144b0565b611807565b6040516105dc91906143c2565b60405180910390f35b3480156105f157600080fd5b5061060c600480360381019061060791906141a7565b6118c1565b6040516106199190614532565b60405180910390f35b34801561062e57600080fd5b50610649600480360381019061064491906141a7565b611a9b565b6040516106599493929190614554565b60405180910390f35b34801561066e57600080fd5b50610689600480360381019061068491906141a7565b611acb565b60405161069c9796959493929190614599565b60405180910390f35b3480156106b157600080fd5b506106ba611b5a565b6040516106c791906143c2565b60405180910390f35b3480156106dc57600080fd5b506106f760048036038101906106f29190614608565b611b5f565b005b34801561070557600080fd5b5061070e611fa0565b60405161071b9190614185565b60405180910390f35b34801561073057600080fd5b5061074b60048036038101906107469190614695565b612032565b005b34801561075957600080fd5b50610762612048565b60405161076f91906143c2565b60405180910390f35b34801561078457600080fd5b5061079f600480360381019061079a91906141a7565b61204e565b005b3480156107ad57600080fd5b506107c860048036038101906107c39190614430565b6121d4565b6040516107d591906143c2565b60405180910390f35b3480156107ea57600080fd5b5061080560048036038101906108009190614805565b6123bf565b005b34801561081357600080fd5b5061082e600480360381019061082991906141a7565b6123dc565b60405161083b9190614185565b60405180910390f35b34801561085057600080fd5b50610859612415565b60405161086691906143c2565b60405180910390f35b610889600480360381019061088491906141a7565b61241a565b60405161089691906143c2565b60405180910390f35b3480156108ab57600080fd5b506108c660048036038101906108c19190614888565b612598565b6040516108d391906140da565b60405180910390f35b3480156108e857600080fd5b506108f161262c565b6040516108fe91906143c2565b60405180910390f35b34801561091357600080fd5b5061092e600480360381019061092991906148c8565b612632565b60405161093b9190614398565b60405180910390f35b34801561095057600080fd5b5061096b600480360381019061096691906141a7565b612648565b6040516109789190614185565b60405180910390f35b6000600d600089815260200190815260200160002090508060000160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614610a21576040517f29f9fc8100000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b8615610a4457858160040160006101000a81548160ff0219169083151502179055505b8415610a54578381600501819055505b8215610a64578181600601819055505b8060000160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16887f8587d3b7f5e8e73d0f5be513ce84b6c7c9497e221295d831f57ba7ecc36589b58360040160009054906101000a900460ff1684600501548560060154604051610aec93929190614962565b60405180910390a35050505050505050565b60007f780e9d63000000000000000000000000000000000000000000000000000000007bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916827bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19161480610b715750610b708261265a565b5b9050919050565b606060008054610b87906149c8565b80601f0160208091040260200160405190810160405280929190818152602001828054610bb3906149c8565b8015610c005780601f10610bd557610100808354040283529160200191610c00565b820191906000526020600020905b815481529060010190602001808311610be357829003601f168201915b5050505050905090565b6000610c158261273c565b50610c1f826127c4565b9050919050565b610c388282610c33612801565b612809565b5050565b600063150b7a0260e01b905095945050505050565b6000600880549050905090565b6000600e600083815260200190815260200160002090506000600d60008360000154815260200190815260200160002090508060040160009054906101000a900460ff16610ce357826040517f2ed602a6000000000000000000000000000000000000000000000000000000008152600401610cda91906143c2565b60405180910390fd5b610cee85858561281b565b5050505050565b610cfd61291d565b6000610d08826115ca565b90503373ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614610d7c5780336040517f5a4c5074000000000000000000000000000000000000000000000000000000008152600401610d739291906149f9565b60405180910390fd5b506000600e600083815260200190815260200160002090506000600d6000836000015481526020019081526020016000209050600081600601541115610e2c57600082600301541480610de1575080600601548260030154610dde9190614a51565b42105b15610e275780600601546040517f2098e24d000000000000000000000000000000000000000000000000000000008152600401610e1e91906143c2565b60405180910390fd5b610e98565b80600501548260020154610e409190614a51565b421015610e975780600501548260020154610e5b9190614a51565b6040517f9dc1207c000000000000000000000000000000000000000000000000000000008152600401610e8e91906143c2565b60405180910390fd5b5b60008260010154905082600001543373ffffffffffffffffffffffffffffffffffffffff167fffdaf13b1d96bfc2213355f353f84c19493e0681eb0df26f83d862acd266750a8684604051610eee929190614a85565b60405180910390a3600e60008581526020019081526020016000206000808201600090556001820160009055600282016000905560038201600090555050610f3584612963565b6001826001015403610f8d573373ffffffffffffffffffffffffffffffffffffffff166108fc829081150290604051600060405180830381858888f19350505050158015610f87573d6000803e3d6000fd5b5061113c565b6014826001015403610fed57610fe833828460020160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166129e99092919063ffffffff16565b61113b565b6102d1826001015403611092578160020160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166342842e0e3033846040518463ffffffff1660e01b815260040161105b93929190614aae565b600060405180830381600087803b15801561107557600080fd5b505af1158015611089573d6000803e3d6000fd5b5050505061113a565b610483826001015403611139578160020160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1663f242432a30338560030154856040518563ffffffff1660e01b81526004016111069493929190614b0b565b600060405180830381600087803b15801561112057600080fd5b505af1158015611134573d6000803e3d6000fd5b505050505b5b5b5b505050611147612a68565b50565b600061115583611807565b821061119a5782826040517fa57d13dc000000000000000000000000000000000000000000000000000000008152600401611191929190614b63565b60405180910390fd5b600660008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600083815260200190815260200160002054905092915050565b60006111fd61291d565b6000600d6000858152602001908152602001600020905060148160010154146112665783816001015460146040517f323b95bb00000000000000000000000000000000000000000000000000000000815260040161125d93929190614b8c565b60405180910390fd5b600083036112a0576040517fd23fa2a300000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b6112f13330858460020160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16612a72909392919063ffffffff16565b600c600081548092919061130490614bc3565b9190505591506113143383612af4565b60405180608001604052808581526020018481526020014281526020016000815250600e600084815260200190815260200160002060008201518160000155602082015181600101556040820151816002015560608201518160030155905050833373ffffffffffffffffffffffffffffffffffffffff167f17700ceb1658b18206f427c1578048e87504106b14ec69e9b4586d9a95174a3284866040516113bd929190614a85565b60405180910390a3506113ce612a68565b92915050565b600c5481565b6000600d600084815260200190815260200160002090508060000160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161461147a576040517f29f9fc8100000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b818160000160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508173ffffffffffffffffffffffffffffffffffffffff16837f8587d3b7f5e8e73d0f5be513ce84b6c7c9497e221295d831f57ba7ecc36589b58360040160009054906101000a900460ff168460050154856006015460405161152193929190614962565b60405180910390a3505050565b600b5481565b61154f838383604051806020016040528060008152506123bf565b505050565b600061155e610c51565b82106115a4576000826040517fa57d13dc00000000000000000000000000000000000000000000000000000000815260040161159b929190614b63565b60405180910390fd5b600882815481106115b8576115b7614c0b565b5b90600052602060002001549050919050565b60006115d58261273c565b9050919050565b60006115e661291d565b6000600d60008581526020019081526020016000209050610483816001015414611651578381600101546104836040517f323b95bb00000000000000000000000000000000000000000000000000000000815260040161164893929190614b8c565b60405180910390fd5b6000830361168b576040517fd23fa2a300000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b8060020160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1663f242432a33308460030154876040518563ffffffff1660e01b81526004016116f29493929190614b0b565b600060405180830381600087803b15801561170c57600080fd5b505af1158015611720573d6000803e3d6000fd5b50505050600c600081548092919061173790614bc3565b9190505591506117473383612af4565b60405180608001604052808581526020018481526020014281526020016000815250600e600084815260200190815260200160002060008201518160000155602082015181600101556040820151816002015560608201518160030155905050833373ffffffffffffffffffffffffffffffffffffffff167f17700ceb1658b18206f427c1578048e87504106b14ec69e9b4586d9a95174a3284866040516117f0929190614a85565b60405180910390a350611801612a68565b92915050565b60008073ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff160361187a5760006040517f89c62b640000000000000000000000000000000000000000000000000000000081526004016118719190614215565b60405180910390fd5b600360008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020549050919050565b60606000600e600084815260200190815260200160002090506000600d60008360000154815260200190815260200160002090506000816001015403611933576040517fa1e9dd9d00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b61193c84612bed565b60405160200161194c9190614e18565b60405160208183030381529060405292508261196b8360000154612bed565b60405160200161197c929190614f55565b6040516020818303038152906040529250826102d18260010154146119b957604051806060016040528060278152602001615555602791396119d3565b60405180606001604052806029815260200161552c602991395b6119e08460010154612bed565b6040516020016119f293929190614fdb565b604051602081830303815290604052925082611a118360020154612bed565b604051602001611a229291906150e0565b604051602081830303815290604052925082611a5082600501548460020154611a4b9190614a51565b612bed565b604051602001611a619291906151b2565b604051602081830303815290604052925082604051602001611a839190615238565b60405160208183030381529060405292505050919050565b600e6020528060005260406000206000915090508060000154908060010154908060020154908060030154905084565b600d6020528060005260406000206000915090508060000160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16908060010154908060020160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16908060030154908060040160009054906101000a900460ff16908060050154908060060154905087565b600181565b60018603611be057600073ffffffffffffffffffffffffffffffffffffffff168573ffffffffffffffffffffffffffffffffffffffff16141580611ba4575060008414155b15611bdb576040517fc52a9bd300000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b611d8a565b60148603611c6057600073ffffffffffffffffffffffffffffffffffffffff168573ffffffffffffffffffffffffffffffffffffffff161480611c24575060008414155b15611c5b576040517fc52a9bd300000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b611d89565b6102d18603611ce157600073ffffffffffffffffffffffffffffffffffffffff168573ffffffffffffffffffffffffffffffffffffffff161480611ca5575060008414155b15611cdc576040517fc52a9bd300000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b611d88565b6104838603611d5557600073ffffffffffffffffffffffffffffffffffffffff168573ffffffffffffffffffffffffffffffffffffffff1603611d50576040517fc52a9bd300000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b611d87565b6040517fa1e9dd9d00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b5b5b5b6040518060e001604052803373ffffffffffffffffffffffffffffffffffffffff1681526020018781526020018673ffffffffffffffffffffffffffffffffffffffff168152602001858152602001841515815260200183815260200182815250600d6000600b54815260200190815260200160002060008201518160000160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506020820151816001015560408201518160020160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506060820151816003015560808201518160040160006101000a81548160ff02191690831515021790555060a0820151816005015560c082015181600601559050508473ffffffffffffffffffffffffffffffffffffffff1686600b547f36b06296d9441695787e7cbfc0b9cfc5deeeabec4406a3a90d30a222103c2dc887604051611f2391906143c2565b60405180910390a43373ffffffffffffffffffffffffffffffffffffffff16600b547f8587d3b7f5e8e73d0f5be513ce84b6c7c9497e221295d831f57ba7ecc36589b5858585604051611f7893929190614962565b60405180910390a3600b6000815480929190611f9390614bc3565b9190505550505050505050565b606060018054611faf906149c8565b80601f0160208091040260200160405190810160405280929190818152602001828054611fdb906149c8565b80156120285780601f10611ffd57610100808354040283529160200191612028565b820191906000526020600020905b81548152906001019060200180831161200b57829003601f168201915b5050505050905090565b61204461203d612801565b8383612cbb565b5050565b61048381565b6000612059826115ca565b90503373ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16146120cd5780336040517f5a4c50740000000000000000000000000000000000000000000000000000000081526004016120c49291906149f9565b60405180910390fd5b6000600e600084815260200190815260200160002090506000600d6000836000015481526020019081526020016000209050806005015482600201546121139190614a51565b42101561216a578060050154826002015461212e9190614a51565b6040517f9dc1207c00000000000000000000000000000000000000000000000000000000815260040161216191906143c2565b60405180910390fd5b60008260030154036121ce574282600301819055503373ffffffffffffffffffffffffffffffffffffffff167fb88af44ff67f15b82bc60b5ecd6ac0f0c27da279a6c21b7d200174756ea5c5e4856040516121c591906143c2565b60405180910390a25b50505050565b60006121de61291d565b6000600d600085815260200190815260200160002090506102d1816001015414612249578381600101546102d16040517f323b95bb00000000000000000000000000000000000000000000000000000000815260040161224093929190614b8c565b60405180910390fd5b8060020160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166342842e0e3330866040518463ffffffff1660e01b81526004016122aa93929190614aae565b600060405180830381600087803b1580156122c457600080fd5b505af11580156122d8573d6000803e3d6000fd5b50505050600c60008154809291906122ef90614bc3565b9190505591506122ff3383612af4565b60405180608001604052808581526020018481526020014281526020016000815250600e600084815260200190815260200160002060008201518160000155602082015181600101556040820151816002015560608201518160030155905050833373ffffffffffffffffffffffffffffffffffffffff167f17700ceb1658b18206f427c1578048e87504106b14ec69e9b4586d9a95174a3284866040516123a8929190614a85565b60405180910390a3506123b9612a68565b92915050565b6123ca848484610c5e565b6123d684848484612e2a565b50505050565b60606123ef6123ea836118c1565b612fe1565b6040516020016123ff91906152a6565b6040516020818303038152906040529050919050565b601481565b600080600d6000848152602001908152602001600020905060018160010154146124845782816001015460016040517f323b95bb00000000000000000000000000000000000000000000000000000000815260040161247b93929190614b8c565b60405180910390fd5b600034036124be576040517fd23fa2a300000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b600c60008154809291906124d190614bc3565b9190505591506124e13383612af4565b60405180608001604052808481526020013481526020014281526020016000815250600e600084815260200190815260200160002060008201518160000155602082015181600101556040820151816002015560608201518160030155905050823373ffffffffffffffffffffffffffffffffffffffff167f17700ceb1658b18206f427c1578048e87504106b14ec69e9b4586d9a95174a32843460405161258a929190614a85565b60405180910390a350919050565b6000600560008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900460ff16905092915050565b6102d181565b600063f23a6e6160e01b90509695505050505050565b6060612653826118c1565b9050919050565b60007f80ac58cd000000000000000000000000000000000000000000000000000000007bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916827bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916148061272557507f5b5e139f000000000000000000000000000000000000000000000000000000007bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916827bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916145b80612735575061273482613153565b5b9050919050565b600080612748836131bd565b9050600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16036127bb57826040517f7e2732890000000000000000000000000000000000000000000000000000000081526004016127b291906143c2565b60405180910390fd5b80915050919050565b60006004600083815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff169050919050565b600033905090565b61281683838360016131fa565b505050565b600073ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff160361288d5760006040517f64a0ae920000000000000000000000000000000000000000000000000000000081526004016128849190614215565b60405180910390fd5b60006128a1838361289c612801565b6133bf565b90508373ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614612917578382826040517f64283d7b00000000000000000000000000000000000000000000000000000000815260040161290e939291906152c8565b60405180910390fd5b50505050565b6002600a5403612959576040517f3ee5aeb500000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b6002600a81905550565b600061297260008360006133bf565b9050600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16036129e557816040517f7e2732890000000000000000000000000000000000000000000000000000000081526004016129dc91906143c2565b60405180910390fd5b5050565b612a63838473ffffffffffffffffffffffffffffffffffffffff1663a9059cbb8585604051602401612a1c929190614b63565b604051602081830303815290604052915060e01b6020820180517bffffffffffffffffffffffffffffffffffffffffffffffffffffffff83818316178352505050506134dc565b505050565b6001600a81905550565b612aee848573ffffffffffffffffffffffffffffffffffffffff166323b872dd868686604051602401612aa793929190614aae565b604051602081830303815290604052915060e01b6020820180517bffffffffffffffffffffffffffffffffffffffffffffffffffffffff83818316178352505050506134dc565b50505050565b600073ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff1603612b665760006040517f64a0ae92000000000000000000000000000000000000000000000000000000008152600401612b5d9190614215565b60405180910390fd5b6000612b74838360006133bf565b9050600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614612be85760006040517f73c6ac6e000000000000000000000000000000000000000000000000000000008152600401612bdf9190614215565b60405180910390fd5b505050565b606060006001612bfc84613573565b01905060008167ffffffffffffffff811115612c1b57612c1a6146da565b5b6040519080825280601f01601f191660200182016040528015612c4d5781602001600182028036833780820191505090505b509050600082602001820190505b600115612cb0578080600190039150507f3031323334353637383961626364656600000000000000000000000000000000600a86061a8153600a8581612ca457612ca36152ff565b5b04945060008503612c5b575b819350505050919050565b600073ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff1603612d2c57816040517f5b08ba18000000000000000000000000000000000000000000000000000000008152600401612d239190614215565b60405180910390fd5b80600560008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff0219169083151502179055508173ffffffffffffffffffffffffffffffffffffffff168373ffffffffffffffffffffffffffffffffffffffff167f17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c3183604051612e1d91906140da565b60405180910390a3505050565b60008373ffffffffffffffffffffffffffffffffffffffff163b1115612fdb578273ffffffffffffffffffffffffffffffffffffffff1663150b7a02612e6e612801565b8685856040518563ffffffff1660e01b8152600401612e90949392919061532e565b6020604051808303816000875af1925050508015612ecc57506040513d601f19601f82011682018060405250810190612ec9919061538f565b60015b612f50573d8060008114612efc576040519150601f19603f3d011682016040523d82523d6000602084013e612f01565b606091505b506000815103612f4857836040517f64a0ae92000000000000000000000000000000000000000000000000000000008152600401612f3f9190614215565b60405180910390fd5b805181602001fd5b63150b7a0260e01b7bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916817bffffffffffffffffffffffffffffffffffffffffffffffffffffffff191614612fd957836040517f64a0ae92000000000000000000000000000000000000000000000000000000008152600401612fd09190614215565b60405180910390fd5b505b50505050565b606060008251036130035760405180602001604052806000815250905061314e565b60006040518060600160405280604081526020016154ec60409139905060006003600285516130329190614a51565b61303c91906153bc565b600461304891906153ed565b67ffffffffffffffff811115613061576130606146da565b5b6040519080825280601f01601f1916602001820160405280156130935781602001600182028036833780820191505090505b50905060018201602082018586518701602081018051600082525b82841015613109576003840193508351603f8160121c168701518653600186019550603f81600c1c168701518653600186019550603f8160061c168701518653600186019550603f81168701518653600186019550506130ae565b80825260038a510660018114613126576002811461313957613141565b603d6001870353603d6002870353613141565b603d60018703535b5050505050505080925050505b919050565b60007f01ffc9a7000000000000000000000000000000000000000000000000000000007bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916827bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916149050919050565b60006002600083815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff169050919050565b80806132335750600073ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff1614155b156133675760006132438461273c565b9050600073ffffffffffffffffffffffffffffffffffffffff168373ffffffffffffffffffffffffffffffffffffffff16141580156132ae57508273ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614155b80156132c157506132bf8184612598565b155b1561330357826040517fa9fbf51f0000000000000000000000000000000000000000000000000000000081526004016132fa9190614215565b60405180910390fd5b811561336557838573ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff167f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b92560405160405180910390a45b505b836004600085815260200190815260200160002060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555050505050565b6000806133cd8585856136c6565b9050600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16036134115761340c846138e0565b613450565b8473ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff161461344f5761344e8185613929565b5b5b600073ffffffffffffffffffffffffffffffffffffffff168573ffffffffffffffffffffffffffffffffffffffff16036134925761348d84613a8a565b6134d1565b8473ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16146134d0576134cf8585613b5b565b5b5b809150509392505050565b6000613507828473ffffffffffffffffffffffffffffffffffffffff16613be690919063ffffffff16565b9050600081511415801561352c57508080602001905181019061352a9190615444565b155b1561356e57826040517f5274afe70000000000000000000000000000000000000000000000000000000081526004016135659190614215565b60405180910390fd5b505050565b600080600090507a184f03e93ff9f4daa797ed6e38ed64bf6a1f01000000000000000083106135d1577a184f03e93ff9f4daa797ed6e38ed64bf6a1f01000000000000000083816135c7576135c66152ff565b5b0492506040810190505b6d04ee2d6d415b85acef8100000000831061360e576d04ee2d6d415b85acef81000000008381613604576136036152ff565b5b0492506020810190505b662386f26fc10000831061363d57662386f26fc100008381613633576136326152ff565b5b0492506010810190505b6305f5e1008310613666576305f5e100838161365c5761365b6152ff565b5b0492506008810190505b612710831061368b576127108381613681576136806152ff565b5b0492506004810190505b606483106136ae57606483816136a4576136a36152ff565b5b0492506002810190505b600a83106136bd576001810190505b80915050919050565b6000806136d2846131bd565b9050600073ffffffffffffffffffffffffffffffffffffffff168373ffffffffffffffffffffffffffffffffffffffff161461371457613713818486613bfc565b5b600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16146137a5576137566000856000806131fa565b6001600360008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600082825403925050819055505b600073ffffffffffffffffffffffffffffffffffffffff168573ffffffffffffffffffffffffffffffffffffffff1614613828576001600360008773ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600082825401925050819055505b846002600086815260200190815260200160002060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550838573ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff167fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef60405160405180910390a4809150509392505050565b6008805490506009600083815260200190815260200160002081905550600881908060018154018082558091505060019003906000526020600020016000909190919091505550565b600061393483611807565b9050600060076000848152602001908152602001600020549050818114613a19576000600660008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600084815260200190815260200160002054905080600660008773ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600084815260200190815260200160002081905550816007600083815260200190815260200160002081905550505b6007600084815260200190815260200160002060009055600660008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008381526020019081526020016000206000905550505050565b60006001600880549050613a9e9190615471565b9050600060096000848152602001908152602001600020549050600060088381548110613ace57613acd614c0b565b5b906000526020600020015490508060088381548110613af057613aef614c0b565b5b906000526020600020018190555081600960008381526020019081526020016000208190555060096000858152602001908152602001600020600090556008805480613b3f57613b3e6154a5565b5b6001900381819060005260206000200160009055905550505050565b60006001613b6884611807565b613b729190615471565b905081600660008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600083815260200190815260200160002081905550806007600084815260200190815260200160002081905550505050565b6060613bf483836000613cc0565b905092915050565b613c07838383613d8d565b613cbb57600073ffffffffffffffffffffffffffffffffffffffff168373ffffffffffffffffffffffffffffffffffffffff1603613c7c57806040517f7e273289000000000000000000000000000000000000000000000000000000008152600401613c7391906143c2565b60405180910390fd5b81816040517f177e802f000000000000000000000000000000000000000000000000000000008152600401613cb2929190614b63565b60405180910390fd5b505050565b606081471015613d0757306040517fcd786059000000000000000000000000000000000000000000000000000000008152600401613cfe9190614215565b60405180910390fd5b6000808573ffffffffffffffffffffffffffffffffffffffff168486604051613d3091906154d4565b60006040518083038185875af1925050503d8060008114613d6d576040519150601f19603f3d011682016040523d82523d6000602084013e613d72565b606091505b5091509150613d82868383613e4e565b925050509392505050565b60008073ffffffffffffffffffffffffffffffffffffffff168373ffffffffffffffffffffffffffffffffffffffff1614158015613e4557508273ffffffffffffffffffffffffffffffffffffffff168473ffffffffffffffffffffffffffffffffffffffff161480613e065750613e058484612598565b5b80613e4457508273ffffffffffffffffffffffffffffffffffffffff16613e2c836127c4565b73ffffffffffffffffffffffffffffffffffffffff16145b5b90509392505050565b606082613e6357613e5e82613edd565b613ed5565b60008251148015613e8b575060008473ffffffffffffffffffffffffffffffffffffffff163b145b15613ecd57836040517f9996b315000000000000000000000000000000000000000000000000000000008152600401613ec49190614215565b60405180910390fd5b819050613ed6565b5b9392505050565b600081511115613ef05780518082602001fd5b6040517f1425ea4200000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b6000604051905090565b600080fd5b600080fd5b6000819050919050565b613f4981613f36565b8114613f5457600080fd5b50565b600081359050613f6681613f40565b92915050565b60008115159050919050565b613f8181613f6c565b8114613f8c57600080fd5b50565b600081359050613f9e81613f78565b92915050565b600080600080600080600060e0888a031215613fc357613fc2613f2c565b5b6000613fd18a828b01613f57565b9750506020613fe28a828b01613f8f565b9650506040613ff38a828b01613f8f565b95505060606140048a828b01613f8f565b94505060806140158a828b01613f57565b93505060a06140268a828b01613f8f565b92505060c06140378a828b01613f57565b91505092959891949750929550565b60007fffffffff0000000000000000000000000000000000000000000000000000000082169050919050565b61407b81614046565b811461408657600080fd5b50565b60008135905061409881614072565b92915050565b6000602082840312156140b4576140b3613f2c565b5b60006140c284828501614089565b91505092915050565b6140d481613f6c565b82525050565b60006020820190506140ef60008301846140cb565b92915050565b600081519050919050565b600082825260208201905092915050565b60005b8381101561412f578082015181840152602081019050614114565b60008484015250505050565b6000601f19601f8301169050919050565b6000614157826140f5565b6141618185614100565b9350614171818560208601614111565b61417a8161413b565b840191505092915050565b6000602082019050818103600083015261419f818461414c565b905092915050565b6000602082840312156141bd576141bc613f2c565b5b60006141cb84828501613f57565b91505092915050565b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b60006141ff826141d4565b9050919050565b61420f816141f4565b82525050565b600060208201905061422a6000830184614206565b92915050565b614239816141f4565b811461424457600080fd5b50565b60008135905061425681614230565b92915050565b6000806040838503121561427357614272613f2c565b5b600061428185828601614247565b925050602061429285828601613f57565b9150509250929050565b600080fd5b600080fd5b600080fd5b60008083601f8401126142c1576142c061429c565b5b8235905067ffffffffffffffff8111156142de576142dd6142a1565b5b6020830191508360018202830111156142fa576142f96142a6565b5b9250929050565b60008060008060006080868803121561431d5761431c613f2c565b5b600061432b88828901614247565b955050602061433c88828901614247565b945050604061434d88828901613f57565b935050606086013567ffffffffffffffff81111561436e5761436d613f31565b5b61437a888289016142ab565b92509250509295509295909350565b61439281614046565b82525050565b60006020820190506143ad6000830184614389565b92915050565b6143bc81613f36565b82525050565b60006020820190506143d760008301846143b3565b92915050565b6000806000606084860312156143f6576143f5613f2c565b5b600061440486828701614247565b935050602061441586828701614247565b925050604061442686828701613f57565b9150509250925092565b6000806040838503121561444757614446613f2c565b5b600061445585828601613f57565b925050602061446685828601613f57565b9150509250929050565b6000806040838503121561448757614486613f2c565b5b600061449585828601613f57565b92505060206144a685828601614247565b9150509250929050565b6000602082840312156144c6576144c5613f2c565b5b60006144d484828501614247565b91505092915050565b600081519050919050565b600082825260208201905092915050565b6000614504826144dd565b61450e81856144e8565b935061451e818560208601614111565b6145278161413b565b840191505092915050565b6000602082019050818103600083015261454c81846144f9565b905092915050565b600060808201905061456960008301876143b3565b61457660208301866143b3565b61458360408301856143b3565b61459060608301846143b3565b95945050505050565b600060e0820190506145ae600083018a614206565b6145bb60208301896143b3565b6145c86040830188614206565b6145d560608301876143b3565b6145e260808301866140cb565b6145ef60a08301856143b3565b6145fc60c08301846143b3565b98975050505050505050565b60008060008060008060c0878903121561462557614624613f2c565b5b600061463389828a01613f57565b965050602061464489828a01614247565b955050604061465589828a01613f57565b945050606061466689828a01613f8f565b935050608061467789828a01613f57565b92505060a061468889828a01613f57565b9150509295509295509295565b600080604083850312156146ac576146ab613f2c565b5b60006146ba85828601614247565b92505060206146cb85828601613f8f565b9150509250929050565b600080fd5b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b6147128261413b565b810181811067ffffffffffffffff82111715614731576147306146da565b5b80604052505050565b6000614744613f22565b90506147508282614709565b919050565b600067ffffffffffffffff8211156147705761476f6146da565b5b6147798261413b565b9050602081019050919050565b82818337600083830152505050565b60006147a86147a384614755565b61473a565b9050828152602081018484840111156147c4576147c36146d5565b5b6147cf848285614786565b509392505050565b600082601f8301126147ec576147eb61429c565b5b81356147fc848260208601614795565b91505092915050565b6000806000806080858703121561481f5761481e613f2c565b5b600061482d87828801614247565b945050602061483e87828801614247565b935050604061484f87828801613f57565b925050606085013567ffffffffffffffff8111156148705761486f613f31565b5b61487c878288016147d7565b91505092959194509250565b6000806040838503121561489f5761489e613f2c565b5b60006148ad85828601614247565b92505060206148be85828601614247565b9150509250929050565b60008060008060008060a087890312156148e5576148e4613f2c565b5b60006148f389828a01614247565b965050602061490489828a01614247565b955050604061491589828a01613f57565b945050606061492689828a01613f57565b935050608087013567ffffffffffffffff81111561494757614946613f31565b5b61495389828a016142ab565b92509250509295509295509295565b600060608201905061497760008301866140cb565b61498460208301856143b3565b61499160408301846143b3565b949350505050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052602260045260246000fd5b600060028204905060018216806149e057607f821691505b6020821081036149f3576149f2614999565b5b50919050565b6000604082019050614a0e6000830185614206565b614a1b6020830184614206565b9392505050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b6000614a5c82613f36565b9150614a6783613f36565b9250828201905080821115614a7f57614a7e614a22565b5b92915050565b6000604082019050614a9a60008301856143b3565b614aa760208301846143b3565b9392505050565b6000606082019050614ac36000830186614206565b614ad06020830185614206565b614add60408301846143b3565b949350505050565b50565b6000614af56000836144e8565b9150614b0082614ae5565b600082019050919050565b600060a082019050614b206000830187614206565b614b2d6020830186614206565b614b3a60408301856143b3565b614b4760608301846143b3565b8181036080830152614b5881614ae8565b905095945050505050565b6000604082019050614b786000830185614206565b614b8560208301846143b3565b9392505050565b6000606082019050614ba160008301866143b3565b614bae60208301856143b3565b614bbb60408301846143b3565b949350505050565b6000614bce82613f36565b91507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8203614c0057614bff614a22565b5b600182019050919050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052603260045260246000fd5b600081905092915050565b7f7b22746f6b656e5f6964223a2200000000000000000000000000000000000000600082015250565b6000614c7b600d83614c3a565b9150614c8682614c45565b600d82019050919050565b6000614c9c826140f5565b614ca68185614c3a565b9350614cb6818560208601614111565b80840191505092915050565b7f222c22696d616765223a202268747470733a2f2f6261646765732e6d6f6f6e7360008201527f747265616d2e746f2f746573742f7374616b696e675f6c6f676f2e706e672200602082015250565b6000614d1e603f83614c3a565b9150614d2982614cc2565b603f82019050919050565b7f2c2265787465726e616c5f75726c223a2268747470733a2f2f67616d65372e6960008201527f6f22000000000000000000000000000000000000000000000000000000000000602082015250565b6000614d90602283614c3a565b9150614d9b82614d34565b602282019050919050565b7f2c226d657461646174615f76657273696f6e223a312c2261747472696275746560008201527f73223a205b000000000000000000000000000000000000000000000000000000602082015250565b6000614e02602583614c3a565b9150614e0d82614da6565b602582019050919050565b6000614e2382614c6e565b9150614e2f8284614c91565b9150614e3a82614d11565b9150614e4582614d83565b9150614e5082614df5565b915081905092915050565b600081905092915050565b6000614e71826144dd565b614e7b8185614e5b565b9350614e8b818560208601614111565b80840191505092915050565b7f7b2274726169745f74797065223a22506f6f6c204944222c2276616c7565223a60008201527f2200000000000000000000000000000000000000000000000000000000000000602082015250565b6000614ef3602183614c3a565b9150614efe82614e97565b602182019050919050565b7f227d000000000000000000000000000000000000000000000000000000000000600082015250565b6000614f3f600283614c3a565b9150614f4a82614f09565b600282019050919050565b6000614f618285614e66565b9150614f6c82614ee6565b9150614f788284614c91565b9150614f8382614f32565b91508190509392505050565b7f2c00000000000000000000000000000000000000000000000000000000000000600082015250565b6000614fc5600183614c3a565b9150614fd082614f8f565b600182019050919050565b6000614fe78286614e66565b9150614ff282614fb8565b9150614ffe8285614c91565b915061500a8284614c91565b915061501582614f32565b9150819050949350505050565b7f2c7b22646973706c61795f74797065223a226e756d626572222c22747261697460008201527f5f74797065223a225374616b6564206174222c2276616c7565223a0000000000602082015250565b600061507e603b83614c3a565b915061508982615022565b603b82019050919050565b7f7d00000000000000000000000000000000000000000000000000000000000000600082015250565b60006150ca600183614c3a565b91506150d582615094565b600182019050919050565b60006150ec8285614e66565b91506150f782615071565b91506151038284614c91565b915061510e826150bd565b91508190509392505050565b7f2c7b22646973706c61795f74797065223a226e756d626572222c22747261697460008201527f5f74797065223a224c6f636b75702065787069726573206174222c2276616c7560208201527f65223a0000000000000000000000000000000000000000000000000000000000604082015250565b600061519c604383614c3a565b91506151a78261511a565b604382019050919050565b60006151be8285614e66565b91506151c98261518f565b91506151d58284614c91565b91506151e0826150bd565b91508190509392505050565b7f5d7d000000000000000000000000000000000000000000000000000000000000600082015250565b6000615222600283614c3a565b915061522d826151ec565b600282019050919050565b60006152448284614e66565b915061524f82615215565b915081905092915050565b7f646174613a6170706c69636174696f6e2f6a736f6e3b6261736536342c000000600082015250565b6000615290601d83614c3a565b915061529b8261525a565b601d82019050919050565b60006152b182615283565b91506152bd8284614c91565b915081905092915050565b60006060820190506152dd6000830186614206565b6152ea60208301856143b3565b6152f76040830184614206565b949350505050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601260045260246000fd5b60006080820190506153436000830187614206565b6153506020830186614206565b61535d60408301856143b3565b818103606083015261536f81846144f9565b905095945050505050565b60008151905061538981614072565b92915050565b6000602082840312156153a5576153a4613f2c565b5b60006153b38482850161537a565b91505092915050565b60006153c782613f36565b91506153d283613f36565b9250826153e2576153e16152ff565b5b828204905092915050565b60006153f882613f36565b915061540383613f36565b925082820261541181613f36565b9150828204841483151761542857615427614a22565b5b5092915050565b60008151905061543e81613f78565b92915050565b60006020828403121561545a57615459613f2c565b5b60006154688482850161542f565b91505092915050565b600061547c82613f36565b915061548783613f36565b925082820390508181111561549f5761549e614a22565b5b92915050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052603160045260246000fd5b60006154e08284614e66565b91508190509291505056fe4142434445464748494a4b4c4d4e4f505152535455565758595a6162636465666768696a6b6c6d6e6f707172737475767778797a303132333435363738392b2f7b2274726169745f74797065223a225374616b656420746f6b656e204944222c2276616c7565223a227b2274726169745f74797065223a225374616b656420616d6f756e74222c2276616c7565223a22a26469706673582212200f3c60054afa4e979b960006cb421748d555b7214b3c508ff0aefbef8defd6a264736f6c63430008180033",
+	ABI: "[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"target\",\"type\":\"address\"}],\"name\":\"AddressEmptyCode\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"AddressInsufficientBalance\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ERC721EnumerableForbiddenBatchMint\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"ERC721IncorrectOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"ERC721InsufficientApproval\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"approver\",\"type\":\"address\"}],\"name\":\"ERC721InvalidApprover\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"ERC721InvalidOperator\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"ERC721InvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"receiver\",\"type\":\"address\"}],\"name\":\"ERC721InvalidReceiver\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"ERC721InvalidSender\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"ERC721NonexistentToken\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"ERC721OutOfBoundsIndex\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"FailedInnerCall\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"poolTokenType\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"tokenTypeArg\",\"type\":\"uint256\"}],\"name\":\"IncorrectTokenType\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"cooldownSeconds\",\"type\":\"uint256\"}],\"name\":\"InitiateUnstakeFirst\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidConfiguration\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidTokenType\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"expiresAt\",\"type\":\"uint256\"}],\"name\":\"LockupNotExpired\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NonAdministrator\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NothingToStake\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"}],\"name\":\"PositionNotTransferable\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ReentrancyGuardReentrantCall\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"}],\"name\":\"SafeERC20FailedOperation\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"UnauthorizedForPosition\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"approved\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"ApprovalForAll\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amountOrTokenID\",\"type\":\"uint256\"}],\"name\":\"Staked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"administrator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"transferable\",\"type\":\"bool\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"lockupSeconds\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"cooldownSeconds\",\"type\":\"uint256\"}],\"name\":\"StakingPoolConfigured\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenType\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenID\",\"type\":\"uint256\"}],\"name\":\"StakingPoolCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"UnstakeInitiated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amountOrTokenID\",\"type\":\"uint256\"}],\"name\":\"Unstaked\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"CurrentAmountInPool\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"CurrentPositionsInPool\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"ERC1155_TOKEN_TYPE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"ERC20_TOKEN_TYPE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"ERC721_TOKEN_TYPE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"NATIVE_TOKEN_TYPE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"Pools\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"administrator\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenType\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenID\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"transferable\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"lockupSeconds\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"cooldownSeconds\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"Positions\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amountOrTokenID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"stakeTimestamp\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"unstakeInitiatedAt\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"TotalPools\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"TotalPositions\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenType\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenID\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"transferable\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"lockupSeconds\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"cooldownSeconds\",\"type\":\"uint256\"}],\"name\":\"createPool\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"getApproved\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"}],\"name\":\"initiateUnstake\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"isApprovedForAll\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"}],\"name\":\"metadataBytes\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"metadata\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"}],\"name\":\"metadataJSON\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"onERC1155Received\",\"outputs\":[{\"internalType\":\"bytes4\",\"name\":\"\",\"type\":\"bytes4\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"onERC721Received\",\"outputs\":[{\"internalType\":\"bytes4\",\"name\":\"\",\"type\":\"bytes4\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"ownerOf\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"safeTransferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"safeTransferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"setApprovalForAll\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"stakeERC1155\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"stakeERC20\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"tokenID\",\"type\":\"uint256\"}],\"name\":\"stakeERC721\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"}],\"name\":\"stakeNative\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"symbol\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"tokenByIndex\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"tokenOfOwnerByIndex\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"tokenURI\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"newAdministrator\",\"type\":\"address\"}],\"name\":\"transferPoolAdministration\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"}],\"name\":\"unstake\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"changeTransferability\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"transferable\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"changeLockup\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"lockupSeconds\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"changeCooldown\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"cooldownSeconds\",\"type\":\"uint256\"}],\"name\":\"updatePoolConfiguration\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
+	Bin: "0x60806040523480156200001157600080fd5b506040518060400160405280600c81526020017f47616d6537205374616b657200000000000000000000000000000000000000008152506040518060400160405280600881526020017f47375354414b455200000000000000000000000000000000000000000000000081525081600090816200008f91906200032c565b508060019081620000a191906200032c565b5050506001600a8190555062000413565b600081519050919050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b7f4e487b7100000000000000000000000000000000000000000000000000000000600052602260045260246000fd5b600060028204905060018216806200013457607f821691505b6020821081036200014a5762000149620000ec565b5b50919050565b60008190508160005260206000209050919050565b60006020601f8301049050919050565b600082821b905092915050565b600060088302620001b47fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8262000175565b620001c0868362000175565b95508019841693508086168417925050509392505050565b6000819050919050565b6000819050919050565b60006200020d620002076200020184620001d8565b620001e2565b620001d8565b9050919050565b6000819050919050565b6200022983620001ec565b62000241620002388262000214565b84845462000182565b825550505050565b600090565b6200025862000249565b620002658184846200021e565b505050565b5b818110156200028d57620002816000826200024e565b6001810190506200026b565b5050565b601f821115620002dc57620002a68162000150565b620002b18462000165565b81016020851015620002c1578190505b620002d9620002d08562000165565b8301826200026a565b50505b505050565b600082821c905092915050565b60006200030160001984600802620002e1565b1980831691505092915050565b60006200031c8383620002ee565b9150826002028217905092915050565b6200033782620000b2565b67ffffffffffffffff811115620003535762000352620000bd565b5b6200035f82546200011b565b6200036c82828562000291565b600060209050601f831160018114620003a457600084156200038f578287015190505b6200039b85826200030e565b8655506200040b565b601f198416620003b48662000150565b60005b82811015620003de57848901518255600182019150602085019450602081019050620003b7565b86831015620003fe5784890151620003fa601f891682620002ee565b8355505b6001600288020188555050505b505050505050565b61588480620004236000396000f3fe60806040526004361061022f5760003560e01c806370e402721161012e578063b29087da116100ab578063e63c6bf01161006f578063e63c6bf0146108ff578063e985e9c51461092f578063f09e76a11461096c578063f23a6e6114610997578063f60476f2146109d45761022f565b8063b29087da146107f4578063b2db30e914610831578063b88d4fde1461086e578063c87b56dd14610897578063d2ba4409146108d45761022f565b8063911e476c116100f2578063911e476c1461072357806395d89b411461074c578063a22cb46514610777578063abd4ce78146107a0578063ae5ac921146107cb5761022f565b806370e40272146105fb57806373caf0f71461063857806373dfccca1461067857806377bd2e78146106bb57806381c822e6146106e65761022f565b80632f745c59116101bc57806342842e0e1161018057806342842e0e146104de5780634f6ccce7146105075780636352211e146105445780636fafa1e91461058157806370a08231146105be5761022f565b80632f745c59146103e557806337d9e9cc146104225780633ab0f1c11461045f5780633db263191461048a578063424b9311146104b35761022f565b8063095ea7b311610203578063095ea7b314610302578063150b7a021461032b57806318160ddd1461036857806323b872dd146103935780632e17de78146103bc5761022f565b80627d0cec1461023457806301ffc9a71461025d57806306fdde031461029a578063081812fc146102c5575b600080fd5b34801561024057600080fd5b5061025b6004803603810190610256919061424e565b610a11565b005b34801561026957600080fd5b50610284600480360381019061027f9190614348565b610b8e565b6040516102919190614384565b60405180910390f35b3480156102a657600080fd5b506102af610c08565b6040516102bc919061442f565b60405180910390f35b3480156102d157600080fd5b506102ec60048036038101906102e79190614451565b610c9a565b6040516102f991906144bf565b60405180910390f35b34801561030e57600080fd5b5061032960048036038101906103249190614506565b610cb6565b005b34801561033757600080fd5b50610352600480360381019061034d91906145ab565b610ccc565b60405161035f9190614642565b60405180910390f35b34801561037457600080fd5b5061037d610ce1565b60405161038a919061466c565b60405180910390f35b34801561039f57600080fd5b506103ba60048036038101906103b59190614687565b610cee565b005b3480156103c857600080fd5b506103e360048036038101906103de9190614451565b610d85565b005b3480156103f157600080fd5b5061040c60048036038101906104079190614506565b611279565b604051610419919061466c565b60405180910390f35b34801561042e57600080fd5b50610449600480360381019061044491906146da565b611322565b604051610456919061466c565b60405180910390f35b34801561046b57600080fd5b50610474611556565b604051610481919061466c565b60405180910390f35b34801561049657600080fd5b506104b160048036038101906104ac919061471a565b61155c565b005b3480156104bf57600080fd5b506104c86116b0565b6040516104d5919061466c565b60405180910390f35b3480156104ea57600080fd5b5061050560048036038101906105009190614687565b6116b6565b005b34801561051357600080fd5b5061052e60048036038101906105299190614451565b6116d6565b60405161053b919061466c565b60405180910390f35b34801561055057600080fd5b5061056b60048036038101906105669190614451565b61174c565b60405161057891906144bf565b60405180910390f35b34801561058d57600080fd5b506105a860048036038101906105a391906146da565b61175e565b6040516105b5919061466c565b60405180910390f35b3480156105ca57600080fd5b506105e560048036038101906105e0919061475a565b6119dc565b6040516105f2919061466c565b60405180910390f35b34801561060757600080fd5b50610622600480360381019061061d9190614451565b611a96565b60405161062f91906147dc565b60405180910390f35b34801561064457600080fd5b5061065f600480360381019061065a9190614451565b611c70565b60405161066f94939291906147fe565b60405180910390f35b34801561068457600080fd5b5061069f600480360381019061069a9190614451565b611ca0565b6040516106b29796959493929190614843565b60405180910390f35b3480156106c757600080fd5b506106d0611d2f565b6040516106dd919061466c565b60405180910390f35b3480156106f257600080fd5b5061070d60048036038101906107089190614451565b611d34565b60405161071a919061466c565b60405180910390f35b34801561072f57600080fd5b5061074a600480360381019061074591906148b2565b611d4c565b005b34801561075857600080fd5b5061076161218d565b60405161076e919061442f565b60405180910390f35b34801561078357600080fd5b5061079e6004803603810190610799919061493f565b61221f565b005b3480156107ac57600080fd5b506107b5612235565b6040516107c2919061466c565b60405180910390f35b3480156107d757600080fd5b506107f260048036038101906107ed9190614451565b61223b565b005b34801561080057600080fd5b5061081b60048036038101906108169190614451565b6123c1565b604051610828919061466c565b60405180910390f35b34801561083d57600080fd5b50610858600480360381019061085391906146da565b6123d9565b604051610865919061466c565b60405180910390f35b34801561087a57600080fd5b5061089560048036038101906108909190614aaf565b612616565b005b3480156108a357600080fd5b506108be60048036038101906108b99190614451565b612633565b6040516108cb919061442f565b60405180910390f35b3480156108e057600080fd5b506108e961266c565b6040516108f6919061466c565b60405180910390f35b61091960048036038101906109149190614451565b612671565b604051610926919061466c565b60405180910390f35b34801561093b57600080fd5b5061095660048036038101906109519190614b32565b612842565b6040516109639190614384565b60405180910390f35b34801561097857600080fd5b506109816128d6565b60405161098e919061466c565b60405180910390f35b3480156109a357600080fd5b506109be60048036038101906109b99190614b72565b6128dc565b6040516109cb9190614642565b60405180910390f35b3480156109e057600080fd5b506109fb60048036038101906109f69190614451565b6128f2565b604051610a08919061442f565b60405180910390f35b6000600f600089815260200190815260200160002090508060000160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614610ab1576040517f29f9fc8100000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b8615610ad457858160040160006101000a81548160ff0219169083151502179055505b8415610ae4578381600501819055505b8215610af4578181600601819055505b8060000160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16887f8587d3b7f5e8e73d0f5be513ce84b6c7c9497e221295d831f57ba7ecc36589b58360040160009054906101000a900460ff1684600501548560060154604051610b7c93929190614c0c565b60405180910390a35050505050505050565b60007f780e9d63000000000000000000000000000000000000000000000000000000007bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916827bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19161480610c015750610c0082612904565b5b9050919050565b606060008054610c1790614c72565b80601f0160208091040260200160405190810160405280929190818152602001828054610c4390614c72565b8015610c905780601f10610c6557610100808354040283529160200191610c90565b820191906000526020600020905b815481529060010190602001808311610c7357829003601f168201915b5050505050905090565b6000610ca5826129e6565b50610caf82612a6e565b9050919050565b610cc88282610cc3612aab565b612ab3565b5050565b600063150b7a0260e01b905095945050505050565b6000600880549050905090565b60006010600083815260200190815260200160002090506000600f60008360000154815260200190815260200160002090508060040160009054906101000a900460ff16610d7357826040517f2ed602a6000000000000000000000000000000000000000000000000000000008152600401610d6a919061466c565b60405180910390fd5b610d7e858585612ac5565b5050505050565b610d8d612bc7565b6000610d988261174c565b90503373ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614610e0c5780336040517f5a4c5074000000000000000000000000000000000000000000000000000000008152600401610e03929190614ca3565b60405180910390fd5b5060006010600083815260200190815260200160002090506000600f6000836000015481526020019081526020016000209050600081600601541115610ebc57600082600301541480610e71575080600601548260030154610e6e9190614cfb565b42105b15610eb75780600601546040517f2098e24d000000000000000000000000000000000000000000000000000000008152600401610eae919061466c565b60405180910390fd5b610f28565b80600501548260020154610ed09190614cfb565b421015610f275780600501548260020154610eeb9190614cfb565b6040517f9dc1207c000000000000000000000000000000000000000000000000000000008152600401610f1e919061466c565b60405180910390fd5b5b6102d1816001015403610f6757600d6000836000015481526020019081526020016000206000815480929190610f5d90614d2f565b9190505550610f9a565b8160010154600d6000846000015481526020019081526020016000206000828254610f929190614d58565b925050819055505b600e6000836000015481526020019081526020016000206000815480929190610fc290614d2f565b919050555060008260010154905082600001543373ffffffffffffffffffffffffffffffffffffffff167fffdaf13b1d96bfc2213355f353f84c19493e0681eb0df26f83d862acd266750a868460405161101d929190614d8c565b60405180910390a360106000858152602001908152602001600020600080820160009055600182016000905560028201600090556003820160009055505061106484612c0d565b60018260010154036110bc573373ffffffffffffffffffffffffffffffffffffffff166108fc829081150290604051600060405180830381858888f193505050501580156110b6573d6000803e3d6000fd5b5061126b565b601482600101540361111c5761111733828460020160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16612c939092919063ffffffff16565b61126a565b6102d18260010154036111c1578160020160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166342842e0e3033846040518463ffffffff1660e01b815260040161118a93929190614db5565b600060405180830381600087803b1580156111a457600080fd5b505af11580156111b8573d6000803e3d6000fd5b50505050611269565b610483826001015403611268578160020160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1663f242432a30338560030154856040518563ffffffff1660e01b81526004016112359493929190614e12565b600060405180830381600087803b15801561124f57600080fd5b505af1158015611263573d6000803e3d6000fd5b505050505b5b5b5b505050611276612d12565b50565b6000611284836119dc565b82106112c95782826040517fa57d13dc0000000000000000000000000000000000000000000000000000000081526004016112c0929190614e6a565b60405180910390fd5b600660008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600083815260200190815260200160002054905092915050565b600061132c612bc7565b6000600f6000858152602001908152602001600020905060148160010154146113955783816001015460146040517f323b95bb00000000000000000000000000000000000000000000000000000000815260040161138c93929190614e93565b60405180910390fd5b600083036113cf576040517fd23fa2a300000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b6114203330858460020160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16612d1c909392919063ffffffff16565b600c600081548092919061143390614eca565b9190505591506114433383612d9e565b60405180608001604052808581526020018481526020014281526020016000815250601060008481526020019081526020016000206000820151816000015560208201518160010155604082015181600201556060820151816003015590505082600d600086815260200190815260200160002060008282546114c69190614cfb565b92505081905550600e600085815260200190815260200160002060008154809291906114f190614eca565b9190505550833373ffffffffffffffffffffffffffffffffffffffff167f17700ceb1658b18206f427c1578048e87504106b14ec69e9b4586d9a95174a32848660405161153f929190614d8c565b60405180910390a350611550612d12565b92915050565b600c5481565b6000600f600084815260200190815260200160002090508060000160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff16146115fc576040517f29f9fc8100000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b818160000160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508173ffffffffffffffffffffffffffffffffffffffff16837f8587d3b7f5e8e73d0f5be513ce84b6c7c9497e221295d831f57ba7ecc36589b58360040160009054906101000a900460ff16846005015485600601546040516116a393929190614c0c565b60405180910390a3505050565b600b5481565b6116d183838360405180602001604052806000815250612616565b505050565b60006116e0610ce1565b8210611726576000826040517fa57d13dc00000000000000000000000000000000000000000000000000000000815260040161171d929190614e6a565b60405180910390fd5b6008828154811061173a57611739614f12565b5b90600052602060002001549050919050565b6000611757826129e6565b9050919050565b6000611768612bc7565b6000600f600085815260200190815260200160002090506104838160010154146117d3578381600101546104836040517f323b95bb0000000000000000000000000000000000000000000000000000000081526004016117ca93929190614e93565b60405180910390fd5b6000830361180d576040517fd23fa2a300000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b8060020160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1663f242432a33308460030154876040518563ffffffff1660e01b81526004016118749493929190614e12565b600060405180830381600087803b15801561188e57600080fd5b505af11580156118a2573d6000803e3d6000fd5b50505050600c60008154809291906118b990614eca565b9190505591506118c93383612d9e565b60405180608001604052808581526020018481526020014281526020016000815250601060008481526020019081526020016000206000820151816000015560208201518160010155604082015181600201556060820151816003015590505082600d6000868152602001908152602001600020600082825461194c9190614cfb565b92505081905550600e6000858152602001908152602001600020600081548092919061197790614eca565b9190505550833373ffffffffffffffffffffffffffffffffffffffff167f17700ceb1658b18206f427c1578048e87504106b14ec69e9b4586d9a95174a3284866040516119c5929190614d8c565b60405180910390a3506119d6612d12565b92915050565b60008073ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff1603611a4f5760006040517f89c62b64000000000000000000000000000000000000000000000000000000008152600401611a4691906144bf565b60405180910390fd5b600360008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020549050919050565b606060006010600084815260200190815260200160002090506000600f60008360000154815260200190815260200160002090506000816001015403611b08576040517fa1e9dd9d00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b611b1184612e97565b604051602001611b21919061511f565b604051602081830303815290604052925082611b408360000154612e97565b604051602001611b5192919061525c565b6040516020818303038152906040529250826102d1826001015414611b8e5760405180606001604052806027815260200161582860279139611ba8565b6040518060600160405280602981526020016157ff602991395b611bb58460010154612e97565b604051602001611bc7939291906152e2565b604051602081830303815290604052925082611be68360020154612e97565b604051602001611bf79291906153e7565b604051602081830303815290604052925082611c2582600501548460020154611c209190614cfb565b612e97565b604051602001611c369291906154b9565b604051602081830303815290604052925082604051602001611c58919061553f565b60405160208183030381529060405292505050919050565b60106020528060005260406000206000915090508060000154908060010154908060020154908060030154905084565b600f6020528060005260406000206000915090508060000160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16908060010154908060020160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16908060030154908060040160009054906101000a900460ff16908060050154908060060154905087565b600181565b600d6020528060005260406000206000915090505481565b60018603611dcd57600073ffffffffffffffffffffffffffffffffffffffff168573ffffffffffffffffffffffffffffffffffffffff16141580611d91575060008414155b15611dc8576040517fc52a9bd300000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b611f77565b60148603611e4d57600073ffffffffffffffffffffffffffffffffffffffff168573ffffffffffffffffffffffffffffffffffffffff161480611e11575060008414155b15611e48576040517fc52a9bd300000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b611f76565b6102d18603611ece57600073ffffffffffffffffffffffffffffffffffffffff168573ffffffffffffffffffffffffffffffffffffffff161480611e92575060008414155b15611ec9576040517fc52a9bd300000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b611f75565b6104838603611f4257600073ffffffffffffffffffffffffffffffffffffffff168573ffffffffffffffffffffffffffffffffffffffff1603611f3d576040517fc52a9bd300000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b611f74565b6040517fa1e9dd9d00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b5b5b5b6040518060e001604052803373ffffffffffffffffffffffffffffffffffffffff1681526020018781526020018673ffffffffffffffffffffffffffffffffffffffff168152602001858152602001841515815260200183815260200182815250600f6000600b54815260200190815260200160002060008201518160000160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506020820151816001015560408201518160020160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506060820151816003015560808201518160040160006101000a81548160ff02191690831515021790555060a0820151816005015560c082015181600601559050508473ffffffffffffffffffffffffffffffffffffffff1686600b547f36b06296d9441695787e7cbfc0b9cfc5deeeabec4406a3a90d30a222103c2dc887604051612110919061466c565b60405180910390a43373ffffffffffffffffffffffffffffffffffffffff16600b547f8587d3b7f5e8e73d0f5be513ce84b6c7c9497e221295d831f57ba7ecc36589b585858560405161216593929190614c0c565b60405180910390a3600b600081548092919061218090614eca565b9190505550505050505050565b60606001805461219c90614c72565b80601f01602080910402602001604051908101604052809291908181526020018280546121c890614c72565b80156122155780601f106121ea57610100808354040283529160200191612215565b820191906000526020600020905b8154815290600101906020018083116121f857829003601f168201915b5050505050905090565b61223161222a612aab565b8383612f65565b5050565b61048381565b60006122468261174c565b90503373ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16146122ba5780336040517f5a4c50740000000000000000000000000000000000000000000000000000000081526004016122b1929190614ca3565b60405180910390fd5b60006010600084815260200190815260200160002090506000600f6000836000015481526020019081526020016000209050806005015482600201546123009190614cfb565b421015612357578060050154826002015461231b9190614cfb565b6040517f9dc1207c00000000000000000000000000000000000000000000000000000000815260040161234e919061466c565b60405180910390fd5b60008260030154036123bb574282600301819055503373ffffffffffffffffffffffffffffffffffffffff167fb88af44ff67f15b82bc60b5ecd6ac0f0c27da279a6c21b7d200174756ea5c5e4856040516123b2919061466c565b60405180910390a25b50505050565b600e6020528060005260406000206000915090505481565b60006123e3612bc7565b6000600f600085815260200190815260200160002090506102d181600101541461244e578381600101546102d16040517f323b95bb00000000000000000000000000000000000000000000000000000000815260040161244593929190614e93565b60405180910390fd5b8060020160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166342842e0e3330866040518463ffffffff1660e01b81526004016124af93929190614db5565b600060405180830381600087803b1580156124c957600080fd5b505af11580156124dd573d6000803e3d6000fd5b50505050600c60008154809291906124f490614eca565b9190505591506125043383612d9e565b604051806080016040528085815260200184815260200142815260200160008152506010600084815260200190815260200160002060008201518160000155602082015181600101556040820151816002015560608201518160030155905050600d6000858152602001908152602001600020600081548092919061258890614eca565b9190505550600e600085815260200190815260200160002060008154809291906125b190614eca565b9190505550833373ffffffffffffffffffffffffffffffffffffffff167f17700ceb1658b18206f427c1578048e87504106b14ec69e9b4586d9a95174a3284866040516125ff929190614d8c565b60405180910390a350612610612d12565b92915050565b612621848484610cee565b61262d848484846130d4565b50505050565b606061264661264183611a96565b61328b565b60405160200161265691906155ad565b6040516020818303038152906040529050919050565b601481565b600080600f6000848152602001908152602001600020905060018160010154146126db5782816001015460016040517f323b95bb0000000000000000000000000000000000000000000000000000000081526004016126d293929190614e93565b60405180910390fd5b60003403612715576040517fd23fa2a300000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b600c600081548092919061272890614eca565b9190505591506127383383612d9e565b60405180608001604052808481526020013481526020014281526020016000815250601060008481526020019081526020016000206000820151816000015560208201518160010155604082015181600201556060820151816003015590505034600d600085815260200190815260200160002060008282546127bb9190614cfb565b92505081905550600e600084815260200190815260200160002060008154809291906127e690614eca565b9190505550823373ffffffffffffffffffffffffffffffffffffffff167f17700ceb1658b18206f427c1578048e87504106b14ec69e9b4586d9a95174a328434604051612834929190614d8c565b60405180910390a350919050565b6000600560008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900460ff16905092915050565b6102d181565b600063f23a6e6160e01b90509695505050505050565b60606128fd82611a96565b9050919050565b60007f80ac58cd000000000000000000000000000000000000000000000000000000007bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916827bffffffffffffffffffffffffffffffffffffffffffffffffffffffff191614806129cf57507f5b5e139f000000000000000000000000000000000000000000000000000000007bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916827bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916145b806129df57506129de826133fd565b5b9050919050565b6000806129f283613467565b9050600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1603612a6557826040517f7e273289000000000000000000000000000000000000000000000000000000008152600401612a5c919061466c565b60405180910390fd5b80915050919050565b60006004600083815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff169050919050565b600033905090565b612ac083838360016134a4565b505050565b600073ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff1603612b375760006040517f64a0ae92000000000000000000000000000000000000000000000000000000008152600401612b2e91906144bf565b60405180910390fd5b6000612b4b8383612b46612aab565b613669565b90508373ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614612bc1578382826040517f64283d7b000000000000000000000000000000000000000000000000000000008152600401612bb8939291906155cf565b60405180910390fd5b50505050565b6002600a5403612c03576040517f3ee5aeb500000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b6002600a81905550565b6000612c1c6000836000613669565b9050600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1603612c8f57816040517f7e273289000000000000000000000000000000000000000000000000000000008152600401612c86919061466c565b60405180910390fd5b5050565b612d0d838473ffffffffffffffffffffffffffffffffffffffff1663a9059cbb8585604051602401612cc6929190614e6a565b604051602081830303815290604052915060e01b6020820180517bffffffffffffffffffffffffffffffffffffffffffffffffffffffff8381831617835250505050613786565b505050565b6001600a81905550565b612d98848573ffffffffffffffffffffffffffffffffffffffff166323b872dd868686604051602401612d5193929190614db5565b604051602081830303815290604052915060e01b6020820180517bffffffffffffffffffffffffffffffffffffffffffffffffffffffff8381831617835250505050613786565b50505050565b600073ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff1603612e105760006040517f64a0ae92000000000000000000000000000000000000000000000000000000008152600401612e0791906144bf565b60405180910390fd5b6000612e1e83836000613669565b9050600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614612e925760006040517f73c6ac6e000000000000000000000000000000000000000000000000000000008152600401612e8991906144bf565b60405180910390fd5b505050565b606060006001612ea68461381d565b01905060008167ffffffffffffffff811115612ec557612ec4614984565b5b6040519080825280601f01601f191660200182016040528015612ef75781602001600182028036833780820191505090505b509050600082602001820190505b600115612f5a578080600190039150507f3031323334353637383961626364656600000000000000000000000000000000600a86061a8153600a8581612f4e57612f4d615606565b5b04945060008503612f05575b819350505050919050565b600073ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff1603612fd657816040517f5b08ba18000000000000000000000000000000000000000000000000000000008152600401612fcd91906144bf565b60405180910390fd5b80600560008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff0219169083151502179055508173ffffffffffffffffffffffffffffffffffffffff168373ffffffffffffffffffffffffffffffffffffffff167f17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31836040516130c79190614384565b60405180910390a3505050565b60008373ffffffffffffffffffffffffffffffffffffffff163b1115613285578273ffffffffffffffffffffffffffffffffffffffff1663150b7a02613118612aab565b8685856040518563ffffffff1660e01b815260040161313a9493929190615635565b6020604051808303816000875af192505050801561317657506040513d601f19601f820116820180604052508101906131739190615696565b60015b6131fa573d80600081146131a6576040519150601f19603f3d011682016040523d82523d6000602084013e6131ab565b606091505b5060008151036131f257836040517f64a0ae920000000000000000000000000000000000000000000000000000000081526004016131e991906144bf565b60405180910390fd5b805181602001fd5b63150b7a0260e01b7bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916817bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19161461328357836040517f64a0ae9200000000000000000000000000000000000000000000000000000000815260040161327a91906144bf565b60405180910390fd5b505b50505050565b606060008251036132ad576040518060200160405280600081525090506133f8565b60006040518060600160405280604081526020016157bf60409139905060006003600285516132dc9190614cfb565b6132e691906156c3565b60046132f291906156f4565b67ffffffffffffffff81111561330b5761330a614984565b5b6040519080825280601f01601f19166020018201604052801561333d5781602001600182028036833780820191505090505b50905060018201602082018586518701602081018051600082525b828410156133b3576003840193508351603f8160121c168701518653600186019550603f81600c1c168701518653600186019550603f8160061c168701518653600186019550603f8116870151865360018601955050613358565b80825260038a5106600181146133d057600281146133e3576133eb565b603d6001870353603d60028703536133eb565b603d60018703535b5050505050505080925050505b919050565b60007f01ffc9a7000000000000000000000000000000000000000000000000000000007bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916827bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916149050919050565b60006002600083815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff169050919050565b80806134dd5750600073ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff1614155b156136115760006134ed846129e6565b9050600073ffffffffffffffffffffffffffffffffffffffff168373ffffffffffffffffffffffffffffffffffffffff161415801561355857508273ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614155b801561356b57506135698184612842565b155b156135ad57826040517fa9fbf51f0000000000000000000000000000000000000000000000000000000081526004016135a491906144bf565b60405180910390fd5b811561360f57838573ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff167f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b92560405160405180910390a45b505b836004600085815260200190815260200160002060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555050505050565b600080613677858585613970565b9050600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16036136bb576136b684613b8a565b6136fa565b8473ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16146136f9576136f88185613bd3565b5b5b600073ffffffffffffffffffffffffffffffffffffffff168573ffffffffffffffffffffffffffffffffffffffff160361373c5761373784613d34565b61377b565b8473ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff161461377a576137798585613e05565b5b5b809150509392505050565b60006137b1828473ffffffffffffffffffffffffffffffffffffffff16613e9090919063ffffffff16565b905060008151141580156137d65750808060200190518101906137d4919061574b565b155b1561381857826040517f5274afe700000000000000000000000000000000000000000000000000000000815260040161380f91906144bf565b60405180910390fd5b505050565b600080600090507a184f03e93ff9f4daa797ed6e38ed64bf6a1f010000000000000000831061387b577a184f03e93ff9f4daa797ed6e38ed64bf6a1f010000000000000000838161387157613870615606565b5b0492506040810190505b6d04ee2d6d415b85acef810000000083106138b8576d04ee2d6d415b85acef810000000083816138ae576138ad615606565b5b0492506020810190505b662386f26fc1000083106138e757662386f26fc1000083816138dd576138dc615606565b5b0492506010810190505b6305f5e1008310613910576305f5e100838161390657613905615606565b5b0492506008810190505b612710831061393557612710838161392b5761392a615606565b5b0492506004810190505b60648310613958576064838161394e5761394d615606565b5b0492506002810190505b600a8310613967576001810190505b80915050919050565b60008061397c84613467565b9050600073ffffffffffffffffffffffffffffffffffffffff168373ffffffffffffffffffffffffffffffffffffffff16146139be576139bd818486613ea6565b5b600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614613a4f57613a006000856000806134a4565b6001600360008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600082825403925050819055505b600073ffffffffffffffffffffffffffffffffffffffff168573ffffffffffffffffffffffffffffffffffffffff1614613ad2576001600360008773ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600082825401925050819055505b846002600086815260200190815260200160002060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550838573ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff167fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef60405160405180910390a4809150509392505050565b6008805490506009600083815260200190815260200160002081905550600881908060018154018082558091505060019003906000526020600020016000909190919091505550565b6000613bde836119dc565b9050600060076000848152602001908152602001600020549050818114613cc3576000600660008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600084815260200190815260200160002054905080600660008773ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600084815260200190815260200160002081905550816007600083815260200190815260200160002081905550505b6007600084815260200190815260200160002060009055600660008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008381526020019081526020016000206000905550505050565b60006001600880549050613d489190614d58565b9050600060096000848152602001908152602001600020549050600060088381548110613d7857613d77614f12565b5b906000526020600020015490508060088381548110613d9a57613d99614f12565b5b906000526020600020018190555081600960008381526020019081526020016000208190555060096000858152602001908152602001600020600090556008805480613de957613de8615778565b5b6001900381819060005260206000200160009055905550505050565b60006001613e12846119dc565b613e1c9190614d58565b905081600660008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600083815260200190815260200160002081905550806007600084815260200190815260200160002081905550505050565b6060613e9e83836000613f6a565b905092915050565b613eb1838383614037565b613f6557600073ffffffffffffffffffffffffffffffffffffffff168373ffffffffffffffffffffffffffffffffffffffff1603613f2657806040517f7e273289000000000000000000000000000000000000000000000000000000008152600401613f1d919061466c565b60405180910390fd5b81816040517f177e802f000000000000000000000000000000000000000000000000000000008152600401613f5c929190614e6a565b60405180910390fd5b505050565b606081471015613fb157306040517fcd786059000000000000000000000000000000000000000000000000000000008152600401613fa891906144bf565b60405180910390fd5b6000808573ffffffffffffffffffffffffffffffffffffffff168486604051613fda91906157a7565b60006040518083038185875af1925050503d8060008114614017576040519150601f19603f3d011682016040523d82523d6000602084013e61401c565b606091505b509150915061402c8683836140f8565b925050509392505050565b60008073ffffffffffffffffffffffffffffffffffffffff168373ffffffffffffffffffffffffffffffffffffffff16141580156140ef57508273ffffffffffffffffffffffffffffffffffffffff168473ffffffffffffffffffffffffffffffffffffffff1614806140b057506140af8484612842565b5b806140ee57508273ffffffffffffffffffffffffffffffffffffffff166140d683612a6e565b73ffffffffffffffffffffffffffffffffffffffff16145b5b90509392505050565b60608261410d5761410882614187565b61417f565b60008251148015614135575060008473ffffffffffffffffffffffffffffffffffffffff163b145b1561417757836040517f9996b31500000000000000000000000000000000000000000000000000000000815260040161416e91906144bf565b60405180910390fd5b819050614180565b5b9392505050565b60008151111561419a5780518082602001fd5b6040517f1425ea4200000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b6000604051905090565b600080fd5b600080fd5b6000819050919050565b6141f3816141e0565b81146141fe57600080fd5b50565b600081359050614210816141ea565b92915050565b60008115159050919050565b61422b81614216565b811461423657600080fd5b50565b60008135905061424881614222565b92915050565b600080600080600080600060e0888a03121561426d5761426c6141d6565b5b600061427b8a828b01614201565b975050602061428c8a828b01614239565b965050604061429d8a828b01614239565b95505060606142ae8a828b01614239565b94505060806142bf8a828b01614201565b93505060a06142d08a828b01614239565b92505060c06142e18a828b01614201565b91505092959891949750929550565b60007fffffffff0000000000000000000000000000000000000000000000000000000082169050919050565b614325816142f0565b811461433057600080fd5b50565b6000813590506143428161431c565b92915050565b60006020828403121561435e5761435d6141d6565b5b600061436c84828501614333565b91505092915050565b61437e81614216565b82525050565b60006020820190506143996000830184614375565b92915050565b600081519050919050565b600082825260208201905092915050565b60005b838110156143d95780820151818401526020810190506143be565b60008484015250505050565b6000601f19601f8301169050919050565b60006144018261439f565b61440b81856143aa565b935061441b8185602086016143bb565b614424816143e5565b840191505092915050565b6000602082019050818103600083015261444981846143f6565b905092915050565b600060208284031215614467576144666141d6565b5b600061447584828501614201565b91505092915050565b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b60006144a98261447e565b9050919050565b6144b98161449e565b82525050565b60006020820190506144d460008301846144b0565b92915050565b6144e38161449e565b81146144ee57600080fd5b50565b600081359050614500816144da565b92915050565b6000806040838503121561451d5761451c6141d6565b5b600061452b858286016144f1565b925050602061453c85828601614201565b9150509250929050565b600080fd5b600080fd5b600080fd5b60008083601f84011261456b5761456a614546565b5b8235905067ffffffffffffffff8111156145885761458761454b565b5b6020830191508360018202830111156145a4576145a3614550565b5b9250929050565b6000806000806000608086880312156145c7576145c66141d6565b5b60006145d5888289016144f1565b95505060206145e6888289016144f1565b94505060406145f788828901614201565b935050606086013567ffffffffffffffff811115614618576146176141db565b5b61462488828901614555565b92509250509295509295909350565b61463c816142f0565b82525050565b60006020820190506146576000830184614633565b92915050565b614666816141e0565b82525050565b6000602082019050614681600083018461465d565b92915050565b6000806000606084860312156146a05761469f6141d6565b5b60006146ae868287016144f1565b93505060206146bf868287016144f1565b92505060406146d086828701614201565b9150509250925092565b600080604083850312156146f1576146f06141d6565b5b60006146ff85828601614201565b925050602061471085828601614201565b9150509250929050565b60008060408385031215614731576147306141d6565b5b600061473f85828601614201565b9250506020614750858286016144f1565b9150509250929050565b6000602082840312156147705761476f6141d6565b5b600061477e848285016144f1565b91505092915050565b600081519050919050565b600082825260208201905092915050565b60006147ae82614787565b6147b88185614792565b93506147c88185602086016143bb565b6147d1816143e5565b840191505092915050565b600060208201905081810360008301526147f681846147a3565b905092915050565b6000608082019050614813600083018761465d565b614820602083018661465d565b61482d604083018561465d565b61483a606083018461465d565b95945050505050565b600060e082019050614858600083018a6144b0565b614865602083018961465d565b61487260408301886144b0565b61487f606083018761465d565b61488c6080830186614375565b61489960a083018561465d565b6148a660c083018461465d565b98975050505050505050565b60008060008060008060c087890312156148cf576148ce6141d6565b5b60006148dd89828a01614201565b96505060206148ee89828a016144f1565b95505060406148ff89828a01614201565b945050606061491089828a01614239565b935050608061492189828a01614201565b92505060a061493289828a01614201565b9150509295509295509295565b60008060408385031215614956576149556141d6565b5b6000614964858286016144f1565b925050602061497585828601614239565b9150509250929050565b600080fd5b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b6149bc826143e5565b810181811067ffffffffffffffff821117156149db576149da614984565b5b80604052505050565b60006149ee6141cc565b90506149fa82826149b3565b919050565b600067ffffffffffffffff821115614a1a57614a19614984565b5b614a23826143e5565b9050602081019050919050565b82818337600083830152505050565b6000614a52614a4d846149ff565b6149e4565b905082815260208101848484011115614a6e57614a6d61497f565b5b614a79848285614a30565b509392505050565b600082601f830112614a9657614a95614546565b5b8135614aa6848260208601614a3f565b91505092915050565b60008060008060808587031215614ac957614ac86141d6565b5b6000614ad7878288016144f1565b9450506020614ae8878288016144f1565b9350506040614af987828801614201565b925050606085013567ffffffffffffffff811115614b1a57614b196141db565b5b614b2687828801614a81565b91505092959194509250565b60008060408385031215614b4957614b486141d6565b5b6000614b57858286016144f1565b9250506020614b68858286016144f1565b9150509250929050565b60008060008060008060a08789031215614b8f57614b8e6141d6565b5b6000614b9d89828a016144f1565b9650506020614bae89828a016144f1565b9550506040614bbf89828a01614201565b9450506060614bd089828a01614201565b935050608087013567ffffffffffffffff811115614bf157614bf06141db565b5b614bfd89828a01614555565b92509250509295509295509295565b6000606082019050614c216000830186614375565b614c2e602083018561465d565b614c3b604083018461465d565b949350505050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052602260045260246000fd5b60006002820490506001821680614c8a57607f821691505b602082108103614c9d57614c9c614c43565b5b50919050565b6000604082019050614cb860008301856144b0565b614cc560208301846144b0565b9392505050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b6000614d06826141e0565b9150614d11836141e0565b9250828201905080821115614d2957614d28614ccc565b5b92915050565b6000614d3a826141e0565b915060008203614d4d57614d4c614ccc565b5b600182039050919050565b6000614d63826141e0565b9150614d6e836141e0565b9250828203905081811115614d8657614d85614ccc565b5b92915050565b6000604082019050614da1600083018561465d565b614dae602083018461465d565b9392505050565b6000606082019050614dca60008301866144b0565b614dd760208301856144b0565b614de4604083018461465d565b949350505050565b50565b6000614dfc600083614792565b9150614e0782614dec565b600082019050919050565b600060a082019050614e2760008301876144b0565b614e3460208301866144b0565b614e41604083018561465d565b614e4e606083018461465d565b8181036080830152614e5f81614def565b905095945050505050565b6000604082019050614e7f60008301856144b0565b614e8c602083018461465d565b9392505050565b6000606082019050614ea8600083018661465d565b614eb5602083018561465d565b614ec2604083018461465d565b949350505050565b6000614ed5826141e0565b91507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8203614f0757614f06614ccc565b5b600182019050919050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052603260045260246000fd5b600081905092915050565b7f7b22746f6b656e5f6964223a2200000000000000000000000000000000000000600082015250565b6000614f82600d83614f41565b9150614f8d82614f4c565b600d82019050919050565b6000614fa38261439f565b614fad8185614f41565b9350614fbd8185602086016143bb565b80840191505092915050565b7f222c22696d616765223a202268747470733a2f2f6261646765732e6d6f6f6e7360008201527f747265616d2e746f2f746573742f7374616b696e675f6c6f676f2e706e672200602082015250565b6000615025603f83614f41565b915061503082614fc9565b603f82019050919050565b7f2c2265787465726e616c5f75726c223a2268747470733a2f2f67616d65372e6960008201527f6f22000000000000000000000000000000000000000000000000000000000000602082015250565b6000615097602283614f41565b91506150a28261503b565b602282019050919050565b7f2c226d657461646174615f76657273696f6e223a312c2261747472696275746560008201527f73223a205b000000000000000000000000000000000000000000000000000000602082015250565b6000615109602583614f41565b9150615114826150ad565b602582019050919050565b600061512a82614f75565b91506151368284614f98565b915061514182615018565b915061514c8261508a565b9150615157826150fc565b915081905092915050565b600081905092915050565b600061517882614787565b6151828185615162565b93506151928185602086016143bb565b80840191505092915050565b7f7b2274726169745f74797065223a22506f6f6c204944222c2276616c7565223a60008201527f2200000000000000000000000000000000000000000000000000000000000000602082015250565b60006151fa602183614f41565b91506152058261519e565b602182019050919050565b7f227d000000000000000000000000000000000000000000000000000000000000600082015250565b6000615246600283614f41565b915061525182615210565b600282019050919050565b6000615268828561516d565b9150615273826151ed565b915061527f8284614f98565b915061528a82615239565b91508190509392505050565b7f2c00000000000000000000000000000000000000000000000000000000000000600082015250565b60006152cc600183614f41565b91506152d782615296565b600182019050919050565b60006152ee828661516d565b91506152f9826152bf565b91506153058285614f98565b91506153118284614f98565b915061531c82615239565b9150819050949350505050565b7f2c7b22646973706c61795f74797065223a226e756d626572222c22747261697460008201527f5f74797065223a225374616b6564206174222c2276616c7565223a0000000000602082015250565b6000615385603b83614f41565b915061539082615329565b603b82019050919050565b7f7d00000000000000000000000000000000000000000000000000000000000000600082015250565b60006153d1600183614f41565b91506153dc8261539b565b600182019050919050565b60006153f3828561516d565b91506153fe82615378565b915061540a8284614f98565b9150615415826153c4565b91508190509392505050565b7f2c7b22646973706c61795f74797065223a226e756d626572222c22747261697460008201527f5f74797065223a224c6f636b75702065787069726573206174222c2276616c7560208201527f65223a0000000000000000000000000000000000000000000000000000000000604082015250565b60006154a3604383614f41565b91506154ae82615421565b604382019050919050565b60006154c5828561516d565b91506154d082615496565b91506154dc8284614f98565b91506154e7826153c4565b91508190509392505050565b7f5d7d000000000000000000000000000000000000000000000000000000000000600082015250565b6000615529600283614f41565b9150615534826154f3565b600282019050919050565b600061554b828461516d565b91506155568261551c565b915081905092915050565b7f646174613a6170706c69636174696f6e2f6a736f6e3b6261736536342c000000600082015250565b6000615597601d83614f41565b91506155a282615561565b601d82019050919050565b60006155b88261558a565b91506155c48284614f98565b915081905092915050565b60006060820190506155e460008301866144b0565b6155f1602083018561465d565b6155fe60408301846144b0565b949350505050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601260045260246000fd5b600060808201905061564a60008301876144b0565b61565760208301866144b0565b615664604083018561465d565b818103606083015261567681846147a3565b905095945050505050565b6000815190506156908161431c565b92915050565b6000602082840312156156ac576156ab6141d6565b5b60006156ba84828501615681565b91505092915050565b60006156ce826141e0565b91506156d9836141e0565b9250826156e9576156e8615606565b5b828204905092915050565b60006156ff826141e0565b915061570a836141e0565b9250828202615718816141e0565b9150828204841483151761572f5761572e614ccc565b5b5092915050565b60008151905061574581614222565b92915050565b600060208284031215615761576157606141d6565b5b600061576f84828501615736565b91505092915050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052603160045260246000fd5b60006157b3828461516d565b91508190509291505056fe4142434445464748494a4b4c4d4e4f505152535455565758595a6162636465666768696a6b6c6d6e6f707172737475767778797a303132333435363738392b2f7b2274726169745f74797065223a225374616b656420746f6b656e204944222c2276616c7565223a227b2274726169745f74797065223a225374616b656420616d6f756e74222c2276616c7565223a22a2646970667358221220afefde38876b3b8edc4a98b260513b266a1ea867e5553a1f6eee21494e33f17064736f6c63430008180033",
 }
 
 // StakerABI is the input ABI used to generate the binding from.
@@ -215,6 +215,68 @@ func (_Staker *StakerTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Tr
 // Transact invokes the (paid) contract method with params as input values.
 func (_Staker *StakerTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
 	return _Staker.Contract.contract.Transact(opts, method, params...)
+}
+
+// CurrentAmountInPool is a free data retrieval call binding the contract method 0x81c822e6.
+//
+// Solidity: function CurrentAmountInPool(uint256 ) view returns(uint256)
+func (_Staker *StakerCaller) CurrentAmountInPool(opts *bind.CallOpts, arg0 *big.Int) (*big.Int, error) {
+	var out []interface{}
+	err := _Staker.contract.Call(opts, &out, "CurrentAmountInPool", arg0)
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// CurrentAmountInPool is a free data retrieval call binding the contract method 0x81c822e6.
+//
+// Solidity: function CurrentAmountInPool(uint256 ) view returns(uint256)
+func (_Staker *StakerSession) CurrentAmountInPool(arg0 *big.Int) (*big.Int, error) {
+	return _Staker.Contract.CurrentAmountInPool(&_Staker.CallOpts, arg0)
+}
+
+// CurrentAmountInPool is a free data retrieval call binding the contract method 0x81c822e6.
+//
+// Solidity: function CurrentAmountInPool(uint256 ) view returns(uint256)
+func (_Staker *StakerCallerSession) CurrentAmountInPool(arg0 *big.Int) (*big.Int, error) {
+	return _Staker.Contract.CurrentAmountInPool(&_Staker.CallOpts, arg0)
+}
+
+// CurrentPositionsInPool is a free data retrieval call binding the contract method 0xb29087da.
+//
+// Solidity: function CurrentPositionsInPool(uint256 ) view returns(uint256)
+func (_Staker *StakerCaller) CurrentPositionsInPool(opts *bind.CallOpts, arg0 *big.Int) (*big.Int, error) {
+	var out []interface{}
+	err := _Staker.contract.Call(opts, &out, "CurrentPositionsInPool", arg0)
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// CurrentPositionsInPool is a free data retrieval call binding the contract method 0xb29087da.
+//
+// Solidity: function CurrentPositionsInPool(uint256 ) view returns(uint256)
+func (_Staker *StakerSession) CurrentPositionsInPool(arg0 *big.Int) (*big.Int, error) {
+	return _Staker.Contract.CurrentPositionsInPool(&_Staker.CallOpts, arg0)
+}
+
+// CurrentPositionsInPool is a free data retrieval call binding the contract method 0xb29087da.
+//
+// Solidity: function CurrentPositionsInPool(uint256 ) view returns(uint256)
+func (_Staker *StakerCallerSession) CurrentPositionsInPool(arg0 *big.Int) (*big.Int, error) {
+	return _Staker.Contract.CurrentPositionsInPool(&_Staker.CallOpts, arg0)
 }
 
 // ERC1155TOKENTYPE is a free data retrieval call binding the contract method 0xabd4ce78.
@@ -2633,7 +2695,7 @@ func CreateStakerDeploymentCommand() *cobra.Command {
 	return cmd
 }
 
-func CreateTokenUriCommand() *cobra.Command {
+func CreateTokenOfOwnerByIndexCommand() *cobra.Command {
 	var contractAddressRaw, rpc string
 	var contractAddress common.Address
 	var timeout uint
@@ -2641,659 +2703,16 @@ func CreateTokenUriCommand() *cobra.Command {
 	var blockNumberRaw, fromAddressRaw string
 	var pending bool
 
-	var tokenId *big.Int
-	var tokenIdRaw string
-
-	var capture0 string
-
-	cmd := &cobra.Command{
-		Use:   "token-uri",
-		Short: "Call the TokenURI view method on a Staker contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if tokenIdRaw == "" {
-				return fmt.Errorf("--token-id argument not specified")
-			}
-			tokenId = new(big.Int)
-			tokenId.SetString(tokenIdRaw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewStaker(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := StakerCallerSession{
-				Contract: &contract.StakerCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.TokenURI(
-				tokenId,
-			)
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0)
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	cmd.Flags().StringVar(&tokenIdRaw, "token-id", "", "token-id argument")
-
-	return cmd
-}
-func CreateTotalSupplyCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var capture0 *big.Int
-
-	cmd := &cobra.Command{
-		Use:   "total-supply",
-		Short: "Call the TotalSupply view method on a Staker contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewStaker(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := StakerCallerSession{
-				Contract: &contract.StakerCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.TotalSupply()
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0.String())
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	return cmd
-}
-func CreateNativetokentypeCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var capture0 *big.Int
-
-	cmd := &cobra.Command{
-		Use:   "nativetokentype",
-		Short: "Call the NATIVETOKENTYPE view method on a Staker contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewStaker(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := StakerCallerSession{
-				Contract: &contract.StakerCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.NATIVETOKENTYPE()
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0.String())
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	return cmd
-}
-func CreateGetApprovedCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var tokenId *big.Int
-	var tokenIdRaw string
-
-	var capture0 common.Address
-
-	cmd := &cobra.Command{
-		Use:   "get-approved",
-		Short: "Call the GetApproved view method on a Staker contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if tokenIdRaw == "" {
-				return fmt.Errorf("--token-id argument not specified")
-			}
-			tokenId = new(big.Int)
-			tokenId.SetString(tokenIdRaw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewStaker(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := StakerCallerSession{
-				Contract: &contract.StakerCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.GetApproved(
-				tokenId,
-			)
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0.Hex())
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	cmd.Flags().StringVar(&tokenIdRaw, "token-id", "", "token-id argument")
-
-	return cmd
-}
-func CreateNameCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var capture0 string
-
-	cmd := &cobra.Command{
-		Use:   "name",
-		Short: "Call the Name view method on a Staker contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewStaker(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := StakerCallerSession{
-				Contract: &contract.StakerCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.Name()
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0)
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	return cmd
-}
-func CreateOwnerOfCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var tokenId *big.Int
-	var tokenIdRaw string
-
-	var capture0 common.Address
-
-	cmd := &cobra.Command{
-		Use:   "owner-of",
-		Short: "Call the OwnerOf view method on a Staker contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if tokenIdRaw == "" {
-				return fmt.Errorf("--token-id argument not specified")
-			}
-			tokenId = new(big.Int)
-			tokenId.SetString(tokenIdRaw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewStaker(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := StakerCallerSession{
-				Contract: &contract.StakerCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.OwnerOf(
-				tokenId,
-			)
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0.Hex())
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	cmd.Flags().StringVar(&tokenIdRaw, "token-id", "", "token-id argument")
-
-	return cmd
-}
-func CreateOnErc1155ReceivedCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var arg0 common.Address
-	var arg0Raw string
-	var arg1 common.Address
-	var arg1Raw string
-	var arg2 *big.Int
-	var arg2Raw string
-	var arg3 *big.Int
-	var arg3Raw string
-	var arg4 []byte
-	var arg4Raw string
-
-	var capture0 [4]byte
-
-	cmd := &cobra.Command{
-		Use:   "on-erc-1155-received",
-		Short: "Call the OnERC1155Received view method on a Staker contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if arg0Raw == "" {
-				return fmt.Errorf("--arg-0 argument not specified")
-			} else if !common.IsHexAddress(arg0Raw) {
-				return fmt.Errorf("--arg-0 argument is not a valid Ethereum address")
-			}
-			arg0 = common.HexToAddress(arg0Raw)
-
-			if arg1Raw == "" {
-				return fmt.Errorf("--arg-1 argument not specified")
-			} else if !common.IsHexAddress(arg1Raw) {
-				return fmt.Errorf("--arg-1 argument is not a valid Ethereum address")
-			}
-			arg1 = common.HexToAddress(arg1Raw)
-
-			if arg2Raw == "" {
-				return fmt.Errorf("--arg-2 argument not specified")
-			}
-			arg2 = new(big.Int)
-			arg2.SetString(arg2Raw, 0)
-
-			if arg3Raw == "" {
-				return fmt.Errorf("--arg-3 argument not specified")
-			}
-			arg3 = new(big.Int)
-			arg3.SetString(arg3Raw, 0)
-
-			var hexDecodearg4Err error
-
-			arg4, hexDecodearg4Err = hex.DecodeString(arg4Raw)
-			if hexDecodearg4Err != nil {
-				return hexDecodearg4Err
-			}
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewStaker(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := StakerCallerSession{
-				Contract: &contract.StakerCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.OnERC1155Received(
-				arg0,
-				arg1,
-				arg2,
-				arg3,
-				arg4,
-			)
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %v\n", capture0)
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	cmd.Flags().StringVar(&arg0Raw, "arg-0", "", "arg-0 argument")
-	cmd.Flags().StringVar(&arg1Raw, "arg-1", "", "arg-1 argument")
-	cmd.Flags().StringVar(&arg2Raw, "arg-2", "", "arg-2 argument")
-	cmd.Flags().StringVar(&arg3Raw, "arg-3", "", "arg-3 argument")
-	cmd.Flags().StringVar(&arg4Raw, "arg-4", "", "arg-4 argument")
-
-	return cmd
-}
-func CreateOnErc721ReceivedCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var arg0 common.Address
-	var arg0Raw string
-	var arg1 common.Address
-	var arg1Raw string
-	var arg2 *big.Int
-	var arg2Raw string
-	var arg3 []byte
-	var arg3Raw string
-
-	var capture0 [4]byte
-
-	cmd := &cobra.Command{
-		Use:   "on-erc-721-received",
-		Short: "Call the OnERC721Received view method on a Staker contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if arg0Raw == "" {
-				return fmt.Errorf("--arg-0 argument not specified")
-			} else if !common.IsHexAddress(arg0Raw) {
-				return fmt.Errorf("--arg-0 argument is not a valid Ethereum address")
-			}
-			arg0 = common.HexToAddress(arg0Raw)
-
-			if arg1Raw == "" {
-				return fmt.Errorf("--arg-1 argument not specified")
-			} else if !common.IsHexAddress(arg1Raw) {
-				return fmt.Errorf("--arg-1 argument is not a valid Ethereum address")
-			}
-			arg1 = common.HexToAddress(arg1Raw)
-
-			if arg2Raw == "" {
-				return fmt.Errorf("--arg-2 argument not specified")
-			}
-			arg2 = new(big.Int)
-			arg2.SetString(arg2Raw, 0)
-
-			var hexDecodearg3Err error
-
-			arg3, hexDecodearg3Err = hex.DecodeString(arg3Raw)
-			if hexDecodearg3Err != nil {
-				return hexDecodearg3Err
-			}
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewStaker(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := StakerCallerSession{
-				Contract: &contract.StakerCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.OnERC721Received(
-				arg0,
-				arg1,
-				arg2,
-				arg3,
-			)
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %v\n", capture0)
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	cmd.Flags().StringVar(&arg0Raw, "arg-0", "", "arg-0 argument")
-	cmd.Flags().StringVar(&arg1Raw, "arg-1", "", "arg-1 argument")
-	cmd.Flags().StringVar(&arg2Raw, "arg-2", "", "arg-2 argument")
-	cmd.Flags().StringVar(&arg3Raw, "arg-3", "", "arg-3 argument")
-
-	return cmd
-}
-func CreateTokenByIndexCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
+	var owner common.Address
+	var ownerRaw string
 	var index *big.Int
 	var indexRaw string
 
 	var capture0 *big.Int
 
 	cmd := &cobra.Command{
-		Use:   "token-by-index",
-		Short: "Call the TokenByIndex view method on a Staker contract",
+		Use:   "token-of-owner-by-index",
+		Short: "Call the TokenOfOwnerByIndex view method on a Staker contract",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			if contractAddressRaw == "" {
 				return fmt.Errorf("--contract not specified")
@@ -3301,6 +2720,13 @@ func CreateTokenByIndexCommand() *cobra.Command {
 				return fmt.Errorf("--contract is not a valid Ethereum address")
 			}
 			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if ownerRaw == "" {
+				return fmt.Errorf("--owner argument not specified")
+			} else if !common.IsHexAddress(ownerRaw) {
+				return fmt.Errorf("--owner argument is not a valid Ethereum address")
+			}
+			owner = common.HexToAddress(ownerRaw)
 
 			if indexRaw == "" {
 				return fmt.Errorf("--index argument not specified")
@@ -3330,7 +2756,8 @@ func CreateTokenByIndexCommand() *cobra.Command {
 			}
 
 			var callErr error
-			capture0, callErr = session.TokenByIndex(
+			capture0, callErr = session.TokenOfOwnerByIndex(
+				owner,
 				index,
 			)
 			if callErr != nil {
@@ -3350,374 +2777,8 @@ func CreateTokenByIndexCommand() *cobra.Command {
 	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
 	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
 
+	cmd.Flags().StringVar(&ownerRaw, "owner", "", "owner argument")
 	cmd.Flags().StringVar(&indexRaw, "index", "", "index argument")
-
-	return cmd
-}
-func CreatePoolsCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var arg0 *big.Int
-	var arg0Raw string
-
-	var capture0 struct {
-		Administrator   common.Address
-		TokenType       *big.Int
-		TokenAddress    common.Address
-		TokenID         *big.Int
-		Transferable    bool
-		LockupSeconds   *big.Int
-		CooldownSeconds *big.Int
-	}
-
-	cmd := &cobra.Command{
-		Use:   "pools",
-		Short: "Call the Pools view method on a Staker contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if arg0Raw == "" {
-				return fmt.Errorf("--arg-0 argument not specified")
-			}
-			arg0 = new(big.Int)
-			arg0.SetString(arg0Raw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewStaker(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := StakerCallerSession{
-				Contract: &contract.StakerCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.Pools(
-				arg0,
-			)
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %v\n", capture0)
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	cmd.Flags().StringVar(&arg0Raw, "arg-0", "", "arg-0 argument")
-
-	return cmd
-}
-func CreatePositionsCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var arg0 *big.Int
-	var arg0Raw string
-
-	var capture0 struct {
-		PoolID             *big.Int
-		AmountOrTokenID    *big.Int
-		StakeTimestamp     *big.Int
-		UnstakeInitiatedAt *big.Int
-	}
-
-	cmd := &cobra.Command{
-		Use:   "positions",
-		Short: "Call the Positions view method on a Staker contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if arg0Raw == "" {
-				return fmt.Errorf("--arg-0 argument not specified")
-			}
-			arg0 = new(big.Int)
-			arg0.SetString(arg0Raw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewStaker(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := StakerCallerSession{
-				Contract: &contract.StakerCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.Positions(
-				arg0,
-			)
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %v\n", capture0)
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	cmd.Flags().StringVar(&arg0Raw, "arg-0", "", "arg-0 argument")
-
-	return cmd
-}
-func CreateTotalPoolsCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var capture0 *big.Int
-
-	cmd := &cobra.Command{
-		Use:   "total-pools",
-		Short: "Call the TotalPools view method on a Staker contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewStaker(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := StakerCallerSession{
-				Contract: &contract.StakerCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.TotalPools()
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0.String())
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	return cmd
-}
-func CreateMetadataBytesCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var positionTokenID *big.Int
-	var positionTokenIDRaw string
-
-	var capture0 []byte
-
-	cmd := &cobra.Command{
-		Use:   "metadata-bytes",
-		Short: "Call the MetadataBytes view method on a Staker contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if positionTokenIDRaw == "" {
-				return fmt.Errorf("--position-token-id argument not specified")
-			}
-			positionTokenID = new(big.Int)
-			positionTokenID.SetString(positionTokenIDRaw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewStaker(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := StakerCallerSession{
-				Contract: &contract.StakerCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.MetadataBytes(
-				positionTokenID,
-			)
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %v\n", capture0)
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	cmd.Flags().StringVar(&positionTokenIDRaw, "position-token-id", "", "position-token-id argument")
-
-	return cmd
-}
-func CreateSymbolCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var capture0 string
-
-	cmd := &cobra.Command{
-		Use:   "symbol",
-		Short: "Call the Symbol view method on a Staker contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewStaker(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := StakerCallerSession{
-				Contract: &contract.StakerCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.Symbol()
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0)
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
 
 	return cmd
 }
@@ -3886,6 +2947,208 @@ func CreateIsApprovedForAllCommand() *cobra.Command {
 
 	return cmd
 }
+func CreateNativetokentypeCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var capture0 *big.Int
+
+	cmd := &cobra.Command{
+		Use:   "nativetokentype",
+		Short: "Call the NATIVETOKENTYPE view method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := StakerCallerSession{
+				Contract: &contract.StakerCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.NATIVETOKENTYPE()
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0.String())
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	return cmd
+}
+func CreateCurrentPositionsInPoolCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var arg0 *big.Int
+	var arg0Raw string
+
+	var capture0 *big.Int
+
+	cmd := &cobra.Command{
+		Use:   "current-positions-in-pool",
+		Short: "Call the CurrentPositionsInPool view method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if arg0Raw == "" {
+				return fmt.Errorf("--arg-0 argument not specified")
+			}
+			arg0 = new(big.Int)
+			arg0.SetString(arg0Raw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := StakerCallerSession{
+				Contract: &contract.StakerCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.CurrentPositionsInPool(
+				arg0,
+			)
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0.String())
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	cmd.Flags().StringVar(&arg0Raw, "arg-0", "", "arg-0 argument")
+
+	return cmd
+}
+func CreateErc1155TokentypeCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var capture0 *big.Int
+
+	cmd := &cobra.Command{
+		Use:   "erc-1155-tokentype",
+		Short: "Call the ERC1155TOKENTYPE view method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := StakerCallerSession{
+				Contract: &contract.StakerCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.ERC1155TOKENTYPE()
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0.String())
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	return cmd
+}
 func CreateMetadataJsonCommand() *cobra.Command {
 	var contractAddressRaw, rpc string
 	var contractAddress common.Address
@@ -3962,298 +3225,6 @@ func CreateMetadataJsonCommand() *cobra.Command {
 
 	return cmd
 }
-func CreateSupportsInterfaceCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var interfaceId [4]byte
-	var interfaceIdRaw string
-
-	var capture0 bool
-
-	cmd := &cobra.Command{
-		Use:   "supports-interface",
-		Short: "Call the SupportsInterface view method on a Staker contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			var hexDecodeinterfaceIdErr error
-
-			var intermediateinterfaceIdLeaf []byte
-			intermediateinterfaceIdLeaf, hexDecodeinterfaceIdErr = hex.DecodeString(interfaceIdRaw)
-			if hexDecodeinterfaceIdErr != nil {
-				return hexDecodeinterfaceIdErr
-			}
-			interfaceId = [4]byte(intermediateinterfaceIdLeaf[:4])
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewStaker(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := StakerCallerSession{
-				Contract: &contract.StakerCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.SupportsInterface(
-				interfaceId,
-			)
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %t\n", capture0)
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	cmd.Flags().StringVar(&interfaceIdRaw, "interface-id", "", "interface-id argument")
-
-	return cmd
-}
-func CreateTokenOfOwnerByIndexCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var owner common.Address
-	var ownerRaw string
-	var index *big.Int
-	var indexRaw string
-
-	var capture0 *big.Int
-
-	cmd := &cobra.Command{
-		Use:   "token-of-owner-by-index",
-		Short: "Call the TokenOfOwnerByIndex view method on a Staker contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if ownerRaw == "" {
-				return fmt.Errorf("--owner argument not specified")
-			} else if !common.IsHexAddress(ownerRaw) {
-				return fmt.Errorf("--owner argument is not a valid Ethereum address")
-			}
-			owner = common.HexToAddress(ownerRaw)
-
-			if indexRaw == "" {
-				return fmt.Errorf("--index argument not specified")
-			}
-			index = new(big.Int)
-			index.SetString(indexRaw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewStaker(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := StakerCallerSession{
-				Contract: &contract.StakerCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.TokenOfOwnerByIndex(
-				owner,
-				index,
-			)
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0.String())
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	cmd.Flags().StringVar(&ownerRaw, "owner", "", "owner argument")
-	cmd.Flags().StringVar(&indexRaw, "index", "", "index argument")
-
-	return cmd
-}
-func CreateErc1155TokentypeCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var capture0 *big.Int
-
-	cmd := &cobra.Command{
-		Use:   "erc-1155-tokentype",
-		Short: "Call the ERC1155TOKENTYPE view method on a Staker contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewStaker(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := StakerCallerSession{
-				Contract: &contract.StakerCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.ERC1155TOKENTYPE()
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0.String())
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	return cmd
-}
-func CreateErc20TokentypeCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var capture0 *big.Int
-
-	cmd := &cobra.Command{
-		Use:   "erc-20-tokentype",
-		Short: "Call the ERC20TOKENTYPE view method on a Staker contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewStaker(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := StakerCallerSession{
-				Contract: &contract.StakerCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.ERC20TOKENTYPE()
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0.String())
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	return cmd
-}
 func CreateErc721TokentypeCommand() *cobra.Command {
 	var contractAddressRaw, rpc string
 	var contractAddress common.Address
@@ -4298,6 +3269,360 @@ func CreateErc721TokentypeCommand() *cobra.Command {
 
 			var callErr error
 			capture0, callErr = session.ERC721TOKENTYPE()
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0.String())
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	return cmd
+}
+func CreateMetadataBytesCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var positionTokenID *big.Int
+	var positionTokenIDRaw string
+
+	var capture0 []byte
+
+	cmd := &cobra.Command{
+		Use:   "metadata-bytes",
+		Short: "Call the MetadataBytes view method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if positionTokenIDRaw == "" {
+				return fmt.Errorf("--position-token-id argument not specified")
+			}
+			positionTokenID = new(big.Int)
+			positionTokenID.SetString(positionTokenIDRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := StakerCallerSession{
+				Contract: &contract.StakerCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.MetadataBytes(
+				positionTokenID,
+			)
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %v\n", capture0)
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	cmd.Flags().StringVar(&positionTokenIDRaw, "position-token-id", "", "position-token-id argument")
+
+	return cmd
+}
+func CreateOwnerOfCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var tokenId *big.Int
+	var tokenIdRaw string
+
+	var capture0 common.Address
+
+	cmd := &cobra.Command{
+		Use:   "owner-of",
+		Short: "Call the OwnerOf view method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if tokenIdRaw == "" {
+				return fmt.Errorf("--token-id argument not specified")
+			}
+			tokenId = new(big.Int)
+			tokenId.SetString(tokenIdRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := StakerCallerSession{
+				Contract: &contract.StakerCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.OwnerOf(
+				tokenId,
+			)
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0.Hex())
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	cmd.Flags().StringVar(&tokenIdRaw, "token-id", "", "token-id argument")
+
+	return cmd
+}
+func CreateSymbolCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var capture0 string
+
+	cmd := &cobra.Command{
+		Use:   "symbol",
+		Short: "Call the Symbol view method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := StakerCallerSession{
+				Contract: &contract.StakerCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.Symbol()
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0)
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	return cmd
+}
+func CreateTokenByIndexCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var index *big.Int
+	var indexRaw string
+
+	var capture0 *big.Int
+
+	cmd := &cobra.Command{
+		Use:   "token-by-index",
+		Short: "Call the TokenByIndex view method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if indexRaw == "" {
+				return fmt.Errorf("--index argument not specified")
+			}
+			index = new(big.Int)
+			index.SetString(indexRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := StakerCallerSession{
+				Contract: &contract.StakerCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.TokenByIndex(
+				index,
+			)
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0.String())
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	cmd.Flags().StringVar(&indexRaw, "index", "", "index argument")
+
+	return cmd
+}
+func CreateTotalPoolsCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var capture0 *big.Int
+
+	cmd := &cobra.Command{
+		Use:   "total-pools",
+		Short: "Call the TotalPools view method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := StakerCallerSession{
+				Contract: &contract.StakerCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.TotalPools()
 			if callErr != nil {
 				return callErr
 			}
@@ -4380,27 +3705,29 @@ func CreateTotalPositionsCommand() *cobra.Command {
 
 	return cmd
 }
-
-func CreateStakeErc721Command() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
+func CreateOnErc721ReceivedCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
 	var contractAddress common.Address
+	var timeout uint
 
-	var poolID *big.Int
-	var poolIDRaw string
-	var tokenID *big.Int
-	var tokenIDRaw string
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var arg0 common.Address
+	var arg0Raw string
+	var arg1 common.Address
+	var arg1Raw string
+	var arg2 *big.Int
+	var arg2Raw string
+	var arg3 []byte
+	var arg3Raw string
+
+	var capture0 [4]byte
 
 	cmd := &cobra.Command{
-		Use:   "stake-erc-721",
-		Short: "Execute the StakeERC721 method on a Staker contract",
+		Use:   "on-erc-721-received",
+		Short: "Call the OnERC721Received view method on a Staker contract",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
 			if contractAddressRaw == "" {
 				return fmt.Errorf("--contract not specified")
 			} else if !common.IsHexAddress(contractAddressRaw) {
@@ -4408,17 +3735,32 @@ func CreateStakeErc721Command() *cobra.Command {
 			}
 			contractAddress = common.HexToAddress(contractAddressRaw)
 
-			if poolIDRaw == "" {
-				return fmt.Errorf("--pool-id argument not specified")
+			if arg0Raw == "" {
+				return fmt.Errorf("--arg-0 argument not specified")
+			} else if !common.IsHexAddress(arg0Raw) {
+				return fmt.Errorf("--arg-0 argument is not a valid Ethereum address")
 			}
-			poolID = new(big.Int)
-			poolID.SetString(poolIDRaw, 0)
+			arg0 = common.HexToAddress(arg0Raw)
 
-			if tokenIDRaw == "" {
-				return fmt.Errorf("--token-id argument not specified")
+			if arg1Raw == "" {
+				return fmt.Errorf("--arg-1 argument not specified")
+			} else if !common.IsHexAddress(arg1Raw) {
+				return fmt.Errorf("--arg-1 argument is not a valid Ethereum address")
 			}
-			tokenID = new(big.Int)
-			tokenID.SetString(tokenIDRaw, 0)
+			arg1 = common.HexToAddress(arg1Raw)
+
+			if arg2Raw == "" {
+				return fmt.Errorf("--arg-2 argument not specified")
+			}
+			arg2 = new(big.Int)
+			arg2.SetString(arg2Raw, 0)
+
+			var hexDecodearg3Err error
+
+			arg3, hexDecodearg3Err = hex.DecodeString(arg3Raw)
+			if hexDecodearg3Err != nil {
+				return hexDecodearg3Err
+			}
 
 			return nil
 		},
@@ -4428,114 +3770,67 @@ func CreateStakeErc721Command() *cobra.Command {
 				return clientErr
 			}
 
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
 			contract, contractErr := NewStaker(contractAddress, client)
 			if contractErr != nil {
 				return contractErr
 			}
 
-			session := StakerTransactorSession{
-				Contract:     &contract.StakerTransactor,
-				TransactOpts: *transactionOpts,
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := StakerCallerSession{
+				Contract: &contract.StakerCaller,
+				CallOpts: callOpts,
 			}
 
-			transaction, transactionErr := session.StakeERC721(
-				poolID,
-				tokenID,
+			var callErr error
+			capture0, callErr = session.OnERC721Received(
+				arg0,
+				arg1,
+				arg2,
+				arg3,
 			)
-			if transactionErr != nil {
-				return transactionErr
+			if callErr != nil {
+				return callErr
 			}
 
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
+			cmd.Printf("0: %v\n", capture0)
 
 			return nil
 		},
 	}
 
 	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
 	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
 	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
 
-	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
-	cmd.Flags().StringVar(&tokenIDRaw, "token-id", "", "token-id argument")
+	cmd.Flags().StringVar(&arg0Raw, "arg-0", "", "arg-0 argument")
+	cmd.Flags().StringVar(&arg1Raw, "arg-1", "", "arg-1 argument")
+	cmd.Flags().StringVar(&arg2Raw, "arg-2", "", "arg-2 argument")
+	cmd.Flags().StringVar(&arg3Raw, "arg-3", "", "arg-3 argument")
 
 	return cmd
 }
-func CreateTransferFromCommand() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
+func CreateCurrentAmountInPoolCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
 	var contractAddress common.Address
+	var timeout uint
 
-	var from0 common.Address
-	var from0Raw string
-	var to0 common.Address
-	var to0Raw string
-	var tokenId *big.Int
-	var tokenIdRaw string
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var arg0 *big.Int
+	var arg0Raw string
+
+	var capture0 *big.Int
 
 	cmd := &cobra.Command{
-		Use:   "transfer-from",
-		Short: "Execute the TransferFrom method on a Staker contract",
+		Use:   "current-amount-in-pool",
+		Short: "Call the CurrentAmountInPool view method on a Staker contract",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
 			if contractAddressRaw == "" {
 				return fmt.Errorf("--contract not specified")
 			} else if !common.IsHexAddress(contractAddressRaw) {
@@ -4543,19 +3838,263 @@ func CreateTransferFromCommand() *cobra.Command {
 			}
 			contractAddress = common.HexToAddress(contractAddressRaw)
 
-			if from0Raw == "" {
-				return fmt.Errorf("--from-0 argument not specified")
-			} else if !common.IsHexAddress(from0Raw) {
-				return fmt.Errorf("--from-0 argument is not a valid Ethereum address")
+			if arg0Raw == "" {
+				return fmt.Errorf("--arg-0 argument not specified")
 			}
-			from0 = common.HexToAddress(from0Raw)
+			arg0 = new(big.Int)
+			arg0.SetString(arg0Raw, 0)
 
-			if to0Raw == "" {
-				return fmt.Errorf("--to-0 argument not specified")
-			} else if !common.IsHexAddress(to0Raw) {
-				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
 			}
-			to0 = common.HexToAddress(to0Raw)
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := StakerCallerSession{
+				Contract: &contract.StakerCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.CurrentAmountInPool(
+				arg0,
+			)
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0.String())
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	cmd.Flags().StringVar(&arg0Raw, "arg-0", "", "arg-0 argument")
+
+	return cmd
+}
+func CreateErc20TokentypeCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var capture0 *big.Int
+
+	cmd := &cobra.Command{
+		Use:   "erc-20-tokentype",
+		Short: "Call the ERC20TOKENTYPE view method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := StakerCallerSession{
+				Contract: &contract.StakerCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.ERC20TOKENTYPE()
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0.String())
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	return cmd
+}
+func CreateOnErc1155ReceivedCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var arg0 common.Address
+	var arg0Raw string
+	var arg1 common.Address
+	var arg1Raw string
+	var arg2 *big.Int
+	var arg2Raw string
+	var arg3 *big.Int
+	var arg3Raw string
+	var arg4 []byte
+	var arg4Raw string
+
+	var capture0 [4]byte
+
+	cmd := &cobra.Command{
+		Use:   "on-erc-1155-received",
+		Short: "Call the OnERC1155Received view method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if arg0Raw == "" {
+				return fmt.Errorf("--arg-0 argument not specified")
+			} else if !common.IsHexAddress(arg0Raw) {
+				return fmt.Errorf("--arg-0 argument is not a valid Ethereum address")
+			}
+			arg0 = common.HexToAddress(arg0Raw)
+
+			if arg1Raw == "" {
+				return fmt.Errorf("--arg-1 argument not specified")
+			} else if !common.IsHexAddress(arg1Raw) {
+				return fmt.Errorf("--arg-1 argument is not a valid Ethereum address")
+			}
+			arg1 = common.HexToAddress(arg1Raw)
+
+			if arg2Raw == "" {
+				return fmt.Errorf("--arg-2 argument not specified")
+			}
+			arg2 = new(big.Int)
+			arg2.SetString(arg2Raw, 0)
+
+			if arg3Raw == "" {
+				return fmt.Errorf("--arg-3 argument not specified")
+			}
+			arg3 = new(big.Int)
+			arg3.SetString(arg3Raw, 0)
+
+			var hexDecodearg4Err error
+
+			arg4, hexDecodearg4Err = hex.DecodeString(arg4Raw)
+			if hexDecodearg4Err != nil {
+				return hexDecodearg4Err
+			}
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := StakerCallerSession{
+				Contract: &contract.StakerCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.OnERC1155Received(
+				arg0,
+				arg1,
+				arg2,
+				arg3,
+				arg4,
+			)
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %v\n", capture0)
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	cmd.Flags().StringVar(&arg0Raw, "arg-0", "", "arg-0 argument")
+	cmd.Flags().StringVar(&arg1Raw, "arg-1", "", "arg-1 argument")
+	cmd.Flags().StringVar(&arg2Raw, "arg-2", "", "arg-2 argument")
+	cmd.Flags().StringVar(&arg3Raw, "arg-3", "", "arg-3 argument")
+	cmd.Flags().StringVar(&arg4Raw, "arg-4", "", "arg-4 argument")
+
+	return cmd
+}
+func CreateTokenUriCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var tokenId *big.Int
+	var tokenIdRaw string
+
+	var capture0 string
+
+	cmd := &cobra.Command{
+		Use:   "token-uri",
+		Short: "Call the TokenURI view method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
 
 			if tokenIdRaw == "" {
 				return fmt.Errorf("--token-id argument not specified")
@@ -4571,94 +4110,491 @@ func CreateTransferFromCommand() *cobra.Command {
 				return clientErr
 			}
 
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
 			contract, contractErr := NewStaker(contractAddress, client)
 			if contractErr != nil {
 				return contractErr
 			}
 
-			session := StakerTransactorSession{
-				Contract:     &contract.StakerTransactor,
-				TransactOpts: *transactionOpts,
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := StakerCallerSession{
+				Contract: &contract.StakerCaller,
+				CallOpts: callOpts,
 			}
 
-			transaction, transactionErr := session.TransferFrom(
-				from0,
-				to0,
+			var callErr error
+			capture0, callErr = session.TokenURI(
 				tokenId,
 			)
-			if transactionErr != nil {
-				return transactionErr
+			if callErr != nil {
+				return callErr
 			}
 
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
+			cmd.Printf("0: %s\n", capture0)
 
 			return nil
 		},
 	}
 
 	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
 	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
 	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
 
-	cmd.Flags().StringVar(&from0Raw, "from-0", "", "from-0 argument")
-	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument")
 	cmd.Flags().StringVar(&tokenIdRaw, "token-id", "", "token-id argument")
 
 	return cmd
 }
+func CreateNameCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var capture0 string
+
+	cmd := &cobra.Command{
+		Use:   "name",
+		Short: "Call the Name view method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := StakerCallerSession{
+				Contract: &contract.StakerCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.Name()
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0)
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	return cmd
+}
+func CreateSupportsInterfaceCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var interfaceId [4]byte
+	var interfaceIdRaw string
+
+	var capture0 bool
+
+	cmd := &cobra.Command{
+		Use:   "supports-interface",
+		Short: "Call the SupportsInterface view method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			var hexDecodeinterfaceIdErr error
+
+			var intermediateinterfaceIdLeaf []byte
+			intermediateinterfaceIdLeaf, hexDecodeinterfaceIdErr = hex.DecodeString(interfaceIdRaw)
+			if hexDecodeinterfaceIdErr != nil {
+				return hexDecodeinterfaceIdErr
+			}
+			interfaceId = [4]byte(intermediateinterfaceIdLeaf[:4])
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := StakerCallerSession{
+				Contract: &contract.StakerCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.SupportsInterface(
+				interfaceId,
+			)
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %t\n", capture0)
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	cmd.Flags().StringVar(&interfaceIdRaw, "interface-id", "", "interface-id argument")
+
+	return cmd
+}
+func CreatePositionsCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var arg0 *big.Int
+	var arg0Raw string
+
+	var capture0 struct {
+		PoolID             *big.Int
+		AmountOrTokenID    *big.Int
+		StakeTimestamp     *big.Int
+		UnstakeInitiatedAt *big.Int
+	}
+
+	cmd := &cobra.Command{
+		Use:   "positions",
+		Short: "Call the Positions view method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if arg0Raw == "" {
+				return fmt.Errorf("--arg-0 argument not specified")
+			}
+			arg0 = new(big.Int)
+			arg0.SetString(arg0Raw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := StakerCallerSession{
+				Contract: &contract.StakerCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.Positions(
+				arg0,
+			)
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %v\n", capture0)
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	cmd.Flags().StringVar(&arg0Raw, "arg-0", "", "arg-0 argument")
+
+	return cmd
+}
+func CreateGetApprovedCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var tokenId *big.Int
+	var tokenIdRaw string
+
+	var capture0 common.Address
+
+	cmd := &cobra.Command{
+		Use:   "get-approved",
+		Short: "Call the GetApproved view method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if tokenIdRaw == "" {
+				return fmt.Errorf("--token-id argument not specified")
+			}
+			tokenId = new(big.Int)
+			tokenId.SetString(tokenIdRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := StakerCallerSession{
+				Contract: &contract.StakerCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.GetApproved(
+				tokenId,
+			)
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0.Hex())
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	cmd.Flags().StringVar(&tokenIdRaw, "token-id", "", "token-id argument")
+
+	return cmd
+}
+func CreatePoolsCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var arg0 *big.Int
+	var arg0Raw string
+
+	var capture0 struct {
+		Administrator   common.Address
+		TokenType       *big.Int
+		TokenAddress    common.Address
+		TokenID         *big.Int
+		Transferable    bool
+		LockupSeconds   *big.Int
+		CooldownSeconds *big.Int
+	}
+
+	cmd := &cobra.Command{
+		Use:   "pools",
+		Short: "Call the Pools view method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if arg0Raw == "" {
+				return fmt.Errorf("--arg-0 argument not specified")
+			}
+			arg0 = new(big.Int)
+			arg0.SetString(arg0Raw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := StakerCallerSession{
+				Contract: &contract.StakerCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.Pools(
+				arg0,
+			)
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %v\n", capture0)
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	cmd.Flags().StringVar(&arg0Raw, "arg-0", "", "arg-0 argument")
+
+	return cmd
+}
+func CreateTotalSupplyCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var capture0 *big.Int
+
+	cmd := &cobra.Command{
+		Use:   "total-supply",
+		Short: "Call the TotalSupply view method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := StakerCallerSession{
+				Contract: &contract.StakerCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.TotalSupply()
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0.String())
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	return cmd
+}
+
 func CreateCreatePoolCommand() *cobra.Command {
 	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
 	var gasLimit uint64
@@ -4906,802 +4842,6 @@ func CreateInitiateUnstakeCommand() *cobra.Command {
 			}
 
 			transaction, transactionErr := session.InitiateUnstake(
-				positionTokenID,
-			)
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	cmd.Flags().StringVar(&positionTokenIDRaw, "position-token-id", "", "position-token-id argument")
-
-	return cmd
-}
-func CreateSetApprovalForAllCommand() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	var operator common.Address
-	var operatorRaw string
-	var approved bool
-	var approvedRaw string
-
-	cmd := &cobra.Command{
-		Use:   "set-approval-for-all",
-		Short: "Execute the SetApprovalForAll method on a Staker contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if operatorRaw == "" {
-				return fmt.Errorf("--operator argument not specified")
-			} else if !common.IsHexAddress(operatorRaw) {
-				return fmt.Errorf("--operator argument is not a valid Ethereum address")
-			}
-			operator = common.HexToAddress(operatorRaw)
-
-			approvedRawLower := strings.ToLower(approvedRaw)
-			switch approvedRawLower {
-			case "true", "t", "y", "yes", "1":
-				approved = true
-			case "false", "f", "n", "no", "0":
-				approved = false
-			default:
-				return fmt.Errorf("--approved argument is not valid (value: %s)", approvedRaw)
-			}
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewStaker(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := StakerTransactorSession{
-				Contract:     &contract.StakerTransactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.SetApprovalForAll(
-				operator,
-				approved,
-			)
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	cmd.Flags().StringVar(&operatorRaw, "operator", "", "operator argument")
-	cmd.Flags().StringVar(&approvedRaw, "approved", "", "approved argument (true, t, y, yes, 1 OR false, f, n, no, 0)")
-
-	return cmd
-}
-func CreateStakeErc1155Command() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	var poolID *big.Int
-	var poolIDRaw string
-	var amount *big.Int
-	var amountRaw string
-
-	cmd := &cobra.Command{
-		Use:   "stake-erc-1155",
-		Short: "Execute the StakeERC1155 method on a Staker contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if poolIDRaw == "" {
-				return fmt.Errorf("--pool-id argument not specified")
-			}
-			poolID = new(big.Int)
-			poolID.SetString(poolIDRaw, 0)
-
-			if amountRaw == "" {
-				return fmt.Errorf("--amount argument not specified")
-			}
-			amount = new(big.Int)
-			amount.SetString(amountRaw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewStaker(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := StakerTransactorSession{
-				Contract:     &contract.StakerTransactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.StakeERC1155(
-				poolID,
-				amount,
-			)
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
-	cmd.Flags().StringVar(&amountRaw, "amount", "", "amount argument")
-
-	return cmd
-}
-func CreateApproveCommand() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	var to0 common.Address
-	var to0Raw string
-	var tokenId *big.Int
-	var tokenIdRaw string
-
-	cmd := &cobra.Command{
-		Use:   "approve",
-		Short: "Execute the Approve method on a Staker contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if to0Raw == "" {
-				return fmt.Errorf("--to-0 argument not specified")
-			} else if !common.IsHexAddress(to0Raw) {
-				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
-			}
-			to0 = common.HexToAddress(to0Raw)
-
-			if tokenIdRaw == "" {
-				return fmt.Errorf("--token-id argument not specified")
-			}
-			tokenId = new(big.Int)
-			tokenId.SetString(tokenIdRaw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewStaker(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := StakerTransactorSession{
-				Contract:     &contract.StakerTransactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.Approve(
-				to0,
-				tokenId,
-			)
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument")
-	cmd.Flags().StringVar(&tokenIdRaw, "token-id", "", "token-id argument")
-
-	return cmd
-}
-func CreateSafeTransferFromCommand() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	var from0 common.Address
-	var from0Raw string
-	var to0 common.Address
-	var to0Raw string
-	var tokenId *big.Int
-	var tokenIdRaw string
-
-	cmd := &cobra.Command{
-		Use:   "safe-transfer-from",
-		Short: "Execute the SafeTransferFrom method on a Staker contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if from0Raw == "" {
-				return fmt.Errorf("--from-0 argument not specified")
-			} else if !common.IsHexAddress(from0Raw) {
-				return fmt.Errorf("--from-0 argument is not a valid Ethereum address")
-			}
-			from0 = common.HexToAddress(from0Raw)
-
-			if to0Raw == "" {
-				return fmt.Errorf("--to-0 argument not specified")
-			} else if !common.IsHexAddress(to0Raw) {
-				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
-			}
-			to0 = common.HexToAddress(to0Raw)
-
-			if tokenIdRaw == "" {
-				return fmt.Errorf("--token-id argument not specified")
-			}
-			tokenId = new(big.Int)
-			tokenId.SetString(tokenIdRaw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewStaker(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := StakerTransactorSession{
-				Contract:     &contract.StakerTransactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.SafeTransferFrom(
-				from0,
-				to0,
-				tokenId,
-			)
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	cmd.Flags().StringVar(&from0Raw, "from-0", "", "from-0 argument")
-	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument")
-	cmd.Flags().StringVar(&tokenIdRaw, "token-id", "", "token-id argument")
-
-	return cmd
-}
-func CreateStakeNativeCommand() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	var poolID *big.Int
-	var poolIDRaw string
-
-	cmd := &cobra.Command{
-		Use:   "stake-native",
-		Short: "Execute the StakeNative method on a Staker contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if poolIDRaw == "" {
-				return fmt.Errorf("--pool-id argument not specified")
-			}
-			poolID = new(big.Int)
-			poolID.SetString(poolIDRaw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewStaker(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := StakerTransactorSession{
-				Contract:     &contract.StakerTransactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.StakeNative(
-				poolID,
-			)
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
-
-	return cmd
-}
-func CreateUnstakeCommand() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	var positionTokenID *big.Int
-	var positionTokenIDRaw string
-
-	cmd := &cobra.Command{
-		Use:   "unstake",
-		Short: "Execute the Unstake method on a Staker contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if positionTokenIDRaw == "" {
-				return fmt.Errorf("--position-token-id argument not specified")
-			}
-			positionTokenID = new(big.Int)
-			positionTokenID.SetString(positionTokenIDRaw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewStaker(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := StakerTransactorSession{
-				Contract:     &contract.StakerTransactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.Unstake(
 				positionTokenID,
 			)
 			if transactionErr != nil {
@@ -6045,7 +5185,7 @@ func CreateStakeErc20Command() *cobra.Command {
 
 	return cmd
 }
-func CreateTransferPoolAdministrationCommand() *cobra.Command {
+func CreateStakeErc1155Command() *cobra.Command {
 	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
 	var gasLimit uint64
 	var simulate bool
@@ -6054,12 +5194,12 @@ func CreateTransferPoolAdministrationCommand() *cobra.Command {
 
 	var poolID *big.Int
 	var poolIDRaw string
-	var newAdministrator common.Address
-	var newAdministratorRaw string
+	var amount *big.Int
+	var amountRaw string
 
 	cmd := &cobra.Command{
-		Use:   "transfer-pool-administration",
-		Short: "Execute the TransferPoolAdministration method on a Staker contract",
+		Use:   "stake-erc-1155",
+		Short: "Execute the StakeERC1155 method on a Staker contract",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			if keyfile == "" {
 				return fmt.Errorf("--keystore not specified")
@@ -6078,12 +5218,11 @@ func CreateTransferPoolAdministrationCommand() *cobra.Command {
 			poolID = new(big.Int)
 			poolID.SetString(poolIDRaw, 0)
 
-			if newAdministratorRaw == "" {
-				return fmt.Errorf("--new-administrator argument not specified")
-			} else if !common.IsHexAddress(newAdministratorRaw) {
-				return fmt.Errorf("--new-administrator argument is not a valid Ethereum address")
+			if amountRaw == "" {
+				return fmt.Errorf("--amount argument not specified")
 			}
-			newAdministrator = common.HexToAddress(newAdministratorRaw)
+			amount = new(big.Int)
+			amount.SetString(amountRaw, 0)
 
 			return nil
 		},
@@ -6122,9 +5261,9 @@ func CreateTransferPoolAdministrationCommand() *cobra.Command {
 				TransactOpts: *transactionOpts,
 			}
 
-			transaction, transactionErr := session.TransferPoolAdministration(
+			transaction, transactionErr := session.StakeERC1155(
 				poolID,
-				newAdministrator,
+				amount,
 			)
 			if transactionErr != nil {
 				return transactionErr
@@ -6175,7 +5314,7 @@ func CreateTransferPoolAdministrationCommand() *cobra.Command {
 	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
 
 	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
-	cmd.Flags().StringVar(&newAdministratorRaw, "new-administrator", "", "new-administrator argument")
+	cmd.Flags().StringVar(&amountRaw, "amount", "", "amount argument")
 
 	return cmd
 }
@@ -6378,6 +5517,1081 @@ func CreateUpdatePoolConfigurationCommand() *cobra.Command {
 
 	return cmd
 }
+func CreateSetApprovalForAllCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var operator common.Address
+	var operatorRaw string
+	var approved bool
+	var approvedRaw string
+
+	cmd := &cobra.Command{
+		Use:   "set-approval-for-all",
+		Short: "Execute the SetApprovalForAll method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if operatorRaw == "" {
+				return fmt.Errorf("--operator argument not specified")
+			} else if !common.IsHexAddress(operatorRaw) {
+				return fmt.Errorf("--operator argument is not a valid Ethereum address")
+			}
+			operator = common.HexToAddress(operatorRaw)
+
+			approvedRawLower := strings.ToLower(approvedRaw)
+			switch approvedRawLower {
+			case "true", "t", "y", "yes", "1":
+				approved = true
+			case "false", "f", "n", "no", "0":
+				approved = false
+			default:
+				return fmt.Errorf("--approved argument is not valid (value: %s)", approvedRaw)
+			}
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := StakerTransactorSession{
+				Contract:     &contract.StakerTransactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.SetApprovalForAll(
+				operator,
+				approved,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&operatorRaw, "operator", "", "operator argument")
+	cmd.Flags().StringVar(&approvedRaw, "approved", "", "approved argument (true, t, y, yes, 1 OR false, f, n, no, 0)")
+
+	return cmd
+}
+func CreateStakeErc721Command() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var poolID *big.Int
+	var poolIDRaw string
+	var tokenID *big.Int
+	var tokenIDRaw string
+
+	cmd := &cobra.Command{
+		Use:   "stake-erc-721",
+		Short: "Execute the StakeERC721 method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if poolIDRaw == "" {
+				return fmt.Errorf("--pool-id argument not specified")
+			}
+			poolID = new(big.Int)
+			poolID.SetString(poolIDRaw, 0)
+
+			if tokenIDRaw == "" {
+				return fmt.Errorf("--token-id argument not specified")
+			}
+			tokenID = new(big.Int)
+			tokenID.SetString(tokenIDRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := StakerTransactorSession{
+				Contract:     &contract.StakerTransactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.StakeERC721(
+				poolID,
+				tokenID,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
+	cmd.Flags().StringVar(&tokenIDRaw, "token-id", "", "token-id argument")
+
+	return cmd
+}
+func CreateStakeNativeCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var poolID *big.Int
+	var poolIDRaw string
+
+	cmd := &cobra.Command{
+		Use:   "stake-native",
+		Short: "Execute the StakeNative method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if poolIDRaw == "" {
+				return fmt.Errorf("--pool-id argument not specified")
+			}
+			poolID = new(big.Int)
+			poolID.SetString(poolIDRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := StakerTransactorSession{
+				Contract:     &contract.StakerTransactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.StakeNative(
+				poolID,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
+
+	return cmd
+}
+func CreateTransferPoolAdministrationCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var poolID *big.Int
+	var poolIDRaw string
+	var newAdministrator common.Address
+	var newAdministratorRaw string
+
+	cmd := &cobra.Command{
+		Use:   "transfer-pool-administration",
+		Short: "Execute the TransferPoolAdministration method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if poolIDRaw == "" {
+				return fmt.Errorf("--pool-id argument not specified")
+			}
+			poolID = new(big.Int)
+			poolID.SetString(poolIDRaw, 0)
+
+			if newAdministratorRaw == "" {
+				return fmt.Errorf("--new-administrator argument not specified")
+			} else if !common.IsHexAddress(newAdministratorRaw) {
+				return fmt.Errorf("--new-administrator argument is not a valid Ethereum address")
+			}
+			newAdministrator = common.HexToAddress(newAdministratorRaw)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := StakerTransactorSession{
+				Contract:     &contract.StakerTransactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.TransferPoolAdministration(
+				poolID,
+				newAdministrator,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
+	cmd.Flags().StringVar(&newAdministratorRaw, "new-administrator", "", "new-administrator argument")
+
+	return cmd
+}
+func CreateApproveCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var to0 common.Address
+	var to0Raw string
+	var tokenId *big.Int
+	var tokenIdRaw string
+
+	cmd := &cobra.Command{
+		Use:   "approve",
+		Short: "Execute the Approve method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if to0Raw == "" {
+				return fmt.Errorf("--to-0 argument not specified")
+			} else if !common.IsHexAddress(to0Raw) {
+				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
+			}
+			to0 = common.HexToAddress(to0Raw)
+
+			if tokenIdRaw == "" {
+				return fmt.Errorf("--token-id argument not specified")
+			}
+			tokenId = new(big.Int)
+			tokenId.SetString(tokenIdRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := StakerTransactorSession{
+				Contract:     &contract.StakerTransactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.Approve(
+				to0,
+				tokenId,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument")
+	cmd.Flags().StringVar(&tokenIdRaw, "token-id", "", "token-id argument")
+
+	return cmd
+}
+func CreateSafeTransferFromCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var from0 common.Address
+	var from0Raw string
+	var to0 common.Address
+	var to0Raw string
+	var tokenId *big.Int
+	var tokenIdRaw string
+
+	cmd := &cobra.Command{
+		Use:   "safe-transfer-from",
+		Short: "Execute the SafeTransferFrom method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if from0Raw == "" {
+				return fmt.Errorf("--from-0 argument not specified")
+			} else if !common.IsHexAddress(from0Raw) {
+				return fmt.Errorf("--from-0 argument is not a valid Ethereum address")
+			}
+			from0 = common.HexToAddress(from0Raw)
+
+			if to0Raw == "" {
+				return fmt.Errorf("--to-0 argument not specified")
+			} else if !common.IsHexAddress(to0Raw) {
+				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
+			}
+			to0 = common.HexToAddress(to0Raw)
+
+			if tokenIdRaw == "" {
+				return fmt.Errorf("--token-id argument not specified")
+			}
+			tokenId = new(big.Int)
+			tokenId.SetString(tokenIdRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := StakerTransactorSession{
+				Contract:     &contract.StakerTransactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.SafeTransferFrom(
+				from0,
+				to0,
+				tokenId,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&from0Raw, "from-0", "", "from-0 argument")
+	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument")
+	cmd.Flags().StringVar(&tokenIdRaw, "token-id", "", "token-id argument")
+
+	return cmd
+}
+func CreateTransferFromCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var from0 common.Address
+	var from0Raw string
+	var to0 common.Address
+	var to0Raw string
+	var tokenId *big.Int
+	var tokenIdRaw string
+
+	cmd := &cobra.Command{
+		Use:   "transfer-from",
+		Short: "Execute the TransferFrom method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if from0Raw == "" {
+				return fmt.Errorf("--from-0 argument not specified")
+			} else if !common.IsHexAddress(from0Raw) {
+				return fmt.Errorf("--from-0 argument is not a valid Ethereum address")
+			}
+			from0 = common.HexToAddress(from0Raw)
+
+			if to0Raw == "" {
+				return fmt.Errorf("--to-0 argument not specified")
+			} else if !common.IsHexAddress(to0Raw) {
+				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
+			}
+			to0 = common.HexToAddress(to0Raw)
+
+			if tokenIdRaw == "" {
+				return fmt.Errorf("--token-id argument not specified")
+			}
+			tokenId = new(big.Int)
+			tokenId.SetString(tokenIdRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := StakerTransactorSession{
+				Contract:     &contract.StakerTransactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.TransferFrom(
+				from0,
+				to0,
+				tokenId,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&from0Raw, "from-0", "", "from-0 argument")
+	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument")
+	cmd.Flags().StringVar(&tokenIdRaw, "token-id", "", "token-id argument")
+
+	return cmd
+}
+func CreateUnstakeCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var positionTokenID *big.Int
+	var positionTokenIDRaw string
+
+	cmd := &cobra.Command{
+		Use:   "unstake",
+		Short: "Execute the Unstake method on a Staker contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if positionTokenIDRaw == "" {
+				return fmt.Errorf("--position-token-id argument not specified")
+			}
+			positionTokenID = new(big.Int)
+			positionTokenID.SetString(positionTokenIDRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewStaker(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := StakerTransactorSession{
+				Contract:     &contract.StakerTransactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.Unstake(
+				positionTokenID,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&positionTokenIDRaw, "position-token-id", "", "position-token-id argument")
+
+	return cmd
+}
 
 var ErrNoRPCURL error = errors.New("no RPC URL provided -- please pass an RPC URL from the command line or set the STAKER_RPC_URL environment variable")
 
@@ -6513,118 +6727,124 @@ func CreateStakerCommand() *cobra.Command {
 	cmdDeployStaker.GroupID = DeployGroup.ID
 	cmd.AddCommand(cmdDeployStaker)
 
-	cmdViewTokenURI := CreateTokenUriCommand()
-	cmdViewTokenURI.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewTokenURI)
-	cmdViewTotalSupply := CreateTotalSupplyCommand()
-	cmdViewTotalSupply.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewTotalSupply)
-	cmdViewNATIVETOKENTYPE := CreateNativetokentypeCommand()
-	cmdViewNATIVETOKENTYPE.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewNATIVETOKENTYPE)
-	cmdViewGetApproved := CreateGetApprovedCommand()
-	cmdViewGetApproved.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewGetApproved)
-	cmdViewName := CreateNameCommand()
-	cmdViewName.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewName)
-	cmdViewOwnerOf := CreateOwnerOfCommand()
-	cmdViewOwnerOf.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewOwnerOf)
-	cmdViewOnERC1155Received := CreateOnErc1155ReceivedCommand()
-	cmdViewOnERC1155Received.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewOnERC1155Received)
-	cmdViewOnERC721Received := CreateOnErc721ReceivedCommand()
-	cmdViewOnERC721Received.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewOnERC721Received)
-	cmdViewTokenByIndex := CreateTokenByIndexCommand()
-	cmdViewTokenByIndex.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewTokenByIndex)
-	cmdViewPools := CreatePoolsCommand()
-	cmdViewPools.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewPools)
-	cmdViewPositions := CreatePositionsCommand()
-	cmdViewPositions.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewPositions)
-	cmdViewTotalPools := CreateTotalPoolsCommand()
-	cmdViewTotalPools.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewTotalPools)
-	cmdViewMetadataBytes := CreateMetadataBytesCommand()
-	cmdViewMetadataBytes.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewMetadataBytes)
-	cmdViewSymbol := CreateSymbolCommand()
-	cmdViewSymbol.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewSymbol)
+	cmdViewTokenOfOwnerByIndex := CreateTokenOfOwnerByIndexCommand()
+	cmdViewTokenOfOwnerByIndex.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewTokenOfOwnerByIndex)
 	cmdViewBalanceOf := CreateBalanceOfCommand()
 	cmdViewBalanceOf.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewBalanceOf)
 	cmdViewIsApprovedForAll := CreateIsApprovedForAllCommand()
 	cmdViewIsApprovedForAll.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewIsApprovedForAll)
-	cmdViewMetadataJSON := CreateMetadataJsonCommand()
-	cmdViewMetadataJSON.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewMetadataJSON)
-	cmdViewSupportsInterface := CreateSupportsInterfaceCommand()
-	cmdViewSupportsInterface.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewSupportsInterface)
-	cmdViewTokenOfOwnerByIndex := CreateTokenOfOwnerByIndexCommand()
-	cmdViewTokenOfOwnerByIndex.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewTokenOfOwnerByIndex)
+	cmdViewNATIVETOKENTYPE := CreateNativetokentypeCommand()
+	cmdViewNATIVETOKENTYPE.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewNATIVETOKENTYPE)
+	cmdViewCurrentPositionsInPool := CreateCurrentPositionsInPoolCommand()
+	cmdViewCurrentPositionsInPool.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewCurrentPositionsInPool)
 	cmdViewERC1155TOKENTYPE := CreateErc1155TokentypeCommand()
 	cmdViewERC1155TOKENTYPE.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewERC1155TOKENTYPE)
-	cmdViewERC20TOKENTYPE := CreateErc20TokentypeCommand()
-	cmdViewERC20TOKENTYPE.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewERC20TOKENTYPE)
+	cmdViewMetadataJSON := CreateMetadataJsonCommand()
+	cmdViewMetadataJSON.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewMetadataJSON)
 	cmdViewERC721TOKENTYPE := CreateErc721TokentypeCommand()
 	cmdViewERC721TOKENTYPE.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewERC721TOKENTYPE)
+	cmdViewMetadataBytes := CreateMetadataBytesCommand()
+	cmdViewMetadataBytes.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewMetadataBytes)
+	cmdViewOwnerOf := CreateOwnerOfCommand()
+	cmdViewOwnerOf.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewOwnerOf)
+	cmdViewSymbol := CreateSymbolCommand()
+	cmdViewSymbol.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewSymbol)
+	cmdViewTokenByIndex := CreateTokenByIndexCommand()
+	cmdViewTokenByIndex.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewTokenByIndex)
+	cmdViewTotalPools := CreateTotalPoolsCommand()
+	cmdViewTotalPools.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewTotalPools)
 	cmdViewTotalPositions := CreateTotalPositionsCommand()
 	cmdViewTotalPositions.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewTotalPositions)
+	cmdViewOnERC721Received := CreateOnErc721ReceivedCommand()
+	cmdViewOnERC721Received.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewOnERC721Received)
+	cmdViewCurrentAmountInPool := CreateCurrentAmountInPoolCommand()
+	cmdViewCurrentAmountInPool.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewCurrentAmountInPool)
+	cmdViewERC20TOKENTYPE := CreateErc20TokentypeCommand()
+	cmdViewERC20TOKENTYPE.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewERC20TOKENTYPE)
+	cmdViewOnERC1155Received := CreateOnErc1155ReceivedCommand()
+	cmdViewOnERC1155Received.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewOnERC1155Received)
+	cmdViewTokenURI := CreateTokenUriCommand()
+	cmdViewTokenURI.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewTokenURI)
+	cmdViewName := CreateNameCommand()
+	cmdViewName.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewName)
+	cmdViewSupportsInterface := CreateSupportsInterfaceCommand()
+	cmdViewSupportsInterface.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewSupportsInterface)
+	cmdViewPositions := CreatePositionsCommand()
+	cmdViewPositions.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewPositions)
+	cmdViewGetApproved := CreateGetApprovedCommand()
+	cmdViewGetApproved.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewGetApproved)
+	cmdViewPools := CreatePoolsCommand()
+	cmdViewPools.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewPools)
+	cmdViewTotalSupply := CreateTotalSupplyCommand()
+	cmdViewTotalSupply.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewTotalSupply)
 
-	cmdTransactStakeERC721 := CreateStakeErc721Command()
-	cmdTransactStakeERC721.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactStakeERC721)
-	cmdTransactTransferFrom := CreateTransferFromCommand()
-	cmdTransactTransferFrom.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactTransferFrom)
 	cmdTransactCreatePool := CreateCreatePoolCommand()
 	cmdTransactCreatePool.GroupID = TransactGroup.ID
 	cmd.AddCommand(cmdTransactCreatePool)
 	cmdTransactInitiateUnstake := CreateInitiateUnstakeCommand()
 	cmdTransactInitiateUnstake.GroupID = TransactGroup.ID
 	cmd.AddCommand(cmdTransactInitiateUnstake)
-	cmdTransactSetApprovalForAll := CreateSetApprovalForAllCommand()
-	cmdTransactSetApprovalForAll.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactSetApprovalForAll)
-	cmdTransactStakeERC1155 := CreateStakeErc1155Command()
-	cmdTransactStakeERC1155.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactStakeERC1155)
-	cmdTransactApprove := CreateApproveCommand()
-	cmdTransactApprove.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactApprove)
-	cmdTransactSafeTransferFrom := CreateSafeTransferFromCommand()
-	cmdTransactSafeTransferFrom.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactSafeTransferFrom)
-	cmdTransactStakeNative := CreateStakeNativeCommand()
-	cmdTransactStakeNative.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactStakeNative)
-	cmdTransactUnstake := CreateUnstakeCommand()
-	cmdTransactUnstake.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactUnstake)
 	cmdTransactSafeTransferFrom0 := CreateSafeTransferFrom0Command()
 	cmdTransactSafeTransferFrom0.GroupID = TransactGroup.ID
 	cmd.AddCommand(cmdTransactSafeTransferFrom0)
 	cmdTransactStakeERC20 := CreateStakeErc20Command()
 	cmdTransactStakeERC20.GroupID = TransactGroup.ID
 	cmd.AddCommand(cmdTransactStakeERC20)
-	cmdTransactTransferPoolAdministration := CreateTransferPoolAdministrationCommand()
-	cmdTransactTransferPoolAdministration.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactTransferPoolAdministration)
+	cmdTransactStakeERC1155 := CreateStakeErc1155Command()
+	cmdTransactStakeERC1155.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactStakeERC1155)
 	cmdTransactUpdatePoolConfiguration := CreateUpdatePoolConfigurationCommand()
 	cmdTransactUpdatePoolConfiguration.GroupID = TransactGroup.ID
 	cmd.AddCommand(cmdTransactUpdatePoolConfiguration)
+	cmdTransactSetApprovalForAll := CreateSetApprovalForAllCommand()
+	cmdTransactSetApprovalForAll.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactSetApprovalForAll)
+	cmdTransactStakeERC721 := CreateStakeErc721Command()
+	cmdTransactStakeERC721.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactStakeERC721)
+	cmdTransactStakeNative := CreateStakeNativeCommand()
+	cmdTransactStakeNative.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactStakeNative)
+	cmdTransactTransferPoolAdministration := CreateTransferPoolAdministrationCommand()
+	cmdTransactTransferPoolAdministration.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactTransferPoolAdministration)
+	cmdTransactApprove := CreateApproveCommand()
+	cmdTransactApprove.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactApprove)
+	cmdTransactSafeTransferFrom := CreateSafeTransferFromCommand()
+	cmdTransactSafeTransferFrom.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactSafeTransferFrom)
+	cmdTransactTransferFrom := CreateTransferFromCommand()
+	cmdTransactTransferFrom.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactTransferFrom)
+	cmdTransactUnstake := CreateUnstakeCommand()
+	cmdTransactUnstake.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactUnstake)
 
 	return cmd
 }
