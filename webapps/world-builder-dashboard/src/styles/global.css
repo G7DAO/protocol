@@ -11,10 +11,15 @@ button {
   --Blue-200: #b3d8ff;
   --Blue-700: #175cd3;
   --Warning-50: #fffaeb;
+  --Warning-100: #FEF0C7;
   --Warning-300: #fec84b;
   --Warning-700: #b54708;
   --Success-50: #ecfdf3;
+  --Success-100: #D1FADF;
   --Success-700: #027a48;
+  --Error-50: #B42318;
+  --Error-100: #FEE4E2;
+  --Error-700: #FEF3F2;
   --Gray-50: #f9fafb;
   --Gray-700: #344054;
   --Gray-200: #eaecf0;
