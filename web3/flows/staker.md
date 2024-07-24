@@ -1275,24 +1275,32 @@ This should be true for all pairs of possible pools.
 
 It can be tested with a single pair of pools.
 
-### `STAKER-120`: If a pool administrator changes the pool configuration before a user has unstaked or while that user is in the process of unstaking, the updated configuration applies to the user
+### `STAKER-120`: For pools without cooldowns, changes to the `lockupSeconds` setting apply to all unstaked users.
 
-For pools without cooldowns, the new `lockupSeconds` setting applies to all unstaked users.
+This tests that when an administrator changes a configuration on a staking pool, the change applies to all open positions immediately.
 
-For pools with cooldowns, for users who have not yet initiated a cooldown, the new `lockupSeconds` setting applies to determine when it is possible for them to `initiateUnstake`.
+### `STAKER-121`: For pools with cooldowns, for users who have not yet initiated a cooldown, changes to the `lockupSeconds` setting apply to determine when it is possible for them to `initiateUnstake`
 
-For pools with cooldowns, for users who have initiated a cooldown already, the new `cooldownSeconds` setting applies.
+This tests that when an administrator changes a configuration on a staking pool, the change applies to all open positions immediately.
 
-Position tokens are no longer transferable even if they were transferable, and were transferred! before.
+### `STAKER-122`: For pools with cooldowns, for users who have initiated a cooldown already, changes to the `cooldownSeconds` setting apply to their final unstake
 
-Position tokens that were not transferable before become transferable if so configured.
+This tests that when an administrator changes a configuration on a staking pool, the change applies to all open positions immediately.
 
-### `STAKER-121`: Position tokens from transferable pools can be staked back into the `Staker`
+### `STAKER-123`: If an administrator changes `transferable` from `true` to `false`, position tokens are no longer transferable even if they were transferable, and were transferred! before
+
+This tests that when an administrator changes a configuration on a staking pool, the change applies to all open positions immediately.
+
+### `STAKER-124`: If an administrator changes `transferable` from `true` to `false`, position tokens that were not transferable before become transferable if so configured
+
+This tests that when an administrator changes a configuration on a staking pool, the change applies to all open positions immediately.
+
+### `STAKER-125`: Position tokens from transferable pools can be staked back into the `Staker`
 
 Because `Staker` positions are ERC721 tokens, as long as the pool under which a position has been opened is transferable,
 the position can be staked back into the contract.
 
-### `STAKER-122`: A user must call the correct `stake*` method to stake their tokens.
+### `STAKER-126`: A user must call the correct `stake*` method to stake their tokens.
 
 If a pool has a `tokenType` which doesn't match the `stake*` method that a user is calling, the contract
 should revert with:
@@ -1301,7 +1309,7 @@ should revert with:
     error IncorrectTokenType(uint256 poolID, uint256 poolTokenType, uint256 tokenTypeArg);
 ```
 
-### `STAKER-123`: When a user calls `stakeNative`, they must stake a non-zero number of tokens
+### `STAKER-127`: When a user calls `stakeNative`, they must stake a non-zero number of tokens
 
 Otherwise, their transaction should revert with:
 
@@ -1309,7 +1317,7 @@ Otherwise, their transaction should revert with:
     error NothingToStake();
 ```
 
-### `STAKER-124`: When a user calls `stakeERC20`, they must stake a non-zero number of tokens
+### `STAKER-128`: When a user calls `stakeERC20`, they must stake a non-zero number of tokens
 
 Otherwise, their transaction should revert with:
 
@@ -1317,7 +1325,7 @@ Otherwise, their transaction should revert with:
     error NothingToStake();
 ```
 
-### `STAKER-125`: When a user calls `stakeERC1155`, they must stake a non-zero number of tokens
+### `STAKER-129`: When a user calls `stakeERC1155`, they must stake a non-zero number of tokens
 
 Otherwise, their transaction should revert with:
 
@@ -1325,7 +1333,7 @@ Otherwise, their transaction should revert with:
     error NothingToStake();
 ```
 
-### `STAKER-126`: Calls to `tokenURI` for position tokens of unstaked positions should revert
+### `STAKER-130`: Calls to `tokenURI` for position tokens of unstaked positions should revert
 
 With:
 
