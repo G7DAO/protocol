@@ -1265,7 +1265,7 @@ These functions are called via `CurrentAmountInPool(poolID)` and `CurrentPositio
 
 These functions are called via `CurrentAmountInPool(poolID)` and `CurrentPositionsInPool(poolID)`.
 
-#### `STAKER-118`: `CurrentAmountInPool` and `CurrentPositionsInPool` should accurate reflect the amount of tokens and number of positions currently open under an ERC1155 staking pool
+#### `STAKER-118`: `CurrentAmountInPool` and `CurrentPositionsInPool` should accurately reflect the amount of tokens and number of positions currently open under an ERC1155 staking pool
 
 These functions are called via `CurrentAmountInPool(poolID)` and `CurrentPositionsInPool(poolID)`.
 
@@ -1275,7 +1275,7 @@ This should be true for all pairs of possible pools.
 
 It can be tested with a single pair of pools.
 
-### `STAKER-120`: For pools without cooldowns, changes to the `lockupSeconds` setting apply to all unstaked users.
+### `STAKER-120`: For pools without cooldowns, changes to the `lockupSeconds` setting apply to all unstaked users
 
 This tests that when an administrator changes a configuration on a staking pool, the change applies to all open positions immediately.
 

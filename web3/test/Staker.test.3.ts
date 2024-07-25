@@ -321,7 +321,7 @@ describe('Staker', function () {
         expect(positionsInPoolAtTime4).to.equal(positionsInPoolAtTime0);
     });
 
-    it('STAKER-118: `CurrentAmountInPool` and `CurrentPositionsInPool` should accurate reflect the amount of tokens and number of positions currently open under an ERC1155 staking pool', async function () {
+    it('STAKER-118: `CurrentAmountInPool` and `CurrentPositionsInPool` should accurately reflect the amount of tokens and number of positions currently open under an ERC1155 staking pool', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 0;
@@ -493,101 +493,139 @@ describe('Staker', function () {
         expect(positionsInERC20PoolAtTime4).to.equal(positionsInERC20PoolAtTime3 - 1n);
     });
 
-    it('STAKER-119: `CurrentAmountInPool` and `CurrentPositionsInPool` should not be affected by positions opened under other pools', async function () {
+    it('`STAKER-120`: For pools without cooldowns, changes to the `lockupSeconds` setting apply to all unstaked users', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 0;
 
-        const { staker, user0, erc20, erc20PoolID, nativePoolID } = await loadFixture(
+        const { staker, stakerWithAdmin0, user0, erc20, erc20PoolID } = await loadFixture(
             setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
         );
 
-        const stake1Amount = ethers.parseEther('0.1');
-        const stake2Amount = ethers.parseEther('3.14159');
+        const stakeAmount = ethers.parseEther('79');
 
-        await erc20.mint(await user0.getAddress(), stake2Amount);
-        await erc20.connect(user0).approve(await staker.getAddress(), stake2Amount);
+        await erc20.mint(await user0.getAddress(), stakeAmount);
+        await erc20.connect(user0).approve(await staker.getAddress(), stakeAmount);
 
         const stakerWithUser0 = staker.connect(user0);
 
-        const amountStakedInNativePoolAtTime0 = await stakerWithUser0.CurrentAmountInPool(nativePoolID);
-        const positionsInNativePoolAtTime0 = await stakerWithUser0.CurrentPositionsInPool(nativePoolID);
+        const stakeTx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const stakeTxReceipt = await stakeTx.wait();
+        expect(stakeTxReceipt).to.not.be.null;
+        const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        expect(stakeBlock).to.not.be.null;
 
-        const amountStakedInERC20PoolAtTime0 = await stakerWithUser0.CurrentAmountInPool(erc20PoolID);
-        const positionsInERC20PoolAtTime0 = await stakerWithUser0.CurrentPositionsInPool(erc20PoolID);
+        const stakePositionTokenID = (await staker.TotalPositions()) - 1n;
 
-        const stake1Tx = await stakerWithUser0.stakeNative(nativePoolID, { value: stake1Amount });
-        const stake1TxReceipt = await stake1Tx.wait();
-        expect(stake1TxReceipt).to.not.be.null;
-        const stake1Block = await ethers.provider.getBlock(stake1TxReceipt!.blockNumber);
-        expect(stake1Block).to.not.be.null;
+        await stakerWithAdmin0.updatePoolConfiguration(erc20PoolID, false, false, true, 2 * lockupSeconds, false, 0);
 
-        const stake1PositionTokenID = (await staker.TotalPositions()) - 1n;
+        await time.setNextBlockTimestamp(stakeBlock!.timestamp + lockupSeconds);
+        await expect(stakerWithUser0.unstake(stakePositionTokenID))
+            .to.be.revertedWithCustomError(staker, 'LockupNotExpired')
+            .withArgs(stakeBlock!.timestamp + 2 * lockupSeconds);
 
-        const amountStakedInNativePoolAtTime1 = await stakerWithUser0.CurrentAmountInPool(nativePoolID);
-        const positionsInNativePoolAtTime1 = await stakerWithUser0.CurrentPositionsInPool(nativePoolID);
+        await time.setNextBlockTimestamp(stakeBlock!.timestamp + 2 * lockupSeconds);
+        await stakerWithUser0.unstake(stakePositionTokenID);
+        await expect(stakerWithUser0.ownerOf(stakePositionTokenID))
+            .to.be.revertedWithCustomError(staker, 'ERC721NonexistentToken')
+            .withArgs(stakePositionTokenID);
+    });
 
-        const amountStakedInERC20PoolAtTime1 = await stakerWithUser0.CurrentAmountInPool(erc20PoolID);
-        const positionsInERC20PoolAtTime1 = await stakerWithUser0.CurrentPositionsInPool(erc20PoolID);
+    it('`STAKER-121`: For pools with cooldowns, for users who have not yet initiated a cooldown, changes to the `lockupSeconds` setting apply to determine when it is possible for them to `initiateUnstake`', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 1;
 
-        expect(amountStakedInNativePoolAtTime1).to.equal(amountStakedInNativePoolAtTime0 + stake1Amount);
-        expect(positionsInNativePoolAtTime1).to.equal(positionsInNativePoolAtTime0 + 1n);
+        const { staker, stakerWithAdmin0, user0, erc20, erc20PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
 
-        expect(amountStakedInERC20PoolAtTime1).to.equal(amountStakedInERC20PoolAtTime0);
-        expect(positionsInERC20PoolAtTime1).to.equal(positionsInERC20PoolAtTime0);
+        const stakeAmount = ethers.parseEther('79');
 
-        const stake2Tx = await stakerWithUser0.stakeERC20(erc20PoolID, stake2Amount);
-        const stake2TxReceipt = await stake2Tx.wait();
-        expect(stake2TxReceipt).to.not.be.null;
-        const stake2Block = await ethers.provider.getBlock(stake2TxReceipt!.blockNumber);
-        expect(stake2Block).to.not.be.null;
+        await erc20.mint(await user0.getAddress(), stakeAmount);
+        await erc20.connect(user0).approve(await staker.getAddress(), stakeAmount);
 
-        const stake2PositionTokenID = (await staker.TotalPositions()) - 1n;
+        const stakerWithUser0 = staker.connect(user0);
 
-        const amountStakedInNativePoolAtTime2 = await stakerWithUser0.CurrentAmountInPool(nativePoolID);
-        const positionsInNativePoolAtTime2 = await stakerWithUser0.CurrentPositionsInPool(nativePoolID);
+        const stakeTx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const stakeTxReceipt = await stakeTx.wait();
+        expect(stakeTxReceipt).to.not.be.null;
+        const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        expect(stakeBlock).to.not.be.null;
 
-        const amountStakedInERC20PoolAtTime2 = await stakerWithUser0.CurrentAmountInPool(erc20PoolID);
-        const positionsInERC20PoolAtTime2 = await stakerWithUser0.CurrentPositionsInPool(erc20PoolID);
+        const stakePositionTokenID = (await staker.TotalPositions()) - 1n;
 
-        expect(amountStakedInNativePoolAtTime2).to.equal(amountStakedInNativePoolAtTime1);
-        expect(positionsInNativePoolAtTime2).to.equal(positionsInNativePoolAtTime1);
+        await stakerWithAdmin0.updatePoolConfiguration(erc20PoolID, false, false, true, 2 * lockupSeconds, false, 0);
 
-        expect(amountStakedInERC20PoolAtTime2).to.equal(amountStakedInERC20PoolAtTime1 + stake2Amount);
-        expect(positionsInERC20PoolAtTime2).to.equal(positionsInERC20PoolAtTime1 + 1n);
+        await time.setNextBlockTimestamp(stakeBlock!.timestamp + lockupSeconds);
+        await expect(stakerWithUser0.initiateUnstake(stakePositionTokenID))
+            .to.be.revertedWithCustomError(staker, 'LockupNotExpired')
+            .withArgs(stakeBlock!.timestamp + 2 * lockupSeconds);
 
-        await time.setNextBlockTimestamp(stake1Block!.timestamp + lockupSeconds);
-        const unstake1Tx = await stakerWithUser0.unstake(stake1PositionTokenID);
-        const unstake1TxReceipt = await unstake1Tx.wait();
-        expect(unstake1TxReceipt).to.not.be.null;
+        await time.setNextBlockTimestamp(stakeBlock!.timestamp + 2 * lockupSeconds);
+        const initiateUnstakeTx = await stakerWithUser0.initiateUnstake(stakePositionTokenID);
+        const initiateUnstakeTxReceipt = await initiateUnstakeTx.wait();
+        expect(initiateUnstakeTxReceipt).to.not.be.null;
+        const initiateUnstakeBlock = await ethers.provider.getBlock(initiateUnstakeTxReceipt!.blockNumber);
+        expect(initiateUnstakeBlock).to.not.be.null;
 
-        const amountStakedInNativePoolAtTime3 = await stakerWithUser0.CurrentAmountInPool(nativePoolID);
-        const positionsInNativePoolAtTime3 = await stakerWithUser0.CurrentPositionsInPool(nativePoolID);
+        const positionAfter = await staker.Positions(stakePositionTokenID);
+        expect(positionAfter.unstakeInitiatedAt).to.equal(initiateUnstakeBlock!.timestamp);
+    });
 
-        const amountStakedInERC20PoolAtTime3 = await stakerWithUser0.CurrentAmountInPool(erc20PoolID);
-        const positionsInERC20PoolAtTime3 = await stakerWithUser0.CurrentPositionsInPool(erc20PoolID);
+    it('`STAKER-122`: For pools with cooldowns, for users who have initiated a cooldown already, changes to the `cooldownSeconds` setting apply to their final unstake', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 1;
 
-        expect(amountStakedInNativePoolAtTime3).to.equal(amountStakedInNativePoolAtTime2 - stake1Amount);
-        expect(positionsInNativePoolAtTime3).to.equal(positionsInNativePoolAtTime2 - 1n);
+        const { staker, stakerWithAdmin0, user0, erc20, erc20PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
 
-        expect(amountStakedInERC20PoolAtTime3).to.equal(amountStakedInERC20PoolAtTime2);
-        expect(positionsInERC20PoolAtTime3).to.equal(positionsInERC20PoolAtTime2);
+        const stakeAmount = ethers.parseEther('79');
 
-        await time.setNextBlockTimestamp(stake2Block!.timestamp + lockupSeconds);
-        const unstake2Tx = await stakerWithUser0.unstake(stake2PositionTokenID);
-        const unstake2TxReceipt = await unstake2Tx.wait();
-        expect(unstake2TxReceipt).to.not.be.null;
+        await erc20.mint(await user0.getAddress(), stakeAmount);
+        await erc20.connect(user0).approve(await staker.getAddress(), stakeAmount);
 
-        const amountStakedInNativePoolAtTime4 = await stakerWithUser0.CurrentAmountInPool(nativePoolID);
-        const positionsInNativePoolAtTime4 = await stakerWithUser0.CurrentPositionsInPool(nativePoolID);
+        const stakerWithUser0 = staker.connect(user0);
 
-        const amountStakedInERC20PoolAtTime4 = await stakerWithUser0.CurrentAmountInPool(erc20PoolID);
-        const positionsInERC20PoolAtTime4 = await stakerWithUser0.CurrentPositionsInPool(erc20PoolID);
+        const stakeTx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const stakeTxReceipt = await stakeTx.wait();
+        expect(stakeTxReceipt).to.not.be.null;
+        const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        expect(stakeBlock).to.not.be.null;
 
-        expect(amountStakedInNativePoolAtTime4).to.equal(amountStakedInNativePoolAtTime3);
-        expect(positionsInNativePoolAtTime4).to.equal(positionsInNativePoolAtTime3);
+        const stakePositionTokenID = (await staker.TotalPositions()) - 1n;
 
-        expect(amountStakedInERC20PoolAtTime4).to.equal(amountStakedInERC20PoolAtTime3 - stake2Amount);
-        expect(positionsInERC20PoolAtTime4).to.equal(positionsInERC20PoolAtTime3 - 1n);
+        await time.setNextBlockTimestamp(stakeBlock!.timestamp + lockupSeconds);
+        const initiateUnstakeTx = await stakerWithUser0.initiateUnstake(stakePositionTokenID);
+        const initiateUnstakeTxReceipt = await initiateUnstakeTx.wait();
+        expect(initiateUnstakeTxReceipt).to.not.be.null;
+        const initiateUnstakeBlock = await ethers.provider.getBlock(initiateUnstakeTxReceipt!.blockNumber);
+        expect(initiateUnstakeBlock).to.not.be.null;
+
+        const positionAfter = await staker.Positions(stakePositionTokenID);
+        expect(positionAfter.unstakeInitiatedAt).to.equal(initiateUnstakeBlock!.timestamp);
+
+        await time.setNextBlockTimestamp(initiateUnstakeBlock!.timestamp + cooldownSeconds);
+        await stakerWithAdmin0.updatePoolConfiguration(
+            erc20PoolID,
+            false,
+            false,
+            false,
+            0,
+            true,
+            1000 * cooldownSeconds
+        );
+
+        await expect(stakerWithUser0.unstake(stakePositionTokenID))
+            .to.be.revertedWithCustomError(staker, 'InitiateUnstakeFirst')
+            .withArgs(1000 * cooldownSeconds);
+
+        await time.setNextBlockTimestamp(initiateUnstakeBlock!.timestamp + 1000 * cooldownSeconds);
+        await stakerWithUser0.unstake(stakePositionTokenID);
+        await expect(stakerWithUser0.ownerOf(stakePositionTokenID))
+            .to.be.revertedWithCustomError(staker, 'ERC721NonexistentToken')
+            .withArgs(stakePositionTokenID);
     });
 });
