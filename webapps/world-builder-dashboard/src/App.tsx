@@ -7,6 +7,7 @@ import { ThemeProvider, AssetsProvider, Tenant } from 'summon-ui'
 import { IntlProvider } from 'summon-ui/intl'
 import { Notifications } from 'summon-ui/mantine'
 import { BlockchainProvider } from '@/components/bridge/BlockchainContext'
+import { BridgeNotificationsProvider } from '@/components/bridge/BridgeNotificationsContext'
 import en from '@/lang/en.json'
 import { AuthProvider } from '@/providers/AuthProvider'
 import router from '@/router'
@@ -59,10 +60,12 @@ export default function App() {
             }}
           >
             <ThemeProvider uiTheme={uiTheme}>
-              <Notifications position='top-right' zIndex={1000} styles={NOTIFICATIONS_STYLES} />
-              <AuthProvider>
-                <RouterProvider router={router} />
-              </AuthProvider>
+              <BridgeNotificationsProvider>
+                <Notifications position='top-right' zIndex={1000} styles={NOTIFICATIONS_STYLES} />
+                <AuthProvider>
+                  <RouterProvider router={router} />
+                </AuthProvider>
+              </BridgeNotificationsProvider>
             </ThemeProvider>
           </IntlProvider>
         </AssetsProvider>
