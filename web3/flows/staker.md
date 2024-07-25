@@ -1300,7 +1300,7 @@ This tests that when an administrator changes a configuration on a staking pool,
 Because `Staker` positions are ERC721 tokens, as long as the pool under which a position has been opened is transferable,
 the position can be staked back into the contract.
 
-### `STAKER-126`: A user must call the correct `stake*` method to stake their tokens.
+### `STAKER-126`: A user must call the correct `stake*` method to stake their tokens
 
 If a pool has a `tokenType` which doesn't match the `stake*` method that a user is calling, the contract
 should revert with:

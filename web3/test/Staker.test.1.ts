@@ -1,12 +1,6 @@
 import { ethers } from 'hardhat';
 import { expect } from 'chai';
 import { loadFixture, time } from '@nomicfoundation/hardhat-network-helpers';
-import { MockERC20 as MockERC20T } from '../typechain-types/contracts/mock/tokens.sol/MockERC20';
-import { MockERC721 as MockERC721T } from '../typechain-types/contracts/mock/tokens.sol/MockERC721';
-import { MockERC1155 as MockERC1155T } from '../typechain-types/contracts/mock/tokens.sol/MockERC1155';
-import { Staker as StakerT } from '../typechain-types/contracts/staking/Staker';
-import { HardhatEthersSigner } from '../helpers/type';
-import { TransactionResponse } from 'ethers';
 
 export async function setupFixture() {
     const [anyone, admin0, admin1, user0, user1, user2] = await ethers.getSigners();

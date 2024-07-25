@@ -628,4 +628,163 @@ describe('Staker', function () {
             .to.be.revertedWithCustomError(staker, 'ERC721NonexistentToken')
             .withArgs(stakePositionTokenID);
     });
+
+    it('`STAKER-123`: If an administrator changes `transferable` from `true` to `false`, position tokens are no longer transferable even if they were transferable, and were transferred! before', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 1;
+
+        const { staker, stakerWithAdmin0, user0, user1, erc20, erc20PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakeAmount = ethers.parseEther('79');
+
+        await erc20.mint(await user0.getAddress(), stakeAmount);
+        await erc20.connect(user0).approve(await staker.getAddress(), stakeAmount);
+
+        const stakerWithUser0 = staker.connect(user0);
+        const stakerWithUser1 = staker.connect(user1);
+
+        const stakeTx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const stakeTxReceipt = await stakeTx.wait();
+        expect(stakeTxReceipt).to.not.be.null;
+        const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        expect(stakeBlock).to.not.be.null;
+
+        const stakePositionTokenID = (await staker.TotalPositions()) - 1n;
+
+        expect(await staker.ownerOf(stakePositionTokenID)).to.equal(await user0.getAddress());
+        await stakerWithUser0.transferFrom(await user0.getAddress(), await user1.getAddress(), stakePositionTokenID);
+        expect(await staker.ownerOf(stakePositionTokenID)).to.equal(await user1.getAddress());
+
+        await stakerWithAdmin0.updatePoolConfiguration(erc20PoolID, true, false, false, 0, false, 0);
+        await expect(
+            stakerWithUser1.transferFrom(await user1.getAddress(), await user0.getAddress(), stakePositionTokenID)
+        )
+            .to.be.revertedWithCustomError(staker, 'PositionNotTransferable')
+            .withArgs(stakePositionTokenID);
+        expect(await staker.ownerOf(stakePositionTokenID)).to.equal(await user1.getAddress());
+    });
+
+    it('`STAKER-124`: If an administrator changes `transferable` from `true` to `false`, position tokens that were not transferable before become transferable if so configured', async function () {
+        const transferable = false;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 1;
+
+        const { staker, stakerWithAdmin0, user0, user1, erc20, erc20PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakeAmount = ethers.parseEther('79');
+
+        await erc20.mint(await user0.getAddress(), stakeAmount);
+        await erc20.connect(user0).approve(await staker.getAddress(), stakeAmount);
+
+        const stakerWithUser0 = staker.connect(user0);
+        const stakerWithUser1 = staker.connect(user1);
+
+        const stakeTx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const stakeTxReceipt = await stakeTx.wait();
+        expect(stakeTxReceipt).to.not.be.null;
+        const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        expect(stakeBlock).to.not.be.null;
+
+        const stakePositionTokenID = (await staker.TotalPositions()) - 1n;
+
+        await expect(
+            stakerWithUser0.transferFrom(await user0.getAddress(), await user1.getAddress(), stakePositionTokenID)
+        )
+            .to.be.revertedWithCustomError(staker, 'PositionNotTransferable')
+            .withArgs(stakePositionTokenID);
+        expect(await staker.ownerOf(stakePositionTokenID)).to.equal(await user0.getAddress());
+
+        await stakerWithAdmin0.updatePoolConfiguration(erc20PoolID, true, true, false, 0, false, 0);
+
+        expect(await staker.ownerOf(stakePositionTokenID)).to.equal(await user0.getAddress());
+        await stakerWithUser0.transferFrom(await user0.getAddress(), await user1.getAddress(), stakePositionTokenID);
+        expect(await staker.ownerOf(stakePositionTokenID)).to.equal(await user1.getAddress());
+    });
+
+    it('`STAKER-125`: Position tokens from transferable pools can be staked back into the `Staker`', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 1;
+
+        const { staker, stakerWithAdmin0, user0, erc20, erc20PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        await stakerWithAdmin0.createPool(
+            721,
+            await staker.getAddress(),
+            0,
+            transferable,
+            lockupSeconds,
+            cooldownSeconds
+        );
+        const stakerPositionPoolID = (await staker.TotalPools()) - 1n;
+        const stakerPositionPool = await staker.Pools(stakerPositionPoolID);
+
+        expect(stakerPositionPool.tokenType).to.equal(721);
+        expect(stakerPositionPool.tokenAddress).to.equal(await staker.getAddress());
+        expect(stakerPositionPool.tokenID).to.equal(0);
+        expect(stakerPositionPool.transferable).to.be.true;
+        expect(stakerPositionPool.lockupSeconds).to.equal(lockupSeconds);
+        expect(stakerPositionPool.cooldownSeconds).to.equal(cooldownSeconds);
+
+        const stakeAmount = ethers.parseEther('79');
+
+        await erc20.mint(await user0.getAddress(), stakeAmount);
+        await erc20.connect(user0).approve(await staker.getAddress(), stakeAmount);
+
+        const stakerWithUser0 = staker.connect(user0);
+
+        const stakeTx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const stakeTxReceipt = await stakeTx.wait();
+        expect(stakeTxReceipt).to.not.be.null;
+        const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        expect(stakeBlock).to.not.be.null;
+
+        const stakePositionTokenID = (await staker.TotalPositions()) - 1n;
+        expect(await staker.ownerOf(stakePositionTokenID)).to.equal(await user0.getAddress());
+
+        await stakerWithUser0.approve(await staker.getAddress(), stakePositionTokenID);
+        await stakerWithUser0.stakeERC721(stakerPositionPoolID, stakePositionTokenID);
+        expect(await staker.ownerOf(stakePositionTokenID)).to.equal(await staker.getAddress());
+
+        const newPositionTokenID = (await staker.TotalPositions()) - 1n;
+        const newPosition = await staker.Positions(newPositionTokenID);
+
+        expect(newPosition.poolID).to.equal(stakerPositionPoolID);
+        expect(newPosition.amountOrTokenID).to.equal(stakePositionTokenID);
+    });
+
+    it('`STAKER-126`: A user must call the correct `stake*` method to stake their tokens', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 1;
+
+        const { staker, stakerWithAdmin0, user0, nativePoolID, erc20PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+
+        await expect(stakerWithUser0.stakeNative(erc20PoolID, { value: 1 }))
+            .to.be.revertedWithCustomError(staker, 'IncorrectTokenType')
+            .withArgs(erc20PoolID, 20, 1);
+
+        await expect(stakerWithUser0.stakeERC20(nativePoolID, 1))
+            .to.be.revertedWithCustomError(staker, 'IncorrectTokenType')
+            .withArgs(nativePoolID, 1, 20);
+
+        await expect(stakerWithUser0.stakeERC721(erc20PoolID, 1))
+            .to.be.revertedWithCustomError(staker, 'IncorrectTokenType')
+            .withArgs(erc20PoolID, 20, 721);
+
+        await expect(stakerWithUser0.stakeERC1155(erc20PoolID, 1))
+            .to.be.revertedWithCustomError(staker, 'IncorrectTokenType')
+            .withArgs(erc20PoolID, 20, 1155);
+    });
 });
