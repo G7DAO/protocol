@@ -799,7 +799,7 @@ describe('Staker', function () {
 
         const stakerWithUser0 = staker.connect(user0);
 
-        expect(stakerWithUser0.stakeNative(nativePoolID, { value: 0 })).to.be.revertedWithCustomError(
+        await expect(stakerWithUser0.stakeNative(nativePoolID, { value: 0 })).to.be.revertedWithCustomError(
             staker,
             'NothingToStake'
         );
@@ -816,7 +816,10 @@ describe('Staker', function () {
 
         const stakerWithUser0 = staker.connect(user0);
 
-        expect(stakerWithUser0.stakeERC20(erc20PoolID, 0)).to.be.revertedWithCustomError(staker, 'NothingToStake');
+        await expect(stakerWithUser0.stakeERC20(erc20PoolID, 0)).to.be.revertedWithCustomError(
+            staker,
+            'NothingToStake'
+        );
     });
 
     it('`STAKER-129`: When a user calls `stakeERC1155`, they must stake a non-zero number of tokens', async function () {
@@ -830,7 +833,10 @@ describe('Staker', function () {
 
         const stakerWithUser0 = staker.connect(user0);
 
-        expect(stakerWithUser0.stakeERC1155(erc1155PoolID, 0)).to.be.revertedWithCustomError(staker, 'NothingToStake');
+        await expect(stakerWithUser0.stakeERC1155(erc1155PoolID, 0)).to.be.revertedWithCustomError(
+            staker,
+            'NothingToStake'
+        );
     });
 
     it('`STAKER-130`: Calls to `tokenURI` for position tokens of unstaked positions should revert', async function () {

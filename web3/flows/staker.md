@@ -1355,6 +1355,46 @@ With the following error:
 
 Even though it is not necessary for the user to initiate the unstake for a position in a pool with no cooldown, the behavior of the `initiateUnstake` function does not change.
 
+### `STAKER-133`: It should not be possible to re-enter the `Staker` (on the `stake*` or `unstake` methods) when staking into a native pool
+
+Any attempt to reenter should result in the following error:
+
+```
+    error ReentrancyGuardReentrantCall();
+```
+
+### `STAKER-134`: It should not be possible to re-enter the `Staker` (on the `stake*` or `unstake` methods) when staking into a native pool
+
+Any attempt to reenter should result in the following error:
+
+```
+    error ReentrancyGuardReentrantCall();
+```
+
+### `STAKER-135`: It should not be possible to re-enter the `Staker` (on the `stake*` or `unstake` methods) when staking into a native pool
+
+Any attempt to reenter should result in the following error:
+
+```
+    error ReentrancyGuardReentrantCall();
+```
+
+### `STAKER-136`: It should not be possible to re-enter the `Staker` (on the `stake*` or `unstake` methods) when staking into a native pool
+
+Any attempt to reenter should result in the following error:
+
+```
+    error ReentrancyGuardReentrantCall();
+```
+
+### `STAKER-137`: It should not be possible to re-enter the `Staker` (on the `stake*` or `unstake` methods) when unstaking a position
+
+Any attempt to reenter should result in the following error:
+
+```
+    error ReentrancyGuardReentrantCall();
+```
+
 ## Adding new flows
 
 Label the new flows using the syntax `TAG-modifier` with `STAKER` as the `TAG` and `*` as the modifier.
