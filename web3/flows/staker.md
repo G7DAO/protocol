@@ -1341,6 +1341,20 @@ With:
     error InvalidTokenType();
 ```
 
+### `STAKER-131`: If a user who holds a position in a pool with `cooldownSeconds = 0` calls `initiateUnstake` after the lockup period has expired, the `unstakeInitiatedAt` parameter of the position is updated
+
+Even though it is not necessary for the user to initiate the unstake for a position in a pool with no cooldown, the behavior of the `initiateUnstake` function does not change.
+
+### `STAKER-132`: If a user who holds a position in a pool with `cooldownSeconds = 0` calls `initiateUnstake` before the lockup period has expired, the transaction reverts
+
+With the following error:
+
+```
+    error LockupNotExpired(uint256 expiresAt);
+```
+
+Even though it is not necessary for the user to initiate the unstake for a position in a pool with no cooldown, the behavior of the `initiateUnstake` function does not change.
+
 ## Adding new flows
 
 Label the new flows using the syntax `TAG-modifier` with `STAKER` as the `TAG` and `*` as the modifier.
