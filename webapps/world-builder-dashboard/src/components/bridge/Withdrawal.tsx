@@ -65,6 +65,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
           return { ...oldData, status: L2ToL1MessageStatus.EXECUTED }
         })
         status.refetch()
+        queryClient.refetchQueries(['pendingTransactions'])
       },
       onError: (error: Error) => {
         console.log(error)
@@ -77,7 +78,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
 
   return (
     <>
-      {status.isLoading ? (
+      {status.isLoading && !status.data ? (
         Array.from(Array(7)).map((_, idx) => (
           <div className={styles.gridItem} key={idx}>
             <Skeleton key={idx} h='12px' w='100%' />
@@ -110,7 +111,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                 </a>
               </div>
               <div className={styles.gridItem}>
-                <div></div>
+                <div>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
               </div>
             </>
           )}
