@@ -3,7 +3,6 @@ import { HIGH_NETWORKS, L2_NETWORK, LOW_NETWORKS } from '../../constants'
 import { ethers, providers } from 'ethers'
 import { BridgeNotification } from '@/components/bridge/NotificationsButton'
 import { DepositRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
-import { L3_NETWORKS } from '@/components/bridge/l3Networks'
 import { WithdrawRecord } from '@/components/bridge/withdrawNativeToken'
 import { L1TransactionReceipt, L2ToL1MessageReader, L2ToL1MessageStatus, L2TransactionReceipt } from '@arbitrum/sdk'
 import { L1ContractCallTransactionReceipt } from '@arbitrum/sdk/dist/lib/message/L1Transaction'
@@ -39,6 +38,7 @@ export interface L2ToL1MessageStatusResult {
 
 const fetchL2ToL1MessageStatus = async (withdrawal: WithdrawRecord) => {
   const { lowNetworkChainId, highNetworkChainId, highNetworkHash, amount, highNetworkTimestamp } = withdrawal
+  console.log(withdrawal)
 
   const lowNetwork = LOW_NETWORKS.find((n) => n.chainId === lowNetworkChainId)
   const highNetwork = HIGH_NETWORKS.find((n) => n.chainId === highNetworkChainId)
@@ -60,6 +60,7 @@ const fetchL2ToL1MessageStatus = async (withdrawal: WithdrawRecord) => {
     from: highNetwork.displayName,
     to: lowNetwork.displayName,
     timestamp: highNetworkTimestamp,
+    lowNetworkTimeStamp: withdrawal.completionTimestamp,
     amount,
     l2Receipt
   }
@@ -185,11 +186,6 @@ export const useL2ToL1MessagesStatus = (transactions: Transaction[] | undefined)
   )
 }
 
-const getL3NetworkRPC = (chainId: number) => {
-  const network = L3_NETWORKS.find((n) => n.chainInfo.chainId === chainId)
-  return network?.chainInfo.rpcs[0]
-}
-
 export const useMessages = (connectedAccount: string | undefined): UseQueryResult<Transaction[]> => {
   return useQuery(['incomingMessages', connectedAccount], () => {
     if (!connectedAccount) {
@@ -219,6 +215,25 @@ export const useMessages = (connectedAccount: string | undefined): UseQueryResul
   })
 }
 
+export const getNotifications = (transactions: any[]) => {
+  const completedTransactions = transactions.filter(
+    (t: { completionTimestamp: number; claimableTimestamp: number }) => t.completionTimestamp || t.claimableTimestamp
+  )
+  const notifications: BridgeNotification[] = completedTransactions
+    .map((ct) => {
+      return {
+        status: ct.failed ? 'FAILED' : ct.completionTimestamp ? 'COMPLETED' : 'CLAIMABLE',
+        type: ct.isDeposit ? 'DEPOSIT' : 'WITHDRAWAL',
+        timestamp: ct.completionTimestamp ?? ct.claimableTimestamp,
+        amount: ct.amount,
+        to: ct.isDeposit ? ct.highNetworkChainId : ct.lowNetworkChainId,
+        seen: !ct.newTransaction
+      }
+    })
+    .sort((a, b) => b.timestamp - a.timestamp)
+  return notifications
+}
+
 export const useNotifications = (
   connectedAccount: string | undefined,
   offset: number,
@@ -241,31 +256,14 @@ export const useNotifications = (
         if (!Array.isArray(transactions)) {
           return []
         }
-        const completedTransactions = transactions
-          .slice(offset, limit)
-          .filter(
-            (t: { completionTimestamp: number; claimableTimestamp: number }) =>
-              t.completionTimestamp || t.claimableTimestamp
-          )
-        const notifications: BridgeNotification[] = completedTransactions.map((ct) => {
-          return {
-            status: ct.failed ? 'FAILED' : ct.completionTimestamp ? 'COMPLETED' : 'CLAIMABLE',
-            type: ct.isDeposit ? 'DEPOSIT' : 'WITHDRAWAL',
-            timestamp: ct.completionTimestamp ?? ct.claimableTimestamp,
-            amount: ct.amount,
-            to: ct.isDeposit ? ct.highNetworkChainId : ct.lowNetworkChainId,
-            seen: !ct.newTransaction
-          }
-        })
-        console.log(notifications)
-        return notifications
+        return getNotifications(transactions)
       } catch (e) {
         console.log(e)
         return []
       }
     },
     {
-      refetchInterval: false
+      refetchInterval: 10 * 1000
     }
   )
 }
