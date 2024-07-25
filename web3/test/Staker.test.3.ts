@@ -787,4 +787,138 @@ describe('Staker', function () {
             .to.be.revertedWithCustomError(staker, 'IncorrectTokenType')
             .withArgs(erc20PoolID, 20, 1155);
     });
+
+    it('`STAKER-127`: When a user calls `stakeNative`, they must stake a non-zero number of tokens', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 300;
+
+        const { staker, user0, nativePoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+
+        expect(stakerWithUser0.stakeNative(nativePoolID, { value: 0 })).to.be.revertedWithCustomError(
+            staker,
+            'NothingToStake'
+        );
+    });
+
+    it('`STAKER-128`: When a user calls `stakeERC20`, they must stake a non-zero number of tokens', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 300;
+
+        const { staker, user0, erc20PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+
+        expect(stakerWithUser0.stakeERC20(erc20PoolID, 0)).to.be.revertedWithCustomError(staker, 'NothingToStake');
+    });
+
+    it('`STAKER-129`: When a user calls `stakeERC1155`, they must stake a non-zero number of tokens', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 300;
+
+        const { staker, user0, erc1155PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+
+        expect(stakerWithUser0.stakeERC1155(erc1155PoolID, 0)).to.be.revertedWithCustomError(staker, 'NothingToStake');
+    });
+
+    it('`STAKER-130`: Calls to `tokenURI` for position tokens of unstaked positions should revert', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 300;
+
+        const { staker } = await loadFixture(setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds));
+
+        const nonexistentPositionTokenID = (await staker.TotalPositions()) + 1n;
+
+        await expect(staker.tokenURI(nonexistentPositionTokenID))
+            .to.be.revertedWithCustomError(staker, 'ERC721NonexistentToken')
+            .withArgs(nonexistentPositionTokenID);
+    });
+
+    it('`STAKER-131`: If a user who holds a position in a pool with `cooldownSeconds = 0` calls `initiateUnstake` after the lockup period has expired, the `unstakeInitiatedAt` parameter of the position is updated', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, user0, nativePoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+        const stakeAmount = ethers.parseEther('1');
+
+        // Stake native tokens
+        const stakeTx = await stakerWithUser0.stakeNative(nativePoolID, { value: stakeAmount });
+        const stakeTxReceipt = await stakeTx.wait();
+        expect(stakeTxReceipt).to.not.be.null;
+        const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        expect(stakeBlock).to.not.be.null;
+
+        // Get the position token ID of the newly minted token
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+
+        // Ensure the position holder is user0
+        expect(await staker.ownerOf(positionTokenID)).to.equal(await user0.getAddress());
+
+        // Fast-forward time to when the lockup period expires
+        await time.setNextBlockTimestamp(stakeBlock!.timestamp + lockupSeconds);
+
+        // Initiate the unstake
+        const initiateUnstakeTx = await stakerWithUser0.initiateUnstake(positionTokenID);
+        const initiateUnstakeTxReceipt = await initiateUnstakeTx.wait();
+        expect(initiateUnstakeTxReceipt).to.not.be.null;
+        const initiateUnstakeBlock = await ethers.provider.getBlock(initiateUnstakeTxReceipt!.blockNumber);
+        expect(initiateUnstakeBlock).to.not.be.null;
+
+        const position = await staker.Positions(positionTokenID);
+        expect(position.unstakeInitiatedAt).to.equal(initiateUnstakeBlock!.timestamp);
+    });
+
+    it('`STAKER-132`: If a user who holds a position in a pool with `cooldownSeconds = 0` calls `initiateUnstake` before the lockup period has expired, the transaction reverts', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, user0, nativePoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+        const stakeAmount = ethers.parseEther('1');
+
+        // Stake native tokens
+        const stakeTx = await stakerWithUser0.stakeNative(nativePoolID, { value: stakeAmount });
+        const stakeTxReceipt = await stakeTx.wait();
+        expect(stakeTxReceipt).to.not.be.null;
+        const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        expect(stakeBlock).to.not.be.null;
+
+        // Get the position token ID of the newly minted token
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+
+        // Ensure the position holder is user0
+        expect(await staker.ownerOf(positionTokenID)).to.equal(await user0.getAddress());
+
+        // Fast-forward time to just before the lockup period expires
+        await time.setNextBlockTimestamp(stakeBlock!.timestamp + lockupSeconds - 1);
+
+        await expect(stakerWithUser0.initiateUnstake(positionTokenID))
+            .to.be.revertedWithCustomError(staker, 'LockupNotExpired')
+            .withArgs(stakeBlock!.timestamp + lockupSeconds);
+
+        const position = await staker.Positions(positionTokenID);
+        expect(position.unstakeInitiatedAt).to.equal(0);
+    });
 });

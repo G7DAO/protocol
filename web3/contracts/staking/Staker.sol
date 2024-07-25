@@ -404,13 +404,10 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
     }
 
     function metadataBytes(uint256 positionTokenID) public view returns (bytes memory metadata) {
+        _requireOwned(positionTokenID);
+
         Position storage position = Positions[positionTokenID];
         StakingPool storage pool = Pools[position.poolID];
-
-        if (pool.tokenType == 0) {
-            // This means that the position does not exist.
-            revert InvalidTokenType();
-        }
 
         // Preamble
         metadata = abi.encodePacked(

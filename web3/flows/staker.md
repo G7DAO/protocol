@@ -1335,10 +1335,10 @@ Otherwise, their transaction should revert with:
 
 ### `STAKER-130`: Calls to `tokenURI` for position tokens of unstaked positions should revert
 
-With:
+With an `ERC721NonExistentToken` error:
 
 ```
-    error InvalidTokenType();
+    error ERC721NonexistentToken(uint256 tokenId);
 ```
 
 ### `STAKER-131`: If a user who holds a position in a pool with `cooldownSeconds = 0` calls `initiateUnstake` after the lockup period has expired, the `unstakeInitiatedAt` parameter of the position is updated
