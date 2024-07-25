@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { Navigate, createBrowserRouter } from 'react-router-dom'
 import ErrorBoundary from '@/components/ErrorBoundry'
 //Layouts
 import AuthLayout from '@/layouts/AuthLayout/AuthLayout'
@@ -11,17 +11,12 @@ import SignUpPage from '@/pages/SignUpPage/SignUpPage'
 
 const router = createBrowserRouter([
   {
-    element: <AuthLayout />,
+    element: <DashboardLayout />,
     path: '/',
     children: [
       {
-        path: '/signUp',
-        element: <SignUpPage />,
-        errorElement: <ErrorBoundary />
-      },
-      {
         path: '/',
-        element: <LoginPage />,
+        element: <Navigate to='/bridge' />,
         errorElement: <ErrorBoundary />
       }
     ]
