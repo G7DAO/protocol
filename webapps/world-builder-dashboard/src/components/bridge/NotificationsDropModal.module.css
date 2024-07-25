@@ -71,19 +71,19 @@
     text-transform: capitalize;
 }
 
-.badgeClaimable {
+.badgeClaimable, .toastClaimable {
     color: var(--Warning-700, #B54708);
     background: var(--Warning-50, #FFFAEB);
 }
-.badgeClaimable:hover {
+.badgeClaimable:hover, .toastClaimable:hover {
     background: var(--Warning-100, #FEF0C7);
 }
 
-.badgeCompleted {
+.badgeCompleted, .toastCompleted {
     color: var(--Success-700, #027a48);
     background: var(--Success-50, #ecfdf3);
 }
-.badgeCompleted:hover {
+.badgeCompleted:hover, .toastCompleted:hover {
     background: var(--Success-100, #D1FADF);
 }
 
@@ -95,12 +95,16 @@
     background: var(--Blue-100, #d1e9ff);
 }
 
-.badgeError {
+.badgeError, .toastError {
     color: var(--Error-700, #FEF3F2);
     background: var(--Error-50, #B42318);
 }
-.badgeError:hover {
+.badgeError:hover, .toastError:hover {
     background: var(--Error-100, #FEE4E2);
+}
+
+.toastMultiple {
+
 }
 
 
@@ -123,6 +127,59 @@
     font-style: normal;
     font-weight: 400;
     line-height: 20px; /* 142.857% */
+}
+
+.button {
+    display: flex;
+    padding: 8px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    align-self: stretch;
+    background: #FFF;
+    cursor: pointer;
+    border: none;
+    width: 100%;
+}
+
+/*.button:hover {*/
+/*    background: var(--Gray-25, #FCFCFD);*/
+/*}*/
+
+.toastCompleted, .toastMultiple, .toastClaimable, .toastError {
+    display: flex;
+    width: 100%;
+    padding: 8px 12px;
+    align-items: flex-start;
+    gap: 8px;
+    position: absolute;
+    left: 0;
+    /*bottom: 10vh;*/
+    border-radius: 8px;
+    transform: translateY(calc(100vh - 32px - 32px - 40.8px));
+    cursor: pointer;
+}
+
+.toastClaimable {
+    border: 1px solid var(--Warning-200, #FEDF89);
+}
+
+.toastError {
+    border: 1px solid var(--Error-200, #FECDCA);
+}
+
+.toastCompleted {
+    border: 1px solid var(--Success-200, #A6F4C5);
+}
+
+.toastMultiple {
+    border: 1px solid var(--Purple-200, #D9D6FE);
+    background: var(--Purple-50, #F4F3FF);
+    color: var(--Purple-700, #5925DC);
+}
+
+.toastMultiple:hover {
+    background: var(--Purple-100, #EBE9FE);
 }
 
 
