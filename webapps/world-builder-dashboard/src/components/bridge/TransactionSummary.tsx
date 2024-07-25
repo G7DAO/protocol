@@ -66,24 +66,6 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
           </div>
         </div>
       </div>
-      {direction === 'DEPOSIT' && (
-        <div className={styles.dataRow}>
-          <div className={styles.itemName}>ETH available</div>
-          <div className={styles.valueContainer}>
-            <div className={styles.value}>{`${gasBalance} ETH`}</div>
-            <div className={styles.valueNote}>{formatCurrency(gasBalance * ethRate)}</div>
-          </div>
-        </div>
-      )}
-      {direction === 'WITHDRAW' && (
-        <div className={styles.dataRow}>
-          <div className={styles.itemName}>{`${tokenSymbol} available`}</div>
-          <div className={styles.valueContainer}>
-            <div className={styles.value}>{`${gasBalance} ${tokenSymbol}`}</div>
-            <div className={styles.valueNote}>{formatCurrency(gasBalance * tokenRate)}</div>
-          </div>
-        </div>
-      )}
       <div className={styles.dataRow}>
         <div className={styles.itemName}>You will receive</div>
         <div className={styles.valueContainer}>
