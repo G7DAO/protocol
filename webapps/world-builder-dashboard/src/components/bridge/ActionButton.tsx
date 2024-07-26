@@ -3,12 +3,15 @@ import { useMutation, useQueryClient } from 'react-query'
 import { L3_NETWORK } from '../../../constants'
 import styles from './ActionButton.module.css'
 import { ethers } from 'ethers'
+import { Modal } from 'summon-ui/mantine'
 import IconLoading01 from '@/assets/IconLoading01'
+import ApproveAllowance from '@/components/bridge/ApproveAllowance'
 import { HighNetworkInterface, NetworkInterface, useBlockchainContext } from '@/components/bridge/BlockchainContext'
 import { depositERC20ArbitrumSDK, DepositRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
 import { sendDepositERC20ToNativeTransaction } from '@/components/bridge/depositERC20ToNative'
 import { sendWithdrawERC20Transaction } from '@/components/bridge/withdrawERC20'
 import { sendWithdrawTransaction, WithdrawRecord } from '@/components/bridge/withdrawNativeToken'
+import useERC20Balance, { useERC20Allowance } from '@/hooks/useERC20Balance'
 import { L2ToL1MessageStatus } from '@arbitrum/sdk'
 
 interface ActionButtonProps {
@@ -20,6 +23,20 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount }) => {
   const [isConnecting, setIsConnecting] = useState(false)
   const { connectedAccount, walletProvider, checkConnection, switchChain, selectedHighNetwork, selectedLowNetwork } =
     useBlockchainContext()
+  const [isAllowanceModalOpened, setIsAllowanceModalOpened] = useState(false)
+
+  const { data: allowance } = useERC20Allowance({
+    tokenAddress: selectedLowNetwork.g7TokenAddress,
+    owner: connectedAccount,
+    spender: selectedLowNetwork.routerSpender ?? '',
+    rpc: selectedLowNetwork.rpcs[0]
+  })
+
+  const { data: lowNetworkBalance } = useERC20Balance({
+    tokenAddress: selectedLowNetwork.g7TokenAddress,
+    account: connectedAccount,
+    rpc: selectedLowNetwork.rpcs[0]
+  })
 
   const getLabel = (): String | undefined => {
     if (isConnecting || deposit.isLoading || withdraw.isLoading) {
@@ -47,12 +64,19 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount }) => {
     }
   }
 
-  const handleClick = async () => {
+  const handleClick = async (isAllowanceSet: boolean) => {
     if (isConnecting || deposit.isLoading || withdraw.isLoading) {
       return
     }
 
     if (connectedAccount && walletProvider) {
+      if (direction === 'DEPOSIT' && allowance && !isAllowanceSet) {
+        if (allowance < Number(amount)) {
+          setIsAllowanceModalOpened(true)
+          return
+        }
+      }
+
       setIsConnecting(true)
 
       const accounts = await walletProvider.listAccounts()
@@ -152,15 +176,19 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount }) => {
           console.log(e)
         }
         console.log(deposit)
+        queryClient.invalidateQueries(['ERC20Balance'])
+
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
         queryClient.refetchQueries(['incomingMessages'])
+        queryClient.refetchQueries(['pendingNotifications'])
       },
       onError: (e: Error) => {
         console.log(e)
       }
     }
   )
+
   const withdraw = useMutation(
     (amount: string) => {
       if (!(connectedAccount && walletProvider)) {
@@ -203,19 +231,41 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount }) => {
         })
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
+        queryClient.refetchQueries(['pendingNotifications'])
         console.log(record)
       }
     }
   )
 
   return (
-    <button
-      className={styles.container}
-      onClick={handleClick}
-      disabled={getLabel() !== 'Connect wallet' && (!Number(amount) || Number(amount) <= 0)}
-    >
-      {getLabel() ?? <IconLoading01 color={'white'} className={styles.rotatable} />}
-    </button>
+    <>
+      <button
+        className={styles.container}
+        onClick={() => handleClick(false)}
+        disabled={getLabel() !== 'Connect wallet' && (!Number(amount) || Number(amount) <= 0)}
+      >
+        {getLabel() ?? <IconLoading01 color={'white'} className={styles.rotatable} />}
+      </button>
+      <Modal
+        opened={isAllowanceModalOpened}
+        onClose={() => setIsAllowanceModalOpened(false)}
+        withCloseButton={false}
+        padding={'24px'}
+        size={'400px'}
+        radius={'12px'}
+      >
+        <ApproveAllowance
+          balance={Number(lowNetworkBalance ?? '0')}
+          allowance={allowance ?? 0}
+          amount={Number(amount)}
+          onSuccess={() => {
+            setIsAllowanceModalOpened(false)
+            handleClick(true)
+          }}
+          onClose={() => setIsAllowanceModalOpened(false)}
+        />
+      </Modal>
+    </>
   )
 }
 
