@@ -1,0 +1,146 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: stretch;
+    font-family: Inter, sans-serif;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    align-self: stretch;
+}
+
+.titleAndCloseButton {
+    display: flex;
+    justify-content: space-between;
+    align-self: stretch;
+}
+
+.title {
+    align-self: stretch;
+    color: var(--Gray-700, #344054);
+    /* Text lg/Semibold */
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 28px; /* 155.556% */
+}
+
+.closeButton {
+    cursor: pointer;
+}
+
+.supportingText {
+    align-self: stretch;
+
+    color: var(--Gray-600, #475467);
+
+    /* Text sm/Regular */
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px; /* 142.857% */
+}
+
+.divider {
+    margin-top: 21px;
+    width: 400px;
+    height: 1px;
+    background-color: #EAECF0;
+    margin-left: -24px;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-self: stretch;
+    padding-top: 24px;
+}
+
+.inputContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    align-self: stretch;
+}
+
+.inputLabel {
+    color: var(--Gray-600, #475467);
+
+    /* Text xs/Medium */
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 18px; /* 150% */
+}
+
+.input {
+
+}
+
+.inputRow {
+    display: flex;
+    gap: 8px;
+    align-self: stretch;
+}
+
+.minButton {
+    border: none;
+    display: flex;
+    padding: 4px 8px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+
+    border-radius: 8px;
+    background: var(--Base-Brand, #EF233C);
+    color: var(--Primary-25, #FFFAFB);
+
+    /* Text xs/Medium */
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 18px; /* 150% */
+}
+
+.hintText {
+    color: var(--Gray-600, #475467);
+
+    /* Text xs/Regular */
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 18px; /* 150% */
+}
+
+.approveButton {
+    display: flex;
+    padding: 10px 16px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex: 1 0 0;
+
+    border-radius: 8px;
+    border: 1px solid var(--Primary-600, #EF233B);
+    background: var(--Primary-600, #EF233B);
+
+    /* Shadow/xs */
+    box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
+    color: var(--Base-White, #FFF);
+
+    /* Text sm/Semibold */
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 20px; /* 142.857% */
+    margin-top: 24px;
+    align-self: stretch;
+}
+
