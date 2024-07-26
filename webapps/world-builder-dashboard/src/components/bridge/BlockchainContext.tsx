@@ -43,6 +43,7 @@ export interface NetworkInterface {
   g7TokenAddress: string
   l2Router?: string
   l1GatewayRouter?: string
+  routerSpender?: string
 }
 
 export interface HighNetworkInterface extends NetworkInterface {

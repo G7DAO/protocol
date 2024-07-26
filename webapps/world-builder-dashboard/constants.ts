@@ -12,7 +12,8 @@ export const L1_NETWORK: NetworkInterface = {
     name: 'ETH',
     symbol: 'ETH'
   },
-  g7TokenAddress: '0xe2ef69e4af84dbefb0a75f8491f27a52bf047b01'
+  g7TokenAddress: '0xe2ef69e4af84dbefb0a75f8491f27a52bf047b01',
+  routerSpender: '0x902b3e5f8f19571859f4ab1003b960a5df693aff'
 }
 
 export const L2_NETWORK: HighNetworkInterface = {
@@ -28,7 +29,8 @@ export const L2_NETWORK: HighNetworkInterface = {
   },
   inbox: '0xaAe29B0366299461418F5324a79Afc425BE5ae21',
   g7TokenAddress: '0x10adbf84548f923577be12146eac104c899d1e75',
-  l1GatewayRouter: '0xcE18836b233C83325Cc8848CA4487e94C6288264'
+  l1GatewayRouter: '0xcE18836b233C83325Cc8848CA4487e94C6288264',
+  routerSpender: '0xE6470bb72291c39073AEd67a30ff93B69c1f47De'
 }
 
 export const L3_NETWORK: HighNetworkInterface = {
