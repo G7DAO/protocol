@@ -1,6 +1,6 @@
 // BlockchainContext.tsx
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react'
-import { DEFAULT_HIGH_NETWORK, DEFAULT_LOW_NETWORK } from '../../../constants'
+import { DEFAULT_HIGH_NETWORK, DEFAULT_LOW_NETWORK, L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../../constants'
 import { ethers } from 'ethers'
 import { L3_NETWORKS, L3NetworkConfiguration } from '@/components/bridge/l3Networks'
 
@@ -60,14 +60,32 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   const [walletProvider, setWalletProvider] = useState<ethers.providers.Web3Provider>()
   const [L2Provider, setL2Provider] = useState<ethers.providers.JsonRpcProvider>()
   const [selectedL3Network, _setSelectedL3Network] = useState<L3NetworkConfiguration>(L3_NETWORKS[0])
-  const [selectedLowNetwork, setSelectedLowNetwork] = useState<NetworkInterface>(DEFAULT_LOW_NETWORK)
-  const [selectedHighNetwork, setSelectedHighNetwork] = useState<NetworkInterface>(DEFAULT_HIGH_NETWORK)
+  const [selectedLowNetwork, _setSelectedLowNetwork] = useState<NetworkInterface>(DEFAULT_LOW_NETWORK)
+  const [selectedHighNetwork, _setSelectedHighNetwork] = useState<NetworkInterface>(DEFAULT_HIGH_NETWORK)
 
   const [connectedAccount, setConnectedAccount] = useState<string>()
   const tokenAddress = '0x5f88d811246222F6CB54266C42cc1310510b9feA'
 
   const setSelectedL3Network = (network: L3NetworkConfiguration): void => {
     _setSelectedL3Network(network)
+  }
+
+  const setSelectedLowNetwork = (network: NetworkInterface) => {
+    if (network === L1_NETWORK) {
+      _setSelectedHighNetwork(L2_NETWORK)
+    } else {
+      _setSelectedHighNetwork(L3_NETWORK)
+    }
+    _setSelectedLowNetwork(network)
+  }
+
+  const setSelectedHighNetwork = (network: NetworkInterface) => {
+    if (network === L2_NETWORK) {
+      _setSelectedLowNetwork(L1_NETWORK)
+    } else {
+      _setSelectedLowNetwork(L2_NETWORK)
+    }
+    _setSelectedHighNetwork(network)
   }
 
   useEffect(() => {
