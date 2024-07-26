@@ -25,14 +25,14 @@ button {
   --Error-600: #d92d20;
   --Error-700: #FEF3F2;
   --Gray-50: #f9fafb;
-  --Gray-700: #344054;
+  --Gray-100: #f2f4f7;
   --Gray-200: #eaecf0;
+  --Gray-300: #d0d5dd;
+  --Gray-600: #475467;
+  --Gray-700: #344054;
   --Primary-600: #ef233b;
   --Primary-700: #dd1534;
-  --Gray-600: #475467;
   --Base-White: #fff;
-  --Gray-300: #d0d5dd;
-  --Gray-100: #f2f4f7;
   --Gray-blue-700: #363f72;
   --Gray-blue-500: #4e5ba6;
   --Gray-blue-300: #b3b8db;
