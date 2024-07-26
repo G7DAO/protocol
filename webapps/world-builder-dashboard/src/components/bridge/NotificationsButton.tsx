@@ -31,7 +31,12 @@ const NotificationsButton: React.FC<NotificationsButtonProps> = ({ notifications
       onChange={setIsDropdownOpened}
     >
       <Popover.Target>
-        <button className={styles.container}>
+        <button
+          className={styles.container}
+          onClick={() => {
+            setIsDropdownOpened(!isDropdownOpened)
+          }}
+        >
           <IconBell />
           <div className={styles.label}>Notifications</div>
           {newNotifications.length > 0 && <div className={styles.badge}>{newNotifications.length}</div>}
