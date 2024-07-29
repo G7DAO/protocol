@@ -30,7 +30,6 @@ const ApproveAllowance: React.FC<ApproveAllowanceProps> = ({ amount, onClose, on
         const signer = provider.getSigner()
         return approve(allowance, signer, network)
       }
-      throw new Error('no window.ethereum')
     },
     {
       onSuccess: () => {
@@ -76,12 +75,10 @@ const ApproveAllowance: React.FC<ApproveAllowanceProps> = ({ amount, onClose, on
           <div className={styles.inputRow}>
             <AllowanceSelector
               balance={balance}
+              amount={amount}
               onChange={(value) => setNewAllowance(String(value))}
               allowance={Number(newAllowance)}
             />
-            <button className={styles.minButton} onClick={() => setNewAllowance(String(amount))}>
-              MIN
-            </button>
           </div>
         </div>
         <div className={styles.hintText}>
