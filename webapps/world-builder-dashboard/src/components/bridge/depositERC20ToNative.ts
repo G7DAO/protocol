@@ -209,6 +209,8 @@ export const sendDepositERC20ToNativeTransaction = async (
     highNetworkChainId: highNetwork.chainId,
     lowNetworkHash: txResponse.hash,
     lowNetworkTimestamp: Date.now() / 1000,
-    retryableCreationTimeout: 15 * 60
+    retryableCreationTimeout: 15 * 60,
+    completionTimestamp: Date.now() / 1000,
+    newTransaction: true
   }
 }
