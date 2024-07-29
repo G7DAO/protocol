@@ -21,9 +21,9 @@ const NAVIGATION_MENU: {
     to: '/bridge'
   },
   {
-    name: 'Stake',
-    icon: 'CoinsStacked03' as IconName,
-    to: '/stake'
+    name: 'Faucet',
+    icon: 'Droplets02' as IconName,
+    to: '/faucet'
   }
 ]
 

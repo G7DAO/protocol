@@ -1,0 +1,140 @@
+.container {
+    display: flex;
+    width: 660px;
+    max-width: 660px;
+    padding: 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+
+    border-radius: 8px;
+    border: 1px solid var(--Gray-200, #EAECF0);
+    background: var(--Gray-50, #F9FAFB);
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.title {
+    align-self: stretch;
+
+    color: var(--Gray-900, #101828);
+
+    /* Text lg/Semibold */
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 28px; /* 155.556% */
+}
+
+.supportingText {
+    align-self: stretch;
+
+    color: var(--Gray-600, #475467);
+
+    /* Text sm/Regular */
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px; /* 142.857% */
+}
+
+.networksContainer {
+    padding: 4px;
+    gap: 8px;
+    border-radius: 6px;
+    display: flex;
+    background: #fff;
+    border: 1px solid #f2f4f7;
+    width: 100%;
+}
+
+.selectedNetworkButton,
+.networkButton {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: Inter, serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    border: none;
+    cursor: pointer;
+}
+
+.selectedNetworkButton {
+    background: var(--Primary-600, #f2f4f7);
+    color: #fff;
+}
+
+.networkButton {
+    background: transparent;
+    color: var(--Gray-600, #475467);
+}
+
+.addressContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-self: stretch;
+}
+
+.label {
+    color: var(--Gray-600, #475467);
+
+    /* Text xs/Medium */
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 18px; /* 150% */
+}
+
+.address, .addressPlaceholder {
+    display: flex;
+    padding: 8px 12px;
+    align-items: center;
+    gap: 8px;
+    align-self: stretch;
+
+    border-radius: 8px;
+    border: 1px solid var(--Gray-100, #F2F4F7);
+    background: var(--Base-White, #FFF);
+    color: var(--Gray-500, #667085);
+
+    /* Text sm/Regular */
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px; /* 142.857% */
+}
+
+.address {
+    color: var(--Gray-700, #344054);
+}
+
+.button {
+    display: flex;
+    height: 40px;
+    padding: 10px 16px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    align-self: stretch;
+
+    border-radius: 8px;
+    border: 1px solid var(--Primary-600, #EF233B);
+    background: var(--Primary-600, #EF233B);
+
+    /* Shadow/xs */
+    box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
+    color: var(--Base-White, #FFF);
+
+    /* Text sm/Semibold */
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 20px; /* 142.857% */
+}

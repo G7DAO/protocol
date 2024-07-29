@@ -4,6 +4,7 @@ import ErrorBoundary from '@/components/ErrorBoundry'
 import AuthLayout from '@/layouts/AuthLayout/AuthLayout'
 import DashboardLayout from '@/layouts/DashboardLayout/DashboardLayout'
 import BridgePage from '@/pages/BridgePage/BridgePage'
+import FaucetPage from '@/pages/FaucetPage/FaucetPage'
 //Pages
 import LoginPage from '@/pages/LoginPage/LoginPage'
 import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage'
@@ -27,6 +28,15 @@ const router = createBrowserRouter([
       {
         path: '/bridge/*',
         element: <BridgePage />
+      }
+    ]
+  },
+  {
+    element: <DashboardLayout />,
+    children: [
+      {
+        path: '/faucet/*',
+        element: <FaucetPage />
       }
     ]
   },
