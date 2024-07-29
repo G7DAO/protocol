@@ -94,11 +94,23 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount }) => {
           if (currentChain.chainId !== targetChain.chainId) {
             try {
               await switchChain(targetChain)
+              if (direction === 'DEPOSIT' && allowance !== undefined && !isAllowanceSet) {
+                if (allowance < Number(amount)) {
+                  setIsAllowanceModalOpened(true)
+                  return
+                }
+              }
               mutate(amount)
             } catch (error) {
               console.error('Error switching chain:', error)
             }
           } else {
+            if (direction === 'DEPOSIT' && allowance !== undefined && !isAllowanceSet) {
+              if (allowance < Number(amount)) {
+                setIsAllowanceModalOpened(true)
+                return
+              }
+            }
             mutate(amount)
           }
         } else {
