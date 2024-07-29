@@ -1,6 +1,13 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
-import { L1_NETWORK, L2_NETWORK, L3_NATIVE_TOKEN_SYMBOL, L3_NETWORK } from '../../../constants'
+import {
+  HIGH_NETWORKS,
+  L1_NETWORK,
+  L2_NETWORK,
+  L3_NATIVE_TOKEN_SYMBOL,
+  L3_NETWORK,
+  LOW_NETWORKS
+} from '../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import { ethers } from 'ethers'
 import { Skeleton } from 'summon-ui/mantine'
@@ -8,6 +15,7 @@ import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import IconLoading01 from '@/assets/IconLoading01'
 import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
+import { useBridgeNotificationsContext } from '@/components/bridge/BridgeNotificationsContext'
 import { WithdrawRecord } from '@/components/bridge/withdrawNativeToken'
 import useL2ToL1MessageStatus from '@/hooks/useL2ToL1MessageStatus'
 import { ETA, timeAgo } from '@/utils/timeFormat'
@@ -22,20 +30,62 @@ const networkRPC = (chainId: number) => {
 interface WithdrawalProps {
   withdrawal: WithdrawRecord
 }
+
+const getStatus = (withdrawal: WithdrawRecord) => {
+  const {
+    completionTimestamp,
+    claimableTimestamp,
+    highNetworkChainId,
+    lowNetworkChainId,
+    highNetworkTimestamp,
+    amount,
+    highNetworkHash
+  } = withdrawal
+  const status = completionTimestamp
+    ? L2ToL1MessageStatus.EXECUTED
+    : claimableTimestamp
+      ? L2ToL1MessageStatus.CONFIRMED
+      : L2ToL1MessageStatus.UNCONFIRMED
+  const lowNetwork = LOW_NETWORKS.find((n) => n.chainId === lowNetworkChainId)
+  const highNetwork = HIGH_NETWORKS.find((n) => n.chainId === highNetworkChainId)
+  if (lowNetwork && highNetwork) {
+    const data = {
+      status,
+      from: highNetwork.displayName,
+      to: lowNetwork.displayName,
+      timestamp: highNetworkTimestamp,
+      lowNetworkTimeStamp: completionTimestamp,
+      amount,
+      highNetworkHash
+    }
+    return { data }
+    // console.log(data)
+  }
+}
 const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   // const targetRPC = withdrawal.highNetworkChainId === L2_NETWORK.chainId ? L1_NETWORK.rpcs[0] : L2_NETWORK.rpcs[0]
   const targetChain = withdrawal.highNetworkChainId === L2_NETWORK.chainId ? L1_NETWORK : L2_NETWORK
-  const status = useL2ToL1MessageStatus(withdrawal)
-  const { switchChain } = useBlockchainContext()
+
+  // const status = useL2ToL1MessageStatus(withdrawal)
+  const status = getStatus(withdrawal)
+  const { switchChain, connectedAccount } = useBlockchainContext()
   const queryClient = useQueryClient()
+  const { refetchNewNotifications } = useBridgeNotificationsContext()
+
+  useEffect(() => {
+    // console.log(withdrawal)
+  }, [withdrawal])
 
   const execute = useMutation(
-    async (l2Receipt: L2TransactionReceipt | undefined) => {
-      if (!l2Receipt) {
-        throw new Error('receipt undefined')
-      }
+    async (highNetworkHash: string) => {
+      // if (!l2Receipt) {
+      //   throw new Error('receipt undefined')
+      // }
       const highNetworkRPC = networkRPC(withdrawal.highNetworkChainId)
       const highNetworkProvider = new ethers.providers.JsonRpcProvider(highNetworkRPC)
+      const receipt = await highNetworkProvider.getTransactionReceipt(highNetworkHash)
+      const l2Receipt = new L2TransactionReceipt(receipt)
+
       let provider
       if (window.ethereum) {
         provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -57,14 +107,39 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
       return rec
     },
     {
-      onSuccess: (data) => {
+      onSuccess: (data, highNetworkHash) => {
         console.log(data)
+        try {
+          const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+
+          let transactions = []
+          if (transactionsString) {
+            transactions = JSON.parse(transactionsString)
+          }
+          const newTransactions = transactions.map((t: any) => {
+            if (t.highNetworkHash === highNetworkHash) {
+              return {
+                ...t,
+                completionTimestamp: Date.now() / 1000,
+                lowNetworkTimestamp: Date.now() / 1000,
+                newTransaction: true
+              }
+            }
+            return { ...t }
+          })
+          localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(newTransactions))
+        } catch (e) {
+          console.log(e)
+        }
+        refetchNewNotifications(connectedAccount ?? '')
+        queryClient.refetchQueries(['incomingMessages'])
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
         queryClient.setQueryData(['withdrawalStatus', withdrawal], (oldData: any) => {
           return { ...oldData, status: L2ToL1MessageStatus.EXECUTED }
         })
-        status.refetch()
+
+        // status.refetch()
         queryClient.refetchQueries(['pendingTransactions'])
       },
       onError: (error: Error) => {
@@ -72,7 +147,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
       }
     }
   )
-  if (!status.isLoading && !status.data) {
+  if (!status) {
     return <></>
   }
 
@@ -123,12 +198,15 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                   target={'_blank'}
                   className={styles.explorerLink}
                 >
-                  <div className={styles.claimable}>Claimable</div>
+                  <div className={styles.claimable}>
+                    Claimable
+                    <IconLinkExternal02 stroke={'#B54708'} />
+                  </div>
                 </a>
               </div>
               <div className={styles.gridItem}>
-                <button className={styles.claimButton} onClick={() => execute.mutate(status.data?.l2Receipt)}>
-                  {execute.isLoading ? <IconLoading01 color={'white'} className={styles.rotatable} /> : 'Claim now'}
+                <button className={styles.claimButton} onClick={() => execute.mutate(status.data.highNetworkHash)}>
+                  {execute.isLoading ? 'Claiming...' : 'Claim now'}
                 </button>
               </div>
             </>
