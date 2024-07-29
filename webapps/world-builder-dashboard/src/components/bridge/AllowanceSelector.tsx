@@ -7,9 +7,10 @@ type AllowanceSelectorProps = {
   balance: number
   onChange: (newAllowance: number) => void
   allowance: number
+  amount: number
 } & InputBaseProps
 
-const AllowanceSelector = ({ balance, onChange, allowance }: AllowanceSelectorProps) => {
+const AllowanceSelector = ({ balance, onChange, allowance, amount }: AllowanceSelectorProps) => {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption()
   })
@@ -37,6 +38,15 @@ const AllowanceSelector = ({ balance, onChange, allowance }: AllowanceSelectorPr
           onClick={() => combobox.toggleDropdown()}
         >
           {allowance}
+          <button
+            className={styles.button}
+            onClick={(e) => {
+              onChange(amount)
+              e.stopPropagation()
+            }}
+          >
+            MIN
+          </button>
         </InputBase>
       </Combobox.Target>
 

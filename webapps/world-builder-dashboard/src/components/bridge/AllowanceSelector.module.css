@@ -16,6 +16,7 @@
     font-style: normal;
     /*font-weight: 500;*/
     line-height: 20px; /* 142.857% */
+    position: relative;
 }
 
 .rightSection {
@@ -26,6 +27,10 @@
 }
 
 .button {
+    position: absolute;
+    z-index: 300;
+    right: 50px;
+    top: 5px;
     border: none;
     display: flex;
     padding: 4px 8px;
