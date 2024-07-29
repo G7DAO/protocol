@@ -193,22 +193,7 @@ export const useMessages = (connectedAccount: string | undefined): UseQueryResul
     }
     const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
     if (transactionsString) {
-      return JSON.parse(transactionsString)
-        .slice(-7)
-        .map((tx: any) => ({
-          ...tx
-        }))
-        .sort(
-          (
-            a: { isDeposit: boolean; status: L2ToL1MessageStatus | undefined },
-            b: { isDeposit: boolean; status: L2ToL1MessageStatus | undefined }
-          ) =>
-            (a.isDeposit || a.status === L2ToL1MessageStatus.EXECUTED) &&
-            (!b.isDeposit || b.status !== L2ToL1MessageStatus.EXECUTED)
-              ? -1
-              : 0
-        )
-        .reverse()
+      return JSON.parse(transactionsString).slice(-9).reverse()
     } else {
       return []
     }
