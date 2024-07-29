@@ -33,13 +33,7 @@ export const approve = async (amount: string, signer: Signer, network: NetworkIn
   const spender = network.routerSpender
   const tokenContract = new ethers.Contract(tokenAddress, erc20Abi, signer)
   const amountInWei = ethers.utils.parseUnits(amount.toString(), 18)
-
-  try {
-    const tx = await tokenContract.approve(spender, amountInWei)
-    console.log('Transaction hash:', tx.hash)
-    await tx.wait() // Wait for the transaction to be mined
-    console.log('Transaction confirmed')
-  } catch (error) {
-    console.error('Transaction failed:', error)
-  }
+  const tx = await tokenContract.approve(spender, amountInWei)
+  console.log('Transaction hash:', tx.hash)
+  return tx.wait() // Wait for the transaction to be mined
 }
