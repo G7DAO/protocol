@@ -1,9 +1,10 @@
-import { L1_NETWORK, L3_NETWORK } from '../../../constants'
+import { L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../../constants'
 import styles from './BridgeView.module.css'
 import { Icon } from 'summon-ui'
-import { Combobox, InputBase, InputBaseProps, useCombobox } from 'summon-ui/mantine'
+import { Combobox, Group, InputBase, InputBaseProps, useCombobox } from 'summon-ui/mantine'
 import IconArbitrumOne from '@/assets/IconArbitrumOne'
 import IconEthereum from '@/assets/IconEthereum'
+import IconG7T from '@/assets/IconG7T'
 import { HighNetworkInterface, NetworkInterface } from '@/components/bridge/BlockchainContext'
 
 type NetworkSelectorProps = {
@@ -36,6 +37,18 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork }: NetworkSelecto
       L3
     </div>
   )
+  const icon = (chainId: number) => {
+    switch (chainId) {
+      case L1_NETWORK.chainId:
+        return <IconEthereum />
+      case L2_NETWORK.chainId:
+        return <IconArbitrumOne />
+      case L3_NETWORK.chainId:
+        return <IconG7T />
+      default:
+        return <></>
+    }
+  }
 
   return (
     <Combobox
@@ -57,7 +70,7 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork }: NetworkSelecto
           variant='unstyled'
           leftSection={
             selectedNetwork.chainId === L3_NETWORK.chainId ? (
-              leftSection
+              <IconG7T />
             ) : selectedNetwork.chainId === L1_NETWORK.chainId ? (
               <IconEthereum />
             ) : (
@@ -76,7 +89,10 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork }: NetworkSelecto
         <Combobox.Options>
           {networks.map((n) => (
             <Combobox.Option className='!px-0' value={String(n.chainId)} key={n.chainId}>
-              {n.displayName}
+              <Group>
+                {icon(n.chainId)}
+                {n.displayName}
+              </Group>
             </Combobox.Option>
           ))}
         </Combobox.Options>
