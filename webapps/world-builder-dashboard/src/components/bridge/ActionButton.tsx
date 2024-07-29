@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
+import { useNavigate } from 'react-router-dom'
 import { L3_NETWORK } from '../../../constants'
 import styles from './ActionButton.module.css'
 import { ethers } from 'ethers'
@@ -7,6 +8,7 @@ import { Modal } from 'summon-ui/mantine'
 import IconLoading01 from '@/assets/IconLoading01'
 import ApproveAllowance from '@/components/bridge/ApproveAllowance'
 import { HighNetworkInterface, NetworkInterface, useBlockchainContext } from '@/components/bridge/BlockchainContext'
+import { useBridgeNotificationsContext } from '@/components/bridge/BridgeNotificationsContext'
 import { depositERC20ArbitrumSDK, DepositRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
 import { sendDepositERC20ToNativeTransaction } from '@/components/bridge/depositERC20ToNative'
 import { sendWithdrawERC20Transaction } from '@/components/bridge/withdrawERC20'
@@ -24,6 +26,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount }) => {
   const { connectedAccount, walletProvider, checkConnection, switchChain, selectedHighNetwork, selectedLowNetwork } =
     useBlockchainContext()
   const [isAllowanceModalOpened, setIsAllowanceModalOpened] = useState(false)
+  const { refetchNewNotifications } = useBridgeNotificationsContext()
+  const navigate = useNavigate()
 
   const { data: allowance } = useERC20Allowance({
     tokenAddress: selectedLowNetwork.g7TokenAddress,
@@ -39,8 +43,11 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount }) => {
   })
 
   const getLabel = (): String | undefined => {
-    if (isConnecting || deposit.isLoading || withdraw.isLoading) {
-      return undefined
+    if (isConnecting) {
+      return 'Connecting...'
+    }
+    if (deposit.isLoading || withdraw.isLoading) {
+      return 'Submitting...'
     }
     if (!connectedAccount || !walletProvider) {
       return 'Connect wallet'
@@ -70,13 +77,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount }) => {
     }
 
     if (connectedAccount && walletProvider) {
-      if (direction === 'DEPOSIT' && allowance && !isAllowanceSet) {
-        if (allowance < Number(amount)) {
-          setIsAllowanceModalOpened(true)
-          return
-        }
-      }
-
       setIsConnecting(true)
 
       const accounts = await walletProvider.listAccounts()
@@ -188,12 +188,15 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount }) => {
           console.log(e)
         }
         console.log(deposit)
+        refetchNewNotifications(connectedAccount ?? '')
         queryClient.invalidateQueries(['ERC20Balance'])
+        queryClient.invalidateQueries(['pendingTransactions'])
 
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
         queryClient.refetchQueries(['incomingMessages'])
         queryClient.refetchQueries(['pendingNotifications'])
+        navigate('/bridge/transactions')
       },
       onError: (e: Error) => {
         console.log(e)
@@ -244,6 +247,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount }) => {
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
         queryClient.refetchQueries(['pendingNotifications'])
+
+        navigate('/bridge/transactions')
         console.log(record)
       }
     }
@@ -256,7 +261,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount }) => {
         onClick={() => handleClick(false)}
         disabled={getLabel() !== 'Connect wallet' && (!Number(amount) || Number(amount) <= 0)}
       >
-        {getLabel() ?? <IconLoading01 color={'white'} className={styles.rotatable} />}
+        {getLabel() ?? 'Submit'}
       </button>
       <Modal
         opened={isAllowanceModalOpened}
