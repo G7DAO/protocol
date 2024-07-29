@@ -1,4 +1,4 @@
-export const timeAgo = (timestamp: number | undefined, short = true) => {
+export const timeAgo = (timestamp: number | undefined, short = false) => {
   if (!timestamp) {
     return ''
   }

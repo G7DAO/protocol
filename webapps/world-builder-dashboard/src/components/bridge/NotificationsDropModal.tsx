@@ -60,7 +60,7 @@ const NotificationsDropModal: React.FC<NotificationsDropModalProps> = ({ notific
                 <div className={styles.itemHeaderTitle}>{n.type.toLowerCase()}</div>
                 <div className={badgeClassName(n.status)}>{n.status.toLowerCase()}</div>
               </div>
-              <div className={styles.headerTime}>{timeAgo(n.timestamp)}</div>
+              <div className={styles.headerTime}>{timeAgo(n.timestamp, true)}</div>
             </div>
             <div className={styles.content}>{copy(n)}</div>
           </div>
