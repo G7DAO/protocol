@@ -4,18 +4,16 @@ import { useQuery } from 'react-query'
 import { L1_NETWORK, L2_NETWORK, L3_NETWORK, L3_NATIVE_TOKEN_SYMBOL } from '../../../constants'
 // Styles and Icons
 import styles from './BridgeView.module.css'
+import { ethers } from 'ethers'
 import { Icon } from 'summon-ui'
-import IconArbitrumOne from '@/assets/IconArbitrumOne'
-import IconEthereum from '@/assets/IconEthereum'
 import ActionButton from '@/components/bridge/ActionButton'
 // Blockchain Context and Utility Functions
-import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
+import { HighNetworkInterface, useBlockchainContext } from '@/components/bridge/BlockchainContext'
 // Components
 import NetworkSelector from '@/components/bridge/NetworkSelector'
 import TransactionSummary from '@/components/bridge/TransactionSummary'
 import ValueToBridge from '@/components/bridge/ValueToBridge'
 import { estimateDepositERC20ToNativeFee } from '@/components/bridge/depositERC20ToNative'
-import { L3_NETWORKS } from '@/components/bridge/l3Networks'
 import { estimateWithdrawFee } from '@/components/bridge/withdrawNativeToken'
 // Hooks and Constants
 import useERC20Balance from '@/hooks/useERC20Balance'
@@ -25,17 +23,12 @@ import useNativeBalance from '@/hooks/useNativeBalance'
 const BridgeView: React.FC = () => {
   const [direction, setDirection] = useState<'DEPOSIT' | 'WITHDRAW'>('DEPOSIT')
   const [value, setValue] = useState('0')
-  const l2networks = ['Arbitrum Sepolia']
-  const lowNetworks = [L1_NETWORK, L2_NETWORK]
-  const highNetworks = [L2_NETWORK, L3_NETWORK]
 
   const g7tUsdRate = useQuery(['rate'], () => 31166.75)
   const { data: ethUsdRate } = useEthUsdRate()
   const {
     L2Provider,
     connectedAccount,
-    tokenAddress,
-    L2_RPC,
     selectedLowNetwork,
     setSelectedLowNetwork,
     selectedHighNetwork,
@@ -65,13 +58,13 @@ const BridgeView: React.FC = () => {
     rpc: selectedHighNetwork.rpcs[0]
   })
 
-  const estimatedFee = useQuery(['estimatedFee', value, direction], async () => {
+  const estimatedFee = useQuery(['estimatedFee', value, direction, selectedHighNetwork], async () => {
     if (!connectedAccount) {
       return
     }
     let est
     if (direction === 'DEPOSIT') {
-      est = await estimateDepositERC20ToNativeFee(value, connectedAccount, selectedHighNetwork)
+      est = await estimateDepositERC20ToNativeFee(value, connectedAccount, selectedHighNetwork as HighNetworkInterface)
     } else {
       if (L2Provider) {
         est = await estimateWithdrawFee(value, connectedAccount, L2Provider)
@@ -79,6 +72,26 @@ const BridgeView: React.FC = () => {
     }
     return est
   })
+
+  const disconnect = async () => {
+    if (window.ethereum) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      console.log(provider)
+      const ethereum = window.ethereum ?? null
+      if (ethereum && provider.connection.url === 'metamask') {
+        // @ts-ignore
+        await ethereum.request({
+          method: 'wallet_revokePermissions',
+          params: [
+            {
+              eth_accounts: {}
+            }
+          ]
+        })
+      }
+    }
+    // coinbaseWalletProvider.disconnect()
+  }
 
   const renderNetworkSelect = (isSource: boolean, direction: 'DEPOSIT' | 'WITHDRAW') => {
     if ((isSource && direction === 'DEPOSIT') || (!isSource && direction === 'WITHDRAW')) {
@@ -88,10 +101,6 @@ const BridgeView: React.FC = () => {
           selectedNetwork={selectedLowNetwork}
           onChange={setSelectedLowNetwork}
         />
-        // <div className={styles.network}>
-        //   <IconEthereum />
-        //   {l2networks[0]}
-        // </div>
       )
     } else {
       return (
@@ -168,7 +177,7 @@ const BridgeView: React.FC = () => {
         tokenSymbol={L3_NATIVE_TOKEN_SYMBOL}
         tokenRate={g7tUsdRate.data ?? 0}
       />
-      <ActionButton direction={direction} l3Network={selectedHighNetwork} amount={value} />
+      <ActionButton direction={direction} l3Network={selectedHighNetwork as HighNetworkInterface} amount={value} />
     </div>
   )
 }
