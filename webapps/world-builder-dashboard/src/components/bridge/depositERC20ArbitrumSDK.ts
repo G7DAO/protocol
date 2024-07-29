@@ -12,6 +12,7 @@ export interface DepositRecord {
   lowNetworkTimestamp: number
   lowNetworkBlockNumber?: number
   highNetworkBlockNumber?: number
+  highNetworkTimestamp?: number
   complete?: boolean
   retryableCreationTimeout: number //seconds
 }
