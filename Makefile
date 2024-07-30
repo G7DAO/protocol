@@ -1,4 +1,4 @@
-.PHONY: clean generate regenerate test docs redocs hardhat bindings test-graffiti test-web3
+.PHONY: clean generate regenerate test docs redocs hardhat bindings test-graffiti test-web3 clean-web3 deepclean
 
 build: hardhat bindings bin/game7 bin/graffiti
 
@@ -52,6 +52,11 @@ test: test-web3 test-graffiti
 
 clean:
 	rm -rf bindings/ERC20/* bin/* bindings/TokenFaucet/* bindings/WrappedNativeToken/* bindings/Staker/* bindings/MockERC20/* bindings/MockERC721/* bindings/MockERC1155/*
+
+clean-web3:
+	rm -rf web3/node_modules web3/artifacts
+
+deepclean: clean clean-web3
 
 hardhat:
 	cd web3 && npm install && npx hardhat compile
