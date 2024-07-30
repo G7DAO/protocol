@@ -59,6 +59,16 @@ transferring administration of that pool to the zero address.
 
 ## Development
 
+### Requirements
+
+- [Node.js](https://nodejs.org/en) (version >= 20)
+- [`hardhat`](https://github.com/NomicFoundation/hardhat), which we used to build and test our smart contracts
+- [Go](https://go.dev/) (version >= 1.21), for the `game7` CLI, and other developmental and operational tools
+- [`seer`](https://github.com/moonstream-to/seer), which we use to generate Go bindings and command-line interfaces
+
+
+### Building and testing this code
+
 The [`Makefile`](./Makefile) for this project can be used to build all the code in the repository.
 
 Build everything using:
