@@ -1,12 +1,16 @@
-.PHONY: clean generate regenerate test docs redocs hardhat bindings
+.PHONY: clean generate regenerate test docs redocs hardhat bindings test-graffiti test-web3 clean-web3 deepclean
 
-build: hardhat bindings bin/game7
+build: hardhat bindings bin/game7 bin/graffiti
 
 rebuild: clean generate build
 
 bin/game7:
 	mkdir -p bin
 	go build -o bin/game7 ./cmd/game7
+
+bin/graffiti:
+	mkdir -p bin
+	go build -o bin/graffiti ./cmd/graffiti
 
 bindings/ERC20/ERC20.go: hardhat
 	mkdir -p bindings/ERC20
@@ -20,18 +24,39 @@ bindings/WrappedNativeToken/WrappedNativeToken.go: hardhat
 	mkdir -p bindings/WrappedNativeToken
 	seer evm generate --package WrappedNativeToken --output bindings/WrappedNativeToken/WrappedNativeToken.go --hardhat web3/artifacts/contracts/token/WrappedNativeToken.sol/WrappedNativeToken.json --cli --struct WrappedNativeToken
 
-bindings: bindings/ERC20/ERC20.go bindings/TokenFaucet/TokenFaucet.go bindings/WrappedNativeToken/WrappedNativeToken.go
+bindings/Staker/Staker.go: hardhat
+	mkdir -p bindings/Staker
+	seer evm generate --package Staker --output bindings/Staker/Staker.go --hardhat web3/artifacts/contracts/staking/Staker.sol/Staker.json --cli --struct Staker
 
-test:
-	npx hardhat test
+bindings/MockERC20/MockERC20.go: hardhat
+	mkdir -p bindings/MockERC20
+	seer evm generate --package MockERC20 --output bindings/MockERC20/MockERC20.go --hardhat web3/artifacts/contracts/mock/tokens.sol/MockERC20.json --cli --struct MockERC20
+
+bindings/MockERC721/MockERC721.go: hardhat
+	mkdir -p bindings/MockERC721
+	seer evm generate --package MockERC721 --output bindings/MockERC721/MockERC721.go --hardhat web3/artifacts/contracts/mock/tokens.sol/MockERC721.json --cli --struct MockERC721
+
+bindings/MockERC1155/MockERC1155.go: hardhat
+	mkdir -p bindings/MockERC1155
+	seer evm generate --package MockERC1155 --output bindings/MockERC1155/MockERC1155.go --hardhat web3/artifacts/contracts/mock/tokens.sol/MockERC1155.json --cli --struct MockERC1155
+
+bindings: bindings/ERC20/ERC20.go bindings/TokenFaucet/TokenFaucet.go bindings/WrappedNativeToken/WrappedNativeToken.go bindings/Staker/Staker.go bindings/MockERC20/MockERC20.go bindings/MockERC721/MockERC721.go bindings/MockERC1155/MockERC1155.go
+
+test-web3:
+	cd web3 && npx hardhat test
+
+test-graffiti:
+	go test ./cmd/graffiti -v
+
+test: test-web3 test-graffiti
 
 clean:
-	rm -rf bindings/ERC20/* bin/* bindings/TokenFaucet/* bindings/WrappedNativeToken/*
+	rm -rf bindings/ERC20/* bin/* bindings/TokenFaucet/* bindings/WrappedNativeToken/* bindings/Staker/* bindings/MockERC20/* bindings/MockERC721/* bindings/MockERC1155/*
+
+clean-web3:
+	rm -rf web3/node_modules web3/artifacts
+
+deepclean: clean clean-web3
 
 hardhat:
 	cd web3 && npm install && npx hardhat compile
-
-docs:
-	forge doc
-
-redocs: clean docs
