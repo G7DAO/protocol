@@ -18,25 +18,6 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork }: NetworkSelecto
     onDropdownClose: () => combobox.resetSelectedOption()
   })
 
-  const leftSection = (
-    <div
-      style={{
-        marginLeft: '-10px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: '50%',
-        width: '24px',
-        height: '24px',
-        fontWeight: '900',
-        fontSize: '13px',
-        color: '#FFF',
-        backgroundColor: '#EF233B'
-      }}
-    >
-      L3
-    </div>
-  )
   const icon = (chainId: number) => {
     switch (chainId) {
       case L1_NETWORK.chainId:
