@@ -30,6 +30,7 @@ const ApproveAllowance: React.FC<ApproveAllowanceProps> = ({ amount, onClose, on
         const signer = provider.getSigner()
         return approve(allowance, signer, network)
       }
+      throw new Error("Wallet isn't installed")
     },
     {
       onSuccess: () => {
