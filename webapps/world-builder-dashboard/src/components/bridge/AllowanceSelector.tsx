@@ -1,6 +1,6 @@
 import styles from './AllowanceSelector.module.css'
 import { Icon } from 'summon-ui'
-import { Combobox, Group, InputBase, InputBaseProps, useCombobox } from 'summon-ui/mantine'
+import { Combobox, InputBase, InputBaseProps, useCombobox } from 'summon-ui/mantine'
 import IconCheck from '@/assets/IconCheck'
 
 type AllowanceSelectorProps = {
@@ -50,15 +50,13 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount }: AllowanceSe
         </InputBase>
       </Combobox.Target>
 
-      <Combobox.Dropdown className='!bg-dark-900 !rounded-md !border-dark-700'>
+      <Combobox.Dropdown className={styles.dropdownContainer}>
         <Combobox.Options>
           {[25, 50, 75, 100].map((n) => (
-            <Combobox.Option className='!px-0' value={String((balance * n) / 100)} key={n}>
-              <Group>
-                <div className={styles.optionPercent}>{`${n}%`}</div>
-                <div className={styles.optionValue}>{(balance * n) / 100}</div>
-                {allowance === (balance * n) / 100 && <IconCheck />}
-              </Group>
+            <Combobox.Option className={styles.optionContainer} value={String((balance * n) / 100)} key={n}>
+              <div className={styles.optionPercent}>{`${n}%`}</div>
+              <div className={styles.optionValue}>{(balance * n) / 100}</div>
+              {allowance === (balance * n) / 100 && <IconCheck />}
             </Combobox.Option>
           ))}
         </Combobox.Options>

@@ -49,6 +49,20 @@
     line-height: 18px; /* 150% */
 }
 
+.optionContainer {
+    display: flex;
+    padding: 10px 10px 10px 8px !important;
+    align-items: flex-start;
+    gap: 8px;
+    flex: 1 0 0;
+    width: 100%;
+    border-radius: 6px;
+}
+
+.dropdownContainer {
+    padding: 6px !important;
+}
+
 .optionPercent {
     color: var(--Gray-700, #344054);
 
