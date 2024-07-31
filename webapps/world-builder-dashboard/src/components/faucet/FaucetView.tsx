@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
-import { useMutation } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { G7T_FAUCET_ADDRESS, L2_NETWORK, L3_NATIVE_TOKEN_SYMBOL, L3_NETWORK } from '../../../constants'
 import styles from './FaucetView.module.css'
 import { ethers } from 'ethers'
 import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
-import { DepositRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
 
 const FAUCET_CHAIN = L2_NETWORK
 
@@ -50,6 +49,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
     }
   }
 
+  const queryClient = useQueryClient()
   const claim = useMutation(
     async ({ isL2Target }: { isL2Target: boolean }) => {
       if (window.ethereum) {
@@ -83,6 +83,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
       onSuccess: (data: any) => {
         console.log('Claim successful')
         console.log(data)
+        queryClient.refetchQueries(['nextFaucetClaimTimestamp'])
       },
       onError: (e: Error) => {
         console.error('Transaction failed:', e)
@@ -90,6 +91,71 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
       }
     }
   )
+
+  function compareTimestampWithCurrentMoment(unixTimestamp: number): boolean {
+    const timestampInMillis = unixTimestamp * 1000 // Unix timestamp in milliseconds
+    const currentInMillis = Date.now() // Current time in milliseconds
+
+    if (timestampInMillis > currentInMillis) {
+      return false
+    }
+
+    return true
+  }
+
+  const nextClaimAvailable = useQuery(['nextFaucetClaimTimestamp', connectedAccount], async () => {
+    const rpc = L2_NETWORK.rpcs[0]
+    const provider = new ethers.providers.JsonRpcProvider(rpc)
+    const faucetContract = new ethers.Contract(
+      G7T_FAUCET_ADDRESS,
+      [
+        {
+          inputs: [],
+          name: 'faucetTimeInterval',
+          outputs: [
+            {
+              internalType: 'uint256',
+              name: '',
+              type: 'uint256'
+            }
+          ],
+          stateMutability: 'view',
+          type: 'function'
+        },
+        {
+          inputs: [
+            {
+              internalType: 'address',
+              name: '',
+              type: 'address'
+            }
+          ],
+          name: 'lastClaimedTimestamp',
+          outputs: [
+            {
+              internalType: 'uint256',
+              name: '',
+              type: 'uint256'
+            }
+          ],
+          stateMutability: 'view',
+          type: 'function'
+        }
+      ],
+      provider
+    )
+    const lastClaimTimestamp = Number(await faucetContract.lastClaimedTimestamp(connectedAccount))
+    const faucetTimeInterval = Number(await faucetContract.faucetTimeInterval())
+    const nextClaimTimestamp = lastClaimTimestamp + faucetTimeInterval
+    const isAvailable = compareTimestampWithCurrentMoment(nextClaimTimestamp)
+    console.log(isAvailable)
+    const date = new Date(nextClaimTimestamp * 1000)
+
+    // Use toLocaleString to format the date
+    const readableDate = date.toLocaleString()
+
+    return { readableDate, isAvailable }
+  })
 
   return (
     <div className={styles.container}>
@@ -126,7 +192,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
           : claim.isLoading
             ? 'Requesting...'
             : connectedAccount
-              ? 'Request'
+              ? `${nextClaimAvailable.data && nextClaimAvailable.data.isAvailable ? 'Request' : 'Wait for '}${nextClaimAvailable.data && !nextClaimAvailable.data.isAvailable ? nextClaimAvailable.data?.readableDate ?? '' : ''}`
               : 'Connect wallet'}
       </button>
     </div>
