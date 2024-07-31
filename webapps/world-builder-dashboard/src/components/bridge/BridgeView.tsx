@@ -1,5 +1,5 @@
 // Libraries
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useQuery } from 'react-query'
 import { L1_NETWORK, L2_NETWORK, L3_NETWORK, L3_NATIVE_TOKEN_SYMBOL } from '../../../constants'
 // Styles and Icons
@@ -18,9 +18,16 @@ import { estimateWithdrawFee } from '@/components/bridge/withdrawNativeToken'
 import useERC20Balance from '@/hooks/useERC20Balance'
 import useEthUsdRate from '@/hooks/useEthUsdRate'
 import useNativeBalance from '@/hooks/useNativeBalance'
+import { DepositDirection } from '@/pages/BridgePage/BridgePage'
 
-const BridgeView: React.FC = () => {
-  const [direction, setDirection] = useState<'DEPOSIT' | 'WITHDRAW'>('DEPOSIT')
+const BridgeView = ({
+  direction,
+  setDirection
+}: {
+  direction: DepositDirection
+  setDirection: (arg0: DepositDirection) => void
+}) => {
+  // const [direction, setDirection] = useState<'DEPOSIT' | 'WITHDRAW'>('DEPOSIT')
   const [value, setValue] = useState('0')
 
   const g7tUsdRate = useQuery(['rate'], () => 31166.75)

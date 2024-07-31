@@ -15,6 +15,8 @@ import WithdrawTransactions from '@/components/bridge/WithdrawTransactions'
 // Hooks
 import { useNotifications, usePendingTransactions } from '@/hooks/useL2ToL1MessageStatus'
 
+export type DepositDirection = 'DEPOSIT' | 'WITHDRAW'
+
 const BridgePage = () => {
   const location = useLocation()
   const navigate = useNavigate()
@@ -22,6 +24,7 @@ const BridgePage = () => {
   const pendingTransacions = usePendingTransactions(connectedAccount)
   const [notificationsOffset] = useState(0)
   const [notificationsLimit] = useState(10)
+  const [direction, setDirection] = useState<DepositDirection>('DEPOSIT')
 
   const notifications = useNotifications(connectedAccount, notificationsOffset, notificationsLimit)
   const { newNotifications, refetchNewNotifications } = useBridgeNotificationsContext()
@@ -65,7 +68,7 @@ const BridgePage = () => {
         </div>
       </div>
       <div className={styles.viewContainer}>
-        {location.pathname === '/bridge' && <BridgeView />}
+        {location.pathname === '/bridge' && <BridgeView direction={direction} setDirection={setDirection} />}
         {location.pathname === '/bridge/transactions' && <WithdrawTransactions />}
       </div>
     </div>
