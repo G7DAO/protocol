@@ -1,17 +1,18 @@
+// React and hooks
 import { useEffect, useState } from 'react'
-import { useQuery, useQueryClient } from 'react-query'
+import { useQueryClient } from 'react-query'
 import { useLocation, useNavigate } from 'react-router-dom'
+// Styles
 import styles from './BridgePage.module.css'
-import { Box } from 'summon-ui/mantine'
+// Contexts
 import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
-import {
-  BridgeNotificationsProvider,
-  useBridgeNotificationsContext
-} from '@/components/bridge/BridgeNotificationsContext'
+import { useBridgeNotificationsContext } from '@/components/bridge/BridgeNotificationsContext'
+// Components
 import BridgeView from '@/components/bridge/BridgeView'
 import NotificationsButton from '@/components/bridge/NotificationsButton'
 import { FloatingNotification } from '@/components/bridge/NotificationsDropModal'
 import WithdrawTransactions from '@/components/bridge/WithdrawTransactions'
+// Hooks
 import { useNotifications, usePendingTransactions } from '@/hooks/useL2ToL1MessageStatus'
 
 const BridgePage = () => {
@@ -19,8 +20,8 @@ const BridgePage = () => {
   const navigate = useNavigate()
   const { connectedAccount } = useBlockchainContext()
   const pendingTransacions = usePendingTransactions(connectedAccount)
-  const [notificationsOffset, setNotificationsOffset] = useState(0)
-  const [notificationsLimit, setNotificationsLimit] = useState(10)
+  const [notificationsOffset] = useState(0)
+  const [notificationsLimit] = useState(10)
 
   const notifications = useNotifications(connectedAccount, notificationsOffset, notificationsLimit)
   const { newNotifications, refetchNewNotifications } = useBridgeNotificationsContext()
@@ -35,35 +36,39 @@ const BridgePage = () => {
   }, [pendingTransacions.data])
 
   return (
-    <Box px='32px' bg={'#FCFCFD'} h={'100vh'} pt={'1px'}>
-      <div className={styles.headerContainer}>
-        {notifications.data && <FloatingNotification notifications={newNotifications} />}
-        <div className={styles.title}>Bridge</div>
-        <NotificationsButton notifications={notifications.data ?? []} />
+    <div className={styles.container}>
+      <div className={styles.top}>
+        <div className={styles.headerContainer}>
+          {notifications.data && <FloatingNotification notifications={newNotifications} />}
+          <div className={styles.title}>Bridge</div>
+          <NotificationsButton notifications={notifications.data ?? []} />
+        </div>
+        <div className={styles.navigationContainer}>
+          <button
+            className={
+              location.pathname === '/bridge' ? styles.selectedNavigationButton : styles.unselectedNavigationButton
+            }
+            onClick={() => navigate('/bridge')}
+          >
+            Transfer
+          </button>
+          <button
+            className={
+              location.pathname === '/bridge/transactions'
+                ? styles.selectedNavigationButton
+                : styles.unselectedNavigationButton
+            }
+            onClick={() => navigate('/bridge/transactions')}
+          >
+            History
+          </button>
+        </div>
       </div>
-      <div className={styles.navigationContainer}>
-        <button
-          className={
-            location.pathname === '/bridge' ? styles.selectedNavigationButton : styles.unselectedNavigationButton
-          }
-          onClick={() => navigate('/bridge')}
-        >
-          Transfer
-        </button>
-        <button
-          className={
-            location.pathname === '/bridge/transactions'
-              ? styles.selectedNavigationButton
-              : styles.unselectedNavigationButton
-          }
-          onClick={() => navigate('/bridge/transactions')}
-        >
-          History
-        </button>
+      <div className={styles.viewContainer}>
+        {location.pathname === '/bridge' && <BridgeView />}
+        {location.pathname === '/bridge/transactions' && <WithdrawTransactions />}
       </div>
-      {location.pathname === '/bridge' && <BridgeView />}
-      {location.pathname === '/bridge/transactions' && <WithdrawTransactions />}
-    </Box>
+    </div>
   )
 }
 

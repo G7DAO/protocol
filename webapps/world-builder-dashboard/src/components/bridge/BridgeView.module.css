@@ -10,7 +10,6 @@
   border-radius: 8px;
   border: 1px solid var(--Gray-200, #eaecf0);
   background: var(--Gray-50, #f9fafb);
-  margin-top: 56px;
 }
 
 
@@ -167,7 +166,7 @@
   border: none;
   outline: none;
   background: transparent;
-  padding-left: 0px;
+  padding-left: 0;
 }
 
 .valueUSD,

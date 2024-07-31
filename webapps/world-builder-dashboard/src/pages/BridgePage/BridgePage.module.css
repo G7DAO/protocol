@@ -1,8 +1,30 @@
+
+.container {
+  display: flex;
+  padding: 32px 0 48px 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  flex: 1 0 0;
+  background: var(--Gray-25, #FCFCFD);
+}
+
+.top {
+  display: flex;
+  padding: 0 32px 32px 32px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  align-self: stretch;
+  border-bottom: 1px solid var(--Gray-200, #EAECF0);
+}
+
 .headerContainer {
   display: flex;
+  width: 100%;
   justify-content: space-between;
-  margin-top: 31px;
-  margin-bottom: 24px;
+  /*margin-top: 31px;*/
+  /*margin-bottom: 24px;*/
   position: relative;
 }
 
@@ -60,4 +82,12 @@
   font-style: normal;
   font-weight: 600;
   line-height: 24px; /* 150% */
+}
+
+.viewContainer {
+  display: flex;
+  padding: 0 32px 32px 32px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
 }
