@@ -119,6 +119,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
           {connectedAccount ?? 'Please connect a wallet...'}
         </div>
       </div>
+      <div className={styles.hintBadge}>You may only request funds to a connected wallet.</div>
       <button className={styles.button} onClick={handleClick}>
         {isConnecting
           ? 'Connecting wallet...'
