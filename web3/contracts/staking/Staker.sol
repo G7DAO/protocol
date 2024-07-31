@@ -395,7 +395,8 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         if (pool.tokenType == NATIVE_TOKEN_TYPE) {
             payable(msg.sender).transfer(amountOrTokenID);
         } else if (pool.tokenType == ERC20_TOKEN_TYPE) {
-            IERC20(pool.tokenAddress).safeTransfer(msg.sender, amountOrTokenID);
+            bool lol = IERC20(pool.tokenAddress).transfer(msg.sender, amountOrTokenID);
+            require(lol, "ERC20 transfer failed");
         } else if (pool.tokenType == ERC721_TOKEN_TYPE) {
             IERC721(pool.tokenAddress).safeTransferFrom(address(this), msg.sender, amountOrTokenID);
         } else if (pool.tokenType == ERC1155_TOKEN_TYPE) {
