@@ -1,5 +1,6 @@
 import { L2_NETWORK, L3_NETWORK } from '../../../constants'
 import { ethers } from 'ethers'
+import { TransactionRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
 
 export interface WithdrawRecord {
   amount: string
@@ -36,7 +37,10 @@ const arbSysABI = [
   }
 ]
 
-export const sendWithdrawTransaction = async (amountInNative: string, destination: string): Promise<WithdrawRecord> => {
+export const sendWithdrawTransaction = async (
+  amountInNative: string,
+  destination: string
+): Promise<TransactionRecord> => {
   try {
     if (!window.ethereum) {
       throw new Error('no provider')
@@ -60,6 +64,7 @@ export const sendWithdrawTransaction = async (amountInNative: string, destinatio
     console.log('Transaction receipt:', receipt)
     console.log('Transaction hash:', receipt.transactionHash)
     return {
+      type: 'WITHDRAWAL',
       amount: amountInNative,
       lowNetworkChainId: L2_NETWORK.chainId,
       highNetworkChainId: L3_NETWORK.chainId,

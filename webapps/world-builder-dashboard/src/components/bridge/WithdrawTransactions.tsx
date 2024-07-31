@@ -1,8 +1,9 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useEffect } from 'react'
 import styles from './WithdrawTransactions.module.css'
 import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
 import Deposit from '@/components/bridge/Deposit'
 import Withdrawal from '@/components/bridge/Withdrawal'
+import { TransactionRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
 import { useMessages } from '@/hooks/useL2ToL1MessageStatus'
 
 interface WithdrawTransactionsProps {}
@@ -25,8 +26,9 @@ const WithdrawTransactions: React.FC<WithdrawTransactionsProps> = () => {
               ))}
               {messages.data
                 .reverse()
-                .map((tx: any, idx: number) =>
-                  !tx.isDeposit ? (
+                .filter((tx) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL')
+                .map((tx: TransactionRecord, idx: number) =>
+                  tx.type === 'WITHDRAWAL' ? (
                     <Withdrawal withdrawal={tx} key={idx} />
                   ) : (
                     <Fragment key={idx}>{tx.lowNetworkHash && <Deposit deposit={tx} />}</Fragment>
