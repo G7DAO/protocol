@@ -4,6 +4,8 @@ import { G7T_FAUCET_ADDRESS, L2_NETWORK, L3_NATIVE_TOKEN_SYMBOL, L3_NETWORK } fr
 import styles from './FaucetView.module.css'
 import { ethers } from 'ethers'
 import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
+import { useBridgeNotificationsContext } from '@/components/bridge/BridgeNotificationsContext'
+import { TransactionRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
 
 const FAUCET_CHAIN = L2_NETWORK
 
@@ -12,6 +14,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const [selectedNetwork, setSelectedNetwork] = useState(L2_NETWORK)
   const { connectedAccount, switchChain } = useBlockchainContext()
   const [isConnecting, setIsConnecting] = useState(false)
+  const { refetchNewNotifications } = useBridgeNotificationsContext()
 
   const handleClick = async () => {
     if (window.ethereum) {
@@ -75,15 +78,40 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
         const contract = new ethers.Contract(G7T_FAUCET_ADDRESS, contractAbi, signer)
         const tx = isL2Target ? await contract.claim() : await contract.claimL3()
         console.log('Transaction hash:', tx.hash)
-        return tx.wait() // Wait for the transaction to be mined
+        const receipt = tx.wait() // Wait for the transaction to be mined
+        return {
+          type: 'CLAIM',
+          amount: 1,
+          highNetworkChainId: selectedNetwork.chainId,
+          lowNetworkHash: receipt.hash,
+          lowNetworkTimestamp: Date.now() / 1000,
+          completionTimestamp: Date.now() / 1000,
+          newTransaction: true
+        }
       }
       throw new Error('no window.ethereum')
     },
     {
-      onSuccess: (data: any) => {
-        console.log('Claim successful')
-        console.log(data)
+      onSuccess: (data: TransactionRecord) => {
+        try {
+          const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+
+          let transactions = []
+          if (transactionsString) {
+            transactions = JSON.parse(transactionsString)
+          }
+          transactions.push({ ...data })
+          console.log(transactions)
+          localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(transactions))
+        } catch (e) {
+          console.log(e)
+        }
+        // console.log('Claim successful')
+        // console.log(data)
         queryClient.refetchQueries(['nextFaucetClaimTimestamp'])
+        queryClient.refetchQueries('pendingTransactions')
+        queryClient.refetchQueries(['notifications'])
+        refetchNewNotifications(connectedAccount ?? '')
       },
       onError: (e: Error) => {
         console.error('Transaction failed:', e)
