@@ -13,25 +13,23 @@ import { ethers } from 'ethers'
 import { Skeleton } from 'summon-ui/mantine'
 import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
-import IconLoading01 from '@/assets/IconLoading01'
 import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/components/bridge/BridgeNotificationsContext'
-import { WithdrawRecord } from '@/components/bridge/withdrawNativeToken'
-import useL2ToL1MessageStatus from '@/hooks/useL2ToL1MessageStatus'
+import { TransactionRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 import { L2ToL1MessageStatus, L2ToL1MessageWriter, L2TransactionReceipt } from '@arbitrum/sdk'
 
-const networkRPC = (chainId: number) => {
+const networkRPC = (chainId: number | undefined) => {
   const network = [L3_NETWORK, L2_NETWORK].find((n) => n.chainId === chainId)
   return network?.rpcs[0]
 }
 
 interface WithdrawalProps {
-  withdrawal: WithdrawRecord
+  withdrawal: TransactionRecord
 }
 
-const getStatus = (withdrawal: WithdrawRecord) => {
+const getStatus = (withdrawal: TransactionRecord) => {
   const {
     completionTimestamp,
     claimableTimestamp,
@@ -58,7 +56,7 @@ const getStatus = (withdrawal: WithdrawRecord) => {
       amount,
       highNetworkHash
     }
-    return { data }
+    return { isLoading: false, data }
     // console.log(data)
   }
 }
@@ -77,10 +75,10 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   }, [withdrawal])
 
   const execute = useMutation(
-    async (highNetworkHash: string) => {
-      // if (!l2Receipt) {
-      //   throw new Error('receipt undefined')
-      // }
+    async (highNetworkHash: string | undefined) => {
+      if (!highNetworkHash) {
+        throw new Error('transaction hash is undefined')
+      }
       const highNetworkRPC = networkRPC(withdrawal.highNetworkChainId)
       const highNetworkProvider = new ethers.providers.JsonRpcProvider(highNetworkRPC)
       const receipt = await highNetworkProvider.getTransactionReceipt(highNetworkHash)

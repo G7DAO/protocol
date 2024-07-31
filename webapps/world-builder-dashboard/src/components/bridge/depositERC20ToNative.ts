@@ -1,6 +1,6 @@
 import { ethers, providers, utils } from 'ethers'
 import { HighNetworkInterface, NetworkInterface } from '@/components/bridge/BlockchainContext'
-import { DepositRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
+import { TransactionRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
 import { convertToBigNumber } from '@/utils/web3utils'
 import { NodeInterface__factory } from '@arbitrum/sdk/dist/lib/abi/factories/NodeInterface__factory'
 import { NODE_INTERFACE_ADDRESS } from '@arbitrum/sdk/dist/lib/dataEntities/constants'
@@ -182,7 +182,7 @@ export const sendDepositERC20ToNativeTransaction = async (
   amount: string,
   l2Signer: Signer,
   account: string
-): Promise<DepositRecord> => {
+): Promise<TransactionRecord> => {
   const destinationAddress = highNetwork.inbox
   const ethAmount = convertToBigNumber(amount)
   const ERC20InboxContract = new ethers.Contract(destinationAddress, ERC20_INBOX_ABI, l2Signer)
@@ -204,12 +204,12 @@ export const sendDepositERC20ToNativeTransaction = async (
   console.log('Transaction was mined in block', receipt.blockNumber)
 
   return {
+    type: 'DEPOSIT',
     amount,
     lowNetworkChainId: lowNetwork.chainId,
     highNetworkChainId: highNetwork.chainId,
     lowNetworkHash: txResponse.hash,
     lowNetworkTimestamp: Date.now() / 1000,
-    retryableCreationTimeout: 15 * 60,
     completionTimestamp: Date.now() / 1000,
     newTransaction: true
   }

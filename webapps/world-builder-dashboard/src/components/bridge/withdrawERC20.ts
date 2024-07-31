@@ -1,5 +1,6 @@
 import { L1_NETWORK, L2_NETWORK } from '../../../constants'
 import { ethers } from 'ethers'
+import { TransactionRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
 
 const L2GatewayRouterABI = [
   {
@@ -39,7 +40,10 @@ const L2GatewayRouterABI = [
 ]
 
 const L2GatewayRouterAddress = '0x9fDD1C4E4AA24EEc1d913FABea925594a20d43C7'
-export const sendWithdrawERC20Transaction = async (amountInNative: string, destination: string) => {
+export const sendWithdrawERC20Transaction = async (
+  amountInNative: string,
+  destination: string
+): Promise<TransactionRecord> => {
   try {
     if (!window.ethereum) {
       throw new Error('no provider')
@@ -67,6 +71,7 @@ export const sendWithdrawERC20Transaction = async (amountInNative: string, desti
     console.log('Transaction hash:', receipt.transactionHash)
 
     return {
+      type: 'WITHDRAWAL',
       amount: amountInNative,
       lowNetworkChainId: L1_NETWORK.chainId,
       highNetworkChainId: L2_NETWORK.chainId,

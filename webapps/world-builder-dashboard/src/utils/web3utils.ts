@@ -8,7 +8,7 @@ export const convertToBigNumber = (numberString: string, precision = 18) => {
   return ethers.BigNumber.from(bigNumberString)
 }
 
-export const getBlockExplorerUrl = (chainId: number) => {
+export const getBlockExplorerUrl = (chainId: number | undefined) => {
   const network = [...LOW_NETWORKS, ...HIGH_NETWORKS].find((n) => n.chainId === chainId)
   if (network?.blockExplorerUrls) {
     return network.blockExplorerUrls[0]

@@ -4,13 +4,13 @@ import styles from './WithdrawTransactions.module.css'
 import { Skeleton } from 'summon-ui/mantine'
 import IconArrowNarrowDown from '@/assets/IconArrowNarrowDown'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
-import { DepositRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
+import { TransactionRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
 import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 
 interface DepositProps {
-  deposit: DepositRecord
+  deposit: TransactionRecord
 }
 const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   const depositInfo = {

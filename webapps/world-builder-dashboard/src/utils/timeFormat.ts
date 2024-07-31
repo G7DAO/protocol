@@ -24,7 +24,10 @@ export const timeAgo = (timestamp: number | undefined, short = false) => {
   return 'just now'
 }
 
-export const ETA = (timestamp: number, delayInSeconds: number) => {
+export const ETA = (timestamp: number | undefined, delayInSeconds: number | undefined) => {
+  if (!timestamp || !delayInSeconds) {
+    return 'N/A'
+  }
   const now = new Date().getTime()
   const date = new Date(Number(timestamp) * 1000 + delayInSeconds * 1000).getTime()
   const timeDifference = Math.floor((date - now) / 1000)

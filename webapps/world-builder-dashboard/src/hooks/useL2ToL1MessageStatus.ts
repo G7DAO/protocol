@@ -2,8 +2,7 @@ import { useQueries, useQuery, UseQueryResult } from 'react-query'
 import { HIGH_NETWORKS, L2_NETWORK, LOW_NETWORKS } from '../../constants'
 import { ethers, providers } from 'ethers'
 import { BridgeNotification } from '@/components/bridge/NotificationsButton'
-import { DepositRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
-import { WithdrawRecord } from '@/components/bridge/withdrawNativeToken'
+import { TransactionRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
 import { L1TransactionReceipt, L2ToL1MessageReader, L2ToL1MessageStatus, L2TransactionReceipt } from '@arbitrum/sdk'
 import { L1ContractCallTransactionReceipt } from '@arbitrum/sdk/dist/lib/message/L1Transaction'
 
@@ -36,13 +35,12 @@ export interface L2ToL1MessageStatusResult {
   l2Receipt?: L2TransactionReceipt
 }
 
-const fetchL2ToL1MessageStatus = async (withdrawal: WithdrawRecord) => {
+const fetchL2ToL1MessageStatus = async (withdrawal: TransactionRecord) => {
   const { lowNetworkChainId, highNetworkChainId, highNetworkHash, amount, highNetworkTimestamp } = withdrawal
-  console.log(withdrawal)
 
   const lowNetwork = LOW_NETWORKS.find((n) => n.chainId === lowNetworkChainId)
   const highNetwork = HIGH_NETWORKS.find((n) => n.chainId === highNetworkChainId)
-  if (!highNetwork || !lowNetwork) {
+  if (!highNetwork || !lowNetwork || !highNetworkHash) {
     return undefined
   }
 
@@ -66,13 +64,13 @@ const fetchL2ToL1MessageStatus = async (withdrawal: WithdrawRecord) => {
   }
 }
 
-export const useL2ToL1MessageStatus = (withdrawal: WithdrawRecord) => {
+export const useL2ToL1MessageStatus = (withdrawal: TransactionRecord) => {
   return useQuery(['withdrawalStatus', withdrawal], () => fetchL2ToL1MessageStatus(withdrawal), {
     refetchInterval: 60 * 1000
   })
 }
 
-const fetchDepositStatus = async (deposit: DepositRecord) => {
+const fetchDepositStatus = async (deposit: TransactionRecord) => {
   const { lowNetworkChainId, highNetworkChainId, lowNetworkHash, lowNetworkTimestamp } = deposit
 
   if (lowNetworkChainId === L2_NETWORK.chainId) {
@@ -85,7 +83,7 @@ const fetchDepositStatus = async (deposit: DepositRecord) => {
   const lowNetwork = LOW_NETWORKS.find((n) => n.chainId === lowNetworkChainId)
   const highNetwork = HIGH_NETWORKS.find((n) => n.chainId === highNetworkChainId)
 
-  if (!lowNetwork) {
+  if (!lowNetwork || !lowNetworkHash) {
     return undefined
   }
 
@@ -131,7 +129,7 @@ const fetchDepositStatus = async (deposit: DepositRecord) => {
   return { l1Receipt, l2Result, highNetworkTimestamp }
 }
 
-export const useDepositStatus = (deposit: DepositRecord) => {
+export const useDepositStatus = (deposit: TransactionRecord) => {
   return useQuery(['depositStatus', deposit], () => fetchDepositStatus(deposit), {
     refetchInterval: 60000 * 3
   })
@@ -186,7 +184,7 @@ export const useL2ToL1MessagesStatus = (transactions: Transaction[] | undefined)
   )
 }
 
-export const useMessages = (connectedAccount: string | undefined): UseQueryResult<Transaction[]> => {
+export const useMessages = (connectedAccount: string | undefined): UseQueryResult<TransactionRecord[]> => {
   return useQuery(['incomingMessages', connectedAccount], () => {
     if (!connectedAccount) {
       return []
@@ -200,18 +198,16 @@ export const useMessages = (connectedAccount: string | undefined): UseQueryResul
   })
 }
 
-export const getNotifications = (transactions: any[]) => {
-  const completedTransactions = transactions.filter(
-    (t: { completionTimestamp: number; claimableTimestamp: number }) => t.completionTimestamp || t.claimableTimestamp
-  )
+export const getNotifications = (transactions: TransactionRecord[]) => {
+  const completedTransactions = transactions.filter((tx) => tx.completionTimestamp || tx.claimableTimestamp)
   const notifications: BridgeNotification[] = completedTransactions
     .map((ct) => {
       return {
-        status: ct.failed ? 'FAILED' : ct.completionTimestamp ? 'COMPLETED' : 'CLAIMABLE',
-        type: ct.isDeposit ? 'DEPOSIT' : 'WITHDRAWAL',
+        status: ct.isFailed ? 'FAILED' : ct.completionTimestamp ? 'COMPLETED' : 'CLAIMABLE',
+        type: ct.type,
         timestamp: ct.completionTimestamp ?? ct.claimableTimestamp,
         amount: ct.amount,
-        to: ct.isDeposit ? ct.highNetworkChainId : ct.lowNetworkChainId,
+        to: ct.type === 'DEPOSIT' ? ct.highNetworkChainId : ct.lowNetworkChainId,
         seen: !ct.newTransaction
       }
     })
@@ -271,13 +267,15 @@ export const usePendingTransactions = (connectedAccount: string | undefined): Us
         if (!Array.isArray(transactions)) {
           return false
         }
-        const pendingTransactions = transactions.filter((t: { completionTimestamp: number }) => !t.completionTimestamp)
+        const pendingTransactions: TransactionRecord[] = transactions.filter(
+          (t: { completionTimestamp: number }) => !t.completionTimestamp
+        )
         const completedTransactions = transactions.filter((t: { completionTimestamp: number }) => t.completionTimestamp)
         console.log(pendingTransactions, completedTransactions)
-        const newCompletedTransactions: any[] = []
+        const newCompletedTransactions: TransactionRecord[] = []
         for (const t of pendingTransactions) {
-          if (t.isDeposit) {
-            const status = await fetchDepositStatus(t as DepositRecord)
+          if (t.type === 'DEPOSIT') {
+            const status = await fetchDepositStatus(t as TransactionRecord)
             if (status?.highNetworkTimestamp) {
               newCompletedTransactions.push({
                 ...t,
@@ -285,8 +283,9 @@ export const usePendingTransactions = (connectedAccount: string | undefined): Us
                 newTransaction: true
               })
             }
-          } else {
-            const status = await fetchL2ToL1MessageStatus(t as WithdrawRecord)
+          }
+          if (t.type === 'WITHDRAWAL') {
+            const status = await fetchL2ToL1MessageStatus(t as TransactionRecord)
             if (status?.status === L2ToL1MessageStatus.CONFIRMED) {
               if (!t.claimableTimestamp) {
                 newCompletedTransactions.push({ ...t, claimableTimestamp: Date.now() / 1000, newTransaction: true })

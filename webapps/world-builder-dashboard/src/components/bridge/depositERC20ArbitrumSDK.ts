@@ -17,12 +17,32 @@ export interface DepositRecord {
   retryableCreationTimeout: number //seconds
 }
 
+export interface TransactionRecord {
+  type: 'DEPOSIT' | 'WITHDRAWAL' | 'CLAIM'
+  amount: string
+  lowNetworkChainId?: number
+  lowNetworkHash?: string
+  lowNetworkTimestamp?: number
+  lowNetworkBlockNumber?: number
+  highNetworkChainId?: number
+  highNetworkHash?: string
+  highNetworkBlockNumber?: number
+  highNetworkTimestamp?: number
+  complete?: boolean
+  retryableCreationTimeout?: number //seconds
+  challengePeriod?: number //seconds
+  completionTimestamp?: number
+  claimableTimestamp?: number
+  newTransaction?: boolean
+  isFailed?: boolean
+}
+
 export const depositERC20ArbitrumSDK = async (
   lowNetwork: NetworkInterface,
   highNetwork: NetworkInterface,
   amount: string,
   l1Signer: Signer
-): Promise<DepositRecord> => {
+): Promise<TransactionRecord> => {
   const l2Provider = new providers.JsonRpcProvider(highNetwork.rpcs[0])
 
   const l2Network = await getL2Network(l2Provider)
@@ -41,6 +61,7 @@ export const depositERC20ArbitrumSDK = async (
 
   console.log(depositTx, new Date().toTimeString())
   return {
+    type: 'DEPOSIT',
     amount,
     lowNetworkChainId: lowNetwork.chainId,
     highNetworkChainId: highNetwork.chainId,
