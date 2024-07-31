@@ -1,18 +1,15 @@
 import { Navigate, createBrowserRouter } from 'react-router-dom'
 import ErrorBoundary from '@/components/ErrorBoundry'
 //Layouts
-import AuthLayout from '@/layouts/AuthLayout/AuthLayout'
-import DashboardLayout from '@/layouts/DashboardLayout/DashboardLayout'
+import MainLayout from '@/layouts/MainLayout/MainLayout'
 import BridgePage from '@/pages/BridgePage/BridgePage'
 import FaucetPage from '@/pages/FaucetPage/FaucetPage'
 //Pages
-import LoginPage from '@/pages/LoginPage/LoginPage'
 import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage'
-import SignUpPage from '@/pages/SignUpPage/SignUpPage'
 
 const router = createBrowserRouter([
   {
-    element: <DashboardLayout />,
+    element: <MainLayout />,
     path: '/',
     children: [
       {
@@ -23,7 +20,7 @@ const router = createBrowserRouter([
     ]
   },
   {
-    element: <DashboardLayout />,
+    element: <MainLayout />,
     children: [
       {
         path: '/bridge/*',
@@ -32,7 +29,7 @@ const router = createBrowserRouter([
     ]
   },
   {
-    element: <DashboardLayout />,
+    element: <MainLayout />,
     children: [
       {
         path: '/faucet/*',
