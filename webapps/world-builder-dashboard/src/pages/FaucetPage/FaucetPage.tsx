@@ -1,23 +1,17 @@
 import { useEffect, useState } from 'react'
-import { useQuery, useQueryClient } from 'react-query'
+import { useQueryClient } from 'react-query'
 import { useLocation, useNavigate } from 'react-router-dom'
-import styles from '../BridgePage/BridgePage.module.css'
+import { L3_NATIVE_TOKEN_SYMBOL } from '../../../constants'
+import styles from './FaucetPage.module.css'
 import { Box } from 'summon-ui/mantine'
 import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
-import {
-  BridgeNotificationsProvider,
-  useBridgeNotificationsContext
-} from '@/components/bridge/BridgeNotificationsContext'
-import BridgeView from '@/components/bridge/BridgeView'
+import { useBridgeNotificationsContext } from '@/components/bridge/BridgeNotificationsContext'
 import NotificationsButton from '@/components/bridge/NotificationsButton'
 import { FloatingNotification } from '@/components/bridge/NotificationsDropModal'
-import WithdrawTransactions from '@/components/bridge/WithdrawTransactions'
 import FaucetView from '@/components/faucet/FaucetView'
 import { useNotifications, usePendingTransactions } from '@/hooks/useL2ToL1MessageStatus'
 
 const BridgePage = () => {
-  const location = useLocation()
-  const navigate = useNavigate()
   const { connectedAccount } = useBlockchainContext()
   const pendingTransacions = usePendingTransactions(connectedAccount)
   const [notificationsOffset, setNotificationsOffset] = useState(0)
@@ -36,13 +30,20 @@ const BridgePage = () => {
   }, [pendingTransacions.data])
 
   return (
-    <Box bg={'#FCFCFD'} h={'100vh'}>
+    <Box px={'32px'} bg={'#FCFCFD'} h={'100vh'} pt={'1px'}>
       <div className={styles.container}>
         <div className={styles.headerContainer}>
           {notifications.data && <FloatingNotification notifications={newNotifications} />}
           <div className={styles.title}>Faucet</div>
           <NotificationsButton notifications={notifications.data ?? []} />
         </div>
+        <div className={styles.warningContainer}>
+          <div className={styles.warningBadge}>Warning</div>
+          <div
+            className={styles.warningText}
+          >{`This faucet only dispenses ${L3_NATIVE_TOKEN_SYMBOL} tokens. For other tokens, please visit external faucets.`}</div>
+        </div>
+
         <FaucetView />
       </div>
     </Box>
