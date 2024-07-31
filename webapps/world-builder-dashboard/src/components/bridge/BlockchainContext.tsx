@@ -26,6 +26,8 @@ interface BlockchainContextType {
   setSelectedLowNetwork: (network: NetworkInterface) => void
   selectedHighNetwork: NetworkInterface
   setSelectedHighNetwork: (network: NetworkInterface) => void
+  isMetaMask: boolean
+  disconnectWallet: () => void
 }
 
 export interface NetworkInterface {
@@ -62,6 +64,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   const [selectedL3Network, _setSelectedL3Network] = useState<L3NetworkConfiguration>(L3_NETWORKS[0])
   const [selectedLowNetwork, _setSelectedLowNetwork] = useState<NetworkInterface>(DEFAULT_LOW_NETWORK)
   const [selectedHighNetwork, _setSelectedHighNetwork] = useState<NetworkInterface>(DEFAULT_HIGH_NETWORK)
+  const [isMetaMask, setIsMetaMask] = useState(false)
 
   const [connectedAccount, setConnectedAccount] = useState<string>()
   const tokenAddress = '0x5f88d811246222F6CB54266C42cc1310510b9feA'
@@ -94,6 +97,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     const ethereum = window.ethereum
     if (ethereum) {
       const provider = new ethers.providers.Web3Provider(ethereum)
+      console.log(provider)
       setWalletProvider(provider)
     }
     if (ethereum && ethereum.on) {
@@ -108,6 +112,8 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     const ethereum = window.ethereum
     if (ethereum) {
       const provider = new ethers.providers.Web3Provider(ethereum)
+      // @ts-ignore
+      setIsMetaMask(window.ethereum?.isMetaMask && !window.ethereum?.overrideIsMetaMask)
       const accounts = await provider.listAccounts()
       if (accounts.length > 0) {
         setConnectedAccount(accounts[0])
@@ -170,6 +176,26 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     }
   }
 
+  const disconnectWallet = async () => {
+    if (window.ethereum) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      console.log(provider)
+      const ethereum = window.ethereum ?? null
+      // @ts-ignore
+      if (ethereum && provider.connection.url === 'metamask' && !window.ethereum?.overrideIsMetaMask) {
+        // @ts-ignore
+        await ethereum.request({
+          method: 'wallet_revokePermissions',
+          params: [
+            {
+              eth_accounts: {}
+            }
+          ]
+        })
+      }
+    }
+  }
+
   return (
     <BlockchainContext.Provider
       value={{
@@ -187,7 +213,9 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
         selectedLowNetwork,
         setSelectedLowNetwork,
         selectedHighNetwork,
-        setSelectedHighNetwork
+        setSelectedHighNetwork,
+        isMetaMask,
+        disconnectWallet
       }}
     >
       {children}
