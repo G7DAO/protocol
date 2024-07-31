@@ -4,7 +4,6 @@ import { useQuery } from 'react-query'
 import { L1_NETWORK, L2_NETWORK, L3_NETWORK, L3_NATIVE_TOKEN_SYMBOL } from '../../../constants'
 // Styles and Icons
 import styles from './BridgeView.module.css'
-import { ethers } from 'ethers'
 import { Icon } from 'summon-ui'
 import ActionButton from '@/components/bridge/ActionButton'
 // Blockchain Context and Utility Functions
@@ -72,26 +71,6 @@ const BridgeView: React.FC = () => {
     }
     return est
   })
-
-  const disconnect = async () => {
-    if (window.ethereum) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-      console.log(provider)
-      const ethereum = window.ethereum ?? null
-      if (ethereum && provider.connection.url === 'metamask') {
-        // @ts-ignore
-        await ethereum.request({
-          method: 'wallet_revokePermissions',
-          params: [
-            {
-              eth_accounts: {}
-            }
-          ]
-        })
-      }
-    }
-    // coinbaseWalletProvider.disconnect()
-  }
 
   const renderNetworkSelect = (isSource: boolean, direction: 'DEPOSIT' | 'WITHDRAW') => {
     if ((isSource && direction === 'DEPOSIT') || (!isSource && direction === 'WITHDRAW')) {

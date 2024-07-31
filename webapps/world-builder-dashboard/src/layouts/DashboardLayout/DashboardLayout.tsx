@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom'
 import styles from './DashboardLayout.module.css'
 import { DashboardLayout as SummonUiDashboardLayout, Icon, IconName } from 'summon-ui'
 import { Box, NavLink, Stack, Badge } from 'summon-ui/mantine'
+import IconLogout from '@/assets/IconLogout'
 import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
 import withAuth from '@/hocs/withAuth'
 import { useAppVersion, useIsDevMode } from '@/utils/utils'
@@ -63,7 +64,7 @@ const renderBottomMenu = ({
   isCollapsed: boolean
   closeMobileMenu: () => void
 }): ReactNode => {
-  const { connectedAccount } = useBlockchainContext()
+  const { connectedAccount, isMetaMask, disconnectWallet } = useBlockchainContext()
 
   return (
     <>
@@ -81,7 +82,12 @@ const renderBottomMenu = ({
           />
         ))}
         {connectedAccount && (
-          <div className={styles.web3address}>{`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}</div>
+          <div className={styles.web3addressContainer}>
+            <div
+              className={styles.web3address}
+            >{`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}</div>
+            {isMetaMask && <IconLogout onClick={disconnectWallet} className={styles.disconnectButton} />}
+          </div>
         )}
       </Stack>
     </>
