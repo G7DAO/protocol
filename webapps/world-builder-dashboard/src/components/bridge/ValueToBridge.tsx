@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styles from './ValueToBridge.module.css'
-import IconTokenSymbol from '@/assets/IconTokenSymbol'
+import IconG7TSmall from '@/assets/IconG7TSmall'
 
 const formatCurrency = (value: number) => {
   const formatter = new Intl.NumberFormat('en-US', {
@@ -34,7 +34,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({ setValue, value, balance,
           MAX
         </button>
         <div className={styles.tokenGroup}>
-          <IconTokenSymbol />
+          <IconG7TSmall />
           <div className={styles.tokenSymbol}>G7T</div>
         </div>
       </div>
