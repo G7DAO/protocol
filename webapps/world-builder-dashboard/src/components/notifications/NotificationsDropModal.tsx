@@ -1,9 +1,18 @@
-import React, { useEffect } from 'react'
+// React and External Libraries
+import React, { useEffect, useRef, useState } from 'react'
+// Constants and Configuration
 import { L3_NATIVE_TOKEN_SYMBOL } from '../../../constants'
+// Styles
 import styles from './NotificationsDropModal.module.css'
+import modalStyles from './NotificationsModal.module.css'
+// Assets and Icons
+import IconClose from '@/assets/IconClose'
+// Components
 import { BridgeNotification } from '@/components/notifications/NotificationsButton'
+// Context and Hooks
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
+// Utilities
 import { timeAgo } from '@/utils/timeFormat'
 import { getNetwork } from '@/utils/web3utils'
 
@@ -43,7 +52,7 @@ const badgeClassName = (status: string) => {
 
 const NotificationsDropModal: React.FC<NotificationsDropModalProps> = ({ notifications }) => {
   const { connectedAccount } = useBlockchainContext()
-  const { cleanNewNotifications } = useBridgeNotificationsContext()
+  const { cleanNewNotifications, setIsDropdownOpened, setIsModalOpened } = useBridgeNotificationsContext()
 
   useEffect(() => {
     console.log(notifications, notifications.slice(0, 3))
@@ -68,7 +77,15 @@ const NotificationsDropModal: React.FC<NotificationsDropModalProps> = ({ notific
             <div className={styles.content}>{copy(n)}</div>
           </div>
         ))}
-      <button className={styles.button}>See more</button>
+      <button
+        className={styles.button}
+        onClick={() => {
+          setIsModalOpened(true)
+          setIsDropdownOpened(false)
+        }}
+      >
+        See more
+      </button>
     </div>
   )
 }
@@ -109,6 +126,63 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
   return (
     <div onClick={handleClick} className={toastClassName(notifications[0].status)}>
       {copy(notifications[0])}
+    </div>
+  )
+}
+
+export const NotificationsModal: React.FC<NotificationsDropModalProps> = ({ notifications }) => {
+  const [page, setPage] = useState(0)
+  const { setIsModalOpened } = useBridgeNotificationsContext()
+  const LIMIT = 4
+
+  const itemsContainerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (itemsContainerRef.current) {
+      itemsContainerRef.current.scrollTo({
+        top: itemsContainerRef.current.scrollHeight,
+        behavior: 'smooth' // Optional, for smooth scrolling
+      })
+      // itemsContainerRef.current.scrollTop = itemsContainerRef.current.scrollHeight
+    }
+  }, [page])
+
+  return (
+    <div className={modalStyles.container}>
+      <IconClose className={modalStyles.closeButton} onClick={() => setIsModalOpened(false)} />
+      <div className={modalStyles.header}>
+        <div className={modalStyles.title}>Notifications</div>
+        <div className={modalStyles.supportingText}>Review your notification center</div>
+      </div>
+      <div className={modalStyles.itemsContainer} ref={itemsContainerRef}>
+        {!notifications || (notifications.length === 0 && <div className={styles.content}>No notifications yet</div>)}
+        {notifications &&
+          notifications.slice(0, LIMIT * page + LIMIT).map((n, idx) => (
+            <div
+              className={
+                idx + 1 === notifications.slice(0, LIMIT * page + LIMIT).length
+                  ? modalStyles.itemWithoutBorder
+                  : modalStyles.item
+              }
+              key={idx}
+            >
+              <div className={modalStyles.itemHeader}>
+                <div className={modalStyles.itemHeaderLeft}>
+                  <div className={modalStyles.itemHeaderTitle}>{n.type.toLowerCase()}</div>
+
+                  <div className={badgeClassName(n.status)}>{n.status.toLowerCase()}</div>
+                </div>
+                <div className={modalStyles.headerTime}>{timeAgo(n.timestamp, true)}</div>
+              </div>
+              <div className={modalStyles.content}>{copy(n)}</div>
+            </div>
+          ))}
+      </div>
+      {notifications.length >= LIMIT * page + LIMIT && (
+        <button className={modalStyles.button} onClick={() => setPage((prev) => prev + 1)}>
+          See more
+        </button>
+      )}
     </div>
   )
 }

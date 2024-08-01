@@ -1,8 +1,8 @@
 import React from 'react'
 import styles from './NotificationsButton.module.css'
-import { Popover } from 'summon-ui/mantine'
+import { Popover, Modal } from 'summon-ui/mantine'
 import IconBell from '@/assets/IconBell'
-import NotificationsDropModal from '@/components/notifications/NotificationsDropModal'
+import NotificationsDropModal, { NotificationsModal } from '@/components/notifications/NotificationsDropModal'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 
 export interface BridgeNotification {
@@ -18,7 +18,9 @@ interface NotificationsButtonProps {
   notifications: BridgeNotification[]
 }
 const NotificationsButton: React.FC<NotificationsButtonProps> = ({ notifications }) => {
-  const { newNotifications, isDropdownOpened, setIsDropdownOpened } = useBridgeNotificationsContext()
+  const { newNotifications, isDropdownOpened, setIsDropdownOpened, isModalOpened, setIsModalOpened } =
+    useBridgeNotificationsContext()
+
   return (
     <Popover
       width={300}
@@ -29,6 +31,16 @@ const NotificationsButton: React.FC<NotificationsButtonProps> = ({ notifications
       opened={isDropdownOpened}
       onChange={setIsDropdownOpened}
     >
+      <Modal
+        opened={isModalOpened}
+        onClose={() => setIsModalOpened(false)}
+        withCloseButton={false}
+        padding={'0px'}
+        size={'678px'}
+        radius={'12px'}
+      >
+        <NotificationsModal notifications={notifications} />
+      </Modal>
       <Popover.Target>
         <button
           className={styles.container}
