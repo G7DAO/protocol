@@ -25,11 +25,10 @@ jobs:
                   npm run build
 
             - name: Publish to CloudFlare Page
-            uses: cloudflare/pages-action@v1
-            working-directory: ./webapps/world-builder-dashboard
-            with:
-                apiToken: ${{ secrets.CF_API_TOKEN_BETA_DEV }}
-                accountId: ${{ secrets.CF_ACCOUNT_ID_BETA_DEV }}
-                projectName: ${{ secrets.CF_PROJECT_NAME_WB_DASHBOARD_BETA_DEV }}
-                directory: dist
-                gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+              uses: cloudflare/pages-action@v1
+              with:
+                    apiToken: ${{ secrets.CF_API_TOKEN_BETA_DEV }}
+                    accountId: ${{ secrets.CF_ACCOUNT_ID_BETA_DEV }}
+                    projectName: ${{ secrets.CF_PROJECT_NAME_WB_DASHBOARD_BETA_DEV }}
+                    directory: ./webapps/world-builder-dashboard/dist
+                    gitHubToken: ${{ secrets.GITHUB_TOKEN }}
