@@ -1,10 +1,13 @@
-import React, { Fragment, useEffect } from 'react'
+// External Libraries
+import React, { Fragment } from 'react'
+// Styles
 import styles from './WithdrawTransactions.module.css'
-import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
-import Deposit from '@/components/bridge/Deposit'
-import Withdrawal from '@/components/bridge/Withdrawal'
-import { TransactionRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
+// Absolute Imports
+import Deposit from '@/components/bridge/history/Deposit'
+import Withdrawal from '@/components/bridge/history/Withdrawal'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useMessages } from '@/hooks/useL2ToL1MessageStatus'
+import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 
 interface WithdrawTransactionsProps {}
 const WithdrawTransactions: React.FC<WithdrawTransactionsProps> = () => {

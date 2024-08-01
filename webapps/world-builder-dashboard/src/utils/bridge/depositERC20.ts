@@ -1,5 +1,5 @@
 import { ethers, providers, utils } from 'ethers'
-import { HighNetworkInterface, NetworkInterface } from '@/components/bridge/BlockchainContext'
+import { HighNetworkInterface, NetworkInterface } from '@/contexts/BlockchainContext'
 import { convertToBigNumber } from '@/utils/web3utils'
 import { NodeInterface__factory } from '@arbitrum/sdk/dist/lib/abi/factories/NodeInterface__factory'
 import { NODE_INTERFACE_ADDRESS } from '@arbitrum/sdk/dist/lib/dataEntities/constants'
@@ -133,7 +133,7 @@ export const estimateDepositFee = async (
     ethAmount,
     0,
     0,
-    '0x'
+    '0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000'
   )
   const data = tx.data
 
@@ -292,14 +292,13 @@ export const sendDepositERC20Transaction = async (
   console.log(gasEstimate)
   // const gasLimit = ethers.utils.parseEther(gasEstimate);
   // console.log(gasLimit);
-  const txRequest = await L1GatewatyContract.populateTransaction.outboundTransferCustomRefund(
+  const txRequest = await L1GatewatyContract.populateTransaction.outboundTransfer(
     lowNetwork.g7TokenAddress,
-    account,
     account,
     ethAmount,
     0,
     0,
-    '0x',
+    '0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000',
     { gasLimit: gasEstimate }
   )
 

@@ -3,9 +3,9 @@ import { useMutation } from 'react-query'
 import styles from './ApproveAllowance.module.css'
 import { ethers } from 'ethers'
 import IconClose from '@/assets/IconClose'
-import AllowanceSelector from '@/components/bridge/AllowanceSelector'
-import { NetworkInterface, useBlockchainContext } from '@/components/bridge/BlockchainContext'
-import { approve } from '@/components/bridge/approveERC20'
+import AllowanceSelector from '@/components/bridge/allowance/AllowanceSelector'
+import { NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
+import { approve } from '@/utils/bridge/approveERC20'
 
 interface ApproveAllowanceProps {
   onSuccess: () => void

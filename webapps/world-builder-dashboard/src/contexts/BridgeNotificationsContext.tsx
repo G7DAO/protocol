@@ -1,6 +1,6 @@
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react'
-import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
-import { BridgeNotification } from '@/components/bridge/NotificationsButton'
+import { BridgeNotification } from '@/components/notifications/NotificationsButton'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { getNotifications } from '@/hooks/useL2ToL1MessageStatus'
 
 interface BridgeNotificationsContext {

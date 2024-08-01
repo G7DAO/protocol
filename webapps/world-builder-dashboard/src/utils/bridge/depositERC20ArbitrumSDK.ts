@@ -1,5 +1,5 @@
 import { providers } from 'ethers'
-import { NetworkInterface } from '@/components/bridge/BlockchainContext'
+import { NetworkInterface } from '@/contexts/BlockchainContext'
 import { convertToBigNumber } from '@/utils/web3utils'
 import { Erc20Bridger, getL2Network } from '@arbitrum/sdk'
 import { Signer } from '@ethersproject/abstract-signer'

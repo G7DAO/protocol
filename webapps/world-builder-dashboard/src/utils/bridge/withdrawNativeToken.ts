@@ -1,6 +1,6 @@
 import { L2_NETWORK, L3_NETWORK } from '../../../constants'
 import { ethers } from 'ethers'
-import { TransactionRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
+import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 
 export interface WithdrawRecord {
   amount: string

@@ -9,7 +9,7 @@ import IconGame7Logo from '@/assets/IconGame7Logo'
 import IconLogout from '@/assets/IconLogout'
 import IconWallet04 from '@/assets/IconWallet04'
 // Local components and assets
-import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
 
 interface MainLayoutProps {}
 
@@ -37,6 +37,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({}) => {
               <div
                 className={location.pathname.startsWith(item.navigateTo) ? styles.selectedNavButton : styles.navButton}
                 onClick={() => navigate(item.navigateTo)}
+                key={item.name}
               >
                 {item.icon}
                 {item.name}

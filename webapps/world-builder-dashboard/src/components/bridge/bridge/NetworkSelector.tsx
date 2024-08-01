@@ -1,11 +1,11 @@
-import { L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../../constants'
+import { L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../../../constants'
 import styles from './BridgeView.module.css'
 import { Icon } from 'summon-ui'
 import { Combobox, Group, InputBase, InputBaseProps, useCombobox } from 'summon-ui/mantine'
 import IconArbitrumOne from '@/assets/IconArbitrumOne'
 import IconEthereum from '@/assets/IconEthereum'
 import IconG7T from '@/assets/IconG7T'
-import { HighNetworkInterface, NetworkInterface } from '@/components/bridge/BlockchainContext'
+import { HighNetworkInterface, NetworkInterface } from '@/contexts/BlockchainContext'
 
 type NetworkSelectorProps = {
   networks: NetworkInterface[]

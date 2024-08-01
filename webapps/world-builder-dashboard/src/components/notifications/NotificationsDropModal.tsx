@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
 import { L3_NATIVE_TOKEN_SYMBOL } from '../../../constants'
 import styles from './NotificationsDropModal.module.css'
-import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
-import { useBridgeNotificationsContext } from '@/components/bridge/BridgeNotificationsContext'
-import { BridgeNotification } from '@/components/bridge/NotificationsButton'
+import { BridgeNotification } from '@/components/notifications/NotificationsButton'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
+import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 import { timeAgo } from '@/utils/timeFormat'
 import { getNetwork } from '@/utils/web3utils'
 

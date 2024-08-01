@@ -3,9 +3,9 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { G7T_FAUCET_ADDRESS, L2_NETWORK, L3_NATIVE_TOKEN_SYMBOL, L3_NETWORK } from '../../../constants'
 import styles from './FaucetView.module.css'
 import { ethers } from 'ethers'
-import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
-import { useBridgeNotificationsContext } from '@/components/bridge/BridgeNotificationsContext'
-import { TransactionRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
+import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
+import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { timeDifferenceInHoursAndMinutes } from '@/utils/timeFormat'
 
 const FAUCET_CHAIN = L2_NETWORK
@@ -80,9 +80,10 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
         const tx = isL2Target ? await contract.claim() : await contract.claimL3()
         console.log('Transaction hash:', tx.hash)
         const receipt = tx.wait() // Wait for the transaction to be mined
+        const type: 'CLAIM' | 'DEPOSIT' | 'WITHDRAWAL' = 'CLAIM'
         return {
-          type: 'CLAIM',
-          amount: 1,
+          type,
+          amount: '1',
           highNetworkChainId: selectedNetwork.chainId,
           lowNetworkHash: receipt.hash,
           lowNetworkTimestamp: Date.now() / 1000,
@@ -93,7 +94,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
       throw new Error('no window.ethereum')
     },
     {
-      onSuccess: (data: TransactionRecord) => {
+      onSuccess: (data: TransactionRecord | undefined) => {
         try {
           const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
 
@@ -125,11 +126,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
     const timestampInMillis = unixTimestamp * 1000 // Unix timestamp in milliseconds
     const currentInMillis = Date.now() // Current time in milliseconds
 
-    if (timestampInMillis > currentInMillis) {
-      return false
-    }
-
-    return true
+    return timestampInMillis <= currentInMillis
   }
 
   const nextClaimAvailable = useQuery(['nextFaucetClaimTimestamp', connectedAccount], async () => {

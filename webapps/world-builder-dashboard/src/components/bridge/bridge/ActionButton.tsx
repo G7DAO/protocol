@@ -1,19 +1,22 @@
+// External Libraries
 import React, { useState } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
 import { useNavigate } from 'react-router-dom'
-import { L3_NETWORK } from '../../../constants'
+// Constants
+import { L3_NETWORK } from '../../../../constants'
+// Styles
 import styles from './ActionButton.module.css'
 import { ethers } from 'ethers'
 import { Modal } from 'summon-ui/mantine'
-import IconLoading01 from '@/assets/IconLoading01'
-import ApproveAllowance from '@/components/bridge/ApproveAllowance'
-import { HighNetworkInterface, NetworkInterface, useBlockchainContext } from '@/components/bridge/BlockchainContext'
-import { useBridgeNotificationsContext } from '@/components/bridge/BridgeNotificationsContext'
-import { depositERC20ArbitrumSDK, DepositRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
-import { sendDepositERC20ToNativeTransaction } from '@/components/bridge/depositERC20ToNative'
-import { sendWithdrawERC20Transaction } from '@/components/bridge/withdrawERC20'
-import { sendWithdrawTransaction, WithdrawRecord } from '@/components/bridge/withdrawNativeToken'
+// Absolute Imports
+import ApproveAllowance from '@/components/bridge/allowance/ApproveAllowance'
+import { HighNetworkInterface, NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
+import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 import useERC20Balance, { useERC20Allowance } from '@/hooks/useERC20Balance'
+import { depositERC20ArbitrumSDK, TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
+import { sendDepositERC20ToNativeTransaction } from '@/utils/bridge/depositERC20ToNative'
+import { sendWithdrawERC20Transaction } from '@/utils/bridge/withdrawERC20'
+import { sendWithdrawTransaction } from '@/utils/bridge/withdrawNativeToken'
 import { L2ToL1MessageStatus } from '@arbitrum/sdk'
 
 interface ActionButtonProps {
@@ -174,7 +177,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount }) => {
       throw new Error('no window.ethereum')
     },
     {
-      onSuccess: (deposit: DepositRecord) => {
+      onSuccess: (deposit: TransactionRecord) => {
         try {
           const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
 
@@ -215,7 +218,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount }) => {
       return sendWithdrawTransaction(amount, connectedAccount)
     },
     {
-      onSuccess: async (record: WithdrawRecord) => {
+      onSuccess: async (record: TransactionRecord) => {
         try {
           const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
           let transactions = []

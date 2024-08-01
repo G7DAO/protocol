@@ -1,6 +1,6 @@
 import { L1_NETWORK, L2_NETWORK } from '../../../constants'
 import { ethers } from 'ethers'
-import { TransactionRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
+import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 
 const L2GatewayRouterABI = [
   {

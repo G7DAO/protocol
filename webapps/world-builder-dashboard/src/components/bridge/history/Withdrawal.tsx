@@ -7,15 +7,15 @@ import {
   L3_NATIVE_TOKEN_SYMBOL,
   L3_NETWORK,
   LOW_NETWORKS
-} from '../../../constants'
+} from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import { ethers } from 'ethers'
 import { Skeleton } from 'summon-ui/mantine'
 import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
-import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
-import { useBridgeNotificationsContext } from '@/components/bridge/BridgeNotificationsContext'
-import { TransactionRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
+import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
+import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 import { L2ToL1MessageStatus, L2ToL1MessageWriter, L2TransactionReceipt } from '@arbitrum/sdk'

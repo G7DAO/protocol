@@ -1,8 +1,8 @@
 import { useQueries, useQuery, UseQueryResult } from 'react-query'
 import { HIGH_NETWORKS, L2_NETWORK, LOW_NETWORKS } from '../../constants'
 import { ethers, providers } from 'ethers'
-import { BridgeNotification } from '@/components/bridge/NotificationsButton'
-import { TransactionRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
+import { BridgeNotification } from '@/components/notifications/NotificationsButton'
+import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { L1TransactionReceipt, L2ToL1MessageReader, L2ToL1MessageStatus, L2TransactionReceipt } from '@arbitrum/sdk'
 import { L1ContractCallTransactionReceipt } from '@arbitrum/sdk/dist/lib/message/L1Transaction'
 
@@ -202,12 +202,13 @@ export const getNotifications = (transactions: TransactionRecord[]) => {
   const completedTransactions = transactions.filter((tx) => tx.completionTimestamp || tx.claimableTimestamp)
   const notifications: BridgeNotification[] = completedTransactions
     .map((ct) => {
+      const timestamp = ct.completionTimestamp ?? ct.claimableTimestamp ?? Date.now() / 1000 //
       return {
         status: ct.isFailed ? 'FAILED' : ct.completionTimestamp ? 'COMPLETED' : 'CLAIMABLE',
         type: ct.type,
-        timestamp: ct.completionTimestamp ?? ct.claimableTimestamp,
+        timestamp,
         amount: ct.amount,
-        to: ct.type === 'DEPOSIT' ? ct.highNetworkChainId : ct.lowNetworkChainId,
+        to: (ct.type === 'WITHDRAWAL' ? ct.lowNetworkChainId : ct.highNetworkChainId) ?? 1, //TODO remove null assertion
         seen: !ct.newTransaction
       }
     })

@@ -1,8 +1,8 @@
 // BlockchainContext.tsx
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react'
-import { DEFAULT_HIGH_NETWORK, DEFAULT_LOW_NETWORK, L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../../constants'
+import { DEFAULT_HIGH_NETWORK, DEFAULT_LOW_NETWORK, L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../constants'
 import { ethers } from 'ethers'
-import { L3_NETWORKS, L3NetworkConfiguration } from '@/components/bridge/l3Networks'
+import { L3_NETWORKS, L3NetworkConfiguration } from '@/utils/bridge/l3Networks'
 
 // const L3_RPC = "https://game7-testnet-custom.rpc.caldera.xyz/http";
 const L2_RPC = 'https://sepolia-rollup.arbitrum.io/rpc'

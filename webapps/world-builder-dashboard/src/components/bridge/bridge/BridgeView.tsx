@@ -1,24 +1,24 @@
 // Libraries
 import { useState } from 'react'
 import { useQuery } from 'react-query'
-import { L1_NETWORK, L2_NETWORK, L3_NETWORK, L3_NATIVE_TOKEN_SYMBOL } from '../../../constants'
+import { L1_NETWORK, L2_NETWORK, L3_NETWORK, L3_NATIVE_TOKEN_SYMBOL } from '../../../../constants'
 // Styles and Icons
 import styles from './BridgeView.module.css'
 import { Icon } from 'summon-ui'
-import ActionButton from '@/components/bridge/ActionButton'
-// Blockchain Context and Utility Functions
-import { HighNetworkInterface, useBlockchainContext } from '@/components/bridge/BlockchainContext'
+import ActionButton from '@/components/bridge/bridge/ActionButton'
 // Components
-import NetworkSelector from '@/components/bridge/NetworkSelector'
-import TransactionSummary from '@/components/bridge/TransactionSummary'
-import ValueToBridge from '@/components/bridge/ValueToBridge'
-import { estimateDepositERC20ToNativeFee } from '@/components/bridge/depositERC20ToNative'
-import { estimateWithdrawFee } from '@/components/bridge/withdrawNativeToken'
+import NetworkSelector from '@/components/bridge/bridge/NetworkSelector'
+import TransactionSummary from '@/components/bridge/bridge/TransactionSummary'
+import ValueToBridge from '@/components/bridge/bridge/ValueToBridge'
+// Blockchain Context and Utility Functions
+import { HighNetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
 // Hooks and Constants
 import useERC20Balance from '@/hooks/useERC20Balance'
 import useEthUsdRate from '@/hooks/useEthUsdRate'
 import useNativeBalance from '@/hooks/useNativeBalance'
 import { DepositDirection } from '@/pages/BridgePage/BridgePage'
+import { estimateDepositERC20ToNativeFee } from '@/utils/bridge/depositERC20ToNative'
+import { estimateWithdrawFee } from '@/utils/bridge/withdrawNativeToken'
 
 const BridgeView = ({
   direction,

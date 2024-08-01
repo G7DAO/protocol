@@ -6,13 +6,13 @@ import { L3_NATIVE_TOKEN_SYMBOL } from '../../../constants'
 // Styles
 import bridgeStyles from '../BridgePage/BridgePage.module.css'
 import styles from './FaucetPage.module.css'
-// Contexts
-import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
-import { useBridgeNotificationsContext } from '@/components/bridge/BridgeNotificationsContext'
-// Components
-import NotificationsButton from '@/components/bridge/NotificationsButton'
-import { FloatingNotification } from '@/components/bridge/NotificationsDropModal'
 import FaucetView from '@/components/faucet/FaucetView'
+// Components
+import NotificationsButton from '@/components/notifications/NotificationsButton'
+import { FloatingNotification } from '@/components/notifications/NotificationsDropModal'
+// Contexts
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
+import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 // Hooks
 import { useNotifications, usePendingTransactions } from '@/hooks/useL2ToL1MessageStatus'
 

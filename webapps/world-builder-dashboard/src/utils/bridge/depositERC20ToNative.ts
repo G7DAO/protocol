@@ -1,6 +1,6 @@
 import { ethers, providers, utils } from 'ethers'
-import { HighNetworkInterface, NetworkInterface } from '@/components/bridge/BlockchainContext'
-import { TransactionRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
+import { HighNetworkInterface, NetworkInterface } from '@/contexts/BlockchainContext'
+import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { convertToBigNumber } from '@/utils/web3utils'
 import { NodeInterface__factory } from '@arbitrum/sdk/dist/lib/abi/factories/NodeInterface__factory'
 import { NODE_INTERFACE_ADDRESS } from '@arbitrum/sdk/dist/lib/dataEntities/constants'

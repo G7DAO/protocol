@@ -4,7 +4,7 @@ import styles from './DashboardLayout.module.css'
 import { DashboardLayout as SummonUiDashboardLayout, Icon, IconName } from 'summon-ui'
 import { Box, NavLink, Stack, Badge } from 'summon-ui/mantine'
 import IconLogout from '@/assets/IconLogout'
-import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import withAuth from '@/hocs/withAuth'
 import { useAppVersion, useIsDevMode } from '@/utils/utils'
 

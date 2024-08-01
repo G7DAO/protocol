@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { NetworkInterface } from '@/components/bridge/BlockchainContext'
+import { NetworkInterface } from '@/contexts/BlockchainContext'
 import { Signer } from '@ethersproject/abstract-signer'
 
 export const approve = async (amount: string, signer: Signer, network: NetworkInterface) => {

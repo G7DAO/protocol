@@ -4,14 +4,14 @@ import { useQueryClient } from 'react-query'
 import { useLocation, useNavigate } from 'react-router-dom'
 // Styles
 import styles from './BridgePage.module.css'
-// Contexts
-import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
-import { useBridgeNotificationsContext } from '@/components/bridge/BridgeNotificationsContext'
 // Components
-import BridgeView from '@/components/bridge/BridgeView'
-import NotificationsButton from '@/components/bridge/NotificationsButton'
-import { FloatingNotification } from '@/components/bridge/NotificationsDropModal'
-import WithdrawTransactions from '@/components/bridge/WithdrawTransactions'
+import BridgeView from '@/components/bridge/bridge/BridgeView'
+import WithdrawTransactions from '@/components/bridge/history/WithdrawTransactions'
+import NotificationsButton from '@/components/notifications/NotificationsButton'
+import { FloatingNotification } from '@/components/notifications/NotificationsDropModal'
+// Contexts
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
+import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 // Hooks
 import { useNotifications, usePendingTransactions } from '@/hooks/useL2ToL1MessageStatus'
 
