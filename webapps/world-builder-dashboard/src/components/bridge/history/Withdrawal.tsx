@@ -114,13 +114,14 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
           if (transactionsString) {
             transactions = JSON.parse(transactionsString)
           }
-          const newTransactions = transactions.map((t: any) => {
+          const newTransactions: TransactionRecord[] = transactions.map((t: any) => {
             if (t.highNetworkHash === highNetworkHash) {
               return {
                 ...t,
                 completionTimestamp: Date.now() / 1000,
                 lowNetworkTimestamp: Date.now() / 1000,
-                newTransaction: true
+                newTransaction: true,
+                lowNetworkHash: data.transactionHash
               }
             }
             return { ...t }
