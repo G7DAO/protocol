@@ -1,14 +1,12 @@
 import React, { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { G7T_FAUCET_ADDRESS, L2_NETWORK, L3_NATIVE_TOKEN_SYMBOL, L3_NETWORK } from '../../../constants'
+import { FAUCET_CHAIN, G7T_FAUCET_ADDRESS, L2_NETWORK, L3_NATIVE_TOKEN_SYMBOL, L3_NETWORK } from '../../../constants'
 import styles from './FaucetView.module.css'
 import { ethers } from 'ethers'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { timeDifferenceInHoursAndMinutes } from '@/utils/timeFormat'
-
-const FAUCET_CHAIN = L2_NETWORK
 
 interface FaucetViewProps {}
 const FaucetView: React.FC<FaucetViewProps> = ({}) => {
@@ -85,6 +83,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
           type,
           amount: '1',
           highNetworkChainId: selectedNetwork.chainId,
+          lowNetworkChainId: FAUCET_CHAIN.chainId,
           lowNetworkHash: receipt.hash,
           lowNetworkTimestamp: Date.now() / 1000,
           completionTimestamp: Date.now() / 1000,
