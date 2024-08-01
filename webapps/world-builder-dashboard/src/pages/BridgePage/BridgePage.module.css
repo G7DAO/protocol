@@ -90,4 +90,8 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 24px;
+  flex-grow: 0;
+  overflow-y: auto;
+  position: relative;
+
 }

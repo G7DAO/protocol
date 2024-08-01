@@ -191,7 +191,7 @@ export const useMessages = (connectedAccount: string | undefined): UseQueryResul
     }
     const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
     if (transactionsString) {
-      return JSON.parse(transactionsString).slice(-9).reverse()
+      return JSON.parse(transactionsString).reverse()
     } else {
       return []
     }

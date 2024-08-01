@@ -136,15 +136,19 @@
     align-items: center;
     gap: 10px;
     align-self: stretch;
-    background: #FFF;
+    background: red;
     cursor: pointer;
     border: none;
-    width: 100%;
+    width: calc(100% + 16px + 16px - 2px);
+    height: calc(100% + 30px);
+    margin-left: -16px;
+    margin-bottom: -12px;
+    border-radius: 0 0 8px 8px;
 }
 
-/*.button:hover {*/
-/*    background: var(--Gray-25, #FCFCFD);*/
-/*}*/
+.button:hover {
+    background: var(--Gray-25, red);
+}
 
 .toastCompleted, .toastMultiple, .toastClaimable, .toastError {
     display: flex;
