@@ -24,7 +24,7 @@ export const timeAgo = (timestamp: number | undefined, short = false) => {
   return 'just now'
 }
 
-export const ETA = (timestamp: number | undefined, delayInSeconds: number | undefined) => {
+export const ETA = (timestamp: number | undefined, delayInSeconds: number | undefined, isApproximate = true) => {
   if (!timestamp || !delayInSeconds) {
     return 'N/A'
   }
@@ -46,8 +46,24 @@ export const ETA = (timestamp: number | undefined, delayInSeconds: number | unde
   for (const unit of units) {
     const value = Math.floor(timeDifference / unit.inSeconds)
     if (value >= 1) {
-      return `~${value} ${unit.name}${value > 1 ? 's' : ''}`
+      return `${isApproximate ? '~' : ''}${value} ${unit.name}${value > 1 ? 's' : ''}`
     }
   }
   return 'just now'
+}
+
+export const timeDifferenceInHoursAndMinutes = (start: number, end: number): string => {
+  // Convert Unix timestamps to Date objects
+  const startDate = new Date(start * 1000)
+  const endDate = new Date(end * 1000)
+
+  // Calculate the difference in milliseconds
+  const diff = endDate.getTime() - startDate.getTime()
+
+  // Convert the difference into hours and minutes
+  const hours = Math.floor(diff / (1000 * 60 * 60))
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+
+  // Return the formatted difference
+  return `${hours}h ${minutes}m`
 }

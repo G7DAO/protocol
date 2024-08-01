@@ -6,7 +6,7 @@ import { ethers } from 'ethers'
 import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/components/bridge/BridgeNotificationsContext'
 import { TransactionRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
-import { timeDifference } from '@/utils/timeFormat'
+import { timeDifferenceInHoursAndMinutes } from '@/utils/timeFormat'
 
 const FAUCET_CHAIN = L2_NETWORK
 
@@ -176,7 +176,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
     const lastClaimTimestamp = Number(await faucetContract.lastClaimedTimestamp(connectedAccount))
     const faucetTimeInterval = Number(await faucetContract.faucetTimeInterval())
     const nextClaimTimestamp = lastClaimTimestamp + faucetTimeInterval
-    const interval = timeDifference(Date.now() / 1000, nextClaimTimestamp)
+    const interval = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimTimestamp)
     const isAvailable = compareTimestampWithCurrentMoment(nextClaimTimestamp)
     const date = new Date(nextClaimTimestamp * 1000)
 
