@@ -4,6 +4,7 @@ import { Popover, Modal } from 'summon-ui/mantine'
 import IconBell from '@/assets/IconBell'
 import NotificationsDropModal, { NotificationsModal } from '@/components/notifications/NotificationsDropModal'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
+import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 
 export interface BridgeNotification {
   type: string
@@ -12,6 +13,7 @@ export interface BridgeNotification {
   amount: string
   to: number
   seen: boolean
+  tx: TransactionRecord
 }
 
 interface NotificationsButtonProps {
@@ -38,6 +40,11 @@ const NotificationsButton: React.FC<NotificationsButtonProps> = ({ notifications
         padding={'0px'}
         size={'678px'}
         radius={'12px'}
+        overlayProps={{
+          color: 'rgba(52, 64, 84)',
+          backgroundOpacity: 0.7,
+          blur: 8
+        }}
       >
         <NotificationsModal notifications={notifications} />
       </Modal>
