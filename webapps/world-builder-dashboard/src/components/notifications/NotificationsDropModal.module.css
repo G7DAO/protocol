@@ -69,6 +69,7 @@
     font-weight: 500;
     line-height: 18px; /* 150% */
     text-transform: capitalize;
+    gap: 4px;
 }
 
 .badgeClaimable, .toastClaimable {

@@ -7,6 +7,7 @@ import styles from './NotificationsDropModal.module.css'
 import modalStyles from './NotificationsModal.module.css'
 // Assets and Icons
 import IconClose from '@/assets/IconClose'
+import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 // Components
 import { BridgeNotification } from '@/components/notifications/NotificationsButton'
 // Context and Hooks
@@ -14,7 +15,7 @@ import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 // Utilities
 import { timeAgo } from '@/utils/timeFormat'
-import { getNetwork } from '@/utils/web3utils'
+import { getBlockExplorerUrl, getNetwork } from '@/utils/web3utils'
 
 interface NotificationsDropModalProps {
   notifications: BridgeNotification[]
@@ -129,6 +130,30 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
     </div>
   )
 }
+const getTransactionUrl = (notification: BridgeNotification): string | undefined => {
+  const { tx, status } = notification
+  let chainId: number | undefined
+  let txHash: string | undefined
+  switch (tx.type) {
+    case 'DEPOSIT':
+      chainId = tx.lowNetworkChainId
+      txHash = tx.lowNetworkHash
+      break
+    case 'WITHDRAWAL':
+      chainId = status === 'COMPLETED' ? tx.lowNetworkChainId : tx.highNetworkChainId
+      txHash = status === 'COMPLETED' ? tx.lowNetworkHash : tx.highNetworkHash
+      break
+    case 'CLAIM':
+      chainId = tx.lowNetworkChainId
+      txHash = tx.lowNetworkHash
+      break
+    default:
+  }
+  const explorerUrl = getBlockExplorerUrl(chainId)
+  if (explorerUrl && txHash) {
+    return `${explorerUrl}/tx/${txHash}`
+  }
+}
 
 export const NotificationsModal: React.FC<NotificationsDropModalProps> = ({ notifications }) => {
   const [page, setPage] = useState(0)
@@ -169,8 +194,16 @@ export const NotificationsModal: React.FC<NotificationsDropModalProps> = ({ noti
               <div className={modalStyles.itemHeader}>
                 <div className={modalStyles.itemHeaderLeft}>
                   <div className={modalStyles.itemHeaderTitle}>{n.type.toLowerCase()}</div>
-
-                  <div className={badgeClassName(n.status)}>{n.status.toLowerCase()}</div>
+                  {getTransactionUrl(n) ? (
+                    <a href={getTransactionUrl(n)} target={'_blank'} className={modalStyles.explorerLink}>
+                      <div className={badgeClassName(n.status)}>
+                        {n.status.toLowerCase()}
+                        <IconLinkExternal02 stroke={n.status === 'CLAIMABLE' ? '#B54708' : '#027A48'} />
+                      </div>
+                    </a>
+                  ) : (
+                    <div className={badgeClassName(n.status)}>{n.status.toLowerCase()}</div>
+                  )}
                 </div>
                 <div className={modalStyles.headerTime}>{timeAgo(n.timestamp, true)}</div>
               </div>

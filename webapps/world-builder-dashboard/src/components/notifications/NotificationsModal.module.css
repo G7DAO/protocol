@@ -117,6 +117,10 @@
     line-height: 24px; /* 150% */
 }
 
+.explorerLink {
+    text-decoration: none;
+}
+
 .badgeCompleted, .badgeClaimable, .badgePending, .badgeFailed {
     display: flex;
     padding: 2px 8px;
