@@ -1,10 +1,12 @@
 on:
     push:
-        branches:
-            - wallet-address
+      branches:
+        - main
+      paths:
+        - 'webapps/world-builder-dashboard/**'
 
 jobs:
-    build:
+    deploy:
         runs-on: ubuntu-latest
 
         steps:
