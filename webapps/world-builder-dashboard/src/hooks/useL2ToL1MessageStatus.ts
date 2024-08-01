@@ -209,7 +209,8 @@ export const getNotifications = (transactions: TransactionRecord[]) => {
         timestamp,
         amount: ct.amount,
         to: (ct.type === 'WITHDRAWAL' ? ct.lowNetworkChainId : ct.highNetworkChainId) ?? 1, //TODO remove null assertion
-        seen: !ct.newTransaction
+        seen: !ct.newTransaction,
+        tx: ct
       }
     })
     .sort((a, b) => b.timestamp - a.timestamp)
