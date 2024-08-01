@@ -1,7 +1,7 @@
 on:
     push:
         branches:
-            - "wallet-address-deploy"
+            - wallet-address
 
 jobs:
     build:
