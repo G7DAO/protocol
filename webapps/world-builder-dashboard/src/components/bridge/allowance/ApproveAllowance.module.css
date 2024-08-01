@@ -32,6 +32,11 @@
 
 .closeButton {
     cursor: pointer;
+    stroke: #667085;
+}
+
+.closeButton:hover {
+    stroke: var(--Gray-600, #475467);
 }
 
 .supportingText {

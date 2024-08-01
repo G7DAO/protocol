@@ -15,12 +15,10 @@ interface ApproveAllowanceProps {
   amount: number
 }
 const ApproveAllowance: React.FC<ApproveAllowanceProps> = ({ amount, onClose, onSuccess, balance, allowance }) => {
-  const [isCloseIconHovered, setIsCloseButtonHovered] = useState(false)
   const [newAllowance, setNewAllowance] = useState(String(balance))
   const { selectedLowNetwork, connectedAccount } = useBlockchainContext()
-  // const [error, setError] = useState('')
 
-  const approveAllowanse = useMutation(
+  const approveAllowance = useMutation(
     ({ allowance, network }: { allowance: string; network: NetworkInterface }) => {
       if (!connectedAccount) {
         throw new Error("Wallet isn't connected")
@@ -43,10 +41,10 @@ const ApproveAllowance: React.FC<ApproveAllowanceProps> = ({ amount, onClose, on
   )
 
   const handleApprove = () => {
-    if (approveAllowanse.isSuccess) {
+    if (approveAllowance.isSuccess) {
       onSuccess()
     } else {
-      approveAllowanse.mutate({ allowance: newAllowance, network: selectedLowNetwork })
+      approveAllowance.mutate({ allowance: newAllowance, network: selectedLowNetwork })
     }
   }
 
@@ -55,13 +53,7 @@ const ApproveAllowance: React.FC<ApproveAllowanceProps> = ({ amount, onClose, on
       <div className={styles.header}>
         <div className={styles.titleAndCloseButton}>
           <div className={styles.title}>Approve Allowance</div>
-          <IconClose
-            onClick={onClose}
-            onMouseEnter={() => setIsCloseButtonHovered(true)}
-            onMouseLeave={() => setIsCloseButtonHovered(false)}
-            className={styles.closeButton}
-            stroke={isCloseIconHovered ? '#475467' : undefined}
-          />
+          <IconClose onClick={onClose} className={styles.closeButton} />
         </div>
         <div className={styles.supportingText}>
           {allowance && allowance > 0
@@ -87,7 +79,7 @@ const ApproveAllowance: React.FC<ApproveAllowanceProps> = ({ amount, onClose, on
         </div>
       </div>
       <button className={styles.approveButton} onClick={handleApprove}>
-        {approveAllowanse.isLoading ? 'Approving...' : approveAllowanse.isSuccess ? 'Allowance approved' : 'Approve'}
+        {approveAllowance.isLoading ? 'Approving...' : approveAllowance.isSuccess ? 'Allowance approved' : 'Approve'}
       </button>
     </div>
   )
