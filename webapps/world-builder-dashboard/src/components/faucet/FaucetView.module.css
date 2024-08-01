@@ -52,6 +52,7 @@
     width: 100%;
 }
 
+
 .selectedNetworkButton,
 .networkButton {
     flex: 1;
@@ -63,11 +64,14 @@
     line-height: 20px;
     border: none;
     cursor: pointer;
+
 }
 
 .selectedNetworkButton {
     background: var(--Primary-600, #f2f4f7);
     color: #fff;
+    transition: transform 0.4s ease-out, color, background-color 0.4s ease;
+
 }
 
 .networkButton {
@@ -158,3 +162,31 @@
     font-weight: 600;
     line-height: 20px; /* 142.857% */
 }
+
+.button:disabled {
+    cursor: not-allowed;
+    background: var(--Gray-600, #475467);
+    box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
+    border: none;
+}
+
+.warningContainer {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    padding: 2px 8px;
+    align-items: center;
+    gap: 8px;
+
+    border-radius: 16px;
+    background: var(--Warning-50, #FFFAEB);
+    mix-blend-mode: multiply;
+    color: var(--Warning-700, #B54708);
+
+    /* Text xs/Medium */
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 18px; /* 150% */
+}
+

@@ -6,6 +6,7 @@ import { ethers } from 'ethers'
 import { useBlockchainContext } from '@/components/bridge/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/components/bridge/BridgeNotificationsContext'
 import { TransactionRecord } from '@/components/bridge/depositERC20ArbitrumSDK'
+import { timeDifference } from '@/utils/timeFormat'
 
 const FAUCET_CHAIN = L2_NETWORK
 
@@ -175,14 +176,13 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
     const lastClaimTimestamp = Number(await faucetContract.lastClaimedTimestamp(connectedAccount))
     const faucetTimeInterval = Number(await faucetContract.faucetTimeInterval())
     const nextClaimTimestamp = lastClaimTimestamp + faucetTimeInterval
+    const interval = timeDifference(Date.now() / 1000, nextClaimTimestamp)
     const isAvailable = compareTimestampWithCurrentMoment(nextClaimTimestamp)
-    console.log(isAvailable)
     const date = new Date(nextClaimTimestamp * 1000)
 
-    // Use toLocaleString to format the date
     const readableDate = date.toLocaleString()
 
-    return { readableDate, isAvailable }
+    return { readableDate, isAvailable, interval }
   })
 
   return (
@@ -213,14 +213,25 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
           {connectedAccount ?? 'Please connect a wallet...'}
         </div>
       </div>
-      <div className={styles.hintBadge}>You may only request funds to a connected wallet.</div>
-      <button className={styles.button} onClick={handleClick}>
+      {(!nextClaimAvailable.data || nextClaimAvailable.data.isAvailable) && (
+        <div className={styles.hintBadge}>You may only request funds to a connected wallet.</div>
+      )}
+      {nextClaimAvailable.data && !nextClaimAvailable.data.isAvailable && (
+        <div
+          className={styles.warningContainer}
+        >{`Already requested today. Come back in ${nextClaimAvailable.data.interval}`}</div>
+      )}
+      <button
+        className={styles.button}
+        onClick={handleClick}
+        disabled={!!connectedAccount && (!nextClaimAvailable.data || !nextClaimAvailable.data.isAvailable)}
+      >
         {isConnecting
           ? 'Connecting wallet...'
           : claim.isLoading
             ? 'Requesting...'
             : connectedAccount
-              ? `${nextClaimAvailable.data && nextClaimAvailable.data.isAvailable ? 'Request' : 'Wait for '}${nextClaimAvailable.data && !nextClaimAvailable.data.isAvailable ? nextClaimAvailable.data?.readableDate ?? '' : ''}`
+              ? 'Request'
               : 'Connect wallet'}
       </button>
     </div>
