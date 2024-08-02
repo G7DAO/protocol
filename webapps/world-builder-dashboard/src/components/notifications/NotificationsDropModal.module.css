@@ -194,7 +194,7 @@
         position: fixed;
         width: calc(100% - 16px);
         left: 8px;
-        transform: translateY(calc(100vh - 64px - 48px - 41px));
+        transform: translateY(calc(100vh - 64px - 48px - 41px - 20px));
     }
 }
 
