@@ -93,11 +93,9 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
 
   useEffect(() => {
     setL2RPC(L2_RPC)
-    // setL3RPC(L3_RPC);
     const ethereum = window.ethereum
     if (ethereum) {
       const provider = new ethers.providers.Web3Provider(ethereum)
-      console.log(provider)
       setWalletProvider(provider)
     }
     if (ethereum && ethereum.on) {
@@ -179,7 +177,6 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   const disconnectWallet = async () => {
     if (window.ethereum) {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
-      console.log(provider)
       const ethereum = window.ethereum ?? null
       // @ts-ignore
       if (ethereum && provider.connection.url === 'metamask' && !window.ethereum?.overrideIsMetaMask) {

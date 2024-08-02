@@ -26,7 +26,6 @@ export const BridgeNotificationsProvider: React.FC<BridgeNotificationsProviderPr
   const [isModalOpened, setIsModalOpened] = useState(false)
 
   const fetchNewNotifications = (connectedAccount: string) => {
-    console.log('refetching new notifications')
     const storageKey = `bridge-${connectedAccount}-transactions`
     const transactionsString = localStorage.getItem(storageKey)
     let transactions

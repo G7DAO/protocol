@@ -34,6 +34,5 @@ export const approve = async (amount: string, signer: Signer, network: NetworkIn
   const tokenContract = new ethers.Contract(tokenAddress, erc20Abi, signer)
   const amountInWei = ethers.utils.parseUnits(amount.toString(), 18)
   const tx = await tokenContract.approve(spender, amountInWei)
-  console.log('Transaction hash:', tx.hash)
   return tx.wait() // Wait for the transaction to be mined
 }

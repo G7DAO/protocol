@@ -118,7 +118,6 @@ const fetchDepositStatus = async (deposit: TransactionRecord) => {
     return { l1Receipt }
   }
 
-  console.log('to return', deposit.amount)
   const retryableCreationReceipt = await l2Result.message.getRetryableCreationReceipt()
   let highNetworkTimestamp
   if (retryableCreationReceipt) {
@@ -229,7 +228,6 @@ export const useNotifications = (
         return []
       }
       const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
-      // console.log(transactionsString)
       let transactions
       if (!transactionsString) {
         return []
@@ -273,7 +271,6 @@ export const usePendingTransactions = (connectedAccount: string | undefined): Us
           (t: { completionTimestamp: number }) => !t.completionTimestamp
         )
         const completedTransactions = transactions.filter((t: { completionTimestamp: number }) => t.completionTimestamp)
-        console.log(pendingTransactions, completedTransactions)
         const newCompletedTransactions: TransactionRecord[] = []
         for (const t of pendingTransactions) {
           if (t.type === 'DEPOSIT') {
@@ -302,17 +299,14 @@ export const usePendingTransactions = (connectedAccount: string | undefined): Us
           const newPendingTransactions = pendingTransactions.filter(
             (pt) =>
               !newCompletedTransactions.some((ct) => {
-                console.log(ct.highNetworkHash === pt.highNetworkHash, ct.lowNetworkHash === pt.lowNetworkHash)
                 return ct.lowNetworkHash === pt.lowNetworkHash && ct.highNetworkHash === pt.highNetworkHash
               })
           )
-          console.log('---', pendingTransactions, newPendingTransactions)
           const allTransactions = [...completedTransactions, ...newCompletedTransactions, ...newPendingTransactions]
           const allTransactionsString = JSON.stringify(allTransactions)
           localStorage.setItem(storageKey, allTransactionsString)
           return true
         }
-        console.log(pendingTransactions, newCompletedTransactions)
       } catch (e) {
         console.log(e)
       }

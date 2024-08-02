@@ -59,7 +59,6 @@ export const getStatus = (withdrawal: TransactionRecord) => {
       highNetworkHash
     }
     return { isLoading: false, data }
-    // console.log(data)
   }
 }
 const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
@@ -95,15 +94,11 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
       const signer = provider.getSigner()
       const messages: L2ToL1MessageWriter[] = (await l2Receipt.getL2ToL1Messages(signer)) as L2ToL1MessageWriter[]
       const message = messages[0]
-      console.log(messages)
       const res = await message.execute(highNetworkProvider)
-      const rec = await res.wait()
-      console.log('Done! Your transaction is executed', rec)
-      return rec
+      return await res.wait()
     },
     {
       onSuccess: (data, highNetworkHash) => {
-        console.log(data)
         try {
           const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
 

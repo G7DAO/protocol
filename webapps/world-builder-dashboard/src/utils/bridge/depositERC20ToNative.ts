@@ -31,19 +31,6 @@ const ERC20_INBOX_ABI = [
   }
 ]
 
-const generateRandomNumber = () => {
-  const baseNumber = 0.000027234234347654
-  const baseString = baseNumber.toString()
-  const [integerPart, fractionalPart] = baseString.split('.')
-
-  const firstTwoDigits = fractionalPart.slice(0, 2)
-  const randomFractionalDigits = Array.from({ length: fractionalPart.length - 2 }, () =>
-    Math.floor(Math.random() * 10)
-  ).join('')
-
-  return parseFloat(`${integerPart}.${firstTwoDigits}${randomFractionalDigits}`)
-}
-
 export const estimateDepositERC20ToNativeFee = async (
   amount: string,
   account: string,
@@ -100,24 +87,11 @@ export const estimateDepositERC20ToNativeFee = async (
       // TXFEES (Transaction fees) = P * G
       const TXFEES = P.mul(G)
 
-      console.log('Gas estimation components')
-      console.log('-------------------')
-      console.log(`Full gas estimation = ${gasEstimateComponents.gasEstimate.toNumber()} units`)
-      console.log(`L2 Gas (L2G) = ${L2G.toNumber()} units`)
-      console.log(`L1 estimated Gas (L1G) = ${l1GasEstimated.toNumber()} units`)
-
-      console.log(`P (L2 Gas Price) = ${utils.formatUnits(P, 'gwei')} gwei`)
-      console.log(`L1P (L1 estimated calldata price per byte) = ${utils.formatUnits(L1P, 'gwei')} gwei`)
-      console.log(`L1S (L1 Calldata size in bytes) = ${L1S} bytes`)
-
-      console.log('-------------------')
-      console.log(`Transaction estimated fees to pay = ${utils.formatEther(TXFEES)} ETH`)
       return utils.formatEther(TXFEES)
     } catch (e: any) {
       console.log("Can't estimate gas: ", e.message)
     }
   }
-  return String(generateRandomNumber())
 }
 
 const estimateDepositERC20ToNativeGas = async (amount: string, account: string, l3Network: HighNetworkInterface) => {
@@ -173,7 +147,7 @@ const estimateDepositERC20ToNativeGas = async (amount: string, account: string, 
     }
   }
 
-  return ethers.BigNumber.from('0x346d32') //fallback for zero price (P);
+  // return ethers.BigNumber.from('0x346d32') //fallback for zero price (P);
 }
 
 export const sendDepositERC20ToNativeTransaction = async (
@@ -187,21 +161,15 @@ export const sendDepositERC20ToNativeTransaction = async (
   const ethAmount = convertToBigNumber(amount)
   const ERC20InboxContract = new ethers.Contract(destinationAddress, ERC20_INBOX_ABI, l2Signer)
   const gasEstimate = await estimateDepositERC20ToNativeGas(amount, account, highNetwork)
-  console.log(gasEstimate)
 
-  // const gasLimit = ethers.utils.parseEther(gasEstimate);
-  // console.log(gasLimit);
   const txRequest = await ERC20InboxContract.populateTransaction.depositERC20(ethAmount, {
     gasLimit: gasEstimate
   })
 
   const txResponse = await l2Signer.sendTransaction(txRequest)
 
-  console.log('Transaction hash:', txResponse.hash)
-
   // Wait for the transaction to be mined
-  const receipt = await txResponse.wait()
-  console.log('Transaction was mined in block', receipt.blockNumber)
+  await txResponse.wait()
 
   return {
     type: 'DEPOSIT',

@@ -191,7 +191,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
         } catch (e) {
           console.log(e)
         }
-        console.log(deposit)
         refetchNewNotifications(connectedAccount ?? '')
         queryClient.invalidateQueries(['ERC20Balance'])
         queryClient.invalidateQueries(['pendingTransactions'])
@@ -253,7 +252,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
         queryClient.refetchQueries(['pendingNotifications'])
 
         navigate('/bridge/transactions')
-        console.log(record)
       }
     }
   )

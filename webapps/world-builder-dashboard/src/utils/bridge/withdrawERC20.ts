@@ -63,12 +63,9 @@ export const sendWithdrawERC20Transaction = async (
     )
 
     const txResponse = await signer.sendTransaction(txRequest)
-    console.log('Transaction response:', txResponse)
 
     // Wait for the transaction to be mined
-    const receipt = await txResponse.wait()
-    console.log('Transaction receipt:', receipt)
-    console.log('Transaction hash:', receipt.transactionHash)
+    await txResponse.wait()
 
     return {
       type: 'WITHDRAWAL',

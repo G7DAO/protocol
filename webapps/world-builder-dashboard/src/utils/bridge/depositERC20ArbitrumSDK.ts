@@ -59,7 +59,6 @@ export const depositERC20ArbitrumSDK = async (
     l2Provider: l2Provider
   })
 
-  console.log(depositTx, new Date().toTimeString())
   return {
     type: 'DEPOSIT',
     amount,

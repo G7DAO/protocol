@@ -23,7 +23,6 @@ interface NotificationsDropModalProps {
 
 const copy = (notification: BridgeNotification) => {
   const targetNetwork = getNetwork(notification.to)?.displayName ?? 'unknown chain'
-  console.log(targetNetwork, notification.to)
   if (notification.status === 'CLAIMABLE') {
     return `Heads Up: Your ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL} withdrawal is complete and you can now claim your assets`
   }
@@ -56,7 +55,6 @@ const NotificationsDropModal: React.FC<NotificationsDropModalProps> = ({ notific
   const { cleanNewNotifications, setIsDropdownOpened, setIsModalOpened } = useBridgeNotificationsContext()
 
   useEffect(() => {
-    console.log(notifications, notifications.slice(0, 3))
     if (connectedAccount) {
       cleanNewNotifications(connectedAccount)
     }

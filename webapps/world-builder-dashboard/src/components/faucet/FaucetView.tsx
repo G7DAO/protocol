@@ -78,7 +78,6 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
 
         const contract = new ethers.Contract(G7T_FAUCET_ADDRESS, contractAbi, signer)
         const tx = isL2Target ? await contract.claim() : await contract.claimL3()
-        console.log('Transaction hash:', tx.hash)
         const receipt = tx.wait() // Wait for the transaction to be mined
         const type: 'CLAIM' | 'DEPOSIT' | 'WITHDRAWAL' = 'CLAIM'
         return {
@@ -104,13 +103,10 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
             transactions = JSON.parse(transactionsString)
           }
           transactions.push({ ...data })
-          console.log(transactions)
           localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(transactions))
         } catch (e) {
           console.log(e)
         }
-        // console.log('Claim successful')
-        // console.log(data)
         queryClient.refetchQueries(['nextFaucetClaimTimestamp'])
         queryClient.refetchQueries('pendingTransactions')
         queryClient.refetchQueries(['notifications'])

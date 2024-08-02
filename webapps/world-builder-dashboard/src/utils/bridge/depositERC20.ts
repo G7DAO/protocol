@@ -181,18 +181,6 @@ export const estimateDepositFee = async (
       // TXFEES (Transaction fees) = P * G
       const TXFEES = P.mul(G)
 
-      console.log('Gas estimation components')
-      console.log('-------------------')
-      console.log(`Full gas estimation = ${gasEstimateComponents.gasEstimate.toNumber()} units`)
-      console.log(`L2 Gas (L2G) = ${L2G.toNumber()} units`)
-      console.log(`L1 estimated Gas (L1G) = ${l1GasEstimated.toNumber()} units`)
-
-      console.log(`P (L2 Gas Price) = ${utils.formatUnits(P, 'gwei')} gwei`)
-      console.log(`L1P (L1 estimated calldata price per byte) = ${utils.formatUnits(L1P, 'gwei')} gwei`)
-      console.log(`L1S (L1 Calldata size in bytes) = ${L1S} bytes`)
-
-      console.log('-------------------')
-      console.log(`Transaction estimated fees to pay = ${utils.formatEther(TXFEES)} ETH`)
       return utils.formatEther(TXFEES)
     } catch (e: any) {
       console.log("Can't estimate gas: ", e.message)
@@ -289,9 +277,6 @@ export const sendDepositERC20Transaction = async (
     lowNetworkProvider
   )
   const gasEstimate = await estimateDepositERC20Gas(amount, account, lowNetwork, highNetwork)
-  console.log(gasEstimate)
-  // const gasLimit = ethers.utils.parseEther(gasEstimate);
-  // console.log(gasLimit);
   const txRequest = await L1GatewatyContract.populateTransaction.outboundTransfer(
     lowNetwork.g7TokenAddress,
     account,
@@ -304,11 +289,6 @@ export const sendDepositERC20Transaction = async (
 
   const txResponse = await lowNetworkProvider.getSigner(account).sendTransaction(txRequest)
 
-  console.log('Transaction hash:', txResponse.hash)
-
   // Wait for the transaction to be mined
-  const receipt = await txResponse.wait()
-  console.log('Transaction was mined in block', receipt.blockNumber)
-
-  return receipt
+  return await txResponse.wait()
 }

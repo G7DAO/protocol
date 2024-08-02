@@ -57,12 +57,10 @@ export const sendWithdrawTransaction = async (
     })
 
     const txResponse = await signer.sendTransaction(txRequest)
-    console.log('Transaction response:', txResponse)
 
     // Wait for the transaction to be mined
-    const receipt = await txResponse.wait()
-    console.log('Transaction receipt:', receipt)
-    console.log('Transaction hash:', receipt.transactionHash)
+    await txResponse.wait()
+
     return {
       type: 'WITHDRAWAL',
       amount: amountInNative,
@@ -91,16 +89,9 @@ export const estimateWithdrawFee = async (
       value: amountInWei
     })
 
-    console.log('Estimated Gas:', estimatedGas.toString())
-
     const gasPrice = await provider.getGasPrice()
     const estimatedFee = gasPrice.mul(estimatedGas)
-    const estimatedFeeInToken = ethers.utils.formatEther(estimatedFee)
-
-    console.log('Estimated Fee in Wei:', estimatedFee.toString())
-    console.log('Estimated Fee in token:', estimatedFeeInToken)
-
-    return estimatedFeeInToken
+    return ethers.utils.formatEther(estimatedFee)
   } catch (error) {
     console.error('Fee estimation failed:', error)
     throw error
