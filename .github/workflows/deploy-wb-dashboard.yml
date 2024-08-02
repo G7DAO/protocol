@@ -2,6 +2,8 @@ on:
     push:
       branches:
         - wallet-address
+      paths:
+        - 'webapps/world-builder-dashboard/**'
 
 jobs:
     deploy:
