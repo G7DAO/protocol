@@ -55,5 +55,37 @@
     font-weight: 500;
     line-height: 18px; /* 150% */
 }
+.viewContainer {
+    display: flex;
+    padding: 0 32px 32px 32px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    flex-grow: 0;
+    overflow-y: auto;
+    position: relative;
+    font-family: Inter, sans-serif;
+}
+
+.warningWrapper {
+    padding: 0 16px;
+}
+
+@media (max-width: 767px) {
+
+    .warningContainer {
+        width: 100%;
+        flex-direction: column;
+        padding: 12px;
+        align-items: start;
+    }
+
+    .viewContainer {
+        padding-left: 0;
+        padding-right: 0;
+
+    }
+
+}
 
 

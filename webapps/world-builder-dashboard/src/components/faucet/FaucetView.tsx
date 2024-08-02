@@ -7,6 +7,7 @@ import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { timeDifferenceInHoursAndMinutes } from '@/utils/timeFormat'
+import { useMediaQuery } from '@mantine/hooks'
 
 interface FaucetViewProps {}
 const FaucetView: React.FC<FaucetViewProps> = ({}) => {
@@ -14,6 +15,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const { connectedAccount, switchChain } = useBlockchainContext()
   const [isConnecting, setIsConnecting] = useState(false)
   const { refetchNewNotifications } = useBridgeNotificationsContext()
+  const smallView = useMediaQuery('(max-width: 767px)')
 
   const handleClick = async () => {
     if (window.ethereum) {
@@ -112,6 +114,8 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
         queryClient.refetchQueries(['nextFaucetClaimTimestamp'])
         queryClient.refetchQueries('pendingTransactions')
         queryClient.refetchQueries(['notifications'])
+        queryClient.refetchQueries(['nativeBalance'])
+        queryClient.refetchQueries(['ERC20balance'])
         refetchNewNotifications(connectedAccount ?? '')
       },
       onError: (e: Error) => {
@@ -205,9 +209,13 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
       </div>
       <div className={styles.addressContainer}>
         <div className={styles.label}>Connected Wallet Address</div>
-        <div className={connectedAccount ? styles.address : styles.addressPlaceholder}>
-          {connectedAccount ?? 'Please connect a wallet...'}
-        </div>
+        {connectedAccount ? (
+          <div className={styles.address}>
+            {smallView ? `${connectedAccount.slice(0, 6)}....${connectedAccount.slice(-4)}` : connectedAccount}
+          </div>
+        ) : (
+          <div className={styles.addressPlaceholder}>'Please connect a wallet...</div>
+        )}
       </div>
       {(!nextClaimAvailable.data || nextClaimAvailable.data.isAvailable) && (
         <div className={styles.hintBadge}>You may only request funds to a connected wallet.</div>

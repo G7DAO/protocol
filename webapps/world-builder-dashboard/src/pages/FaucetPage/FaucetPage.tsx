@@ -43,12 +43,14 @@ const BridgePage = () => {
           <NotificationsButton notifications={notifications.data ?? []} />
         </div>
       </div>
-      <div className={bridgeStyles.viewContainer}>
-        <div className={styles.warningContainer}>
-          <div className={styles.warningBadge}>Warning</div>
-          <div
-            className={styles.warningText}
-          >{`This faucet only dispenses ${L3_NATIVE_TOKEN_SYMBOL} tokens. For other tokens, please visit external faucets.`}</div>
+      <div className={styles.viewContainer}>
+        <div className={styles.warningWrapper}>
+          <div className={styles.warningContainer}>
+            <div className={styles.warningBadge}>Warning</div>
+            <div
+              className={styles.warningText}
+            >{`This faucet only dispenses ${L3_NATIVE_TOKEN_SYMBOL} tokens. For other tokens, please visit external faucets.`}</div>
+          </div>
         </div>
 
         <FaucetView />
