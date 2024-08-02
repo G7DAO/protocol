@@ -46,6 +46,8 @@ export interface NetworkInterface {
   l2Router?: string
   l1GatewayRouter?: string
   routerSpender?: string
+  retryableCreationTimeout?: number //seconds
+  challengePeriod?: number //seconds
 }
 
 export interface HighNetworkInterface extends NetworkInterface {

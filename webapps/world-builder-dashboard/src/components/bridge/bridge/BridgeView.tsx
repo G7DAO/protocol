@@ -157,7 +157,11 @@ const BridgeView = ({
         direction={direction}
         gasBalance={Number((direction === 'DEPOSIT' ? lowNetworkNativeBalance : highNetworkNativeBalance) ?? 0)}
         address={connectedAccount ?? '0x'}
-        transferTime={direction === 'DEPOSIT' ? '< min' : '~15 min'}
+        transferTime={
+          direction === 'DEPOSIT'
+            ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
+            : `~${Math.floor((selectedHighNetwork.challengePeriod ?? 0) / 60)} min`
+        }
         fee={Number(estimatedFee.data ?? 0)}
         value={Number(value)}
         ethRate={ethUsdRate ?? 0}
