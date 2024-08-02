@@ -188,5 +188,14 @@
     background: var(--Purple-100, #EBE9FE);
 }
 
+@media (max-width: 767px) {
+
+    .toastCompleted, .toastMultiple, .toastClaimable, .toastError {
+        position: fixed;
+        width: calc(100% - 16px);
+        left: 8px;
+        transform: translateY(calc(100vh - 64px - 48px - 41px));
+    }
+}
 
 
