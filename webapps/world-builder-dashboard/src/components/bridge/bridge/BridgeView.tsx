@@ -1,5 +1,5 @@
 // Libraries
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { L1_NETWORK, L2_NETWORK, L3_NETWORK, L3_NATIVE_TOKEN_SYMBOL } from '../../../../constants'
 // Styles and Icons
@@ -78,6 +78,10 @@ const BridgeView = ({
     }
     return est
   })
+
+  useEffect(() => {
+    setNetworkErrorMessage('')
+  }, [selectedHighNetwork, selectedLowNetwork, value])
 
   const renderNetworkSelect = (isSource: boolean, direction: 'DEPOSIT' | 'WITHDRAW') => {
     if ((isSource && direction === 'DEPOSIT') || (!isSource && direction === 'WITHDRAW')) {
