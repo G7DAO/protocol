@@ -30,8 +30,7 @@
 .logoContainer {
     display: flex;
     padding: 0 20px 0 24px;
-    flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     align-self: stretch;
 }
 
@@ -106,11 +105,23 @@
     margin-left: 8px;
 }
 
-.disconnectButton {
+.iconButton {
     cursor: pointer;
     stroke: #667085;
 }
 
-.disconnectButton:hover {
+.iconButton:hover {
     stroke: var(--Gray-600, #475467);
+}
+
+
+@media (max-width: 767px) {
+        .container {
+            display: flex;
+            flex-direction: column;
+            min-width: 100vw;
+        }
+    .logoContainer {
+        padding: 0;
+    }
 }
