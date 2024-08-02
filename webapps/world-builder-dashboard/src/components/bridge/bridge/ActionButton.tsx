@@ -23,8 +23,9 @@ interface ActionButtonProps {
   direction: 'DEPOSIT' | 'WITHDRAW'
   l3Network: HighNetworkInterface
   amount: string
+  isDisabled: boolean
 }
-const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount }) => {
+const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabled }) => {
   const [isConnecting, setIsConnecting] = useState(false)
   const { connectedAccount, walletProvider, checkConnection, switchChain, selectedHighNetwork, selectedLowNetwork } =
     useBlockchainContext()
@@ -262,7 +263,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount }) => {
       <button
         className={styles.container}
         onClick={() => handleClick(false)}
-        disabled={getLabel() !== 'Connect wallet' && (!Number(amount) || Number(amount) <= 0)}
+        disabled={getLabel() !== 'Connect wallet' && (isDisabled || Number(amount) <= 0)}
       >
         {getLabel() ?? 'Submit'}
       </button>

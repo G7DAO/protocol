@@ -29,6 +29,17 @@
   line-height: 18px; /* 150% */
 }
 
+.errorMessage {
+  color: var(--Error-600, #D92D20);
+  text-align: right;
+
+  /* Text xs/Medium */
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 18px; /* 150% */
+}
+
 @keyframes blink {
   0% {
     opacity: 1;
@@ -56,7 +67,7 @@
   line-height: 18px; /* 150% */
 }
 
-.inputGroup {
+.inputGroup, .inputWithError {
   display: flex;
   padding-left: 12px;
   align-items: center;
@@ -81,6 +92,10 @@
   border: none;
   outline: none;
   padding: 0;
+}
+
+.inputWithError {
+  border: 1px solid var(--Error-500, #F04438);
 }
 
 .maxButton {

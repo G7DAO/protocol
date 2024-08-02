@@ -26,8 +26,8 @@ const BridgeView = ({
   direction: DepositDirection
   setDirection: (arg0: DepositDirection) => void
 }) => {
-  // const [direction, setDirection] = useState<'DEPOSIT' | 'WITHDRAW'>('DEPOSIT')
   const [value, setValue] = useState('0')
+  const [inputErrorMessage, setInputErrorMessage] = useState('')
 
   const g7tUsdRate = useQuery(['rate'], () => 31166.75)
   const { data: ethUsdRate } = useEthUsdRate()
@@ -149,6 +149,8 @@ const BridgeView = ({
               ? isFetchingL3NativeBalance
               : isFetchingHighNetworkBalance
         }
+        errorMessage={inputErrorMessage}
+        setErrorMessage={setInputErrorMessage}
       />
       <TransactionSummary
         direction={direction}
@@ -161,7 +163,12 @@ const BridgeView = ({
         tokenSymbol={L3_NATIVE_TOKEN_SYMBOL}
         tokenRate={g7tUsdRate.data ?? 0}
       />
-      <ActionButton direction={direction} l3Network={selectedHighNetwork as HighNetworkInterface} amount={value} />
+      <ActionButton
+        direction={direction}
+        l3Network={selectedHighNetwork as HighNetworkInterface}
+        amount={value}
+        isDisabled={!!inputErrorMessage}
+      />
     </div>
   )
 }
