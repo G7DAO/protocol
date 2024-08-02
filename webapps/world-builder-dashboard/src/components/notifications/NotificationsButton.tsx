@@ -5,6 +5,7 @@ import IconBell from '@/assets/IconBell'
 import NotificationsDropModal, { NotificationsModal } from '@/components/notifications/NotificationsDropModal'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
+import { useMediaQuery } from '@mantine/hooks'
 
 export interface BridgeNotification {
   type: string
@@ -22,6 +23,7 @@ interface NotificationsButtonProps {
 const NotificationsButton: React.FC<NotificationsButtonProps> = ({ notifications }) => {
   const { newNotifications, isDropdownOpened, setIsDropdownOpened, isModalOpened, setIsModalOpened } =
     useBridgeNotificationsContext()
+  const smallView = useMediaQuery('(max-width: 767px)')
 
   return (
     <Popover
@@ -56,7 +58,7 @@ const NotificationsButton: React.FC<NotificationsButtonProps> = ({ notifications
           }}
         >
           <IconBell />
-          <div className={styles.label}>Notifications</div>
+          {!smallView && <div className={styles.label}>Notifications</div>}
           {newNotifications.length > 0 && <div className={styles.badge}>{newNotifications.length}</div>}
         </button>
       </Popover.Target>
