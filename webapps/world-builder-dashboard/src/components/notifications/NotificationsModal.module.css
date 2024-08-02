@@ -207,13 +207,14 @@
     cursor: pointer;
     border: none;
     border-top: 1px solid var(--Gray-200, #EAECF0);
-    /*!*width: calc(100% + 16px + 16px - 2px);*!*/
-    /*!*height: calc(100% + 30px);*!*/
-    /*margin-left: -16px;*/
-    /*margin-bottom: -12px;*/
-    /*border-radius: 0 0 8px 8px;*/
 }
 
 .button:hover {
     background: var(--Gray-25, #FCFCFD);
+}
+
+@media (max-width: 767px) {
+    .container {
+        width: 100%;
+    }
 }
