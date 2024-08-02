@@ -3,22 +3,21 @@
 </p>
 <h1 align="center">Game7 Protocol Contracts</h1>
 
-## Requirements
+[The full documentation of the `protocol` repo lives at the top-level of this repository.](../README.md).
 
-1. NodeJs >= 18 (use nvm)
-2. Fill the .env file with the correct values(see .env.example)
-3. Install dependencies
+## Build and test
 
-```shell
-npm install
+We use `hardhat` to build and test our smart contracts.
+
+Build:
+
+```bash
+npx hardhat compile
 ```
 
-## Hardhat CLI commands
+Test:
 
-```shell
-npx hardhat help
+```bash
 npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.ts
 ```
+

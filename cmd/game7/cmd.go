@@ -5,14 +5,22 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/G7DAO/protocol/accounts"
 	"github.com/G7DAO/protocol/bindings/ArbSys"
 	"github.com/G7DAO/protocol/bindings/ArbitrumL1OrbitCustomGateway"
 	"github.com/G7DAO/protocol/bindings/ArbitrumL1OrbitGatewayRouter"
 	"github.com/G7DAO/protocol/bindings/ArbitrumL2CustomGateway"
 	"github.com/G7DAO/protocol/bindings/ArbitrumUpgradeExecutor"
 	"github.com/G7DAO/protocol/bindings/ERC20Inbox"
+	"github.com/G7DAO/protocol/bindings/Staker"
+	"github.com/G7DAO/protocol/bindings/TokenFaucet"
+	"github.com/G7DAO/protocol/bridge"
 
-	"github.com/G7DAO/protocol/bindings/Game7Token"
+	"github.com/G7DAO/protocol/bindings/ERC20"
+	"github.com/G7DAO/protocol/bindings/MockERC1155"
+	"github.com/G7DAO/protocol/bindings/MockERC20"
+	"github.com/G7DAO/protocol/bindings/MockERC721"
+	"github.com/G7DAO/protocol/bindings/WrappedNativeToken"
 	"github.com/G7DAO/protocol/cmd/game7/version"
 )
 
@@ -29,7 +37,7 @@ func CreateRootCommand() *cobra.Command {
 	completionCmd := CreateCompletionCommand(rootCmd)
 	versionCmd := CreateVersionCommand()
 
-	tokenCmd := Game7Token.CreateGame7TokenCommand()
+	tokenCmd := ERC20.CreateERC20Command()
 	tokenCmd.Use = "token"
 
 	arbitrumL1OrbitCustomGatewayCmd := ArbitrumL1OrbitCustomGateway.CreateL1OrbitCustomGatewayCommand()
@@ -50,7 +58,24 @@ func CreateRootCommand() *cobra.Command {
 	erc20InboxCmd := ERC20Inbox.CreateERC20InboxCommand()
 	erc20InboxCmd.Use = "erc20-inbox"
 
-	rootCmd.AddCommand(completionCmd, versionCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd)
+	bridgeCmd := bridge.CreateBridgeCommand()
+	bridgeCmd.Use = "bridge"
+
+	faucetCmd := TokenFaucet.CreateTokenFaucetCommand()
+	faucetCmd.Use = "faucet"
+
+	accountsCmd := accounts.CreateAccountsCommand()
+	accountsCmd.Use = "accounts"
+
+	wrappedNativeTokenCmd := WrappedNativeToken.CreateWrappedNativeTokenCommand()
+	wrappedNativeTokenCmd.Use = "wrapped-native-token"
+
+	stakerCmd := Staker.CreateStakerCommand()
+	stakerCmd.Use = "staker"
+
+	mockCmd := CreateMockCommand()
+
+	rootCmd.AddCommand(completionCmd, versionCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd, accountsCmd, wrappedNativeTokenCmd, stakerCmd, mockCmd)
 
 	// By default, cobra Command objects write to stderr. We have to forcibly set them to output to
 	// stdout.
@@ -123,4 +148,27 @@ func CreateVersionCommand() *cobra.Command {
 	}
 
 	return versionCmd
+}
+
+func CreateMockCommand() *cobra.Command {
+	mockCmd := &cobra.Command{
+		Use:   "mock",
+		Short: "Mock contracts for demos and testing",
+		Run: func(cmd *cobra.Command, args []string) {
+			cmd.Help()
+		},
+	}
+
+	erc20Cmd := MockERC20.CreateMockERC20Command()
+	erc20Cmd.Use = "erc20"
+
+	erc721Cmd := MockERC721.CreateMockERC721Command()
+	erc721Cmd.Use = "erc721"
+
+	erc1155Cmd := MockERC1155.CreateMockERC1155Command()
+	erc1155Cmd.Use = "erc1155"
+
+	mockCmd.AddCommand(erc20Cmd, erc721Cmd, erc1155Cmd)
+
+	return mockCmd
 }
