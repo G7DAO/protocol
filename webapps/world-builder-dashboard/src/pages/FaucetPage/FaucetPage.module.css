@@ -68,10 +68,13 @@
 }
 
 .warningWrapper {
-    padding: 0 16px;
+    padding: 0;
 }
 
 @media (max-width: 767px) {
+    .warningWrapper {
+        padding: 0 16px;
+    }
 
     .warningContainer {
         width: 100%;
