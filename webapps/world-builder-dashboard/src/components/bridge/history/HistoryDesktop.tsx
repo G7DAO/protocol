@@ -10,7 +10,7 @@ import { useMessages } from '@/hooks/useL2ToL1MessageStatus'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 
 interface WithdrawTransactionsProps {}
-const WithdrawTransactions: React.FC<WithdrawTransactionsProps> = () => {
+const HistoryDesktop: React.FC<WithdrawTransactionsProps> = () => {
   const { connectedAccount } = useBlockchainContext()
   const messages = useMessages(connectedAccount)
 
@@ -45,4 +45,4 @@ const WithdrawTransactions: React.FC<WithdrawTransactionsProps> = () => {
   )
 }
 
-export default WithdrawTransactions
+export default HistoryDesktop

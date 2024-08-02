@@ -49,7 +49,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
               <div className={styles.gridItem}>
                 {status.data && status.data.l2Result?.complete ? (
                   <div className={styles.settled}>
-                    Settled
+                    Completed
                     <IconLinkExternal02 stroke={'#027A48'} />
                   </div>
                 ) : (

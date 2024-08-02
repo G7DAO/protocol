@@ -6,7 +6,8 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import styles from './BridgePage.module.css'
 // Components
 import BridgeView from '@/components/bridge/bridge/BridgeView'
-import WithdrawTransactions from '@/components/bridge/history/WithdrawTransactions'
+import HistoryDesktop from '@/components/bridge/history/HistoryDesktop'
+import HistoryMobile from '@/components/bridge/history/HistoryMobile'
 import NotificationsButton from '@/components/notifications/NotificationsButton'
 import { FloatingNotification } from '@/components/notifications/NotificationsDropModal'
 // Contexts
@@ -14,6 +15,7 @@ import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 // Hooks
 import { useNotifications, usePendingTransactions } from '@/hooks/useL2ToL1MessageStatus'
+import { useMediaQuery } from '@mantine/hooks'
 
 export type DepositDirection = 'DEPOSIT' | 'WITHDRAW'
 
@@ -28,6 +30,7 @@ const BridgePage = () => {
 
   const notifications = useNotifications(connectedAccount, notificationsOffset, notificationsLimit)
   const { newNotifications, refetchNewNotifications } = useBridgeNotificationsContext()
+  const smallView = useMediaQuery('(max-width: 767px)')
 
   const queryClient = useQueryClient()
 
@@ -69,7 +72,7 @@ const BridgePage = () => {
       </div>
       <div className={styles.viewContainer}>
         {location.pathname === '/bridge' && <BridgeView direction={direction} setDirection={setDirection} />}
-        {location.pathname === '/bridge/transactions' && <WithdrawTransactions />}
+        {location.pathname === '/bridge/transactions' && (!smallView ? <HistoryDesktop /> : <HistoryMobile />)}
       </div>
     </div>
   )
