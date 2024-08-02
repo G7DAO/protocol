@@ -1,7 +1,8 @@
 import { useQuery } from 'react-query'
+import { L1_NETWORK } from '../../constants'
 import { ethers } from 'ethers'
 
-const ETH_USD_CONTRACT_ADDRESS = '0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419'
+const ETH_USD_CONTRACT_ADDRESS = '0x694AA1769357215DE4FAC081bf1f309aDC325306'
 const ABI = [
   {
     inputs: [],
@@ -46,15 +47,9 @@ type LatestRoundData = {
   answeredInRound: bigint
 } & [bigint, bigint, bigint, bigint, bigint]
 
-const MAINNET_RPC = import.meta.env.VITE_MAINNET_RPC
-
 const useEthUsdRate = () => {
   return useQuery('ethUsdRate', async () => {
-    if (!MAINNET_RPC) {
-      console.log("MAINNET RPC PROVIDER isn't set")
-      return
-    }
-    const provider = new ethers.providers.JsonRpcProvider(MAINNET_RPC)
+    const provider = new ethers.providers.JsonRpcProvider(L1_NETWORK.rpcs[0])
     const contract = new ethers.Contract(ETH_USD_CONTRACT_ADDRESS, ABI, provider)
     return contract.latestRoundData().then((data: LatestRoundData) => Number(data.answer) / 1e8)
   })
