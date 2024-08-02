@@ -69,8 +69,7 @@
 }
 
 .input {
-  flex: 1 0 0;
-
+  width: 100%;
   color: var(--Gray-700, #344054);
 
   /* Display sm/Semibold */
@@ -123,4 +122,12 @@
   font-style: normal;
   font-weight: 600;
   line-height: 20px; /* 142.857% */
+}
+
+
+@media (max-width: 767px) {
+  .input {
+    font-size: 18px;
+    font-weight: 700;
+  }
 }

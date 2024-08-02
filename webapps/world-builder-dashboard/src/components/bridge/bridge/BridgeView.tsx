@@ -4,7 +4,6 @@ import { useQuery } from 'react-query'
 import { L1_NETWORK, L2_NETWORK, L3_NETWORK, L3_NATIVE_TOKEN_SYMBOL } from '../../../../constants'
 // Styles and Icons
 import styles from './BridgeView.module.css'
-import { Icon } from 'summon-ui'
 import ActionButton from '@/components/bridge/bridge/ActionButton'
 // Components
 import NetworkSelector from '@/components/bridge/bridge/NetworkSelector'
@@ -126,7 +125,6 @@ const BridgeView = ({
           </label>
           {renderNetworkSelect(true, direction)}
         </div>
-        <Icon name={'ArrowRight'} top={'12px'} color={'#667085'} />
         <div className={styles.networkSelect}>
           <label htmlFor='network-select-to' className={styles.label}>
             To

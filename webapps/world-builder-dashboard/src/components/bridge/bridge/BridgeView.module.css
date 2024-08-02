@@ -94,6 +94,7 @@
   font-weight: 600;
   line-height: 18px;
   color: #475467;
+  min-width: 30px;
 }
 
 .networkSelectSelect {
@@ -115,6 +116,7 @@
   font-style: normal;
   font-weight: 500;
   line-height: 20px; /* 142.857% */
+  width: 100%;
 }
 
 .network {
@@ -234,4 +236,24 @@
   border: none;
   background: transparent;
   cursor: pointer;
+}
+
+@media (max-width: 767px) {
+    .container {
+      width: 100%;
+      padding: 15px;
+    }
+  .networksContainer {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .networkSelect {
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    gap: 12px
+  }
+  .arrowIcon {
+    display: none;
+  }
 }

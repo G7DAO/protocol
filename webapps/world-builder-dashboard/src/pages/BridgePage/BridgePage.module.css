@@ -7,6 +7,7 @@
   gap: 24px;
   flex: 1 0 0;
   background: var(--Gray-25, #FCFCFD);
+  align-self: stretch;
 }
 
 .top {
@@ -93,5 +94,18 @@
   flex-grow: 0;
   overflow-y: auto;
   position: relative;
+  width: 100vw;
+}
 
+@media (max-width: 767px) {
+  .container {
+    padding: 32px 0 16px 0;
+  }
+  .top {
+    padding: 0 16px 16px 16px;
+
+  }
+  .viewContainer {
+    padding: 16px;
+  }
 }
