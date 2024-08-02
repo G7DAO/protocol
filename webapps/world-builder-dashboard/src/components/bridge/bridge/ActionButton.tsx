@@ -24,8 +24,9 @@ interface ActionButtonProps {
   l3Network: HighNetworkInterface
   amount: string
   isDisabled: boolean
+  setErrorMessage: (arg0: string) => void
 }
-const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabled }) => {
+const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabled, setErrorMessage }) => {
   const [isConnecting, setIsConnecting] = useState(false)
   const { connectedAccount, walletProvider, checkConnection, switchChain, selectedHighNetwork, selectedLowNetwork } =
     useBlockchainContext()
@@ -79,6 +80,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
     if (isConnecting || deposit.isLoading || withdraw.isLoading) {
       return
     }
+    setErrorMessage('')
 
     if (connectedAccount && walletProvider) {
       setIsConnecting(true)
@@ -172,7 +174,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
             connectedAccount
           )
         }
-        // return sendDepositERC20Transaction(amount, connectedAccount, selectedLowNetwork, selectedHighNetwork, provider)
         return depositERC20ArbitrumSDK(selectedLowNetwork, selectedHighNetwork, amount, signer)
       }
       throw new Error('no window.ethereum')
@@ -203,6 +204,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
       },
       onError: (e: Error) => {
         console.log(e)
+        setErrorMessage('Something went wrong. Try again, please')
       }
     }
   )
@@ -252,6 +254,10 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
         queryClient.refetchQueries(['pendingNotifications'])
 
         navigate('/bridge/transactions')
+      },
+      onError: (e) => {
+        console.log(e)
+        setErrorMessage('Something went wrong. Try again, please')
       }
     }
   )

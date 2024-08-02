@@ -28,6 +28,7 @@ const BridgeView = ({
 }) => {
   const [value, setValue] = useState('0')
   const [inputErrorMessage, setInputErrorMessage] = useState('')
+  const [networkErrorMessage, setNetworkErrorMessage] = useState('')
 
   const g7tUsdRate = useQuery(['rate'], () => 31166.75)
   const { data: ethUsdRate } = useEthUsdRate()
@@ -163,11 +164,13 @@ const BridgeView = ({
         tokenSymbol={L3_NATIVE_TOKEN_SYMBOL}
         tokenRate={g7tUsdRate.data ?? 0}
       />
+      {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
       <ActionButton
         direction={direction}
         l3Network={selectedHighNetwork as HighNetworkInterface}
         amount={value}
         isDisabled={!!inputErrorMessage}
+        setErrorMessage={setNetworkErrorMessage}
       />
     </div>
   )
