@@ -20,7 +20,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({}) => {
   const smallView = useMediaQuery('(max-width: 767px)')
   return (
     <div className={styles.container}>
-      {smallView ? <MobileSidebar /> : <DesktopSidebar navigationItems={NAVIGATION_ITEMS} />}
+      {smallView ? (
+        <MobileSidebar navigationItems={NAVIGATION_ITEMS} />
+      ) : (
+        <DesktopSidebar navigationItems={NAVIGATION_ITEMS} />
+      )}
       <Outlet />
     </div>
   )
