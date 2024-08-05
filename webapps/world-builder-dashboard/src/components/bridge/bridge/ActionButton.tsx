@@ -65,7 +65,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
       setErrorMessage("Wallet isn't installed")
       return
     }
-    if (typeof window.ethereum !== 'undefined' && !connectedAccount) {
+    if (!connectedAccount) {
       await connectWallet()
       return
     }
@@ -145,7 +145,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
 
   const withdraw = useMutation(
     async (amount: string) => {
-      const provider = await getProvider(selectedLowNetwork)
+      const provider = await getProvider(selectedHighNetwork)
       if (!provider || !connectedAccount) {
         throw new Error("Wallet isn't connected")
       }
