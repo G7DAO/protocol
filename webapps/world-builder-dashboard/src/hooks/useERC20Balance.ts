@@ -50,51 +50,53 @@ interface UseERC20AllowanceProps {
 export const useERC20Allowance = ({ tokenAddress, owner, spender, rpc }: UseERC20AllowanceProps) => {
   return useQuery(
     ['ERC20Allowance', tokenAddress, owner, spender, rpc],
-    async () => {
-      if (!owner || !spender || tokenAddress === ZERO_ADDRESS) {
-        return 0
-      }
-      const provider = new ethers.providers.JsonRpcProvider(rpc)
-      const ERC20Contract = new ethers.Contract(
-        tokenAddress,
-        [
-          {
-            constant: true,
-            inputs: [
-              {
-                name: '_owner',
-                type: 'address'
-              },
-              {
-                name: '_spender',
-                type: 'address'
-              }
-            ],
-            name: 'allowance',
-            outputs: [
-              {
-                name: '',
-                type: 'uint256'
-              }
-            ],
-            payable: false,
-            stateMutability: 'view',
-            type: 'function'
-          }
-        ],
-        provider
-      )
-
-      const allowance = await ERC20Contract.allowance(owner, spender)
-      const bigNumberValue = ethers.BigNumber.from(allowance._hex)
-      const decimalString = ethers.utils.formatUnits(bigNumberValue, 18)
-      return parseFloat(decimalString)
-    },
+    () => fetchERC20Allowance({ tokenAddress, owner, spender, rpc }),
     {
       refetchInterval: 50000,
       enabled: !!owner
     }
   )
+}
+
+export const fetchERC20Allowance = async ({ tokenAddress, owner, spender, rpc }: UseERC20AllowanceProps) => {
+  if (!owner || !spender || tokenAddress === ZERO_ADDRESS) {
+    return 0
+  }
+  const provider = new ethers.providers.JsonRpcProvider(rpc)
+  const ERC20Contract = new ethers.Contract(
+    tokenAddress,
+    [
+      {
+        constant: true,
+        inputs: [
+          {
+            name: '_owner',
+            type: 'address'
+          },
+          {
+            name: '_spender',
+            type: 'address'
+          }
+        ],
+        name: 'allowance',
+        outputs: [
+          {
+            name: '',
+            type: 'uint256'
+          }
+        ],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function'
+      }
+    ],
+    provider
+  )
+
+  const allowance = await ERC20Contract.allowance(owner, spender)
+  const bigNumberValue = ethers.BigNumber.from(allowance._hex)
+  const decimalString = ethers.utils.formatUnits(bigNumberValue, 18)
+  return parseFloat(decimalString)
 }
 
 export default useERC20Balance
