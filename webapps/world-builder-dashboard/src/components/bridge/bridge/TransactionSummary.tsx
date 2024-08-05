@@ -15,6 +15,7 @@ interface TransactionSummaryProps {
   address: string
   transferTime: string
   fee: number
+  isEstimatingFee: boolean
   value: number
   gasBalance: number
   ethRate: number
@@ -28,6 +29,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
   address,
   transferTime,
   fee,
+  isEstimatingFee,
   ethRate,
   tokenRate,
   tokenSymbol,
@@ -59,15 +61,19 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
       </div>
       <div className={styles.dataRow}>
         <div className={styles.itemName}>Estimated gas fee</div>
-        <div className={styles.valueContainer}>
-          <div
-            className={styles.value}
-            title={`balance: ${String(gasBalance)}`}
-          >{`${fee} ${direction === 'DEPOSIT' ? 'ETH' : tokenSymbol}`}</div>
-          <div className={styles.valueNote}>
-            {formatCurrency(fee * (direction === 'DEPOSIT' ? ethRate : tokenRate))}
+        {!!fee ? (
+          <div className={styles.valueContainer}>
+            <div
+              className={styles.value}
+              title={`balance: ${String(gasBalance)}`}
+            >{`${fee} ${direction === 'DEPOSIT' ? 'ETH' : tokenSymbol}`}</div>
+            <div className={styles.valueNote}>
+              {formatCurrency(fee * (direction === 'DEPOSIT' ? ethRate : tokenRate))}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className={styles.valueNote}>{isEstimatingFee ? 'estimating...' : `can't estimate fee`}</div>
+        )}
       </div>
       <div className={styles.dataRow}>
         <div className={styles.itemName}>You will receive</div>

@@ -164,6 +164,7 @@ const BridgeView = ({
             : `~${Math.floor((selectedHighNetwork.challengePeriod ?? 0) / 60)} min`
         }
         fee={Number(estimatedFee.data ?? 0)}
+        isEstimatingFee={estimatedFee.isFetching}
         value={Number(value)}
         ethRate={ethUsdRate ?? 0}
         tokenSymbol={L3_NATIVE_TOKEN_SYMBOL}
