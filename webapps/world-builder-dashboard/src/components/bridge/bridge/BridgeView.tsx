@@ -32,14 +32,8 @@ const BridgeView = ({
 
   const g7tUsdRate = useQuery(['rate'], () => 31166.75)
   const { data: ethUsdRate } = useEthUsdRate()
-  const {
-    L2Provider,
-    connectedAccount,
-    selectedLowNetwork,
-    setSelectedLowNetwork,
-    selectedHighNetwork,
-    setSelectedHighNetwork
-  } = useBlockchainContext()
+  const { connectedAccount, selectedLowNetwork, setSelectedLowNetwork, selectedHighNetwork, setSelectedHighNetwork } =
+    useBlockchainContext()
   const { data: lowNetworkBalance, isFetching: isFetchingLowNetworkBalance } = useERC20Balance({
     tokenAddress: selectedLowNetwork.g7TokenAddress,
     account: connectedAccount,
@@ -70,11 +64,14 @@ const BridgeView = ({
     }
     let est
     if (direction === 'DEPOSIT') {
-      est = await estimateDepositERC20ToNativeFee(value, connectedAccount, selectedHighNetwork as HighNetworkInterface)
+      est = await estimateDepositERC20ToNativeFee(
+        value,
+        connectedAccount,
+        selectedLowNetwork,
+        selectedHighNetwork as HighNetworkInterface
+      )
     } else {
-      if (L2Provider) {
-        est = await estimateWithdrawFee(value, connectedAccount, L2Provider)
-      }
+      est = await estimateWithdrawFee(value, connectedAccount, selectedLowNetwork)
     }
     return est
   })
@@ -175,7 +172,6 @@ const BridgeView = ({
       {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
       <ActionButton
         direction={direction}
-        l3Network={selectedHighNetwork as HighNetworkInterface}
         amount={value}
         isDisabled={!!inputErrorMessage}
         setErrorMessage={setNetworkErrorMessage}

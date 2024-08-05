@@ -1,5 +1,6 @@
 import { L2_NETWORK, L3_NETWORK } from '../../../constants'
-import { ethers } from 'ethers'
+import { ethers, providers } from 'ethers'
+import { NetworkInterface } from '@/contexts/BlockchainContext'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 
 export interface WithdrawRecord {
@@ -79,17 +80,19 @@ export const sendWithdrawTransaction = async (
 export const estimateWithdrawFee = async (
   amountInNative: string,
   destination: string,
-  provider: ethers.providers.JsonRpcProvider
+  lowNetwork: NetworkInterface
 ) => {
+  const lowNetworkProvider = new providers.JsonRpcProvider(lowNetwork.rpcs[0])
+
   try {
     const amountInWei = ethers.utils.parseEther(amountInNative.toString())
-    const arbSysContract = new ethers.Contract(arbSysAddress, arbSysABI, provider)
+    const arbSysContract = new ethers.Contract(arbSysAddress, arbSysABI, lowNetworkProvider)
 
     const estimatedGas = await arbSysContract.estimateGas.withdrawEth(destination, {
       value: amountInWei
     })
 
-    const gasPrice = await provider.getGasPrice()
+    const gasPrice = await lowNetworkProvider.getGasPrice()
     const estimatedFee = gasPrice.mul(estimatedGas)
     return ethers.utils.formatEther(estimatedFee)
   } catch (error) {

@@ -6,9 +6,6 @@ import { NodeInterface__factory } from '@arbitrum/sdk/dist/lib/abi/factories/Nod
 import { NODE_INTERFACE_ADDRESS } from '@arbitrum/sdk/dist/lib/dataEntities/constants'
 import { Signer } from '@ethersproject/abstract-signer'
 
-const L2_RPC = 'https://sepolia-rollup.arbitrum.io/rpc'
-const l2Provider = new providers.JsonRpcProvider(L2_RPC)
-
 const ERC20_INBOX_ABI = [
   {
     inputs: [
@@ -34,16 +31,23 @@ const ERC20_INBOX_ABI = [
 export const estimateDepositERC20ToNativeFee = async (
   amount: string,
   account: string,
-  l3Network: HighNetworkInterface
+  lowNetwork: NetworkInterface,
+  highNetwork: HighNetworkInterface
 ) => {
-  const destinationAddress = l3Network.inbox
+  if (!highNetwork.inbox) {
+    console.log('inbox contract is undefined')
+    return
+  }
+  const destinationAddress = highNetwork.inbox
+  const lowNetworkProvider = new providers.JsonRpcProvider(lowNetwork.rpcs[0])
 
   const ethAmount = convertToBigNumber(amount)
-  const ERC20InboxContract = new ethers.Contract(l3Network.inbox, ERC20_INBOX_ABI, l2Provider)
+  const ERC20InboxContract = new ethers.Contract(highNetwork.inbox, ERC20_INBOX_ABI, lowNetworkProvider)
   const tx = await ERC20InboxContract.populateTransaction.depositERC20(ethAmount)
   const data = tx.data
 
-  const nodeInterface = NodeInterface__factory.connect(NODE_INTERFACE_ADDRESS, l2Provider)
+  const nodeInterface = NodeInterface__factory.connect(NODE_INTERFACE_ADDRESS, lowNetworkProvider)
+
   if (data) {
     try {
       const gasEstimateComponents = await nodeInterface.callStatic.gasEstimateComponents(
@@ -94,15 +98,21 @@ export const estimateDepositERC20ToNativeFee = async (
   }
 }
 
-const estimateDepositERC20ToNativeGas = async (amount: string, account: string, l3Network: HighNetworkInterface) => {
-  const destinationAddress = l3Network.inbox
+const estimateDepositERC20ToNativeGas = async (
+  amount: string,
+  account: string,
+  lowNetwork: NetworkInterface,
+  highNetwork: HighNetworkInterface
+) => {
+  const destinationAddress = highNetwork.inbox
 
   const ethAmount = convertToBigNumber(amount)
-  const ERC20InboxContract = new ethers.Contract(l3Network.inbox, ERC20_INBOX_ABI, l2Provider)
+  const lowNetworkProvider = new providers.JsonRpcProvider(lowNetwork.rpcs[0])
+
+  const ERC20InboxContract = new ethers.Contract(highNetwork.inbox, ERC20_INBOX_ABI, lowNetworkProvider)
   const tx = await ERC20InboxContract.populateTransaction.depositERC20(ethAmount)
   const data = tx.data
-
-  const nodeInterface = NodeInterface__factory.connect(NODE_INTERFACE_ADDRESS, l2Provider)
+  const nodeInterface = NodeInterface__factory.connect(NODE_INTERFACE_ADDRESS, lowNetworkProvider)
   if (data) {
     try {
       const gasEstimateComponents = await nodeInterface.callStatic.gasEstimateComponents(
@@ -160,7 +170,7 @@ export const sendDepositERC20ToNativeTransaction = async (
   const destinationAddress = highNetwork.inbox
   const ethAmount = convertToBigNumber(amount)
   const ERC20InboxContract = new ethers.Contract(destinationAddress, ERC20_INBOX_ABI, l2Signer)
-  const gasEstimate = await estimateDepositERC20ToNativeGas(amount, account, highNetwork)
+  const gasEstimate = await estimateDepositERC20ToNativeGas(amount, account, lowNetwork, highNetwork)
 
   const txRequest = await ERC20InboxContract.populateTransaction.depositERC20(ethAmount, {
     gasLimit: gasEstimate
