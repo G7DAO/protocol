@@ -1,5 +1,5 @@
 # IERC20Inbox
-[Git Source](https://github.com/G7DAO/protocol/blob/024286bc1373ec838e8f937f2c3b0ea25f0a1161/contracts/interfaces/IERC20Inbox.sol)
+[Git Source](https://github.com/G7DAO/protocol/blob/a9a4c737dc96fb8aa41bd2bb8beb52a1877503f3/contracts/interfaces/IERC20Inbox.sol)
 
 
 ## Functions

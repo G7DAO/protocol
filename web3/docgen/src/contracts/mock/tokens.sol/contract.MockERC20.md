@@ -1,5 +1,5 @@
 # MockERC20
-[Git Source](https://github.com/G7DAO/protocol/blob/024286bc1373ec838e8f937f2c3b0ea25f0a1161/contracts/mock/tokens.sol)
+[Git Source](https://github.com/G7DAO/protocol/blob/a9a4c737dc96fb8aa41bd2bb8beb52a1877503f3/contracts/mock/tokens.sol)
 
 **Inherits:**
 [ERC20](/contracts/token/ERC20.sol/contract.ERC20.md)

@@ -211,7 +211,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
      *
      * @notice This transaction allows for any subset of the pool configuration to be changed atomically.
      *
-     * @notice The changeTransferability, changeLockup, and changeCooldown arguments are used to indicate
+     * @notice The `changeTransferability`, `changeLockup`, and `changeCooldown` arguments are used to indicate
      * which parameters should be changed. If a parameter is not to be changed, the corresponding argument
      * should be set to false and the corresponding value argument will be ignored regardless of its value.
      */

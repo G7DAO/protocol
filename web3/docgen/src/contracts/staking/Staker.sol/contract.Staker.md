@@ -1,5 +1,5 @@
 # Staker
-[Git Source](https://github.com/G7DAO/protocol/blob/024286bc1373ec838e8f937f2c3b0ea25f0a1161/contracts/staking/Staker.sol)
+[Git Source](https://github.com/G7DAO/protocol/blob/a9a4c737dc96fb8aa41bd2bb8beb52a1877503f3/contracts/staking/Staker.sol)
 
 **Inherits:**
 ERC721Enumerable, ReentrancyGuard
@@ -169,7 +169,7 @@ Allows a pool administrator to modify the configuration of that pool.
 
 This transaction allows for any subset of the pool configuration to be changed atomically.
 
-The changeTransferability, changeLockup, and changeCooldown arguments are used to indicate
+The `changeTransferability`, `changeLockup`, and `changeCooldown` arguments are used to indicate
 which parameters should be changed. If a parameter is not to be changed, the corresponding argument
 should be set to false and the corresponding value argument will be ignored regardless of its value.
 
