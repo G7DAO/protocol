@@ -2,32 +2,21 @@
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react'
 import { DEFAULT_HIGH_NETWORK, DEFAULT_LOW_NETWORK, L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../constants'
 import { ethers } from 'ethers'
-import { L3_NETWORKS, L3NetworkConfiguration } from '@/utils/bridge/l3Networks'
-
-// const L3_RPC = "https://game7-testnet-custom.rpc.caldera.xyz/http";
-const L2_RPC = 'https://sepolia-rollup.arbitrum.io/rpc'
 
 interface BlockchainContextType {
   walletProvider?: ethers.providers.Web3Provider
-  L2Provider?: ethers.providers.JsonRpcProvider
-  // L3Provider?: ethers.providers.JsonRpcProvider;
   connectedAccount?: string
-  setL2RPC: (rpcUrl: string) => void
-  // setL3RPC: (rpcUrl: string) => void;
   connectWallet: () => Promise<void>
-  tokenAddress: string
-  checkConnection: () => void
   switchChain: (chain: NetworkInterface) => Promise<void>
-  L2_RPC: string
-  // L3_RPC: string;
-  selectedL3Network: L3NetworkConfiguration
-  setSelectedL3Network: (network: L3NetworkConfiguration) => void
+  disconnectWallet: () => void
+  tokenAddress: string
   selectedLowNetwork: NetworkInterface
   setSelectedLowNetwork: (network: NetworkInterface) => void
   selectedHighNetwork: NetworkInterface
   setSelectedHighNetwork: (network: NetworkInterface) => void
   isMetaMask: boolean
-  disconnectWallet: () => void
+  getProvider: (network: NetworkInterface) => Promise<ethers.providers.Web3Provider>
+  isConnecting: boolean
 }
 
 export interface NetworkInterface {
@@ -62,18 +51,13 @@ interface BlockchainProviderProps {
 
 export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children }) => {
   const [walletProvider, setWalletProvider] = useState<ethers.providers.Web3Provider>()
-  const [L2Provider, setL2Provider] = useState<ethers.providers.JsonRpcProvider>()
-  const [selectedL3Network, _setSelectedL3Network] = useState<L3NetworkConfiguration>(L3_NETWORKS[0])
   const [selectedLowNetwork, _setSelectedLowNetwork] = useState<NetworkInterface>(DEFAULT_LOW_NETWORK)
   const [selectedHighNetwork, _setSelectedHighNetwork] = useState<NetworkInterface>(DEFAULT_HIGH_NETWORK)
   const [isMetaMask, setIsMetaMask] = useState(false)
+  const [isConnecting, setIsConnecting] = useState(false)
 
   const [connectedAccount, setConnectedAccount] = useState<string>()
   const tokenAddress = '0x5f88d811246222F6CB54266C42cc1310510b9feA'
-
-  const setSelectedL3Network = (network: L3NetworkConfiguration): void => {
-    _setSelectedL3Network(network)
-  }
 
   const setSelectedLowNetwork = (network: NetworkInterface) => {
     if (network === L1_NETWORK) {
@@ -94,7 +78,6 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   }
 
   useEffect(() => {
-    setL2RPC(L2_RPC)
     const ethereum = window.ethereum
     if (ethereum) {
       const provider = new ethers.providers.Web3Provider(ethereum)
@@ -128,51 +111,71 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   }, [walletProvider])
 
   const connectWallet = async () => {
-    if (window.ethereum && !walletProvider) {
+    setIsConnecting(true)
+    if (window.ethereum) {
       try {
         const provider = new ethers.providers.Web3Provider(window.ethereum)
         setWalletProvider(provider)
         await provider.send('eth_requestAccounts', [])
-        handleAccountsChanged()
+        await handleAccountsChanged()
       } catch (error) {
         console.error('Error connecting to wallet:', error)
       }
     }
+    setIsConnecting(false)
   }
 
-  const setL2RPC = (rpcUrl: string) => {
-    const providerL2 = new ethers.providers.JsonRpcProvider(rpcUrl)
-    setL2Provider(providerL2)
+  const getProvider = async (network: NetworkInterface) => {
+    if (!window.ethereum) {
+      throw new Error("Wallet isn't installed")
+    }
+    if (!walletProvider) {
+      await connectWallet()
+    }
+    await switchChain(network)
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    setWalletProvider(provider)
+    return provider
   }
 
   const switchChain = async (chain: NetworkInterface) => {
     if (!walletProvider) {
       throw new Error('Wallet is not connected')
     }
-    const hexChainId = ethers.utils.hexStripZeros(ethers.utils.hexlify(chain.chainId))
+
+    setIsConnecting(true)
+
     try {
-      await walletProvider.send('wallet_switchEthereumChain', [{ chainId: hexChainId }])
-    } catch (error: any) {
-      if (error.code === 4902) {
+      const currentChain = await walletProvider.getNetwork()
+      if (currentChain.chainId !== chain.chainId) {
+        const hexChainId = ethers.utils.hexStripZeros(ethers.utils.hexlify(chain.chainId))
         try {
-          // Chain not found, attempt to add it
-          await walletProvider.send('wallet_addEthereumChain', [
-            {
-              chainId: hexChainId,
-              chainName: chain.displayName || chain.name,
-              nativeCurrency: chain.nativeCurrency,
-              rpcUrls: chain.rpcs,
-              blockExplorerUrls: chain.blockExplorerUrls
+          await walletProvider.send('wallet_switchEthereumChain', [{ chainId: hexChainId }])
+        } catch (error: any) {
+          if (error.code === 4902) {
+            try {
+              // Chain not found, attempt to add it
+              await walletProvider.send('wallet_addEthereumChain', [
+                {
+                  chainId: hexChainId,
+                  chainName: chain.displayName || chain.name,
+                  nativeCurrency: chain.nativeCurrency,
+                  rpcUrls: chain.rpcs,
+                  blockExplorerUrls: chain.blockExplorerUrls
+                }
+              ])
+            } catch (addError) {
+              console.error('Failed to add the Ethereum chain:', addError)
+              throw addError
             }
-          ])
-        } catch (addError) {
-          console.error('Failed to add the Ethereum chain:', addError)
-          throw addError
+          } else {
+            console.error('Failed to switch the Ethereum chain:', error)
+            throw error
+          }
         }
-      } else {
-        console.error('Failed to switch the Ethereum chain:', error)
-        throw error
       }
+    } finally {
+      setIsConnecting(false)
     }
   }
 
@@ -199,22 +202,18 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     <BlockchainContext.Provider
       value={{
         walletProvider,
-        L2Provider,
         connectedAccount,
-        setL2RPC,
         connectWallet,
         tokenAddress,
-        checkConnection: handleAccountsChanged,
         switchChain,
-        L2_RPC,
-        selectedL3Network,
-        setSelectedL3Network,
         selectedLowNetwork,
         setSelectedLowNetwork,
         selectedHighNetwork,
         setSelectedHighNetwork,
         isMetaMask,
-        disconnectWallet
+        disconnectWallet,
+        getProvider,
+        isConnecting
       }}
     >
       {children}
