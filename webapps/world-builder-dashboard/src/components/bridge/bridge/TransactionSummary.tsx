@@ -67,9 +67,11 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
               className={styles.value}
               title={`balance: ${String(gasBalance)}`}
             >{`${fee} ${direction === 'DEPOSIT' ? 'ETH' : tokenSymbol}`}</div>
-            <div className={styles.valueNote}>
-              {formatCurrency(fee * (direction === 'DEPOSIT' ? ethRate : tokenRate))}
-            </div>
+            {!!(fee * (direction === 'DEPOSIT' ? ethRate : tokenRate)) && (
+              <div className={styles.valueNote}>
+                {formatCurrency(fee * (direction === 'DEPOSIT' ? ethRate : tokenRate))}
+              </div>
+            )}
           </div>
         ) : (
           <div className={styles.valueNote}>{isEstimatingFee ? 'estimating...' : `can't estimate fee`}</div>
@@ -79,7 +81,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
         <div className={styles.itemName}>You will receive</div>
         <div className={styles.valueContainer}>
           <div className={styles.value}>{`${value} ${tokenSymbol}`}</div>
-          <div className={styles.valueNote}>{formatCurrency(value * tokenRate)}</div>
+          {tokenRate > 0 && <div className={styles.valueNote}>{formatCurrency(value * tokenRate)}</div>}
         </div>
       </div>
     </div>

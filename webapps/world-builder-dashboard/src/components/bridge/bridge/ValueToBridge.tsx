@@ -62,7 +62,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
         </div>
       </div>
       <div className={styles.header}>
-        <div className={styles.label}>{formatCurrency(Number(value) * rate)}</div>
+        <div className={styles.label}>{rate > 0 ? formatCurrency(Number(value) * rate) : ' '}</div>
         <div className={styles.available}>
           <div className={`${styles.label} ${isFetchingBalance ? styles.blink : ''}`}>{balance ?? '0'}</div>{' '}
           {/*TODO how to display undefined balance */}

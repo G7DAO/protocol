@@ -30,7 +30,7 @@ const BridgeView = ({
   const [inputErrorMessage, setInputErrorMessage] = useState('')
   const [networkErrorMessage, setNetworkErrorMessage] = useState('')
 
-  const g7tUsdRate = useQuery(['rate'], () => 31166.75)
+  const g7tUsdRate = useQuery(['rate'], () => 0)
   const { data: ethUsdRate } = useEthUsdRate()
   const { connectedAccount, selectedLowNetwork, setSelectedLowNetwork, selectedHighNetwork, setSelectedHighNetwork } =
     useBlockchainContext()
