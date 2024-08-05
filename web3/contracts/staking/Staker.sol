@@ -14,26 +14,26 @@ import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 
 /**
- * The Staker contract allows users to permissionlessly create staking pools by specifying various parameters
+ * @notice The Staker contract allows users to permissionlessly create staking pools by specifying various parameters
  * for each pool, such as:
  * - the tokens it accepts
  * - whether or not positions from that pool are transferable
  * - the period for which those tokens will be locked up
  * - a cooldown period on withdrawals for tokens in that pool
  *
- * Built by the Game7 World Builder team: worldbuilder - at - game7.io
+ * @notice Built by the Game7 World Builder team: worldbuilder - at - game7.io
  */
 contract Staker is ERC721Enumerable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     /**
-     * StakingPool represents a staking position that users can adopt.
+     * @notice StakingPool represents a staking position that users can adopt.
      *
-     * Anybody can permissionlessly create a staking pool on the Staker contract. The creator
+     * @notice Anybody can permissionlessly create a staking pool on the Staker contract. The creator
      * of a pool is automatically designated as its administrator. The current administrator of a pool
      * can transfer its administration privileges to another account.
      *
-     * The administrator of a staking pool is the only account that can change certain parameters
+     * @notice The administrator of a staking pool is the only account that can change certain parameters
      * of the pool, such as whether positions under that staking pool are transferable, the length of
      * the lockup period for positions staked under that pool, and the length of the cooldown period for
      * withdrawals for positions staked under that pool.
@@ -49,13 +49,13 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
     }
 
     /**
-     * Position represents the parameters of a staking position:
+     * @notice Position represents the parameters of a staking position:
      * - the staking pool ID under which the deposit was made
      * - the amount of tokens deposited under that staking pool (for non-ERC721 token types),
      *   or the tokenID for staking positions involving ERC721 tokens
      * - the timestamp at which the deposit was made
      *
-     * The address of the depositor is the owner of the ERC721 token representing this deposit, and
+     * @notice The address of the depositor is the owner of the ERC721 token representing this deposit, and
      * is not stored within this struct.
      */
     struct Position {
@@ -225,7 +225,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         );
     }
 
-    function stakeNative(uint256 poolID) external payable returns (uint256 positionTokenID) {
+    function stakeNative(uint256 poolID) external payable nonReentrant returns (uint256 positionTokenID) {
         StakingPool storage pool = Pools[poolID];
         if (pool.tokenType != NATIVE_TOKEN_TYPE) {
             revert IncorrectTokenType(poolID, pool.tokenType, NATIVE_TOKEN_TYPE);
@@ -331,7 +331,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         emit Staked(positionTokenID, msg.sender, poolID, amount);
     }
 
-    function initiateUnstake(uint256 positionTokenID) external {
+    function initiateUnstake(uint256 positionTokenID) external nonReentrant {
         address positionOwner = ownerOf(positionTokenID);
         if (positionOwner != msg.sender) {
             revert UnauthorizedForPosition(positionOwner, msg.sender);
