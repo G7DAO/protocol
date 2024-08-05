@@ -142,20 +142,24 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     if (!walletProvider) {
       throw new Error('Wallet is not connected')
     }
-
+    if (!window.ethereum) {
+      throw new Error("Wallet isn't installed")
+    }
     setIsConnecting(true)
 
     try {
-      const currentChain = await walletProvider.getNetwork()
+      const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
+
+      const currentChain = await provider.getNetwork()
       if (currentChain.chainId !== chain.chainId) {
         const hexChainId = ethers.utils.hexStripZeros(ethers.utils.hexlify(chain.chainId))
         try {
-          await walletProvider.send('wallet_switchEthereumChain', [{ chainId: hexChainId }])
+          await provider.send('wallet_switchEthereumChain', [{ chainId: hexChainId }])
         } catch (error: any) {
           if (error.code === 4902) {
             try {
               // Chain not found, attempt to add it
-              await walletProvider.send('wallet_addEthereumChain', [
+              await provider.send('wallet_addEthereumChain', [
                 {
                   chainId: hexChainId,
                   chainName: chain.displayName || chain.name,
