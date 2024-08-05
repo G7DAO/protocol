@@ -1,5 +1,5 @@
 # ERC20
-[Git Source](https://github.com/G7DAO/protocol/blob/1fa20e44ab50858e3adc7f6902f74516fb46348a/contracts/token/ERC20.sol)
+[Git Source](https://github.com/G7DAO/protocol/blob/024286bc1373ec838e8f937f2c3b0ea25f0a1161/contracts/token/ERC20.sol)
 
 **Inherits:**
 [IERC20](/contracts/interfaces/IERC20.sol/interface.IERC20.md)

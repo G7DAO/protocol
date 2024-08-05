@@ -1,5 +1,5 @@
 # Staker
-[Git Source](https://github.com/G7DAO/protocol/blob/1fa20e44ab50858e3adc7f6902f74516fb46348a/contracts/staking/Staker.sol)
+[Git Source](https://github.com/G7DAO/protocol/blob/024286bc1373ec838e8f937f2c3b0ea25f0a1161/contracts/staking/Staker.sol)
 
 **Inherits:**
 ERC721Enumerable, ReentrancyGuard
@@ -10,6 +10,11 @@ for each pool, such as:
 - whether or not positions from that pool are transferable
 - the period for which those tokens will be locked up
 - a cooldown period on withdrawals for tokens in that pool
+
+Users can stake tokens into these pools - this is called "opening a position under a pool".
+
+Each position is represented by an ERC721 token, which is minted to the user when they open a position.
+This ERC721 token is burned from its holder when they close their position.
 
 Built by the Game7 World Builder team: worldbuilder - at - game7.io
 
@@ -44,6 +49,8 @@ uint256 public constant ERC1155_TOKEN_TYPE = 1155;
 
 
 ### TotalPools
+The total number of staking pools created on this contract.
+
 
 ```solidity
 uint256 public TotalPools;
@@ -51,6 +58,8 @@ uint256 public TotalPools;
 
 
 ### TotalPositions
+The total number of staking positions that have ever been opened on this contract.
+
 
 ```solidity
 uint256 public TotalPositions;
@@ -58,6 +67,8 @@ uint256 public TotalPositions;
 
 
 ### CurrentAmountInPool
+The total amount of tokens currently staked in each pool.
+
 
 ```solidity
 mapping(uint256 => uint256) public CurrentAmountInPool;
@@ -65,6 +76,8 @@ mapping(uint256 => uint256) public CurrentAmountInPool;
 
 
 ### CurrentPositionsInPool
+The total number of positions currently open under each pool.
+
 
 ```solidity
 mapping(uint256 => uint256) public CurrentPositionsInPool;
@@ -72,6 +85,8 @@ mapping(uint256 => uint256) public CurrentPositionsInPool;
 
 
 ### Pools
+Pool ID => StakingPool struct
+
 
 ```solidity
 mapping(uint256 => StakingPool) public Pools;
@@ -79,6 +94,8 @@ mapping(uint256 => StakingPool) public Pools;
 
 
 ### Positions
+Token ID of position tokens on this ERC721 contract => Position struct
+
 
 ```solidity
 mapping(uint256 => Position) public Positions;
@@ -88,12 +105,17 @@ mapping(uint256 => Position) public Positions;
 ## Functions
 ### constructor
 
+Deploys a Staker contract. Note that the constructor doesn't do much as Staker contracts
+are permissionless.
+
 
 ```solidity
 constructor() ERC721("Game7 Staker", "G7STAKER");
 ```
 
 ### onERC721Received
+
+Allows the Staker to receive ERC721 tokens through safeTransferFrom.
 
 
 ```solidity
@@ -102,6 +124,10 @@ function onERC721Received(address, address, uint256, bytes calldata) external pu
 
 ### onERC1155Received
 
+Allows the Staker to receive ERC1155 tokens.
+
+*We don't implement onERC1155BatchReceived because staking operates on a single tokenID.*
+
 
 ```solidity
 function onERC1155Received(address, address, uint256, uint256, bytes calldata) external pure returns (bytes4);
@@ -109,12 +135,21 @@ function onERC1155Received(address, address, uint256, uint256, bytes calldata) e
 
 ### transferFrom
 
+If a pool is configured so that its positions are non-transferable, then we must disable transfer
+functionality on the position tokens.
+
+*Since our ERC721 functionality is inherited from OpenZeppelin's ERC721 contract, we can override
+this functionality in the transferFrom function. Both safeTransferFrom methods on the OpenZeppelin
+ERC721 rely on transferFrom to perform the actual transfer.*
+
 
 ```solidity
 function transferFrom(address from, address to, uint256 tokenId) public override(ERC721, IERC721);
 ```
 
 ### createPool
+
+Allows anybody to create a staking pool.
 
 
 ```solidity
@@ -129,6 +164,14 @@ function createPool(
 ```
 
 ### updatePoolConfiguration
+
+Allows a pool administrator to modify the configuration of that pool.
+
+This transaction allows for any subset of the pool configuration to be changed atomically.
+
+The changeTransferability, changeLockup, and changeCooldown arguments are used to indicate
+which parameters should be changed. If a parameter is not to be changed, the corresponding argument
+should be set to false and the corresponding value argument will be ignored regardless of its value.
 
 
 ```solidity
@@ -145,12 +188,18 @@ function updatePoolConfiguration(
 
 ### transferPoolAdministration
 
+Allows pool administrators to transfer administration privileges.
+
+*To make a pool immutable, transfer administration to the zero address: `0x0000000000000000000000000000000000000000`.*
+
 
 ```solidity
 function transferPoolAdministration(uint256 poolID, address newAdministrator) external;
 ```
 
 ### stakeNative
+
+Allows anyone to open a position under a staking pool for native tokens.
 
 
 ```solidity
@@ -159,12 +208,29 @@ function stakeNative(uint256 poolID) external payable nonReentrant returns (uint
 
 ### stakeERC20
 
+Allows anyone to open a position under a staking pool for ERC20 tokens.
+
+`amount` should be the full, raw amount. The Staker contract does not account for the ERC20
+contract's `decimals` value.
+
+*The user must have granted approval on the ERC20 contract for the Staker contract to transfer
+`amount` tokens from their account. This can typically be done by calling the `approve` method on the
+ERC20 contract.*
+
 
 ```solidity
 function stakeERC20(uint256 poolID, uint256 amount) external nonReentrant returns (uint256 positionTokenID);
 ```
 
 ### stakeERC721
+
+Allows anyone to open a position under a staking pool for ERC721 tokens.
+
+Each position represents a single ERC721 token on the ERC721 contract specified by the pool.
+
+*The user must have granted approval on the ERC721 contract for the Staker contract to transfer
+the token with the given `tokenID` from their account. This can typically be done by calling the `approve`
+or `setApprovalForAll` methods on the ERC721 contract.*
 
 
 ```solidity
@@ -173,12 +239,29 @@ function stakeERC721(uint256 poolID, uint256 tokenID) external nonReentrant retu
 
 ### stakeERC1155
 
+Allows anyone to open a position under a staking pool for ERC1155 tokens.
+
+*The user must have granted approval on the ERC1155 contract for the Staker contract to transfer
+`amount` tokens with the given `tokenId` from their account. This can typically be done by calling
+the `setApprovalForAll` method on the ERC1155 contract.*
+
 
 ```solidity
 function stakeERC1155(uint256 poolID, uint256 amount) external nonReentrant returns (uint256 positionTokenID);
 ```
 
 ### initiateUnstake
+
+Allows a user to initiate an unstake on a position they hold.
+
+This call will revert if the lockup period for the position has not yet expired.
+
+This call is idempotent. If a user calls this method successfully multiple times, every
+call after the first will have no further effect.
+
+For positions under pools with no cooldown period, a user can directly unstake their tokens
+from their position after the lockup period has expired. It is not necessary for them to call this
+method at all.
 
 
 ```solidity
@@ -187,12 +270,20 @@ function initiateUnstake(uint256 positionTokenID) external nonReentrant;
 
 ### unstake
 
+Unstakes a user's position.
+
+Requires that the lockup period on the position has expired. If the staking pool has a positive
+cooldown period, then the user must have called `initiateUnstake` and waited for the cooldown period to
+expire before calling this method.
+
 
 ```solidity
 function unstake(uint256 positionTokenID) external nonReentrant;
 ```
 
 ### metadataBytes
+
+Generates the on-chain metadata for a given position on the Staker.
 
 
 ```solidity
@@ -201,12 +292,16 @@ function metadataBytes(uint256 positionTokenID) public view returns (bytes memor
 
 ### metadataJSON
 
+Returns a JSON string representing a position's on-chain metadata.
+
 
 ```solidity
 function metadataJSON(uint256 positionTokenID) public view returns (string memory);
 ```
 
 ### tokenURI
+
+Returns the ERC721 token URI for a position on the Staker contract, encoded as a data URI.
 
 
 ```solidity
@@ -215,6 +310,8 @@ function tokenURI(uint256 tokenId) public view override returns (string memory);
 
 ## Events
 ### StakingPoolCreated
+This event is emitted when a staking pool is created.
+
 
 ```solidity
 event StakingPoolCreated(
@@ -223,6 +320,10 @@ event StakingPoolCreated(
 ```
 
 ### StakingPoolConfigured
+This event is emitted whenever the administrator of a staking pool changes its configuration
+(transferability, lockup period, cooldown period). The arguments of the event represent the
+pool's configuration after the change.
+
 
 ```solidity
 event StakingPoolConfigured(
@@ -235,18 +336,24 @@ event StakingPoolConfigured(
 ```
 
 ### Staked
+Emitted when a user opens a position under a given pool.
+
 
 ```solidity
 event Staked(uint256 positionTokenID, address indexed owner, uint256 indexed poolID, uint256 amountOrTokenID);
 ```
 
 ### UnstakeInitiated
+Emitted when a user initiates an unstake on a position they hold.
+
 
 ```solidity
 event UnstakeInitiated(uint256 positionTokenID, address indexed owner);
 ```
 
 ### Unstaked
+Emitted when a user unstakes a position they hold.
+
 
 ```solidity
 event Unstaked(uint256 positionTokenID, address indexed owner, uint256 indexed poolID, uint256 amountOrTokenID);
