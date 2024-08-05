@@ -178,12 +178,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
             }
           }
         )
-        queryClient.setQueryData(['incomingMessages', connectedAccount], (oldData: any) => {
-          if (oldData) {
-            return [record, ...oldData]
-          }
-          return [record]
-        })
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
         queryClient.refetchQueries(['pendingNotifications'])
