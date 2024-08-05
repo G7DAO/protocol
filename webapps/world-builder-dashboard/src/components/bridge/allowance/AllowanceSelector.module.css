@@ -1,9 +1,5 @@
 .container {
-    /*display: flex;*/
     padding: 0 0 0 14px;
-    /*align-items: center;*/
-    /*gap: 8px;*/
-    /*align-self: stretch;*/
 
     border-radius: 8px;
     border: 1px solid var(--Gray-100, #F2F4F7);
@@ -14,7 +10,6 @@
     font-family: Inter, sans-serif;
     font-size: 14px;
     font-style: normal;
-    /*font-weight: 500;*/
     line-height: 20px; /* 142.857% */
     position: relative;
 }

@@ -85,10 +85,6 @@
     line-height: 18px; /* 150% */
 }
 
-.input {
-
-}
-
 .inputRow {
     display: flex;
     gap: 8px;
