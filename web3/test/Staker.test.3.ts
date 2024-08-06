@@ -4,6 +4,124 @@ import { loadFixture, time } from '@nomicfoundation/hardhat-network-helpers';
 import { setupStakingPoolsFixture } from './Staker.test.1';
 
 describe('Staker', function () {
+    it('STAKER-113: The ERC721 representing an ERC721 staking position have as its metadata URI a data URI representing an appropriate JSON object', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, erc721, user0, erc721PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+        const tokenId = 1n;
+
+        // Mint ERC721 token to user0
+        await erc721.mint(await user0.getAddress(), tokenId);
+
+        // Approve staker contract to transfer ERC721 token
+        await erc721.connect(user0).approve(await staker.getAddress(), tokenId);
+
+        // Stake ERC721 token
+        const tx = await stakerWithUser0.stakeERC721(erc721PoolID, tokenId);
+        const txReceipt = await tx.wait();
+        expect(txReceipt).to.not.be.null;
+        const block = await ethers.provider.getBlock(txReceipt!.blockNumber);
+        expect(block).to.not.be.null;
+
+        // Get the position token ID of the newly minted token
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+
+        const metadataDataURI = await staker.tokenURI(positionTokenID);
+        const metadataBase64 = metadataDataURI.split(',')[1];
+        const metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
+
+        expect(metadata).to.deep.equal({
+            token_id: positionTokenID.toString(),
+            image: 'https://badges.moonstream.to/test/staking_logo.png',
+            result_version: 1,
+            attributes: [
+                {
+                    trait_type: 'Pool ID',
+                    value: erc721PoolID.toString(),
+                },
+                {
+                    trait_type: 'Staked token ID',
+                    value: tokenId.toString(),
+                },
+                {
+                    trait_type: 'Staked at',
+                    value: block!.timestamp,
+                    display_type: 'number',
+                },
+                {
+                    trait_type: 'Lockup expires at',
+                    value: block!.timestamp + lockupSeconds,
+                    display_type: 'number',
+                },
+            ],
+        });
+    });
+
+    it('STAKER-114: The ERC721 representing a non-ERC721 staking position have as its metadata URI a data URI representing an appropriate JSON object', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, erc20, user0, erc20PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+        const stakeAmount = 17n;
+
+        // Mint ERC20 token to user0
+        await erc20.mint(await user0.getAddress(), stakeAmount);
+
+        // Approve staker contract to transfer ERC721 token
+        await erc20.connect(user0).approve(await staker.getAddress(), stakeAmount);
+
+        // Stake ERC20 token
+        const tx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const txReceipt = await tx.wait();
+        expect(txReceipt).to.not.be.null;
+        const block = await ethers.provider.getBlock(txReceipt!.blockNumber);
+        expect(block).to.not.be.null;
+
+        // Get the position token ID of the newly minted token
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+
+        const metadataDataURI = await staker.tokenURI(positionTokenID);
+        const metadataBase64 = metadataDataURI.split(',')[1];
+        const metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
+
+        expect(metadata).to.deep.equal({
+            token_id: positionTokenID.toString(),
+            image: 'https://badges.moonstream.to/test/staking_logo.png',
+            result_version: 1,
+            attributes: [
+                {
+                    trait_type: 'Pool ID',
+                    value: erc20PoolID.toString(),
+                },
+                {
+                    trait_type: 'Staked amount',
+                    value: stakeAmount.toString(),
+                },
+                {
+                    trait_type: 'Staked at',
+                    value: block!.timestamp,
+                    display_type: 'number',
+                },
+                {
+                    trait_type: 'Lockup expires at',
+                    value: block!.timestamp + lockupSeconds,
+                    display_type: 'number',
+                },
+            ],
+        });
+    });
+
     it('STAKER-115: `CurrentAmountInPool` and `CurrentPositionsInPool` should accurate reflect the amount of tokens and number of positions currently open under a native token staking pool', async function () {
         const transferable = true;
         const lockupSeconds = 3600;

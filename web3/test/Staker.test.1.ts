@@ -637,7 +637,7 @@ describe('Staker', function () {
     });
 
     // Test written with the aid of ChatGPT 4o
-    it('STAKER-113: A non-administrator should not be able to transfer administration of a pool to another account.', async function () {
+    it('STAKER-138: A non-administrator should not be able to transfer administration of a pool to another account.', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 300;
@@ -663,7 +663,7 @@ describe('Staker', function () {
     });
 
     // Test written with the aid of ChatGPT 4o
-    it('STAKER-114: A non-administrator of a staking pool should not be able to transfer administration of that pool to another account, even if they are an administrator of another pool.', async function () {
+    it('STAKER-139: A non-administrator of a staking pool should not be able to transfer administration of that pool to another account, even if they are an administrator of another pool.', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 300;
