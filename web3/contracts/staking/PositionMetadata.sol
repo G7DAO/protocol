@@ -8,10 +8,9 @@ import { StakingPool, Position } from "./data.sol";
 
 contract PositionMetadata {
     function metadataBytes(
-        uint256 /*poolID*/,
-        StakingPool memory pool,
         uint256 positionTokenID,
-        Position memory position
+        Position memory position,
+        StakingPool memory pool
     ) public pure returns (bytes memory) {
         bytes memory result = abi.encodePacked(
             '{"token_id":"',
@@ -54,25 +53,23 @@ contract PositionMetadata {
 
     /// @notice Returns a JSON string representing a position's on-chain metadata.
     function metadataJSON(
-        uint256 poolID,
-        StakingPool memory pool,
         uint256 positionTokenID,
-        Position memory position
+        Position memory position,
+        StakingPool memory pool
     ) public pure returns (string memory) {
-        return string(metadataBytes(poolID, pool, positionTokenID, position));
+        return string(metadataBytes(positionTokenID, position, pool));
     }
 
     function metadata(
-        uint256 poolID,
-        StakingPool memory pool,
         uint256 positionTokenID,
-        Position memory position
+        Position memory position,
+        StakingPool memory pool
     ) public pure returns (string memory) {
         return
             string(
                 abi.encodePacked(
                     "data:application/json;base64,",
-                    Base64.encode(metadataBytes(poolID, pool, positionTokenID, position))
+                    Base64.encode(metadataBytes(positionTokenID, position, pool))
                 )
             );
     }

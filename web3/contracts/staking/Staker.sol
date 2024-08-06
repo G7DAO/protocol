@@ -466,6 +466,6 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         Position storage position = Positions[tokenId];
         StakingPool storage pool = Pools[position.poolID];
 
-        return PositionMetadata(positionMetadataAddress).metadata(position.poolID, pool, tokenId, position);
+        return PositionMetadata(positionMetadataAddress).metadata(tokenId, position, pool);
     }
 }
