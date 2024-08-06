@@ -459,9 +459,6 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         }
     }
 
-    /// @notice Generates the on-chain metadata for a given position on the Staker.
-    function metadataBytes(uint256 positionTokenID) public view returns (bytes memory metadata) {}
-
     /// @notice Returns the ERC721 token URI for a position on the Staker contract, encoded as a data URI.
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         _requireOwned(tokenId);

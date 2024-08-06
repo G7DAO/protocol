@@ -18,7 +18,6 @@ contract PositionMetadata {
             Strings.toString(positionTokenID),
             // TODO(zomglings): Change image URI
             '","image": "https://badges.moonstream.to/test/staking_logo.png"',
-            ',"external_url":"https://game7.io"',
             ',"result_version":1,"attributes": ['
         );
 
