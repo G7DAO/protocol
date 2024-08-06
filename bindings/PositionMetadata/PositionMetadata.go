@@ -66,8 +66,8 @@ type StakingPool struct {
 
 // PositionMetadataMetaData contains all meta data concerning the PositionMetadata contract.
 var PositionMetadataMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"address\",\"name\":\"administrator\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenType\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenID\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"transferable\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"lockupSeconds\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"cooldownSeconds\",\"type\":\"uint256\"}],\"internalType\":\"structStakingPool\",\"name\":\"pool\",\"type\":\"tuple\"},{\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amountOrTokenID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"stakeTimestamp\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"unstakeInitiatedAt\",\"type\":\"uint256\"}],\"internalType\":\"structPosition\",\"name\":\"position\",\"type\":\"tuple\"}],\"name\":\"metadata\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"address\",\"name\":\"administrator\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenType\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenID\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"transferable\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"lockupSeconds\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"cooldownSeconds\",\"type\":\"uint256\"}],\"internalType\":\"structStakingPool\",\"name\":\"pool\",\"type\":\"tuple\"},{\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amountOrTokenID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"stakeTimestamp\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"unstakeInitiatedAt\",\"type\":\"uint256\"}],\"internalType\":\"structPosition\",\"name\":\"position\",\"type\":\"tuple\"}],\"name\":\"metadataBytes\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"address\",\"name\":\"administrator\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenType\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenID\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"transferable\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"lockupSeconds\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"cooldownSeconds\",\"type\":\"uint256\"}],\"internalType\":\"structStakingPool\",\"name\":\"pool\",\"type\":\"tuple\"},{\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amountOrTokenID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"stakeTimestamp\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"unstakeInitiatedAt\",\"type\":\"uint256\"}],\"internalType\":\"structPosition\",\"name\":\"position\",\"type\":\"tuple\"}],\"name\":\"metadataJSON\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"pure\",\"type\":\"function\"}]",
-	Bin: "0x608060405234801561001057600080fd5b50611227806100206000396000f3fe608060405234801561001057600080fd5b50600436106100415760003560e01c80632a0ab0e8146100465780633fcb348b14610076578063c034b724146100a6575b600080fd5b610060600480360381019061005b91906108c9565b6100d6565b60405161006d91906109b2565b60405180910390f35b610090600480360381019061008b91906108c9565b610115565b60405161009d9190610a29565b60405180910390f35b6100c060048036038101906100bb91906108c9565b610286565b6040516100cd91906109b2565b60405180910390f35b60606100ec6100e786868686610115565b61029e565b6040516020016100fc9190610ad3565b6040516020818303038152906040529050949350505050565b6060600061012284610410565b6040516020016101329190610c25565b6040516020818303038152906040529050806101518460000151610410565b604051602001610162929190610d57565b6040516020818303038152906040529050806102d186602001511461019f576040518060600160405280602781526020016111cb602791396101b9565b6040518060600160405280602981526020016111a2602991395b6101c68560200151610410565b6040516020016101d893929190610ddd565b6040516020818303038152906040529050806101f78460400151610410565b604051602001610208929190610ee2565b6040516020818303038152906040529050806102368660a0015185604001516102319190610f4b565b610410565b604051602001610247929190611017565b604051602081830303815290604052905080604051602001610269919061109d565b604051602081830303815290604052905080915050949350505050565b606061029485858585610115565b9050949350505050565b606060008251036102c05760405180602001604052806000815250905061040b565b600060405180606001604052806040815260200161116260409139905060006003600285516102ef9190610f4b565b6102f991906110ee565b6004610305919061111f565b67ffffffffffffffff81111561031e5761031d61068c565b5b6040519080825280601f01601f1916602001820160405280156103505781602001600182028036833780820191505090505b50905060018201602082018586518701602081018051600082525b828410156103c6576003840193508351603f8160121c168701518653600186019550603f81600c1c168701518653600186019550603f8160061c168701518653600186019550603f811687015186536001860195505061036b565b80825260038a5106600181146103e357600281146103f6576103fe565b603d6001870353603d60028703536103fe565b603d60018703535b5050505050505080925050505b919050565b60606000600161041f846104de565b01905060008167ffffffffffffffff81111561043e5761043d61068c565b5b6040519080825280601f01601f1916602001820160405280156104705781602001600182028036833780820191505090505b509050600082602001820190505b6001156104d3578080600190039150507f3031323334353637383961626364656600000000000000000000000000000000600a86061a8153600a85816104c7576104c66110bf565b5b0494506000850361047e575b819350505050919050565b600080600090507a184f03e93ff9f4daa797ed6e38ed64bf6a1f010000000000000000831061053c577a184f03e93ff9f4daa797ed6e38ed64bf6a1f0100000000000000008381610532576105316110bf565b5b0492506040810190505b6d04ee2d6d415b85acef81000000008310610579576d04ee2d6d415b85acef8100000000838161056f5761056e6110bf565b5b0492506020810190505b662386f26fc1000083106105a857662386f26fc10000838161059e5761059d6110bf565b5b0492506010810190505b6305f5e10083106105d1576305f5e10083816105c7576105c66110bf565b5b0492506008810190505b61271083106105f65761271083816105ec576105eb6110bf565b5b0492506004810190505b60648310610619576064838161060f5761060e6110bf565b5b0492506002810190505b600a8310610628576001810190505b80915050919050565b6000604051905090565b600080fd5b6000819050919050565b61065381610640565b811461065e57600080fd5b50565b6000813590506106708161064a565b92915050565b600080fd5b6000601f19601f8301169050919050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b6106c48261067b565b810181811067ffffffffffffffff821117156106e3576106e261068c565b5b80604052505050565b60006106f6610631565b905061070282826106bb565b919050565b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b600061073282610707565b9050919050565b61074281610727565b811461074d57600080fd5b50565b60008135905061075f81610739565b92915050565b60008115159050919050565b61077a81610765565b811461078557600080fd5b50565b60008135905061079781610771565b92915050565b600060e082840312156107b3576107b2610676565b5b6107bd60e06106ec565b905060006107cd84828501610750565b60008301525060206107e184828501610661565b60208301525060406107f584828501610750565b604083015250606061080984828501610661565b606083015250608061081d84828501610788565b60808301525060a061083184828501610661565b60a08301525060c061084584828501610661565b60c08301525092915050565b60006080828403121561086757610866610676565b5b61087160806106ec565b9050600061088184828501610661565b600083015250602061089584828501610661565b60208301525060406108a984828501610661565b60408301525060606108bd84828501610661565b60608301525092915050565b6000806000806101a085870312156108e4576108e361063b565b5b60006108f287828801610661565b94505060206109038782880161079d565b93505061010061091587828801610661565b92505061012061092787828801610851565b91505092959194509250565b600081519050919050565b600082825260208201905092915050565b60005b8381101561096d578082015181840152602081019050610952565b60008484015250505050565b600061098482610933565b61098e818561093e565b935061099e81856020860161094f565b6109a78161067b565b840191505092915050565b600060208201905081810360008301526109cc8184610979565b905092915050565b600081519050919050565b600082825260208201905092915050565b60006109fb826109d4565b610a0581856109df565b9350610a1581856020860161094f565b610a1e8161067b565b840191505092915050565b60006020820190508181036000830152610a4381846109f0565b905092915050565b600081905092915050565b7f646174613a6170706c69636174696f6e2f6a736f6e3b6261736536342c000000600082015250565b6000610a8c601d83610a4b565b9150610a9782610a56565b601d82019050919050565b6000610aad82610933565b610ab78185610a4b565b9350610ac781856020860161094f565b80840191505092915050565b6000610ade82610a7f565b9150610aea8284610aa2565b915081905092915050565b7f7b22746f6b656e5f6964223a2200000000000000000000000000000000000000600082015250565b6000610b2b600d83610a4b565b9150610b3682610af5565b600d82019050919050565b7f222c22696d616765223a202268747470733a2f2f6261646765732e6d6f6f6e7360008201527f747265616d2e746f2f746573742f7374616b696e675f6c6f676f2e706e672200602082015250565b6000610b9d603f83610a4b565b9150610ba882610b41565b603f82019050919050565b7f2c22726573756c745f76657273696f6e223a312c22617474726962757465732260008201527f3a205b0000000000000000000000000000000000000000000000000000000000602082015250565b6000610c0f602383610a4b565b9150610c1a82610bb3565b602382019050919050565b6000610c3082610b1e565b9150610c3c8284610aa2565b9150610c4782610b90565b9150610c5282610c02565b915081905092915050565b600081905092915050565b6000610c73826109d4565b610c7d8185610c5d565b9350610c8d81856020860161094f565b80840191505092915050565b7f7b2274726169745f74797065223a22506f6f6c204944222c2276616c7565223a60008201527f2200000000000000000000000000000000000000000000000000000000000000602082015250565b6000610cf5602183610a4b565b9150610d0082610c99565b602182019050919050565b7f227d000000000000000000000000000000000000000000000000000000000000600082015250565b6000610d41600283610a4b565b9150610d4c82610d0b565b600282019050919050565b6000610d638285610c68565b9150610d6e82610ce8565b9150610d7a8284610aa2565b9150610d8582610d34565b91508190509392505050565b7f2c00000000000000000000000000000000000000000000000000000000000000600082015250565b6000610dc7600183610a4b565b9150610dd282610d91565b600182019050919050565b6000610de98286610c68565b9150610df482610dba565b9150610e008285610aa2565b9150610e0c8284610aa2565b9150610e1782610d34565b9150819050949350505050565b7f2c7b22646973706c61795f74797065223a226e756d626572222c22747261697460008201527f5f74797065223a225374616b6564206174222c2276616c7565223a0000000000602082015250565b6000610e80603b83610a4b565b9150610e8b82610e24565b603b82019050919050565b7f7d00000000000000000000000000000000000000000000000000000000000000600082015250565b6000610ecc600183610a4b565b9150610ed782610e96565b600182019050919050565b6000610eee8285610c68565b9150610ef982610e73565b9150610f058284610aa2565b9150610f1082610ebf565b91508190509392505050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b6000610f5682610640565b9150610f6183610640565b9250828201905080821115610f7957610f78610f1c565b5b92915050565b7f2c7b22646973706c61795f74797065223a226e756d626572222c22747261697460008201527f5f74797065223a224c6f636b75702065787069726573206174222c2276616c7560208201527f65223a0000000000000000000000000000000000000000000000000000000000604082015250565b6000611001604383610a4b565b915061100c82610f7f565b604382019050919050565b60006110238285610c68565b915061102e82610ff4565b915061103a8284610aa2565b915061104582610ebf565b91508190509392505050565b7f5d7d000000000000000000000000000000000000000000000000000000000000600082015250565b6000611087600283610a4b565b915061109282611051565b600282019050919050565b60006110a98284610c68565b91506110b48261107a565b915081905092915050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601260045260246000fd5b60006110f982610640565b915061110483610640565b925082611114576111136110bf565b5b828204905092915050565b600061112a82610640565b915061113583610640565b925082820261114381610640565b9150828204841483151761115a57611159610f1c565b5b509291505056fe4142434445464748494a4b4c4d4e4f505152535455565758595a6162636465666768696a6b6c6d6e6f707172737475767778797a303132333435363738392b2f7b2274726169745f74797065223a225374616b656420746f6b656e204944222c2276616c7565223a227b2274726169745f74797065223a225374616b656420616d6f756e74222c2276616c7565223a22a26469706673582212208dc98b0ff747482f9c2e6e6502901246f7f29706d998c5282c75236fbf10cdfd64736f6c63430008180033",
+	ABI: "[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amountOrTokenID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"stakeTimestamp\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"unstakeInitiatedAt\",\"type\":\"uint256\"}],\"internalType\":\"structPosition\",\"name\":\"position\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"address\",\"name\":\"administrator\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenType\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenID\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"transferable\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"lockupSeconds\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"cooldownSeconds\",\"type\":\"uint256\"}],\"internalType\":\"structStakingPool\",\"name\":\"pool\",\"type\":\"tuple\"}],\"name\":\"metadata\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amountOrTokenID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"stakeTimestamp\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"unstakeInitiatedAt\",\"type\":\"uint256\"}],\"internalType\":\"structPosition\",\"name\":\"position\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"address\",\"name\":\"administrator\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenType\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenID\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"transferable\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"lockupSeconds\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"cooldownSeconds\",\"type\":\"uint256\"}],\"internalType\":\"structStakingPool\",\"name\":\"pool\",\"type\":\"tuple\"}],\"name\":\"metadataBytes\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"positionTokenID\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"poolID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amountOrTokenID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"stakeTimestamp\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"unstakeInitiatedAt\",\"type\":\"uint256\"}],\"internalType\":\"structPosition\",\"name\":\"position\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"address\",\"name\":\"administrator\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenType\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenID\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"transferable\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"lockupSeconds\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"cooldownSeconds\",\"type\":\"uint256\"}],\"internalType\":\"structStakingPool\",\"name\":\"pool\",\"type\":\"tuple\"}],\"name\":\"metadataJSON\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"pure\",\"type\":\"function\"}]",
+	Bin: "0x608060405234801561001057600080fd5b5061120c806100206000396000f3fe608060405234801561001057600080fd5b50600436106100415760003560e01c8063239bdf6c14610046578063721ac18a146100765780637b2f34ff146100a6575b600080fd5b610060600480360381019061005b91906108c4565b6100d6565b60405161006d9190610997565b60405180910390f35b610090600480360381019061008b91906108c4565b6100ec565b60405161009d9190610a0e565b60405180910390f35b6100c060048036038101906100bb91906108c4565b61025c565b6040516100cd9190610997565b60405180910390f35b60606100e38484846100ec565b90509392505050565b606060006100f985610299565b6040516020016101099190610b9c565b6040516020818303038152906040529050806101288560000151610299565b604051602001610139929190610cce565b6040516020818303038152906040529050806102d1846020015114610176576040518060600160405280602781526020016111b060279139610190565b604051806060016040528060298152602001611187602991395b61019d8660200151610299565b6040516020016101af93929190610d54565b6040516020818303038152906040529050806101ce8560400151610299565b6040516020016101df929190610e59565b60405160208183030381529060405290508061020d8460a0015186604001516102089190610ec2565b610299565b60405160200161021e929190610f8e565b6040516020818303038152906040529050806040516020016102409190611014565b6040516020818303038152906040529050809150509392505050565b606061027161026c8585856100ec565b610367565b6040516020016102819190611082565b60405160208183030381529060405290509392505050565b6060600060016102a8846104d9565b01905060008167ffffffffffffffff8111156102c7576102c6610687565b5b6040519080825280601f01601f1916602001820160405280156102f95781602001600182028036833780820191505090505b509050600082602001820190505b60011561035c578080600190039150507f3031323334353637383961626364656600000000000000000000000000000000600a86061a8153600a85816103505761034f6110a4565b5b04945060008503610307575b819350505050919050565b60606000825103610389576040518060200160405280600081525090506104d4565b600060405180606001604052806040815260200161114760409139905060006003600285516103b89190610ec2565b6103c291906110d3565b60046103ce9190611104565b67ffffffffffffffff8111156103e7576103e6610687565b5b6040519080825280601f01601f1916602001820160405280156104195781602001600182028036833780820191505090505b50905060018201602082018586518701602081018051600082525b8284101561048f576003840193508351603f8160121c168701518653600186019550603f81600c1c168701518653600186019550603f8160061c168701518653600186019550603f8116870151865360018601955050610434565b80825260038a5106600181146104ac57600281146104bf576104c7565b603d6001870353603d60028703536104c7565b603d60018703535b5050505050505080925050505b919050565b600080600090507a184f03e93ff9f4daa797ed6e38ed64bf6a1f0100000000000000008310610537577a184f03e93ff9f4daa797ed6e38ed64bf6a1f010000000000000000838161052d5761052c6110a4565b5b0492506040810190505b6d04ee2d6d415b85acef81000000008310610574576d04ee2d6d415b85acef8100000000838161056a576105696110a4565b5b0492506020810190505b662386f26fc1000083106105a357662386f26fc100008381610599576105986110a4565b5b0492506010810190505b6305f5e10083106105cc576305f5e10083816105c2576105c16110a4565b5b0492506008810190505b61271083106105f15761271083816105e7576105e66110a4565b5b0492506004810190505b60648310610614576064838161060a576106096110a4565b5b0492506002810190505b600a8310610623576001810190505b80915050919050565b6000604051905090565b600080fd5b6000819050919050565b61064e8161063b565b811461065957600080fd5b50565b60008135905061066b81610645565b92915050565b600080fd5b6000601f19601f8301169050919050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b6106bf82610676565b810181811067ffffffffffffffff821117156106de576106dd610687565b5b80604052505050565b60006106f161062c565b90506106fd82826106b6565b919050565b60006080828403121561071857610717610671565b5b61072260806106e7565b905060006107328482850161065c565b60008301525060206107468482850161065c565b602083015250604061075a8482850161065c565b604083015250606061076e8482850161065c565b60608301525092915050565b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b60006107a58261077a565b9050919050565b6107b58161079a565b81146107c057600080fd5b50565b6000813590506107d2816107ac565b92915050565b60008115159050919050565b6107ed816107d8565b81146107f857600080fd5b50565b60008135905061080a816107e4565b92915050565b600060e0828403121561082657610825610671565b5b61083060e06106e7565b90506000610840848285016107c3565b60008301525060206108548482850161065c565b6020830152506040610868848285016107c3565b604083015250606061087c8482850161065c565b6060830152506080610890848285016107fb565b60808301525060a06108a48482850161065c565b60a08301525060c06108b88482850161065c565b60c08301525092915050565b600080600061018084860312156108de576108dd610636565b5b60006108ec8682870161065c565b93505060206108fd86828701610702565b92505060a061090e86828701610810565b9150509250925092565b600081519050919050565b600082825260208201905092915050565b60005b83811015610952578082015181840152602081019050610937565b60008484015250505050565b600061096982610918565b6109738185610923565b9350610983818560208601610934565b61098c81610676565b840191505092915050565b600060208201905081810360008301526109b1818461095e565b905092915050565b600081519050919050565b600082825260208201905092915050565b60006109e0826109b9565b6109ea81856109c4565b93506109fa818560208601610934565b610a0381610676565b840191505092915050565b60006020820190508181036000830152610a2881846109d5565b905092915050565b600081905092915050565b7f7b22746f6b656e5f6964223a2200000000000000000000000000000000000000600082015250565b6000610a71600d83610a30565b9150610a7c82610a3b565b600d82019050919050565b6000610a9282610918565b610a9c8185610a30565b9350610aac818560208601610934565b80840191505092915050565b7f222c22696d616765223a202268747470733a2f2f6261646765732e6d6f6f6e7360008201527f747265616d2e746f2f746573742f7374616b696e675f6c6f676f2e706e672200602082015250565b6000610b14603f83610a30565b9150610b1f82610ab8565b603f82019050919050565b7f2c22726573756c745f76657273696f6e223a312c22617474726962757465732260008201527f3a205b0000000000000000000000000000000000000000000000000000000000602082015250565b6000610b86602383610a30565b9150610b9182610b2a565b602382019050919050565b6000610ba782610a64565b9150610bb38284610a87565b9150610bbe82610b07565b9150610bc982610b79565b915081905092915050565b600081905092915050565b6000610bea826109b9565b610bf48185610bd4565b9350610c04818560208601610934565b80840191505092915050565b7f7b2274726169745f74797065223a22506f6f6c204944222c2276616c7565223a60008201527f2200000000000000000000000000000000000000000000000000000000000000602082015250565b6000610c6c602183610a30565b9150610c7782610c10565b602182019050919050565b7f227d000000000000000000000000000000000000000000000000000000000000600082015250565b6000610cb8600283610a30565b9150610cc382610c82565b600282019050919050565b6000610cda8285610bdf565b9150610ce582610c5f565b9150610cf18284610a87565b9150610cfc82610cab565b91508190509392505050565b7f2c00000000000000000000000000000000000000000000000000000000000000600082015250565b6000610d3e600183610a30565b9150610d4982610d08565b600182019050919050565b6000610d608286610bdf565b9150610d6b82610d31565b9150610d778285610a87565b9150610d838284610a87565b9150610d8e82610cab565b9150819050949350505050565b7f2c7b22646973706c61795f74797065223a226e756d626572222c22747261697460008201527f5f74797065223a225374616b6564206174222c2276616c7565223a0000000000602082015250565b6000610df7603b83610a30565b9150610e0282610d9b565b603b82019050919050565b7f7d00000000000000000000000000000000000000000000000000000000000000600082015250565b6000610e43600183610a30565b9150610e4e82610e0d565b600182019050919050565b6000610e658285610bdf565b9150610e7082610dea565b9150610e7c8284610a87565b9150610e8782610e36565b91508190509392505050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b6000610ecd8261063b565b9150610ed88361063b565b9250828201905080821115610ef057610eef610e93565b5b92915050565b7f2c7b22646973706c61795f74797065223a226e756d626572222c22747261697460008201527f5f74797065223a224c6f636b75702065787069726573206174222c2276616c7560208201527f65223a0000000000000000000000000000000000000000000000000000000000604082015250565b6000610f78604383610a30565b9150610f8382610ef6565b604382019050919050565b6000610f9a8285610bdf565b9150610fa582610f6b565b9150610fb18284610a87565b9150610fbc82610e36565b91508190509392505050565b7f5d7d000000000000000000000000000000000000000000000000000000000000600082015250565b6000610ffe600283610a30565b915061100982610fc8565b600282019050919050565b60006110208284610bdf565b915061102b82610ff1565b915081905092915050565b7f646174613a6170706c69636174696f6e2f6a736f6e3b6261736536342c000000600082015250565b600061106c601d83610a30565b915061107782611036565b601d82019050919050565b600061108d8261105f565b91506110998284610a87565b915081905092915050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601260045260246000fd5b60006110de8261063b565b91506110e98361063b565b9250826110f9576110f86110a4565b5b828204905092915050565b600061110f8261063b565b915061111a8361063b565b92508282026111288161063b565b9150828204841483151761113f5761113e610e93565b5b509291505056fe4142434445464748494a4b4c4d4e4f505152535455565758595a6162636465666768696a6b6c6d6e6f707172737475767778797a303132333435363738392b2f7b2274726169745f74797065223a225374616b656420746f6b656e204944222c2276616c7565223a227b2274726169745f74797065223a225374616b656420616d6f756e74222c2276616c7565223a22a26469706673582212201ba45e687da3ccb740445486ef2bae091e5dc525110f352658f7c961a8db363e64736f6c63430008180033",
 }
 
 // PositionMetadataABI is the input ABI used to generate the binding from.
@@ -237,12 +237,12 @@ func (_PositionMetadata *PositionMetadataTransactorRaw) Transact(opts *bind.Tran
 	return _PositionMetadata.Contract.contract.Transact(opts, method, params...)
 }
 
-// Metadata is a free data retrieval call binding the contract method 0x2a0ab0e8.
+// Metadata is a free data retrieval call binding the contract method 0x7b2f34ff.
 //
-// Solidity: function metadata(uint256 poolID, (address,uint256,address,uint256,bool,uint256,uint256) pool, uint256 positionTokenID, (uint256,uint256,uint256,uint256) position) pure returns(string)
-func (_PositionMetadata *PositionMetadataCaller) Metadata(opts *bind.CallOpts, poolID *big.Int, pool StakingPool, positionTokenID *big.Int, position Position) (string, error) {
+// Solidity: function metadata(uint256 positionTokenID, (uint256,uint256,uint256,uint256) position, (address,uint256,address,uint256,bool,uint256,uint256) pool) pure returns(string)
+func (_PositionMetadata *PositionMetadataCaller) Metadata(opts *bind.CallOpts, positionTokenID *big.Int, position Position, pool StakingPool) (string, error) {
 	var out []interface{}
-	err := _PositionMetadata.contract.Call(opts, &out, "metadata", poolID, pool, positionTokenID, position)
+	err := _PositionMetadata.contract.Call(opts, &out, "metadata", positionTokenID, position, pool)
 
 	if err != nil {
 		return *new(string), err
@@ -254,26 +254,26 @@ func (_PositionMetadata *PositionMetadataCaller) Metadata(opts *bind.CallOpts, p
 
 }
 
-// Metadata is a free data retrieval call binding the contract method 0x2a0ab0e8.
+// Metadata is a free data retrieval call binding the contract method 0x7b2f34ff.
 //
-// Solidity: function metadata(uint256 poolID, (address,uint256,address,uint256,bool,uint256,uint256) pool, uint256 positionTokenID, (uint256,uint256,uint256,uint256) position) pure returns(string)
-func (_PositionMetadata *PositionMetadataSession) Metadata(poolID *big.Int, pool StakingPool, positionTokenID *big.Int, position Position) (string, error) {
-	return _PositionMetadata.Contract.Metadata(&_PositionMetadata.CallOpts, poolID, pool, positionTokenID, position)
+// Solidity: function metadata(uint256 positionTokenID, (uint256,uint256,uint256,uint256) position, (address,uint256,address,uint256,bool,uint256,uint256) pool) pure returns(string)
+func (_PositionMetadata *PositionMetadataSession) Metadata(positionTokenID *big.Int, position Position, pool StakingPool) (string, error) {
+	return _PositionMetadata.Contract.Metadata(&_PositionMetadata.CallOpts, positionTokenID, position, pool)
 }
 
-// Metadata is a free data retrieval call binding the contract method 0x2a0ab0e8.
+// Metadata is a free data retrieval call binding the contract method 0x7b2f34ff.
 //
-// Solidity: function metadata(uint256 poolID, (address,uint256,address,uint256,bool,uint256,uint256) pool, uint256 positionTokenID, (uint256,uint256,uint256,uint256) position) pure returns(string)
-func (_PositionMetadata *PositionMetadataCallerSession) Metadata(poolID *big.Int, pool StakingPool, positionTokenID *big.Int, position Position) (string, error) {
-	return _PositionMetadata.Contract.Metadata(&_PositionMetadata.CallOpts, poolID, pool, positionTokenID, position)
+// Solidity: function metadata(uint256 positionTokenID, (uint256,uint256,uint256,uint256) position, (address,uint256,address,uint256,bool,uint256,uint256) pool) pure returns(string)
+func (_PositionMetadata *PositionMetadataCallerSession) Metadata(positionTokenID *big.Int, position Position, pool StakingPool) (string, error) {
+	return _PositionMetadata.Contract.Metadata(&_PositionMetadata.CallOpts, positionTokenID, position, pool)
 }
 
-// MetadataBytes is a free data retrieval call binding the contract method 0x3fcb348b.
+// MetadataBytes is a free data retrieval call binding the contract method 0x721ac18a.
 //
-// Solidity: function metadataBytes(uint256 , (address,uint256,address,uint256,bool,uint256,uint256) pool, uint256 positionTokenID, (uint256,uint256,uint256,uint256) position) pure returns(bytes)
-func (_PositionMetadata *PositionMetadataCaller) MetadataBytes(opts *bind.CallOpts, arg0 *big.Int, pool StakingPool, positionTokenID *big.Int, position Position) ([]byte, error) {
+// Solidity: function metadataBytes(uint256 positionTokenID, (uint256,uint256,uint256,uint256) position, (address,uint256,address,uint256,bool,uint256,uint256) pool) pure returns(bytes)
+func (_PositionMetadata *PositionMetadataCaller) MetadataBytes(opts *bind.CallOpts, positionTokenID *big.Int, position Position, pool StakingPool) ([]byte, error) {
 	var out []interface{}
-	err := _PositionMetadata.contract.Call(opts, &out, "metadataBytes", arg0, pool, positionTokenID, position)
+	err := _PositionMetadata.contract.Call(opts, &out, "metadataBytes", positionTokenID, position, pool)
 
 	if err != nil {
 		return *new([]byte), err
@@ -285,26 +285,26 @@ func (_PositionMetadata *PositionMetadataCaller) MetadataBytes(opts *bind.CallOp
 
 }
 
-// MetadataBytes is a free data retrieval call binding the contract method 0x3fcb348b.
+// MetadataBytes is a free data retrieval call binding the contract method 0x721ac18a.
 //
-// Solidity: function metadataBytes(uint256 , (address,uint256,address,uint256,bool,uint256,uint256) pool, uint256 positionTokenID, (uint256,uint256,uint256,uint256) position) pure returns(bytes)
-func (_PositionMetadata *PositionMetadataSession) MetadataBytes(arg0 *big.Int, pool StakingPool, positionTokenID *big.Int, position Position) ([]byte, error) {
-	return _PositionMetadata.Contract.MetadataBytes(&_PositionMetadata.CallOpts, arg0, pool, positionTokenID, position)
+// Solidity: function metadataBytes(uint256 positionTokenID, (uint256,uint256,uint256,uint256) position, (address,uint256,address,uint256,bool,uint256,uint256) pool) pure returns(bytes)
+func (_PositionMetadata *PositionMetadataSession) MetadataBytes(positionTokenID *big.Int, position Position, pool StakingPool) ([]byte, error) {
+	return _PositionMetadata.Contract.MetadataBytes(&_PositionMetadata.CallOpts, positionTokenID, position, pool)
 }
 
-// MetadataBytes is a free data retrieval call binding the contract method 0x3fcb348b.
+// MetadataBytes is a free data retrieval call binding the contract method 0x721ac18a.
 //
-// Solidity: function metadataBytes(uint256 , (address,uint256,address,uint256,bool,uint256,uint256) pool, uint256 positionTokenID, (uint256,uint256,uint256,uint256) position) pure returns(bytes)
-func (_PositionMetadata *PositionMetadataCallerSession) MetadataBytes(arg0 *big.Int, pool StakingPool, positionTokenID *big.Int, position Position) ([]byte, error) {
-	return _PositionMetadata.Contract.MetadataBytes(&_PositionMetadata.CallOpts, arg0, pool, positionTokenID, position)
+// Solidity: function metadataBytes(uint256 positionTokenID, (uint256,uint256,uint256,uint256) position, (address,uint256,address,uint256,bool,uint256,uint256) pool) pure returns(bytes)
+func (_PositionMetadata *PositionMetadataCallerSession) MetadataBytes(positionTokenID *big.Int, position Position, pool StakingPool) ([]byte, error) {
+	return _PositionMetadata.Contract.MetadataBytes(&_PositionMetadata.CallOpts, positionTokenID, position, pool)
 }
 
-// MetadataJSON is a free data retrieval call binding the contract method 0xc034b724.
+// MetadataJSON is a free data retrieval call binding the contract method 0x239bdf6c.
 //
-// Solidity: function metadataJSON(uint256 poolID, (address,uint256,address,uint256,bool,uint256,uint256) pool, uint256 positionTokenID, (uint256,uint256,uint256,uint256) position) pure returns(string)
-func (_PositionMetadata *PositionMetadataCaller) MetadataJSON(opts *bind.CallOpts, poolID *big.Int, pool StakingPool, positionTokenID *big.Int, position Position) (string, error) {
+// Solidity: function metadataJSON(uint256 positionTokenID, (uint256,uint256,uint256,uint256) position, (address,uint256,address,uint256,bool,uint256,uint256) pool) pure returns(string)
+func (_PositionMetadata *PositionMetadataCaller) MetadataJSON(opts *bind.CallOpts, positionTokenID *big.Int, position Position, pool StakingPool) (string, error) {
 	var out []interface{}
-	err := _PositionMetadata.contract.Call(opts, &out, "metadataJSON", poolID, pool, positionTokenID, position)
+	err := _PositionMetadata.contract.Call(opts, &out, "metadataJSON", positionTokenID, position, pool)
 
 	if err != nil {
 		return *new(string), err
@@ -316,18 +316,18 @@ func (_PositionMetadata *PositionMetadataCaller) MetadataJSON(opts *bind.CallOpt
 
 }
 
-// MetadataJSON is a free data retrieval call binding the contract method 0xc034b724.
+// MetadataJSON is a free data retrieval call binding the contract method 0x239bdf6c.
 //
-// Solidity: function metadataJSON(uint256 poolID, (address,uint256,address,uint256,bool,uint256,uint256) pool, uint256 positionTokenID, (uint256,uint256,uint256,uint256) position) pure returns(string)
-func (_PositionMetadata *PositionMetadataSession) MetadataJSON(poolID *big.Int, pool StakingPool, positionTokenID *big.Int, position Position) (string, error) {
-	return _PositionMetadata.Contract.MetadataJSON(&_PositionMetadata.CallOpts, poolID, pool, positionTokenID, position)
+// Solidity: function metadataJSON(uint256 positionTokenID, (uint256,uint256,uint256,uint256) position, (address,uint256,address,uint256,bool,uint256,uint256) pool) pure returns(string)
+func (_PositionMetadata *PositionMetadataSession) MetadataJSON(positionTokenID *big.Int, position Position, pool StakingPool) (string, error) {
+	return _PositionMetadata.Contract.MetadataJSON(&_PositionMetadata.CallOpts, positionTokenID, position, pool)
 }
 
-// MetadataJSON is a free data retrieval call binding the contract method 0xc034b724.
+// MetadataJSON is a free data retrieval call binding the contract method 0x239bdf6c.
 //
-// Solidity: function metadataJSON(uint256 poolID, (address,uint256,address,uint256,bool,uint256,uint256) pool, uint256 positionTokenID, (uint256,uint256,uint256,uint256) position) pure returns(string)
-func (_PositionMetadata *PositionMetadataCallerSession) MetadataJSON(poolID *big.Int, pool StakingPool, positionTokenID *big.Int, position Position) (string, error) {
-	return _PositionMetadata.Contract.MetadataJSON(&_PositionMetadata.CallOpts, poolID, pool, positionTokenID, position)
+// Solidity: function metadataJSON(uint256 positionTokenID, (uint256,uint256,uint256,uint256) position, (address,uint256,address,uint256,bool,uint256,uint256) pool) pure returns(string)
+func (_PositionMetadata *PositionMetadataCallerSession) MetadataJSON(positionTokenID *big.Int, position Position, pool StakingPool) (string, error) {
+	return _PositionMetadata.Contract.MetadataJSON(&_PositionMetadata.CallOpts, positionTokenID, position, pool)
 }
 
 func CreatePositionMetadataDeploymentCommand() *cobra.Command {
@@ -432,14 +432,12 @@ func CreateMetadataCommand() *cobra.Command {
 	var blockNumberRaw, fromAddressRaw string
 	var pending bool
 
-	var poolID *big.Int
-	var poolIDRaw string
-	var pool StakingPool
-	var poolRaw string
 	var positionTokenID *big.Int
 	var positionTokenIDRaw string
 	var position Position
 	var positionRaw string
+	var pool StakingPool
+	var poolRaw string
 
 	var capture0 string
 
@@ -453,31 +451,6 @@ func CreateMetadataCommand() *cobra.Command {
 				return fmt.Errorf("--contract is not a valid Ethereum address")
 			}
 			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if poolIDRaw == "" {
-				return fmt.Errorf("--pool-id argument not specified")
-			}
-			poolID = new(big.Int)
-			poolID.SetString(poolIDRaw, 0)
-
-			if poolRaw == "" {
-				return fmt.Errorf("--pool argument not specified")
-			} else if strings.HasPrefix(poolRaw, "@") {
-				filename := strings.TrimPrefix(poolRaw, "@")
-				contents, readErr := os.ReadFile(filename)
-				if readErr != nil {
-					return readErr
-				}
-				unmarshalErr := json.Unmarshal(contents, &pool)
-				if unmarshalErr != nil {
-					return unmarshalErr
-				}
-			} else {
-				unmarshalErr := json.Unmarshal([]byte(poolRaw), &pool)
-				if unmarshalErr != nil {
-					return unmarshalErr
-				}
-			}
 
 			if positionTokenIDRaw == "" {
 				return fmt.Errorf("--position-token-id argument not specified")
@@ -499,6 +472,25 @@ func CreateMetadataCommand() *cobra.Command {
 				}
 			} else {
 				unmarshalErr := json.Unmarshal([]byte(positionRaw), &position)
+				if unmarshalErr != nil {
+					return unmarshalErr
+				}
+			}
+
+			if poolRaw == "" {
+				return fmt.Errorf("--pool argument not specified")
+			} else if strings.HasPrefix(poolRaw, "@") {
+				filename := strings.TrimPrefix(poolRaw, "@")
+				contents, readErr := os.ReadFile(filename)
+				if readErr != nil {
+					return readErr
+				}
+				unmarshalErr := json.Unmarshal(contents, &pool)
+				if unmarshalErr != nil {
+					return unmarshalErr
+				}
+			} else {
+				unmarshalErr := json.Unmarshal([]byte(poolRaw), &pool)
 				if unmarshalErr != nil {
 					return unmarshalErr
 				}
@@ -527,10 +519,9 @@ func CreateMetadataCommand() *cobra.Command {
 
 			var callErr error
 			capture0, callErr = session.Metadata(
-				poolID,
-				pool,
 				positionTokenID,
 				position,
+				pool,
 			)
 			if callErr != nil {
 				return callErr
@@ -549,10 +540,9 @@ func CreateMetadataCommand() *cobra.Command {
 	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
 	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
 
-	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
-	cmd.Flags().StringVar(&poolRaw, "pool", "", "pool argument (StakingPool)")
 	cmd.Flags().StringVar(&positionTokenIDRaw, "position-token-id", "", "position-token-id argument")
 	cmd.Flags().StringVar(&positionRaw, "position", "", "position argument (Position)")
+	cmd.Flags().StringVar(&poolRaw, "pool", "", "pool argument (StakingPool)")
 
 	return cmd
 }
@@ -564,14 +554,12 @@ func CreateMetadataBytesCommand() *cobra.Command {
 	var blockNumberRaw, fromAddressRaw string
 	var pending bool
 
-	var arg0 *big.Int
-	var arg0Raw string
-	var pool StakingPool
-	var poolRaw string
 	var positionTokenID *big.Int
 	var positionTokenIDRaw string
 	var position Position
 	var positionRaw string
+	var pool StakingPool
+	var poolRaw string
 
 	var capture0 []byte
 
@@ -585,31 +573,6 @@ func CreateMetadataBytesCommand() *cobra.Command {
 				return fmt.Errorf("--contract is not a valid Ethereum address")
 			}
 			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if arg0Raw == "" {
-				return fmt.Errorf("--arg-0 argument not specified")
-			}
-			arg0 = new(big.Int)
-			arg0.SetString(arg0Raw, 0)
-
-			if poolRaw == "" {
-				return fmt.Errorf("--pool argument not specified")
-			} else if strings.HasPrefix(poolRaw, "@") {
-				filename := strings.TrimPrefix(poolRaw, "@")
-				contents, readErr := os.ReadFile(filename)
-				if readErr != nil {
-					return readErr
-				}
-				unmarshalErr := json.Unmarshal(contents, &pool)
-				if unmarshalErr != nil {
-					return unmarshalErr
-				}
-			} else {
-				unmarshalErr := json.Unmarshal([]byte(poolRaw), &pool)
-				if unmarshalErr != nil {
-					return unmarshalErr
-				}
-			}
 
 			if positionTokenIDRaw == "" {
 				return fmt.Errorf("--position-token-id argument not specified")
@@ -631,6 +594,25 @@ func CreateMetadataBytesCommand() *cobra.Command {
 				}
 			} else {
 				unmarshalErr := json.Unmarshal([]byte(positionRaw), &position)
+				if unmarshalErr != nil {
+					return unmarshalErr
+				}
+			}
+
+			if poolRaw == "" {
+				return fmt.Errorf("--pool argument not specified")
+			} else if strings.HasPrefix(poolRaw, "@") {
+				filename := strings.TrimPrefix(poolRaw, "@")
+				contents, readErr := os.ReadFile(filename)
+				if readErr != nil {
+					return readErr
+				}
+				unmarshalErr := json.Unmarshal(contents, &pool)
+				if unmarshalErr != nil {
+					return unmarshalErr
+				}
+			} else {
+				unmarshalErr := json.Unmarshal([]byte(poolRaw), &pool)
 				if unmarshalErr != nil {
 					return unmarshalErr
 				}
@@ -659,10 +641,9 @@ func CreateMetadataBytesCommand() *cobra.Command {
 
 			var callErr error
 			capture0, callErr = session.MetadataBytes(
-				arg0,
-				pool,
 				positionTokenID,
 				position,
+				pool,
 			)
 			if callErr != nil {
 				return callErr
@@ -681,10 +662,9 @@ func CreateMetadataBytesCommand() *cobra.Command {
 	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
 	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
 
-	cmd.Flags().StringVar(&arg0Raw, "arg-0", "", "arg-0 argument")
-	cmd.Flags().StringVar(&poolRaw, "pool", "", "pool argument (StakingPool)")
 	cmd.Flags().StringVar(&positionTokenIDRaw, "position-token-id", "", "position-token-id argument")
 	cmd.Flags().StringVar(&positionRaw, "position", "", "position argument (Position)")
+	cmd.Flags().StringVar(&poolRaw, "pool", "", "pool argument (StakingPool)")
 
 	return cmd
 }
@@ -696,14 +676,12 @@ func CreateMetadataJsonCommand() *cobra.Command {
 	var blockNumberRaw, fromAddressRaw string
 	var pending bool
 
-	var poolID *big.Int
-	var poolIDRaw string
-	var pool StakingPool
-	var poolRaw string
 	var positionTokenID *big.Int
 	var positionTokenIDRaw string
 	var position Position
 	var positionRaw string
+	var pool StakingPool
+	var poolRaw string
 
 	var capture0 string
 
@@ -717,31 +695,6 @@ func CreateMetadataJsonCommand() *cobra.Command {
 				return fmt.Errorf("--contract is not a valid Ethereum address")
 			}
 			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if poolIDRaw == "" {
-				return fmt.Errorf("--pool-id argument not specified")
-			}
-			poolID = new(big.Int)
-			poolID.SetString(poolIDRaw, 0)
-
-			if poolRaw == "" {
-				return fmt.Errorf("--pool argument not specified")
-			} else if strings.HasPrefix(poolRaw, "@") {
-				filename := strings.TrimPrefix(poolRaw, "@")
-				contents, readErr := os.ReadFile(filename)
-				if readErr != nil {
-					return readErr
-				}
-				unmarshalErr := json.Unmarshal(contents, &pool)
-				if unmarshalErr != nil {
-					return unmarshalErr
-				}
-			} else {
-				unmarshalErr := json.Unmarshal([]byte(poolRaw), &pool)
-				if unmarshalErr != nil {
-					return unmarshalErr
-				}
-			}
 
 			if positionTokenIDRaw == "" {
 				return fmt.Errorf("--position-token-id argument not specified")
@@ -763,6 +716,25 @@ func CreateMetadataJsonCommand() *cobra.Command {
 				}
 			} else {
 				unmarshalErr := json.Unmarshal([]byte(positionRaw), &position)
+				if unmarshalErr != nil {
+					return unmarshalErr
+				}
+			}
+
+			if poolRaw == "" {
+				return fmt.Errorf("--pool argument not specified")
+			} else if strings.HasPrefix(poolRaw, "@") {
+				filename := strings.TrimPrefix(poolRaw, "@")
+				contents, readErr := os.ReadFile(filename)
+				if readErr != nil {
+					return readErr
+				}
+				unmarshalErr := json.Unmarshal(contents, &pool)
+				if unmarshalErr != nil {
+					return unmarshalErr
+				}
+			} else {
+				unmarshalErr := json.Unmarshal([]byte(poolRaw), &pool)
 				if unmarshalErr != nil {
 					return unmarshalErr
 				}
@@ -791,10 +763,9 @@ func CreateMetadataJsonCommand() *cobra.Command {
 
 			var callErr error
 			capture0, callErr = session.MetadataJSON(
-				poolID,
-				pool,
 				positionTokenID,
 				position,
+				pool,
 			)
 			if callErr != nil {
 				return callErr
@@ -813,10 +784,9 @@ func CreateMetadataJsonCommand() *cobra.Command {
 	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
 	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
 
-	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
-	cmd.Flags().StringVar(&poolRaw, "pool", "", "pool argument (StakingPool)")
 	cmd.Flags().StringVar(&positionTokenIDRaw, "position-token-id", "", "position-token-id argument")
 	cmd.Flags().StringVar(&positionRaw, "position", "", "position argument (Position)")
+	cmd.Flags().StringVar(&poolRaw, "pool", "", "pool argument (StakingPool)")
 
 	return cmd
 }
