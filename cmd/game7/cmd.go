@@ -13,6 +13,7 @@ import (
 	"github.com/G7DAO/protocol/bindings/ArbitrumUpgradeExecutor"
 	"github.com/G7DAO/protocol/bindings/ERC20Inbox"
 	"github.com/G7DAO/protocol/bindings/Staker"
+	"github.com/G7DAO/protocol/bindings/PositionMetadata"
 	"github.com/G7DAO/protocol/bindings/TokenFaucet"
 	"github.com/G7DAO/protocol/bridge"
 
@@ -73,9 +74,12 @@ func CreateRootCommand() *cobra.Command {
 	stakerCmd := Staker.CreateStakerCommand()
 	stakerCmd.Use = "staker"
 
+        positionMetadataCmd := PositionMetadata.CreatePositionMetadataCommand()
+        positionMetadataCmd.Use = "staker-position-metadata"
+
 	mockCmd := CreateMockCommand()
 
-	rootCmd.AddCommand(completionCmd, versionCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd, accountsCmd, wrappedNativeTokenCmd, stakerCmd, mockCmd)
+	rootCmd.AddCommand(completionCmd, versionCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd, accountsCmd, wrappedNativeTokenCmd, stakerCmd, mockCmd, positionMetadataCmd)
 
 	// By default, cobra Command objects write to stderr. We have to forcibly set them to output to
 	// stdout.
