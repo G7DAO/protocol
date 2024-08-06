@@ -5,8 +5,11 @@ import { loadFixture, time } from '@nomicfoundation/hardhat-network-helpers';
 export async function setupFixture() {
     const [anyone, admin0, admin1, user0, user1, user2] = await ethers.getSigners();
 
+    const PositionMetadata = await ethers.getContractFactory('PositionMetadata');
+    const positionMetadata = await PositionMetadata.deploy();
+
     const Staker = await ethers.getContractFactory('Staker');
-    const staker = await Staker.deploy();
+    const staker = await Staker.deploy(await positionMetadata.getAddress());
 
     const ERC20 = await ethers.getContractFactory('MockERC20');
     const erc20 = await ERC20.deploy();
