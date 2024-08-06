@@ -92,6 +92,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
     error InitiateUnstakeFirst(uint256 cooldownSeconds);
     error LockupNotExpired(uint256 expiresAt);
     error PositionNotTransferable(uint256 positionTokenID);
+    error MetadataError();
 
     /// @notice Deploys a Staker contract. Note that the constructor doesn't do much as Staker contracts
     /// are permissionless.
@@ -466,6 +467,12 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         Position storage position = Positions[tokenId];
         StakingPool storage pool = Pools[position.poolID];
 
-        return PositionMetadata(positionMetadataAddress).metadata(tokenId, position, pool);
+        (bool success, bytes memory resultBytes) = positionMetadataAddress.staticcall(
+            abi.encodeCall(PositionMetadata.metadata, (tokenId, position, pool))
+        );
+        if (!success) {
+            revert MetadataError();
+        }
+        return abi.decode(resultBytes, (string));
     }
 }
