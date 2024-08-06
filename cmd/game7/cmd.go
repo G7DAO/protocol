@@ -12,8 +12,8 @@ import (
 	"github.com/G7DAO/protocol/bindings/ArbitrumL2CustomGateway"
 	"github.com/G7DAO/protocol/bindings/ArbitrumUpgradeExecutor"
 	"github.com/G7DAO/protocol/bindings/ERC20Inbox"
-	"github.com/G7DAO/protocol/bindings/Staker"
 	"github.com/G7DAO/protocol/bindings/PositionMetadata"
+	"github.com/G7DAO/protocol/bindings/Staker"
 	"github.com/G7DAO/protocol/bindings/TokenFaucet"
 	"github.com/G7DAO/protocol/bridge"
 
@@ -74,8 +74,8 @@ func CreateRootCommand() *cobra.Command {
 	stakerCmd := Staker.CreateStakerCommand()
 	stakerCmd.Use = "staker"
 
-        positionMetadataCmd := PositionMetadata.CreatePositionMetadataCommand()
-        positionMetadataCmd.Use = "staker-position-metadata"
+	positionMetadataCmd := PositionMetadata.CreatePositionMetadataCommand()
+	positionMetadataCmd.Use = "staker-metadata"
 
 	mockCmd := CreateMockCommand()
 
