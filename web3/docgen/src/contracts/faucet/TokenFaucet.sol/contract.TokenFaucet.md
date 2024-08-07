@@ -1,5 +1,5 @@
 # TokenFaucet
-[Git Source](https://github.com/G7DAO/protocol/blob/f319967a9c724fe4c96f2e162afd527a52929919/contracts/faucet/TokenFaucet.sol)
+[Git Source](https://github.com/G7DAO/protocol/blob/0d286772d26e7f355ea5f6d3e0323d2491e1ebca/contracts/faucet/TokenFaucet.sol)
 
 **Inherits:**
 Ownable

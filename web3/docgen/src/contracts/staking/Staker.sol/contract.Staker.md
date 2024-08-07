@@ -1,5 +1,5 @@
 # Staker
-[Git Source](https://github.com/G7DAO/protocol/blob/f319967a9c724fe4c96f2e162afd527a52929919/contracts/staking/Staker.sol)
+[Git Source](https://github.com/G7DAO/protocol/blob/0d286772d26e7f355ea5f6d3e0323d2491e1ebca/contracts/staking/Staker.sol)
 
 **Inherits:**
 ERC721Enumerable, ReentrancyGuard
@@ -45,6 +45,15 @@ uint256 public constant ERC721_TOKEN_TYPE = 721;
 
 ```solidity
 uint256 public constant ERC1155_TOKEN_TYPE = 1155;
+```
+
+
+### positionMetadataAddress
+Address of the contract that calculates position NFT metadata.
+
+
+```solidity
+address public immutable positionMetadataAddress;
 ```
 
 
@@ -110,7 +119,7 @@ are permissionless.
 
 
 ```solidity
-constructor() ERC721("Game7 Staker", "G7STAKER");
+constructor(address positionMetadata) ERC721("Game7 Staker", "G7STAKER");
 ```
 
 ### onERC721Received
@@ -289,24 +298,6 @@ expire before calling this method.
 function unstake(uint256 positionTokenID) external nonReentrant;
 ```
 
-### metadataBytes
-
-Generates the on-chain metadata for a given position on the Staker.
-
-
-```solidity
-function metadataBytes(uint256 positionTokenID) public view returns (bytes memory metadata);
-```
-
-### metadataJSON
-
-Returns a JSON string representing a position's on-chain metadata.
-
-
-```solidity
-function metadataJSON(uint256 positionTokenID) public view returns (string memory);
-```
-
 ### tokenURI
 
 Returns the ERC721 token URI for a position on the Staker contract, encoded as a data URI.
@@ -422,49 +413,9 @@ error LockupNotExpired(uint256 expiresAt);
 error PositionNotTransferable(uint256 positionTokenID);
 ```
 
-## Structs
-### StakingPool
-StakingPool represents a staking position that users can adopt.
-
-Anybody can permissionlessly create a staking pool on the Staker contract. The creator
-of a pool is automatically designated as its administrator. The current administrator of a pool
-can transfer its administration privileges to another account.
-
-The administrator of a staking pool is the only account that can change certain parameters
-of the pool, such as whether positions under that staking pool are transferable, the length of
-the lockup period for positions staked under that pool, and the length of the cooldown period for
-withdrawals for positions staked under that pool.
-
+### MetadataError
 
 ```solidity
-struct StakingPool {
-    address administrator;
-    uint256 tokenType;
-    address tokenAddress;
-    uint256 tokenID;
-    bool transferable;
-    uint256 lockupSeconds;
-    uint256 cooldownSeconds;
-}
-```
-
-### Position
-Position represents the parameters of a staking position:
-- the staking pool ID under which the deposit was made
-- the amount of tokens deposited under that staking pool (for non-ERC721 token types),
-or the tokenID for staking positions involving ERC721 tokens
-- the timestamp at which the deposit was made
-
-The address of the depositor is the owner of the ERC721 token representing this deposit, and
-is not stored within this struct.
-
-
-```solidity
-struct Position {
-    uint256 poolID;
-    uint256 amountOrTokenID;
-    uint256 stakeTimestamp;
-    uint256 unstakeInitiatedAt;
-}
+error MetadataError();
 ```
 

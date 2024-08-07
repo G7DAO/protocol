@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.24;
 
-import { Base64 } from "@openzeppelin/contracts/utils/Base64.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IERC721 } from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import { IERC721Receiver } from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
@@ -11,7 +10,9 @@ import { ERC721 } from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import { ERC721Enumerable } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
+
+import { StakingPool, Position } from "./data.sol";
+import { PositionMetadata } from "./PositionMetadata.sol";
 
 /**
  * @notice The Staker contract allows users to permissionlessly create staking pools by specifying various parameters
@@ -31,45 +32,6 @@ import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 contract Staker is ERC721Enumerable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
-    /**
-     * @notice StakingPool represents a staking position that users can adopt.
-     *
-     * @notice Anybody can permissionlessly create a staking pool on the Staker contract. The creator
-     * of a pool is automatically designated as its administrator. The current administrator of a pool
-     * can transfer its administration privileges to another account.
-     *
-     * @notice The administrator of a staking pool is the only account that can change certain parameters
-     * of the pool, such as whether positions under that staking pool are transferable, the length of
-     * the lockup period for positions staked under that pool, and the length of the cooldown period for
-     * withdrawals for positions staked under that pool.
-     */
-    struct StakingPool {
-        address administrator;
-        uint256 tokenType;
-        address tokenAddress;
-        uint256 tokenID;
-        bool transferable;
-        uint256 lockupSeconds;
-        uint256 cooldownSeconds;
-    }
-
-    /**
-     * @notice Position represents the parameters of a staking position:
-     * - the staking pool ID under which the deposit was made
-     * - the amount of tokens deposited under that staking pool (for non-ERC721 token types),
-     *   or the tokenID for staking positions involving ERC721 tokens
-     * - the timestamp at which the deposit was made
-     *
-     * @notice The address of the depositor is the owner of the ERC721 token representing this deposit, and
-     * is not stored within this struct.
-     */
-    struct Position {
-        uint256 poolID;
-        uint256 amountOrTokenID;
-        uint256 stakeTimestamp;
-        uint256 unstakeInitiatedAt;
-    }
-
     // Valid token types for StakingPool.tokenType.
     // We use this method instead of an enum to make it easier for users to remember the mapping from
     // these values to the actual types they represent.
@@ -77,6 +39,9 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
     uint256 public constant ERC20_TOKEN_TYPE = 20;
     uint256 public constant ERC721_TOKEN_TYPE = 721;
     uint256 public constant ERC1155_TOKEN_TYPE = 1155;
+
+    /// @notice Address of the contract that calculates position NFT metadata.
+    address public immutable positionMetadataAddress;
 
     /// @notice The total number of staking pools created on this contract.
     uint256 public TotalPools;
@@ -127,10 +92,13 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
     error InitiateUnstakeFirst(uint256 cooldownSeconds);
     error LockupNotExpired(uint256 expiresAt);
     error PositionNotTransferable(uint256 positionTokenID);
+    error MetadataError();
 
     /// @notice Deploys a Staker contract. Note that the constructor doesn't do much as Staker contracts
     /// are permissionless.
-    constructor() ERC721("Game7 Staker", "G7STAKER") {}
+    constructor(address positionMetadata) ERC721("Game7 Staker", "G7STAKER") {
+        positionMetadataAddress = positionMetadata;
+    }
 
     /// @notice Allows the Staker to receive ERC721 tokens through safeTransferFrom.
     function onERC721Received(address, address, uint256, bytes calldata) external pure returns (bytes4) {
@@ -496,64 +464,19 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         }
     }
 
-    /// @notice Generates the on-chain metadata for a given position on the Staker.
-    function metadataBytes(uint256 positionTokenID) public view returns (bytes memory metadata) {
-        _requireOwned(positionTokenID);
-
-        Position storage position = Positions[positionTokenID];
-        StakingPool storage pool = Pools[position.poolID];
-
-        // Preamble
-        metadata = abi.encodePacked(
-            '{"token_id":"',
-            Strings.toString(positionTokenID),
-            // TODO(zomglings): Change image URI
-            '","image": "https://badges.moonstream.to/test/staking_logo.png"',
-            ',"external_url":"https://game7.io"',
-            ',"metadata_version":1,"attributes": ['
-        );
-
-        metadata = abi.encodePacked(
-            metadata,
-            '{"trait_type":"Pool ID","value":"',
-            Strings.toString(position.poolID),
-            '"}'
-        );
-
-        metadata = abi.encodePacked(
-            metadata,
-            ",",
-            pool.tokenType == ERC721_TOKEN_TYPE
-                ? '{"trait_type":"Staked token ID","value":"'
-                : '{"trait_type":"Staked amount","value":"',
-            Strings.toString(position.amountOrTokenID),
-            '"}'
-        );
-
-        metadata = abi.encodePacked(
-            metadata,
-            ',{"display_type":"number","trait_type":"Staked at","value":',
-            Strings.toString(position.stakeTimestamp),
-            "}"
-        );
-
-        metadata = abi.encodePacked(
-            metadata,
-            ',{"display_type":"number","trait_type":"Lockup expires at","value":',
-            Strings.toString(position.stakeTimestamp + pool.lockupSeconds),
-            "}"
-        );
-
-        metadata = abi.encodePacked(metadata, "]}");
-    }
-
-    /// @notice Returns a JSON string representing a position's on-chain metadata.
-    function metadataJSON(uint256 positionTokenID) public view returns (string memory) {
-        return string(metadataBytes(positionTokenID));
-    }
-
     /// @notice Returns the ERC721 token URI for a position on the Staker contract, encoded as a data URI.
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
-        return string(abi.encodePacked("data:application/json;base64,", Base64.encode(metadataBytes(tokenId))));
+        _requireOwned(tokenId);
+
+        Position storage position = Positions[tokenId];
+        StakingPool storage pool = Pools[position.poolID];
+
+        (bool success, bytes memory resultBytes) = positionMetadataAddress.staticcall(
+            abi.encodeCall(PositionMetadata.metadata, (tokenId, position, pool))
+        );
+        if (!success) {
+            revert MetadataError();
+        }
+        return abi.decode(resultBytes, (string));
     }
 }
