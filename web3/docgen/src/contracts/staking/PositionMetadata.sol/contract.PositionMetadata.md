@@ -1,5 +1,5 @@
 # PositionMetadata
-[Git Source](https://github.com/G7DAO/protocol/blob/fccfcc8a0536e9213636bc700d12b3bd8562130f/contracts/staking/PositionMetadata.sol)
+[Git Source](https://github.com/G7DAO/protocol/blob/0d286772d26e7f355ea5f6d3e0323d2491e1ebca/contracts/staking/PositionMetadata.sol)
 
 
 ## Functions
@@ -7,7 +7,7 @@
 
 
 ```solidity
-function metadataBytes(uint256, StakingPool memory pool, uint256 positionTokenID, Position memory position)
+function metadataBytes(uint256 positionTokenID, Position memory position, StakingPool memory pool)
     public
     pure
     returns (bytes memory);
@@ -19,7 +19,7 @@ Returns a JSON string representing a position's on-chain metadata.
 
 
 ```solidity
-function metadataJSON(uint256 poolID, StakingPool memory pool, uint256 positionTokenID, Position memory position)
+function metadataJSON(uint256 positionTokenID, Position memory position, StakingPool memory pool)
     public
     pure
     returns (string memory);
@@ -29,7 +29,7 @@ function metadataJSON(uint256 poolID, StakingPool memory pool, uint256 positionT
 
 
 ```solidity
-function metadata(uint256 poolID, StakingPool memory pool, uint256 positionTokenID, Position memory position)
+function metadata(uint256 positionTokenID, Position memory position, StakingPool memory pool)
     public
     pure
     returns (string memory);
