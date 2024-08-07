@@ -1,5 +1,6 @@
 import { useQuery } from 'react-query'
 import { ethers } from 'ethers'
+import { ERC20_ABI } from '@/web3/ABI/erc20_abi'
 
 interface UseERC20BalanceProps {
   tokenAddress: string
@@ -15,19 +16,7 @@ const useERC20Balance = ({ tokenAddress, account, rpc }: UseERC20BalanceProps) =
         return '0'
       }
       const provider = new ethers.providers.JsonRpcProvider(rpc)
-      const ERC20Contract = new ethers.Contract(
-        tokenAddress,
-        [
-          {
-            constant: true,
-            inputs: [{ name: '_owner', type: 'address' }],
-            name: 'balanceOf',
-            outputs: [{ name: 'balance', type: 'uint256' }],
-            type: 'function'
-          }
-        ],
-        provider
-      )
+      const ERC20Contract = new ethers.Contract(tokenAddress, ERC20_ABI, provider)
 
       const balance = await ERC20Contract.balanceOf(account)
       return ethers.utils.formatEther(balance)
@@ -62,35 +51,7 @@ export const fetchERC20Allowance = async ({ tokenAddress, owner, spender, rpc }:
     return 0
   }
   const provider = new ethers.providers.JsonRpcProvider(rpc)
-  const ERC20Contract = new ethers.Contract(
-    tokenAddress,
-    [
-      {
-        constant: true,
-        inputs: [
-          {
-            name: '_owner',
-            type: 'address'
-          },
-          {
-            name: '_spender',
-            type: 'address'
-          }
-        ],
-        name: 'allowance',
-        outputs: [
-          {
-            name: '',
-            type: 'uint256'
-          }
-        ],
-        payable: false,
-        stateMutability: 'view',
-        type: 'function'
-      }
-    ],
-    provider
-  )
+  const ERC20Contract = new ethers.Contract(tokenAddress, ERC20_ABI, provider)
 
   const allowance = await ERC20Contract.allowance(owner, spender)
   const bigNumberValue = ethers.BigNumber.from(allowance._hex)
