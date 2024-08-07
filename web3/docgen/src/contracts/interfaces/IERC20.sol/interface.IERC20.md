@@ -1,5 +1,5 @@
 # IERC20
-[Git Source](https://github.com/G7DAO/protocol/blob/fccfcc8a0536e9213636bc700d12b3bd8562130f/contracts/interfaces/IERC20.sol)
+[Git Source](https://github.com/G7DAO/protocol/blob/f319967a9c724fe4c96f2e162afd527a52929919/contracts/interfaces/IERC20.sol)
 
 *Interface of the ERC20 standard as defined in the EIP.*
 

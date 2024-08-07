@@ -179,9 +179,13 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
      *
      * @notice This transaction allows for any subset of the pool configuration to be changed atomically.
      *
-     * @notice The `changeTransferability`, `changeLockup`, and `changeCooldown` arguments are used to indicate
-     * which parameters should be changed. If a parameter is not to be changed, the corresponding argument
-     * should be set to false and the corresponding value argument will be ignored regardless of its value.
+     * @param poolID The ID of the staking pool to update configuration of.
+     * @param changeTransferability Specifies whether the current call is updating the transferability of the pool or not. If this is false, then the value of the `transferable` argument will be ignored.
+     * @param transferable Whether or not the pool should be transferable. This argument is only applied if `changeTransferabiliy` is `true`.
+     * @param changeLockup Specifies whether the current call is updating the `lockupSeconds` configuration of the pool or not. If this is false, then the value of the `lockupSeconds` argument will be ignored.
+     * @param lockupSeconds The new value for the `lockupSeconds` member of the pool.  This argument is only applied if `changeLockup` is `true`.
+     * @param changeCooldown Specifies whether the current call is updating the `cooldownSeconds` configuration of the pool or not. If this is false, then the value of the `cooldownSeconds` argument will be ignored.
+     * @param cooldownSeconds The new value for the `cooldownSeconds` member of the pool.  This argument is only applied if `changeCooldown` is `true`.
      */
     function updatePoolConfiguration(
         uint256 poolID,

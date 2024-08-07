@@ -1,5 +1,5 @@
 # MockERC1155
-[Git Source](https://github.com/G7DAO/protocol/blob/fccfcc8a0536e9213636bc700d12b3bd8562130f/contracts/mock/tokens.sol)
+[Git Source](https://github.com/G7DAO/protocol/blob/f319967a9c724fe4c96f2e162afd527a52929919/contracts/mock/tokens.sol)
 
 **Inherits:**
 ERC1155
