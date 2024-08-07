@@ -1,5 +1,5 @@
 # WrappedNativeToken
-[Git Source](https://github.com/G7DAO/protocol/blob/a9a4c737dc96fb8aa41bd2bb8beb52a1877503f3/contracts/token/WrappedNativeToken.sol)
+[Git Source](https://github.com/G7DAO/protocol/blob/08f889b6e904fd8f9ecfb869fe3c5da80b02ad6c/contracts/token/WrappedNativeToken.sol)
 
 **Inherits:**
 [IERC20](/contracts/interfaces/IERC20.sol/interface.IERC20.md)

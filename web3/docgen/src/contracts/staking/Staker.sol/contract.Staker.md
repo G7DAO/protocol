@@ -1,5 +1,5 @@
 # Staker
-[Git Source](https://github.com/G7DAO/protocol/blob/a9a4c737dc96fb8aa41bd2bb8beb52a1877503f3/contracts/staking/Staker.sol)
+[Git Source](https://github.com/G7DAO/protocol/blob/08f889b6e904fd8f9ecfb869fe3c5da80b02ad6c/contracts/staking/Staker.sol)
 
 **Inherits:**
 ERC721Enumerable, ReentrancyGuard
@@ -169,10 +169,6 @@ Allows a pool administrator to modify the configuration of that pool.
 
 This transaction allows for any subset of the pool configuration to be changed atomically.
 
-The `changeTransferability`, `changeLockup`, and `changeCooldown` arguments are used to indicate
-which parameters should be changed. If a parameter is not to be changed, the corresponding argument
-should be set to false and the corresponding value argument will be ignored regardless of its value.
-
 
 ```solidity
 function updatePoolConfiguration(
@@ -185,6 +181,18 @@ function updatePoolConfiguration(
     uint256 cooldownSeconds
 ) external;
 ```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`poolID`|`uint256`|The ID of the staking pool to update configuration of.|
+|`changeTransferability`|`bool`|Specifies whether the current call is updating the transferability of the pool or not. If this is false, then the value of the `transferable` argument will be ignored.|
+|`transferable`|`bool`|Whether or not the pool should be transferable. This argument is only applied if `changeTransferabiliy` is `true`.|
+|`changeLockup`|`bool`|Specifies whether the current call is updating the `lockupSeconds` configuration of the pool or not. If this is false, then the value of the `lockupSeconds` argument will be ignored.|
+|`lockupSeconds`|`uint256`|The new value for the `lockupSeconds` member of the pool.  This argument is only applied if `changeLockup` is `true`.|
+|`changeCooldown`|`bool`|Specifies whether the current call is updating the `cooldownSeconds` configuration of the pool or not. If this is false, then the value of the `cooldownSeconds` argument will be ignored.|
+|`cooldownSeconds`|`uint256`|The new value for the `cooldownSeconds` member of the pool.  This argument is only applied if `changeCooldown` is `true`.|
+
 
 ### transferPoolAdministration
 
