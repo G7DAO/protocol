@@ -6,7 +6,7 @@
  */
 
 pragma solidity ^0.8.9;
-import {TerminusFacet} from "./terminus/TerminusFacet.sol";
+import {TerminusFacet} from "./TerminusFacet.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 abstract contract ControllableWithTerminus is Ownable {

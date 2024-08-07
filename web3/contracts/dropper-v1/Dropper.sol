@@ -18,7 +18,7 @@ import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
-import {TerminusFacet} from "./terminus/TerminusFacet.sol";
+import {TerminusFacet} from "../terminus/TerminusFacet.sol";
 
 /**
  * @title Moonstream Dropper
