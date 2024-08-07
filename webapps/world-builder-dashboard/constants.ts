@@ -44,15 +44,15 @@ export const L3_NETWORK: HighNetworkInterface = {
   blockExplorerUrls: ['https://explorer-game7-testnet-0ilneybprf.t.conduit.xyz'],
   nativeCurrency: {
     decimals: 18,
-    name: 'G7T',
-    symbol: 'G7T'
+    name: 'Testnet Game7 Token',
+    symbol: 'TG7T'
   },
   inbox: '0xE6470bb72291c39073AEd67a30ff93B69c1f47De',
   g7TokenAddress: '0x0000000000000000000000000000000000000000',
   challengePeriod: 60 * 60
 }
 
-export const L3_NATIVE_TOKEN_SYMBOL = 'G7'
+export const L3_NATIVE_TOKEN_SYMBOL = 'TG7T'
 export const DEFAULT_LOW_NETWORK = L1_NETWORK
 export const DEFAULT_HIGH_NETWORK = L2_NETWORK
 
