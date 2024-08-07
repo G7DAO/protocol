@@ -1,5 +1,5 @@
 # Staker
-[Git Source](https://github.com/G7DAO/protocol/blob/08f889b6e904fd8f9ecfb869fe3c5da80b02ad6c/contracts/staking/Staker.sol)
+[Git Source](https://github.com/G7DAO/protocol/blob/f319967a9c724fe4c96f2e162afd527a52929919/contracts/staking/Staker.sol)
 
 **Inherits:**
 ERC721Enumerable, ReentrancyGuard
