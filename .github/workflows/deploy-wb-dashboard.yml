@@ -1,7 +1,7 @@
 on:
     push:
       branches:
-        - wallet-address
+        - main
       paths:
         - 'webapps/world-builder-dashboard/**'
 
