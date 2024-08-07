@@ -20,7 +20,7 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./ERC1155WithTerminusStorage.sol";
 import "./LibTerminus.sol";
 import {LibDiamondMoonstream as LibDiamond} from "../diamond/libraries/LibDiamondMoonstream.sol";

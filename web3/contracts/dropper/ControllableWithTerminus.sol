@@ -7,7 +7,7 @@
 
 pragma solidity ^0.8.9;
 import {TerminusFacet} from "./terminus/TerminusFacet.sol";
-import "@openzeppelin-contracts/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 abstract contract ControllableWithTerminus is Ownable {
     TerminusFacet private terminus;
@@ -16,7 +16,7 @@ abstract contract ControllableWithTerminus is Ownable {
     constructor(
         address _terminusContractAddress,
         uint256 _administratorPoolId
-    ) {
+    ) Ownable(msg.sender){
         terminus = TerminusFacet(_terminusContractAddress);
         administratorPoolId = _administratorPoolId;
     }

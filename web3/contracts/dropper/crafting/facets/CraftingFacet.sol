@@ -6,12 +6,11 @@
  */
 
 pragma solidity ^0.8.0;
-import "@openzeppelin-contracts/contracts/token/ERC20/extensions/ERC20Burnable.sol";
-import "@openzeppelin-contracts/contracts/token/ERC20/presets/ERC20PresetMinterPauser.sol";
-import "@openzeppelin-contracts/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
-import "@openzeppelin-contracts/contracts/token/ERC721/extensions/ERC721Burnable.sol";
-import "@openzeppelin-contracts/contracts/token/ERC1155/utils/ERC1155Holder.sol";
-import "@openzeppelin-contracts/contracts/token/ERC721/utils/ERC721Holder.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
+import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
+import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import {MockTerminus} from "../../mock/MockTerminus.sol";
 import {MockErc20} from "../../mock/MockErc20.sol";
 import "../libraries/LibCrafting.sol";

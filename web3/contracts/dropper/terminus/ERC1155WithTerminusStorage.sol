@@ -15,11 +15,11 @@
 
 pragma solidity ^0.8.9;
 
-import "@openzeppelin-contracts/contracts/token/ERC1155/IERC1155.sol";
-import "@openzeppelin-contracts/contracts/token/ERC1155/IERC1155Receiver.sol";
-import "@openzeppelin-contracts/contracts/token/ERC1155/extensions/IERC1155MetadataURI.sol";
-import "@openzeppelin-contracts/contracts/utils/Context.sol";
-import "@openzeppelin-contracts/contracts/utils/introspection/ERC165.sol";
+import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
+import "@openzeppelin/contracts/token/ERC1155/extensions/IERC1155MetadataURI.sol";
+import "@openzeppelin/contracts/utils/Context.sol";
+import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "./LibTerminus.sol";
 
 contract ERC1155WithTerminusStorage is

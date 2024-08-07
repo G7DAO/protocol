@@ -6,7 +6,7 @@
  *
  */
 
-import "@openzeppelin-contracts/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./TerminusFacet.sol";
 
 pragma solidity ^0.8.9;

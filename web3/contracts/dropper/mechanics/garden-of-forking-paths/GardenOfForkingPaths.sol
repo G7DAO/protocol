@@ -7,10 +7,10 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin-contracts/contracts/token/ERC1155/utils/ERC1155Holder.sol";
-import "@openzeppelin-contracts/contracts/token/ERC721/utils/ERC721Holder.sol";
-import "@openzeppelin-contracts/contracts/token/ERC721/IERC721.sol";
-import "@openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
+import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {LibDiamondMoonstream as LibDiamond} from "../../diamond/libraries/LibDiamondMoonstream.sol";
 import "../../diamond/security/DiamondReentrancyGuard.sol";
 

@@ -7,7 +7,7 @@
 
 pragma solidity ^0.8.9;
 
-import {IERC721} from "@openzeppelin/contracts/contracts/token/ERC721/IERC721.sol";
+import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {IGOFP} from "../interfaces/IGOFP.sol";
 
 library GOFPPredicates {

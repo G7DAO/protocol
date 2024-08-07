@@ -7,16 +7,16 @@
 
 pragma solidity ^0.8.9;
 
-import "@openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin-contracts/contracts/token/ERC721/IERC721.sol";
-import "@openzeppelin-contracts/contracts/token/ERC1155/IERC1155.sol";
-import "@openzeppelin-contracts/contracts/access/Ownable.sol";
-import "@openzeppelin-contracts/contracts/security/Pausable.sol";
-import "@openzeppelin-contracts/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin-contracts/contracts/token/ERC721/IERC721Receiver.sol";
-import "@openzeppelin-contracts/contracts/token/ERC1155/utils/ERC1155Holder.sol";
-import "@openzeppelin-contracts/contracts/utils/cryptography/draft-EIP712.sol";
-import "@openzeppelin-contracts/contracts/utils/cryptography/SignatureChecker.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
+import "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
+import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
 import {TerminusFacet} from "./terminus/TerminusFacet.sol";
 
@@ -94,7 +94,7 @@ contract Dropper is
     /**
      * @dev Initializes the Dropper contract
      */
-    constructor() EIP712("Moonstream Dropper", "0.1.0") {}
+    constructor()Ownable(msg.sender) EIP712("Moonstream Dropper", "0.1.0") {}
 
     function onERC721Received(
         address operator,

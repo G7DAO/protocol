@@ -2,7 +2,7 @@
 ///@notice This contract is for mock for WETH token.
 pragma solidity ^0.8.0;
 
-import "@openzeppelin-contracts/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
+import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
 
 contract MockERC1155 is ERC1155Burnable {
     constructor() ERC1155("lol://lol") {}

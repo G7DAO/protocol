@@ -6,7 +6,8 @@ pragma solidity ^0.8.0;
  * https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/cryptography/draft-EIP712.sol
  */
 
-import "@openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import {MessageHashUtils} from "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 
 library LibSignatures {
     bytes32 constant SIGNATURES_STORAGE_POSITION =
@@ -92,7 +93,7 @@ library LibSignatures {
         view
         returns (bytes32)
     {
-        return ECDSA.toTypedDataHash(_domainSeparatorV4(), structHash);
+        return MessageHashUtils.toTypedDataHash(_domainSeparatorV4(), structHash);
     }
 
     function _completeRequest(uint256 requestId) internal {

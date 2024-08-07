@@ -9,8 +9,8 @@
 
 pragma solidity ^0.8.9;
 
-import "@openzeppelin-contracts/contracts/token/ERC1155/IERC1155.sol";
-import "@openzeppelin-contracts/contracts/token/ERC1155/extensions/IERC1155MetadataURI.sol";
+import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+import "@openzeppelin/contracts/token/ERC1155/extensions/IERC1155MetadataURI.sol";
 import {LibDiamondMoonstream as LibDiamond} from "../diamond/libraries/LibDiamondMoonstream.sol";
 import "./LibTerminus.sol";
 
