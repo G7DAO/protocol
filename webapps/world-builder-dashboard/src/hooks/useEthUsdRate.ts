@@ -1,8 +1,7 @@
 import { useQuery } from 'react-query'
-import { L1_NETWORK } from '../../constants'
+import { ETH_USD_CONTRACT_ADDRESS, L1_NETWORK } from '../../constants'
 import { ethers } from 'ethers'
 
-const ETH_USD_CONTRACT_ADDRESS = '0x694AA1769357215DE4FAC081bf1f309aDC325306'
 const ABI = [
   {
     inputs: [],
