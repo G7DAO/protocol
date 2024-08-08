@@ -1,10 +1,11 @@
 // External Libraries
-import React, { Fragment } from 'react'
+import React from 'react'
 // Styles
-import styles from './WithdrawTransactions.module.css'
+import styles from './PoolDesktop.module.css'
+import OptionsButton from './OptionsButton';
 
-interface WithdrawTransactionsProps { }
-const PoolsDesktop: React.FC<WithdrawTransactionsProps> = () => {
+interface PoolDesktopProps { }
+const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
 
   const headers = [
     'Pool ID',
@@ -18,7 +19,7 @@ const PoolsDesktop: React.FC<WithdrawTransactionsProps> = () => {
     'Cooldown period (s)',
     'Is transferable?',
     `Is immutable?`,
-    'Positions',
+    ''
   ];
 
   const sampleData = [
@@ -91,7 +92,7 @@ const PoolsDesktop: React.FC<WithdrawTransactionsProps> = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <div style={{ margin: 'auto', width: '80%' }}>
+      <div style={{ margin: 'auto', width: '100%' }}>
         <table className={styles.tableStyles}>
           <thead>
             <tr>
@@ -117,10 +118,7 @@ const PoolsDesktop: React.FC<WithdrawTransactionsProps> = () => {
                 <td className={styles.tdStyles}>{data.isTransferable}</td>
                 <td className={styles.tdStyles}>{data.isImmutable}</td>
                 <td className={styles.tdStyles}>
-                  <button className={styles.buttonStyles}>Check positions</button>
-                </td>
-                <td className={styles.tdStyles}>
-                  <button className={styles.buttonStyles}>Edit Pool</button>
+                  <OptionsButton />
                 </td>
               </tr>
             ))}
