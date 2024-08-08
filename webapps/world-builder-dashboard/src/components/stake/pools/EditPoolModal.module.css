@@ -1,0 +1,92 @@
+/* Modal.module.css */
+.modal {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    width: 660px;
+    max-width: 100%;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid var(--Gray-200, #eaecf0);
+    background: var(--Gray-50, #f9fafb);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .modalHeader {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .modalTitle {
+    color: var(--Gray-900, #101828);
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 28px;
+  }
+  
+  .modalSubtitle {
+    color: var(--Gray-600, #475467);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+  }
+  
+  .inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+  
+  .label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #475467;
+  }
+  
+  .input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #d0d5dd;
+    background: #fff;
+    color: #101828;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+  }
+  
+  .buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    width: 100%;
+  }
+  
+  .button {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    background-color: var(--Primary-600, #007bff);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .button:hover {
+    background-color: var(--Primary-700, #0056b3);
+  }
+  
+  .cancelButton {
+    background-color: var(--Gray-500, #6c757d);
+  }
+  
+  .cancelButton:hover {
+    background-color: var(--Gray-600, #495057);
+  }
+  
