@@ -1,0 +1,80 @@
+.container {
+    padding: 0 0 0 14px;
+
+    border-radius: 8px;
+    border: 1px solid var(--Gray-100, #F2F4F7);
+    background: var(--Base-White, #FFF);
+    color: var(--Gray-700, #344054);
+
+    /* Text sm/Medium */
+    font-family: Inter, sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    line-height: 20px; /* 142.857% */
+    position: relative;
+}
+
+.rightSection {
+    display: flex;
+    gap: 8px;
+    align-content: center;
+    position: relative;
+}
+
+.button {
+    position: absolute;
+    z-index: 300;
+    right: 50px;
+    top: 5px;
+    border: none;
+    display: flex;
+    padding: 4px 8px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+
+    border-radius: 8px;
+    background: var(--Base-Brand, #EF233C);
+    color: var(--Primary-25, #FFFAFB);
+
+    /* Text xs/Medium */
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 18px; /* 150% */
+}
+
+.optionContainer {
+    display: flex;
+    padding: 10px 10px 10px 8px !important;
+    align-items: flex-start;
+    gap: 8px;
+    flex: 1 0 0;
+    width: 100%;
+    border-radius: 6px;
+}
+
+.dropdownContainer {
+    padding: 6px !important;
+}
+
+.optionPercent {
+    color: var(--Gray-700, #344054);
+
+    /* Text sm/Medium */
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px; /* 142.857% */
+}
+
+.optionValue {
+    color: var(--Gray-600, #475467);
+
+    /* Text sm/Regular */
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px; /* 142.857% */
+    margin-right: auto;
+}

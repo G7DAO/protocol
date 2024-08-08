@@ -1,0 +1,86 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-family: Inter, sans-serif;
+  border-radius: 8px;
+  background: #fff;
+  width: 100%;
+  padding-bottom: 12px;
+  padding-top: 12px;
+}
+
+.header {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  color: #475467;
+  padding-left: 12px;
+}
+
+.divider {
+  height: 1px;
+  place-self: stretch;
+  background: #f2f4f7;
+}
+
+.dataRow {
+  display: flex;
+  place-self: stretch;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.itemName {
+  display: flex;
+  color: #475467;
+  /* Text xs/Regular */
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 18px; /* 150% */
+}
+
+.address {
+  display: flex;
+  padding: 2px 8px;
+  align-items: center;
+
+  border-radius: 16px;
+  background: #f2f4f7;
+  mix-blend-mode: multiply;
+  color: #344054;
+  text-align: center;
+
+  /* Text xs/Medium */
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 18px; /* 150% */
+  cursor: default;
+}
+
+.valueContainer {
+  display: flex;
+  gap: 4px;
+}
+.value {
+  color: #475467;
+
+  /* Text xs/Regular */
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 18px; /* 150% */
+}
+.valueNote {
+  color: #90959b;
+
+  /* Text xs/Regular */
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 18px; /* 150% */
+}

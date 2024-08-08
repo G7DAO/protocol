@@ -1,0 +1,55 @@
+/* src/styles/global.css */
+
+button {
+  cursor: pointer;
+}
+
+
+:root {
+  --Blue-50: #eff8ff;
+  --Blue-100: #d1e9ff;
+  --Blue-200: #b3d8ff;
+  --Blue-700: #175cd3;
+  --Warning-50: #fffaeb;
+  --Warning-100: #FEF0C7;
+  --Warning-200: #FEDF89;
+  --Warning-300: #fec84b;
+  --Warning-600: #DC6803;
+  --Warning-700: #b54708;
+  --Success-50: #ecfdf3;
+  --Success-100: #D1FADF;
+  --Success-200: #A6F4C5;
+  --Success-700: #027a48;
+  --Error-50: #B42318;
+  --Error-100: #FEE4E2;
+  --Error-200: #FECDCA;
+  --Error-500: #F04438;
+  --Error-600: #d92d20;
+  --Error-700: #FEF3F2;
+  --Gray-50: #f9fafb;
+  --Gray-100: #f2f4f7;
+  --Gray-200: #eaecf0;
+  --Gray-300: #d0d5dd;
+  --Gray-600: #475467;
+  --Gray-700: #344054;
+  --Primary-600: #ef233b;
+  --Primary-700: #dd1534;
+  --Base-White: #fff;
+  --Gray-blue-700: #363f72;
+  --Gray-blue-500: #4e5ba6;
+  --Gray-blue-300: #b3b8db;
+  --Gray-blue-50: #f8f9fc;
+  --Base-Brand: #ef233c;
+  --Gray-500: #667085;
+  --Primary-25: #fffafb;
+  --Purple-50: #F4F3FF;
+  --Purple-100: #EBE9FE;
+  --Purple-200: #D9D6FE;
+  --Purple-700: #5925DC;
+  --Blue-light-700: #026aa2;
+  --Blue-light-50: #f0f9ff;
+  --Indigo-50: #eef4ff;
+  --Indigo-700: #3538cd;
+  --Gray-25: #fcfcfd;
+  --Gray-900: #101828;
+}

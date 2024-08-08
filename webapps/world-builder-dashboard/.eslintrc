@@ -1,0 +1,45 @@
+{
+  "root": true,
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
+    "plugin:import/warnings",
+    "plugin:import/errors",
+    "plugin:jsx-a11y/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "eslint-config-prettier"
+
+  ],
+  "settings": {
+    "react": {
+      "version": "detect"
+    },
+    // Tells eslint how to resolve imports
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true,
+        "project": "tsconfig.json"
+      },
+      "node": {
+        "paths": ["src"],
+        "extensions": [".js", ".jsx", ".ts", ".tsx"],
+        "moduleDirectory": ["node_modules", "src/"]
+      }
+    }
+  },
+  "rules": {
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off",
+    "@typescript-eslint/ban-ts-ignore": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
+    "import/no-named-as-default": "off",
+    "import/export": 0,
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      { "": "never", "js": "never", "jsx": "never", "ts": "never", "tsx": "never" }
+    ]
+  }
+}
