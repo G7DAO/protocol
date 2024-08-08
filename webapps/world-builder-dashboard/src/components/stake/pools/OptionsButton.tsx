@@ -1,31 +1,36 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import styles from './OptionsButton.module.css';
 
-const OptionsButton = () => {
-    const [isOpen, setIsOpen] = useState(false);
+interface OptionsButtonProps {
+  onViewPositions: () => void;
+}
 
-    const toggleDropdown = () => {
-        setIsOpen(!isOpen);
-        console.log(isOpen);
-    };
+const OptionsButton: React.FC<OptionsButtonProps> = ({ onViewPositions }) => {
+  const [isOpen, setIsOpen] = useState(false);
 
-    const handleOptionClick = (option: any) => {
-        console.log(`${option} clicked`);
-        setIsOpen(false); // Close dropdown after selection
-    };
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
 
+  const handleOptionClick = (option: string) => {
+    console.log(`${option} clicked`);
+    if (option === 'View Positions') {
+      onViewPositions();
+    }
+    setIsOpen(false); // Close dropdown after selection
+  };
 
-    return (
-        <div className={styles.container} onClick={() => toggleDropdown()}>
-            <span className={styles.label}>Options</span>
-            {isOpen && (
-                <div className={styles.dropdown}>
-                    <div className={styles.dropdownItem} onClick={() => handleOptionClick('View Positions')}>View Positions</div>
-                    <div className={styles.dropdownItem} onClick={() => handleOptionClick('Edit Pool')}>Edit Pool</div>
-                </div>
-            )}
+  return (
+    <div className={styles.container} onClick={toggleDropdown}>
+      <span className={styles.label}>Options</span>
+      {isOpen && (
+        <div className={styles.dropdown}>
+          <div className={styles.dropdownItem} onClick={() => handleOptionClick('View Positions')}>View Positions</div>
+          <div className={styles.dropdownItem} onClick={() => handleOptionClick('Edit Pool')}>Edit Pool</div>
         </div>
-    );
+      )}
+    </div>
+  );
 };
 
 export default OptionsButton;

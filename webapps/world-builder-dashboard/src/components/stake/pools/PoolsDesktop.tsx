@@ -1,11 +1,27 @@
 // External Libraries
-import React from 'react'
+import React, { useState } from 'react'
 // Styles
 import styles from './PoolDesktop.module.css'
 import OptionsButton from './OptionsButton';
+import PositionsTable, { Position } from './PositionsTable';
 
 interface PoolDesktopProps { }
 const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
+  const [activePool, setActivePool] = useState<string | null>(null);
+
+  interface Pool {
+    poolId: string;
+    poolName: string;
+    administrator: string;
+    owner: string;
+    tokenType: string;
+    tokenAddress: string;
+    tokenId: string;
+    lockdownPeriod: string;
+    cooldownPeriod: string;
+    isTransferable: string;
+    isImmutable: string;
+  }
 
   const headers = [
     'Pool ID',
@@ -22,7 +38,7 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
     ''
   ];
 
-  const sampleData = [
+  const sampleData: Pool[] = [
     {
       poolId: '1',
       poolName: "Knight's Reserve",
@@ -90,6 +106,11 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
     }
   ];
 
+
+  const handleViewPositions = (poolId: string) => {
+    setActivePool(activePool === poolId ? null : poolId);
+  };
+
   return (
     <div style={{ padding: '20px' }}>
       <div style={{ margin: 'auto', width: '100%' }}>
@@ -105,22 +126,31 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
           </thead>
           <tbody>
             {sampleData.map((data, idx) => (
-              <tr key={idx} className={styles.trStyles}>
-                <td className={styles.tdStyles}>{data.poolId}</td>
-                <td className={styles.tdStyles}>{data.poolName}</td>
-                <td className={styles.tdStyles}>{data.administrator}</td>
-                <td className={styles.tdStyles}>{data.owner}</td>
-                <td className={styles.tdStyles}>{data.tokenType}</td>
-                <td className={styles.tdStyles}>{data.tokenAddress}</td>
-                <td className={styles.tdStyles}>{data.tokenId}</td>
-                <td className={styles.tdStyles}>{data.lockdownPeriod}</td>
-                <td className={styles.tdStyles}>{data.cooldownPeriod}</td>
-                <td className={styles.tdStyles}>{data.isTransferable}</td>
-                <td className={styles.tdStyles}>{data.isImmutable}</td>
-                <td className={styles.tdStyles}>
-                  <OptionsButton />
-                </td>
-              </tr>
+              <React.Fragment key={data.poolId}>
+                <tr className={styles.trStyles}>
+                  <td className={styles.tdStyles}>{data.poolId}</td>
+                  <td className={styles.tdStyles}>{data.poolName}</td>
+                  <td className={styles.tdStyles}>{data.administrator}</td>
+                  <td className={styles.tdStyles}>{data.owner}</td>
+                  <td className={styles.tdStyles}>{data.tokenType}</td>
+                  <td className={styles.tdStyles}>{data.tokenAddress}</td>
+                  <td className={styles.tdStyles}>{data.tokenId}</td>
+                  <td className={styles.tdStyles}>{data.lockdownPeriod}</td>
+                  <td className={styles.tdStyles}>{data.cooldownPeriod}</td>
+                  <td className={styles.tdStyles}>{data.isTransferable}</td>
+                  <td className={styles.tdStyles}>{data.isImmutable}</td>
+                  <td className={styles.tdStyles}>
+                    <OptionsButton onViewPositions={() => handleViewPositions(data.poolId)} />
+                  </td>
+                </tr>
+                {activePool === data.poolId && (
+                  <tr className={styles.trStyles}>
+                    <td colSpan={headers.length} className={styles.tdStyles}>
+                      <PositionsTable />
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
             ))}
           </tbody>
         </table>
