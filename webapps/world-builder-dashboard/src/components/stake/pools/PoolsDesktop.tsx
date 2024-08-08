@@ -17,10 +17,10 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
     tokenType: string;
     tokenAddress: string;
     tokenId: string;
-    lockdownPeriod: string;
-    cooldownPeriod: string;
-    isTransferable: string;
-    isImmutable: string;
+    lockdownPeriod: number;
+    cooldownPeriod: number;
+    isTransferable: boolean;
+    isImmutable: boolean;
   }
 
   const headers = [
@@ -47,10 +47,10 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
       tokenType: 'Native Token',
       tokenAddress: '0xA',
       tokenId: 'N/A',
-      lockdownPeriod: '60',
-      cooldownPeriod: '30',
-      isTransferable: 'true',
-      isImmutable: 'false',
+      lockdownPeriod: 60,
+      cooldownPeriod: 30,
+      isTransferable: true,
+      isImmutable: false,
     },
     {
       poolId: '2',
@@ -60,10 +60,10 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
       tokenType: 'ERC721',
       tokenAddress: '0xB',
       tokenId: 'N/A',
-      lockdownPeriod: '60',
-      cooldownPeriod: '30',
-      isTransferable: 'true',
-      isImmutable: 'false',
+      lockdownPeriod: 60,
+      cooldownPeriod: 30,
+      isTransferable: true,
+      isImmutable: false,
     },
     {
       poolId: '3',
@@ -73,10 +73,10 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
       tokenType: 'ERC20',
       tokenAddress: '0xC',
       tokenId: 'N/A',
-      lockdownPeriod: '60',
-      cooldownPeriod: '30',
-      isTransferable: 'true',
-      isImmutable: 'false',
+      lockdownPeriod: 60,
+      cooldownPeriod: 30,
+      isTransferable: true,
+      isImmutable: false,
     },
     {
       poolId: '4',
@@ -86,10 +86,10 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
       tokenType: 'ERC1155',
       tokenAddress: '0xD',
       tokenId: '3',
-      lockdownPeriod: '60',
-      cooldownPeriod: '30',
-      isTransferable: 'true',
-      isImmutable: 'false',
+      lockdownPeriod: 60,
+      cooldownPeriod: 30,
+      isTransferable: true,
+      isImmutable: false,
     },
     {
       poolId: '5',
@@ -99,12 +99,16 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
       tokenType: 'ERC20',
       tokenAddress: '0xE',
       tokenId: 'N/A ',
-      lockdownPeriod: '60',
-      cooldownPeriod: '30',
-      isTransferable: 'true',
-      isImmutable: 'false',
+      lockdownPeriod: 60,
+      cooldownPeriod: 30,
+      isTransferable: true,
+      isImmutable: false,
     }
   ];
+
+  const handleEditPool = () => {
+    console.log("hello");
+  };
 
 
   const handleViewPositions = (poolId: string) => {
@@ -137,10 +141,10 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
                   <td className={styles.tdStyles}>{data.tokenId}</td>
                   <td className={styles.tdStyles}>{data.lockdownPeriod}</td>
                   <td className={styles.tdStyles}>{data.cooldownPeriod}</td>
-                  <td className={styles.tdStyles}>{data.isTransferable}</td>
-                  <td className={styles.tdStyles}>{data.isImmutable}</td>
+                  <td className={styles.tdStyles}>{data.isTransferable.toString()}</td>
+                  <td className={styles.tdStyles}>{data.isImmutable.toString()}</td>
                   <td className={styles.tdStyles}>
-                    <OptionsButton onViewPositions={() => handleViewPositions(data.poolId)} />
+                    <OptionsButton onViewPositions={() => handleViewPositions(data.poolId)} onEditPool={() => handleEditPool()} poolData={{ isTransferable: data.isTransferable, cooldownSeconds: data.cooldownPeriod, lockdownSeconds: data.lockdownPeriod }} />
                   </td>
                 </tr>
                 {activePool === data.poolId && (

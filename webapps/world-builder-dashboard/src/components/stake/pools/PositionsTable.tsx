@@ -18,8 +18,8 @@ const headers = [
     `Opened By`,
     `NFT Token ID`,
     `Amount`,
-    `TokenId`,
-    `Stake Timestamp`,
+    `Staked Token ID`,
+    `Staked at`,
     `Unstake Initiated At`
 ];
 
