@@ -183,6 +183,28 @@ export const useL2ToL1MessagesStatus = (transactions: Transaction[] | undefined)
   )
 }
 
+const sortTransactions = (a: TransactionRecord, b: TransactionRecord) => {
+  const getTimestamp = (tx: TransactionRecord) => {
+    if (tx.type === 'WITHDRAWAL') {
+      return tx.completionTimestamp ?? tx.claimableTimestamp ?? tx.highNetworkTimestamp ?? 0
+    } else if (tx.type === 'DEPOSIT') {
+      return tx.completionTimestamp ?? tx.lowNetworkTimestamp ?? 0
+    }
+    return 0
+  }
+
+  const isClaimableWithoutCompletion = (tx: TransactionRecord) => tx.claimableTimestamp && !tx.completionTimestamp
+
+  if (isClaimableWithoutCompletion(a) && isClaimableWithoutCompletion(b)) {
+    return (b.highNetworkTimestamp ?? 0) - (a.highNetworkTimestamp ?? 0)
+  }
+
+  if (isClaimableWithoutCompletion(a)) return -1
+  if (isClaimableWithoutCompletion(b)) return 1
+
+  return getTimestamp(b) - getTimestamp(a)
+}
+
 export const useMessages = (connectedAccount: string | undefined): UseQueryResult<TransactionRecord[]> => {
   return useQuery(['incomingMessages', connectedAccount], () => {
     if (!connectedAccount) {
@@ -190,7 +212,7 @@ export const useMessages = (connectedAccount: string | undefined): UseQueryResul
     }
     const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
     if (transactionsString) {
-      return JSON.parse(transactionsString).reverse()
+      return JSON.parse(transactionsString).sort(sortTransactions)
     } else {
       return []
     }
