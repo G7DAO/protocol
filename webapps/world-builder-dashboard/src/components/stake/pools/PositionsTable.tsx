@@ -1,10 +1,11 @@
 import React from 'react';
 import styles from './PositionsTable.module.css';
+import NFTAttributesButton from './NFTAttributesButton';
 
 export interface Position {
     positionId: string;
     staker: string;
-    depositorNftTokenId: string;
+    depositorNftTokenId: number;
     amount: string;
     tokenId: string;
     startDate: string;
@@ -16,7 +17,7 @@ interface PositionsTableProps { }
 const headers = [
     'Position ID',
     `Opened By`,
-    `NFT Token ID`,
+    `NFT Token`,
     `Amount`,
     `Staked Token ID`,
     `Staked at`,
@@ -27,7 +28,7 @@ const samplePositions: Position[] = [
     {
         positionId: '1',
         staker: '0x0',
-        depositorNftTokenId: '1',
+        depositorNftTokenId: 1,
         amount: '1',
         tokenId: '1',
         startDate: '2022-01-01',
@@ -36,7 +37,7 @@ const samplePositions: Position[] = [
     {
         positionId: '2',
         staker: '0x1',
-        depositorNftTokenId: '2',
+        depositorNftTokenId: 2,
         amount: '200',
         tokenId: '-',
         startDate: '2022-02-01',
@@ -61,7 +62,7 @@ const PositionsTable: React.FC<PositionsTableProps> = () => {
                     <tr key={index}>
                         <td>{position.positionId}</td>
                         <td>{position.staker}</td>
-                        <td>{position.depositorNftTokenId}</td>
+                        <td><NFTAttributesButton tokenId={position.depositorNftTokenId}/></td>
                         <td>{position.amount}</td>
                         <td>{position.tokenId}</td>
                         <td>{position.startDate}</td>
