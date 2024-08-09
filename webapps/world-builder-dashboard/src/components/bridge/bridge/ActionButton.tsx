@@ -181,6 +181,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
         queryClient.refetchQueries(['pendingNotifications'])
+        queryClient.refetchQueries(['incomingMessages'])
 
         navigate('/bridge/transactions')
       },
