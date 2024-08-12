@@ -15,7 +15,11 @@ const fetchPools = async () => {
         // If no MM or other wallet provider is found, use G7 chain RPC
         provider = new ethers.providers.JsonRpcProvider(L3_NETWORKS[2].chainInfo.rpcs[0])
     }
-    const PoolContract = new ethers.Contract(STAKER_ADDRESS ?? "", STAKER_ABI, provider)
+    const PoolContract = new ethers.Contract(
+        STAKER_ADDRESS ?? "",
+        STAKER_ABI,
+        provider
+    )
 
     try {
         const totalPools = await PoolContract.TotalPools();

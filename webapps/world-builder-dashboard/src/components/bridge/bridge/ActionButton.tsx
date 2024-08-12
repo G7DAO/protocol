@@ -18,14 +18,28 @@ import { sendWithdrawERC20Transaction } from '@/utils/bridge/withdrawERC20'
 import { sendWithdrawTransaction } from '@/utils/bridge/withdrawNativeToken'
 import { L2ToL1MessageStatus } from '@arbitrum/sdk'
 
-interface ActionButtonProps {
-  direction: 'DEPOSIT' | 'WITHDRAW' | 'CREATEPOOL'
+
+interface CreatePoolParams {
+  tokenType: number
+  tokenAddress: string
+  tokenID: number
+  transferable: boolean
+  lockupSeconds: number
+  cooldownSeconds: number
+}
+
+export interface DepositWithdrawParams {
   amount: string
+}
+
+export interface ActionButtonProps {
+  direction: 'DEPOSIT' | 'WITHDRAW' | 'CREATEPOOL'
+  params?: DepositWithdrawParams | CreatePoolParams
   isDisabled: boolean
   setErrorMessage: (arg0: string) => void
 }
 
-const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabled, setErrorMessage }) => {
+const ActionButton: React.FC<ActionButtonProps> = ({ direction, params, isDisabled, setErrorMessage }) => {
   const { connectedAccount, isConnecting, selectedHighNetwork, selectedLowNetwork, connectWallet, getProvider } =
     useBlockchainContext()
   const [isAllowanceModalOpened, setIsAllowanceModalOpened] = useState(false)
@@ -72,11 +86,13 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
     }
     setErrorMessage('')
     if (direction === 'DEPOSIT') {
-      deposit.mutate(amount)
+      const { amount } = params as DepositWithdrawParams;
+      deposit.mutate(amount ?? "")
       return
     }
     if (direction === 'WITHDRAW') {
-      withdraw.mutate(amount)
+      const { amount } = params as DepositWithdrawParams;
+      withdraw.mutate(amount ?? "")
       return
     }
     if (direction === 'CREATEPOOL') {
@@ -85,6 +101,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
   }
 
   const queryClient = useQueryClient()
+  //#region depositAndWithdraw functions
   const deposit = useMutation(
     async (amount: string) => {
       const provider = await getProvider(selectedLowNetwork)
@@ -194,35 +211,61 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
       }
     }
   )
+  //#endregion
+
+  //#region createPool
+
+  //#endregion
+  const actionButton = (direction: string) => {
+    if (direction === "DEPOSIT" || direction === "WITHDRAW") {
+      const { amount } = params as DepositWithdrawParams;
+      return (
+        <>
+          <button
+            className={styles.container}
+            onClick={handleClick}
+            disabled={getLabel() !== 'Connect wallet' && (isDisabled || Number(amount) <= 0)}
+          >
+            {getLabel() ?? 'Submit'}
+          </button>
+          <Modal
+            opened={isAllowanceModalOpened}
+            onClose={() => setIsAllowanceModalOpened(false)}
+            withCloseButton={false}
+            padding={'24px'}
+            size={'400px'}
+            radius={'12px'}
+          >
+            <ApproveAllowance
+              balance={Number(lowNetworkBalance ?? '0')}
+              allowance={allowance ?? 0}
+              amount={Number(amount)}
+              onSuccess={() => {
+                setIsAllowanceModalOpened(false)
+                deposit.mutate(amount ?? "")
+              }}
+              onClose={() => setIsAllowanceModalOpened(false)}
+            />
+          </Modal>
+        </>
+      )
+    } else if (direction === "CREATEPOOL") {
+      return (
+        <button
+          className={styles.container}
+          onClick={handleClick}
+          // Todo add params
+          disabled={getLabel() !== 'Connect wallet'}
+        >
+          {getLabel() ?? 'Submit'}
+        </button>
+      )
+    }
+  }
 
   return (
     <>
-      <button
-        className={styles.container}
-        onClick={handleClick}
-        disabled={getLabel() !== 'Connect wallet' && (isDisabled || Number(amount) <= 0)}
-      >
-        {getLabel() ?? 'Submit'}
-      </button>
-      <Modal
-        opened={isAllowanceModalOpened}
-        onClose={() => setIsAllowanceModalOpened(false)}
-        withCloseButton={false}
-        padding={'24px'}
-        size={'400px'}
-        radius={'12px'}
-      >
-        <ApproveAllowance
-          balance={Number(lowNetworkBalance ?? '0')}
-          allowance={allowance ?? 0}
-          amount={Number(amount)}
-          onSuccess={() => {
-            setIsAllowanceModalOpened(false)
-            deposit.mutate(amount)
-          }}
-          onClose={() => setIsAllowanceModalOpened(false)}
-        />
-      </Modal>
+      {actionButton(direction)}
     </>
   )
 }

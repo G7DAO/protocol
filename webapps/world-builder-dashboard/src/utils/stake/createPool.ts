@@ -17,13 +17,18 @@ export const createPool = async (
     cooldownPeriod: string,
     isTransferable: boolean,
     isImmutable: boolean,
-    networkProvider: ethers.providers.Web3Provider,
     account: string
 ) => {
+    let provider
+    if (window.ethereum) {
+        provider = new ethers.providers.Web3Provider(window.ethereum)
+    } else {
+        provider = new ethers.providers.JsonRpcProvider(L3_NETWORKS[2].chainInfo.rpcs[0])
+    }
     const StakerContract = new ethers.Contract(
         L3_NETWORKS[2].coreContracts.staking ?? '',
         STAKER_ABI,
-        networkProvider
+        provider
     )
     const txRequest = await StakerContract.populateTransaction.createPool(
         tokenType,
@@ -34,7 +39,7 @@ export const createPool = async (
         cooldownPeriod,
     )
 
-    const txResponse = await networkProvider.getSigner(account).sendTransaction(txRequest);
+    const txResponse = await provider.getSigner(account).sendTransaction(txRequest)
 
-    return await txResponse.wait();
+    return await txResponse.wait()
 }
