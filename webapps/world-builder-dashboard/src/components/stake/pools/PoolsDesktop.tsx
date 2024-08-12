@@ -5,6 +5,7 @@ import styles from './PoolDesktop.module.css'
 import OptionsButton from './OptionsButton';
 import PositionsTable, { Position } from './PositionsTable';
 import usePools from '@/hooks/usePools';
+import { formatAddress } from '@/utils/addressFormat';
 
 interface PoolDesktopProps { }
 
@@ -69,22 +70,26 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
             </tr>
           </thead>
           <tbody>
-            {data.map((item, idx) => (
+            {data?.map((item) => (
               <React.Fragment key={item.poolId}>
                 <tr className={styles.trStyles}>
                   <td className={styles.tdStyles}>{item.poolId}</td>
                   <td className={styles.tdStyles}>{item.poolName}</td>
-                  <td className={styles.tdStyles}>{item.administrator}</td>
-                  <td className={styles.tdStyles}>{item.owner}</td>
+                  <td className={styles.tdStyles}>{formatAddress(item.administrator)}</td>
+                  <td className={styles.tdStyles}>{formatAddress(item.owner)}</td>
                   <td className={styles.tdStyles}>{item.tokenType}</td>
-                  <td className={styles.tdStyles}>{item.tokenAddress}</td>
+                  <td className={styles.tdStyles}>{formatAddress(item.tokenAddress)}</td>
                   <td className={styles.tdStyles}>{item.tokenId}</td>
                   <td className={styles.tdStyles}>{item.lockdownPeriod}</td>
                   <td className={styles.tdStyles}>{item.cooldownPeriod}</td>
                   <td className={styles.tdStyles}>{item.isTransferable.toString()}</td>
                   <td className={styles.tdStyles}>{item.isImmutable.toString()}</td>
                   <td className={styles.tdStyles}>
-                    <OptionsButton onViewPositions={() => handleViewPositions(item.poolId)} onEditPool={() => handleEditPool()} poolData={{ isTransferable: data.isTransferable, cooldownSeconds: data.cooldownPeriod, lockdownSeconds: data.lockdownPeriod }} />
+                    <OptionsButton
+                      onViewPositions={() => handleViewPositions(item.poolId)}
+                      onEditPool={() => handleEditPool()}
+                      poolData={{ isTransferable: item.isTransferable, cooldownSeconds: item.cooldownPeriod, lockdownSeconds: item.lockdownPeriod }}
+                    />
                   </td>
                 </tr>
                 {activePool === item.poolId && (

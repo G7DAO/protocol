@@ -2,7 +2,7 @@ import {ethers, providers, utils} from 'ethers';
 import { STAKER_ABI } from '@/web3/ABI/Staker';
 import { L3_NETWORKS } from '../bridge/l3Networks';
 
-enum TokenType {
+export enum TokenType {
     NATIVE,
     ERC20,
     ERC721,
