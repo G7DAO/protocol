@@ -169,6 +169,11 @@ const BridgeView = ({
         ethRate={ethUsdRate ?? 0}
         tokenSymbol={L3_NATIVE_TOKEN_SYMBOL}
         tokenRate={g7tUsdRate.data ?? 0}
+        gasTokenSymbol={
+          direction === 'DEPOSIT'
+            ? selectedLowNetwork.nativeCurrency?.symbol ?? ''
+            : selectedHighNetwork.nativeCurrency?.symbol ?? ''
+        }
       />
       {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
       <ActionButton

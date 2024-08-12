@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers'
 import { NetworkInterface, HighNetworkInterface } from '@/contexts/BlockchainContext'
 
 export const L1_NETWORK: NetworkInterface = {
@@ -44,24 +43,24 @@ export const L3_NETWORK: HighNetworkInterface = {
   blockExplorerUrls: ['https://explorer-game7-testnet-0ilneybprf.t.conduit.xyz'],
   nativeCurrency: {
     decimals: 18,
-    name: 'G7T',
-    symbol: 'G7T'
+    name: 'Testnet Game7 Token',
+    symbol: 'TG7T'
   },
   inbox: '0xE6470bb72291c39073AEd67a30ff93B69c1f47De',
   g7TokenAddress: '0x0000000000000000000000000000000000000000',
   challengePeriod: 60 * 60
 }
 
-export const L3_NATIVE_TOKEN_SYMBOL = 'G7'
+export const L3_NATIVE_TOKEN_SYMBOL = 'TG7T'
 export const DEFAULT_LOW_NETWORK = L1_NETWORK
 export const DEFAULT_HIGH_NETWORK = L2_NETWORK
 
-export const MaxUint256: BigNumber = /*#__PURE__*/ BigNumber.from(
-  '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
-)
-export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 export const LOW_NETWORKS = [L1_NETWORK, L2_NETWORK]
 export const HIGH_NETWORKS = [L2_NETWORK, L3_NETWORK]
 
 export const G7T_FAUCET_ADDRESS = '0x8C4557CeA625e4E7421A9295Be61f7E0071c016C'
 export const FAUCET_CHAIN = L2_NETWORK
+
+export const ETH_USD_CONTRACT_ADDRESS = '0x694AA1769357215DE4FAC081bf1f309aDC325306'
+
+export const FIVE_MINUTES = 1000 * 60 * 5

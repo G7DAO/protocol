@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { L3_NATIVE_TOKEN_SYMBOL } from '../../../../constants'
 import styles from './ValueToBridge.module.css'
 import IconG7TSmall from '@/assets/IconG7TSmall'
 
@@ -58,7 +59,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
         </button>
         <div className={styles.tokenGroup}>
           <IconG7TSmall />
-          <div className={styles.tokenSymbol}>G7T</div>
+          <div className={styles.tokenSymbol}>{L3_NATIVE_TOKEN_SYMBOL}</div>
         </div>
       </div>
       <div className={styles.header}>

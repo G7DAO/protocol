@@ -20,6 +20,7 @@ interface TransactionSummaryProps {
   gasBalance: number
   ethRate: number
   tokenSymbol: string
+  gasTokenSymbol: string
   tokenRate: number
   direction: 'DEPOSIT' | 'WITHDRAW'
 }
@@ -33,6 +34,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
   ethRate,
   tokenRate,
   tokenSymbol,
+  gasTokenSymbol,
   value
 }) => {
   const [showFullAddress, setShowFullAddress] = useState(false)
@@ -63,10 +65,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
         <div className={styles.itemName}>Estimated gas fee</div>
         {!!fee ? (
           <div className={styles.valueContainer}>
-            <div
-              className={styles.value}
-              title={`balance: ${String(gasBalance)}`}
-            >{`${fee} ${direction === 'DEPOSIT' ? 'ETH' : tokenSymbol}`}</div>
+            <div className={styles.value} title={`balance: ${String(gasBalance)}`}>{`${fee} ${gasTokenSymbol}`}</div>
             {!!(fee * (direction === 'DEPOSIT' ? ethRate : tokenRate)) && (
               <div className={styles.valueNote}>
                 {formatCurrency(fee * (direction === 'DEPOSIT' ? ethRate : tokenRate))}
