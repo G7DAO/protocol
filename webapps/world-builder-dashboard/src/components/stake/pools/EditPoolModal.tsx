@@ -1,35 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, ModalProps } from 'summon-ui/mantine'; // assuming the path to your modal component
 import styles from './EditPoolModal.module.css'
+import ActionButton from '@/components/bridge/bridge/ActionButton';
 
 interface EditPoolModalProps extends ModalProps {
     isOpen: boolean;
     onClose: () => void;
     poolData: {
-        isTransferable: boolean;
-        cooldownSeconds: number;
-        lockdownSeconds: number;
+        poolId: string;
+        transferable: boolean;
+        cooldownSeconds: string;
+        lockdownSeconds: string;
     };
-    onSave: (updatedData: {
-        isTransferable: boolean;
-        cooldownSeconds: number;
-        lockdownSeconds: number;
-    }) => void;
 }
 
-const EditPoolModal: React.FC<EditPoolModalProps> = ({ isOpen, onClose, poolData, onSave }) => {
-    const [isTransferable, setIsTransferable] = React.useState(poolData.isTransferable);
-    const [cooldownSeconds, setCooldownSeconds] = React.useState(poolData.cooldownSeconds);
-    const [lockdownSeconds, setLockdownSeconds] = React.useState(poolData.lockdownSeconds);
+const EditPoolModal: React.FC<EditPoolModalProps> = ({ isOpen, onClose, poolData }) => {
+    const poolId = poolData.poolId;
+    const [transferable, setTransferable] = useState(poolData.transferable);
+    const [cooldownSeconds, setCooldownSeconds] = useState(poolData.cooldownSeconds);
+    const [lockupSeconds, setLockdownSeconds] = useState(poolData.lockdownSeconds);
+    const [changeTransferability, setChangeTransferability] = useState(true);
+    const [changeLockup, setChangeLockup] = useState(true);
+    const [changeCooldown, setChangeCooldown] = useState(true);
+    const [inputErrorMessage, setInputErrorMessage] = useState('')
+    const [networkErrorMessage, setNetworkErrorMessage] = useState('')
 
-    const handleSave = () => {
-        onSave({
-            isTransferable,
-            cooldownSeconds,
-            lockdownSeconds
-        });
-        onClose(); // Close modal after saving
-    };
+    useEffect(() => {
+        console.log(poolId.toString());
+    }, [])
 
     return (
         <Modal opened={isOpen} onClose={onClose}>
@@ -42,8 +40,8 @@ const EditPoolModal: React.FC<EditPoolModalProps> = ({ isOpen, onClose, poolData
                     <label className={styles.label}>Is Transferable</label>
                     <select
                         className={styles.input}
-                        value={String(isTransferable)}
-                        onChange={(e) => setIsTransferable(e.target.value === 'true')}
+                        value={String(transferable)}
+                        onChange={(e) => setTransferable(e.target.value === 'true')}
                     >
                         <option value="true">True</option>
                         <option value="false">False</option>
@@ -52,29 +50,27 @@ const EditPoolModal: React.FC<EditPoolModalProps> = ({ isOpen, onClose, poolData
                 <div className={styles.inputGroup}>
                     <label className={styles.label}>Cooldown Seconds</label>
                     <input
-                        type="number"
+                        type="string"
                         className={styles.input}
                         value={cooldownSeconds}
-                        onChange={(e) => setCooldownSeconds(Number(e.target.value))}
+                        onChange={(e) => setCooldownSeconds(e.target.value)}
                     />
                 </div>
                 <div className={styles.inputGroup}>
                     <label className={styles.label}>Lockdown Seconds</label>
                     <input
-                        type="number"
+                        type="string"
                         className={styles.input}
-                        value={lockdownSeconds}
-                        onChange={(e) => setLockdownSeconds(Number(e.target.value))}
+                        value={lockupSeconds}
+                        onChange={(e) => setLockdownSeconds(e.target.value)}
                     />
                 </div>
-                <div className={styles.buttons}>
-                    <button className={`${styles.button} ${styles.cancelButton}`} onClick={onClose}>
-                        Cancel
-                    </button>
-                    <button className={styles.button} onClick={handleSave}>
-                        Save
-                    </button>
-                </div>
+                <ActionButton
+                    direction={"EDITPOOL"}
+                    params={{ poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds }}
+                    isDisabled={!!inputErrorMessage}
+                    setErrorMessage={setNetworkErrorMessage}
+                />
             </div>
         </Modal>
     );

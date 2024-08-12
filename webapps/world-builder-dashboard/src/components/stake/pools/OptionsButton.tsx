@@ -5,18 +5,14 @@ import EditPoolModal from './EditPoolModal';
 interface OptionsButtonProps {
     onViewPositions: () => void;
     poolData: {
-        isTransferable: boolean;
-        cooldownSeconds: number;
-        lockdownSeconds: number;
+        poolId: string
+        transferable: boolean;
+        cooldownSeconds: string;
+        lockdownSeconds: string;
     };
-    onEditPool: (updatedData: {
-        isTransferable: boolean;
-        cooldownSeconds: number;
-        lockdownSeconds: number;
-    }) => void;
 }
 
-const OptionsButton: React.FC<OptionsButtonProps> = ({ onViewPositions, poolData, onEditPool }) => {
+const OptionsButton: React.FC<OptionsButtonProps> = ({ onViewPositions, poolData }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -54,9 +50,6 @@ const OptionsButton: React.FC<OptionsButtonProps> = ({ onViewPositions, poolData
                     isOpen={isModalOpen}
                     onClose={handleModalClose}
                     poolData={poolData}
-                    onSave={(updatedData) => {
-                        onEditPool(updatedData);
-                    }}
                 />
             )}
         </div>

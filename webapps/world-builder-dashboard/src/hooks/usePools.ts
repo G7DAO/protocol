@@ -23,7 +23,6 @@ const fetchPools = async () => {
 
     try {
         const totalPools = await PoolContract.TotalPools();
-        console.log(totalPools);
         const totalPoolsNumber = totalPools.toNumber();
         const pools: Pool[] = [];
 
@@ -39,7 +38,7 @@ const fetchPools = async () => {
                 tokenId: (poolData.tokenID).toString(),
                 lockdownPeriod: poolData.lockupSeconds.toNumber(),
                 cooldownPeriod: poolData.cooldownSeconds.toNumber(),
-                isTransferable: poolData.transferable,
+                transferable: poolData.transferable,
                 isImmutable: false
             }
             pools.push(pool);

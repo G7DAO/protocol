@@ -18,19 +18,15 @@ export interface Pool {
   tokenType: string;
   tokenAddress: string;
   tokenId: string;
-  lockdownPeriod: number;
-  cooldownPeriod: number;
-  isTransferable: boolean;
+  lockdownPeriod: string;
+  cooldownPeriod: string;
+  transferable: boolean;
   isImmutable: boolean;
 }
 
 const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
   const { data } = usePools();
   const [activePool, setActivePool] = useState<string | null>(null);
-
-  useEffect(() => {
-    console.log(data);
-  }, [data])
 
   const headers = [
     'Pool ID',
@@ -82,13 +78,17 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
                   <td className={styles.tdStyles}>{item.tokenId}</td>
                   <td className={styles.tdStyles}>{item.lockdownPeriod}</td>
                   <td className={styles.tdStyles}>{item.cooldownPeriod}</td>
-                  <td className={styles.tdStyles}>{item.isTransferable.toString()}</td>
+                  <td className={styles.tdStyles}>{item.transferable.toString()}</td>
                   <td className={styles.tdStyles}>{item.isImmutable.toString()}</td>
                   <td className={styles.tdStyles}>
                     <OptionsButton
                       onViewPositions={() => handleViewPositions(item.poolId)}
-                      onEditPool={() => handleEditPool()}
-                      poolData={{ isTransferable: item.isTransferable, cooldownSeconds: item.cooldownPeriod, lockdownSeconds: item.lockdownPeriod }}
+                      poolData={{
+                        poolId: item.poolId,
+                        transferable: item.transferable,
+                        cooldownSeconds: item.cooldownPeriod,
+                        lockdownSeconds: item.lockdownPeriod
+                      }}
                     />
                   </td>
                 </tr>

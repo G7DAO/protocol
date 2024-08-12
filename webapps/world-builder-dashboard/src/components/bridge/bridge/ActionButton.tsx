@@ -18,6 +18,7 @@ import { sendWithdrawERC20Transaction } from '@/utils/bridge/withdrawERC20'
 import { sendWithdrawTransaction } from '@/utils/bridge/withdrawNativeToken'
 import { L2ToL1MessageStatus } from '@arbitrum/sdk'
 import { createPool } from '@/utils/stake/createPool'
+import { editPool } from '@/utils/stake/editPool'
 
 
 export interface CreatePoolParams {
@@ -29,13 +30,23 @@ export interface CreatePoolParams {
   cooldownSeconds: string
 }
 
+export interface EditPoolParams {
+  poolId: string
+  changeTransferability: boolean
+  transferable: boolean
+  changeLockup: boolean
+  lockupSeconds: string
+  changeCooldown: boolean
+  cooldownSeconds: string
+}
+
 export interface DepositWithdrawParams {
   amount: string
 }
 
 export interface ActionButtonProps {
-  direction: 'DEPOSIT' | 'WITHDRAW' | 'CREATEPOOL'
-  params?: DepositWithdrawParams | CreatePoolParams
+  direction: 'DEPOSIT' | 'WITHDRAW' | 'CREATEPOOL' | 'EDITPOOL'
+  params?: DepositWithdrawParams | CreatePoolParams | EditPoolParams
   isDisabled: boolean
   setErrorMessage: (arg0: string) => void
 }
@@ -99,6 +110,11 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, params, isDisabl
     if (direction === 'CREATEPOOL') {
       const { tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds } = params as CreatePoolParams
       createAPool.mutate({ tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds });
+      return
+    }
+    if (direction === 'EDITPOOL') {
+      const { poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds } = params as EditPoolParams
+      editAPool.mutate({ poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds });
       return
     }
   }
@@ -216,7 +232,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, params, isDisabl
   )
   //#endregion
 
-  //#region createPool
+  //#region pool functions
   const createAPool = useMutation(
     async ({
       tokenType,
@@ -225,7 +241,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, params, isDisabl
       lockupSeconds,
       cooldownSeconds,
       transferable
-    }: CreatePoolParams): Promise<any> => {
+    }: CreatePoolParams) => {
       if (!connectedAccount) {
         throw new Error("Wallet isn't connected")
       }
@@ -233,17 +249,36 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, params, isDisabl
     },
     {
       onSuccess: async () => {
-        // try {
-        //   const transactionsString = localStorage.getItem(`pools`)
-        //   let transactions = []
-        //   if (transactionsString) {
-        //     transactions = JSON.parse(transactionsString)
-        //   }
-        //   transactions.push(record)
-        //   localStorage.setItem(`pools`, JSON.stringify(transactions))
-        // } catch (e) {
-        //   console.log(e)
-        // }
+        // add setup
+        queryClient.refetchQueries(['pools'])
+        navigate('/stake/pools')
+      },
+      onError: (e) => {
+        console.log(e)
+        setErrorMessage("Something went wrong. Check the console log!");
+      }
+    }
+  )
+
+  const editAPool = useMutation(
+    async ({
+      poolId,
+      changeTransferability,
+      transferable,
+      changeLockup,
+      lockupSeconds,
+      changeCooldown,
+      cooldownSeconds,
+    }: EditPoolParams) => {
+      if (!connectedAccount) {
+        throw new Error("Wallet isn't connected")
+      }
+      console.log(poolId.toString());
+      return editPool(poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds, connectedAccount)
+    },
+    {
+      onSuccess: async () => {
+        // add setup
         queryClient.refetchQueries(['pools'])
         navigate('/stake/pools')
       },
@@ -254,6 +289,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, params, isDisabl
     }
   )
   //#endregion
+
   const actionButton = (direction: string) => {
     if (direction === "DEPOSIT" || direction === "WITHDRAW") {
       const { amount } = params as DepositWithdrawParams;
@@ -287,12 +323,11 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, params, isDisabl
           </Modal>
         </>
       )
-    } else if (direction === "CREATEPOOL") {
+    } else if (direction === "CREATEPOOL" || direction === "EDITPOOL") {
       return (
         <button
           className={styles.container}
           onClick={handleClick}
-          // Todo add params
           disabled={false}
         >
           {getLabel() ?? 'Submit'}
