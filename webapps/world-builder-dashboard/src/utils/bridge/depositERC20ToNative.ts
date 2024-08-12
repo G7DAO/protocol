@@ -38,7 +38,7 @@ const estimateGasComponents = async (
   }
 }
 
-const calculateGasValues = (gasEstimateComponents: any) => {
+export const calculateGasValues = (gasEstimateComponents: any) => {
   const l1GasEstimated = gasEstimateComponents.gasEstimateForL1
   const l2GasUsed = gasEstimateComponents.gasEstimate.sub(gasEstimateComponents.gasEstimateForL1)
   const l2EstimatedPrice = gasEstimateComponents.baseFee
@@ -55,8 +55,7 @@ const calculateGasValues = (gasEstimateComponents: any) => {
   const L1C = L1P.mul(L1S)
   const B = L1C.div(P)
   const G = L2G.add(B)
-
-  return { TXFEES: P.mul(G), gasLimit: G }
+  return { TXFEES: P.mul(G), gasLimit: G, L2G, l2EstimatedPrice, G }
 }
 
 export const estimateDepositERC20ToNativeFee = async (
