@@ -43,11 +43,6 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
     ''
   ];
 
-  const handleEditPool = () => {
-    console.log("hello");
-  };
-
-
   const handleViewPositions = (poolId: string) => {
     setActivePool(activePool === poolId ? null : poolId);
   };
