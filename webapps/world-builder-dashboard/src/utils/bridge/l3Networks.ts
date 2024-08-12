@@ -68,7 +68,7 @@ export const L3_NETWORKS = [
       utils: '0xDaE6924DAFBefb0eb7Ae2B398958920dE61173F2',
       validatorWalletCreator: '0x85Feb8fE05794c2384b848235942490a6610C64B',
       upgradeExecutor: '0xaf0B28462B18df0D7e3b2Ee64684d625f8C3Cb8C',
-      upgradeExecutorL2: '0xee2439C4C47b84aA718a8f899AECf274Cd759eF6'
+      upgradeExecutorL2: '0xee2439C4C47b84aA718a8f899AECf274Cd759eF6',
     },
     tokenBridgeContracts: {
       l2Contracts: {
@@ -160,7 +160,8 @@ export const L3_NETWORKS = [
       bridge: '0xC7EEB897bA9bc3fA071C3871e7F4Cf1Ae7570f16',
       utils: '0xB11EB62DD2B352886A4530A9106fE427844D515f',
       validatorWalletCreator: '0xEb9885B6c0e117D339F47585cC06a2765AaE2E0b',
-      l3UpgradeExecutor: '0x8d2821B57E7B3D860E250C0bdc7Cb924B17C72b2'
+      l3UpgradeExecutor: '0x8d2821B57E7B3D860E250C0bdc7Cb924B17C72b2',
+      staking: '0xa6B0461b7E54Fa342Be6320D4938295A81f82Cd3'
     },
     tokenBridgeContracts: {
       l2Contracts: {

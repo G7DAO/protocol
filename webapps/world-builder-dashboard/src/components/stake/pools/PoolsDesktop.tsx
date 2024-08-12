@@ -5,23 +5,26 @@ import styles from './PoolDesktop.module.css'
 import OptionsButton from './OptionsButton';
 import PositionsTable, { Position } from './PositionsTable';
 
-interface PoolDesktopProps { }
+interface PoolDesktopProps {}
+
+
+export interface Pool {
+  poolId: string;
+  poolName: string;
+  administrator: string;
+  owner: string;
+  tokenType: string;
+  tokenAddress: string;
+  tokenId: string;
+  lockdownPeriod: number;
+  cooldownPeriod: number;
+  isTransferable: boolean;
+  isImmutable: boolean;
+}
+
 const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
   const [activePool, setActivePool] = useState<string | null>(null);
 
-  interface Pool {
-    poolId: string;
-    poolName: string;
-    administrator: string;
-    owner: string;
-    tokenType: string;
-    tokenAddress: string;
-    tokenId: string;
-    lockdownPeriod: number;
-    cooldownPeriod: number;
-    isTransferable: boolean;
-    isImmutable: boolean;
-  }
 
   const headers = [
     'Pool ID',

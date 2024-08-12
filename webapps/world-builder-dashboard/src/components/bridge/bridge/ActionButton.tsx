@@ -19,11 +19,12 @@ import { sendWithdrawTransaction } from '@/utils/bridge/withdrawNativeToken'
 import { L2ToL1MessageStatus } from '@arbitrum/sdk'
 
 interface ActionButtonProps {
-  direction: 'DEPOSIT' | 'WITHDRAW'
+  direction: 'DEPOSIT' | 'WITHDRAW' | 'CREATEPOOL'
   amount: string
   isDisabled: boolean
   setErrorMessage: (arg0: string) => void
 }
+
 const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabled, setErrorMessage }) => {
   const { connectedAccount, isConnecting, selectedHighNetwork, selectedLowNetwork, connectWallet, getProvider } =
     useBlockchainContext()
@@ -78,6 +79,9 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
       withdraw.mutate(amount)
       return
     }
+    if (direction === 'CREATEPOOL') {
+      return
+    }
   }
 
   const queryClient = useQueryClient()
@@ -129,7 +133,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
         refetchNewNotifications(connectedAccount ?? '')
         queryClient.invalidateQueries(['ERC20Balance'])
         queryClient.invalidateQueries(['pendingTransactions'])
-
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
         queryClient.refetchQueries(['incomingMessages'])
