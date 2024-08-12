@@ -4,33 +4,51 @@ import styles from './EditPoolModal.module.css'
 import ActionButton from '@/components/bridge/bridge/ActionButton';
 
 interface EditPoolModalProps extends ModalProps {
-    isOpen: boolean;
+    opened: boolean;
     onClose: () => void;
     poolData: {
         poolId: string;
         transferable: boolean;
         cooldownSeconds: string;
-        lockdownSeconds: string;
+        lockupSeconds: string;
     };
 }
 
-const EditPoolModal: React.FC<EditPoolModalProps> = ({ isOpen, onClose, poolData }) => {
+const EditPoolModal: React.FC<EditPoolModalProps> = ({ opened, onClose, poolData }) => {
     const poolId = poolData.poolId;
     const [transferable, setTransferable] = useState(poolData.transferable);
     const [cooldownSeconds, setCooldownSeconds] = useState(poolData.cooldownSeconds);
-    const [lockupSeconds, setLockdownSeconds] = useState(poolData.lockdownSeconds);
-    const [changeTransferability, setChangeTransferability] = useState(true);
-    const [changeLockup, setChangeLockup] = useState(true);
-    const [changeCooldown, setChangeCooldown] = useState(true);
+    const [lockupSeconds, setLockupSeconds] = useState(poolData.lockupSeconds);
+    const [changeTransferability, setChangeTransferability] = useState(false);
+    const [changeLockup, setChangeLockup] = useState(false);
+    const [changeCooldown, setChangeCooldown] = useState(false);
     const [inputErrorMessage, setInputErrorMessage] = useState('')
     const [networkErrorMessage, setNetworkErrorMessage] = useState('')
 
+    // to save on gas in the function, only update the values in smart contract if the values from frontend change
     useEffect(() => {
-        console.log(poolId.toString());
-    }, [])
+        if (lockupSeconds !== poolData.lockupSeconds) {
+            setChangeLockup(true);
+        }
+        console.log("change lockup:", true);
+    }, [lockupSeconds])
+
+    useEffect(() => {
+        if (cooldownSeconds !== poolData.cooldownSeconds) {
+            setChangeCooldown(true);
+            console.log("change cooldown:", true);
+        }
+    }, [cooldownSeconds])
+
+    useEffect(() => {
+        if (transferable !== poolData.transferable) {
+            setChangeTransferability(true);
+            console.log("change transferability:", true);
+        }
+    }, [transferable])
 
     return (
-        <Modal opened={isOpen} onClose={onClose}>
+        <Modal opened={opened} onClose={onClose} onClick={(e) => { e.stopPropagation() }}>
             <div className={styles.modal}>
                 <div className={styles.modalHeader}>
                     <div className={styles.modalTitle}>Edit Pool</div>
@@ -57,12 +75,12 @@ const EditPoolModal: React.FC<EditPoolModalProps> = ({ isOpen, onClose, poolData
                     />
                 </div>
                 <div className={styles.inputGroup}>
-                    <label className={styles.label}>Lockdown Seconds</label>
+                    <label className={styles.label}>Lockup Seconds</label>
                     <input
                         type="string"
                         className={styles.input}
                         value={lockupSeconds}
-                        onChange={(e) => setLockdownSeconds(e.target.value)}
+                        onChange={(e) => setLockupSeconds(e.target.value)}
                     />
                 </div>
                 <ActionButton

@@ -82,7 +82,7 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
                         poolId: item.poolId,
                         transferable: item.transferable,
                         cooldownSeconds: item.cooldownPeriod,
-                        lockdownSeconds: item.lockdownPeriod
+                        lockupSeconds: item.lockdownPeriod
                       }}
                     />
                   </td>

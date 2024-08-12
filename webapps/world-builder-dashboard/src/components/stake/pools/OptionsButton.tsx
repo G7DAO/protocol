@@ -8,7 +8,7 @@ interface OptionsButtonProps {
         poolId: string
         transferable: boolean;
         cooldownSeconds: string;
-        lockdownSeconds: string;
+        lockupSeconds: string;
     };
 }
 
@@ -47,7 +47,6 @@ const OptionsButton: React.FC<OptionsButtonProps> = ({ onViewPositions, poolData
             {isModalOpen && (
                 <EditPoolModal
                     opened={isModalOpen}
-                    isOpen={isModalOpen}
                     onClose={handleModalClose}
                     poolData={poolData}
                 />
