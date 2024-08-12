@@ -68,7 +68,7 @@ const EditPoolModal: React.FC<EditPoolModalProps> = ({ opened, onClose, poolData
                 <div className={styles.inputGroup}>
                     <label className={styles.label}>Cooldown Seconds</label>
                     <input
-                        type="string"
+                        type="number"
                         className={styles.input}
                         value={cooldownSeconds}
                         onChange={(e) => setCooldownSeconds(e.target.value)}
@@ -77,7 +77,7 @@ const EditPoolModal: React.FC<EditPoolModalProps> = ({ opened, onClose, poolData
                 <div className={styles.inputGroup}>
                     <label className={styles.label}>Lockup Seconds</label>
                     <input
-                        type="string"
+                        type="number"
                         className={styles.input}
                         value={lockupSeconds}
                         onChange={(e) => setLockupSeconds(e.target.value)}

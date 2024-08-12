@@ -109,6 +109,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, params, isDisabl
     }
     if (direction === 'CREATEPOOL') {
       const { tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds } = params as CreatePoolParams
+      console.log(params);
       createAPool.mutate({ tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds });
       return
     }

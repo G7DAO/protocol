@@ -51,15 +51,15 @@ const StakingView = () => {
             </div>
             <div className={styles.addressContainer}>
                 <div className={styles.label}>Token ID (if NFT)</div>
-                <input className={styles.input} value={tokenId} onChange={(e) => setTokenId(e.target.value)} />
+                <input type="number" className={styles.input} value={tokenId} onChange={(e) => setTokenId(e.target.value)} />
             </div>
             <div className={styles.addressContainer}>
                 <div className={styles.label}>Lockdown period (in seconds)</div>
-                <input className={styles.input} value={lockupSeconds} onChange={(e) => setLockupSeconds(e.target.value)} />
+                <input type="number" className={styles.input} value={lockupSeconds} onChange={(e) => setLockupSeconds(e.target.value)} />
             </div>
             <div className={styles.addressContainer}>
                 <div className={styles.label}>Cooldown period (in seconds)</div>
-                <input className={styles.input} value={cooldownSeconds} onChange={(e) => setCooldownSeconds(e.target.value)} />
+                <input type="number" className={styles.input} value={cooldownSeconds} onChange={(e) => setCooldownSeconds(e.target.value)} />
             </div>
             <div>
                 <input type="checkbox" id="horns" name="horns" checked={transferable} onChange={(e) => setTransferable(e.target.checked)} />
