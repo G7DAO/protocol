@@ -48,7 +48,8 @@ export const L3_NETWORK: HighNetworkInterface = {
   },
   inbox: '0xE6470bb72291c39073AEd67a30ff93B69c1f47De',
   g7TokenAddress: '0x0000000000000000000000000000000000000000',
-  challengePeriod: 60 * 60
+  challengePeriod: 60 * 60,
+  staker: '0xa6B0461b7E54Fa342Be6320D4938295A81f82Cd3'
 }
 
 export const L3_NATIVE_TOKEN_SYMBOL = 'TG7T'
