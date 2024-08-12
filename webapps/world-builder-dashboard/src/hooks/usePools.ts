@@ -23,6 +23,7 @@ const fetchPools = async () => {
 
     try {
         const totalPools = await PoolContract.TotalPools();
+        console.log(totalPools);
         const totalPoolsNumber = totalPools.toNumber();
         const pools: Pool[] = [];
 

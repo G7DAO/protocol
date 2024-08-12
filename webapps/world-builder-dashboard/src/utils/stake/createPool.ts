@@ -10,12 +10,12 @@ export enum TokenType {
 }
 
 export const createPool = async (
-    tokenType: TokenType,
+    tokenType: string,
     tokenAddress: string,
     tokenId: string,
-    lockdownPeriod: string,
-    cooldownPeriod: string,
-    isTransferable: boolean,
+    lockupSeconds: string,
+    cooldownSeconds: string,
+    transferable: boolean,
     isImmutable: boolean,
     account: string
 ) => {
@@ -34,9 +34,9 @@ export const createPool = async (
         tokenType,
         tokenAddress,
         tokenId,
-        isTransferable,
-        lockdownPeriod,
-        cooldownPeriod,
+        transferable,
+        lockupSeconds,
+        cooldownSeconds,
     )
 
     const txResponse = await provider.getSigner(account).sendTransaction(txRequest)

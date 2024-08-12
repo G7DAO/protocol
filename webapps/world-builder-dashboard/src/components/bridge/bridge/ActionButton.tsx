@@ -17,15 +17,16 @@ import { sendDepositERC20ToNativeTransaction } from '@/utils/bridge/depositERC20
 import { sendWithdrawERC20Transaction } from '@/utils/bridge/withdrawERC20'
 import { sendWithdrawTransaction } from '@/utils/bridge/withdrawNativeToken'
 import { L2ToL1MessageStatus } from '@arbitrum/sdk'
+import { createPool } from '@/utils/stake/createPool'
 
 
-interface CreatePoolParams {
-  tokenType: number
+export interface CreatePoolParams {
+  tokenType: string
   tokenAddress: string
-  tokenID: number
+  tokenID: string
   transferable: boolean
-  lockupSeconds: number
-  cooldownSeconds: number
+  lockupSeconds: string
+  cooldownSeconds: string
 }
 
 export interface DepositWithdrawParams {
@@ -86,16 +87,18 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, params, isDisabl
     }
     setErrorMessage('')
     if (direction === 'DEPOSIT') {
-      const { amount } = params as DepositWithdrawParams;
+      const { amount } = params as DepositWithdrawParams
       deposit.mutate(amount ?? "")
       return
     }
     if (direction === 'WITHDRAW') {
-      const { amount } = params as DepositWithdrawParams;
+      const { amount } = params as DepositWithdrawParams
       withdraw.mutate(amount ?? "")
       return
     }
     if (direction === 'CREATEPOOL') {
+      const { tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds } = params as CreatePoolParams
+      createAPool.mutate({ tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds });
       return
     }
   }
@@ -214,7 +217,42 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, params, isDisabl
   //#endregion
 
   //#region createPool
-
+  const createAPool = useMutation(
+    async ({
+      tokenType,
+      tokenAddress,
+      tokenID,
+      lockupSeconds,
+      cooldownSeconds,
+      transferable
+    }: CreatePoolParams): Promise<any> => {
+      if (!connectedAccount) {
+        throw new Error("Wallet isn't connected")
+      }
+      return createPool(tokenType, tokenAddress, tokenID, lockupSeconds, cooldownSeconds, transferable, false, connectedAccount)
+    },
+    {
+      onSuccess: async () => {
+        // try {
+        //   const transactionsString = localStorage.getItem(`pools`)
+        //   let transactions = []
+        //   if (transactionsString) {
+        //     transactions = JSON.parse(transactionsString)
+        //   }
+        //   transactions.push(record)
+        //   localStorage.setItem(`pools`, JSON.stringify(transactions))
+        // } catch (e) {
+        //   console.log(e)
+        // }
+        queryClient.refetchQueries(['pools'])
+        navigate('/stake/pools')
+      },
+      onError: (e) => {
+        console.log(e)
+        setErrorMessage("Something went wrong. Check the console log!");
+      }
+    }
+  )
   //#endregion
   const actionButton = (direction: string) => {
     if (direction === "DEPOSIT" || direction === "WITHDRAW") {
@@ -255,7 +293,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, params, isDisabl
           className={styles.container}
           onClick={handleClick}
           // Todo add params
-          disabled={getLabel() !== 'Connect wallet'}
+          disabled={false}
         >
           {getLabel() ?? 'Submit'}
         </button>
