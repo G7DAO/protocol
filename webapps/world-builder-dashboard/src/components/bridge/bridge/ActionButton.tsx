@@ -211,13 +211,18 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
       >
         <ApproveAllowance
           balance={Number(lowNetworkBalance ?? '0')}
-          allowance={allowance ?? 0}
           amount={Number(amount)}
           onSuccess={() => {
             setIsAllowanceModalOpened(false)
             deposit.mutate(amount)
           }}
           onClose={() => setIsAllowanceModalOpened(false)}
+          allowanceProps={{
+            allowance: allowance ?? 0,
+            tokenAddress: selectedLowNetwork.g7TokenAddress,
+            network: selectedLowNetwork,
+            spender: selectedLowNetwork.routerSpender
+          }}
         />
       </Modal>
     </>
