@@ -40,7 +40,22 @@ bindings/MockERC1155/MockERC1155.go: hardhat
 	mkdir -p bindings/MockERC1155
 	seer evm generate --package MockERC1155 --output bindings/MockERC1155/MockERC1155.go --hardhat web3/artifacts/contracts/mock/tokens.sol/MockERC1155.json --cli --struct MockERC1155
 
-bindings: bindings/ERC20/ERC20.go bindings/TokenFaucet/TokenFaucet.go bindings/WrappedNativeToken/WrappedNativeToken.go bindings/Staker/Staker.go bindings/MockERC20/MockERC20.go bindings/MockERC721/MockERC721.go bindings/MockERC1155/MockERC1155.go
+bindings/Diamond/Diamond.go: hardhat
+	mkdir -p bindings/Diamond
+	seer evm generate --package Diamond --output bindings/Diamond/Diamond.go --hardhat web3/artifacts/contracts/diamond/Diamond.sol/Diamond.json --cli --struct Diamond
+	mkdir -p bindings/Diamond/facets
+	seer evm generate --package DiamondCutFacet --output bindings/Diamond/facets/DiamondCutFacet.go --hardhat web3/artifacts/contracts/diamond/facets/DiamondCutFacet.sol/DiamondCutFacet.json --cli --struct DiamondCutFacet
+	seer evm generate --package DiamondLoupeFacet --output bindings/Diamond/facets/DiamondLoupeFacet.go --hardhat web3/artifacts/contracts/diamond/facets/DiamondLoupeFacet.sol/DiamondLoupeFacet.json --cli --struct DiamondLoupeFacet
+
+bindings/Terminus/Terminus.go: hardhat
+	mkdir -p bindings/Terminus
+	seer evm generate --package ERC1155WithTerminusStorage --output bindings/Terminus/ERC1155WithTerminusStorage.go --hardhat web3/artifacts/contracts/terminus/ERC1155WithTerminusStorage.sol/ERC1155WithTerminusStorage.json --cli --struct ERC1155WithTerminusStorage
+	seer evm generate --package TerminusFacet --output bindings/Terminus/TerminusFacet.go --hardhat web3/artifacts/contracts/terminus/TerminusFacet.sol/TerminusFacet.json --cli --struct TerminusFacet
+
+
+	
+
+bindings: bindings/ERC20/ERC20.go bindings/TokenFaucet/TokenFaucet.go bindings/WrappedNativeToken/WrappedNativeToken.go bindings/Staker/Staker.go bindings/MockERC20/MockERC20.go bindings/MockERC721/MockERC721.go bindings/MockERC1155/MockERC1155.go bindings/Diamond/Diamond.go bindings/Terminus/Terminus.go
 
 test-web3:
 	cd web3 && npx hardhat test
@@ -51,7 +66,7 @@ test-graffiti:
 test: test-web3 test-graffiti
 
 clean:
-	rm -rf bindings/ERC20/* bin/* bindings/TokenFaucet/* bindings/WrappedNativeToken/* bindings/Staker/* bindings/MockERC20/* bindings/MockERC721/* bindings/MockERC1155/*
+	rm -rf bindings/ERC20/* bin/* bindings/TokenFaucet/* bindings/WrappedNativeToken/* bindings/Staker/* bindings/MockERC20/* bindings/MockERC721/* bindings/MockERC1155/* bindings/Diamond/* bindings/Terminus/*
 
 clean-web3:
 	rm -rf web3/node_modules web3/artifacts
