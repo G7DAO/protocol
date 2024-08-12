@@ -1,0 +1,81 @@
+import { ethers, providers } from 'ethers'
+import { HighNetworkInterface, NetworkInterface } from '@/contexts/BlockchainContext'
+import { calculateGasValues } from '@/utils/bridge/depositERC20ToNative'
+import { convertToBigNumber } from '@/utils/web3utils'
+import { ERC20_INBOX_ABI } from '@/web3/ABI/erc20_inbox_abi'
+import { NodeInterface__factory } from '@arbitrum/sdk/dist/lib/abi/factories/NodeInterface__factory'
+import { NODE_INTERFACE_ADDRESS } from '@arbitrum/sdk/dist/lib/dataEntities/constants'
+import { Signer } from '@ethersproject/abstract-signer'
+
+const estimateGasComponents = async (
+  account: string,
+  network: NetworkInterface,
+  destinationAddress: string,
+  data: string
+) => {
+  const provider = new providers.JsonRpcProvider(network.rpcs[0])
+
+  if (data) {
+    const nodeInterface = NodeInterface__factory.connect(NODE_INTERFACE_ADDRESS, provider)
+    try {
+      return await nodeInterface.callStatic.gasEstimateComponents(destinationAddress, false, data, {
+        from: account
+      })
+    } catch (e: any) {
+      console.log("Can't estimate gas: ", e.message)
+    }
+  }
+}
+
+export const estimateCreateRetryableTicketFee = async (
+  account: string,
+  network: NetworkInterface,
+  destinationAddress: string,
+  data: string
+) => {
+  const gasEstimateComponents = await estimateGasComponents(account, network, destinationAddress, data)
+  if (gasEstimateComponents) {
+    const { TXFEES, G } = calculateGasValues(gasEstimateComponents)
+    return { TXFEES, G }
+  }
+}
+
+export const sendL2ToL3Message = async (
+  highNetwork: HighNetworkInterface,
+  amount: string,
+  l2Signer: Signer,
+  account: string,
+  callAddress: string,
+  callData: string
+) => {
+  const destinationAddress = highNetwork.inbox
+  const ethAmount = convertToBigNumber(amount)
+  const ERC20InboxContract = new ethers.Contract(destinationAddress, ERC20_INBOX_ABI, l2Signer)
+  const feeEstimation = await estimateCreateRetryableTicketFee(account, highNetwork, callAddress, callData)
+  if (!feeEstimation) {
+    console.log('sendL1->L2MessageError: fee estimation error')
+    return
+  }
+  const { TXFEES, G } = feeEstimation
+
+  const to = callAddress
+  const l2CallValue = ethAmount
+  const maxSubmissionCost = 0
+  const excessFeeRefundAddress = account
+  const callValueRefundAddress = account
+  const gasLimit = G.add(G) //adding 100% buffer
+  const maxFeePerGas = TXFEES.div(G)
+  const tokenTotalFeeAmount = maxFeePerGas.mul(gasLimit).add(l2CallValue)
+  const txResponse = await ERC20InboxContract.createRetryableTicket(
+    to,
+    l2CallValue,
+    maxSubmissionCost,
+    excessFeeRefundAddress,
+    callValueRefundAddress,
+    gasLimit,
+    maxFeePerGas,
+    tokenTotalFeeAmount,
+    callData
+  )
+  return txResponse.wait()
+}
