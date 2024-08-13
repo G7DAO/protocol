@@ -7,7 +7,7 @@ import PositionsTable, { Position } from './PositionsTable';
 import usePools from '@/hooks/usePools';
 import { formatAddress } from '@/utils/addressFormat';
 import { tokenTypes } from '@/utils/web3utils';
-import { useBlockchainContext } from '@/contexts/BlockchainContext';
+import { Pagination } from 'summon-ui/mantine'
 
 interface PoolDesktopProps { }
 
@@ -30,7 +30,17 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
   const { data } = usePools();
   const [activePool, setActivePool] = useState<string | null>(null)
   const [clickedPool, setClickedPool] = useState<number | null>(null)
-  const [page, setPage] = useState<number | null>(0);
+  const [page, setPage] = useState<number>(0)
+  const [maximumPages, setMaximumPages] = useState<number>(0)
+  // for future, when the user is able to customize their own entries
+  const [entries, setEntries] = useState<number>(10);
+
+  useEffect(() => {
+    if (!data) {
+      return
+    }
+    setMaximumPages(Math.ceil(data?.length / entries))
+  }, [data])
 
   const headers = [
     'Pool ID',
@@ -66,6 +76,12 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
   return (
     <div style={{ padding: '20px' }}>
       <div style={{ margin: 'auto', width: '100%' }}>
+        <Pagination
+          value={page + 1}
+          onChange={(value) => setPage((value - 1) % maximumPages)}
+          total={maximumPages}
+          style={{ marginBottom: "20px" }}
+        />
         <table className={styles.tableStyles}>
           <thead>
             <tr>
@@ -77,7 +93,7 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
             </tr>
           </thead>
           <tbody>
-            {data?.slice(0,10).map((item) => (
+            {data?.slice(page * entries, entries * (page + 1)).map((item) => (
               <React.Fragment key={item.poolId}>
                 <tr className={styles.trStyles}>
                   <td className={styles.tdStyles}>{item.poolId}</td>
