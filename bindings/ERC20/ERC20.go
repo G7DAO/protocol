@@ -892,6 +892,69 @@ func CreateERC20DeploymentCommand() *cobra.Command {
 	return cmd
 }
 
+func CreateTotalSupplyCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var capture0 *big.Int
+
+	cmd := &cobra.Command{
+		Use:   "total-supply",
+		Short: "Call the TotalSupply view method on a ERC20 contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewERC20(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := ERC20CallerSession{
+				Contract: &contract.ERC20Caller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.TotalSupply()
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0.String())
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	return cmd
+}
 func CreateAllowanceCommand() *cobra.Command {
 	var contractAddressRaw, rpc string
 	var contractAddress common.Address
@@ -1232,69 +1295,6 @@ func CreateSymbolCommand() *cobra.Command {
 			}
 
 			cmd.Printf("0: %s\n", capture0)
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	return cmd
-}
-func CreateTotalSupplyCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var capture0 *big.Int
-
-	cmd := &cobra.Command{
-		Use:   "total-supply",
-		Short: "Call the TotalSupply view method on a ERC20 contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewERC20(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := ERC20CallerSession{
-				Contract: &contract.ERC20Caller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.TotalSupply()
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0.String())
 
 			return nil
 		},
@@ -1858,6 +1858,9 @@ func CreateERC20Command() *cobra.Command {
 	cmdDeployERC20.GroupID = DeployGroup.ID
 	cmd.AddCommand(cmdDeployERC20)
 
+	cmdViewTotalSupply := CreateTotalSupplyCommand()
+	cmdViewTotalSupply.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewTotalSupply)
 	cmdViewAllowance := CreateAllowanceCommand()
 	cmdViewAllowance.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewAllowance)
@@ -1873,9 +1876,6 @@ func CreateERC20Command() *cobra.Command {
 	cmdViewSymbol := CreateSymbolCommand()
 	cmdViewSymbol.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewSymbol)
-	cmdViewTotalSupply := CreateTotalSupplyCommand()
-	cmdViewTotalSupply.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewTotalSupply)
 
 	cmdTransactApprove := CreateApproveCommand()
 	cmdTransactApprove.GroupID = TransactGroup.ID

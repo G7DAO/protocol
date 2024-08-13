@@ -11,6 +11,7 @@ import (
 	"github.com/G7DAO/protocol/bindings/Diamond/facets/DiamondCutFacet"
 	"github.com/G7DAO/protocol/bindings/Diamond/facets/DiamondLoupeFacet"
 	"github.com/G7DAO/protocol/bindings/Diamond/facets/OwnershipFacet"
+	"github.com/G7DAO/protocol/bindings/Terminus/TerminusFacet"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -22,7 +23,7 @@ type DiamondConfiguration struct {
 	DiamondCutFacet   string
 	DiamondLoupeFacet string
 	OwnershipFacet    string
-	TeminusFacet      string
+	TerminusFacet     string
 	Transactions      map[string]string
 }
 
@@ -127,6 +128,26 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 		deployedConfiguration.OwnershipFacet = ownershipAddress.Hex()
 	}
 
+	// If terminusAddress is not provided, we must deploy a new TerminusFacet.
+	if addressIsZero(terminusAddress) {
+		address, terminusTransaction, _, terminusErr := TerminusFacet.DeployTerminusFacet(txOpts, client)
+		if terminusErr != nil {
+			return deployedConfiguration, terminusErr
+		}
+
+		terminusTxReceiptCtx := context.Background()
+		_, terminusTxReceiptErr := bind.WaitMined(terminusTxReceiptCtx, client, terminusTransaction)
+		if terminusTxReceiptErr != nil {
+			return deployedConfiguration, terminusTxReceiptErr
+		}
+
+		terminusAddress = address
+		deployedConfiguration.TerminusFacet = address.Hex()
+		deployedConfiguration.Transactions["TerminusFacetDeployment"] = terminusTransaction.Hash().Hex()
+	} else {
+		deployedConfiguration.TerminusFacet = terminusAddress.Hex()
+	}
+
 	// Method signature: true if it's already attached and false otherwise
 	attachedMethods := make(map[string]bool)
 
@@ -165,6 +186,47 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 			attachedMethods[method.Sig] = true
 		}
 	}
+
+	// Call data for contract initialization
+	var initCalldata []byte
+
+	terminusFacetCut := DiamondCutFacet.IDiamondCutFacetCut{FacetAddress: terminusAddress, Action: 0, FunctionSelectors: make([][4]byte, 0)}
+	terminusABI, terminusABIErr := TerminusFacet.TerminusFacetMetaData.GetAbi()
+	if terminusABIErr != nil {
+		return deployedConfiguration, terminusABIErr
+	}
+	for _, method := range terminusABI.Methods {
+		// We initialize a Terminus diamond using the TerminusFacet init method.
+		if method.Name == "init" {
+			initCalldata = method.ID
+		}
+
+		_, ok := attachedMethods[method.Sig]
+		if !ok {
+			terminusFacetCut.FunctionSelectors = append(terminusFacetCut.FunctionSelectors, [4]byte(method.ID[:4]))
+			attachedMethods[method.Sig] = true
+		}
+	}
+
+	diamondForCut, diamondForCutErr := DiamondCutFacet.NewDiamondCutFacet(diamondAddress, client)
+	if diamondForCutErr != nil {
+		return deployedConfiguration, diamondForCutErr
+	}
+
+	cuts := []DiamondCutFacet.IDiamondCutFacetCut{diamondLoupeCut, ownershipCut, terminusFacetCut}
+
+	cutTransaction, cutTransactionErr := diamondForCut.DiamondCut(txOpts, cuts, terminusAddress, initCalldata)
+	if cutTransactionErr != nil {
+		return deployedConfiguration, cutTransactionErr
+	}
+
+	cutTxReceiptCtx := context.Background()
+	_, cutTxReceiptErr := bind.WaitMined(cutTxReceiptCtx, client, cutTransaction)
+	if cutTxReceiptErr != nil {
+		return deployedConfiguration, cutTxReceiptErr
+	}
+
+	deployedConfiguration.Transactions["Cut"] = cutTransaction.Hash().Hex()
 
 	return deployedConfiguration, nil
 }
