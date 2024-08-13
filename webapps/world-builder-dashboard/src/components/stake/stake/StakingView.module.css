@@ -145,6 +145,7 @@
   flex-direction: column;
   gap: 6px;
   align-self: stretch;
+  border-radius: 8px;
 }
 
 .address, .addressPlaceholder {

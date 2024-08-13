@@ -328,7 +328,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, params, isDisabl
         <button
           className={styles.container}
           onClick={handleClick}
-          disabled={false}
+          disabled={getLabel() !== 'Connect wallet' && isDisabled}
         >
           {getLabel() ?? 'Submit'}
         </button>
