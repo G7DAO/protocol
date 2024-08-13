@@ -17,6 +17,8 @@
     align-items: center;
     border-bottom: 1px solid var(--Gray-100, #F2F4F7);
     cursor: pointer;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
 }
 
 .button:hover {
@@ -129,5 +131,11 @@
 
 .inputError {
     border: 1px solid var(--Error-500, #F04438);
+}
+
+@media (max-width: 767px) {
+    .button {
+        width: 100%;
+    }
 }
 
