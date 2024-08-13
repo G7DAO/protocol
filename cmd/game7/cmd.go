@@ -13,9 +13,15 @@ import (
 	"github.com/G7DAO/protocol/bindings/ArbitrumUpgradeExecutor"
 	"github.com/G7DAO/protocol/bindings/ERC20Inbox"
 	"github.com/G7DAO/protocol/bindings/Staker"
+	"github.com/G7DAO/protocol/bindings/Terminus/ERC1155WithTerminusStorage"
+	"github.com/G7DAO/protocol/bindings/Terminus/TerminusFacet"
 	"github.com/G7DAO/protocol/bindings/TokenFaucet"
 	"github.com/G7DAO/protocol/bridge"
 
+	"github.com/G7DAO/protocol/bindings/Diamond"
+	"github.com/G7DAO/protocol/bindings/Diamond/facets/DiamondCutFacet"
+	"github.com/G7DAO/protocol/bindings/Diamond/facets/DiamondLoupeFacet"
+	"github.com/G7DAO/protocol/bindings/Diamond/facets/OwnershipFacet"
 	"github.com/G7DAO/protocol/bindings/ERC20"
 	"github.com/G7DAO/protocol/bindings/MockERC1155"
 	"github.com/G7DAO/protocol/bindings/MockERC20"
@@ -67,6 +73,17 @@ func CreateRootCommand() *cobra.Command {
 	accountsCmd := accounts.CreateAccountsCommand()
 	accountsCmd.Use = "accounts"
 
+	diamondCmd := Diamond.CreateDiamondCommand()
+	//diamondCmd.Use := "diamond" //throwing error
+	diamondCutFacetCmd := DiamondCutFacet.CreateDiamondCutFacetCommand()
+	//diamondCutFacetCmd.Use := "diamond-cut-facet" //throwing error
+	diamondLoupeFacetCmd := DiamondLoupeFacet.CreateDiamondLoupeFacetCommand()
+	ownershipFacet := OwnershipFacet.CreateOwnershipFacetCommand()
+
+	erc1155WithTerminusStorageCmd := ERC1155WithTerminusStorage.CreateERC1155WithTerminusStorageCommand()
+	//erc1155WithTerminusStorageCmd.Use := "erc1155-with-terminus-storage" //throwing error
+	terminusFacetCmd := TerminusFacet.CreateTerminusFacetCommand()
+
 	wrappedNativeTokenCmd := WrappedNativeToken.CreateWrappedNativeTokenCommand()
 	wrappedNativeTokenCmd.Use = "wrapped-native-token"
 
@@ -75,7 +92,7 @@ func CreateRootCommand() *cobra.Command {
 
 	mockCmd := CreateMockCommand()
 
-	rootCmd.AddCommand(completionCmd, versionCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd, accountsCmd, wrappedNativeTokenCmd, stakerCmd, mockCmd)
+	rootCmd.AddCommand(completionCmd, versionCmd, diamondCmd, diamondLoupeFacetCmd, ownershipFacet, terminusFacetCmd, erc1155WithTerminusStorageCmd, diamondCutFacetCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd, accountsCmd, wrappedNativeTokenCmd, stakerCmd, mockCmd)
 
 	// By default, cobra Command objects write to stderr. We have to forcibly set them to output to
 	// stdout.
