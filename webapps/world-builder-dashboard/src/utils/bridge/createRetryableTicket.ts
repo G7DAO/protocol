@@ -1,5 +1,7 @@
+import { MAX_ALLOWANCE_ACCOUNT } from '../../../constants'
 import { ethers, providers } from 'ethers'
-import { HighNetworkInterface, NetworkInterface } from '@/contexts/BlockchainContext'
+import { NetworkInterface } from '@/contexts/BlockchainContext'
+import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { calculateGasValues } from '@/utils/bridge/depositERC20ToNative'
 import { convertToBigNumber } from '@/utils/web3utils'
 import { ERC20_INBOX_ABI } from '@/web3/ABI/erc20_inbox_abi'
@@ -14,7 +16,6 @@ const estimateGasComponents = async (
   data: string
 ) => {
   const provider = new providers.JsonRpcProvider(network.rpcs[0])
-
   if (data) {
     const nodeInterface = NodeInterface__factory.connect(NODE_INTERFACE_ADDRESS, provider)
     try {
@@ -28,11 +29,15 @@ const estimateGasComponents = async (
 }
 
 export const estimateCreateRetryableTicketFee = async (
-  account: string,
+  _account: string,
   network: NetworkInterface,
   destinationAddress: string,
   data: string
 ) => {
+  let account = _account
+  if (!_account) {
+    account = MAX_ALLOWANCE_ACCOUNT
+  }
   const gasEstimateComponents = await estimateGasComponents(account, network, destinationAddress, data)
   if (gasEstimateComponents) {
     const { TXFEES, G } = calculateGasValues(gasEstimateComponents)
@@ -41,20 +46,25 @@ export const estimateCreateRetryableTicketFee = async (
 }
 
 export const sendL2ToL3Message = async (
-  highNetwork: HighNetworkInterface,
+  lowNetwork: NetworkInterface,
+  highNetwork: NetworkInterface,
   amount: string,
   l2Signer: Signer,
   account: string,
   callAddress: string,
-  callData: string
-) => {
+  callData: string,
+  _feeEstimation: { TXFEES: ethers.BigNumber; G: ethers.BigNumber } | undefined
+): Promise<TransactionRecord> => {
   const destinationAddress = highNetwork.inbox
+  if (!destinationAddress) {
+    throw new Error('inbox contract address is undefined')
+  }
   const ethAmount = convertToBigNumber(amount)
   const ERC20InboxContract = new ethers.Contract(destinationAddress, ERC20_INBOX_ABI, l2Signer)
-  const feeEstimation = await estimateCreateRetryableTicketFee(account, highNetwork, callAddress, callData)
+  const feeEstimation =
+    _feeEstimation ?? (await estimateCreateRetryableTicketFee(account, lowNetwork, callAddress, callData))
   if (!feeEstimation) {
-    console.log('sendL1->L2MessageError: fee estimation error')
-    return
+    throw new Error('sendL2->L3MessageError: fee estimation error')
   }
   const { TXFEES, G } = feeEstimation
 
@@ -77,5 +87,15 @@ export const sendL2ToL3Message = async (
     tokenTotalFeeAmount,
     callData
   )
-  return txResponse.wait()
+  await txResponse.wait()
+  return {
+    type: 'DEPOSIT',
+    amount,
+    lowNetworkChainId: lowNetwork.chainId,
+    highNetworkChainId: highNetwork.chainId,
+    lowNetworkHash: txResponse.hash,
+    lowNetworkTimestamp: Date.now() / 1000,
+    completionTimestamp: Date.now() / 1000,
+    newTransaction: true
+  }
 }
