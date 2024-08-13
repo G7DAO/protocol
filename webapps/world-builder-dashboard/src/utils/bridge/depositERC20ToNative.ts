@@ -43,19 +43,23 @@ export const calculateGasValues = (gasEstimateComponents: any) => {
   const l2GasUsed = gasEstimateComponents.gasEstimate.sub(gasEstimateComponents.gasEstimateForL1)
   const l2EstimatedPrice = gasEstimateComponents.baseFee
   const l1EstimatedPrice = gasEstimateComponents.l1BaseFeeEstimate.mul(16)
-
-  const l1Cost = l1GasEstimated.mul(l2EstimatedPrice)
-  const l1Size = l1Cost.div(l1EstimatedPrice)
-
   const P = l2EstimatedPrice
   const L2G = l2GasUsed
-  const L1P = l1EstimatedPrice
-  const L1S = l1Size
+  let B: ethers.BigNumber
+  if (l1EstimatedPrice.toNumber() !== 0 && l1GasEstimated.toNumber() !== 0) {
+    const L1P = l1EstimatedPrice
+    const l1Cost = l1GasEstimated.mul(l2EstimatedPrice)
+    const L1S = l1Cost.div(l1EstimatedPrice)
+    const L1C = L1P.mul(L1S)
+    B = L1C.div(P)
+  } else {
+    B = L2G.mul(ethers.BigNumber.from(8))
+  }
 
-  const L1C = L1P.mul(L1S)
-  const B = L1C.div(P)
   const G = L2G.add(B)
-  return { TXFEES: P.mul(G), gasLimit: G, L2G, l2EstimatedPrice, G }
+  const TXFEES = P.mul(G)
+
+  return { TXFEES, gasLimit: G, L2G, l2EstimatedPrice, G }
 }
 
 export const estimateDepositERC20ToNativeFee = async (
