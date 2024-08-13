@@ -7,6 +7,7 @@ import PositionsTable, { Position } from './PositionsTable';
 import usePools from '@/hooks/usePools';
 import { formatAddress } from '@/utils/addressFormat';
 import { tokenTypes } from '@/utils/web3utils';
+import { useBlockchainContext } from '@/contexts/BlockchainContext';
 
 interface PoolDesktopProps { }
 
@@ -26,7 +27,8 @@ export interface Pool {
 }
 
 const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
-  const { data } = usePools();
+  const { connectedAccount } = useBlockchainContext()
+  const { data } = usePools(connectedAccount ?? "");
   const [activePool, setActivePool] = useState<string | null>(null)
   const [clickedPool, setClickedPool] = useState<number | null>(null)
 

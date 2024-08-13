@@ -3,7 +3,6 @@ import { useQuery } from 'react-query'
 import { STAKER_ABI } from '@/web3/ABI/Staker'
 import { L3_NETWORKS } from '@/utils/bridge/l3Networks'
 import { Pool } from '@/components/stake/pools/PoolsDesktop'
-
 const STAKER_ADDRESS = L3_NETWORKS[2].coreContracts.staking ?? ''
 
 
@@ -24,21 +23,41 @@ const fetchPools = async () => {
     try {
         const totalPools = await PoolContract.TotalPools();
         const totalPoolsNumber = totalPools.toNumber();
+
+        // Create an array of all the PoolIDs in our staker contract
+        const allPools = Array.from({ length: totalPoolsNumber }, (_, index) => index)
         const pools: Pool[] = [];
 
-        for (let i = 0; i < totalPoolsNumber; i++) {
-            const poolData = await PoolContract.Pools(i);
+        // Bundle all the encoded functiondata in one variable
+        const calls = allPools.map((poolId) => {
+            return {
+                to: STAKER_ADDRESS,
+                data: PoolContract.interface.encodeFunctionData('Pools', [poolId])
+            }
+        })
+
+        // Make one call
+        const callResults = await Promise.all(
+            calls.map(call => provider.call(call))
+        );
+
+        // Return decoded data
+        const decodedData = callResults.map((data) => {
+            return PoolContract.interface.decodeFunctionResult('Pools', data);
+        });
+
+        for (let i = 0; i < decodedData.length; i++) {
             const pool: Pool = {
                 poolId: i.toString(),
                 poolName: "Pool " + i.toString(),
-                administrator: poolData.administrator,
-                owner: poolData.administrator,
-                tokenType: (poolData.tokenType).toString(),
-                tokenAddress: poolData.tokenAddress,
-                tokenId: (poolData.tokenID).toString(),
-                lockdownPeriod: poolData.lockupSeconds.toNumber(),
-                cooldownPeriod: poolData.cooldownSeconds.toNumber(),
-                transferable: poolData.transferable,
+                administrator: decodedData[i].administrator,
+                owner: decodedData[i].administrator,
+                tokenType: (decodedData[i].tokenType).toString(),
+                tokenAddress: decodedData[i].tokenAddress,
+                tokenId: (decodedData[i].tokenID).toString(),
+                lockdownPeriod: decodedData[i].lockupSeconds.toNumber(),
+                cooldownPeriod: decodedData[i].cooldownSeconds.toNumber(),
+                transferable: decodedData[i].transferable,
                 isImmutable: false
             }
             pools.push(pool);
@@ -50,7 +69,7 @@ const fetchPools = async () => {
     }
 }
 
-const usePools = () => {
+const usePools = (connectedAccount: string) => {
     return useQuery('pools', () => fetchPools(), {
         refetchInterval: 60000,
         onError: (error) => {

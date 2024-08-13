@@ -4,7 +4,7 @@ import { useState } from 'react'
 import styles from './StakingView.module.css'
 import ActionButton from '@/components/bridge/bridge/ActionButton'
 import { tokenTypes, ZERO_ADDRESS } from '@/utils/web3utils';
-import { isAddress } from 'web3-validator';
+import { ethers } from 'ethers';
 
 const StakingView = () => {
     const [tokenAddress, setTokenAddress] = useState(ZERO_ADDRESS)
@@ -20,6 +20,7 @@ const StakingView = () => {
         setTokenType(tokenValue)
         if (tokenValue === "1") {
             setTokenAddress(ZERO_ADDRESS)
+            setInputErrorMessage("")
             return
         }
         if (tokenValue !== "1155")
@@ -27,7 +28,7 @@ const StakingView = () => {
     }
 
     const handleAddressChange = (address: string) => {
-        if (!isAddress(address)) {
+        if (!ethers.utils.isAddress(address)) {
             setInputErrorMessage("Token address is not an address!")
         } else if (address === ZERO_ADDRESS && tokenType !== "1") {
             setInputErrorMessage("Token address cannot be a zero address")
