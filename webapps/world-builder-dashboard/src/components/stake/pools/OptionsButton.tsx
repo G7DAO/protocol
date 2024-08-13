@@ -1,24 +1,29 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './OptionsButton.module.css';
 import EditPoolModal from './EditPoolModal';
 
 interface OptionsButtonProps {
-    onViewPositions: () => void;
+    onViewPositions: () => void
     poolData: {
         poolId: string
-        transferable: boolean;
-        cooldownSeconds: string;
-        lockupSeconds: string;
-    };
+        transferable: boolean
+        cooldownSeconds: string
+        lockupSeconds: string
+    }
+    toggleDropdown: (clickedPoolId: number) => void
+    clickedPool: number | null
 }
 
-const OptionsButton: React.FC<OptionsButtonProps> = ({ onViewPositions, poolData }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+const OptionsButton: React.FC<OptionsButtonProps> = ({ onViewPositions, poolData, toggleDropdown, clickedPool }) => {
+    const [isOpen, setIsOpen] = useState(false)
+    const [isModalOpen, setIsModalOpen] = useState(false)
 
-    const toggleDropdown = () => {
-        setIsOpen(!isOpen);
-    };
+    useEffect(() => {
+        if (clickedPool === Number(poolData.poolId))
+            setIsOpen(true)
+        else
+            setIsOpen(false)
+    }, [clickedPool])
 
     const handleOptionClick = (option: string) => {
         console.log(`${option} clicked`);
@@ -26,17 +31,17 @@ const OptionsButton: React.FC<OptionsButtonProps> = ({ onViewPositions, poolData
             onViewPositions();
         }
         else if (option === 'Edit Pool') {
-            setIsModalOpen(!isModalOpen);
+            setIsModalOpen(!isModalOpen)
         }
-        setIsOpen(false);
+        setIsOpen(false)
     };
 
     const handleModalClose = () => {
-        setIsModalOpen(false);
+        setIsModalOpen(false)
     }
 
     return (
-        <div className={styles.container} onClick={toggleDropdown}>
+        <div className={styles.container} onClick={() => { toggleDropdown(Number(poolData.poolId)) }}>
             <span className={styles.label}>Options</span>
             {isOpen && (
                 <div className={styles.dropdown}>

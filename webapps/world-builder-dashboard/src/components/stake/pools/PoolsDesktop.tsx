@@ -27,7 +27,8 @@ export interface Pool {
 
 const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
   const { data } = usePools();
-  const [activePool, setActivePool] = useState<string | null>(null);
+  const [activePool, setActivePool] = useState<string | null>(null)
+  const [clickedPool, setClickedPool] = useState<number | null>(null)
 
   const headers = [
     'Pool ID',
@@ -51,6 +52,13 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
   const getTokenLabel = (tokenValue: string) => {
     const type = tokenTypes.find((token => token.value === tokenValue))
     return type?.label;
+  }
+
+  const toggleDropdown = (clickedPoolId: number | null) => {
+    if (clickedPoolId === clickedPool)
+      setClickedPool(null)
+    else
+      setClickedPool(clickedPoolId)
   }
 
   return (
@@ -90,6 +98,8 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
                         cooldownSeconds: item.cooldownPeriod,
                         lockupSeconds: item.lockdownPeriod
                       }}
+                      toggleDropdown={toggleDropdown}
+                      clickedPool={clickedPool}
                     />
                   </td>
                 </tr>
