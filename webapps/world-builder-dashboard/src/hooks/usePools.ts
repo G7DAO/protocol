@@ -4,7 +4,6 @@ import { STAKER_ABI } from '@/web3/ABI/Staker'
 import { MULTICALL_ABI } from '@/web3/ABI/Multicall'
 import { L3_NETWORKS } from '@/utils/bridge/l3Networks'
 import { Pool } from '@/components/stake/pools/PoolsDesktop'
-import { useBlockchainContext } from '@/contexts/BlockchainContext'
 
 const STAKER_ADDRESS = L3_NETWORKS[2].coreContracts.staking ?? ''
 const MULTICALL_ADDRESS = L3_NETWORKS[2].tokenBridgeContracts.l3Contracts.multicall;
@@ -38,7 +37,7 @@ const fetchPools = async () => {
 
         // Create an array of all the PoolIDs in our staker contract
         const allPools = Array.from({ length: totalPoolsNumber }, (_, index) => index)
-        const pools: Pool[] = [];
+        const pools: Pool[] = []
 
         // Map every pool ID to an encoded function call
         const calls = allPools.map((poolId) => {
@@ -47,35 +46,42 @@ const fetchPools = async () => {
                 callData: PoolContract.interface.encodeFunctionData('Pools', [poolId])
             };
         });
-        
+
         // Aggregate all calls as one
         const callData = MulticallContract.interface.encodeFunctionData('tryAggregate', [false, calls]);
 
-        // Here, we need ot define a raw call to be call() by provider. The reason why is because regular 
-        // invocation makes it a transaction and we don't want that. Bad UX
+        // define a raw call to be used with provider.call(), to avoid transacting.
         const rawCall = {
             to: MULTICALL_ADDRESS,
             data: callData
         };
+
+        // Execute the call using the provider
         const result = await provider.call(rawCall);
 
-        // Decode the result
+        // Decode the result from the tryAggregate call
         const decodedResult = MulticallContract.interface.decodeFunctionResult('tryAggregate', result);
-        console.log(decodedResult)
 
+        // Extract and decode the return data from each call
+        const poolDataArray = decodedResult[0].map((resultData: any) => {
+            return PoolContract.interface.decodeFunctionResult('Pools', resultData.returnData);
+        });
+
+        console.log(poolDataArray)
+
+        // console.log(poolData)
         for (let i = 0; i < totalPoolsNumber; i++) {
-            const poolData = await PoolContract.Pools(i);
             const pool: Pool = {
                 poolId: i.toString(),
                 poolName: "Pool " + i.toString(),
-                administrator: poolData.administrator,
-                owner: poolData.administrator,
-                tokenType: (poolData.tokenType).toString(),
-                tokenAddress: poolData.tokenAddress,
-                tokenId: (poolData.tokenID).toString(),
-                lockdownPeriod: poolData.lockupSeconds.toNumber(),
-                cooldownPeriod: poolData.cooldownSeconds.toNumber(),
-                transferable: poolData.transferable,
+                administrator: poolDataArray[i].administrator,
+                owner: poolDataArray[i].administrator,
+                tokenType: (poolDataArray[i].tokenType).toString(),
+                tokenAddress: poolDataArray[i].tokenAddress,
+                tokenId: (poolDataArray[i].tokenID).toString(),
+                lockdownPeriod: poolDataArray[i].lockupSeconds.toNumber(),
+                cooldownPeriod: poolDataArray[i].cooldownSeconds.toNumber(),
+                transferable: poolDataArray[i].transferable,
                 isImmutable: false
             }
             pools.push(pool);

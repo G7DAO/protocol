@@ -27,10 +27,10 @@ export interface Pool {
 }
 
 const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
-  const { connectedAccount } = useBlockchainContext()
-  const { data } = usePools(connectedAccount ?? "");
+  const { data } = usePools();
   const [activePool, setActivePool] = useState<string | null>(null)
   const [clickedPool, setClickedPool] = useState<number | null>(null)
+  const [page, setPage] = useState<number | null>(0);
 
   const headers = [
     'Pool ID',
@@ -77,7 +77,7 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
             </tr>
           </thead>
           <tbody>
-            {data?.map((item) => (
+            {data?.slice(0,10).map((item) => (
               <React.Fragment key={item.poolId}>
                 <tr className={styles.trStyles}>
                   <td className={styles.tdStyles}>{item.poolId}</td>
