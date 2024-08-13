@@ -1,9 +1,14 @@
 import { ethers } from 'ethers'
 import { useQuery } from 'react-query'
 import { STAKER_ABI } from '@/web3/ABI/Staker'
+import { MULTICALL_ABI } from '@/web3/ABI/Multicall'
 import { L3_NETWORKS } from '@/utils/bridge/l3Networks'
 import { Pool } from '@/components/stake/pools/PoolsDesktop'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
+
 const STAKER_ADDRESS = L3_NETWORKS[2].coreContracts.staking ?? ''
+const MULTICALL_ADDRESS = L3_NETWORKS[2].tokenBridgeContracts.l3Contracts.multicall;
+
 
 
 const fetchPools = async () => {
@@ -14,9 +19,16 @@ const fetchPools = async () => {
         // If no MM or other wallet provider is found, use G7 chain RPC
         provider = new ethers.providers.JsonRpcProvider(L3_NETWORKS[2].chainInfo.rpcs[0])
     }
+
     const PoolContract = new ethers.Contract(
         STAKER_ADDRESS ?? "",
         STAKER_ABI,
+        provider
+    )
+
+    const MulticallContract = new ethers.Contract(
+        MULTICALL_ADDRESS ?? "",
+        MULTICALL_ABI,
         provider
     )
 
@@ -28,36 +40,42 @@ const fetchPools = async () => {
         const allPools = Array.from({ length: totalPoolsNumber }, (_, index) => index)
         const pools: Pool[] = [];
 
-        // Bundle all the encoded functiondata in one variable
+        // Map every pool ID to an encoded function call
         const calls = allPools.map((poolId) => {
             return {
-                to: STAKER_ADDRESS,
-                data: PoolContract.interface.encodeFunctionData('Pools', [poolId])
-            }
-        })
-
-        // Make one call
-        const callResults = await Promise.all(
-            calls.map(call => provider.call(call))
-        );
-
-        // Return decoded data
-        const decodedData = callResults.map((data) => {
-            return PoolContract.interface.decodeFunctionResult('Pools', data);
+                target: STAKER_ADDRESS,
+                callData: PoolContract.interface.encodeFunctionData('Pools', [poolId])
+            };
         });
+        
+        // Aggregate all calls as one
+        const callData = MulticallContract.interface.encodeFunctionData('tryAggregate', [false, calls]);
 
-        for (let i = 0; i < decodedData.length; i++) {
+        // Here, we need ot define a raw call to be call() by provider. The reason why is because regular 
+        // invocation makes it a transaction and we don't want that. Bad UX
+        const rawCall = {
+            to: MULTICALL_ADDRESS,
+            data: callData
+        };
+        const result = await provider.call(rawCall);
+
+        // Decode the result
+        const decodedResult = MulticallContract.interface.decodeFunctionResult('tryAggregate', result);
+        console.log(decodedResult)
+
+        for (let i = 0; i < totalPoolsNumber; i++) {
+            const poolData = await PoolContract.Pools(i);
             const pool: Pool = {
                 poolId: i.toString(),
                 poolName: "Pool " + i.toString(),
-                administrator: decodedData[i].administrator,
-                owner: decodedData[i].administrator,
-                tokenType: (decodedData[i].tokenType).toString(),
-                tokenAddress: decodedData[i].tokenAddress,
-                tokenId: (decodedData[i].tokenID).toString(),
-                lockdownPeriod: decodedData[i].lockupSeconds.toNumber(),
-                cooldownPeriod: decodedData[i].cooldownSeconds.toNumber(),
-                transferable: decodedData[i].transferable,
+                administrator: poolData.administrator,
+                owner: poolData.administrator,
+                tokenType: (poolData.tokenType).toString(),
+                tokenAddress: poolData.tokenAddress,
+                tokenId: (poolData.tokenID).toString(),
+                lockdownPeriod: poolData.lockupSeconds.toNumber(),
+                cooldownPeriod: poolData.cooldownSeconds.toNumber(),
+                transferable: poolData.transferable,
                 isImmutable: false
             }
             pools.push(pool);
@@ -69,7 +87,7 @@ const fetchPools = async () => {
     }
 }
 
-const usePools = (connectedAccount: string) => {
+const usePools = () => {
     return useQuery('pools', () => fetchPools(), {
         refetchInterval: 60000,
         onError: (error) => {

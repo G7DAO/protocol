@@ -14,7 +14,7 @@ export const MULTICALL_ABI = [
                         "type": "bytes"
                     }
                 ],
-                "internalType": "struct Multicall3.Call[]",
+                "internalType": "struct Multicall2.Call[]",
                 "name": "calls",
                 "type": "tuple[]"
             }
@@ -32,108 +32,7 @@ export const MULTICALL_ABI = [
                 "type": "bytes[]"
             }
         ],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "components": [
-                    {
-                        "internalType": "address",
-                        "name": "target",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "bool",
-                        "name": "allowFailure",
-                        "type": "bool"
-                    },
-                    {
-                        "internalType": "bytes",
-                        "name": "callData",
-                        "type": "bytes"
-                    }
-                ],
-                "internalType": "struct Multicall3.Call3[]",
-                "name": "calls",
-                "type": "tuple[]"
-            }
-        ],
-        "name": "aggregate3",
-        "outputs": [
-            {
-                "components": [
-                    {
-                        "internalType": "bool",
-                        "name": "success",
-                        "type": "bool"
-                    },
-                    {
-                        "internalType": "bytes",
-                        "name": "returnData",
-                        "type": "bytes"
-                    }
-                ],
-                "internalType": "struct Multicall3.Result[]",
-                "name": "returnData",
-                "type": "tuple[]"
-            }
-        ],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "components": [
-                    {
-                        "internalType": "address",
-                        "name": "target",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "bool",
-                        "name": "allowFailure",
-                        "type": "bool"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "value",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "bytes",
-                        "name": "callData",
-                        "type": "bytes"
-                    }
-                ],
-                "internalType": "struct Multicall3.Call3Value[]",
-                "name": "calls",
-                "type": "tuple[]"
-            }
-        ],
-        "name": "aggregate3Value",
-        "outputs": [
-            {
-                "components": [
-                    {
-                        "internalType": "bool",
-                        "name": "success",
-                        "type": "bool"
-                    },
-                    {
-                        "internalType": "bytes",
-                        "name": "returnData",
-                        "type": "bytes"
-                    }
-                ],
-                "internalType": "struct Multicall3.Result[]",
-                "name": "returnData",
-                "type": "tuple[]"
-            }
-        ],
-        "stateMutability": "payable",
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -151,7 +50,7 @@ export const MULTICALL_ABI = [
                         "type": "bytes"
                     }
                 ],
-                "internalType": "struct Multicall3.Call[]",
+                "internalType": "struct Multicall2.Call[]",
                 "name": "calls",
                 "type": "tuple[]"
             }
@@ -181,25 +80,12 @@ export const MULTICALL_ABI = [
                         "type": "bytes"
                     }
                 ],
-                "internalType": "struct Multicall3.Result[]",
+                "internalType": "struct Multicall2.Result[]",
                 "name": "returnData",
                 "type": "tuple[]"
             }
         ],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "getBasefee",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "basefee",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -228,19 +114,6 @@ export const MULTICALL_ABI = [
             {
                 "internalType": "uint256",
                 "name": "blockNumber",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "getChainId",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "chainid",
                 "type": "uint256"
             }
         ],
@@ -351,7 +224,7 @@ export const MULTICALL_ABI = [
                         "type": "bytes"
                     }
                 ],
-                "internalType": "struct Multicall3.Call[]",
+                "internalType": "struct Multicall2.Call[]",
                 "name": "calls",
                 "type": "tuple[]"
             }
@@ -371,12 +244,12 @@ export const MULTICALL_ABI = [
                         "type": "bytes"
                     }
                 ],
-                "internalType": "struct Multicall3.Result[]",
+                "internalType": "struct Multicall2.Result[]",
                 "name": "returnData",
                 "type": "tuple[]"
             }
         ],
-        "stateMutability": "payable",
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -399,7 +272,7 @@ export const MULTICALL_ABI = [
                         "type": "bytes"
                     }
                 ],
-                "internalType": "struct Multicall3.Call[]",
+                "internalType": "struct Multicall2.Call[]",
                 "name": "calls",
                 "type": "tuple[]"
             }
@@ -429,12 +302,12 @@ export const MULTICALL_ABI = [
                         "type": "bytes"
                     }
                 ],
-                "internalType": "struct Multicall3.Result[]",
+                "internalType": "struct Multicall2.Result[]",
                 "name": "returnData",
                 "type": "tuple[]"
             }
         ],
-        "stateMutability": "payable",
+        "stateMutability": "nonpayable",
         "type": "function"
     }
 ]
