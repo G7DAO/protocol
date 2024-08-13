@@ -44,7 +44,11 @@ bindings/MockERC1155/MockERC1155.go: hardhat
 	mkdir -p bindings/MockERC1155
 	seer evm generate --package MockERC1155 --output bindings/MockERC1155/MockERC1155.go --hardhat web3/artifacts/contracts/mock/tokens.sol/MockERC1155.json --cli --struct MockERC1155
 
-bindings: bindings/ERC20/ERC20.go bindings/TokenFaucet/TokenFaucet.go bindings/WrappedNativeToken/WrappedNativeToken.go bindings/Staker/Staker.go bindings/MockERC20/MockERC20.go bindings/MockERC721/MockERC721.go bindings/MockERC1155/MockERC1155.go bindings/PositionMetadata/PositionMetadata.go
+bindings/StakeFor/StakeFor.go: hardhat
+	mkdir -p bindings/StakeFor
+	seer evm generate --package StakeFor --output bindings/StakeFor/StakeFor.go --hardhat web3/artifacts/contracts/staking/StakeFor.sol/StakeFor.json --cli --struct StakeFor
+
+bindings: bindings/ERC20/ERC20.go bindings/TokenFaucet/TokenFaucet.go bindings/WrappedNativeToken/WrappedNativeToken.go bindings/Staker/Staker.go bindings/MockERC20/MockERC20.go bindings/MockERC721/MockERC721.go bindings/MockERC1155/MockERC1155.go bindings/PositionMetadata/PositionMetadata.go bindings/StakeFor/StakeFor.go
 
 test-web3:
 	cd web3 && npx hardhat test
