@@ -23,9 +23,10 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./ERC1155WithTerminusStorage.sol";
 import "./LibTerminus.sol";
+import "./TerminusInitializer.sol";
 import {LibDiamondMoonstream as LibDiamond} from "../diamond/libraries/LibDiamondMoonstream.sol";
 
-contract TerminusFacet is ERC1155WithTerminusStorage {
+contract TerminusFacet is ERC1155WithTerminusStorage, TerminusInitializer {
     constructor() {
         LibTerminus.TerminusStorage storage ts = LibTerminus.terminusStorage();
         ts.controller = msg.sender;
