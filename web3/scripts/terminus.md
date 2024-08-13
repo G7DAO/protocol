@@ -40,11 +40,20 @@ bin/game7 ownership-facet deploy \
     --password $PASSWORD
 
 export OWNERSHIP="0x5b80E68e3AA2DB4eA024A52c751AE37FFA4A5BB7"
+
+bin/game7 diamond-cut-facet diamond-cut help
+
+
 ```
 
 # Deploy Terminus
 ```bash
+
 bin/game7 terminus-facet help
+
+bin/game7 erc1155-with-terminus-storage help
+
+bin/game7 terminus-initializer help
 
 
 ```

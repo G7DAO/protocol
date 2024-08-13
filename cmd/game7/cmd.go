@@ -15,6 +15,7 @@ import (
 	"github.com/G7DAO/protocol/bindings/Staker"
 	"github.com/G7DAO/protocol/bindings/Terminus/ERC1155WithTerminusStorage"
 	"github.com/G7DAO/protocol/bindings/Terminus/TerminusFacet"
+	"github.com/G7DAO/protocol/bindings/Terminus/TerminusInitializer"
 	"github.com/G7DAO/protocol/bindings/TokenFaucet"
 	"github.com/G7DAO/protocol/bridge"
 
@@ -83,7 +84,7 @@ func CreateRootCommand() *cobra.Command {
 	erc1155WithTerminusStorageCmd := ERC1155WithTerminusStorage.CreateERC1155WithTerminusStorageCommand()
 	//erc1155WithTerminusStorageCmd.Use := "erc1155-with-terminus-storage" //throwing error
 	terminusFacetCmd := TerminusFacet.CreateTerminusFacetCommand()
-	terminusInitializerCmd := terminusInitializer.CreaterTerminusInitializerCommand()
+	terminusInitializerCmd := TerminusInitializer.CreateTerminusInitializerCommand()
 
 	wrappedNativeTokenCmd := WrappedNativeToken.CreateWrappedNativeTokenCommand()
 	wrappedNativeTokenCmd.Use = "wrapped-native-token"
