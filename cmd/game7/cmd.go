@@ -28,6 +28,7 @@ import (
 	"github.com/G7DAO/protocol/bindings/MockERC20"
 	"github.com/G7DAO/protocol/bindings/MockERC721"
 	"github.com/G7DAO/protocol/bindings/WrappedNativeToken"
+	terminusGogogo "github.com/G7DAO/protocol/cmd/game7/gogogo"
 	"github.com/G7DAO/protocol/cmd/game7/version"
 )
 
@@ -86,6 +87,8 @@ func CreateRootCommand() *cobra.Command {
 	terminusFacetCmd := TerminusFacet.CreateTerminusFacetCommand()
 	terminusInitializerCmd := TerminusInitializer.CreateTerminusInitializerCommand()
 
+	terminusGogogoCmd := terminusGogogo.CreateGogogoCommand()
+
 	wrappedNativeTokenCmd := WrappedNativeToken.CreateWrappedNativeTokenCommand()
 	wrappedNativeTokenCmd.Use = "wrapped-native-token"
 
@@ -94,7 +97,7 @@ func CreateRootCommand() *cobra.Command {
 
 	mockCmd := CreateMockCommand()
 
-	rootCmd.AddCommand(completionCmd, versionCmd, terminusInitializerCmd, diamondCmd, diamondLoupeFacetCmd, ownershipFacet, terminusFacetCmd, erc1155WithTerminusStorageCmd, diamondCutFacetCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd, accountsCmd, wrappedNativeTokenCmd, stakerCmd, mockCmd)
+	rootCmd.AddCommand(completionCmd, versionCmd, terminusGogogoCmd, terminusInitializerCmd, diamondCmd, diamondLoupeFacetCmd, ownershipFacet, terminusFacetCmd, erc1155WithTerminusStorageCmd, diamondCutFacetCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd, accountsCmd, wrappedNativeTokenCmd, stakerCmd, mockCmd)
 
 	// By default, cobra Command objects write to stderr. We have to forcibly set them to output to
 	// stdout.
