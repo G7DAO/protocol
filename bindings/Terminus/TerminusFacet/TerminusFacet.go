@@ -2368,7 +2368,7 @@ func CreateTerminusFacetDeploymentCommand() *cobra.Command {
 	return cmd
 }
 
-func CreateTerminusPoolControllerCommand() *cobra.Command {
+func CreateBalanceOfCommand() *cobra.Command {
 	var contractAddressRaw, rpc string
 	var contractAddress common.Address
 	var timeout uint
@@ -2376,90 +2376,16 @@ func CreateTerminusPoolControllerCommand() *cobra.Command {
 	var blockNumberRaw, fromAddressRaw string
 	var pending bool
 
-	var poolID *big.Int
-	var poolIDRaw string
-
-	var capture0 common.Address
-
-	cmd := &cobra.Command{
-		Use:   "terminus-pool-controller",
-		Short: "Call the TerminusPoolController view method on a TerminusFacet contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if poolIDRaw == "" {
-				return fmt.Errorf("--pool-id argument not specified")
-			}
-			poolID = new(big.Int)
-			poolID.SetString(poolIDRaw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewTerminusFacet(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := TerminusFacetCallerSession{
-				Contract: &contract.TerminusFacetCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.TerminusPoolController(
-				poolID,
-			)
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0.Hex())
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
-
-	return cmd
-}
-func CreateTerminusPoolSupplyCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var poolID *big.Int
-	var poolIDRaw string
+	var account common.Address
+	var accountRaw string
+	var id *big.Int
+	var idRaw string
 
 	var capture0 *big.Int
 
 	cmd := &cobra.Command{
-		Use:   "terminus-pool-supply",
-		Short: "Call the TerminusPoolSupply view method on a TerminusFacet contract",
+		Use:   "balance-of",
+		Short: "Call the BalanceOf view method on a TerminusFacet contract",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			if contractAddressRaw == "" {
 				return fmt.Errorf("--contract not specified")
@@ -2468,11 +2394,18 @@ func CreateTerminusPoolSupplyCommand() *cobra.Command {
 			}
 			contractAddress = common.HexToAddress(contractAddressRaw)
 
-			if poolIDRaw == "" {
-				return fmt.Errorf("--pool-id argument not specified")
+			if accountRaw == "" {
+				return fmt.Errorf("--account argument not specified")
+			} else if !common.IsHexAddress(accountRaw) {
+				return fmt.Errorf("--account argument is not a valid Ethereum address")
 			}
-			poolID = new(big.Int)
-			poolID.SetString(poolIDRaw, 0)
+			account = common.HexToAddress(accountRaw)
+
+			if idRaw == "" {
+				return fmt.Errorf("--id argument not specified")
+			}
+			id = new(big.Int)
+			id.SetString(idRaw, 0)
 
 			return nil
 		},
@@ -2496,8 +2429,9 @@ func CreateTerminusPoolSupplyCommand() *cobra.Command {
 			}
 
 			var callErr error
-			capture0, callErr = session.TerminusPoolSupply(
-				poolID,
+			capture0, callErr = session.BalanceOf(
+				account,
+				id,
 			)
 			if callErr != nil {
 				return callErr
@@ -2516,11 +2450,12 @@ func CreateTerminusPoolSupplyCommand() *cobra.Command {
 	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
 	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
 
-	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
+	cmd.Flags().StringVar(&accountRaw, "account", "", "account argument (common.Address)")
+	cmd.Flags().StringVar(&idRaw, "id", "", "id argument")
 
 	return cmd
 }
-func CreateUriCommand() *cobra.Command {
+func CreateContractUriCommand() *cobra.Command {
 	var contractAddressRaw, rpc string
 	var contractAddress common.Address
 	var timeout uint
@@ -2528,14 +2463,11 @@ func CreateUriCommand() *cobra.Command {
 	var blockNumberRaw, fromAddressRaw string
 	var pending bool
 
-	var poolID *big.Int
-	var poolIDRaw string
-
 	var capture0 string
 
 	cmd := &cobra.Command{
-		Use:   "uri",
-		Short: "Call the Uri view method on a TerminusFacet contract",
+		Use:   "contract-uri",
+		Short: "Call the ContractURI view method on a TerminusFacet contract",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			if contractAddressRaw == "" {
 				return fmt.Errorf("--contract not specified")
@@ -2543,12 +2475,6 @@ func CreateUriCommand() *cobra.Command {
 				return fmt.Errorf("--contract is not a valid Ethereum address")
 			}
 			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if poolIDRaw == "" {
-				return fmt.Errorf("--pool-id argument not specified")
-			}
-			poolID = new(big.Int)
-			poolID.SetString(poolIDRaw, 0)
 
 			return nil
 		},
@@ -2572,9 +2498,7 @@ func CreateUriCommand() *cobra.Command {
 			}
 
 			var callErr error
-			capture0, callErr = session.Uri(
-				poolID,
-			)
+			capture0, callErr = session.ContractURI()
 			if callErr != nil {
 				return callErr
 			}
@@ -2591,8 +2515,6 @@ func CreateUriCommand() *cobra.Command {
 	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
 	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
 	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
 
 	return cmd
 }
@@ -2684,7 +2606,7 @@ func CreateIsApprovedForAllCommand() *cobra.Command {
 
 	return cmd
 }
-func CreatePoolIsTransferableCommand() *cobra.Command {
+func CreateTerminusControllerCommand() *cobra.Command {
 	var contractAddressRaw, rpc string
 	var contractAddress common.Address
 	var timeout uint
@@ -2692,14 +2614,11 @@ func CreatePoolIsTransferableCommand() *cobra.Command {
 	var blockNumberRaw, fromAddressRaw string
 	var pending bool
 
-	var poolID *big.Int
-	var poolIDRaw string
-
-	var capture0 bool
+	var capture0 common.Address
 
 	cmd := &cobra.Command{
-		Use:   "pool-is-transferable",
-		Short: "Call the PoolIsTransferable view method on a TerminusFacet contract",
+		Use:   "terminus-controller",
+		Short: "Call the TerminusController view method on a TerminusFacet contract",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			if contractAddressRaw == "" {
 				return fmt.Errorf("--contract not specified")
@@ -2707,12 +2626,6 @@ func CreatePoolIsTransferableCommand() *cobra.Command {
 				return fmt.Errorf("--contract is not a valid Ethereum address")
 			}
 			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if poolIDRaw == "" {
-				return fmt.Errorf("--pool-id argument not specified")
-			}
-			poolID = new(big.Int)
-			poolID.SetString(poolIDRaw, 0)
 
 			return nil
 		},
@@ -2736,14 +2649,12 @@ func CreatePoolIsTransferableCommand() *cobra.Command {
 			}
 
 			var callErr error
-			capture0, callErr = session.PoolIsTransferable(
-				poolID,
-			)
+			capture0, callErr = session.TerminusController()
 			if callErr != nil {
 				return callErr
 			}
 
-			cmd.Printf("0: %t\n", capture0)
+			cmd.Printf("0: %s\n", capture0.Hex())
 
 			return nil
 		},
@@ -2755,8 +2666,6 @@ func CreatePoolIsTransferableCommand() *cobra.Command {
 	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
 	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
 	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
 
 	return cmd
 }
@@ -2872,7 +2781,7 @@ func CreateBalanceOfBatchCommand() *cobra.Command {
 
 	return cmd
 }
-func CreateContractUriCommand() *cobra.Command {
+func CreateTerminusPoolCapacityCommand() *cobra.Command {
 	var contractAddressRaw, rpc string
 	var contractAddress common.Address
 	var timeout uint
@@ -2880,11 +2789,14 @@ func CreateContractUriCommand() *cobra.Command {
 	var blockNumberRaw, fromAddressRaw string
 	var pending bool
 
-	var capture0 string
+	var poolID *big.Int
+	var poolIDRaw string
+
+	var capture0 *big.Int
 
 	cmd := &cobra.Command{
-		Use:   "contract-uri",
-		Short: "Call the ContractURI view method on a TerminusFacet contract",
+		Use:   "terminus-pool-capacity",
+		Short: "Call the TerminusPoolCapacity view method on a TerminusFacet contract",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			if contractAddressRaw == "" {
 				return fmt.Errorf("--contract not specified")
@@ -2892,6 +2804,12 @@ func CreateContractUriCommand() *cobra.Command {
 				return fmt.Errorf("--contract is not a valid Ethereum address")
 			}
 			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if poolIDRaw == "" {
+				return fmt.Errorf("--pool-id argument not specified")
+			}
+			poolID = new(big.Int)
+			poolID.SetString(poolIDRaw, 0)
 
 			return nil
 		},
@@ -2915,7 +2833,161 @@ func CreateContractUriCommand() *cobra.Command {
 			}
 
 			var callErr error
-			capture0, callErr = session.ContractURI()
+			capture0, callErr = session.TerminusPoolCapacity(
+				poolID,
+			)
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0.String())
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
+
+	return cmd
+}
+func CreateTerminusPoolControllerCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var poolID *big.Int
+	var poolIDRaw string
+
+	var capture0 common.Address
+
+	cmd := &cobra.Command{
+		Use:   "terminus-pool-controller",
+		Short: "Call the TerminusPoolController view method on a TerminusFacet contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if poolIDRaw == "" {
+				return fmt.Errorf("--pool-id argument not specified")
+			}
+			poolID = new(big.Int)
+			poolID.SetString(poolIDRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewTerminusFacet(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := TerminusFacetCallerSession{
+				Contract: &contract.TerminusFacetCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.TerminusPoolController(
+				poolID,
+			)
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0.Hex())
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
+
+	return cmd
+}
+func CreateUriCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var poolID *big.Int
+	var poolIDRaw string
+
+	var capture0 string
+
+	cmd := &cobra.Command{
+		Use:   "uri",
+		Short: "Call the Uri view method on a TerminusFacet contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if poolIDRaw == "" {
+				return fmt.Errorf("--pool-id argument not specified")
+			}
+			poolID = new(big.Int)
+			poolID.SetString(poolIDRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewTerminusFacet(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := TerminusFacetCallerSession{
+				Contract: &contract.TerminusFacetCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.Uri(
+				poolID,
+			)
 			if callErr != nil {
 				return callErr
 			}
@@ -2933,92 +3005,7 @@ func CreateContractUriCommand() *cobra.Command {
 	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
 	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
 
-	return cmd
-}
-func CreateIsApprovedForPoolCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var poolID *big.Int
-	var poolIDRaw string
-	var operator common.Address
-	var operatorRaw string
-
-	var capture0 bool
-
-	cmd := &cobra.Command{
-		Use:   "is-approved-for-pool",
-		Short: "Call the IsApprovedForPool view method on a TerminusFacet contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if poolIDRaw == "" {
-				return fmt.Errorf("--pool-id argument not specified")
-			}
-			poolID = new(big.Int)
-			poolID.SetString(poolIDRaw, 0)
-
-			if operatorRaw == "" {
-				return fmt.Errorf("--operator argument not specified")
-			} else if !common.IsHexAddress(operatorRaw) {
-				return fmt.Errorf("--operator argument is not a valid Ethereum address")
-			}
-			operator = common.HexToAddress(operatorRaw)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewTerminusFacet(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := TerminusFacetCallerSession{
-				Contract: &contract.TerminusFacetCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.IsApprovedForPool(
-				poolID,
-				operator,
-			)
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %t\n", capture0)
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
 	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
-	cmd.Flags().StringVar(&operatorRaw, "operator", "", "operator argument (common.Address)")
 
 	return cmd
 }
@@ -3075,6 +3062,208 @@ func CreatePoolIsBurnableCommand() *cobra.Command {
 
 			var callErr error
 			capture0, callErr = session.PoolIsBurnable(
+				poolID,
+			)
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %t\n", capture0)
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
+
+	return cmd
+}
+func CreatePaymentTokenCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var capture0 common.Address
+
+	cmd := &cobra.Command{
+		Use:   "payment-token",
+		Short: "Call the PaymentToken view method on a TerminusFacet contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewTerminusFacet(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := TerminusFacetCallerSession{
+				Contract: &contract.TerminusFacetCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.PaymentToken()
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0.Hex())
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	return cmd
+}
+func CreatePoolBasePriceCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var capture0 *big.Int
+
+	cmd := &cobra.Command{
+		Use:   "pool-base-price",
+		Short: "Call the PoolBasePrice view method on a TerminusFacet contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewTerminusFacet(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := TerminusFacetCallerSession{
+				Contract: &contract.TerminusFacetCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.PoolBasePrice()
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0.String())
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	return cmd
+}
+func CreatePoolIsTransferableCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var poolID *big.Int
+	var poolIDRaw string
+
+	var capture0 bool
+
+	cmd := &cobra.Command{
+		Use:   "pool-is-transferable",
+		Short: "Call the PoolIsTransferable view method on a TerminusFacet contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if poolIDRaw == "" {
+				return fmt.Errorf("--pool-id argument not specified")
+			}
+			poolID = new(big.Int)
+			poolID.SetString(poolIDRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewTerminusFacet(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := TerminusFacetCallerSession{
+				Contract: &contract.TerminusFacetCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.PoolIsTransferable(
 				poolID,
 			)
 			if callErr != nil {
@@ -3178,70 +3367,7 @@ func CreateSupportsInterfaceCommand() *cobra.Command {
 
 	return cmd
 }
-func CreateTerminusControllerCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var capture0 common.Address
-
-	cmd := &cobra.Command{
-		Use:   "terminus-controller",
-		Short: "Call the TerminusController view method on a TerminusFacet contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewTerminusFacet(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := TerminusFacetCallerSession{
-				Contract: &contract.TerminusFacetCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.TerminusController()
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0.Hex())
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	return cmd
-}
-func CreateTerminusPoolCapacityCommand() *cobra.Command {
+func CreateTerminusPoolSupplyCommand() *cobra.Command {
 	var contractAddressRaw, rpc string
 	var contractAddress common.Address
 	var timeout uint
@@ -3255,8 +3381,8 @@ func CreateTerminusPoolCapacityCommand() *cobra.Command {
 	var capture0 *big.Int
 
 	cmd := &cobra.Command{
-		Use:   "terminus-pool-capacity",
-		Short: "Call the TerminusPoolCapacity view method on a TerminusFacet contract",
+		Use:   "terminus-pool-supply",
+		Short: "Call the TerminusPoolSupply view method on a TerminusFacet contract",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			if contractAddressRaw == "" {
 				return fmt.Errorf("--contract not specified")
@@ -3293,7 +3419,7 @@ func CreateTerminusPoolCapacityCommand() *cobra.Command {
 			}
 
 			var callErr error
-			capture0, callErr = session.TerminusPoolCapacity(
+			capture0, callErr = session.TerminusPoolSupply(
 				poolID,
 			)
 			if callErr != nil {
@@ -3314,156 +3440,6 @@ func CreateTerminusPoolCapacityCommand() *cobra.Command {
 	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
 
 	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
-
-	return cmd
-}
-func CreateBalanceOfCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var account common.Address
-	var accountRaw string
-	var id *big.Int
-	var idRaw string
-
-	var capture0 *big.Int
-
-	cmd := &cobra.Command{
-		Use:   "balance-of",
-		Short: "Call the BalanceOf view method on a TerminusFacet contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if accountRaw == "" {
-				return fmt.Errorf("--account argument not specified")
-			} else if !common.IsHexAddress(accountRaw) {
-				return fmt.Errorf("--account argument is not a valid Ethereum address")
-			}
-			account = common.HexToAddress(accountRaw)
-
-			if idRaw == "" {
-				return fmt.Errorf("--id argument not specified")
-			}
-			id = new(big.Int)
-			id.SetString(idRaw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewTerminusFacet(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := TerminusFacetCallerSession{
-				Contract: &contract.TerminusFacetCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.BalanceOf(
-				account,
-				id,
-			)
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0.String())
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	cmd.Flags().StringVar(&accountRaw, "account", "", "account argument (common.Address)")
-	cmd.Flags().StringVar(&idRaw, "id", "", "id argument")
-
-	return cmd
-}
-func CreatePoolBasePriceCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var capture0 *big.Int
-
-	cmd := &cobra.Command{
-		Use:   "pool-base-price",
-		Short: "Call the PoolBasePrice view method on a TerminusFacet contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewTerminusFacet(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := TerminusFacetCallerSession{
-				Contract: &contract.TerminusFacetCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.PoolBasePrice()
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0.String())
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
 
 	return cmd
 }
@@ -3530,7 +3506,7 @@ func CreateTotalPoolsCommand() *cobra.Command {
 
 	return cmd
 }
-func CreatePaymentTokenCommand() *cobra.Command {
+func CreateIsApprovedForPoolCommand() *cobra.Command {
 	var contractAddressRaw, rpc string
 	var contractAddress common.Address
 	var timeout uint
@@ -3538,11 +3514,16 @@ func CreatePaymentTokenCommand() *cobra.Command {
 	var blockNumberRaw, fromAddressRaw string
 	var pending bool
 
-	var capture0 common.Address
+	var poolID *big.Int
+	var poolIDRaw string
+	var operator common.Address
+	var operatorRaw string
+
+	var capture0 bool
 
 	cmd := &cobra.Command{
-		Use:   "payment-token",
-		Short: "Call the PaymentToken view method on a TerminusFacet contract",
+		Use:   "is-approved-for-pool",
+		Short: "Call the IsApprovedForPool view method on a TerminusFacet contract",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			if contractAddressRaw == "" {
 				return fmt.Errorf("--contract not specified")
@@ -3550,6 +3531,19 @@ func CreatePaymentTokenCommand() *cobra.Command {
 				return fmt.Errorf("--contract is not a valid Ethereum address")
 			}
 			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if poolIDRaw == "" {
+				return fmt.Errorf("--pool-id argument not specified")
+			}
+			poolID = new(big.Int)
+			poolID.SetString(poolIDRaw, 0)
+
+			if operatorRaw == "" {
+				return fmt.Errorf("--operator argument not specified")
+			} else if !common.IsHexAddress(operatorRaw) {
+				return fmt.Errorf("--operator argument is not a valid Ethereum address")
+			}
+			operator = common.HexToAddress(operatorRaw)
 
 			return nil
 		},
@@ -3573,12 +3567,15 @@ func CreatePaymentTokenCommand() *cobra.Command {
 			}
 
 			var callErr error
-			capture0, callErr = session.PaymentToken()
+			capture0, callErr = session.IsApprovedForPool(
+				poolID,
+				operator,
+			)
 			if callErr != nil {
 				return callErr
 			}
 
-			cmd.Printf("0: %s\n", capture0.Hex())
+			cmd.Printf("0: %t\n", capture0)
 
 			return nil
 		},
@@ -3591,28 +3588,27 @@ func CreatePaymentTokenCommand() *cobra.Command {
 	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
 	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
 
+	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
+	cmd.Flags().StringVar(&operatorRaw, "operator", "", "operator argument (common.Address)")
+
 	return cmd
 }
 
-func CreateMintCommand() *cobra.Command {
+func CreateSetPoolControllerCommand() *cobra.Command {
 	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
 	var gasLimit uint64
 	var simulate bool
 	var timeout uint
 	var contractAddress common.Address
 
-	var to0 common.Address
-	var to0Raw string
 	var poolID *big.Int
 	var poolIDRaw string
-	var amount *big.Int
-	var amountRaw string
-	var data []byte
-	var dataRaw string
+	var newController common.Address
+	var newControllerRaw string
 
 	cmd := &cobra.Command{
-		Use:   "mint",
-		Short: "Execute the Mint method on a TerminusFacet contract",
+		Use:   "set-pool-controller",
+		Short: "Execute the SetPoolController method on a TerminusFacet contract",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			if keyfile == "" {
 				return fmt.Errorf("--keystore not specified")
@@ -3625,34 +3621,18 @@ func CreateMintCommand() *cobra.Command {
 			}
 			contractAddress = common.HexToAddress(contractAddressRaw)
 
-			if to0Raw == "" {
-				return fmt.Errorf("--to-0 argument not specified")
-			} else if !common.IsHexAddress(to0Raw) {
-				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
-			}
-			to0 = common.HexToAddress(to0Raw)
-
 			if poolIDRaw == "" {
 				return fmt.Errorf("--pool-id argument not specified")
 			}
 			poolID = new(big.Int)
 			poolID.SetString(poolIDRaw, 0)
 
-			if amountRaw == "" {
-				return fmt.Errorf("--amount argument not specified")
+			if newControllerRaw == "" {
+				return fmt.Errorf("--new-controller argument not specified")
+			} else if !common.IsHexAddress(newControllerRaw) {
+				return fmt.Errorf("--new-controller argument is not a valid Ethereum address")
 			}
-			amount = new(big.Int)
-			amount.SetString(amountRaw, 0)
-
-			var dataIntermediate []byte
-
-			var dataIntermediateHexDecodeErr error
-			dataIntermediate, dataIntermediateHexDecodeErr = hex.DecodeString(dataRaw)
-			if dataIntermediateHexDecodeErr != nil {
-				return dataIntermediateHexDecodeErr
-			}
-
-			copy(data[:], dataIntermediate)
+			newController = common.HexToAddress(newControllerRaw)
 
 			return nil
 		},
@@ -3691,11 +3671,9 @@ func CreateMintCommand() *cobra.Command {
 				TransactOpts: *transactionOpts,
 			}
 
-			transaction, transactionErr := session.Mint(
-				to0,
+			transaction, transactionErr := session.SetPoolController(
 				poolID,
-				amount,
-				data,
+				newController,
 			)
 			if transactionErr != nil {
 				return transactionErr
@@ -3745,10 +3723,118 @@ func CreateMintCommand() *cobra.Command {
 	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
 	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
 
-	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument (common.Address)")
 	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
-	cmd.Flags().StringVar(&amountRaw, "amount", "", "amount argument")
-	cmd.Flags().StringVar(&dataRaw, "data", "", "data argument ([]byte)")
+	cmd.Flags().StringVar(&newControllerRaw, "new-controller", "", "new-controller argument (common.Address)")
+
+	return cmd
+}
+func CreateInitCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	cmd := &cobra.Command{
+		Use:   "init",
+		Short: "Execute the Init method on a TerminusFacet contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewTerminusFacet(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := TerminusFacetTransactorSession{
+				Contract:     &contract.TerminusFacetTransactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.Init()
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
 
 	return cmd
 }
@@ -4300,6 +4386,712 @@ func CreateSafeBatchTransferFromCommand() *cobra.Command {
 
 	return cmd
 }
+func CreateSetPoolBasePriceCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var newBasePrice *big.Int
+	var newBasePriceRaw string
+
+	cmd := &cobra.Command{
+		Use:   "set-pool-base-price",
+		Short: "Execute the SetPoolBasePrice method on a TerminusFacet contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if newBasePriceRaw == "" {
+				return fmt.Errorf("--new-base-price argument not specified")
+			}
+			newBasePrice = new(big.Int)
+			newBasePrice.SetString(newBasePriceRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewTerminusFacet(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := TerminusFacetTransactorSession{
+				Contract:     &contract.TerminusFacetTransactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.SetPoolBasePrice(
+				newBasePrice,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&newBasePriceRaw, "new-base-price", "", "new-base-price argument")
+
+	return cmd
+}
+func CreateSetUriCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var poolID *big.Int
+	var poolIDRaw string
+	var poolURI string
+
+	cmd := &cobra.Command{
+		Use:   "set-uri",
+		Short: "Execute the SetURI method on a TerminusFacet contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if poolIDRaw == "" {
+				return fmt.Errorf("--pool-id argument not specified")
+			}
+			poolID = new(big.Int)
+			poolID.SetString(poolIDRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewTerminusFacet(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := TerminusFacetTransactorSession{
+				Contract:     &contract.TerminusFacetTransactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.SetURI(
+				poolID,
+				poolURI,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
+	cmd.Flags().StringVar(&poolURI, "pool-uri", "", "pool-uri argument")
+
+	return cmd
+}
+func CreateWithdrawPaymentsCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var toAddress0 common.Address
+	var toAddress0Raw string
+	var amount *big.Int
+	var amountRaw string
+
+	cmd := &cobra.Command{
+		Use:   "withdraw-payments",
+		Short: "Execute the WithdrawPayments method on a TerminusFacet contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if toAddress0Raw == "" {
+				return fmt.Errorf("--to-address-0 argument not specified")
+			} else if !common.IsHexAddress(toAddress0Raw) {
+				return fmt.Errorf("--to-address-0 argument is not a valid Ethereum address")
+			}
+			toAddress0 = common.HexToAddress(toAddress0Raw)
+
+			if amountRaw == "" {
+				return fmt.Errorf("--amount argument not specified")
+			}
+			amount = new(big.Int)
+			amount.SetString(amountRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewTerminusFacet(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := TerminusFacetTransactorSession{
+				Contract:     &contract.TerminusFacetTransactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.WithdrawPayments(
+				toAddress0,
+				amount,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&toAddress0Raw, "to-address-0", "", "to-address-0 argument (common.Address)")
+	cmd.Flags().StringVar(&amountRaw, "amount", "", "amount argument")
+
+	return cmd
+}
+func CreateCreatePoolV2Command() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var capacity *big.Int
+	var capacityRaw string
+	var transferable bool
+	var transferableRaw string
+	var burnable bool
+	var burnableRaw string
+	var poolURI string
+
+	cmd := &cobra.Command{
+		Use:   "create-pool-v-2",
+		Short: "Execute the CreatePoolV2 method on a TerminusFacet contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if capacityRaw == "" {
+				return fmt.Errorf("--capacity argument not specified")
+			}
+			capacity = new(big.Int)
+			capacity.SetString(capacityRaw, 0)
+
+			transferableRawLower := strings.ToLower(transferableRaw)
+			switch transferableRawLower {
+			case "true", "t", "y", "yes", "1":
+				transferable = true
+			case "false", "f", "n", "no", "0":
+				transferable = false
+			default:
+				return fmt.Errorf("--transferable argument is not valid (value: %s)", transferableRaw)
+			}
+
+			burnableRawLower := strings.ToLower(burnableRaw)
+			switch burnableRawLower {
+			case "true", "t", "y", "yes", "1":
+				burnable = true
+			case "false", "f", "n", "no", "0":
+				burnable = false
+			default:
+				return fmt.Errorf("--burnable argument is not valid (value: %s)", burnableRaw)
+			}
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewTerminusFacet(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := TerminusFacetTransactorSession{
+				Contract:     &contract.TerminusFacetTransactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.CreatePoolV2(
+				capacity,
+				transferable,
+				burnable,
+				poolURI,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&capacityRaw, "capacity", "", "capacity argument")
+	cmd.Flags().StringVar(&transferableRaw, "transferable", "", "transferable argument (true, t, y, yes, 1 OR false, f, n, no, 0)")
+	cmd.Flags().StringVar(&burnableRaw, "burnable", "", "burnable argument (true, t, y, yes, 1 OR false, f, n, no, 0)")
+	cmd.Flags().StringVar(&poolURI, "pool-uri", "", "pool-uri argument")
+
+	return cmd
+}
+func CreateSafeTransferFromCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var from0 common.Address
+	var from0Raw string
+	var to0 common.Address
+	var to0Raw string
+	var id *big.Int
+	var idRaw string
+	var amount *big.Int
+	var amountRaw string
+	var data []byte
+	var dataRaw string
+
+	cmd := &cobra.Command{
+		Use:   "safe-transfer-from",
+		Short: "Execute the SafeTransferFrom method on a TerminusFacet contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if from0Raw == "" {
+				return fmt.Errorf("--from-0 argument not specified")
+			} else if !common.IsHexAddress(from0Raw) {
+				return fmt.Errorf("--from-0 argument is not a valid Ethereum address")
+			}
+			from0 = common.HexToAddress(from0Raw)
+
+			if to0Raw == "" {
+				return fmt.Errorf("--to-0 argument not specified")
+			} else if !common.IsHexAddress(to0Raw) {
+				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
+			}
+			to0 = common.HexToAddress(to0Raw)
+
+			if idRaw == "" {
+				return fmt.Errorf("--id argument not specified")
+			}
+			id = new(big.Int)
+			id.SetString(idRaw, 0)
+
+			if amountRaw == "" {
+				return fmt.Errorf("--amount argument not specified")
+			}
+			amount = new(big.Int)
+			amount.SetString(amountRaw, 0)
+
+			var dataIntermediate []byte
+
+			var dataIntermediateHexDecodeErr error
+			dataIntermediate, dataIntermediateHexDecodeErr = hex.DecodeString(dataRaw)
+			if dataIntermediateHexDecodeErr != nil {
+				return dataIntermediateHexDecodeErr
+			}
+
+			copy(data[:], dataIntermediate)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewTerminusFacet(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := TerminusFacetTransactorSession{
+				Contract:     &contract.TerminusFacetTransactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.SafeTransferFrom(
+				from0,
+				to0,
+				id,
+				amount,
+				data,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&from0Raw, "from-0", "", "from-0 argument (common.Address)")
+	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument (common.Address)")
+	cmd.Flags().StringVar(&idRaw, "id", "", "id argument")
+	cmd.Flags().StringVar(&amountRaw, "amount", "", "amount argument")
+	cmd.Flags().StringVar(&dataRaw, "data", "", "data argument ([]byte)")
+
+	return cmd
+}
 func CreateSetApprovalForAllCommand() *cobra.Command {
 	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
 	var gasLimit uint64
@@ -4438,6 +5230,122 @@ func CreateSetApprovalForAllCommand() *cobra.Command {
 
 	return cmd
 }
+func CreateSetContractUriCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var contractURI string
+
+	cmd := &cobra.Command{
+		Use:   "set-contract-uri",
+		Short: "Execute the SetContractURI method on a TerminusFacet contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewTerminusFacet(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := TerminusFacetTransactorSession{
+				Contract:     &contract.TerminusFacetTransactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.SetContractURI(
+				contractURI,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&contractURI, "contract-uri", "", "contract-uri argument")
+
+	return cmd
+}
 func CreateSetControllerCommand() *cobra.Command {
 	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
 	var gasLimit uint64
@@ -4559,253 +5467,6 @@ func CreateSetControllerCommand() *cobra.Command {
 	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
 
 	cmd.Flags().StringVar(&newControllerRaw, "new-controller", "", "new-controller argument (common.Address)")
-
-	return cmd
-}
-func CreateSetPaymentTokenCommand() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	var newPaymentToken common.Address
-	var newPaymentTokenRaw string
-
-	cmd := &cobra.Command{
-		Use:   "set-payment-token",
-		Short: "Execute the SetPaymentToken method on a TerminusFacet contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if newPaymentTokenRaw == "" {
-				return fmt.Errorf("--new-payment-token argument not specified")
-			} else if !common.IsHexAddress(newPaymentTokenRaw) {
-				return fmt.Errorf("--new-payment-token argument is not a valid Ethereum address")
-			}
-			newPaymentToken = common.HexToAddress(newPaymentTokenRaw)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewTerminusFacet(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := TerminusFacetTransactorSession{
-				Contract:     &contract.TerminusFacetTransactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.SetPaymentToken(
-				newPaymentToken,
-			)
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	cmd.Flags().StringVar(&newPaymentTokenRaw, "new-payment-token", "", "new-payment-token argument (common.Address)")
-
-	return cmd
-}
-func CreateSetPoolBasePriceCommand() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	var newBasePrice *big.Int
-	var newBasePriceRaw string
-
-	cmd := &cobra.Command{
-		Use:   "set-pool-base-price",
-		Short: "Execute the SetPoolBasePrice method on a TerminusFacet contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if newBasePriceRaw == "" {
-				return fmt.Errorf("--new-base-price argument not specified")
-			}
-			newBasePrice = new(big.Int)
-			newBasePrice.SetString(newBasePriceRaw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewTerminusFacet(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := TerminusFacetTransactorSession{
-				Contract:     &contract.TerminusFacetTransactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.SetPoolBasePrice(
-				newBasePrice,
-			)
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	cmd.Flags().StringVar(&newBasePriceRaw, "new-base-price", "", "new-base-price argument")
 
 	return cmd
 }
@@ -5083,1131 +5744,6 @@ func CreateSetPoolTransferableCommand() *cobra.Command {
 
 	return cmd
 }
-func CreateWithdrawPaymentsCommand() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	var toAddress0 common.Address
-	var toAddress0Raw string
-	var amount *big.Int
-	var amountRaw string
-
-	cmd := &cobra.Command{
-		Use:   "withdraw-payments",
-		Short: "Execute the WithdrawPayments method on a TerminusFacet contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if toAddress0Raw == "" {
-				return fmt.Errorf("--to-address-0 argument not specified")
-			} else if !common.IsHexAddress(toAddress0Raw) {
-				return fmt.Errorf("--to-address-0 argument is not a valid Ethereum address")
-			}
-			toAddress0 = common.HexToAddress(toAddress0Raw)
-
-			if amountRaw == "" {
-				return fmt.Errorf("--amount argument not specified")
-			}
-			amount = new(big.Int)
-			amount.SetString(amountRaw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewTerminusFacet(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := TerminusFacetTransactorSession{
-				Contract:     &contract.TerminusFacetTransactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.WithdrawPayments(
-				toAddress0,
-				amount,
-			)
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	cmd.Flags().StringVar(&toAddress0Raw, "to-address-0", "", "to-address-0 argument (common.Address)")
-	cmd.Flags().StringVar(&amountRaw, "amount", "", "amount argument")
-
-	return cmd
-}
-func CreateSafeTransferFromCommand() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	var from0 common.Address
-	var from0Raw string
-	var to0 common.Address
-	var to0Raw string
-	var id *big.Int
-	var idRaw string
-	var amount *big.Int
-	var amountRaw string
-	var data []byte
-	var dataRaw string
-
-	cmd := &cobra.Command{
-		Use:   "safe-transfer-from",
-		Short: "Execute the SafeTransferFrom method on a TerminusFacet contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if from0Raw == "" {
-				return fmt.Errorf("--from-0 argument not specified")
-			} else if !common.IsHexAddress(from0Raw) {
-				return fmt.Errorf("--from-0 argument is not a valid Ethereum address")
-			}
-			from0 = common.HexToAddress(from0Raw)
-
-			if to0Raw == "" {
-				return fmt.Errorf("--to-0 argument not specified")
-			} else if !common.IsHexAddress(to0Raw) {
-				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
-			}
-			to0 = common.HexToAddress(to0Raw)
-
-			if idRaw == "" {
-				return fmt.Errorf("--id argument not specified")
-			}
-			id = new(big.Int)
-			id.SetString(idRaw, 0)
-
-			if amountRaw == "" {
-				return fmt.Errorf("--amount argument not specified")
-			}
-			amount = new(big.Int)
-			amount.SetString(amountRaw, 0)
-
-			var dataIntermediate []byte
-
-			var dataIntermediateHexDecodeErr error
-			dataIntermediate, dataIntermediateHexDecodeErr = hex.DecodeString(dataRaw)
-			if dataIntermediateHexDecodeErr != nil {
-				return dataIntermediateHexDecodeErr
-			}
-
-			copy(data[:], dataIntermediate)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewTerminusFacet(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := TerminusFacetTransactorSession{
-				Contract:     &contract.TerminusFacetTransactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.SafeTransferFrom(
-				from0,
-				to0,
-				id,
-				amount,
-				data,
-			)
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	cmd.Flags().StringVar(&from0Raw, "from-0", "", "from-0 argument (common.Address)")
-	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument (common.Address)")
-	cmd.Flags().StringVar(&idRaw, "id", "", "id argument")
-	cmd.Flags().StringVar(&amountRaw, "amount", "", "amount argument")
-	cmd.Flags().StringVar(&dataRaw, "data", "", "data argument ([]byte)")
-
-	return cmd
-}
-func CreateSetContractUriCommand() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	var contractURI string
-
-	cmd := &cobra.Command{
-		Use:   "set-contract-uri",
-		Short: "Execute the SetContractURI method on a TerminusFacet contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewTerminusFacet(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := TerminusFacetTransactorSession{
-				Contract:     &contract.TerminusFacetTransactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.SetContractURI(
-				contractURI,
-			)
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	cmd.Flags().StringVar(&contractURI, "contract-uri", "", "contract-uri argument")
-
-	return cmd
-}
-func CreateSetPoolControllerCommand() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	var poolID *big.Int
-	var poolIDRaw string
-	var newController common.Address
-	var newControllerRaw string
-
-	cmd := &cobra.Command{
-		Use:   "set-pool-controller",
-		Short: "Execute the SetPoolController method on a TerminusFacet contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if poolIDRaw == "" {
-				return fmt.Errorf("--pool-id argument not specified")
-			}
-			poolID = new(big.Int)
-			poolID.SetString(poolIDRaw, 0)
-
-			if newControllerRaw == "" {
-				return fmt.Errorf("--new-controller argument not specified")
-			} else if !common.IsHexAddress(newControllerRaw) {
-				return fmt.Errorf("--new-controller argument is not a valid Ethereum address")
-			}
-			newController = common.HexToAddress(newControllerRaw)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewTerminusFacet(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := TerminusFacetTransactorSession{
-				Contract:     &contract.TerminusFacetTransactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.SetPoolController(
-				poolID,
-				newController,
-			)
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
-	cmd.Flags().StringVar(&newControllerRaw, "new-controller", "", "new-controller argument (common.Address)")
-
-	return cmd
-}
-func CreateBurnCommand() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	var from0 common.Address
-	var from0Raw string
-	var poolID *big.Int
-	var poolIDRaw string
-	var amount *big.Int
-	var amountRaw string
-
-	cmd := &cobra.Command{
-		Use:   "burn",
-		Short: "Execute the Burn method on a TerminusFacet contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if from0Raw == "" {
-				return fmt.Errorf("--from-0 argument not specified")
-			} else if !common.IsHexAddress(from0Raw) {
-				return fmt.Errorf("--from-0 argument is not a valid Ethereum address")
-			}
-			from0 = common.HexToAddress(from0Raw)
-
-			if poolIDRaw == "" {
-				return fmt.Errorf("--pool-id argument not specified")
-			}
-			poolID = new(big.Int)
-			poolID.SetString(poolIDRaw, 0)
-
-			if amountRaw == "" {
-				return fmt.Errorf("--amount argument not specified")
-			}
-			amount = new(big.Int)
-			amount.SetString(amountRaw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewTerminusFacet(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := TerminusFacetTransactorSession{
-				Contract:     &contract.TerminusFacetTransactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.Burn(
-				from0,
-				poolID,
-				amount,
-			)
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	cmd.Flags().StringVar(&from0Raw, "from-0", "", "from-0 argument (common.Address)")
-	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
-	cmd.Flags().StringVar(&amountRaw, "amount", "", "amount argument")
-
-	return cmd
-}
-func CreateCreatePoolV1Command() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	var capacity *big.Int
-	var capacityRaw string
-	var transferable bool
-	var transferableRaw string
-	var burnable bool
-	var burnableRaw string
-
-	cmd := &cobra.Command{
-		Use:   "create-pool-v-1",
-		Short: "Execute the CreatePoolV1 method on a TerminusFacet contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if capacityRaw == "" {
-				return fmt.Errorf("--capacity argument not specified")
-			}
-			capacity = new(big.Int)
-			capacity.SetString(capacityRaw, 0)
-
-			transferableRawLower := strings.ToLower(transferableRaw)
-			switch transferableRawLower {
-			case "true", "t", "y", "yes", "1":
-				transferable = true
-			case "false", "f", "n", "no", "0":
-				transferable = false
-			default:
-				return fmt.Errorf("--transferable argument is not valid (value: %s)", transferableRaw)
-			}
-
-			burnableRawLower := strings.ToLower(burnableRaw)
-			switch burnableRawLower {
-			case "true", "t", "y", "yes", "1":
-				burnable = true
-			case "false", "f", "n", "no", "0":
-				burnable = false
-			default:
-				return fmt.Errorf("--burnable argument is not valid (value: %s)", burnableRaw)
-			}
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewTerminusFacet(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := TerminusFacetTransactorSession{
-				Contract:     &contract.TerminusFacetTransactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.CreatePoolV1(
-				capacity,
-				transferable,
-				burnable,
-			)
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	cmd.Flags().StringVar(&capacityRaw, "capacity", "", "capacity argument")
-	cmd.Flags().StringVar(&transferableRaw, "transferable", "", "transferable argument (true, t, y, yes, 1 OR false, f, n, no, 0)")
-	cmd.Flags().StringVar(&burnableRaw, "burnable", "", "burnable argument (true, t, y, yes, 1 OR false, f, n, no, 0)")
-
-	return cmd
-}
-func CreateCreatePoolV2Command() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	var capacity *big.Int
-	var capacityRaw string
-	var transferable bool
-	var transferableRaw string
-	var burnable bool
-	var burnableRaw string
-	var poolURI string
-
-	cmd := &cobra.Command{
-		Use:   "create-pool-v-2",
-		Short: "Execute the CreatePoolV2 method on a TerminusFacet contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if capacityRaw == "" {
-				return fmt.Errorf("--capacity argument not specified")
-			}
-			capacity = new(big.Int)
-			capacity.SetString(capacityRaw, 0)
-
-			transferableRawLower := strings.ToLower(transferableRaw)
-			switch transferableRawLower {
-			case "true", "t", "y", "yes", "1":
-				transferable = true
-			case "false", "f", "n", "no", "0":
-				transferable = false
-			default:
-				return fmt.Errorf("--transferable argument is not valid (value: %s)", transferableRaw)
-			}
-
-			burnableRawLower := strings.ToLower(burnableRaw)
-			switch burnableRawLower {
-			case "true", "t", "y", "yes", "1":
-				burnable = true
-			case "false", "f", "n", "no", "0":
-				burnable = false
-			default:
-				return fmt.Errorf("--burnable argument is not valid (value: %s)", burnableRaw)
-			}
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewTerminusFacet(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := TerminusFacetTransactorSession{
-				Contract:     &contract.TerminusFacetTransactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.CreatePoolV2(
-				capacity,
-				transferable,
-				burnable,
-				poolURI,
-			)
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	cmd.Flags().StringVar(&capacityRaw, "capacity", "", "capacity argument")
-	cmd.Flags().StringVar(&transferableRaw, "transferable", "", "transferable argument (true, t, y, yes, 1 OR false, f, n, no, 0)")
-	cmd.Flags().StringVar(&burnableRaw, "burnable", "", "burnable argument (true, t, y, yes, 1 OR false, f, n, no, 0)")
-	cmd.Flags().StringVar(&poolURI, "pool-uri", "", "pool-uri argument")
-
-	return cmd
-}
-func CreateCreateSimplePoolCommand() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	var capacity *big.Int
-	var capacityRaw string
-
-	cmd := &cobra.Command{
-		Use:   "create-simple-pool",
-		Short: "Execute the CreateSimplePool method on a TerminusFacet contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if capacityRaw == "" {
-				return fmt.Errorf("--capacity argument not specified")
-			}
-			capacity = new(big.Int)
-			capacity.SetString(capacityRaw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewTerminusFacet(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := TerminusFacetTransactorSession{
-				Contract:     &contract.TerminusFacetTransactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.CreateSimplePool(
-				capacity,
-			)
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	cmd.Flags().StringVar(&capacityRaw, "capacity", "", "capacity argument")
-
-	return cmd
-}
 func CreateUnapproveForPoolCommand() *cobra.Command {
 	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
 	var gasLimit uint64
@@ -6476,16 +6012,23 @@ func CreateApproveForPoolCommand() *cobra.Command {
 
 	return cmd
 }
-func CreateInitCommand() *cobra.Command {
+func CreateCreatePoolV1Command() *cobra.Command {
 	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
 	var gasLimit uint64
 	var simulate bool
 	var timeout uint
 	var contractAddress common.Address
 
+	var capacity *big.Int
+	var capacityRaw string
+	var transferable bool
+	var transferableRaw string
+	var burnable bool
+	var burnableRaw string
+
 	cmd := &cobra.Command{
-		Use:   "init",
-		Short: "Execute the Init method on a TerminusFacet contract",
+		Use:   "create-pool-v-1",
+		Short: "Execute the CreatePoolV1 method on a TerminusFacet contract",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			if keyfile == "" {
 				return fmt.Errorf("--keystore not specified")
@@ -6497,6 +6040,32 @@ func CreateInitCommand() *cobra.Command {
 				return fmt.Errorf("--contract is not a valid Ethereum address")
 			}
 			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if capacityRaw == "" {
+				return fmt.Errorf("--capacity argument not specified")
+			}
+			capacity = new(big.Int)
+			capacity.SetString(capacityRaw, 0)
+
+			transferableRawLower := strings.ToLower(transferableRaw)
+			switch transferableRawLower {
+			case "true", "t", "y", "yes", "1":
+				transferable = true
+			case "false", "f", "n", "no", "0":
+				transferable = false
+			default:
+				return fmt.Errorf("--transferable argument is not valid (value: %s)", transferableRaw)
+			}
+
+			burnableRawLower := strings.ToLower(burnableRaw)
+			switch burnableRawLower {
+			case "true", "t", "y", "yes", "1":
+				burnable = true
+			case "false", "f", "n", "no", "0":
+				burnable = false
+			default:
+				return fmt.Errorf("--burnable argument is not valid (value: %s)", burnableRaw)
+			}
 
 			return nil
 		},
@@ -6535,129 +6104,10 @@ func CreateInitCommand() *cobra.Command {
 				TransactOpts: *transactionOpts,
 			}
 
-			transaction, transactionErr := session.Init()
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	return cmd
-}
-func CreateSetUriCommand() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	var poolID *big.Int
-	var poolIDRaw string
-	var poolURI string
-
-	cmd := &cobra.Command{
-		Use:   "set-uri",
-		Short: "Execute the SetURI method on a TerminusFacet contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if poolIDRaw == "" {
-				return fmt.Errorf("--pool-id argument not specified")
-			}
-			poolID = new(big.Int)
-			poolID.SetString(poolIDRaw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewTerminusFacet(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := TerminusFacetTransactorSession{
-				Contract:     &contract.TerminusFacetTransactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.SetURI(
-				poolID,
-				poolURI,
+			transaction, transactionErr := session.CreatePoolV1(
+				capacity,
+				transferable,
+				burnable,
 			)
 			if transactionErr != nil {
 				return transactionErr
@@ -6707,8 +6157,558 @@ func CreateSetUriCommand() *cobra.Command {
 	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
 	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
 
+	cmd.Flags().StringVar(&capacityRaw, "capacity", "", "capacity argument")
+	cmd.Flags().StringVar(&transferableRaw, "transferable", "", "transferable argument (true, t, y, yes, 1 OR false, f, n, no, 0)")
+	cmd.Flags().StringVar(&burnableRaw, "burnable", "", "burnable argument (true, t, y, yes, 1 OR false, f, n, no, 0)")
+
+	return cmd
+}
+func CreateCreateSimplePoolCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var capacity *big.Int
+	var capacityRaw string
+
+	cmd := &cobra.Command{
+		Use:   "create-simple-pool",
+		Short: "Execute the CreateSimplePool method on a TerminusFacet contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if capacityRaw == "" {
+				return fmt.Errorf("--capacity argument not specified")
+			}
+			capacity = new(big.Int)
+			capacity.SetString(capacityRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewTerminusFacet(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := TerminusFacetTransactorSession{
+				Contract:     &contract.TerminusFacetTransactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.CreateSimplePool(
+				capacity,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&capacityRaw, "capacity", "", "capacity argument")
+
+	return cmd
+}
+func CreateMintCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var to0 common.Address
+	var to0Raw string
+	var poolID *big.Int
+	var poolIDRaw string
+	var amount *big.Int
+	var amountRaw string
+	var data []byte
+	var dataRaw string
+
+	cmd := &cobra.Command{
+		Use:   "mint",
+		Short: "Execute the Mint method on a TerminusFacet contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if to0Raw == "" {
+				return fmt.Errorf("--to-0 argument not specified")
+			} else if !common.IsHexAddress(to0Raw) {
+				return fmt.Errorf("--to-0 argument is not a valid Ethereum address")
+			}
+			to0 = common.HexToAddress(to0Raw)
+
+			if poolIDRaw == "" {
+				return fmt.Errorf("--pool-id argument not specified")
+			}
+			poolID = new(big.Int)
+			poolID.SetString(poolIDRaw, 0)
+
+			if amountRaw == "" {
+				return fmt.Errorf("--amount argument not specified")
+			}
+			amount = new(big.Int)
+			amount.SetString(amountRaw, 0)
+
+			var dataIntermediate []byte
+
+			var dataIntermediateHexDecodeErr error
+			dataIntermediate, dataIntermediateHexDecodeErr = hex.DecodeString(dataRaw)
+			if dataIntermediateHexDecodeErr != nil {
+				return dataIntermediateHexDecodeErr
+			}
+
+			copy(data[:], dataIntermediate)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewTerminusFacet(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := TerminusFacetTransactorSession{
+				Contract:     &contract.TerminusFacetTransactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.Mint(
+				to0,
+				poolID,
+				amount,
+				data,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&to0Raw, "to-0", "", "to-0 argument (common.Address)")
 	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
-	cmd.Flags().StringVar(&poolURI, "pool-uri", "", "pool-uri argument")
+	cmd.Flags().StringVar(&amountRaw, "amount", "", "amount argument")
+	cmd.Flags().StringVar(&dataRaw, "data", "", "data argument ([]byte)")
+
+	return cmd
+}
+func CreateSetPaymentTokenCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var newPaymentToken common.Address
+	var newPaymentTokenRaw string
+
+	cmd := &cobra.Command{
+		Use:   "set-payment-token",
+		Short: "Execute the SetPaymentToken method on a TerminusFacet contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if newPaymentTokenRaw == "" {
+				return fmt.Errorf("--new-payment-token argument not specified")
+			} else if !common.IsHexAddress(newPaymentTokenRaw) {
+				return fmt.Errorf("--new-payment-token argument is not a valid Ethereum address")
+			}
+			newPaymentToken = common.HexToAddress(newPaymentTokenRaw)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewTerminusFacet(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := TerminusFacetTransactorSession{
+				Contract:     &contract.TerminusFacetTransactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.SetPaymentToken(
+				newPaymentToken,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&newPaymentTokenRaw, "new-payment-token", "", "new-payment-token argument (common.Address)")
+
+	return cmd
+}
+func CreateBurnCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var from0 common.Address
+	var from0Raw string
+	var poolID *big.Int
+	var poolIDRaw string
+	var amount *big.Int
+	var amountRaw string
+
+	cmd := &cobra.Command{
+		Use:   "burn",
+		Short: "Execute the Burn method on a TerminusFacet contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if from0Raw == "" {
+				return fmt.Errorf("--from-0 argument not specified")
+			} else if !common.IsHexAddress(from0Raw) {
+				return fmt.Errorf("--from-0 argument is not a valid Ethereum address")
+			}
+			from0 = common.HexToAddress(from0Raw)
+
+			if poolIDRaw == "" {
+				return fmt.Errorf("--pool-id argument not specified")
+			}
+			poolID = new(big.Int)
+			poolID.SetString(poolIDRaw, 0)
+
+			if amountRaw == "" {
+				return fmt.Errorf("--amount argument not specified")
+			}
+			amount = new(big.Int)
+			amount.SetString(amountRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewTerminusFacet(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := TerminusFacetTransactorSession{
+				Contract:     &contract.TerminusFacetTransactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.Burn(
+				from0,
+				poolID,
+				amount,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&from0Raw, "from-0", "", "from-0 argument (common.Address)")
+	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
+	cmd.Flags().StringVar(&amountRaw, "amount", "", "amount argument")
 
 	return cmd
 }
@@ -6847,58 +6847,61 @@ func CreateTerminusFacetCommand() *cobra.Command {
 	cmdDeployTerminusFacet.GroupID = DeployGroup.ID
 	cmd.AddCommand(cmdDeployTerminusFacet)
 
-	cmdViewTerminusPoolController := CreateTerminusPoolControllerCommand()
-	cmdViewTerminusPoolController.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewTerminusPoolController)
-	cmdViewTerminusPoolSupply := CreateTerminusPoolSupplyCommand()
-	cmdViewTerminusPoolSupply.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewTerminusPoolSupply)
-	cmdViewUri := CreateUriCommand()
-	cmdViewUri.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewUri)
-	cmdViewIsApprovedForAll := CreateIsApprovedForAllCommand()
-	cmdViewIsApprovedForAll.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewIsApprovedForAll)
-	cmdViewPoolIsTransferable := CreatePoolIsTransferableCommand()
-	cmdViewPoolIsTransferable.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewPoolIsTransferable)
-	cmdViewBalanceOfBatch := CreateBalanceOfBatchCommand()
-	cmdViewBalanceOfBatch.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewBalanceOfBatch)
-	cmdViewContractURI := CreateContractUriCommand()
-	cmdViewContractURI.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewContractURI)
-	cmdViewIsApprovedForPool := CreateIsApprovedForPoolCommand()
-	cmdViewIsApprovedForPool.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewIsApprovedForPool)
-	cmdViewPoolIsBurnable := CreatePoolIsBurnableCommand()
-	cmdViewPoolIsBurnable.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewPoolIsBurnable)
-	cmdViewSupportsInterface := CreateSupportsInterfaceCommand()
-	cmdViewSupportsInterface.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewSupportsInterface)
-	cmdViewTerminusController := CreateTerminusControllerCommand()
-	cmdViewTerminusController.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewTerminusController)
-	cmdViewTerminusPoolCapacity := CreateTerminusPoolCapacityCommand()
-	cmdViewTerminusPoolCapacity.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewTerminusPoolCapacity)
 	cmdViewBalanceOf := CreateBalanceOfCommand()
 	cmdViewBalanceOf.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewBalanceOf)
-	cmdViewPoolBasePrice := CreatePoolBasePriceCommand()
-	cmdViewPoolBasePrice.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewPoolBasePrice)
-	cmdViewTotalPools := CreateTotalPoolsCommand()
-	cmdViewTotalPools.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewTotalPools)
+	cmdViewContractURI := CreateContractUriCommand()
+	cmdViewContractURI.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewContractURI)
+	cmdViewIsApprovedForAll := CreateIsApprovedForAllCommand()
+	cmdViewIsApprovedForAll.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewIsApprovedForAll)
+	cmdViewTerminusController := CreateTerminusControllerCommand()
+	cmdViewTerminusController.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewTerminusController)
+	cmdViewBalanceOfBatch := CreateBalanceOfBatchCommand()
+	cmdViewBalanceOfBatch.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewBalanceOfBatch)
+	cmdViewTerminusPoolCapacity := CreateTerminusPoolCapacityCommand()
+	cmdViewTerminusPoolCapacity.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewTerminusPoolCapacity)
+	cmdViewTerminusPoolController := CreateTerminusPoolControllerCommand()
+	cmdViewTerminusPoolController.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewTerminusPoolController)
+	cmdViewUri := CreateUriCommand()
+	cmdViewUri.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewUri)
+	cmdViewPoolIsBurnable := CreatePoolIsBurnableCommand()
+	cmdViewPoolIsBurnable.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewPoolIsBurnable)
 	cmdViewPaymentToken := CreatePaymentTokenCommand()
 	cmdViewPaymentToken.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewPaymentToken)
+	cmdViewPoolBasePrice := CreatePoolBasePriceCommand()
+	cmdViewPoolBasePrice.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewPoolBasePrice)
+	cmdViewPoolIsTransferable := CreatePoolIsTransferableCommand()
+	cmdViewPoolIsTransferable.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewPoolIsTransferable)
+	cmdViewSupportsInterface := CreateSupportsInterfaceCommand()
+	cmdViewSupportsInterface.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewSupportsInterface)
+	cmdViewTerminusPoolSupply := CreateTerminusPoolSupplyCommand()
+	cmdViewTerminusPoolSupply.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewTerminusPoolSupply)
+	cmdViewTotalPools := CreateTotalPoolsCommand()
+	cmdViewTotalPools.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewTotalPools)
+	cmdViewIsApprovedForPool := CreateIsApprovedForPoolCommand()
+	cmdViewIsApprovedForPool.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewIsApprovedForPool)
 
-	cmdTransactMint := CreateMintCommand()
-	cmdTransactMint.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactMint)
+	cmdTransactSetPoolController := CreateSetPoolControllerCommand()
+	cmdTransactSetPoolController.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactSetPoolController)
+	cmdTransactInit := CreateInitCommand()
+	cmdTransactInit.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactInit)
 	cmdTransactMintBatch := CreateMintBatchCommand()
 	cmdTransactMintBatch.GroupID = TransactGroup.ID
 	cmd.AddCommand(cmdTransactMintBatch)
@@ -6908,60 +6911,57 @@ func CreateTerminusFacetCommand() *cobra.Command {
 	cmdTransactSafeBatchTransferFrom := CreateSafeBatchTransferFromCommand()
 	cmdTransactSafeBatchTransferFrom.GroupID = TransactGroup.ID
 	cmd.AddCommand(cmdTransactSafeBatchTransferFrom)
-	cmdTransactSetApprovalForAll := CreateSetApprovalForAllCommand()
-	cmdTransactSetApprovalForAll.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactSetApprovalForAll)
-	cmdTransactSetController := CreateSetControllerCommand()
-	cmdTransactSetController.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactSetController)
-	cmdTransactSetPaymentToken := CreateSetPaymentTokenCommand()
-	cmdTransactSetPaymentToken.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactSetPaymentToken)
 	cmdTransactSetPoolBasePrice := CreateSetPoolBasePriceCommand()
 	cmdTransactSetPoolBasePrice.GroupID = TransactGroup.ID
 	cmd.AddCommand(cmdTransactSetPoolBasePrice)
+	cmdTransactSetURI := CreateSetUriCommand()
+	cmdTransactSetURI.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactSetURI)
+	cmdTransactWithdrawPayments := CreateWithdrawPaymentsCommand()
+	cmdTransactWithdrawPayments.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactWithdrawPayments)
+	cmdTransactCreatePoolV2 := CreateCreatePoolV2Command()
+	cmdTransactCreatePoolV2.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactCreatePoolV2)
+	cmdTransactSafeTransferFrom := CreateSafeTransferFromCommand()
+	cmdTransactSafeTransferFrom.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactSafeTransferFrom)
+	cmdTransactSetApprovalForAll := CreateSetApprovalForAllCommand()
+	cmdTransactSetApprovalForAll.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactSetApprovalForAll)
+	cmdTransactSetContractURI := CreateSetContractUriCommand()
+	cmdTransactSetContractURI.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactSetContractURI)
+	cmdTransactSetController := CreateSetControllerCommand()
+	cmdTransactSetController.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactSetController)
 	cmdTransactSetPoolBurnable := CreateSetPoolBurnableCommand()
 	cmdTransactSetPoolBurnable.GroupID = TransactGroup.ID
 	cmd.AddCommand(cmdTransactSetPoolBurnable)
 	cmdTransactSetPoolTransferable := CreateSetPoolTransferableCommand()
 	cmdTransactSetPoolTransferable.GroupID = TransactGroup.ID
 	cmd.AddCommand(cmdTransactSetPoolTransferable)
-	cmdTransactWithdrawPayments := CreateWithdrawPaymentsCommand()
-	cmdTransactWithdrawPayments.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactWithdrawPayments)
-	cmdTransactSafeTransferFrom := CreateSafeTransferFromCommand()
-	cmdTransactSafeTransferFrom.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactSafeTransferFrom)
-	cmdTransactSetContractURI := CreateSetContractUriCommand()
-	cmdTransactSetContractURI.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactSetContractURI)
-	cmdTransactSetPoolController := CreateSetPoolControllerCommand()
-	cmdTransactSetPoolController.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactSetPoolController)
-	cmdTransactBurn := CreateBurnCommand()
-	cmdTransactBurn.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactBurn)
-	cmdTransactCreatePoolV1 := CreateCreatePoolV1Command()
-	cmdTransactCreatePoolV1.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactCreatePoolV1)
-	cmdTransactCreatePoolV2 := CreateCreatePoolV2Command()
-	cmdTransactCreatePoolV2.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactCreatePoolV2)
-	cmdTransactCreateSimplePool := CreateCreateSimplePoolCommand()
-	cmdTransactCreateSimplePool.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactCreateSimplePool)
 	cmdTransactUnapproveForPool := CreateUnapproveForPoolCommand()
 	cmdTransactUnapproveForPool.GroupID = TransactGroup.ID
 	cmd.AddCommand(cmdTransactUnapproveForPool)
 	cmdTransactApproveForPool := CreateApproveForPoolCommand()
 	cmdTransactApproveForPool.GroupID = TransactGroup.ID
 	cmd.AddCommand(cmdTransactApproveForPool)
-	cmdTransactInit := CreateInitCommand()
-	cmdTransactInit.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactInit)
-	cmdTransactSetURI := CreateSetUriCommand()
-	cmdTransactSetURI.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactSetURI)
+	cmdTransactCreatePoolV1 := CreateCreatePoolV1Command()
+	cmdTransactCreatePoolV1.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactCreatePoolV1)
+	cmdTransactCreateSimplePool := CreateCreateSimplePoolCommand()
+	cmdTransactCreateSimplePool.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactCreateSimplePool)
+	cmdTransactMint := CreateMintCommand()
+	cmdTransactMint.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactMint)
+	cmdTransactSetPaymentToken := CreateSetPaymentTokenCommand()
+	cmdTransactSetPaymentToken.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactSetPaymentToken)
+	cmdTransactBurn := CreateBurnCommand()
+	cmdTransactBurn.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactBurn)
 
 	return cmd
 }

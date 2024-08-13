@@ -11,16 +11,13 @@ export PASSWORD="<password>"
 ```
 
 # Deploy Terminus Diamond
+-Deploys Terminus Diamond and facet
+
 ```bash
 bin/game7 terminus-gogogo v1 \
     --rpc $RPC \
     --keyfile $KEY \
     --password $PASSWORD \
     --contract-owner $CALLER 
-
-bin/game7 terminus-facet deploy \
-    --rpc $RPC \
-    --keyfile $KEY \
-    --password $PASSWORD 
 
 ```

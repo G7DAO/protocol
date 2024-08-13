@@ -1230,69 +1230,6 @@ func CreateWrappedNativeTokenDeploymentCommand() *cobra.Command {
 	return cmd
 }
 
-func CreateNameCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var capture0 string
-
-	cmd := &cobra.Command{
-		Use:   "name",
-		Short: "Call the Name view method on a WrappedNativeToken contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewWrappedNativeToken(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := WrappedNativeTokenCallerSession{
-				Contract: &contract.WrappedNativeTokenCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.Name()
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0)
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	return cmd
-}
 func CreateSymbolCommand() *cobra.Command {
 	var contractAddressRaw, rpc string
 	var contractAddress common.Address
@@ -1633,6 +1570,69 @@ func CreateDecimalsCommand() *cobra.Command {
 			}
 
 			cmd.Printf("0: %d\n", capture0)
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	return cmd
+}
+func CreateNameCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var capture0 string
+
+	cmd := &cobra.Command{
+		Use:   "name",
+		Short: "Call the Name view method on a WrappedNativeToken contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewWrappedNativeToken(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := WrappedNativeTokenCallerSession{
+				Contract: &contract.WrappedNativeTokenCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.Name()
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0)
 
 			return nil
 		},
@@ -2539,9 +2539,6 @@ func CreateWrappedNativeTokenCommand() *cobra.Command {
 	cmdDeployWrappedNativeToken.GroupID = DeployGroup.ID
 	cmd.AddCommand(cmdDeployWrappedNativeToken)
 
-	cmdViewName := CreateNameCommand()
-	cmdViewName.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewName)
 	cmdViewSymbol := CreateSymbolCommand()
 	cmdViewSymbol.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewSymbol)
@@ -2557,6 +2554,9 @@ func CreateWrappedNativeTokenCommand() *cobra.Command {
 	cmdViewDecimals := CreateDecimalsCommand()
 	cmdViewDecimals.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewDecimals)
+	cmdViewName := CreateNameCommand()
+	cmdViewName.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewName)
 
 	cmdTransactTransfer := CreateTransferCommand()
 	cmdTransactTransfer.GroupID = TransactGroup.ID

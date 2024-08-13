@@ -15,7 +15,6 @@ import (
 	"github.com/G7DAO/protocol/bindings/Staker"
 	"github.com/G7DAO/protocol/bindings/Terminus/ERC1155WithTerminusStorage"
 	"github.com/G7DAO/protocol/bindings/Terminus/TerminusFacet"
-	"github.com/G7DAO/protocol/bindings/Terminus/TerminusInitializer"
 	"github.com/G7DAO/protocol/bindings/TokenFaucet"
 	"github.com/G7DAO/protocol/bridge"
 
@@ -28,7 +27,9 @@ import (
 	"github.com/G7DAO/protocol/bindings/MockERC20"
 	"github.com/G7DAO/protocol/bindings/MockERC721"
 	"github.com/G7DAO/protocol/bindings/WrappedNativeToken"
-	terminusGogogo "github.com/G7DAO/protocol/cmd/game7/gogogo"
+
+	dropperGogogo "github.com/G7DAO/protocol/cmd/game7/gogogo/dropper"
+	terminusGogogo "github.com/G7DAO/protocol/cmd/game7/gogogo/terminus"
 	"github.com/G7DAO/protocol/cmd/game7/version"
 )
 
@@ -85,9 +86,9 @@ func CreateRootCommand() *cobra.Command {
 	erc1155WithTerminusStorageCmd := ERC1155WithTerminusStorage.CreateERC1155WithTerminusStorageCommand()
 	//erc1155WithTerminusStorageCmd.Use := "erc1155-with-terminus-storage" //throwing error
 	terminusFacetCmd := TerminusFacet.CreateTerminusFacetCommand()
-	terminusInitializerCmd := TerminusInitializer.CreateTerminusInitializerCommand()
 
 	terminusGogogoCmd := terminusGogogo.CreateGogogoCommand()
+	dropperGogogoDmd := dropperGogogo.CreateGogogoCommand()
 
 	wrappedNativeTokenCmd := WrappedNativeToken.CreateWrappedNativeTokenCommand()
 	wrappedNativeTokenCmd.Use = "wrapped-native-token"
@@ -97,7 +98,7 @@ func CreateRootCommand() *cobra.Command {
 
 	mockCmd := CreateMockCommand()
 
-	rootCmd.AddCommand(completionCmd, versionCmd, terminusGogogoCmd, terminusInitializerCmd, diamondCmd, diamondLoupeFacetCmd, ownershipFacet, terminusFacetCmd, erc1155WithTerminusStorageCmd, diamondCutFacetCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd, accountsCmd, wrappedNativeTokenCmd, stakerCmd, mockCmd)
+	rootCmd.AddCommand(completionCmd, versionCmd, terminusGogogoCmd, dropperGogogoDmd, diamondCmd, diamondLoupeFacetCmd, ownershipFacet, terminusFacetCmd, erc1155WithTerminusStorageCmd, diamondCutFacetCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd, accountsCmd, wrappedNativeTokenCmd, stakerCmd, mockCmd)
 
 	// By default, cobra Command objects write to stderr. We have to forcibly set them to output to
 	// stdout.
