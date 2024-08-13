@@ -56,6 +56,9 @@ bindings/Terminus/Terminus.go: hardhat
 	seer evm generate --package ERC1155WithTerminusStorage --output bindings/Terminus/ERC1155WithTerminusStorage/ERC1155WithTerminusStorage.go --hardhat web3/artifacts/contracts/terminus/ERC1155WithTerminusStorage.sol/ERC1155WithTerminusStorage.json --cli --struct ERC1155WithTerminusStorage
 	mkdir -p bindings/Terminus/TerminusFacet
 	seer evm generate --package TerminusFacet --output bindings/Terminus/TerminusFacet/TerminusFacet.go --hardhat web3/artifacts/contracts/terminus/TerminusFacet.sol/TerminusFacet.json --cli --struct TerminusFacet
+	mkdir -p bindings/Terminus/TerminusInitializer
+	seer evm generate --package TerminusInitializer --output bindings/Terminus/TerminusInitializer/TerminusInitializer.go --hardhat web3/artifacts/contracts/terminus/TerminusInitializer.sol/TerminusInitializer.json --cli --struct TerminusInitializer
+
 
 bindings/DropperV2/DropperV2.go: hardhat
 	mkdir -p bindings/DropperV2
