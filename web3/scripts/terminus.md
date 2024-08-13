@@ -6,7 +6,7 @@
 export RPC="https://rpc-game7-testnet-0ilneybprf.t.conduit.xyz"
 export CALLER="0x9ed191DB1829371F116Deb9748c26B49467a592A"
 export KEY=".secrets/dao-dev.json"
-export PASSWORD="peppercat"
+export PASSWORD="<password>"
 
 ```
 # Deploy Diamond
