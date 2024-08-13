@@ -6,12 +6,14 @@ import { useNavigate } from 'react-router-dom'
 import { L3_NETWORK } from '../../../../constants'
 // Styles
 import styles from './ActionButton.module.css'
+import { ethers } from 'ethers'
 import { Modal } from 'summon-ui/mantine'
 // Absolute Imports
 import ApproveAllowance from '@/components/bridge/allowance/ApproveAllowance'
 import { HighNetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 import useERC20Balance, { fetchERC20Allowance, useERC20Allowance } from '@/hooks/useERC20Balance'
+import { estimateCreateRetryableTicketFee, sendL2ToL3Message } from '@/utils/bridge/createRetryableTicket'
 import { depositERC20ArbitrumSDK, TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { sendDepositERC20ToNativeTransaction } from '@/utils/bridge/depositERC20ToNative'
 import { sendWithdrawERC20Transaction } from '@/utils/bridge/withdrawERC20'
@@ -22,12 +24,17 @@ interface ActionButtonProps {
   direction: 'DEPOSIT' | 'WITHDRAW'
   amount: string
   isDisabled: boolean
+  L2L3message?: { destination: string; data: string }
   setErrorMessage: (arg0: string) => void
 }
-const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabled, setErrorMessage }) => {
+const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabled, setErrorMessage, L2L3message }) => {
   const { connectedAccount, isConnecting, selectedHighNetwork, selectedLowNetwork, connectWallet, getProvider } =
     useBlockchainContext()
   const [isAllowanceModalOpened, setIsAllowanceModalOpened] = useState(false)
+  const [additionalCost, setAdditionalCost] = useState(0)
+  const [feeEstimation, setFeeEstimation] = useState<{ TXFEES: ethers.BigNumber; G: ethers.BigNumber } | undefined>(
+    undefined
+  )
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const navigate = useNavigate()
 
@@ -90,15 +97,48 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
       const allowance = await fetchERC20Allowance({
         tokenAddress: selectedLowNetwork.g7TokenAddress,
         owner: connectedAccount,
-        spender: selectedLowNetwork.routerSpender ?? '',
+        spender: selectedHighNetwork.inbox,
         rpc: selectedLowNetwork.rpcs[0]
       })
-      if (allowance !== undefined && allowance < Number(amount)) {
+
+      const signer = provider.getSigner()
+      let messageExecutionCost = additionalCost
+      let estimate: { TXFEES: ethers.BigNumber; G: ethers.BigNumber } | undefined
+      if (L2L3message?.data && L2L3message.destination && messageExecutionCost === 0) {
+        try {
+          estimate = await estimateCreateRetryableTicketFee(
+            '',
+            selectedLowNetwork,
+            selectedHighNetwork.staker ?? '',
+            L2L3message.data
+          )
+          if (estimate) {
+            setFeeEstimation(estimate)
+            messageExecutionCost = Number(ethers.utils.formatEther(estimate.TXFEES)) * 2
+          }
+        } catch (e) {
+          console.log(`Estimation message execution fee error:  ${e}`)
+        }
+      }
+
+      setAdditionalCost(messageExecutionCost)
+      if (allowance !== undefined && allowance < Number(amount) + messageExecutionCost) {
         setIsAllowanceModalOpened(true)
         return
       }
-      const signer = provider.getSigner()
       if (selectedHighNetwork.chainId === L3_NETWORK.chainId) {
+        if (L2L3message?.data && L2L3message.destination) {
+          return sendL2ToL3Message(
+            selectedLowNetwork,
+            selectedHighNetwork,
+            amount,
+            signer,
+            connectedAccount,
+            L2L3message.destination,
+            L2L3message.data,
+            estimate ?? feeEstimation
+          )
+        }
         return sendDepositERC20ToNativeTransaction(
           selectedLowNetwork,
           selectedHighNetwork as HighNetworkInterface,
@@ -211,7 +251,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
       >
         <ApproveAllowance
           balance={Number(lowNetworkBalance ?? '0')}
-          amount={Number(amount)}
+          amount={Number(amount) + additionalCost}
           onSuccess={() => {
             setIsAllowanceModalOpened(false)
             deposit.mutate(amount)
