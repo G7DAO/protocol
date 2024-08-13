@@ -4,7 +4,7 @@ import { useQuery } from 'react-query'
 import { L1_NETWORK, L2_NETWORK, L3_NETWORK, L3_NATIVE_TOKEN_SYMBOL } from '../../../../constants'
 // Styles and Icons
 import styles from './BridgeView.module.css'
-import ActionButton, { DepositWithdrawParams } from '@/components/bridge/bridge/ActionButton'
+import ActionButton from '@/components/bridge/bridge/ActionButton'
 // Components
 import NetworkSelector from '@/components/bridge/bridge/NetworkSelector'
 import TransactionSummary from '@/components/bridge/bridge/TransactionSummary'
@@ -178,7 +178,7 @@ const BridgeView = ({
       {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
       <ActionButton
         direction={direction}
-        params={{ amount: value } as DepositWithdrawParams}
+        amount={value}
         isDisabled={!!inputErrorMessage}
         setErrorMessage={setNetworkErrorMessage}
       />

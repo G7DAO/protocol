@@ -2,9 +2,9 @@
 import { useState } from 'react'
 // Styles and Icons
 import styles from './StakingView.module.css'
-import ActionButton from '@/components/bridge/bridge/ActionButton'
 import { tokenTypes, ZERO_ADDRESS } from '@/utils/web3utils';
 import { ethers } from 'ethers';
+import ActionButtonStake from '../ActionButtonStake';
 
 const StakingView = () => {
     const [tokenAddress, setTokenAddress] = useState(ZERO_ADDRESS)
@@ -86,7 +86,7 @@ const StakingView = () => {
             </div>
             {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
             {inputErrorMessage && <div className={styles.networkErrorMessage}>{inputErrorMessage}</div>}
-            <ActionButton
+            <ActionButtonStake
                 direction={"CREATEPOOL"}
                 params={{ tokenType, tokenAddress, tokenID: tokenId, lockupSeconds, cooldownSeconds, transferable }}
                 isDisabled={inputErrorMessage != ""}

@@ -17,41 +17,14 @@ import { sendDepositERC20ToNativeTransaction } from '@/utils/bridge/depositERC20
 import { sendWithdrawERC20Transaction } from '@/utils/bridge/withdrawERC20'
 import { sendWithdrawTransaction } from '@/utils/bridge/withdrawNativeToken'
 import { L2ToL1MessageStatus } from '@arbitrum/sdk'
-import { createPool } from '@/utils/stake/createPool'
-import { editPool } from '@/utils/stake/editPool'
 
-
-export interface CreatePoolParams {
-  tokenType: string
-  tokenAddress: string
-  tokenID: string
-  transferable: boolean
-  lockupSeconds: string
-  cooldownSeconds: string
-}
-
-export interface EditPoolParams {
-  poolId: string
-  changeTransferability: boolean
-  transferable: boolean
-  changeLockup: boolean
-  lockupSeconds: string
-  changeCooldown: boolean
-  cooldownSeconds: string
-}
-
-export interface DepositWithdrawParams {
+interface ActionButtonProps {
+  direction: 'DEPOSIT' | 'WITHDRAW'
   amount: string
-}
-
-export interface ActionButtonProps {
-  direction: 'DEPOSIT' | 'WITHDRAW' | 'CREATEPOOL' | 'EDITPOOL'
-  params?: DepositWithdrawParams | CreatePoolParams | EditPoolParams
   isDisabled: boolean
   setErrorMessage: (arg0: string) => void
 }
-
-const ActionButton: React.FC<ActionButtonProps> = ({ direction, params, isDisabled, setErrorMessage }) => {
+const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabled, setErrorMessage }) => {
   const { connectedAccount, isConnecting, selectedHighNetwork, selectedLowNetwork, connectWallet, getProvider } =
     useBlockchainContext()
   const [isAllowanceModalOpened, setIsAllowanceModalOpened] = useState(false)
@@ -98,29 +71,16 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, params, isDisabl
     }
     setErrorMessage('')
     if (direction === 'DEPOSIT') {
-      const { amount } = params as DepositWithdrawParams
-      deposit.mutate(amount ?? "")
+      deposit.mutate(amount)
       return
     }
     if (direction === 'WITHDRAW') {
-      const { amount } = params as DepositWithdrawParams
-      withdraw.mutate(amount ?? "")
-      return
-    }
-    if (direction === 'CREATEPOOL') {
-      const { tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds } = params as CreatePoolParams
-      createAPool.mutate({ tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds });
-      return
-    }
-    if (direction === 'EDITPOOL') {
-      const { poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds } = params as EditPoolParams
-      editAPool.mutate({ poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds });
+      withdraw.mutate(amount)
       return
     }
   }
 
   const queryClient = useQueryClient()
-  //#region depositAndWithdraw functions
   const deposit = useMutation(
     async (amount: string) => {
       const provider = await getProvider(selectedLowNetwork)
@@ -169,6 +129,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, params, isDisabl
         refetchNewNotifications(connectedAccount ?? '')
         queryClient.invalidateQueries(['ERC20Balance'])
         queryClient.invalidateQueries(['pendingTransactions'])
+
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
         queryClient.refetchQueries(['incomingMessages'])
@@ -230,115 +191,35 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, params, isDisabl
       }
     }
   )
-  //#endregion
-
-  //#region pool functions
-  const createAPool = useMutation(
-    async ({
-      tokenType,
-      tokenAddress,
-      tokenID,
-      lockupSeconds,
-      cooldownSeconds,
-      transferable
-    }: CreatePoolParams) => {
-      if (!connectedAccount) {
-        throw new Error("Wallet isn't connected")
-      }
-      return createPool(tokenType, tokenAddress, tokenID, lockupSeconds, cooldownSeconds, transferable, false, connectedAccount)
-    },
-    {
-      onSuccess: async () => {
-        // add setup
-        queryClient.refetchQueries(['pools'])
-        navigate('/stake/pools')
-      },
-      onError: (e) => {
-        console.log(e)
-        setErrorMessage("Something went wrong. Check the console log!");
-      }
-    }
-  )
-
-  const editAPool = useMutation(
-    async ({
-      poolId,
-      changeTransferability,
-      transferable,
-      changeLockup,
-      lockupSeconds,
-      changeCooldown,
-      cooldownSeconds,
-    }: EditPoolParams) => {
-      if (!connectedAccount) {
-        throw new Error("Wallet isn't connected")
-      }
-      console.log(poolId.toString());
-      return editPool(poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds, connectedAccount)
-    },
-    {
-      onSuccess: async () => {
-        // add setup
-        queryClient.refetchQueries(['pools'])
-        navigate('/stake/pools')
-      },
-      onError: (e) => {
-        console.log(e)
-        setErrorMessage("Something went wrong. Check the console log!");
-      }
-    }
-  )
-  //#endregion
-
-  const actionButton = (direction: string) => {
-    if (direction === "DEPOSIT" || direction === "WITHDRAW") {
-      const { amount } = params as DepositWithdrawParams;
-      return (
-        <>
-          <button
-            className={styles.container}
-            onClick={handleClick}
-            disabled={getLabel() !== 'Connect wallet' && (isDisabled || Number(amount) <= 0)}
-          >
-            {getLabel() ?? 'Submit'}
-          </button>
-          <Modal
-            opened={isAllowanceModalOpened}
-            onClose={() => setIsAllowanceModalOpened(false)}
-            withCloseButton={false}
-            padding={'24px'}
-            size={'400px'}
-            radius={'12px'}
-          >
-            <ApproveAllowance
-              balance={Number(lowNetworkBalance ?? '0')}
-              allowance={allowance ?? 0}
-              amount={Number(amount)}
-              onSuccess={() => {
-                setIsAllowanceModalOpened(false)
-                deposit.mutate(amount ?? "")
-              }}
-              onClose={() => setIsAllowanceModalOpened(false)}
-            />
-          </Modal>
-        </>
-      )
-    } else if (direction === "CREATEPOOL" || direction === "EDITPOOL") {
-      return (
-        <button
-          className={styles.container}
-          onClick={handleClick}
-          disabled={getLabel() !== 'Connect wallet' && isDisabled}
-        >
-          {getLabel() ?? 'Submit'}
-        </button>
-      )
-    }
-  }
 
   return (
     <>
-      {actionButton(direction)}
+      <button
+        className={styles.container}
+        onClick={handleClick}
+        disabled={getLabel() !== 'Connect wallet' && (isDisabled || Number(amount) <= 0)}
+      >
+        {getLabel() ?? 'Submit'}
+      </button>
+      <Modal
+        opened={isAllowanceModalOpened}
+        onClose={() => setIsAllowanceModalOpened(false)}
+        withCloseButton={false}
+        padding={'24px'}
+        size={'400px'}
+        radius={'12px'}
+      >
+        <ApproveAllowance
+          balance={Number(lowNetworkBalance ?? '0')}
+          allowance={allowance ?? 0}
+          amount={Number(amount)}
+          onSuccess={() => {
+            setIsAllowanceModalOpened(false)
+            deposit.mutate(amount)
+          }}
+          onClose={() => setIsAllowanceModalOpened(false)}
+        />
+      </Modal>
     </>
   )
 }

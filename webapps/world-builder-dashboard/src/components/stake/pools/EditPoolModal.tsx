@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, ModalProps } from 'summon-ui/mantine'; // assuming the path to your modal component
 import styles from './EditPoolModal.module.css'
-import ActionButton from '@/components/bridge/bridge/ActionButton';
+import ActionButtonStake from '../ActionButtonStake';
 
 interface EditPoolModalProps extends ModalProps {
     opened: boolean;
@@ -84,7 +84,7 @@ const EditPoolModal: React.FC<EditPoolModalProps> = ({ opened, onClose, poolData
                         onChange={(e) => setLockupSeconds(e.target.value)}
                     />
                 </div>
-                <ActionButton
+                <ActionButtonStake
                     direction={"EDITPOOL"}
                     params={{ poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds }}
                     isDisabled={!changeLockup && !changeCooldown && !changeTransferability}
