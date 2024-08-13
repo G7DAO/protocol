@@ -6,6 +6,7 @@ import OptionsButton from './OptionsButton';
 import PositionsTable, { Position } from './PositionsTable';
 import usePools from '@/hooks/usePools';
 import { formatAddress } from '@/utils/addressFormat';
+import { tokenTypes } from '@/utils/web3utils';
 
 interface PoolDesktopProps { }
 
@@ -47,6 +48,11 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
     setActivePool(activePool === poolId ? null : poolId);
   };
 
+  const getTokenLabel = (tokenValue: string) => {
+    const type = tokenTypes.find((token => token.value === tokenValue))
+    return type?.label;
+  }
+
   return (
     <div style={{ padding: '20px' }}>
       <div style={{ margin: 'auto', width: '100%' }}>
@@ -68,7 +74,7 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
                   <td className={styles.tdStyles}>{item.poolName}</td>
                   <td className={styles.tdStyles}>{formatAddress(item.administrator)}</td>
                   <td className={styles.tdStyles}>{formatAddress(item.owner)}</td>
-                  <td className={styles.tdStyles}>{item.tokenType}</td>
+                  <td className={styles.tdStyles}>{getTokenLabel(item.tokenType)}</td>
                   <td className={styles.tdStyles}>{formatAddress(item.tokenAddress)}</td>
                   <td className={styles.tdStyles}>{item.tokenId}</td>
                   <td className={styles.tdStyles}>{item.lockdownPeriod}</td>

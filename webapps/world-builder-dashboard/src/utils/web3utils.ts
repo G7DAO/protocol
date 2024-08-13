@@ -18,3 +18,12 @@ export const getBlockExplorerUrl = (chainId: number | undefined) => {
 export const getNetwork = (chainId: number) => {
   return [...LOW_NETWORKS, ...HIGH_NETWORKS].find((n) => n.chainId === chainId)
 }
+
+export const tokenTypes = [
+  {value: "1", label: "Native"},
+  {value: "20", label: "ERC20"},
+  {value: "721", label: "ERC721"},
+  {value: "1155", label: "ERC1155"}
+];
+
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';

@@ -2,25 +2,25 @@
 import { useState } from 'react'
 // Styles and Icons
 import styles from './StakingView.module.css'
-import ActionButton, { CreatePoolParams } from '@/components/bridge/bridge/ActionButton'
+import ActionButton from '@/components/bridge/bridge/ActionButton'
+import { tokenTypes, ZERO_ADDRESS } from '@/utils/web3utils';
 
 const StakingView = () => {
-    const [name, setName] = useState('');
-    const [tokenAddress, setTokenAddress] = useState('0x0')
+    const [tokenAddress, setTokenAddress] = useState(ZERO_ADDRESS)
     const [tokenId, setTokenId] = useState('0');
-    const [tokenType, setTokenType] = useState("0");
+    const [tokenType, setTokenType] = useState(tokenTypes[0].value)
     const [lockupSeconds, setLockupSeconds] = useState("0")
     const [cooldownSeconds, setCooldownSeconds] = useState("0")
     const [transferable, setTransferable] = useState(false)
     const [inputErrorMessage, setInputErrorMessage] = useState('')
     const [networkErrorMessage, setNetworkErrorMessage] = useState('')
 
-    const options = [
-        "1",
-        "20",
-        "721",
-        "1155",
-    ];
+    const handleTokenSelect = (tokenValue: string) => {
+        setTokenType(tokenValue);
+        if (tokenValue === "1") {
+            setTokenAddress(ZERO_ADDRESS);
+        }
+    }
 
     return (
         <div className={styles.container}>
@@ -29,30 +29,29 @@ const StakingView = () => {
                 <div className={styles.subtitle}>Set your pool parameters</div>
             </div>
             <div className={styles.addressContainer}>
-                <div className={styles.label}>Name</div>
-                <input className={styles.input} value={name} onChange={(e) => setName(e.target.value)} />
-            </div>
-            <div className={styles.addressContainer}>
                 <div className={styles.label}>Token Type</div>
-                <select onChange={(e) => setTokenType(e.target.value)}>
-                    <option>Please choose one option</option>
-                    {options.map((option, index) => {
+                <select onChange={(e) => handleTokenSelect(e.target.value)}>
+                    <option disabled>Please choose one option</option>
+                    {tokenTypes.map((tokenType) => {
                         return (
-                            <option key={index}>
-                                {option}
+                            <option key={tokenType.value} value={tokenType.value}>
+                                {tokenType.label}
                             </option>
                         );
                     })}
                 </select>
             </div>
-            <div className={styles.addressContainer}>
-                <div className={styles.label}>Token Address (if non-native)</div>
-                <input className={styles.input} value={tokenAddress} onChange={(e) => setTokenAddress(e.target.value)} />
-            </div>
-            <div className={styles.addressContainer}>
-                <div className={styles.label}>Token ID (if NFT)</div>
-                <input type="number" className={styles.input} value={tokenId} onChange={(e) => setTokenId(e.target.value)} />
-            </div>
+            {tokenType !== "1" && (
+                <div className={styles.addressContainer}>
+                    <div className={styles.label}>Token Address</div>
+                    <input className={styles.input} value={tokenAddress} onChange={(e) => setTokenAddress(e.target.value)} />
+                </div>
+            )}
+            {tokenType === "1155" && (
+                <div className={styles.addressContainer}>
+                    <div className={styles.label}>Token ID</div>
+                    <input type="number" className={styles.input} value={tokenId} onChange={(e) => setTokenId(e.target.value)} />
+                </div>)}
             <div className={styles.addressContainer}>
                 <div className={styles.label}>Lockdown period (in seconds)</div>
                 <input type="number" className={styles.input} value={lockupSeconds} onChange={(e) => setLockupSeconds(e.target.value)} />
