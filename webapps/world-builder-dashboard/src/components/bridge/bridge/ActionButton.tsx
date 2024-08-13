@@ -1,5 +1,5 @@
 // External Libraries
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 // Constants
@@ -32,11 +32,15 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
     useBlockchainContext()
   const [isAllowanceModalOpened, setIsAllowanceModalOpened] = useState(false)
   const [additionalCost, setAdditionalCost] = useState(0)
-  const [feeEstimation, setFeeEstimation] = useState<{ TXFEES: ethers.BigNumber; G: ethers.BigNumber } | undefined>(
+  const [feeEstimate, setFeeEstimate] = useState<{ TXFEES: ethers.BigNumber; G: ethers.BigNumber } | undefined>(
     undefined
   )
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    setFeeEstimate(undefined)
+  }, [L2L3message])
 
   const { data: allowance } = useERC20Allowance({
     tokenAddress: selectedLowNetwork.g7TokenAddress,
@@ -113,7 +117,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
             L2L3message.data
           )
           if (estimate) {
-            setFeeEstimation(estimate)
+            setFeeEstimate(estimate)
             messageExecutionCost = Number(ethers.utils.formatEther(estimate.TXFEES)) * 2
           }
         } catch (e) {
@@ -136,7 +140,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
             connectedAccount,
             L2L3message.destination,
             L2L3message.data,
-            estimate ?? feeEstimation
+            estimate ?? feeEstimate
           )
         }
         return sendDepositERC20ToNativeTransaction(
