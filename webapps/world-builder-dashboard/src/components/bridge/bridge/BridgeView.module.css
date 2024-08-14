@@ -43,7 +43,7 @@
   border-radius: 6px;
   display: flex;
   background: var(--Base-White, #ffffff);
-  border: 1px solid #f2f4f7;
+  border: 1px solid var(--Primary-600, #f2f4f7);
   width: 100%;
 }
 
@@ -93,7 +93,7 @@
   font-size: 12px;
   font-weight: 600;
   line-height: 18px;
-  color: #475467;
+  color: var(--Gray-600, #475467);
   min-width: 30px;
 }
 
@@ -108,7 +108,7 @@
   background: var(--Base-White, #ffffff);
 
   box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
-  color: #101828;
+  color: var(--Gray-900, #101828);
 
   /* Text sm/Medium */
   font-family: Inter, sans-serif;
@@ -130,7 +130,7 @@
   border: 1px solid #d0d5dd;
   background: var(--Base-White, #ffffff);
   box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
-  color: #101828;
+  color: var(--Gray-900, #101828);
 
   /* Text sm/Medium */
   font-family: Inter, sans-serif;
@@ -160,7 +160,7 @@
 
 .valueInput {
   width: 415px;
-  color: #475467;
+  color: var(--Gray-600, #475467);
   font-size: 30px;
   font-style: normal;
   font-weight: 600;
@@ -211,7 +211,7 @@
 
   /* Shadow/xs */
   box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
-  color: #344054;
+  color:  var(--Gray-700, #344054);
 
   /* Text sm/Semibold */
   font-size: 14px;
@@ -226,7 +226,7 @@
 }
 
 .maxButton {
-  color: #dd1534;
+  color: var(--Primary-700, #dd1534);
   padding: 0;
   /* Text xs/Medium */
   font-size: 12px;

@@ -55,7 +55,7 @@
     margin-top: 21px;
     width: 400px;
     height: 1px;
-    background-color: #EAECF0;
+    background-color: var(--Gray-200, #EAECF0);
     margin-left: -24px;
 }
 

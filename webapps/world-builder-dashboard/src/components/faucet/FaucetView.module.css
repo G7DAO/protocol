@@ -48,7 +48,7 @@
     border-radius: 6px;
     display: flex;
     background: var(--Base-White, #ffffff);
-    border: 1px solid #f2f4f7;
+    border: 1px solid var(--Primary-600, #f2f4f7);
     width: 100%;
 }
 
