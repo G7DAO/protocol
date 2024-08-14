@@ -32,9 +32,9 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
     useBlockchainContext()
   const [isAllowanceModalOpened, setIsAllowanceModalOpened] = useState(false)
   const [additionalCost, setAdditionalCost] = useState(0)
-  const [feeEstimate, setFeeEstimate] = useState<{ TXFEES: ethers.BigNumber; G: ethers.BigNumber } | undefined>(
-    undefined
-  )
+  const [feeEstimate, setFeeEstimate] = useState<
+    { gasLimit: ethers.BigNumber; maxFeePerGas: ethers.BigNumber } | undefined
+  >(undefined)
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const navigate = useNavigate()
 
@@ -101,24 +101,24 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
       const allowance = await fetchERC20Allowance({
         tokenAddress: selectedLowNetwork.g7TokenAddress,
         owner: connectedAccount,
-        spender: selectedHighNetwork.inbox,
+        spender: selectedLowNetwork.routerSpender,
         rpc: selectedLowNetwork.rpcs[0]
       })
 
       const signer = provider.getSigner()
       let messageExecutionCost = additionalCost
-      let estimate: { TXFEES: ethers.BigNumber; G: ethers.BigNumber } | undefined
+      let estimate: { gasLimit: ethers.BigNumber; maxFeePerGas: ethers.BigNumber } | undefined
       if (L2L3message?.data && L2L3message.destination && messageExecutionCost === 0) {
         try {
           estimate = await estimateCreateRetryableTicketFee(
             '',
             selectedLowNetwork,
-            selectedHighNetwork.staker ?? '',
+            L2L3message.destination ?? '',
             L2L3message.data
           )
           if (estimate) {
             setFeeEstimate(estimate)
-            messageExecutionCost = Number(ethers.utils.formatEther(estimate.TXFEES)) * 2
+            messageExecutionCost = Number(ethers.utils.formatEther(estimate.maxFeePerGas.mul(estimate.gasLimit)))
           }
         } catch (e) {
           console.log(`Estimation message execution fee error:  ${e}`)
