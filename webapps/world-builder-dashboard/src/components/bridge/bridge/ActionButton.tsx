@@ -101,7 +101,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
       const allowance = await fetchERC20Allowance({
         tokenAddress: selectedLowNetwork.g7TokenAddress,
         owner: connectedAccount,
-        spender: selectedHighNetwork.inbox,
+        spender: selectedLowNetwork.routerSpender,
         rpc: selectedLowNetwork.rpcs[0]
       })
 
