@@ -1,10 +1,18 @@
 // Libraries
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
-import { L1_NETWORK, L2_NETWORK, L3_NETWORK, L3_NATIVE_TOKEN_SYMBOL } from '../../../../constants'
+import {
+  DEFAULT_STAKE_NATIVE_POOL_ID,
+  L1_NETWORK,
+  L2_NETWORK,
+  L3_NATIVE_TOKEN_SYMBOL,
+  L3_NETWORK
+} from '../../../../constants'
 // Styles and Icons
 import styles from './BridgeView.module.css'
+import { ethers } from 'ethers'
 import ActionButton from '@/components/bridge/bridge/ActionButton'
+import BridgeMessage from '@/components/bridge/bridge/BridgeMessage'
 // Components
 import NetworkSelector from '@/components/bridge/bridge/NetworkSelector'
 import TransactionSummary from '@/components/bridge/bridge/TransactionSummary'
@@ -17,6 +25,7 @@ import useEthUsdRate from '@/hooks/useEthUsdRate'
 import useNativeBalance from '@/hooks/useNativeBalance'
 import { DepositDirection } from '@/pages/BridgePage/BridgePage'
 import { estimateDepositERC20ToNativeFee } from '@/utils/bridge/depositERC20ToNative'
+import { getStakeNativeTxData } from '@/utils/bridge/stakeContractInfo'
 import { estimateWithdrawFee } from '@/utils/bridge/withdrawNativeToken'
 
 const BridgeView = ({
@@ -27,7 +36,8 @@ const BridgeView = ({
   setDirection: (arg0: DepositDirection) => void
 }) => {
   const [value, setValue] = useState('0')
-  const [inputErrorMessage, setInputErrorMessage] = useState('')
+  const [message, setMessage] = useState<{ destination: string; data: string }>({ destination: '', data: '' })
+  const [inputErrorMessages, setInputErrorMessages] = useState({ value: '', data: '', destination: '' })
   const [networkErrorMessage, setNetworkErrorMessage] = useState('')
 
   const g7tUsdRate = useQuery(['rate'], () => 0)
@@ -79,6 +89,24 @@ const BridgeView = ({
   useEffect(() => {
     setNetworkErrorMessage('')
   }, [selectedHighNetwork, selectedLowNetwork, value])
+
+  useEffect(() => {
+    if (message.data === 'stake') {
+      if (!L3_NETWORK.staker) {
+        console.log('staker is undefined')
+        return
+      }
+      setDataForStake(L3_NETWORK.staker)
+    }
+  }, [message, value])
+
+  const setDataForStake = async (destination: string) => {
+    const data = await getStakeNativeTxData(destination, ethers.BigNumber.from(DEFAULT_STAKE_NATIVE_POOL_ID), value)
+    if (data) {
+      setMessage({ destination, data })
+      setInputErrorMessages({ ...inputErrorMessages, data: '', destination: '' })
+    }
+  }
 
   const renderNetworkSelect = (isSource: boolean, direction: 'DEPOSIT' | 'WITHDRAW') => {
     if ((isSource && direction === 'DEPOSIT') || (!isSource && direction === 'WITHDRAW')) {
@@ -151,9 +179,21 @@ const BridgeView = ({
               ? isFetchingL3NativeBalance
               : isFetchingHighNetworkBalance
         }
-        errorMessage={inputErrorMessage}
-        setErrorMessage={setInputErrorMessage}
+        errorMessage={inputErrorMessages.value}
+        setErrorMessage={(msg) => setInputErrorMessages((prev) => ({ ...prev, value: msg }))}
       />
+      {direction === 'DEPOSIT' && selectedLowNetwork.chainId === L2_NETWORK.chainId && (
+        <BridgeMessage
+          message={message}
+          setMessage={(newMessage) => {
+            setMessage((prev) => ({ ...prev, ...newMessage }))
+          }}
+          errors={inputErrorMessages}
+          setErrors={(newErrors) => {
+            setInputErrorMessages((prev) => ({ ...prev, ...newErrors }))
+          }}
+        />
+      )}
       <TransactionSummary
         direction={direction}
         gasBalance={Number((direction === 'DEPOSIT' ? lowNetworkNativeBalance : highNetworkNativeBalance) ?? 0)}
@@ -179,8 +219,9 @@ const BridgeView = ({
       <ActionButton
         direction={direction}
         amount={value}
-        isDisabled={!!inputErrorMessage}
+        isDisabled={!!inputErrorMessages.value || !!inputErrorMessages.destination || !!inputErrorMessages.data}
         setErrorMessage={setNetworkErrorMessage}
+        L2L3message={message}
       />
     </div>
   )
