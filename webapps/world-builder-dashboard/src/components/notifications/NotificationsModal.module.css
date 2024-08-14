@@ -203,7 +203,7 @@
     align-items: center;
     gap: 10px;
     align-self: stretch;
-    background: #FFF;
+    background: var(--Base-White, #ffffff);
     cursor: pointer;
     border: none;
     border-top: 1px solid var(--Gray-200, #EAECF0);

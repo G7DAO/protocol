@@ -92,6 +92,7 @@
   border: none;
   outline: none;
   padding: 0;
+  background: var(--Base-White, #fff);
 }
 
 .inputWithError {

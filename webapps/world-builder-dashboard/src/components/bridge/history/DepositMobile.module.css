@@ -97,6 +97,6 @@
     line-height: 20px; /* 142.857% */
     border: none;
     border-top: 1px solid #EAECF0;
-    background: #FFF;
+    background: var(--Base-White, #ffffff);
     border-radius: 0 0 12px 12px;
 }
