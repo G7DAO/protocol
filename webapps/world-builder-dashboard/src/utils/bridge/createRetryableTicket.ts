@@ -61,6 +61,28 @@ export const sendL2ToL3Message = async (
   }
   const ethAmount = convertToBigNumber(amount)
   const ERC20InboxContract = new ethers.Contract(destinationAddress, ERC20_INBOX_ABI, l2Signer)
+
+  const provider = new providers.JsonRpcProvider(lowNetwork.rpcs[0])
+  if (callData) {
+    const nodeInterface = NodeInterface__factory.connect(NODE_INTERFACE_ADDRESS, provider)
+    console.log('qq')
+    try {
+      const eRT = await nodeInterface.callStatic.estimateRetryableTicket(
+        account,
+        ethAmount.mul(ethers.BigNumber.from(2)),
+        callAddress,
+        ethAmount,
+        account,
+        account,
+        callData,
+        { from: account }
+      )
+      console.log({ eRT })
+    } catch (e: any) {
+      console.log("Can't estimate gas: ", e.message)
+    }
+  }
+
   const feeEstimation =
     _feeEstimation ?? (await estimateCreateRetryableTicketFee(account, lowNetwork, callAddress, callData))
   if (!feeEstimation) {
