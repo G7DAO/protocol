@@ -1,10 +1,11 @@
 // Libraries
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 // Styles and Icons
 import styles from './StakingView.module.css'
-import { tokenTypes, ZERO_ADDRESS } from '@/utils/web3utils';
+import { doesContractExist, tokenTypes, ZERO_ADDRESS } from '@/utils/web3utils';
 import { ethers } from 'ethers';
 import ActionButtonStake from '../ActionButtonStake';
+import { useBlockchainContext } from '@/contexts/BlockchainContext';
 
 const StakingView = () => {
     const [tokenAddress, setTokenAddress] = useState<string>(ZERO_ADDRESS)
@@ -15,14 +16,19 @@ const StakingView = () => {
     const [transferable, setTransferable] = useState<boolean>(false)
     const [inputErrorMessage, setInputErrorMessage] = useState<string[]>([])
     const [networkErrorMessage, setNetworkErrorMessage] = useState<string>('')
+    const [provider, setProvider] = useState<ethers.providers.Web3Provider | null>(null);
 
-    // assign provider
-    let provider: ethers.providers.Provider
-    if (window.ethereum)
-        provider = new ethers.providers.Web3Provider(window.ethereum)
-
+    useEffect(() => {
+        if (window.ethereum) {
+            const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+            setProvider(web3Provider);
+        } else {
+            addErrorMessage("Ethereum provider not found. Please install a wallet.");
+        }
+    }, []); // This effect will run once when the component mounts
 
     const addErrorMessage = (message: string) => {
+        if (inputErrorMessage.includes(message)) return
         setInputErrorMessage((prevMessages) => [...prevMessages, message]);
     };
 
@@ -45,25 +51,26 @@ const StakingView = () => {
         }
     }
 
-    const handleAddressChange = (address: string, tokenType?: string) => {
-        console.log("address changed: ", address)
-        console.log(tokenType)
-        if (!ethers.utils.isAddress(address)) {
-            addErrorMessage("Token address is not an address!")
-            console.log("Token address is not an address!")
-        } else {
-            removeErrorMessage("Token address is not an address!")
-        }
-
-        if (address === ZERO_ADDRESS && tokenType !== "1") {
-            addErrorMessage("Token address cannot be a zero address")
-            console.log("Token address cannot be a zero address")
-        }
-        else {
-            removeErrorMessage("Token address cannot be a zero address")
-        }
-
+    const handleAddressChange = async (address: string, tokenType?: string) => {
         setTokenAddress(address);
+
+        // Conditions
+        if (!ethers.utils.isAddress(address))
+            addErrorMessage("Token address is not an address!")
+        else
+            removeErrorMessage("Token address is not an address!")
+
+        if (address === ZERO_ADDRESS && tokenType !== "1")
+            addErrorMessage("Token address cannot be a zero address")
+        else
+            removeErrorMessage("Token address cannot be a zero address")
+
+        const contractExists = await doesContractExist(address, provider)
+
+        if (!contractExists)
+            addErrorMessage("Token contract does not exist!")
+        else
+            removeErrorMessage("Token contract does not exist!")
     }
 
     const preventNegative = (value: any) => {
@@ -96,7 +103,7 @@ const StakingView = () => {
             {tokenType !== "1" && (
                 <div className={styles.addressContainer}>
                     <div className={styles.label}>Token Address</div>
-                    <input className={styles.input} value={tokenAddress} onChange={(e) => handleAddressChange(e.target.value)} />
+                    <input className={styles.input} value={tokenAddress} onChange={(e) => handleAddressChange(e.target.value, "")} />
                 </div>
             )}
             {tokenType === "1155" && (

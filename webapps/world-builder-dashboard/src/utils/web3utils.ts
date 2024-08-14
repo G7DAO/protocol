@@ -28,7 +28,7 @@ export const tokenTypes = [
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
-export const doesContractExist = async (address: string, provider: ethers.providers.Provider): Promise<boolean> => {
+export const doesContractExist = async (address: string, provider: ethers.providers.Provider | null): Promise<boolean> => {
   const smartContractCode = await provider.getCode(address)
   return smartContractCode !== "0x"
 }

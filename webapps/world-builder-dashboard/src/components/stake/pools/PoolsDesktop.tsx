@@ -101,7 +101,7 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
                   <td className={styles.tdStyles}>{formatAddress(item.administrator)}</td>
                   <td className={styles.tdStyles}>{formatAddress(item.owner)}</td>
                   <td className={styles.tdStyles}>{getTokenLabel(item.tokenType)}</td>
-                  <td className={styles.tdStyles}>{formatAddress(item.tokenAddress)}</td>
+                  <td className={styles.tdStyles}>{item.tokenType !== '1' ? formatAddress(item.tokenAddress) : "N/A"}</td>
                   <td className={styles.tdStyles}>{item.tokenId}</td>
                   <td className={styles.tdStyles}>{item.lockdownPeriod}</td>
                   <td className={styles.tdStyles}>{item.cooldownPeriod}</td>
