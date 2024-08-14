@@ -9,6 +9,8 @@ import { NodeInterface__factory } from '@arbitrum/sdk/dist/lib/abi/factories/Nod
 import { NODE_INTERFACE_ADDRESS } from '@arbitrum/sdk/dist/lib/dataEntities/constants'
 import { Signer } from '@ethersproject/abstract-signer'
 
+const MIN_GAS_LIMIT = ethers.BigNumber.from(300000)
+
 const estimateGasComponents = async (
   account: string,
   network: NetworkInterface,
@@ -41,7 +43,10 @@ export const estimateCreateRetryableTicketFee = async (
   const gasEstimateComponents = await estimateGasComponents(account, network, destinationAddress, data)
   if (gasEstimateComponents) {
     const { TXFEES, G } = calculateGasValues(gasEstimateComponents)
-    return { TXFEES, G }
+    const gasLimit = G.add(G).lt(MIN_GAS_LIMIT) ? MIN_GAS_LIMIT : G.add(G) //adding 100% buffer
+    const maxFeePerGas = TXFEES.div(G)
+
+    return { gasLimit, maxFeePerGas }
   }
 }
 
@@ -53,7 +58,7 @@ export const sendL2ToL3Message = async (
   account: string,
   callAddress: string,
   callData: string,
-  _feeEstimation: { TXFEES: ethers.BigNumber; G: ethers.BigNumber } | undefined
+  _feeEstimation: { gasLimit: ethers.BigNumber; maxFeePerGas: ethers.BigNumber } | undefined
 ): Promise<TransactionRecord> => {
   const destinationAddress = highNetwork.inbox
   if (!destinationAddress) {
@@ -66,15 +71,13 @@ export const sendL2ToL3Message = async (
   if (!feeEstimation) {
     throw new Error('sendL2->L3MessageError: fee estimation error')
   }
-  const { TXFEES, G } = feeEstimation
+  const { gasLimit, maxFeePerGas } = feeEstimation
 
   const to = callAddress
   const l2CallValue = ethAmount
   const maxSubmissionCost = 0
   const excessFeeRefundAddress = account
   const callValueRefundAddress = account
-  const gasLimit = G.add(G) //adding 100% buffer
-  const maxFeePerGas = TXFEES.div(G)
   const tokenTotalFeeAmount = maxFeePerGas.mul(gasLimit).add(l2CallValue)
   const txResponse = await ERC20InboxContract.createRetryableTicket(
     to,
