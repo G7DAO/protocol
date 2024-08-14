@@ -2,7 +2,7 @@
 import { useState } from 'react'
 // Styles and Icons
 import styles from './StakingView.module.css'
-import { tokenTypes, ZERO_ADDRESS } from '@/utils/web3utils';
+import { doesContractExist, tokenTypes, ZERO_ADDRESS } from '@/utils/web3utils';
 import { ethers } from 'ethers';
 import ActionButtonStake from '../ActionButtonStake';
 
@@ -16,6 +16,11 @@ const StakingView = () => {
     const [inputErrorMessage, setInputErrorMessage] = useState('')
     const [networkErrorMessage, setNetworkErrorMessage] = useState('')
 
+    // assign provider
+    let provider: ethers.providers.Provider
+    if (window.ethereum)
+        provider = new ethers.providers.Web3Provider(window.ethereum)
+
     const handleTokenSelect = (tokenValue: string) => {
         setTokenType(tokenValue)
         if (tokenValue === "1") {
@@ -27,14 +32,17 @@ const StakingView = () => {
             setTokenId('0');
     }
 
-    const handleAddressChange = (address: string) => {
-        if (!ethers.utils.isAddress(address)) {
+    const handleAddressChange = async (address: string) => {
+        const contractExists = await doesContractExist(address, provider)
+        if (!ethers.utils.isAddress(address))
             setInputErrorMessage("Token address is not an address!")
-        } else if (address === ZERO_ADDRESS && tokenType !== "1") {
+        else if (address === ZERO_ADDRESS && tokenType !== "1")
             setInputErrorMessage("Token address cannot be a zero address")
-        } else {
+        else if (!contractExists) {
+            setInputErrorMessage("Token contract does not exist")
+        } else
             setInputErrorMessage("")
-        }
+
         setTokenAddress(address);
     }
 

@@ -20,10 +20,15 @@ export const getNetwork = (chainId: number) => {
 }
 
 export const tokenTypes = [
-  {value: "1", label: "Native"},
-  {value: "20", label: "ERC20"},
-  {value: "721", label: "ERC721"},
-  {value: "1155", label: "ERC1155"}
+  { value: "1", label: "Native" },
+  { value: "20", label: "ERC20" },
+  { value: "721", label: "ERC721" },
+  { value: "1155", label: "ERC1155" }
 ];
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+
+export const doesContractExist = async (address: string, provider: ethers.providers.Provider): Promise<boolean> => {
+  const smartContractCode = await provider.getCode(address)
+  return smartContractCode !== "0x"
+}
