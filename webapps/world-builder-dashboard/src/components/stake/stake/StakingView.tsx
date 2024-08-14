@@ -53,7 +53,6 @@ const StakingView = () => {
 
     const handleAddressChange = async (address: string, tokenType?: string) => {
         setTokenAddress(address);
-
         // Conditions
         if (!ethers.utils.isAddress(address))
             addErrorMessage("Token address is not an address!")
