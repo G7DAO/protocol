@@ -17,6 +17,8 @@ const StakingView = () => {
     const [networkErrorMessage, setNetworkErrorMessage] = useState<string>('')
     const [provider, setProvider] = useState<ethers.providers.Web3Provider | null>(null);
 
+    const arrayOfErrors: any[] = []
+
     useEffect(() => {
         if (window.ethereum) {
             const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -24,17 +26,22 @@ const StakingView = () => {
         } else {
             addErrorMessage("Ethereum provider not found. Please install a wallet.");
         }
-    }, []);
+    }, [window.ethereum]);
 
     const addErrorMessage = (message: string) => {
-        if (inputErrorMessage.includes(message)) return
+        if (arrayOfErrors.includes(message) || inputErrorMessage.includes(message)) return
         setInputErrorMessage((prevMessages) => [...prevMessages, message]);
+        arrayOfErrors.push(message)
     };
 
     const removeErrorMessage = (message: string) => {
         setInputErrorMessage((prevMessages) =>
             prevMessages.filter((msg) => msg !== message)
         );
+        const index = arrayOfErrors.indexOf(message);
+        if (index > -1) { // only splice array when item is found
+            arrayOfErrors.splice(index, 1); // 2nd parameter means remove one item only
+        }
     };
 
     const handleTokenSelect = (tokenValue: string) => {
@@ -86,7 +93,6 @@ const StakingView = () => {
         {
             if (value.key === '-' || value.key === 'e')
                 value.preventDefault(); // Prevent the minus sign or 'e' from being entered
-
         }
     }
 

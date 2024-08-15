@@ -37,7 +37,7 @@ const StakingPage = () => {
       queryClient.refetchQueries(['incomingMessages'])
       refetchNewNotifications(connectedAccount)
     }
-  }, [pendingTransactions.data])
+  }, [pendingTransactions.data, connectedAccount])
 
   return (
     <div className={styles.container}>

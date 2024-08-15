@@ -32,7 +32,7 @@ const BridgePage = () => {
       queryClient.refetchQueries(['incomingMessages'])
       refetchNewNotifications(connectedAccount)
     }
-  }, [pendingTransacions.data])
+  }, [pendingTransacions.data, connectedAccount])
 
   return (
     <div className={bridgeStyles.container}>
