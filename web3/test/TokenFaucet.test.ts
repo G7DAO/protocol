@@ -73,9 +73,11 @@ describe("TokenFaucet", function () {
     await expect(tokenFaucet.connect(addr1).setTokenAddress(tokenAddress)).to.be.revertedWithCustomError(tokenFaucet, "OwnableUnauthorizedAccount");
   });
 
-  it("Should allow claiming tokens", async function () {
+  it("Should allow claiming tokens on both chains", async function () {
     const tokenFaucetAddress = await tokenFaucet.getAddress();
     await token.transfer(tokenFaucetAddress, initialSupply);
+
+    // L2
     const claimCallPromise = tokenFaucet.claim();
     await expect(claimCallPromise).to.emit(token, "Transfer").withArgs(tokenFaucetAddress, owner.address, faucetAmount);
     const tx = await claimCallPromise;
@@ -83,7 +85,7 @@ describe("TokenFaucet", function () {
     const block = await receipt?.getBlock()
     const claimBlockTimestamp = block?.timestamp
     expect(await token.balanceOf(owner.address)).to.equal(faucetAmount);
-    expect(await tokenFaucet.lastClaimedTimestamp(owner.address)).to.equal(claimBlockTimestamp);
+    expect(await tokenFaucet.lastClaimedL2Timestamp(owner.address)).to.equal(claimBlockTimestamp);
   });
 
   it("Should NOT allow claiming tokens if time interval not passed", async function () {
