@@ -76,8 +76,6 @@ describe("TokenFaucet", function () {
   it("Should allow claiming tokens", async function () {
     const tokenFaucetAddress = await tokenFaucet.getAddress();
     await token.transfer(tokenFaucetAddress, initialSupply);
-
-    // L2
     const claimCallPromise = tokenFaucet.claim();
     await expect(claimCallPromise).to.emit(token, "Transfer").withArgs(tokenFaucetAddress, owner.address, faucetAmount);
     const tx = await claimCallPromise;
