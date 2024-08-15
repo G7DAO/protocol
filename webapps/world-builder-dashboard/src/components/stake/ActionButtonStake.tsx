@@ -37,7 +37,7 @@ export interface ActionButtonStakeProps {
 }
 
 const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ actionType, params, isDisabled, setErrorMessage }) => {
-    const { connectedAccount, isConnecting, getProvider} = useBlockchainContext()
+    const { connectedAccount, isConnecting, getProvider, connectWallet} = useBlockchainContext()
 
     const navigate = useNavigate()
 
@@ -55,6 +55,10 @@ const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ actionType, param
     }
 
     const handleClick = async () => {
+        if (!connectedAccount) {
+            await connectWallet()
+            return
+        }
         if (window.ethereum) {
             const provider = await getProvider(L3_NETWORK)
             if (actionType === 'CREATEPOOL') {
