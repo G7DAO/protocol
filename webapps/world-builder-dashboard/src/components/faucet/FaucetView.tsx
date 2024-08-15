@@ -7,47 +7,22 @@ import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { timeDifferenceInHoursAndMinutes } from '@/utils/timeFormat'
+import { faucetABI } from '@/web3/ABI/faucet_abi'
+import { Signer } from '@ethersproject/abstract-signer'
 import { useMediaQuery } from '@mantine/hooks'
 
 interface FaucetViewProps {}
 const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const [selectedNetwork, setSelectedNetwork] = useState(L2_NETWORK)
-  const { connectedAccount, switchChain } = useBlockchainContext()
-  const [isConnecting, setIsConnecting] = useState(false)
+  const { connectedAccount, isConnecting, getProvider } = useBlockchainContext()
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const smallView = useMediaQuery('(max-width: 767px)')
 
   const handleClick = async () => {
     if (window.ethereum) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-      const currentChain = await provider.getNetwork()
-      const accounts = await provider.listAccounts()
-      if (accounts.length === 0) {
-        if (typeof window.ethereum !== 'undefined') {
-          try {
-            setIsConnecting(true)
-            const provider = new ethers.providers.Web3Provider(window.ethereum)
-            await provider.send('eth_requestAccounts', [])
-          } catch (error) {
-            console.error('Error connecting to wallet:', error)
-          } finally {
-            setIsConnecting(false)
-          }
-        } else {
-          alert('Wallet is not installed. Please install it to use this feature.')
-        }
-        return
-      }
-      if (currentChain.chainId !== FAUCET_CHAIN.chainId) {
-        try {
-          await switchChain(FAUCET_CHAIN)
-          claim.mutate({ isL2Target: selectedNetwork.chainId === L2_NETWORK.chainId })
-        } catch (error) {
-          console.error('Error switching chain:', error)
-        }
-      } else {
-        claim.mutate({ isL2Target: selectedNetwork.chainId === L2_NETWORK.chainId })
-      }
+      const provider = await getProvider(L2_NETWORK)
+      const signer = provider.getSigner()
+      claim.mutate({ isL2Target: selectedNetwork.chainId === L2_NETWORK.chainId, signer })
     } else {
       console.error('Wallet is not installed!')
     }
@@ -55,10 +30,8 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
 
   const queryClient = useQueryClient()
   const claim = useMutation(
-    async ({ isL2Target }: { isL2Target: boolean }) => {
+    async ({ isL2Target, signer }: { isL2Target: boolean; signer: Signer }) => {
       if (window.ethereum) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum)
-        const signer = provider.getSigner()
         const contractAbi = [
           {
             inputs: [],
@@ -107,7 +80,22 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
         } catch (e) {
           console.log(e)
         }
-        queryClient.refetchQueries(['nextFaucetClaimTimestamp'])
+        queryClient.setQueryData(['nextFaucetClaimTimestamp', connectedAccount], (oldData: any) => {
+          const lastClaimTimestamp = Date.now() / 1000
+          let faucetTimeInterval = oldData?.faucetTimeInterval
+          if (!faucetTimeInterval) {
+            queryClient.refetchQueries(['nextFaucetClaimTimestamp'])
+            return oldData
+          }
+
+          const nextClaimTimestamp = lastClaimTimestamp + faucetTimeInterval
+          const interval = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimTimestamp)
+          const isAvailable = false
+          const date = new Date(nextClaimTimestamp * 1000)
+
+          const readableDate = date.toLocaleString()
+          return { readableDate, isAvailable, interval, faucetTimeInterval }
+        })
         queryClient.refetchQueries('pendingTransactions')
         queryClient.refetchQueries(['notifications'])
         queryClient.refetchQueries(['nativeBalance'])
@@ -131,44 +119,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const nextClaimAvailable = useQuery(['nextFaucetClaimTimestamp', connectedAccount], async () => {
     const rpc = L2_NETWORK.rpcs[0]
     const provider = new ethers.providers.JsonRpcProvider(rpc)
-    const faucetContract = new ethers.Contract(
-      G7T_FAUCET_ADDRESS,
-      [
-        {
-          inputs: [],
-          name: 'faucetTimeInterval',
-          outputs: [
-            {
-              internalType: 'uint256',
-              name: '',
-              type: 'uint256'
-            }
-          ],
-          stateMutability: 'view',
-          type: 'function'
-        },
-        {
-          inputs: [
-            {
-              internalType: 'address',
-              name: '',
-              type: 'address'
-            }
-          ],
-          name: 'lastClaimedTimestamp',
-          outputs: [
-            {
-              internalType: 'uint256',
-              name: '',
-              type: 'uint256'
-            }
-          ],
-          stateMutability: 'view',
-          type: 'function'
-        }
-      ],
-      provider
-    )
+    const faucetContract = new ethers.Contract(G7T_FAUCET_ADDRESS, faucetABI, provider)
     const lastClaimTimestamp = Number(await faucetContract.lastClaimedTimestamp(connectedAccount))
     const faucetTimeInterval = Number(await faucetContract.faucetTimeInterval())
     const nextClaimTimestamp = lastClaimTimestamp + faucetTimeInterval
@@ -177,8 +128,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
     const date = new Date(nextClaimTimestamp * 1000)
 
     const readableDate = date.toLocaleString()
-
-    return { readableDate, isAvailable, interval }
+    return { readableDate, isAvailable, interval, faucetTimeInterval }
   })
 
   return (
