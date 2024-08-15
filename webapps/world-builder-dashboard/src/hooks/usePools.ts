@@ -10,7 +10,7 @@ const MULTICALL_ADDRESS = L3_NETWORKS[2].tokenBridgeContracts.l3Contracts.multic
 
 const fetchPools = async () => {
     const provider = new ethers.providers.JsonRpcProvider(L3_NETWORKS[2].chainInfo.rpcs[0])
-    
+
     const stakerContract = new ethers.Contract(
         STAKER_ADDRESS ?? "",
         STAKER_ABI,
@@ -53,8 +53,7 @@ const fetchPools = async () => {
             return stakerContract.interface.decodeFunctionResult('Pools', resultData.returnData);
         });
 
-        const pools: Pool[] = []
-        poolDataArray.map((poolData: any, i: number) => {
+        const pools: Pool[] = poolDataArray.map((poolData: any, i: number) => {
             const pool: Pool = {
                 poolId: i.toString(),
                 poolName: "Pool " + i.toString(),
@@ -68,7 +67,7 @@ const fetchPools = async () => {
                 transferable: poolData.transferable,
                 isImmutable: false
             }
-            pools.push(pool);
+            return pool
         })
         return pools;
 
