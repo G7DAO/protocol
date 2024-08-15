@@ -26,7 +26,6 @@ const OptionsButton: React.FC<OptionsButtonProps> = ({ onViewPositions, poolData
     }, [clickedPool])
 
     const handleOptionClick = (option: string) => {
-        console.log(`${option} clicked`);
         if (option === 'View Positions') {
             onViewPositions();
         }

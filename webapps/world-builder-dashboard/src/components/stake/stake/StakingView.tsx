@@ -24,7 +24,7 @@ const StakingView = () => {
         } else {
             addErrorMessage("Ethereum provider not found. Please install a wallet.");
         }
-    }, []); // This effect will run once when the component mounts
+    }, []);
 
     const addErrorMessage = (message: string) => {
         if (inputErrorMessage.includes(message)) return
@@ -101,7 +101,7 @@ const StakingView = () => {
             {tokenType !== "1" && (
                 <div className={styles.addressContainer}>
                     <div className={styles.label}>Token Address</div>
-                    <input className={styles.input} value={tokenAddress} onChange={(e) => handleAddressChange(e.target.value, "")} />
+                    <input value={tokenAddress} onChange={(e) => handleAddressChange(e.target.value, "")} />
                 </div>
             )}
             {tokenType === "1155" && (
@@ -128,7 +128,7 @@ const StakingView = () => {
             {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
             {inputErrorMessage.length > 0 && <div className={styles.networkErrorMessage}>{inputErrorMessage.map((message, index) => (<p key={index}>{message}</p>))}</div>}
             <ActionButtonStake
-                direction={"CREATEPOOL"}
+                actionType={"CREATEPOOL"}
                 params={{ tokenType, tokenAddress, tokenID: tokenId, lockupSeconds, cooldownSeconds, transferable }}
                 isDisabled={inputErrorMessage.length !== 0}
                 setErrorMessage={setNetworkErrorMessage}

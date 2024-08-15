@@ -30,13 +30,13 @@ export interface EditPoolParams {
 }
 
 export interface ActionButtonStakeProps {
-    direction: 'CREATEPOOL' | 'EDITPOOL'
+    actionType: 'CREATEPOOL' | 'EDITPOOL'
     params?: CreatePoolParams | EditPoolParams
     isDisabled: boolean
     setErrorMessage: (arg0: string) => void
 }
 
-const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ direction, params, isDisabled, setErrorMessage }) => {
+const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ actionType, params, isDisabled, setErrorMessage }) => {
     const { connectedAccount, isConnecting, connectWallet } =
         useBlockchainContext()
 
@@ -46,7 +46,7 @@ const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ direction, params
         if (isConnecting) {
             return 'Connecting...'
         }
-        if (createAPool.isLoading) {
+        if (_createPool.isLoading) {
             return 'Submitting...'
         }
         if (!connectedAccount) {
@@ -68,14 +68,14 @@ const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ direction, params
             return
         }
         setErrorMessage('')
-        if (direction === 'CREATEPOOL') {
+        if (actionType === 'CREATEPOOL') {
             const { tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds } = params as CreatePoolParams
-            createAPool.mutate({ tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds });
+            _createPool.mutate({ tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds });
             return
         }
-        if (direction === 'EDITPOOL') {
+        if (actionType === 'EDITPOOL') {
             const { poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds } = params as EditPoolParams
-            editAPool.mutate({ poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds });
+            _editPool.mutate({ poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds });
             return
         }
     }
@@ -84,7 +84,7 @@ const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ direction, params
    
 
     //#region pool functions
-    const createAPool = useMutation(
+    const _createPool = useMutation(
         async ({
             tokenType,
             tokenAddress,
@@ -111,7 +111,7 @@ const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ direction, params
         }
     )
 
-    const editAPool = useMutation(
+    const _editPool = useMutation(
         async ({
             poolId,
             changeTransferability,
@@ -124,7 +124,6 @@ const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ direction, params
             if (!connectedAccount) {
                 throw new Error("Wallet isn't connected")
             }
-            console.log(poolId.toString());
             return editPool(poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds, connectedAccount)
         },
         {
@@ -157,7 +156,7 @@ const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ direction, params
 
     return (
         <>
-            {actionButton(direction)}
+            {actionButton(actionType)}
         </>
     )
 }

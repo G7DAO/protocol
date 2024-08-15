@@ -31,21 +31,21 @@ const EditPoolModal: React.FC<EditPoolModalProps> = ({ opened, onClose, poolData
             setChangeLockup(true)
         else
             setChangeLockup(false)
-    }, [lockupSeconds, changeLockup])
+    }, [lockupSeconds])
 
     useEffect(() => {
         if (cooldownSeconds != poolData.cooldownSeconds)
             setChangeCooldown(true)
         else
             setChangeCooldown(false)
-    }, [cooldownSeconds, changeCooldown])
+    }, [cooldownSeconds])
 
     useEffect(() => {
         if (transferable !== poolData.transferable)
             setChangeTransferability(true);
         else
             setChangeTransferability(false);
-    }, [transferable, changeTransferability])
+    }, [transferable])
 
     return (
         <Modal opened={opened} onClose={onClose} onClick={(e) => { e.stopPropagation() }}>
@@ -85,7 +85,7 @@ const EditPoolModal: React.FC<EditPoolModalProps> = ({ opened, onClose, poolData
                 </div>
                 {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
                 <ActionButtonStake
-                    direction={"EDITPOOL"}
+                    actionType={"EDITPOOL"}
                     params={{ poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds }}
                     isDisabled={!changeLockup && !changeCooldown && !changeTransferability}
                     setErrorMessage={setNetworkErrorMessage}

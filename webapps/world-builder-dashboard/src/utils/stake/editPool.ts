@@ -23,7 +23,6 @@ export const editPool = async (
         STAKER_ABI,
         provider
     )
-    console.log({ poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds, connectedAccount })
     const txRequest = await StakerContract.populateTransaction.updatePoolConfiguration(
         poolId,
         changeTransferability,
