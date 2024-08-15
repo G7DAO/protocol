@@ -42,6 +42,9 @@ const StakingView = () => {
         handleAddressChange(tokenAddress, tokenValue)
         if (tokenValue === "1") {
             setTokenAddress(ZERO_ADDRESS)
+            removeErrorMessage("Token address is not an address!")
+            removeErrorMessage("Token address cannot be a zero address")
+            removeErrorMessage("Token contract does not exist!")
             return
         }
         if (tokenValue !== "1155") {
@@ -51,6 +54,14 @@ const StakingView = () => {
     }
 
     const handleAddressChange = async (address: string, tokenType?: string) => {
+        if (tokenType === "1") {
+            setTokenAddress(ZERO_ADDRESS);
+            removeErrorMessage("Token address is not an address!")
+            removeErrorMessage("Token address cannot be a zero address")
+            removeErrorMessage("Token contract does not exist!")
+            return;
+        }
+
         setTokenAddress(address);
         // Conditions
         if (!ethers.utils.isAddress(address))
@@ -64,11 +75,11 @@ const StakingView = () => {
             removeErrorMessage("Token address cannot be a zero address")
 
         const contractExists = await doesContractExist(address, provider)
-
         if (!contractExists)
             addErrorMessage("Token contract does not exist!")
         else
             removeErrorMessage("Token contract does not exist!")
+
     }
 
     const preventNegative = (value: any) => {

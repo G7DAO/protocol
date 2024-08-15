@@ -9,14 +9,8 @@ const STAKER_ADDRESS = L3_NETWORKS[2].coreContracts.staking ?? ''
 const MULTICALL_ADDRESS = L3_NETWORKS[2].tokenBridgeContracts.l3Contracts.multicall;
 
 const fetchPools = async () => {
-    let provider
-    if (window.ethereum) {
-        provider = new ethers.providers.Web3Provider(window.ethereum)
-    } else {
-        // If no MM or other wallet provider is found, use G7 chain RPC
-        provider = new ethers.providers.JsonRpcProvider(L3_NETWORKS[2].chainInfo.rpcs[0])
-    }
-
+    const provider = new ethers.providers.JsonRpcProvider(L3_NETWORKS[2].chainInfo.rpcs[0])
+    
     const stakerContract = new ethers.Contract(
         STAKER_ADDRESS ?? "",
         STAKER_ABI,

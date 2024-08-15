@@ -10,14 +10,9 @@ export const editPool = async (
     lockupSeconds: string,
     changeCooldown: boolean,
     cooldownSeconds: string,
-    connectedAccount: string
+    connectedAccount: string,
+    provider: ethers.providers.Web3Provider
 ) => {
-    let provider
-    if (window.ethereum) {
-        provider = new ethers.providers.Web3Provider(window.ethereum)
-    } else {
-        provider = new ethers.providers.JsonRpcProvider(L3_NETWORKS[2].chainInfo.rpcs[0])
-    }
     const StakerContract = new ethers.Contract(
         L3_NETWORKS[2].coreContracts.staking ?? '',
         STAKER_ABI,
@@ -33,6 +28,6 @@ export const editPool = async (
         cooldownSeconds
     )
 
-    const txResponse = await provider.getSigner(connectedAccount).sendTransaction(txRequest)
-    return await txResponse.wait()
+    const txResponse = await provider?.getSigner(connectedAccount).sendTransaction(txRequest)
+    return await txResponse?.wait()
 }

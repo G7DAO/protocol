@@ -8,7 +8,8 @@ import styles from '@/components/bridge/bridge/ActionButton.module.css'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { createPool } from '@/utils/stake/createPool'
 import { editPool } from '@/utils/stake/editPool'
-
+import { ethers } from 'ethers'
+import { L3_NETWORK } from '../../../constants'
 
 export interface CreatePoolParams {
     tokenType: string
@@ -37,7 +38,7 @@ export interface ActionButtonStakeProps {
 }
 
 const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ actionType, params, isDisabled, setErrorMessage }) => {
-    const { connectedAccount, isConnecting, connectWallet } =
+    const { connectedAccount, isConnecting, connectWallet, switchChain } =
         useBlockchainContext()
 
     const navigate = useNavigate()
@@ -56,32 +57,54 @@ const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ actionType, param
     }
 
     const handleClick = async () => {
-        if (isConnecting) {
-            return
-        }
-        if (typeof window.ethereum === 'undefined') {
-            setErrorMessage("Wallet isn't installed")
-            return
-        }
-        if (!connectedAccount) {
-            await connectWallet()
-            return
-        }
-        setErrorMessage('')
-        if (actionType === 'CREATEPOOL') {
-            const { tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds } = params as CreatePoolParams
-            _createPool.mutate({ tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds });
-            return
-        }
-        if (actionType === 'EDITPOOL') {
-            const { poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds } = params as EditPoolParams
-            _editPool.mutate({ poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds });
-            return
+        if (window.ethereum) {
+            const provider = new ethers.providers.Web3Provider(window.ethereum)
+            const currentChainId = (await provider.getNetwork()).chainId
+
+            if (isConnecting) {
+                return
+            }
+            if (typeof window.ethereum === 'undefined') {
+                setErrorMessage("Wallet isn't installed")
+                return
+            }
+            if (!connectedAccount) {
+                await connectWallet()
+                return
+            }
+            setErrorMessage('')
+            if (actionType === 'CREATEPOOL') {
+                const { tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds } = params as CreatePoolParams
+                if (currentChainId !== L3_NETWORK.chainId) {
+                    await switchChain(L3_NETWORK).then(() => {
+                        _createPool.mutate({ tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds, provider });
+                    })
+                } else {
+                    _createPool.mutate({ tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds, provider });
+                }
+                return
+            }
+            if (actionType === 'EDITPOOL') {
+                const { poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds } = params as EditPoolParams
+                if (currentChainId !== L3_NETWORK.chainId) {
+                    try {
+                        await switchChain(L3_NETWORK)
+                        _editPool.mutate({ poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds, provider });
+                    } catch (error) {
+                        console.error('Error switching chain: ', error)
+                    }
+                } else {
+                    _editPool.mutate({ poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds, provider });
+                }
+                return
+            }
+        } else {
+            console.error('Wallet is not installed!')
         }
     }
 
     const queryClient = useQueryClient()
-   
+
 
     //#region pool functions
     const _createPool = useMutation(
@@ -92,11 +115,16 @@ const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ actionType, param
             lockupSeconds,
             cooldownSeconds,
             transferable
-        }: CreatePoolParams) => {
-            if (!connectedAccount) {
-                throw new Error("Wallet isn't connected")
+        }: any) => {
+            if (window.ethereum) {
+                const provider = new ethers.providers.Web3Provider(window.ethereum)
+                if (!connectedAccount) {
+                    throw new Error("Wallet isn't connected")
+                }
+                return createPool(tokenType, tokenAddress, tokenID, lockupSeconds, cooldownSeconds, transferable, connectedAccount, provider)
+            } else {
+                throw new Error('No wallet installed')
             }
-            return createPool(tokenType, tokenAddress, tokenID, lockupSeconds, cooldownSeconds, transferable, connectedAccount)
         },
         {
             onSuccess: async () => {
@@ -119,12 +147,15 @@ const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ actionType, param
             changeLockup,
             lockupSeconds,
             changeCooldown,
-            cooldownSeconds,
-        }: EditPoolParams) => {
+            cooldownSeconds
+        }: any) => {
             if (!connectedAccount) {
                 throw new Error("Wallet isn't connected")
             }
-            return editPool(poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds, connectedAccount)
+            if (window.ethereum) {
+                const provider = new ethers.providers.Web3Provider(window.ethereum)
+                return editPool(poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds, connectedAccount, provider)   
+            }
         },
         {
             onSuccess: async () => {

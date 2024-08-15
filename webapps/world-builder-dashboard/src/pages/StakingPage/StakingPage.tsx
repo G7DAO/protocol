@@ -19,8 +19,6 @@ import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsCon
 import { useNotifications, usePendingTransactions } from '@/hooks/useL2ToL1MessageStatus'
 import PoolsDesktop from '@/components/stake/pools/PoolsDesktop'
 
-export type DepositDirection = 'DEPOSIT' | 'WITHDRAW'
-
 const StakingPage = () => {
   const location = useLocation()
   const navigate = useNavigate()
