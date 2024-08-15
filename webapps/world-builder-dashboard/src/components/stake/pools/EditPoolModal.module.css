@@ -90,3 +90,14 @@
     background-color: var(--Gray-600, #495057);
   }
   
+  .networkErrorMessage {
+    align-self: stretch;
+  
+    color: var(--Error-600, #D92D20);
+  
+    /* Text xs/Medium */
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 18px; /* 150% */
+  }

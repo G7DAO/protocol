@@ -16,7 +16,6 @@ export const createPool = async (
     lockupSeconds: string,
     cooldownSeconds: string,
     transferable: boolean,
-    isImmutable: boolean,
     account: string
 ) => {
     let provider

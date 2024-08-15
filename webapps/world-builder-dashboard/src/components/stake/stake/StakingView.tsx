@@ -5,7 +5,6 @@ import styles from './StakingView.module.css'
 import { doesContractExist, tokenTypes, ZERO_ADDRESS } from '@/utils/web3utils';
 import { ethers } from 'ethers';
 import ActionButtonStake from '../ActionButtonStake';
-import { useBlockchainContext } from '@/contexts/BlockchainContext';
 
 const StakingView = () => {
     const [tokenAddress, setTokenAddress] = useState<string>(ZERO_ADDRESS)
@@ -74,9 +73,9 @@ const StakingView = () => {
 
     const preventNegative = (value: any) => {
         {
-            if (value.key === '-' || value.key === 'e') {
+            if (value.key === '-' || value.key === 'e')
                 value.preventDefault(); // Prevent the minus sign or 'e' from being entered
-            }
+
         }
     }
 

@@ -22,7 +22,6 @@ const EditPoolModal: React.FC<EditPoolModalProps> = ({ opened, onClose, poolData
     const [changeTransferability, setChangeTransferability] = useState(false)
     const [changeLockup, setChangeLockup] = useState(false)
     const [changeCooldown, setChangeCooldown] = useState(false)
-    const [inputErrorMessage, setInputErrorMessage] = useState('')
     const [networkErrorMessage, setNetworkErrorMessage] = useState('')
 
     // To save on gas in the function, we only update the values in smart contract if the 
@@ -84,6 +83,7 @@ const EditPoolModal: React.FC<EditPoolModalProps> = ({ opened, onClose, poolData
                         onChange={(e) => setLockupSeconds(e.target.value)}
                     />
                 </div>
+                {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
                 <ActionButtonStake
                     direction={"EDITPOOL"}
                     params={{ poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds }}

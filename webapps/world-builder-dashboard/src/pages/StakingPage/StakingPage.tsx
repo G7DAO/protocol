@@ -8,8 +8,6 @@ import styles from './StakingPage.module.css'
 
 // Components
 import StakingView from '@/components/stake/stake/StakingView'
-import HistoryDesktop from '@/components/bridge/history/HistoryDesktop'
-import HistoryMobile from '@/components/bridge/history/HistoryMobile'
 import NotificationsButton from '@/components/notifications/NotificationsButton'
 import { FloatingNotification } from '@/components/notifications/NotificationsDropModal'
 
@@ -19,7 +17,6 @@ import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsCon
 
 // Hooks
 import { useNotifications, usePendingTransactions } from '@/hooks/useL2ToL1MessageStatus'
-import { useMediaQuery } from '@mantine/hooks'
 import PoolsDesktop from '@/components/stake/pools/PoolsDesktop'
 
 export type DepositDirection = 'DEPOSIT' | 'WITHDRAW'
@@ -31,11 +28,9 @@ const StakingPage = () => {
   const pendingTransacions = usePendingTransactions(connectedAccount)
   const [notificationsOffset] = useState(0)
   const [notificationsLimit] = useState(10)
-  const [direction, setDirection] = useState<DepositDirection>('DEPOSIT')
 
   const notifications = useNotifications(connectedAccount, notificationsOffset, notificationsLimit)
   const { newNotifications, refetchNewNotifications } = useBridgeNotificationsContext()
-  const smallView = useMediaQuery('(max-width: 767px)')
 
   const queryClient = useQueryClient()
 
@@ -76,7 +71,7 @@ const StakingPage = () => {
         </div>
       </div>
       <div className={styles.viewContainer}>
-        {location.pathname === '/stake' && <StakingView direction={direction} setDirection={setDirection} />}
+        {location.pathname === '/stake' && <StakingView />}
         {location.pathname === '/stake/pools' && <PoolsDesktop />}
       </div>
     </div>
