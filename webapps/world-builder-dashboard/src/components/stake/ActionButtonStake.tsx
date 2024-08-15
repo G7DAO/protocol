@@ -8,7 +8,6 @@ import styles from '@/components/bridge/bridge/ActionButton.module.css'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { createPool } from '@/utils/stake/createPool'
 import { editPool } from '@/utils/stake/editPool'
-import { ethers } from 'ethers'
 import { L3_NETWORK } from '../../../constants'
 
 export interface CreatePoolParams {
@@ -124,7 +123,6 @@ const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ actionType, param
                 throw new Error("Wallet isn't connected")
             }
             if (window.ethereum) {
-                const provider = new ethers.providers.Web3Provider(window.ethereum)
                 return editPool(poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds, connectedAccount, provider)   
             }
         },

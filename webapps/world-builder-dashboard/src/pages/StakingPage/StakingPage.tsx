@@ -23,7 +23,7 @@ const StakingPage = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const { connectedAccount } = useBlockchainContext()
-  const pendingTransacions = usePendingTransactions(connectedAccount)
+  const pendingTransactions = usePendingTransactions(connectedAccount)
   const [notificationsOffset] = useState(0)
   const [notificationsLimit] = useState(10)
 
@@ -33,11 +33,11 @@ const StakingPage = () => {
   const queryClient = useQueryClient()
 
   useEffect(() => {
-    if (pendingTransacions.data && connectedAccount) {
+    if (pendingTransactions.data && connectedAccount) {
       queryClient.refetchQueries(['incomingMessages'])
       refetchNewNotifications(connectedAccount)
     }
-  }, [pendingTransacions.data])
+  }, [pendingTransactions.data])
 
   return (
     <div className={styles.container}>
