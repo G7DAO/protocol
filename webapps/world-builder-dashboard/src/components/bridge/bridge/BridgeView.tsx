@@ -6,7 +6,8 @@ import {
   L1_NETWORK,
   L2_NETWORK,
   L3_NATIVE_TOKEN_SYMBOL,
-  L3_NETWORK
+  L3_NETWORK,
+  MAX_ALLOWANCE_ACCOUNT
 } from '../../../../constants'
 // Styles and Icons
 import styles from './BridgeView.module.css'
@@ -26,6 +27,7 @@ import useNativeBalance from '@/hooks/useNativeBalance'
 import { DepositDirection } from '@/pages/BridgePage/BridgePage'
 import { estimateDepositERC20ToNativeFee } from '@/utils/bridge/depositERC20ToNative'
 import { getStakeNativeTxData } from '@/utils/bridge/stakeContractInfo'
+import { estimateOutboundTransferGas } from '@/utils/bridge/withdrawERC20'
 import { estimateWithdrawFee } from '@/utils/bridge/withdrawNativeToken'
 
 const BridgeView = ({
@@ -76,16 +78,28 @@ const BridgeView = ({
     if (direction === 'DEPOSIT') {
       est = await estimateDepositERC20ToNativeFee(
         value,
-        connectedAccount,
+        MAX_ALLOWANCE_ACCOUNT,
         selectedLowNetwork,
         selectedHighNetwork as HighNetworkInterface
       )
+      if (selectedLowNetwork.chainId === L1_NETWORK.chainId) {
+        const provider = new ethers.providers.JsonRpcProvider(L1_NETWORK.rpcs[0])
+
+        const est = await estimateOutboundTransferGas(
+          selectedHighNetwork.routerSpender ?? '',
+          selectedLowNetwork.g7TokenAddress,
+          MAX_ALLOWANCE_ACCOUNT,
+          ethers.utils.parseEther(value),
+          '0x',
+          provider
+        )
+        console.log(est)
+      }
     } else {
       est = await estimateWithdrawFee(value, connectedAccount, selectedLowNetwork)
     }
     return est
   })
-
   useEffect(() => {
     setNetworkErrorMessage('')
   }, [selectedHighNetwork, selectedLowNetwork, value])
