@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 // Styles
 import styles from './PoolDesktop.module.css'
 import OptionsButton from './OptionsButton';
-import PositionsTable, { Position } from './PositionsTable';
+import PositionsTable from './PositionsTable';
 import usePools from '@/hooks/usePools';
 import { formatAddress } from '@/utils/addressFormat';
 import { tokenTypes } from '@/utils/web3utils';
@@ -40,6 +40,7 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
       return
     }
     setMaximumPages(Math.ceil(data?.length / entries))
+    setEntries(10)
   }, [data])
 
   const headers = [
