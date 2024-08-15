@@ -73,7 +73,7 @@ describe("TokenFaucet", function () {
     await expect(tokenFaucet.connect(addr1).setTokenAddress(tokenAddress)).to.be.revertedWithCustomError(tokenFaucet, "OwnableUnauthorizedAccount");
   });
 
-  it("Should allow claiming tokens on both chains", async function () {
+  it("Should allow claiming tokens", async function () {
     const tokenFaucetAddress = await tokenFaucet.getAddress();
     await token.transfer(tokenFaucetAddress, initialSupply);
 
