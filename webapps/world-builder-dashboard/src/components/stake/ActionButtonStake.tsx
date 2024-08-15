@@ -76,12 +76,14 @@ const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ actionType, param
             if (actionType === 'CREATEPOOL') {
                 const { tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds } = params as CreatePoolParams
                 if (currentChainId !== L3_NETWORK.chainId) {
-                    await switchChain(L3_NETWORK).then(() => {
-                        _createPool.mutate({ tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds, provider });
-                    })
-                } else {
-                    _createPool.mutate({ tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds, provider });
+                    try {
+                        await switchChain(L3_NETWORK)
+                    } catch (error) {
+                        console.error("Can't switch chain: ", error)
+                    }
                 }
+
+                _createPool.mutate({ tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds, provider });
                 return
             }
             if (actionType === 'EDITPOOL') {
@@ -89,13 +91,11 @@ const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ actionType, param
                 if (currentChainId !== L3_NETWORK.chainId) {
                     try {
                         await switchChain(L3_NETWORK)
-                        _editPool.mutate({ poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds, provider });
                     } catch (error) {
-                        console.error('Error switching chain: ', error)
+                        console.error("can't switch chain: ", error)
                     }
-                } else {
-                    _editPool.mutate({ poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds, provider });
                 }
+                _editPool.mutate({ poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds, provider });
                 return
             }
         } else {
