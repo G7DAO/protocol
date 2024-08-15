@@ -38,8 +38,7 @@ export interface ActionButtonStakeProps {
 }
 
 const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ actionType, params, isDisabled, setErrorMessage }) => {
-    const { connectedAccount, isConnecting, connectWallet, switchChain } =
-        useBlockchainContext()
+    const { connectedAccount, isConnecting, getProvider} = useBlockchainContext()
 
     const navigate = useNavigate()
 
@@ -58,43 +57,14 @@ const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ actionType, param
 
     const handleClick = async () => {
         if (window.ethereum) {
-            const provider = new ethers.providers.Web3Provider(window.ethereum)
-            const currentChainId = (await provider.getNetwork()).chainId
-
-            if (isConnecting) {
-                return
-            }
-            if (typeof window.ethereum === 'undefined') {
-                setErrorMessage("Wallet isn't installed")
-                return
-            }
-            if (!connectedAccount) {
-                await connectWallet()
-                return
-            }
-            setErrorMessage('')
+            const provider = await getProvider(L3_NETWORK)
             if (actionType === 'CREATEPOOL') {
                 const { tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds } = params as CreatePoolParams
-                if (currentChainId !== L3_NETWORK.chainId) {
-                    try {
-                        await switchChain(L3_NETWORK)
-                    } catch (error) {
-                        console.error("Can't switch chain: ", error)
-                    }
-                }
-
                 _createPool.mutate({ tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds, provider });
                 return
             }
             if (actionType === 'EDITPOOL') {
                 const { poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds } = params as EditPoolParams
-                if (currentChainId !== L3_NETWORK.chainId) {
-                    try {
-                        await switchChain(L3_NETWORK)
-                    } catch (error) {
-                        console.error("can't switch chain: ", error)
-                    }
-                }
                 _editPool.mutate({ poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds, provider });
                 return
             }
@@ -114,10 +84,10 @@ const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ actionType, param
             tokenID,
             lockupSeconds,
             cooldownSeconds,
-            transferable
+            transferable, 
+            provider
         }: any) => {
             if (window.ethereum) {
-                const provider = new ethers.providers.Web3Provider(window.ethereum)
                 if (!connectedAccount) {
                     throw new Error("Wallet isn't connected")
                 }
@@ -147,7 +117,8 @@ const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ actionType, param
             changeLockup,
             lockupSeconds,
             changeCooldown,
-            cooldownSeconds
+            cooldownSeconds,
+            provider
         }: any) => {
             if (!connectedAccount) {
                 throw new Error("Wallet isn't connected")
