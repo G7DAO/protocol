@@ -20,6 +20,7 @@ import TransactionSummary from '@/components/bridge/bridge/TransactionSummary'
 import ValueToBridge from '@/components/bridge/bridge/ValueToBridge'
 // Blockchain Context and Utility Functions
 import { HighNetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
+import { useUISettings } from '@/contexts/UISettingsContext'
 // Hooks and Constants
 import useERC20Balance from '@/hooks/useERC20Balance'
 import useEthUsdRate from '@/hooks/useEthUsdRate'
@@ -41,8 +42,8 @@ const BridgeView = ({
   const [message, setMessage] = useState<{ destination: string; data: string }>({ destination: '', data: '' })
   const [inputErrorMessages, setInputErrorMessages] = useState({ value: '', data: '', destination: '' })
   const [networkErrorMessage, setNetworkErrorMessage] = useState('')
-
-  const g7tUsdRate = useQuery(['rate'], () => 0)
+  const { isMessagingEnabled } = useUISettings()
+  const g7tUsdRate = useQuery(['rate'], () => 2501.32)
   const { data: ethUsdRate } = useEthUsdRate()
   const { connectedAccount, selectedLowNetwork, setSelectedLowNetwork, selectedHighNetwork, setSelectedHighNetwork } =
     useBlockchainContext()
@@ -196,7 +197,7 @@ const BridgeView = ({
         errorMessage={inputErrorMessages.value}
         setErrorMessage={(msg) => setInputErrorMessages((prev) => ({ ...prev, value: msg }))}
       />
-      {direction === 'DEPOSIT' && selectedLowNetwork.chainId === L2_NETWORK.chainId && (
+      {direction === 'DEPOSIT' && selectedLowNetwork.chainId === L2_NETWORK.chainId && isMessagingEnabled && (
         <BridgeMessage
           message={message}
           setMessage={(newMessage) => {
