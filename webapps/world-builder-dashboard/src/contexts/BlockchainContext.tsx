@@ -133,7 +133,13 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     }
     if (!walletProvider) {
       await connectWallet()
+    } else {
+      const accounts = await walletProvider.listAccounts()
+      if (accounts.length === 0) {
+        await connectWallet()
+      }
     }
+
     await switchChain(network)
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     setWalletProvider(provider)
