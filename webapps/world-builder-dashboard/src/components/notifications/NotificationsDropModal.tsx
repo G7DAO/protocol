@@ -31,7 +31,7 @@ const copy = (notification: BridgeNotification) => {
       return `${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL} deposited to ${targetNetwork}`
     }
     if (notification.type === 'CLAIM') {
-      return `You received ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL}`
+      return `You requested ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL}` //L3 claim takes a couple of minutes, but checking status isn't implemented yet
     }
     return `Your ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL} withdrawal is complete`
   }
