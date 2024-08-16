@@ -137,7 +137,7 @@
     align-items: center;
     gap: 10px;
     align-self: stretch;
-    background: #FFF;
+    background: var(--Base-White, #ffffff);
     cursor: pointer;
     border: none;
     width: calc(100% + 16px + 16px - 2px);

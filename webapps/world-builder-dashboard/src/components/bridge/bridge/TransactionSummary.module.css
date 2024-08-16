@@ -4,7 +4,7 @@
   gap: 12px;
   font-family: Inter, sans-serif;
   border-radius: 8px;
-  background: #fff;
+  background: var(--Base-White, #ffffff);
   width: 100%;
   padding-bottom: 12px;
   padding-top: 12px;
@@ -14,14 +14,14 @@
   font-size: 12px;
   font-weight: 600;
   line-height: 18px;
-  color: #475467;
+  color: var(--Gray-600, #475467);
   padding-left: 12px;
 }
 
 .divider {
   height: 1px;
   place-self: stretch;
-  background: #f2f4f7;
+  background: var(--Gray-100, #f2f4f7);
 }
 
 .dataRow {
@@ -35,7 +35,7 @@
 
 .itemName {
   display: flex;
-  color: #475467;
+  color: var(--Gray-600, #475467);
   /* Text xs/Regular */
   font-size: 12px;
   font-style: normal;
@@ -49,9 +49,9 @@
   align-items: center;
 
   border-radius: 16px;
-  background: #f2f4f7;
+  background: var(--Gray-100, #f2f4f7);
   mix-blend-mode: multiply;
-  color: #344054;
+  color:  var(--Gray-700, #344054);
   text-align: center;
 
   /* Text xs/Medium */
@@ -67,7 +67,7 @@
   gap: 4px;
 }
 .value {
-  color: #475467;
+  color: var(--Gray-600, #475467);
 
   /* Text xs/Regular */
   font-size: 12px;

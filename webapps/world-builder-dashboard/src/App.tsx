@@ -9,6 +9,7 @@ import { IntlProvider } from 'summon-ui/intl'
 import { Notifications } from 'summon-ui/mantine'
 import { BlockchainProvider } from '@/contexts/BlockchainContext'
 import { BridgeNotificationsProvider } from '@/contexts/BridgeNotificationsContext'
+import { UISettingsProvider } from '@/contexts/UISettingsContext'
 import en from '@/lang/en.json'
 import { AuthProvider } from '@/providers/AuthProvider'
 import router from '@/router'
@@ -51,25 +52,27 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BlockchainProvider>
-        <AssetsProvider tenant={name as Tenant}>
-          <IntlProvider
-            intlConf={{
-              currentLang: lang as LangKey,
-              messagesConf: {
-                ...enMessages
-              }
-            }}
-          >
-            <ThemeProvider uiTheme={uiTheme}>
-              <BridgeNotificationsProvider>
-                <Notifications position='top-right' zIndex={1000} styles={NOTIFICATIONS_STYLES} />
-                <AuthProvider>
-                  <RouterProvider router={router} />
-                </AuthProvider>
-              </BridgeNotificationsProvider>
-            </ThemeProvider>
-          </IntlProvider>
-        </AssetsProvider>
+        <UISettingsProvider>
+          <AssetsProvider tenant={name as Tenant}>
+            <IntlProvider
+              intlConf={{
+                currentLang: lang as LangKey,
+                messagesConf: {
+                  ...enMessages
+                }
+              }}
+            >
+              <ThemeProvider uiTheme={uiTheme}>
+                <BridgeNotificationsProvider>
+                  <Notifications position='top-right' zIndex={1000} styles={NOTIFICATIONS_STYLES} />
+                  <AuthProvider>
+                    <RouterProvider router={router} />
+                  </AuthProvider>
+                </BridgeNotificationsProvider>
+              </ThemeProvider>
+            </IntlProvider>
+          </AssetsProvider>
+        </UISettingsProvider>
       </BlockchainProvider>
     </QueryClientProvider>
   )

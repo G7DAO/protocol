@@ -81,3 +81,27 @@ export const sendWithdrawERC20Transaction = async (
     throw error
   }
 }
+
+export const estimateOutboundTransferGas = async (
+  contractAddress: string,
+  _l1Token: string,
+  _to: string,
+  _amount: ethers.BigNumberish,
+  _data: string | ethers.BytesLike,
+  provider: ethers.providers.Provider
+) => {
+  // Create a contract instance
+  const contract = new ethers.Contract(contractAddress, L2GatewayRouterABI, provider)
+
+  // Estimate gas
+  try {
+    const estimatedGas = await contract.estimateGas.outboundTransfer(_l1Token, _to, _amount, _data, {
+      value: ethers.utils.parseEther('0') // Adjust if the function requires ETH
+    })
+    console.log(`Estimated Gas: ${estimatedGas.toString()}`)
+    return estimatedGas
+  } catch (error) {
+    console.error('Error estimating gas:', error)
+    throw error
+  }
+}

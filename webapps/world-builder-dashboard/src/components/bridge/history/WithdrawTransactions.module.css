@@ -13,8 +13,8 @@
   align-self: stretch;
 
   border-radius: 12px;
-  border: 1px solid #eaecf0;
-  background: #fff;
+  border: 1px solid var(--Gray-200, #EAECF0);
+  background: var(--Base-White, #ffffff);
 
   /* Shadow/sm */
   box-shadow:
@@ -48,7 +48,7 @@
   align-items: center;
   gap: 8px;
   border: 1px solid #d0d5dd;
-  color: #344054;
+  color:  var(--Gray-700, #344054);
 
   /* Text sm/Semibold */
   font-family: Inter, sans-serif;
@@ -85,7 +85,7 @@
 
 .withdrawalContainer {
   display: flex;
-  background-color: #101828;
+  background-color: var(--Gray-900, #101828);
 }
 
 .withdrawsGrid {

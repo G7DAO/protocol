@@ -95,6 +95,7 @@
   overflow-y: auto;
   position: relative;
   font-family: Inter, sans-serif;
+  width: 100%;
 }
 
 @media (max-width: 767px) {

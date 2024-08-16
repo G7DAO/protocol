@@ -47,8 +47,8 @@
     gap: 8px;
     border-radius: 6px;
     display: flex;
-    background: #fff;
-    border: 1px solid #f2f4f7;
+    background: var(--Base-White, #ffffff);
+    border: 1px solid var(--Gray-100, #f2f4f7);
     width: 100%;
 }
 
@@ -68,8 +68,8 @@
 }
 
 .selectedNetworkButton {
-    background: var(--Primary-600, #f2f4f7);
-    color: #fff;
+    background: var(--Primary-600, #EF233B);
+    color: var(--Base-White, #ffffff);
     transition: transform 0.4s ease-out, color, background-color 0.4s ease;
 
 }

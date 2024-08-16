@@ -66,6 +66,7 @@ export const sendL2ToL3Message = async (
   }
   const ethAmount = convertToBigNumber(amount)
   const ERC20InboxContract = new ethers.Contract(destinationAddress, ERC20_INBOX_ABI, l2Signer)
+
   const feeEstimation =
     _feeEstimation ?? (await estimateCreateRetryableTicketFee(account, lowNetwork, callAddress, callData))
   if (!feeEstimation) {
