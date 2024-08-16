@@ -31,7 +31,7 @@ const useERC20Balance = ({ tokenAddress, account, rpc }: UseERC20BalanceProps) =
 interface UseERC20AllowanceProps {
   tokenAddress: string
   owner: string | undefined
-  spender: string
+  spender: string | undefined
   rpc: string
 }
 

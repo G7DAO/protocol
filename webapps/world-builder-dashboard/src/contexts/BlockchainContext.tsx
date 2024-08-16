@@ -37,6 +37,8 @@ export interface NetworkInterface {
   routerSpender?: string
   retryableCreationTimeout?: number //seconds
   challengePeriod?: number //seconds
+  staker?: string
+  inbox?: string
 }
 
 export interface HighNetworkInterface extends NetworkInterface {

@@ -1,3 +1,5 @@
+import { NetworkInterface } from '@/contexts/BlockchainContext'
+
 export interface User {
   firstName: string
   lastName: string
@@ -7,4 +9,11 @@ export interface User {
 export interface LoginData {
   email: string
   password: string
+}
+
+export interface ERC20AllowanceProps {
+  network: NetworkInterface
+  allowance: number
+  spender: string | undefined
+  tokenAddress: string
 }
