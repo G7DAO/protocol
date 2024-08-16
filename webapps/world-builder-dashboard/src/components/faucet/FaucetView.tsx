@@ -67,7 +67,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
       throw new Error('no window.ethereum')
     },
     {
-      onSuccess: (data: TransactionRecord | undefined) => {
+      onSuccess: (data: TransactionRecord | undefined, variables) => {
         try {
           const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
 
@@ -82,19 +82,18 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
         }
         queryClient.setQueryData(['nextFaucetClaimTimestamp', connectedAccount], (oldData: any) => {
           const lastClaimTimestamp = Date.now() / 1000
-          let faucetTimeInterval = oldData?.faucetTimeInterval
-          if (!faucetTimeInterval) {
+          if (!oldData) {
             queryClient.refetchQueries(['nextFaucetClaimTimestamp'])
             return oldData
           }
 
-          const nextClaimTimestamp = lastClaimTimestamp + faucetTimeInterval
+          const nextClaimTimestamp = lastClaimTimestamp + oldData.faucetTimeInterval
           const interval = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimTimestamp)
           const isAvailable = false
-          const date = new Date(nextClaimTimestamp * 1000)
+          const L2 = variables.isL2Target ? { nextClaimTimestamp, interval, isAvailable } : oldData.L2
+          const L3 = !variables.isL2Target ? { nextClaimTimestamp, interval, isAvailable } : oldData.L3
 
-          const readableDate = date.toLocaleString()
-          return { readableDate, isAvailable, interval, faucetTimeInterval }
+          return { faucetTimeInterval: oldData.faucetTimeInterval, L2, L3 }
         })
         queryClient.refetchQueries('pendingTransactions')
         queryClient.refetchQueries(['notifications'])
@@ -120,15 +119,24 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
     const rpc = L2_NETWORK.rpcs[0]
     const provider = new ethers.providers.JsonRpcProvider(rpc)
     const faucetContract = new ethers.Contract(G7T_FAUCET_ADDRESS, faucetABI, provider)
-    const lastClaimTimestamp = Number(await faucetContract.lastClaimedTimestamp(connectedAccount))
-    const faucetTimeInterval = Number(await faucetContract.faucetTimeInterval())
-    const nextClaimTimestamp = lastClaimTimestamp + faucetTimeInterval
-    const interval = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimTimestamp)
-    const isAvailable = compareTimestampWithCurrentMoment(nextClaimTimestamp)
-    const date = new Date(nextClaimTimestamp * 1000)
 
-    const readableDate = date.toLocaleString()
-    return { readableDate, isAvailable, interval, faucetTimeInterval }
+    const lastClaimedL2Timestamp = Number(await faucetContract.lastClaimedL2Timestamp(connectedAccount))
+    const lastClaimedL3Timestamp = Number(await faucetContract.lastClaimedL3Timestamp(connectedAccount))
+
+    const faucetTimeInterval = Number(await faucetContract.faucetTimeInterval())
+    const nextClaimL2Timestamp = lastClaimedL2Timestamp + faucetTimeInterval
+    const nextClaimL3Timestamp = lastClaimedL3Timestamp + faucetTimeInterval
+
+    const intervalL2 = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimL2Timestamp)
+    const intervalL3 = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimL3Timestamp)
+
+    const isAvailableL2 = compareTimestampWithCurrentMoment(nextClaimL2Timestamp)
+    const isAvailableL3 = compareTimestampWithCurrentMoment(nextClaimL3Timestamp)
+
+    const L2 = { interval: intervalL2, nextClaimTimestamp: nextClaimL2Timestamp, isAvailable: isAvailableL2 }
+    const L3 = { interval: intervalL3, nextClaimTimestamp: nextClaimL3Timestamp, isAvailable: isAvailableL3 }
+
+    return { faucetTimeInterval, L2, L3 }
   })
 
   return (
@@ -163,18 +171,37 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
           <div className={styles.addressPlaceholder}>'Please connect a wallet...</div>
         )}
       </div>
-      {(!nextClaimAvailable.data || nextClaimAvailable.data.isAvailable) && (
-        <div className={styles.hintBadge}>You may only request funds to a connected wallet.</div>
-      )}
-      {nextClaimAvailable.data && !nextClaimAvailable.data.isAvailable && (
-        <div
-          className={styles.warningContainer}
-        >{`Already requested today. Come back in ${nextClaimAvailable.data.interval}`}</div>
-      )}
+      {nextClaimAvailable.isLoading && <div className={styles.warningContainer}>Checking faucet permissions...</div>}
+      {!nextClaimAvailable.isLoading &&
+        (selectedNetwork.chainId === L2_NETWORK.chainId
+          ? nextClaimAvailable.data?.L2.isAvailable
+          : nextClaimAvailable.data?.L3.isAvailable) && (
+          <div className={styles.hintBadge}>You may only request funds to a connected wallet.</div>
+        )}
+      {selectedNetwork.chainId === L2_NETWORK.chainId &&
+        nextClaimAvailable.data &&
+        !nextClaimAvailable.data.L2.isAvailable && (
+          <div
+            className={styles.warningContainer}
+          >{`Already requested today. Come back in ${nextClaimAvailable.data.L2.interval}`}</div>
+        )}
+      {selectedNetwork.chainId === L3_NETWORK.chainId &&
+        nextClaimAvailable.data &&
+        !nextClaimAvailable.data.L3.isAvailable && (
+          <div
+            className={styles.warningContainer}
+          >{`Already requested today. Come back in ${nextClaimAvailable.data.L3.interval}`}</div>
+        )}
       <button
         className={styles.button}
         onClick={handleClick}
-        disabled={!!connectedAccount && (!nextClaimAvailable.data || !nextClaimAvailable.data.isAvailable)}
+        disabled={
+          !!connectedAccount &&
+          (!nextClaimAvailable.data ||
+            (selectedNetwork.chainId === L2_NETWORK.chainId
+              ? !nextClaimAvailable.data.L2.isAvailable
+              : !nextClaimAvailable.data.L3.isAvailable))
+        }
       >
         {isConnecting
           ? 'Connecting wallet...'
