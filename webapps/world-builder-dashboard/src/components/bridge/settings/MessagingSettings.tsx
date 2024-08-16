@@ -13,8 +13,6 @@ const MessagingSettings: React.FC<MessagingSettingsProps> = ({}) => {
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       const { key } = event
-
-      // We only care about alphanumeric characters
       if (/^[a-zA-Z]$/.test(key)) {
         setTypedCharacters((prev) => (prev + key).toLowerCase())
       }
@@ -30,19 +28,17 @@ const MessagingSettings: React.FC<MessagingSettingsProps> = ({}) => {
   }, [])
 
   useEffect(() => {
-    // Check if the typed characters contain 'light' or 'dark'
     if (typedCharacters.includes('light')) {
       if (theme !== 'light') {
         toggleTheme()
       }
-      setTypedCharacters('') // Reset after detection
+      setTypedCharacters('')
     } else if (typedCharacters.includes('dark')) {
       if (theme !== 'dark') {
         toggleTheme()
       }
-      setTypedCharacters('') // Reset after detection
+      setTypedCharacters('')
     } else if (typedCharacters.length > 5) {
-      // Reset if the buffer exceeds the length of the target words
       setTypedCharacters('')
     }
   }, [typedCharacters])
@@ -51,7 +47,7 @@ const MessagingSettings: React.FC<MessagingSettingsProps> = ({}) => {
     <div className={styles.container}>
       <div className={styles.content}>
         <div className={styles.iconContainer}>
-          <IconMessageSquare02 />
+          <IconMessageSquare02 className={styles.icon} />
         </div>
         <div className={styles.textContainer}>
           <div className={styles.header}>
@@ -69,6 +65,8 @@ const MessagingSettings: React.FC<MessagingSettingsProps> = ({}) => {
         color='#12B76A'
         checked={isMessagingEnabled}
         onChange={(event) => setIsMessagingEnabled(event.currentTarget.checked)}
+        classNames={{ track: styles.track, thumb: styles.thumb }}
+        size={'md'}
       />
     </div>
   )
