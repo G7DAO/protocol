@@ -174,8 +174,6 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
     }
   }, [nextClaimTimestamp])
 
-  useEffect(() => {}, [])
-
   return (
     <div className={styles.container}>
       <div className={styles.header}>
