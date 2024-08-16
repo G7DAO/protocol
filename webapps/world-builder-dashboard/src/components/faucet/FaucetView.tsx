@@ -14,7 +14,7 @@ import { useMediaQuery } from '@mantine/hooks'
 interface FaucetViewProps {}
 const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const [selectedNetwork, setSelectedNetwork] = useState(L2_NETWORK)
-  const { connectedAccount, isConnecting, getProvider } = useBlockchainContext()
+  const { connectedAccount, isConnecting, getProvider, connectWallet } = useBlockchainContext()
   const [animatedInterval, setAnimatedInterval] = useState('')
   const [nextClaimTimestamp, setNextClaimTimestamp] = useState(0)
 
@@ -22,13 +22,13 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const smallView = useMediaQuery('(max-width: 767px)')
 
   const handleClick = async () => {
-    if (window.ethereum) {
-      const provider = await getProvider(L2_NETWORK)
-      const signer = provider.getSigner()
-      claim.mutate({ isL2Target: selectedNetwork.chainId === L2_NETWORK.chainId, signer })
-    } else {
-      console.error('Wallet is not installed!')
+    if (!connectedAccount) {
+      await connectWallet()
+      return
     }
+    const provider = await getProvider(L2_NETWORK)
+    const signer = provider.getSigner()
+    claim.mutate({ isL2Target: selectedNetwork.chainId === L2_NETWORK.chainId, signer })
   }
 
   const queryClient = useQueryClient()
@@ -205,7 +205,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
             {smallView ? `${connectedAccount.slice(0, 6)}....${connectedAccount.slice(-4)}` : connectedAccount}
           </div>
         ) : (
-          <div className={styles.addressPlaceholder}>'Please connect a wallet...</div>
+          <div className={styles.addressPlaceholder}>Please connect a wallet...</div>
         )}
       </div>
       {nextClaimAvailable.isLoading && <div className={styles.warningContainer}>Checking faucet permissions...</div>}
@@ -215,6 +215,9 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
           : nextClaimAvailable.data?.L3.isAvailable) && (
           <div className={styles.hintBadge}>You may only request funds to a connected wallet.</div>
         )}
+      {!nextClaimAvailable.isLoading && !connectedAccount && (
+        <div className={styles.hintBadge}>You may only request funds to a connected wallet.</div>
+      )}
       {selectedNetwork.chainId === L2_NETWORK.chainId &&
         nextClaimAvailable.data &&
         !nextClaimAvailable.data.L2.isAvailable && (
