@@ -176,7 +176,7 @@
     justify-content: center;
     padding: 2px 8px;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
 
     border-radius: 16px;
     background: var(--Warning-50, #FFFAEB);
@@ -188,6 +188,10 @@
     font-style: normal;
     font-weight: 500;
     line-height: 18px; /* 150% */
+}
+
+.time {
+    width: 100px;
 }
 
 

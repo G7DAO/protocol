@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { FAUCET_CHAIN, G7T_FAUCET_ADDRESS, L2_NETWORK, L3_NATIVE_TOKEN_SYMBOL, L3_NETWORK } from '../../../constants'
 import styles from './FaucetView.module.css'
@@ -6,7 +6,7 @@ import { ethers } from 'ethers'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
-import { timeDifferenceInHoursAndMinutes } from '@/utils/timeFormat'
+import { timeDifferenceInHoursAndMinutes, timeDifferenceInHoursMinutesAndSeconds } from '@/utils/timeFormat'
 import { faucetABI } from '@/web3/ABI/faucet_abi'
 import { Signer } from '@ethersproject/abstract-signer'
 import { useMediaQuery } from '@mantine/hooks'
@@ -15,6 +15,9 @@ interface FaucetViewProps {}
 const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const [selectedNetwork, setSelectedNetwork] = useState(L2_NETWORK)
   const { connectedAccount, isConnecting, getProvider } = useBlockchainContext()
+  const [animatedInterval, setAnimatedInterval] = useState('')
+  const [nextClaimTimestamp, setNextClaimTimestamp] = useState(0)
+
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const smallView = useMediaQuery('(max-width: 767px)')
 
@@ -115,29 +118,63 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
     return timestampInMillis <= currentInMillis
   }
 
-  const nextClaimAvailable = useQuery(['nextFaucetClaimTimestamp', connectedAccount], async () => {
-    const rpc = L2_NETWORK.rpcs[0]
-    const provider = new ethers.providers.JsonRpcProvider(rpc)
-    const faucetContract = new ethers.Contract(G7T_FAUCET_ADDRESS, faucetABI, provider)
+  const nextClaimAvailable = useQuery(
+    ['nextFaucetClaimTimestamp', connectedAccount],
+    async () => {
+      const rpc = L2_NETWORK.rpcs[0]
+      const provider = new ethers.providers.JsonRpcProvider(rpc)
+      const faucetContract = new ethers.Contract(G7T_FAUCET_ADDRESS, faucetABI, provider)
 
-    const lastClaimedL2Timestamp = Number(await faucetContract.lastClaimedL2Timestamp(connectedAccount))
-    const lastClaimedL3Timestamp = Number(await faucetContract.lastClaimedL3Timestamp(connectedAccount))
+      const lastClaimedL2Timestamp = Number(await faucetContract.lastClaimedL2Timestamp(connectedAccount))
+      const lastClaimedL3Timestamp = Number(await faucetContract.lastClaimedL3Timestamp(connectedAccount))
 
-    const faucetTimeInterval = Number(await faucetContract.faucetTimeInterval())
-    const nextClaimL2Timestamp = lastClaimedL2Timestamp + faucetTimeInterval
-    const nextClaimL3Timestamp = lastClaimedL3Timestamp + faucetTimeInterval
+      const faucetTimeInterval = Number(await faucetContract.faucetTimeInterval())
+      const nextClaimL2Timestamp = lastClaimedL2Timestamp + faucetTimeInterval
+      const nextClaimL3Timestamp = lastClaimedL3Timestamp + faucetTimeInterval
 
-    const intervalL2 = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimL2Timestamp)
-    const intervalL3 = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimL3Timestamp)
+      const intervalL2 = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimL2Timestamp)
+      const intervalL3 = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimL3Timestamp)
 
-    const isAvailableL2 = compareTimestampWithCurrentMoment(nextClaimL2Timestamp)
-    const isAvailableL3 = compareTimestampWithCurrentMoment(nextClaimL3Timestamp)
+      const isAvailableL2 = compareTimestampWithCurrentMoment(nextClaimL2Timestamp)
+      const isAvailableL3 = compareTimestampWithCurrentMoment(nextClaimL3Timestamp)
 
-    const L2 = { interval: intervalL2, nextClaimTimestamp: nextClaimL2Timestamp, isAvailable: isAvailableL2 }
-    const L3 = { interval: intervalL3, nextClaimTimestamp: nextClaimL3Timestamp, isAvailable: isAvailableL3 }
+      const L2 = { interval: intervalL2, nextClaimTimestamp: nextClaimL2Timestamp, isAvailable: isAvailableL2 }
+      const L3 = { interval: intervalL3, nextClaimTimestamp: nextClaimL3Timestamp, isAvailable: isAvailableL3 }
 
-    return { faucetTimeInterval, L2, L3 }
-  })
+      return { faucetTimeInterval, L2, L3 }
+    },
+    {
+      enabled: !!connectedAccount
+    }
+  )
+
+  useEffect(() => {
+    if (!nextClaimAvailable.data) {
+      return
+    }
+    const intervalInfo =
+      selectedNetwork.chainId === L2_NETWORK.chainId ? nextClaimAvailable.data.L2 : nextClaimAvailable.data.L3
+    if (!intervalInfo.isAvailable) {
+      setNextClaimTimestamp(intervalInfo.nextClaimTimestamp)
+    }
+  }, [nextClaimAvailable.data, selectedNetwork])
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout
+    if (nextClaimTimestamp) {
+      setAnimatedInterval(timeDifferenceInHoursMinutesAndSeconds(Math.floor(Date.now() / 1000), nextClaimTimestamp))
+      intervalId = setInterval(() => {
+        setAnimatedInterval(timeDifferenceInHoursMinutesAndSeconds(Math.floor(Date.now() / 1000), nextClaimTimestamp))
+      }, 1000)
+    }
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId)
+      }
+    }
+  }, [nextClaimTimestamp])
+
+  useEffect(() => {}, [])
 
   return (
     <div className={styles.container}>
@@ -181,16 +218,17 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
       {selectedNetwork.chainId === L2_NETWORK.chainId &&
         nextClaimAvailable.data &&
         !nextClaimAvailable.data.L2.isAvailable && (
-          <div
-            className={styles.warningContainer}
-          >{`Already requested today. Come back in ${nextClaimAvailable.data.L2.interval}`}</div>
+          <div className={styles.warningContainer}>
+            {`Already requested today. Come back in `}
+            <span className={styles.time}>{animatedInterval}</span>
+          </div>
         )}
       {selectedNetwork.chainId === L3_NETWORK.chainId &&
         nextClaimAvailable.data &&
         !nextClaimAvailable.data.L3.isAvailable && (
-          <div
-            className={styles.warningContainer}
-          >{`Already requested today. Come back in ${nextClaimAvailable.data.L3.interval}`}</div>
+          <div className={styles.warningContainer}>
+            {`Already requested today. Come back in `} <span className={styles.time}>{` ${animatedInterval}`}</span>
+          </div>
         )}
       <button
         className={styles.button}
