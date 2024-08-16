@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { STAKER_ABI } from '@/web3/ABI/Staker';
+import { stakerABI } from '@/web3/ABI/staker';
 import { L3_NETWORKS } from '../bridge/l3Networks';
 
 export const editPool = async (
@@ -15,7 +15,7 @@ export const editPool = async (
 ) => {
     const StakerContract = new ethers.Contract(
         L3_NETWORKS[2].coreContracts.staking ?? '',
-        STAKER_ABI,
+        stakerABI,
         provider
     )
     const txRequest = await StakerContract.populateTransaction.updatePoolConfiguration(

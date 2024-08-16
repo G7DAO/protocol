@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
 import { useQuery } from 'react-query'
-import { STAKER_ABI } from '@/web3/ABI/Staker'
+import { stakerABI } from '@/web3/ABI/staker'
 import { MULTICALL_ABI } from '@/web3/ABI/Multicall'
 import { L3_NETWORKS } from '@/utils/bridge/l3Networks'
 import { Pool } from '@/components/stake/pools/PoolsDesktop'
@@ -13,7 +13,7 @@ const fetchPools = async () => {
 
     const stakerContract = new ethers.Contract(
         STAKER_ADDRESS ?? "",
-        STAKER_ABI,
+        stakerABI,
         provider
     )
 
