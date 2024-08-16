@@ -2,92 +2,78 @@
 import { useEffect, useState } from 'react'
 import { useQueryClient } from 'react-query'
 import { useLocation, useNavigate } from 'react-router-dom'
+
 // Styles
-import styles from './BridgePage.module.css'
+import styles from './StakingPage.module.css'
+
 // Components
-import BridgeView from '@/components/bridge/bridge/BridgeView'
-import HistoryDesktop from '@/components/bridge/history/HistoryDesktop'
-import HistoryMobile from '@/components/bridge/history/HistoryMobile'
-import SettingsView from '@/components/bridge/settings/SettingsView'
+import StakingView from '@/components/stake/stake/StakingView'
 import NotificationsButton from '@/components/notifications/NotificationsButton'
 import { FloatingNotification } from '@/components/notifications/NotificationsDropModal'
+
 // Contexts
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
+
 // Hooks
 import { useNotifications, usePendingTransactions } from '@/hooks/useL2ToL1MessageStatus'
-import { useMediaQuery } from '@mantine/hooks'
+import PoolsDesktop from '@/components/stake/pools/PoolsDesktop'
 
-export type DepositDirection = 'DEPOSIT' | 'WITHDRAW'
-
-const BridgePage = () => {
+const StakingPage = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const { connectedAccount } = useBlockchainContext()
-  const pendingTransacions = usePendingTransactions(connectedAccount)
+  const pendingTransactions = usePendingTransactions(connectedAccount)
   const [notificationsOffset] = useState(0)
   const [notificationsLimit] = useState(10)
-  const [direction, setDirection] = useState<DepositDirection>('DEPOSIT')
 
   const notifications = useNotifications(connectedAccount, notificationsOffset, notificationsLimit)
   const { newNotifications, refetchNewNotifications } = useBridgeNotificationsContext()
-  const smallView = useMediaQuery('(max-width: 767px)')
 
   const queryClient = useQueryClient()
 
   useEffect(() => {
-    if (pendingTransacions.data && connectedAccount) {
+    if (pendingTransactions.data && connectedAccount) {
       queryClient.refetchQueries(['incomingMessages'])
       refetchNewNotifications(connectedAccount)
     }
-  }, [pendingTransacions.data, connectedAccount])
+  }, [pendingTransactions.data, connectedAccount])
 
   return (
     <div className={styles.container}>
       <div className={styles.top}>
         <div className={styles.headerContainer}>
           {notifications.data && <FloatingNotification notifications={newNotifications} />}
-          <div className={styles.title}>Bridge</div>
+          <div className={styles.title}>Stake</div>
           <NotificationsButton notifications={notifications.data ?? []} />
         </div>
         <div className={styles.navigationContainer}>
           <button
             className={
-              location.pathname === '/bridge' ? styles.selectedNavigationButton : styles.unselectedNavigationButton
+              location.pathname === '/stake' ? styles.selectedNavigationButton : styles.unselectedNavigationButton
             }
-            onClick={() => navigate('/bridge')}
+            onClick={() => navigate('/stake')}
           >
-            Transfer
+            Create Pool
           </button>
           <button
             className={
-              location.pathname === '/bridge/transactions'
+              location.pathname === '/stake/pools'
                 ? styles.selectedNavigationButton
                 : styles.unselectedNavigationButton
             }
-            onClick={() => navigate('/bridge/transactions')}
+            onClick={() => navigate('/stake/pools')}
           >
-            History
-          </button>
-          <button
-            className={
-              location.pathname === '/bridge/settings'
-                ? styles.selectedNavigationButton
-                : styles.unselectedNavigationButton
-            }
-            onClick={() => navigate('/bridge/settings')}
-          >
-            Settings
+            View Pools
           </button>
         </div>
       </div>
       <div className={styles.viewContainer}>
-        {location.pathname === '/bridge' && <BridgeView direction={direction} setDirection={setDirection} />}
-        {location.pathname === '/bridge/transactions' && (!smallView ? <HistoryDesktop /> : <HistoryMobile />)}
-        {location.pathname === '/bridge/settings' && <SettingsView />}
+        {location.pathname === '/stake' && <StakingView />}
+        {location.pathname === '/stake/pools' && <PoolsDesktop />}
       </div>
     </div>
   )
 }
 
-export default BridgePage
+export default StakingPage

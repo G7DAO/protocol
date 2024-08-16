@@ -6,6 +6,7 @@ import BridgePage from '@/pages/BridgePage/BridgePage'
 import FaucetPage from '@/pages/FaucetPage/FaucetPage'
 //Pages
 import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage'
+import StakingPage from './pages/StakingPage/StakingPage'
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,15 @@ const router = createBrowserRouter([
       {
         path: '/faucet/*',
         element: <FaucetPage />
+      }
+    ]
+  },
+  {
+    element: <MainLayout />,
+    children: [
+      {
+        path: '/stake/*',
+        element: <StakingPage />
       }
     ]
   },
