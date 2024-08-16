@@ -1,21 +1,37 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { FAUCET_CHAIN, G7T_FAUCET_ADDRESS, L2_NETWORK, L3_NATIVE_TOKEN_SYMBOL, L3_NETWORK } from '../../../constants'
+import {
+  FAUCET_CHAIN,
+  G7T_FAUCET_ADDRESS,
+  L1_NETWORK,
+  L2_NETWORK,
+  L3_NATIVE_TOKEN_SYMBOL,
+  L3_NETWORK
+} from '../../../constants'
 import styles from './FaucetView.module.css'
 import { ethers } from 'ethers'
-import { useBlockchainContext } from '@/contexts/BlockchainContext'
+import { NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
+import { useUISettings } from '@/contexts/UISettingsContext'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { timeDifferenceInHoursAndMinutes } from '@/utils/timeFormat'
 import { useMediaQuery } from '@mantine/hooks'
 
 interface FaucetViewProps {}
 const FaucetView: React.FC<FaucetViewProps> = ({}) => {
-  const [selectedNetwork, setSelectedNetwork] = useState(L2_NETWORK)
+  const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L2_NETWORK)
   const { connectedAccount, switchChain } = useBlockchainContext()
+  const { faucetTargetChainId } = useUISettings()
   const [isConnecting, setIsConnecting] = useState(false)
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const smallView = useMediaQuery('(max-width: 767px)')
+
+  useEffect(() => {
+    const targetNetwork = [L1_NETWORK, L2_NETWORK, L3_NETWORK].find((n) => n.chainId === faucetTargetChainId)
+    if (targetNetwork) {
+      setSelectedNetwork(targetNetwork)
+    }
+  }, [faucetTargetChainId])
 
   const handleClick = async () => {
     if (window.ethereum) {
