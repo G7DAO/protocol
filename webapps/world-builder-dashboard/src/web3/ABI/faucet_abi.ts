@@ -150,7 +150,26 @@ export const faucetABI = [
         type: 'address'
       }
     ],
-    name: 'lastClaimedTimestamp',
+    name: 'lastClaimedL2Timestamp',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address'
+      }
+    ],
+    name: 'lastClaimedL3Timestamp',
     outputs: [
       {
         internalType: 'uint256',
