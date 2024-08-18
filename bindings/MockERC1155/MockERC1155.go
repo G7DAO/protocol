@@ -1199,169 +1199,6 @@ func CreateMockERC1155DeploymentCommand() *cobra.Command {
 	return cmd
 }
 
-func CreateUriCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var arg0 *big.Int
-	var arg0Raw string
-
-	var capture0 string
-
-	cmd := &cobra.Command{
-		Use:   "uri",
-		Short: "Call the Uri view method on a MockERC1155 contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if arg0Raw == "" {
-				return fmt.Errorf("--arg-0 argument not specified")
-			}
-			arg0 = new(big.Int)
-			arg0.SetString(arg0Raw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewMockERC1155(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := MockERC1155CallerSession{
-				Contract: &contract.MockERC1155Caller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.Uri(
-				arg0,
-			)
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0)
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	cmd.Flags().StringVar(&arg0Raw, "arg-0", "", "arg-0 argument")
-
-	return cmd
-}
-func CreateBalanceOfCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var account common.Address
-	var accountRaw string
-	var id *big.Int
-	var idRaw string
-
-	var capture0 *big.Int
-
-	cmd := &cobra.Command{
-		Use:   "balance-of",
-		Short: "Call the BalanceOf view method on a MockERC1155 contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if accountRaw == "" {
-				return fmt.Errorf("--account argument not specified")
-			} else if !common.IsHexAddress(accountRaw) {
-				return fmt.Errorf("--account argument is not a valid Ethereum address")
-			}
-			account = common.HexToAddress(accountRaw)
-
-			if idRaw == "" {
-				return fmt.Errorf("--id argument not specified")
-			}
-			id = new(big.Int)
-			id.SetString(idRaw, 0)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewMockERC1155(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := MockERC1155CallerSession{
-				Contract: &contract.MockERC1155Caller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.BalanceOf(
-				account,
-				id,
-			)
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0.String())
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	cmd.Flags().StringVar(&accountRaw, "account", "", "account argument (common.Address)")
-	cmd.Flags().StringVar(&idRaw, "id", "", "id argument")
-
-	return cmd
-}
 func CreateBalanceOfBatchCommand() *cobra.Command {
 	var contractAddressRaw, rpc string
 	var contractAddress common.Address
@@ -1642,7 +1479,308 @@ func CreateSupportsInterfaceCommand() *cobra.Command {
 
 	return cmd
 }
+func CreateUriCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
 
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var arg0 *big.Int
+	var arg0Raw string
+
+	var capture0 string
+
+	cmd := &cobra.Command{
+		Use:   "uri",
+		Short: "Call the Uri view method on a MockERC1155 contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if arg0Raw == "" {
+				return fmt.Errorf("--arg-0 argument not specified")
+			}
+			arg0 = new(big.Int)
+			arg0.SetString(arg0Raw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewMockERC1155(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := MockERC1155CallerSession{
+				Contract: &contract.MockERC1155Caller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.Uri(
+				arg0,
+			)
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0)
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	cmd.Flags().StringVar(&arg0Raw, "arg-0", "", "arg-0 argument")
+
+	return cmd
+}
+func CreateBalanceOfCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var account common.Address
+	var accountRaw string
+	var id *big.Int
+	var idRaw string
+
+	var capture0 *big.Int
+
+	cmd := &cobra.Command{
+		Use:   "balance-of",
+		Short: "Call the BalanceOf view method on a MockERC1155 contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if accountRaw == "" {
+				return fmt.Errorf("--account argument not specified")
+			} else if !common.IsHexAddress(accountRaw) {
+				return fmt.Errorf("--account argument is not a valid Ethereum address")
+			}
+			account = common.HexToAddress(accountRaw)
+
+			if idRaw == "" {
+				return fmt.Errorf("--id argument not specified")
+			}
+			id = new(big.Int)
+			id.SetString(idRaw, 0)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewMockERC1155(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := MockERC1155CallerSession{
+				Contract: &contract.MockERC1155Caller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.BalanceOf(
+				account,
+				id,
+			)
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0.String())
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	cmd.Flags().StringVar(&accountRaw, "account", "", "account argument (common.Address)")
+	cmd.Flags().StringVar(&idRaw, "id", "", "id argument")
+
+	return cmd
+}
+
+func CreateSetApprovalForAllCommand() *cobra.Command {
+	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
+	var gasLimit uint64
+	var simulate bool
+	var timeout uint
+	var contractAddress common.Address
+
+	var operator common.Address
+	var operatorRaw string
+	var approved bool
+	var approvedRaw string
+
+	cmd := &cobra.Command{
+		Use:   "set-approval-for-all",
+		Short: "Execute the SetApprovalForAll method on a MockERC1155 contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if keyfile == "" {
+				return fmt.Errorf("--keystore not specified")
+			}
+
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if operatorRaw == "" {
+				return fmt.Errorf("--operator argument not specified")
+			} else if !common.IsHexAddress(operatorRaw) {
+				return fmt.Errorf("--operator argument is not a valid Ethereum address")
+			}
+			operator = common.HexToAddress(operatorRaw)
+
+			approvedRawLower := strings.ToLower(approvedRaw)
+			switch approvedRawLower {
+			case "true", "t", "y", "yes", "1":
+				approved = true
+			case "false", "f", "n", "no", "0":
+				approved = false
+			default:
+				return fmt.Errorf("--approved argument is not valid (value: %s)", approvedRaw)
+			}
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			key, keyErr := KeyFromFile(keyfile, password)
+			if keyErr != nil {
+				return keyErr
+			}
+
+			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
+			defer cancelChainIDCtx()
+			chainID, chainIDErr := client.ChainID(chainIDCtx)
+			if chainIDErr != nil {
+				return chainIDErr
+			}
+
+			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
+			if transactionOptsErr != nil {
+				return transactionOptsErr
+			}
+
+			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+
+			contract, contractErr := NewMockERC1155(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			session := MockERC1155TransactorSession{
+				Contract:     &contract.MockERC1155Transactor,
+				TransactOpts: *transactionOpts,
+			}
+
+			transaction, transactionErr := session.SetApprovalForAll(
+				operator,
+				approved,
+			)
+			if transactionErr != nil {
+				return transactionErr
+			}
+
+			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
+			if transactionOpts.NoSend {
+				estimationMessage := ethereum.CallMsg{
+					From: transactionOpts.From,
+					To:   &contractAddress,
+					Data: transaction.Data(),
+				}
+
+				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
+				defer cancelGasEstimationCtx()
+
+				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
+				if gasEstimateErr != nil {
+					return gasEstimateErr
+				}
+
+				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
+				if transactionBinaryErr != nil {
+					return transactionBinaryErr
+				}
+				transactionBinaryHex := hex.EncodeToString(transactionBinary)
+
+				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
+			} else {
+				cmd.Println("Transaction submitted")
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
+	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
+	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
+	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
+	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
+	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
+	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
+	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+
+	cmd.Flags().StringVar(&operatorRaw, "operator", "", "operator argument (common.Address)")
+	cmd.Flags().StringVar(&approvedRaw, "approved", "", "approved argument (true, t, y, yes, 1 OR false, f, n, no, 0)")
+
+	return cmd
+}
 func CreateBurnCommand() *cobra.Command {
 	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
 	var gasLimit uint64
@@ -2295,144 +2433,6 @@ func CreateSafeTransferFromCommand() *cobra.Command {
 
 	return cmd
 }
-func CreateSetApprovalForAllCommand() *cobra.Command {
-	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, contractAddressRaw string
-	var gasLimit uint64
-	var simulate bool
-	var timeout uint
-	var contractAddress common.Address
-
-	var operator common.Address
-	var operatorRaw string
-	var approved bool
-	var approvedRaw string
-
-	cmd := &cobra.Command{
-		Use:   "set-approval-for-all",
-		Short: "Execute the SetApprovalForAll method on a MockERC1155 contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if keyfile == "" {
-				return fmt.Errorf("--keystore not specified")
-			}
-
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if operatorRaw == "" {
-				return fmt.Errorf("--operator argument not specified")
-			} else if !common.IsHexAddress(operatorRaw) {
-				return fmt.Errorf("--operator argument is not a valid Ethereum address")
-			}
-			operator = common.HexToAddress(operatorRaw)
-
-			approvedRawLower := strings.ToLower(approvedRaw)
-			switch approvedRawLower {
-			case "true", "t", "y", "yes", "1":
-				approved = true
-			case "false", "f", "n", "no", "0":
-				approved = false
-			default:
-				return fmt.Errorf("--approved argument is not valid (value: %s)", approvedRaw)
-			}
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			key, keyErr := KeyFromFile(keyfile, password)
-			if keyErr != nil {
-				return keyErr
-			}
-
-			chainIDCtx, cancelChainIDCtx := NewChainContext(timeout)
-			defer cancelChainIDCtx()
-			chainID, chainIDErr := client.ChainID(chainIDCtx)
-			if chainIDErr != nil {
-				return chainIDErr
-			}
-
-			transactionOpts, transactionOptsErr := bind.NewKeyedTransactorWithChainID(key.PrivateKey, chainID)
-			if transactionOptsErr != nil {
-				return transactionOptsErr
-			}
-
-			SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
-
-			contract, contractErr := NewMockERC1155(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			session := MockERC1155TransactorSession{
-				Contract:     &contract.MockERC1155Transactor,
-				TransactOpts: *transactionOpts,
-			}
-
-			transaction, transactionErr := session.SetApprovalForAll(
-				operator,
-				approved,
-			)
-			if transactionErr != nil {
-				return transactionErr
-			}
-
-			cmd.Printf("Transaction hash: %s\n", transaction.Hash().Hex())
-			if transactionOpts.NoSend {
-				estimationMessage := ethereum.CallMsg{
-					From: transactionOpts.From,
-					To:   &contractAddress,
-					Data: transaction.Data(),
-				}
-
-				gasEstimationCtx, cancelGasEstimationCtx := NewChainContext(timeout)
-				defer cancelGasEstimationCtx()
-
-				gasEstimate, gasEstimateErr := client.EstimateGas(gasEstimationCtx, estimationMessage)
-				if gasEstimateErr != nil {
-					return gasEstimateErr
-				}
-
-				transactionBinary, transactionBinaryErr := transaction.MarshalBinary()
-				if transactionBinaryErr != nil {
-					return transactionBinaryErr
-				}
-				transactionBinaryHex := hex.EncodeToString(transactionBinary)
-
-				cmd.Printf("Transaction: %s\nEstimated gas: %d\n", transactionBinaryHex, gasEstimate)
-			} else {
-				cmd.Println("Transaction submitted")
-			}
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&keyfile, "keyfile", "", "Path to the keystore file to use for the transaction")
-	cmd.Flags().StringVar(&password, "password", "", "Password to use to unlock the keystore (if not specified, you will be prompted for the password when the command executes)")
-	cmd.Flags().StringVar(&nonce, "nonce", "", "Nonce to use for the transaction")
-	cmd.Flags().StringVar(&value, "value", "", "Value to send with the transaction")
-	cmd.Flags().StringVar(&gasPrice, "gas-price", "", "Gas price to use for the transaction")
-	cmd.Flags().StringVar(&maxFeePerGas, "max-fee-per-gas", "", "Maximum fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().StringVar(&maxPriorityFeePerGas, "max-priority-fee-per-gas", "", "Maximum priority fee per gas to use for the (EIP-1559) transaction")
-	cmd.Flags().Uint64Var(&gasLimit, "gas-limit", 0, "Gas limit for the transaction")
-	cmd.Flags().BoolVar(&simulate, "simulate", false, "Simulate the transaction without sending it")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-
-	cmd.Flags().StringVar(&operatorRaw, "operator", "", "operator argument (common.Address)")
-	cmd.Flags().StringVar(&approvedRaw, "approved", "", "approved argument (true, t, y, yes, 1 OR false, f, n, no, 0)")
-
-	return cmd
-}
 
 var ErrNoRPCURL error = errors.New("no RPC URL provided -- please pass an RPC URL from the command line or set the MOCK_ERC_1155_RPC_URL environment variable")
 
@@ -2568,12 +2568,6 @@ func CreateMockERC1155Command() *cobra.Command {
 	cmdDeployMockERC1155.GroupID = DeployGroup.ID
 	cmd.AddCommand(cmdDeployMockERC1155)
 
-	cmdViewUri := CreateUriCommand()
-	cmdViewUri.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewUri)
-	cmdViewBalanceOf := CreateBalanceOfCommand()
-	cmdViewBalanceOf.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewBalanceOf)
 	cmdViewBalanceOfBatch := CreateBalanceOfBatchCommand()
 	cmdViewBalanceOfBatch.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewBalanceOfBatch)
@@ -2583,7 +2577,16 @@ func CreateMockERC1155Command() *cobra.Command {
 	cmdViewSupportsInterface := CreateSupportsInterfaceCommand()
 	cmdViewSupportsInterface.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewSupportsInterface)
+	cmdViewUri := CreateUriCommand()
+	cmdViewUri.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewUri)
+	cmdViewBalanceOf := CreateBalanceOfCommand()
+	cmdViewBalanceOf.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewBalanceOf)
 
+	cmdTransactSetApprovalForAll := CreateSetApprovalForAllCommand()
+	cmdTransactSetApprovalForAll.GroupID = TransactGroup.ID
+	cmd.AddCommand(cmdTransactSetApprovalForAll)
 	cmdTransactBurn := CreateBurnCommand()
 	cmdTransactBurn.GroupID = TransactGroup.ID
 	cmd.AddCommand(cmdTransactBurn)
@@ -2596,9 +2599,6 @@ func CreateMockERC1155Command() *cobra.Command {
 	cmdTransactSafeTransferFrom := CreateSafeTransferFromCommand()
 	cmdTransactSafeTransferFrom.GroupID = TransactGroup.ID
 	cmd.AddCommand(cmdTransactSafeTransferFrom)
-	cmdTransactSetApprovalForAll := CreateSetApprovalForAllCommand()
-	cmdTransactSetApprovalForAll.GroupID = TransactGroup.ID
-	cmd.AddCommand(cmdTransactSetApprovalForAll)
 
 	return cmd
 }

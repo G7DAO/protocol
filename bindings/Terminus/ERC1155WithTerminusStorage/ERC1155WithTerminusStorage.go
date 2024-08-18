@@ -1230,118 +1230,6 @@ func CreateERC1155WithTerminusStorageDeploymentCommand() *cobra.Command {
 	return cmd
 }
 
-func CreateBalanceOfBatchCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var accounts []common.Address
-	var accountsRaw string
-	var ids []*big.Int
-	var idsRaw string
-
-	var capture0 []*big.Int
-
-	cmd := &cobra.Command{
-		Use:   "balance-of-batch",
-		Short: "Call the BalanceOfBatch view method on a ERC1155WithTerminusStorage contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			if accountsRaw == "" {
-				return fmt.Errorf("--accounts argument not specified")
-			} else if strings.HasPrefix(accountsRaw, "@") {
-				filename := strings.TrimPrefix(accountsRaw, "@")
-				contents, readErr := os.ReadFile(filename)
-				if readErr != nil {
-					return readErr
-				}
-				unmarshalErr := json.Unmarshal(contents, &accounts)
-				if unmarshalErr != nil {
-					return unmarshalErr
-				}
-			} else {
-				unmarshalErr := json.Unmarshal([]byte(accountsRaw), &accounts)
-				if unmarshalErr != nil {
-					return unmarshalErr
-				}
-			}
-
-			if idsRaw == "" {
-				return fmt.Errorf("--ids argument not specified")
-			} else if strings.HasPrefix(idsRaw, "@") {
-				filename := strings.TrimPrefix(idsRaw, "@")
-				contents, readErr := os.ReadFile(filename)
-				if readErr != nil {
-					return readErr
-				}
-				unmarshalErr := json.Unmarshal(contents, &ids)
-				if unmarshalErr != nil {
-					return unmarshalErr
-				}
-			} else {
-				unmarshalErr := json.Unmarshal([]byte(idsRaw), &ids)
-				if unmarshalErr != nil {
-					return unmarshalErr
-				}
-			}
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewERC1155WithTerminusStorage(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := ERC1155WithTerminusStorageCallerSession{
-				Contract: &contract.ERC1155WithTerminusStorageCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.BalanceOfBatch(
-				accounts,
-				ids,
-			)
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %v\n", capture0)
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	cmd.Flags().StringVar(&accountsRaw, "accounts", "", "accounts argument ([]common.Address)")
-	cmd.Flags().StringVar(&idsRaw, "ids", "", "ids argument ([]*big.Int)")
-
-	return cmd
-}
 func CreateIsApprovedForAllCommand() *cobra.Command {
 	var contractAddressRaw, rpc string
 	var contractAddress common.Address
@@ -1757,6 +1645,118 @@ func CreateBalanceOfCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&accountRaw, "account", "", "account argument (common.Address)")
 	cmd.Flags().StringVar(&idRaw, "id", "", "id argument")
+
+	return cmd
+}
+func CreateBalanceOfBatchCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var accounts []common.Address
+	var accountsRaw string
+	var ids []*big.Int
+	var idsRaw string
+
+	var capture0 []*big.Int
+
+	cmd := &cobra.Command{
+		Use:   "balance-of-batch",
+		Short: "Call the BalanceOfBatch view method on a ERC1155WithTerminusStorage contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			if accountsRaw == "" {
+				return fmt.Errorf("--accounts argument not specified")
+			} else if strings.HasPrefix(accountsRaw, "@") {
+				filename := strings.TrimPrefix(accountsRaw, "@")
+				contents, readErr := os.ReadFile(filename)
+				if readErr != nil {
+					return readErr
+				}
+				unmarshalErr := json.Unmarshal(contents, &accounts)
+				if unmarshalErr != nil {
+					return unmarshalErr
+				}
+			} else {
+				unmarshalErr := json.Unmarshal([]byte(accountsRaw), &accounts)
+				if unmarshalErr != nil {
+					return unmarshalErr
+				}
+			}
+
+			if idsRaw == "" {
+				return fmt.Errorf("--ids argument not specified")
+			} else if strings.HasPrefix(idsRaw, "@") {
+				filename := strings.TrimPrefix(idsRaw, "@")
+				contents, readErr := os.ReadFile(filename)
+				if readErr != nil {
+					return readErr
+				}
+				unmarshalErr := json.Unmarshal(contents, &ids)
+				if unmarshalErr != nil {
+					return unmarshalErr
+				}
+			} else {
+				unmarshalErr := json.Unmarshal([]byte(idsRaw), &ids)
+				if unmarshalErr != nil {
+					return unmarshalErr
+				}
+			}
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewERC1155WithTerminusStorage(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := ERC1155WithTerminusStorageCallerSession{
+				Contract: &contract.ERC1155WithTerminusStorageCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.BalanceOfBatch(
+				accounts,
+				ids,
+			)
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %v\n", capture0)
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	cmd.Flags().StringVar(&accountsRaw, "accounts", "", "accounts argument ([]common.Address)")
+	cmd.Flags().StringVar(&idsRaw, "ids", "", "ids argument ([]*big.Int)")
 
 	return cmd
 }
@@ -2666,9 +2666,6 @@ func CreateERC1155WithTerminusStorageCommand() *cobra.Command {
 	cmdDeployERC1155WithTerminusStorage.GroupID = DeployGroup.ID
 	cmd.AddCommand(cmdDeployERC1155WithTerminusStorage)
 
-	cmdViewBalanceOfBatch := CreateBalanceOfBatchCommand()
-	cmdViewBalanceOfBatch.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewBalanceOfBatch)
 	cmdViewIsApprovedForAll := CreateIsApprovedForAllCommand()
 	cmdViewIsApprovedForAll.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewIsApprovedForAll)
@@ -2684,6 +2681,9 @@ func CreateERC1155WithTerminusStorageCommand() *cobra.Command {
 	cmdViewBalanceOf := CreateBalanceOfCommand()
 	cmdViewBalanceOf.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewBalanceOf)
+	cmdViewBalanceOfBatch := CreateBalanceOfBatchCommand()
+	cmdViewBalanceOfBatch.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewBalanceOfBatch)
 
 	cmdTransactApproveForPool := CreateApproveForPoolCommand()
 	cmdTransactApproveForPool.GroupID = TransactGroup.ID
