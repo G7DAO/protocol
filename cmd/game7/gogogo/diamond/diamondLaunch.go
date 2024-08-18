@@ -1,4 +1,4 @@
-package dropperGogogo
+package diamondGogogo
 
 import (
 	"context"
@@ -11,7 +11,6 @@ import (
 	"github.com/G7DAO/protocol/bindings/Diamond/facets/DiamondCutFacet"
 	"github.com/G7DAO/protocol/bindings/Diamond/facets/DiamondLoupeFacet"
 	"github.com/G7DAO/protocol/bindings/Diamond/facets/OwnershipFacet"
-	DropperFacet "github.com/G7DAO/protocol/bindings/DropperV2"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -23,7 +22,6 @@ type DiamondConfiguration struct {
 	DiamondCutFacet   string
 	DiamondLoupeFacet string
 	OwnershipFacet    string
-	DropperFacet      string
 	Transactions      map[string]string
 }
 
@@ -35,8 +33,8 @@ func addressIsZero(address common.Address) bool {
 
 func CreateGogogoCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "dropper-gogogo",
-		Short: "Deploy new dropper diamond contracts, and upgrade existing diamonds",
+		Use:   "diamond-gogogo",
+		Short: "Deploy new diamond contracts, and upgrade existing diamonds",
 		Run: func(cmd *cobra.Command, args []string) {
 			cmd.Help()
 		},
@@ -48,8 +46,8 @@ func CreateGogogoCommand() *cobra.Command {
 	return cmd
 }
 
-// Sets up a Dropper diamond from scratch. Uses the provided facet addresses if they are non-zero.
-func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner common.Address, diamondCutAddress common.Address, diamondLoupeAddress common.Address, ownershipAddress common.Address, dropperAddress common.Address, terminusAddress common.Address, terminusPoolId *big.Int) (DiamondConfiguration, error) {
+// Sets up a diamond from scratch. Uses the provided facet addresses if they are non-zero.
+func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner common.Address, diamondCutAddress common.Address, diamondLoupeAddress common.Address, ownershipAddress common.Address) (DiamondConfiguration, error) {
 	deployedConfiguration := DiamondConfiguration{}
 	deployedConfiguration.Transactions = make(map[string]string)
 
@@ -128,26 +126,6 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 		deployedConfiguration.OwnershipFacet = ownershipAddress.Hex()
 	}
 
-	// If dropperAddress is not provided, we must deploy a new DropperFacet.
-	if addressIsZero(dropperAddress) {
-		address, dropperTransaction, _, dropperErr := DropperFacet.DeployDropperFacet(txOpts, client)
-		if dropperErr != nil {
-			return deployedConfiguration, dropperErr
-		}
-
-		dropperTxReceiptCtx := context.Background()
-		_, dropperTxReceiptErr := bind.WaitMined(dropperTxReceiptCtx, client, dropperTransaction)
-		if dropperTxReceiptErr != nil {
-			return deployedConfiguration, dropperTxReceiptErr
-		}
-
-		dropperAddress = address
-		deployedConfiguration.DropperFacet = address.Hex()
-		deployedConfiguration.Transactions["DropperFacetDeployment"] = dropperTransaction.Hash().Hex()
-	} else {
-		deployedConfiguration.DropperFacet = dropperAddress.Hex()
-	}
-
 	// Method signature: true if it's already attached and false otherwise
 	attachedMethods := make(map[string]bool)
 
@@ -187,47 +165,6 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 		}
 	}
 
-	// Call data for contract initialization
-	var initCalldata []byte
-
-	DropperFacetCut := DiamondCutFacet.IDiamondCutFacetCut{FacetAddress: dropperAddress, Action: 0, FunctionSelectors: make([][4]byte, 0)}
-	dropperABI, dropperABIErr := DropperFacet.DropperFacetMetaData.GetAbi()
-	if dropperABIErr != nil {
-		return deployedConfiguration, dropperABIErr
-	}
-	for _, method := range dropperABI.Methods {
-		// We initialize a Dropper diamond using the DropperFacet init method.
-		//need to attach args to the init function
-		if method.Name == "init" {
-			initCalldata = method.ID
-		}
-		_, ok := attachedMethods[method.Sig]
-		if !ok {
-			DropperFacetCut.FunctionSelectors = append(DropperFacetCut.FunctionSelectors, [4]byte(method.ID[:4]))
-			attachedMethods[method.Sig] = true
-		}
-	}
-
-	diamondForCut, diamondForCutErr := DiamondCutFacet.NewDiamondCutFacet(diamondAddress, client)
-	if diamondForCutErr != nil {
-		return deployedConfiguration, diamondForCutErr
-	}
-
-	cuts := []DiamondCutFacet.IDiamondCutFacetCut{diamondLoupeCut, ownershipCut, DropperFacetCut}
-
-	cutTransaction, cutTransactionErr := diamondForCut.DiamondCut(txOpts, cuts, dropperAddress, initCalldata)
-	if cutTransactionErr != nil {
-		return deployedConfiguration, cutTransactionErr
-	}
-
-	cutTxReceiptCtx := context.Background()
-	_, cutTxReceiptErr := bind.WaitMined(cutTxReceiptCtx, client, cutTransaction)
-	if cutTxReceiptErr != nil {
-		return deployedConfiguration, cutTxReceiptErr
-	}
-
-	deployedConfiguration.Transactions["Cut"] = cutTransaction.Hash().Hex()
-
 	return deployedConfiguration, nil
 }
 
@@ -238,11 +175,9 @@ func CreateV1Command() *cobra.Command {
 	var timeout uint
 
 	var contractOwner common.Address
-	var terminusAdminContractAddress common.Address
-	var terminusAdminPoolId *big.Int
 	var contractOwnerRaw string
-	var diamondCutFacet, diamondLoupeFacet, ownershipFacet, DropperFacet common.Address
-	var diamondCutFacetRaw, diamondLoupeFacetRaw, ownershipFacetRaw, DropperFacetRaw, terminusAddressRaw, terminusPoolIdRaw string
+	var diamondCutFacet, diamondLoupeFacet, ownershipFacet common.Address
+	var diamondCutFacetRaw, diamondLoupeFacetRaw, ownershipFacetRaw string
 
 	cmd := &cobra.Command{
 		Use:   "v1",
@@ -285,33 +220,6 @@ func CreateV1Command() *cobra.Command {
 			} else {
 				ownershipFacet = common.BigToAddress(big.NewInt(0))
 			}
-			if DropperFacetRaw != "" {
-				if !common.IsHexAddress(DropperFacetRaw) {
-					return fmt.Errorf("--dropper-facet argument is not a valid Ethereum address")
-				}
-				DropperFacet = common.HexToAddress(DropperFacetRaw)
-			} else {
-				DropperFacet = common.BigToAddress(big.NewInt(0))
-			}
-			if terminusAddressRaw != "" {
-				if !common.IsHexAddress(terminusAddressRaw) {
-					return fmt.Errorf("--terminus-address argument is not a valid Ethereum address")
-				}
-				terminusAdminContractAddress = common.HexToAddress(terminusAddressRaw)
-			} else {
-				return fmt.Errorf("terminus-address argmument is not set")
-			}
-			//TODO Setup terminusPoolIdRaw from string to big.Int
-			if terminusPoolIdRaw != "" {
-				//var ok bool
-				//terminusAdminPoolId, ok = terminusPoolIdRaw.SetString(terminusPoolIdRaw, 10)
-				//if !ok {
-				//return fmt.Errorf("terminus-admin-pool-id argument is not a valid int")
-				//}
-				terminusAdminPoolId = big.NewInt(1000)
-			} else {
-				return fmt.Errorf("terminus-admin-pool-id argmument is not set")
-			}
 
 			return nil
 		},
@@ -340,7 +248,7 @@ func CreateV1Command() *cobra.Command {
 
 			Diamond.SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
 
-			deployedConfiguration, setupErr := DiamondSetupV1(transactionOpts, client, contractOwner, diamondCutFacet, diamondLoupeFacet, ownershipFacet, DropperFacet, terminusAdminContractAddress, terminusAdminPoolId)
+			deployedConfiguration, setupErr := DiamondSetupV1(transactionOpts, client, contractOwner, diamondCutFacet, diamondLoupeFacet, ownershipFacet)
 			if setupErr != nil {
 				return setupErr
 			}
@@ -378,10 +286,7 @@ func CreateV1Command() *cobra.Command {
 	cmd.Flags().StringVar(&diamondCutFacetRaw, "diamond-cut-facet", "", "(Optional) address of pre-existing DiamondCutFacet that should be mounted onto the Diamond")
 	cmd.Flags().StringVar(&diamondLoupeFacetRaw, "diamond-loupe-facet", "", "(Optional) address of pre-existing DiamondLoupeFacet that should be mounted onto the Diamond")
 	cmd.Flags().StringVar(&ownershipFacetRaw, "ownership-facet", "", "(Optional) address of pre-existing OwnershipFacet that should be mounted onto the Diamond")
-	cmd.Flags().StringVar(&DropperFacetRaw, "dropper-facet", "", "(Optional) address of pre-existing DropperFacet that should be mounted onto the Diamond")
 	cmd.Flags().StringVarP(&outfile, "output", "o", "", "Path to the file where the deployment configuration should be written")
-	cmd.Flags().StringVarP(&terminusAddressRaw, "terminus", "", "", "Address of Terminus Admin Contract")
-	cmd.Flags().StringVarP(&terminusPoolIdRaw, "terminus-admin-Id", "", "", "Terminus Pool Identifier for Admin Control")
 
 	return cmd
 }

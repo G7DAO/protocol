@@ -4,14 +4,22 @@
 ``` bash
 export RPC="https://rpc-game7-testnet-0ilneybprf.t.conduit.xyz"
 export CALLER="0x9ed191DB1829371F116Deb9748c26B49467a592A"
-export KEY=".secrets/dao-dev.json"
-export PASSWORD="<password>"
-export TERMINUS="<TERMINUS Address>"
-export TERMINUSPOOLID="<TERMINUS pool id>"
+export KEY=""
+export PASSWORD=""
+export TERMINUS="0x9ed191DB1829371F116Deb9748c26B49467a592A"
+export TERMINUSPOOLID="256"
 ```
 
 # Deploy Dropper Diamond
--Deploys Dropper Diamond and facet
+-Deploys Diamond and facet
+
+```bash
+bin/game7 diamond-gogogo v1 \
+    --rpc $RPC \
+    --keyfile $KEY \
+    --password $PASSWORD \
+    --contract-owner $CALLER
+```
 
 ```bash
 bin/game7 dropper-gogogo v1 \
@@ -19,6 +27,7 @@ bin/game7 dropper-gogogo v1 \
     --keyfile $KEY \
     --password $PASSWORD \
     --contract-owner $CALLER \
-    --terminus-contract $TERMINUS
+    --terminus $TERMINUS \
+    --terminus-admin-Id $TERMINUSPOOLID
 
 ```
