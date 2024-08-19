@@ -28,7 +28,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const { faucetTargetChainId } = useUISettings()
 
   const { refetchNewNotifications } = useBridgeNotificationsContext()
-  const smallView = useMediaQuery('(max-width: 767px)')
+  const smallView = useMediaQuery('(max-width: 1199px)')
 
   useEffect(() => {
     const targetNetwork = [L1_NETWORK, L2_NETWORK, L3_NETWORK].find((n) => n.chainId === faucetTargetChainId)

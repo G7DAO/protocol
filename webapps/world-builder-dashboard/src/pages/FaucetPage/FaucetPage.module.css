@@ -71,7 +71,7 @@
     padding: 0;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1199px) {
     .warningWrapper {
         padding: 0 16px;
     }

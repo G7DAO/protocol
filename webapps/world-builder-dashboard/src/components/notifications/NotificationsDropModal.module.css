@@ -188,7 +188,7 @@
     background: var(--Purple-100, #EBE9FE);
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1199px) {
 
     .toastCompleted, .toastMultiple, .toastClaimable, .toastError {
         position: fixed;

@@ -4,12 +4,12 @@ import { Outlet } from 'react-router-dom'
 // Styles
 import styles from './MainLayout.module.css'
 import IconDroplets02 from '@/assets/IconDroplets02'
+import IconG7T from '@/assets/IconG7T'
 import IconWallet04 from '@/assets/IconWallet04'
 // Local components and assets
 import DesktopSidebar from '@/layouts/MainLayout/DesktopSidebar'
 import MobileSidebar from '@/layouts/MainLayout/MobileSidebar'
 import { useMediaQuery } from '@mantine/hooks'
-import IconG7T from '@/assets/IconG7T'
 
 interface MainLayoutProps {}
 
@@ -19,7 +19,7 @@ const NAVIGATION_ITEMS = [
   { name: 'stake', navigateTo: '/stake', icon: <IconG7T /> }
 ]
 const MainLayout: React.FC<MainLayoutProps> = ({}) => {
-  const smallView = useMediaQuery('(max-width: 767px)')
+  const smallView = useMediaQuery('(max-width: 1199px)')
   return (
     <div className={styles.container}>
       {smallView ? (
