@@ -317,7 +317,6 @@ contract DropperFacet is
             );
         } else if (claimToken.tokenType == TokenType.terminus_mintable_type()) {
             (bool sent,) = payable(msg.sender).call{value: amount}("");
-            //todo: Confirm if failure is not enough value?
             require(sent, "Failed to send Native Token");
         } else if (claimToken.tokenType == TokenType.native_token_type()) {
             ITerminus terminusFacetContract = ITerminus(
@@ -415,6 +414,14 @@ contract DropperFacet is
         IERC721 erc721Contract = IERC721(tokenAddress);
         erc721Contract.safeTransferFrom(address(this), msg.sender, tokenId, "");
         emit Withdrawal(msg.sender, TokenType.erc721_type(), tokenAddress, tokenId, 1);
+    }
+
+    function withdrawNativeToken(
+        uint256 amount
+    ) public onlyTerminusAdmin {
+        (bool sent,) = payable(msg.sender).call{value: amount}("");
+        require(sent, "Failed to send Native Token");
+        emit Withdrawal(msg.sender, TokenType.native_token_type(), address(0), 0, amount);
     }
 
     function withdrawERC1155(
