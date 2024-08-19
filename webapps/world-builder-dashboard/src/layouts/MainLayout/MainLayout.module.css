@@ -4,6 +4,7 @@
     max-height: 100vh;
     width: 100vw;
     position: relative;
+    font-family: Inter, sans-serif;
 }
 
 .sideBar {
@@ -38,7 +39,7 @@
 .logoWrapper {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
 .navigation {
@@ -55,7 +56,7 @@
     display: flex;
     padding: 8px 12px;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
     align-self: stretch;
 
     border-radius: 6px;
@@ -78,7 +79,7 @@
 
 .footer {
     display: flex;
-    padding: 0 16px 32px 16px;
+    padding: 0 15px 32px 16px;
     flex-direction: column;
     align-items: flex-start;
     gap: 24px;
@@ -94,6 +95,7 @@
     justify-content: space-between;
 
     border-top: 1px solid var(--Gray-200, #EAECF0);
+    height: 60px;
 }
 
 .web3address {
@@ -104,12 +106,12 @@
     font-style: normal;
     font-weight: 400;
     line-height: 20px; /* 142.857% */
-    margin-left: 8px;
 }
 
 .iconButton {
     cursor: pointer;
     stroke: #667085;
+    margin-right: 8px;
 }
 
 .iconButton:hover {
