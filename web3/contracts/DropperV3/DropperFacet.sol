@@ -115,6 +115,24 @@ contract DropperFacet is
         return (ss.name, ss.version);
     }
 
+    function createFlashDrop(
+        uint256 tokenType,
+        address tokenAddress,
+        uint256 tokenId,
+        uint256 amount,
+        address authorizationTokenAddress,
+        uint256 authorizationPoolId,
+        uint256 numberOfClaims,
+        string memory uri
+    ) internal onlyTerminusAdmin returns (uint256) {
+        uint256 dropId = _createDrop(tokenType, tokenAddress, tokenId, amount, authorizationTokenAddress, authorizationPoolId, uri);
+        LibDropper.DropperStorage storage ds = LibDropper.dropperStorage();
+        ds.IsFlashDrop[dropId] = true;
+        ds.NumOfClaims[dropId] = numberOfClaims;
+        return dropId;
+    }
+
+
     function createDrop(
         uint256 tokenType,
         address tokenAddress,
@@ -123,7 +141,20 @@ contract DropperFacet is
         address authorizationTokenAddress,
         uint256 authorizationPoolId,
         string memory uri
-    ) external onlyTerminusAdmin payable returns (uint256) {
+    ) internal onlyTerminusAdmin returns (uint256) {
+        return _createDrop(tokenType, tokenAddress, tokenId, amount, authorizationTokenAddress, authorizationPoolId, uri);
+        
+    }
+
+    function _createDrop(
+        uint256 tokenType,
+        address tokenAddress,
+        uint256 tokenId,
+        uint256 amount,
+        address authorizationTokenAddress,
+        uint256 authorizationPoolId,
+        string memory uri
+    ) internal returns (uint256) {
         require(
             tokenType == TokenType.erc20_type() ||
                 tokenType == TokenType.erc721_type() ||
@@ -131,11 +162,6 @@ contract DropperFacet is
                 tokenType == TokenType.native_token_type() ||
                 tokenType == TokenType.terminus_mintable_type(),
             "Dropper: createDrop -- Unknown token type"
-        );
-
-        require(
-            amount != 0,
-            "Dropper: createDrop -- Amount must be greater than 0"
         );
 
         require(
@@ -332,6 +358,11 @@ contract DropperFacet is
             revert("Dropper: _claim -- Unknown token type in claim");
         }
 
+        ds.ClaimCount[dropId]++;
+        //FlashDrop makes drop inactive once ClaimCount hits it's limit
+        if(ds.NumOfClaims[dropId] == ds.ClaimCount[dropId] && ds.IsFlashDrop[dropId]){
+            ds.IsDropActive[dropId] = false; 
+        }
         ds.DropRequestClaimed[dropId][requestID] = true;
 
         emit Claimed(dropId, msg.sender, signer, requestID, amount);
