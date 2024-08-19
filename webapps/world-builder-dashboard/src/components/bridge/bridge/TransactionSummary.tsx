@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styles from './TransactionSummary.module.css'
+import { Tooltip, useClipboard } from 'summon-ui/mantine'
 
 const formatCurrency = (value: number) => {
   const formatter = new Intl.NumberFormat('en-US', {
@@ -37,7 +38,8 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
   gasTokenSymbol,
   value
 }) => {
-  const [showFullAddress, setShowFullAddress] = useState(false)
+  const clipboard = useClipboard({ timeout: 700 })
+
   const getAddress = (address: string | undefined, showFullAddress: boolean) => {
     if (!address) {
       return '...'
@@ -52,13 +54,19 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
     <div className={styles.container}>
       <div className={styles.header}>Transaction Summary</div>
       <div className={styles.divider} />
-      <div
-        className={styles.dataRow}
-        onMouseEnter={() => setShowFullAddress(true)}
-        onMouseLeave={() => setShowFullAddress(false)}
-      >
+      <div className={styles.dataRow}>
         <div className={styles.itemName}>To address</div>
-        <div className={styles.address}>{getAddress(address, showFullAddress)}</div>
+        <Tooltip
+          arrowSize={8}
+          radius={'8px'}
+          label={clipboard.copied ? 'copied' : address}
+          withArrow
+          disabled={!address}
+        >
+          <div className={styles.address} onClick={() => address && clipboard.copy(address)}>
+            {getAddress(address, false)}
+          </div>
+        </Tooltip>
       </div>
       <div className={styles.dataRow}>
         <div className={styles.itemName}>Transfer time</div>
