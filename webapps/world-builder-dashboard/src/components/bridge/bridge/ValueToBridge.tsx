@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { L3_NATIVE_TOKEN_SYMBOL } from '../../../../constants'
 import styles from './ValueToBridge.module.css'
 import IconG7TSmall from '@/assets/IconG7TSmall'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
 
 const formatCurrency = (value: number) => {
   const formatter = new Intl.NumberFormat('en-US', {
@@ -46,6 +47,8 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
     setErrorMessage('')
   }, [value, balance])
 
+  const { connectedAccount } = useBlockchainContext()
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -53,8 +56,13 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
         <div className={styles.errorMessage}>{errorMessage}</div>
       </div>
       <div className={errorMessage ? styles.inputWithError : styles.inputGroup}>
-        <input className={styles.input} value={value} onChange={(e) => setValue(e.target.value)} />
-        <button className={styles.maxButton} onClick={() => setValue(String(balance))}>
+        <input
+          className={styles.input}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          disabled={!connectedAccount}
+        />
+        <button className={styles.maxButton} onClick={() => setValue(String(balance))} disabled={!connectedAccount}>
           MAX
         </button>
         <div className={styles.tokenGroup}>
