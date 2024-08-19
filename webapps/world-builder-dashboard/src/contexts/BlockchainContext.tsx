@@ -165,7 +165,8 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
         try {
           await ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: hexChainId }] })
         } catch (error: any) {
-          if (error.code === 4902) {
+          if (error.code === 4902 || error.code === -32603) {
+            //unfortunately, 'chain not found' error not always has code 4902, sometimes it's -32603 (blanket error). But we can assume that error trying to switch to a chain is caused by absence of the chain
             try {
               // Chain most probably not found, attempt to add it
               await ethereum.request({
