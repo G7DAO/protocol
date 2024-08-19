@@ -14,8 +14,8 @@ struct TerminusAuthorization {
 }
 
 library LibDropper {
-    bytes32 constant DROPPERV2_STORAGE_POSITION =
-        keccak256("moonstreamdao.eth.storage.Dropper");
+    bytes32 constant DROPPERV3_STORAGE_POSITION =
+        keccak256("game7dao.eth.storage.Dropper");
 
     struct DropperStorage {
         address TerminusAdminContractAddress;
@@ -34,7 +34,7 @@ library LibDropper {
         pure
         returns (DropperStorage storage ds)
     {
-        bytes32 position = DROPPERV2_STORAGE_POSITION;
+        bytes32 position = DROPPERV3_STORAGE_POSITION;
         assembly {
             ds.slot := position
         }

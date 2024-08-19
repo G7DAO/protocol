@@ -87,8 +87,6 @@ contract DropperFacet is
         _;
     }
 
-
-
     function init() external {
         LibDiamond.enforceIsContractOwner();
 
@@ -298,7 +296,8 @@ contract DropperFacet is
 
         if (claimToken.tokenType == TokenType.erc20_type()) {
             IERC20 erc20Contract = IERC20(claimToken.tokenAddress);
-            erc20Contract.transfer(msg.sender, amount);
+            (bool sent) = erc20Contract.transfer(msg.sender, amount);
+            require(sent, "Failed to send ERC20");
         } else if (claimToken.tokenType == TokenType.erc721_type()) {
             IERC721 erc721Contract = IERC721(claimToken.tokenAddress);
             erc721Contract.safeTransferFrom(
@@ -317,6 +316,10 @@ contract DropperFacet is
                 ""
             );
         } else if (claimToken.tokenType == TokenType.terminus_mintable_type()) {
+            (bool sent,) = payable(msg.sender).call{value: amount}("");
+            //todo: Confirm if failure is not enough value?
+            require(sent, "Failed to send Native Token");
+        } else if (claimToken.tokenType == TokenType.native_token_type()) {
             ITerminus terminusFacetContract = ITerminus(
                 claimToken.tokenAddress
             );
@@ -457,4 +460,7 @@ contract DropperFacet is
         ds.DropURI[dropId] = uri;
         emit DropURIChanged(dropId, uri);
     }
+
+    receive() external payable{}
+    fallback() external payable{}
 }
