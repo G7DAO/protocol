@@ -102,13 +102,14 @@
   .container {
     padding: 32px 0 16px 0;
     margin-top: 64px;
+    gap: 16px;
   }
   .top {
     padding: 0 16px 16px 16px;
 
   }
   .viewContainer {
-    padding: 16px;
+    padding: 0 16px;
     width: 100%;
   }
 }
