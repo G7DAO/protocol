@@ -25,7 +25,7 @@
 
     border-radius: 16px;
     background: var(--Warning-50, #FFFAEB);
-    mix-blend-mode: multiply;
+    mix-blend-mode: var(--mix-blend, multiply);
 }
 
 

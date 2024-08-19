@@ -128,7 +128,7 @@
 
     border-radius: 16px;
     background: var(--Blue-50, #EFF8FF);
-    mix-blend-mode: multiply;
+    mix-blend-mode: var(--mix-blend, multiply);
     color: var(--Blue-700, #175CD3);
     text-align: center;
 
@@ -180,7 +180,7 @@
 
     border-radius: 16px;
     background: var(--Warning-50, #FFFAEB);
-    mix-blend-mode: multiply;
+    mix-blend-mode: var(--mix-blend, multiply);
     color: var(--Warning-700, #B54708);
 
     /* Text xs/Medium */

@@ -67,7 +67,7 @@
 
     border-radius: 16px;
     background: var(--Primary-50, #FFEBEF);
-    mix-blend-mode: multiply;
+    mix-blend-mode: var(--mix-blend, multiply);
 
     color: var(--Primary-700, #DD1534);
     text-align: center;

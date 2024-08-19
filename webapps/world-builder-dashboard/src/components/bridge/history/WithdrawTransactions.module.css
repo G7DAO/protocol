@@ -164,7 +164,7 @@
 
   border-radius: 16px;
   background: var(--Blue-light-50, #f0f9ff);
-  mix-blend-mode: multiply;
+  mix-blend-mode: var(--mix-blend, multiply);
 
   color: var(--Blue-light-700, #026aa2);
   text-align: center;
@@ -184,7 +184,7 @@
 
   border-radius: 16px;
   background: var(--Indigo-50, #eef4ff);
-  mix-blend-mode: multiply;
+  mix-blend-mode: var(--mix-blend, multiply);
   color: var(--Indigo-700, #3538cd);
   text-align: center;
 
@@ -212,7 +212,7 @@
   font-style: normal;
   font-weight: 500;
   line-height: 18px; /* 150% */
-  mix-blend-mode: multiply;
+  mix-blend-mode: var(--mix-blend, multiply);
   cursor: pointer;
 }
 

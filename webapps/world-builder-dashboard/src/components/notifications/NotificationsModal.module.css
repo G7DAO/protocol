@@ -127,7 +127,7 @@
     align-items: center;
 
     border-radius: 16px;
-    mix-blend-mode: multiply;
+    mix-blend-mode: var(--mix-blend, multiply);
     text-align: center;
 
     /* Text xs/Medium */
