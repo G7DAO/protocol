@@ -62,7 +62,7 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork }: NetworkSelecto
           rightSectionPointerEvents='none'
           onClick={() => combobox.toggleDropdown()}
         >
-          {selectedNetwork.displayName}
+          <span className={styles.networkSelectNetworkName}>{selectedNetwork.displayName}</span>
         </InputBase>
       </Combobox.Target>
 

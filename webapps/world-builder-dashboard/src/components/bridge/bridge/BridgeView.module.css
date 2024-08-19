@@ -119,6 +119,10 @@
   width: 100%;
 }
 
+.networkSelectNetworkName {
+  color: var(--Gray-700, #344054);
+}
+
 .network {
   max-height: 44px;
   display: flex;
