@@ -38,9 +38,9 @@
 }
 
 .directionContainer {
-  padding: 4px;
+  padding: 3px;
   gap: 8px;
-  border-radius: 6px;
+  border-radius: 8px;
   display: flex;
   background: var(--Base-White, #ffffff);
   border: 1px solid var(--Gray-100, #f2f4f7);
@@ -98,7 +98,7 @@
 }
 
 .networkSelectSelect {
-  padding: 1px 10px;
+  padding: 3px 6px;
   align-items: center;
   gap: 8px;
   align-self: stretch;
