@@ -3,6 +3,7 @@
 /**
  * Authors: Moonstream Engineering (engineering@moonstream.to)
  * GitHub: https://github.com/bugout-dev/engine
+ * TODO: Need Updated information wanted for this
  */
 
 pragma solidity ^0.8.9;
@@ -24,9 +25,9 @@ import {TerminusPermissions} from "../terminus/TerminusPermissions.sol";
 import "../libraries/TokenType.sol";
 
 /**
- * @title Moonstream Dropper
- * @author Moonstream Engineering (engineering@moonstream.to)
- * @notice This contract manages drops for ERC20, ERC1155, and ERC721 tokens.
+ * @title Game7 Dropper
+ * @author Game7 World Builder team: worldbuilder - at - game7.io
+ * @notice This contract manages drops for Native Tokens, ERC20, ERC1155, and ERC721 tokens.
  */
 contract DropperFacet is
     ERC721Holder,
@@ -68,7 +69,6 @@ contract DropperFacet is
     constructor(address _terminusAdminContractAddress, uint256 _terminusAdminPoolId) {
         terminusAdminContractAddress = _terminusAdminContractAddress;
         terminusAdminPoolID = _terminusAdminPoolId;
-
     }
 
 
@@ -341,10 +341,10 @@ contract DropperFacet is
                 amount,
                 ""
             );
-        } else if (claimToken.tokenType == TokenType.terminus_mintable_type()) {
+        } else if (claimToken.tokenType == TokenType.native_token_type()) {
             (bool sent,) = payable(msg.sender).call{value: amount}("");
             require(sent, "Failed to send Native Token");
-        } else if (claimToken.tokenType == TokenType.native_token_type()) {
+        } else if (claimToken.tokenType == TokenType.terminus_mintable_type()) {
             ITerminus terminusFacetContract = ITerminus(
                 claimToken.tokenAddress
             );

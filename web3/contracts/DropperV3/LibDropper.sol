@@ -14,6 +14,7 @@ struct TerminusAuthorization {
 }
 
 library LibDropper {
+    //todo: Check if "game7dao.eth" wanted or something else
     bytes32 constant DROPPERV3_STORAGE_POSITION =
         keccak256("game7dao.eth.storage.Dropper");
 
