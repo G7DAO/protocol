@@ -13,13 +13,6 @@ export TERMINUSPOOLID="256"
 # Deploy Dropper Diamond
 -Deploys Diamond and facet
 
-```bash
-bin/game7 diamond-gogogo v1 \
-    --rpc $RPC \
-    --keyfile $KEY \
-    --password $PASSWORD \
-    --contract-owner $CALLER
-```
 
 ```bash
 bin/game7 dropper-gogogo v1 \

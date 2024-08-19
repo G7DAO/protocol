@@ -130,7 +130,7 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 
 	// If dropperAddress is not provided, we must deploy a new DropperFacet.
 	if addressIsZero(dropperAddress) {
-		address, dropperTransaction, _, dropperErr := DropperFacet.DeployDropperFacet(txOpts, client)
+		address, dropperTransaction, _, dropperErr := DropperFacet.DeployDropperFacet(txOpts, client, terminusAddress, terminusPoolId)
 		if dropperErr != nil {
 			return deployedConfiguration, dropperErr
 		}
@@ -303,12 +303,8 @@ func CreateV1Command() *cobra.Command {
 			}
 			//TODO Setup terminusPoolIdRaw from string to big.Int
 			if terminusPoolIdRaw != "" {
-				//var ok bool
-				//terminusAdminPoolId, ok = terminusPoolIdRaw.SetString(terminusPoolIdRaw, 10)
-				//if !ok {
-				//return fmt.Errorf("terminus-admin-pool-id argument is not a valid int")
-				//}
-				terminusAdminPoolId = big.NewInt(1000)
+				terminusAdminPoolId = new(big.Int)
+				terminusAdminPoolId.SetString(terminusPoolIdRaw, 0)
 			} else {
 				return fmt.Errorf("terminus-admin-pool-id argmument is not set")
 			}

@@ -62,6 +62,8 @@ contract DropperFacet is
         uint256 amount
     );
 
+
+
     // TODO(zomglings): Could be pure. Listing as view right now because ABI does not process
     // correctly through moonworm generate-brownie.
     function erc20_type() external view returns (uint256) {
@@ -95,10 +97,15 @@ contract DropperFacet is
         _;
     }
 
-    function init(
-        address terminusAdminContractAddress,
-        uint256 terminusAdminPoolID
-    ) external {
+    address terminusAdminContractAddress;
+    uint256 terminusAdminPoolID;
+    constructor(address _terminusAdminContractAddress, uint256 _terminusAdminPoolId) {
+        terminusAdminContractAddress = _terminusAdminContractAddress;
+        terminusAdminPoolID = _terminusAdminPoolId;
+
+    }
+
+    function init() external {
         LibDiamond.enforceIsContractOwner();
 
         // Set up server side signing parameters for EIP712

@@ -11,6 +11,7 @@ import (
 	"github.com/G7DAO/protocol/bindings/ArbitrumL1OrbitGatewayRouter"
 	"github.com/G7DAO/protocol/bindings/ArbitrumL2CustomGateway"
 	"github.com/G7DAO/protocol/bindings/ArbitrumUpgradeExecutor"
+	DropperFacet "github.com/G7DAO/protocol/bindings/DropperV2"
 	"github.com/G7DAO/protocol/bindings/ERC20Inbox"
 	"github.com/G7DAO/protocol/bindings/Staker"
 	"github.com/G7DAO/protocol/bindings/Terminus/ERC1155WithTerminusStorage"
@@ -88,7 +89,8 @@ func CreateRootCommand() *cobra.Command {
 	terminusFacetCmd := TerminusFacet.CreateTerminusFacetCommand()
 
 	terminusGogogoCmd := terminusGogogo.CreateGogogoCommand()
-	dropperGogogoDmd := dropperGogogo.CreateGogogoCommand()
+	dropperGogogoCmd := dropperGogogo.CreateGogogoCommand()
+	dropperFacetCmd := DropperFacet.CreateDropperFacetCommand()
 
 	wrappedNativeTokenCmd := WrappedNativeToken.CreateWrappedNativeTokenCommand()
 	wrappedNativeTokenCmd.Use = "wrapped-native-token"
@@ -98,7 +100,7 @@ func CreateRootCommand() *cobra.Command {
 
 	mockCmd := CreateMockCommand()
 
-	rootCmd.AddCommand(completionCmd, versionCmd, terminusGogogoCmd, dropperGogogoDmd, diamondCmd, diamondLoupeFacetCmd, ownershipFacet, terminusFacetCmd, erc1155WithTerminusStorageCmd, diamondCutFacetCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd, accountsCmd, wrappedNativeTokenCmd, stakerCmd, mockCmd)
+	rootCmd.AddCommand(completionCmd, versionCmd, terminusGogogoCmd, dropperFacetCmd, dropperGogogoCmd, diamondCmd, diamondLoupeFacetCmd, ownershipFacet, terminusFacetCmd, erc1155WithTerminusStorageCmd, diamondCutFacetCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd, accountsCmd, wrappedNativeTokenCmd, stakerCmd, mockCmd)
 
 	// By default, cobra Command objects write to stderr. We have to forcibly set them to output to
 	// stdout.
