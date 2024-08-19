@@ -114,11 +114,12 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
 
   const connectWallet = async () => {
     setIsConnecting(true)
-    if (window.ethereum) {
+    const ethereum = window.ethereum
+    if (ethereum) {
       try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        const provider = new ethers.providers.Web3Provider(ethereum)
         setWalletProvider(provider)
-        await provider.send('eth_requestAccounts', [])
+        await ethereum.request({ method: 'eth_requestAccounts' })
         await handleAccountsChanged()
       } catch (error) {
         console.error('Error connecting to wallet:', error)
@@ -150,32 +151,35 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     if (!walletProvider) {
       throw new Error('Wallet is not connected')
     }
-    if (!window.ethereum) {
+    const ethereum = window.ethereum
+    if (!ethereum) {
       throw new Error("Wallet isn't installed")
     }
     setIsConnecting(true)
 
     try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
-
+      const provider = new ethers.providers.Web3Provider(ethereum, 'any')
       const currentChain = await provider.getNetwork()
       if (currentChain.chainId !== chain.chainId) {
         const hexChainId = ethers.utils.hexStripZeros(ethers.utils.hexlify(chain.chainId))
         try {
-          await provider.send('wallet_switchEthereumChain', [{ chainId: hexChainId }])
+          await ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: hexChainId }] })
         } catch (error: any) {
           if (error.code === 4902) {
             try {
-              // Chain not found, attempt to add it
-              await provider.send('wallet_addEthereumChain', [
-                {
-                  chainId: hexChainId,
-                  chainName: chain.displayName || chain.name,
-                  nativeCurrency: chain.nativeCurrency,
-                  rpcUrls: chain.rpcs,
-                  blockExplorerUrls: chain.blockExplorerUrls
-                }
-              ])
+              // Chain most probably not found, attempt to add it
+              await ethereum.request({
+                method: 'wallet_addEthereumChain',
+                params: [
+                  {
+                    chainId: hexChainId,
+                    chainName: chain.displayName || chain.name,
+                    nativeCurrency: chain.nativeCurrency,
+                    rpcUrls: chain.rpcs,
+                    blockExplorerUrls: chain.blockExplorerUrls
+                  }
+                ]
+              })
             } catch (addError) {
               console.error('Failed to add the Ethereum chain:', addError)
               throw addError
