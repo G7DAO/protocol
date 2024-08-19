@@ -93,7 +93,7 @@
   font-size: 12px;
   font-weight: 600;
   line-height: 18px;
-  color: var(--Gray-600, #475467);
+  color: var(--Gray-500, #667085);
   min-width: 30px;
 }
 
@@ -108,7 +108,7 @@
   background: var(--Base-White, #ffffff);
 
   box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
-  color: var(--Gray-900, #101828);
+  color: var(--Gray-700, #344054);
 
   /* Text sm/Medium */
   font-family: Inter, sans-serif;
