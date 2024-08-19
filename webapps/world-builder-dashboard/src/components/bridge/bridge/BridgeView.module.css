@@ -119,6 +119,10 @@
   width: 100%;
 }
 
+.networkSelectSelect:hover {
+  background: var(--Gray-25, #FCFCFD);
+}
+
 .networkSelectNetworkName {
   color: var(--Gray-700, #344054);
 }
