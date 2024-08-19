@@ -28,7 +28,6 @@ const HistoryDesktop: React.FC<WithdrawTransactionsProps> = () => {
                 </div>
               ))}
               {messages.data
-                .reverse()
                 .filter((tx) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL')
                 .map((tx: TransactionRecord, idx: number) =>
                   tx.type === 'WITHDRAWAL' ? (
