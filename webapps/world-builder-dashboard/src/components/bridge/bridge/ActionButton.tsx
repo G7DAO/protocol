@@ -57,7 +57,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
 
   const getLabel = (): String | undefined => {
     if (isConnecting) {
-      return 'Connecting...'
+      return 'Connecting wallet...'
     }
     if (deposit.isLoading || withdraw.isLoading) {
       return 'Submitting...'
@@ -241,9 +241,15 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
       <button
         className={styles.container}
         onClick={handleClick}
-        disabled={getLabel() !== 'Connect wallet' && (isDisabled || Number(amount) <= 0)}
+        disabled={getLabel() === 'Submit' && (isDisabled || Number(amount) <= 0)}
       >
-        {getLabel() ?? 'Submit'}
+        <div
+          className={
+            isConnecting || deposit.isLoading || withdraw.isLoading ? styles.buttonLabelLoading : styles.buttonLabel
+          }
+        >
+          {getLabel() ?? 'Submit'}
+        </div>
       </button>
       <Modal
         opened={isAllowanceModalOpened}
