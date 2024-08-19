@@ -12,7 +12,7 @@ const formatCurrency = (value: number) => {
 }
 
 interface TransactionSummaryProps {
-  address: string
+  address: string | undefined
   transferTime: string
   fee: number
   isEstimatingFee: boolean
@@ -38,7 +38,10 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
   value
 }) => {
   const [showFullAddress, setShowFullAddress] = useState(false)
-  const getAddress = (address: string, showFullAddress: boolean) => {
+  const getAddress = (address: string | undefined, showFullAddress: boolean) => {
+    if (!address) {
+      return '...'
+    }
     if (showFullAddress) {
       return address
     }
@@ -54,7 +57,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
         onMouseEnter={() => setShowFullAddress(true)}
         onMouseLeave={() => setShowFullAddress(false)}
       >
-        <div className={styles.itemName}>-{'>'} To address</div>
+        <div className={styles.itemName}>To address</div>
         <div className={styles.address}>{getAddress(address, showFullAddress)}</div>
       </div>
       <div className={styles.dataRow}>
