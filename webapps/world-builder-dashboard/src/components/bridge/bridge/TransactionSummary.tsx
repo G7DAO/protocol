@@ -1,6 +1,8 @@
 import React from 'react'
 import styles from './TransactionSummary.module.css'
 import { Tooltip, useClipboard } from 'summon-ui/mantine'
+import { mantineBreakpoints } from '@/styles/breakpoints'
+import { useMediaQuery } from '@mantine/hooks'
 
 const formatCurrency = (value: number) => {
   const formatter = new Intl.NumberFormat('en-US', {
@@ -40,15 +42,17 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
 }) => {
   const clipboard = useClipboard({ timeout: 700 })
 
-  const getAddress = (address: string | undefined, showFullAddress: boolean) => {
+  const getAddress = (address: string | undefined, showFullAddress: boolean, divide: boolean) => {
     if (!address) {
       return '...'
     }
     if (showFullAddress) {
-      return address
+      return divide ? `${address.slice(0, 21)} ${address.slice(21)}` : address
     }
     return `${address.slice(0, 6)}...${address.slice(-4)}`
   }
+
+  const isXsScreen = useMediaQuery(`(max-width: ${mantineBreakpoints.xs})`)
 
   return (
     <div className={styles.container}>
@@ -57,14 +61,19 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
       <div className={styles.dataRow}>
         <div className={styles.itemName}>To address</div>
         <Tooltip
-          arrowSize={8}
+          multiline
           radius={'8px'}
-          label={clipboard.copied ? 'copied' : address}
+          label={clipboard.copied ? 'copied' : getAddress(address, true, isXsScreen ?? false)}
+          arrowSize={8}
           withArrow
+          arrowOffset={14}
           disabled={!address}
+          events={{ hover: true, focus: true, touch: true }}
+          w={isXsScreen ? 200 : 'auto'}
+          position={isXsScreen ? 'top-end' : 'top'}
         >
           <div className={styles.address} onClick={() => address && clipboard.copy(address)}>
-            {getAddress(address, false)}
+            {getAddress(address, false, false)}
           </div>
         </Tooltip>
       </div>
