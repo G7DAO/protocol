@@ -180,7 +180,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       </div>
                     </a>
                   </div>
-                  <div className={styles.gridItem}>
+                  <div className={styles.gridItemImportant}>
                     <div>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
                   </div>
                 </>
@@ -221,7 +221,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     </a>
                   </div>
 
-                  <div className={styles.gridItem}>
+                  <div className={styles.gridItemImportant}>
                     <div>{ETA(status.data?.timestamp, withdrawal.challengePeriod)}</div>
                   </div>
                 </>

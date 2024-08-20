@@ -115,7 +115,7 @@
   grid-column: span 7;
 }
 
-.gridItem {
+.gridItem, .gridItemImportant {
   display: flex;
   height: 72px;
   padding: 16px 24px;
@@ -124,12 +124,22 @@
   color: var(--Gray-700, #344054);
 
   /* Text sm/Regular */
-  font-family: Inter, sans-serif;
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
   line-height: 20px; /* 142.857% */
   border-bottom: 1px solid var(--Gray-200, #eaecf0);
+}
+
+.gridItemImportant {
+  color: var(--Gray-700, #344054);
+  text-align: center;
+
+  /* Text sm/Semibold */
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px; /* 142.857% */
 }
 
 .transactionsHeader {
