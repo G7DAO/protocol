@@ -79,6 +79,12 @@
 .badgeClaimable:hover, .toastClaimable:hover {
     background: var(--Warning-100, #FEF0C7);
 }
+.iconCloseClaimable {
+    color: var(--Warning-700, #B54708);
+}
+.iconCloseClaimable:hover {
+    color: var(--Warning-800, #B54708);
+}
 
 .badgeCompleted, .toastCompleted {
     color: var(--Success-700, #027a48);
@@ -86,6 +92,12 @@
 }
 .badgeCompleted:hover, .toastCompleted:hover {
     background: var(--Success-100, #D1FADF);
+}
+.iconCloseCompleted {
+    stroke: var(--Success-700, #027a48);
+}
+.iconCloseCompleted:hover {
+    stroke: var(--Success-800, #027a48);
 }
 
 .badgePending {
@@ -95,6 +107,12 @@
 .badgePending:hover {
     background: var(--Blue-100, #d1e9ff);
 }
+.iconClosePending {
+    stroke: var(--Blue-700, #175cd3);
+}
+.iconClosePending:hover {
+    stroke: var(--Blue-800, #175cd3);
+}
 
 .badgeError, .toastError {
     color: var(--Error-700, #FEF3F2);
@@ -103,11 +121,12 @@
 .badgeError:hover, .toastError:hover {
     background: var(--Error-100, #FEE4E2);
 }
-
-.toastMultiple {
-
+.iconCloseError {
+    stroke: var(--Error-700, #FEF3F2);
 }
-
+.iconCloseError {
+    stroke: var(--Error-800, #FEF3F2);
+}
 
 .headerTime {
     color: var(--Gray-500, #667085);
@@ -155,7 +174,8 @@
     display: flex;
     width: 100%;
     padding: 8px 12px;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: space-between;
     gap: 8px;
     position: absolute;
     z-index: 3;
@@ -186,6 +206,14 @@
 
 .toastMultiple:hover {
     background: var(--Purple-100, #EBE9FE);
+}
+
+.closeIconMultiple {
+    stroke: var(--Purple-700, #5925DC);
+}
+
+.closeIconMultiple:hover {
+    stroke: var(--Purple-800, #5925DC);
 }
 
 @media (max-width: 1199px) {
