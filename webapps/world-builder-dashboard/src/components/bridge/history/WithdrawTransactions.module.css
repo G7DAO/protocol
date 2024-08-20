@@ -240,6 +240,18 @@
   color: var(--Success-700, #027a48);
 }
 
+.pending:hover {
+  background: var(--Blue-100, #eff8ff);
+}
+
+.claimable:hover {
+  background: var(--Warning-100, #fffaeb);
+}
+
+.settled:hover {
+  background: var(--Success-100, #ecfdf3);
+}
+
 .claimButton {
   height: 28px;
   display: flex;
