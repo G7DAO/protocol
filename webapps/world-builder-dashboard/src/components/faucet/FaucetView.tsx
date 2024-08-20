@@ -70,14 +70,14 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
 
         const contract = new ethers.Contract(G7T_FAUCET_ADDRESS, contractAbi, signer)
         const tx = isL2Target ? await contract.claim() : await contract.claimL3()
-        const receipt = tx.wait() // Wait for the transaction to be mined
+        const receipt = await tx.wait() // Wait for the transaction to be mined
         const type: 'CLAIM' | 'DEPOSIT' | 'WITHDRAWAL' = 'CLAIM'
         return {
           type,
           amount: '1',
           highNetworkChainId: selectedNetwork.chainId,
           lowNetworkChainId: FAUCET_CHAIN.chainId,
-          lowNetworkHash: receipt.hash,
+          lowNetworkHash: receipt.transactionHash,
           lowNetworkTimestamp: Date.now() / 1000,
           completionTimestamp: Date.now() / 1000,
           newTransaction: true
