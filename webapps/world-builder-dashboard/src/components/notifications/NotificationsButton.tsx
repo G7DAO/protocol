@@ -34,6 +34,7 @@ const NotificationsButton: React.FC<NotificationsButtonProps> = ({ notifications
       radius={'8px'}
       opened={isDropdownOpened}
       onChange={setIsDropdownOpened}
+      classNames={{ dropdown: styles.dropdown }}
     >
       <Modal
         opened={isModalOpened}

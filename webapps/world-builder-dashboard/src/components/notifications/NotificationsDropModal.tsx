@@ -186,9 +186,11 @@ export const NotificationsModal: React.FC<NotificationsDropModalProps> = ({ noti
 
   return (
     <div className={modalStyles.container}>
-      <IconClose className={modalStyles.closeButton} onClick={() => setIsModalOpened(false)} />
       <div className={modalStyles.header}>
-        <div className={modalStyles.title}>Notifications</div>
+        <div className={modalStyles.title}>
+          Notifications
+          <IconClose className={modalStyles.closeButton} onClick={() => setIsModalOpened(false)} />
+        </div>
         <div className={modalStyles.supportingText}>Review your notification center</div>
       </div>
       <div className={modalStyles.itemsContainer} ref={itemsContainerRef}>
