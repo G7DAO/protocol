@@ -198,8 +198,11 @@
 }
 
 .time {
-    width: 100px;
+    display: inline-block;
+    min-width: 11ch;
     white-space: nowrap;
+    font-weight: 500;
+    text-align: start;
 }
 
 
