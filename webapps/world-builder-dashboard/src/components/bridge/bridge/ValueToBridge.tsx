@@ -49,6 +49,12 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
 
   const { connectedAccount } = useBlockchainContext()
 
+  useEffect(() => {
+    if (!connectedAccount) {
+      setValue('0')
+    }
+  }, [connectedAccount])
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
