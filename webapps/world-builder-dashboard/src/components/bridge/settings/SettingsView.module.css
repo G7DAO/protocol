@@ -45,6 +45,14 @@
     width: 100%;
 }
 
+.faucetLinks {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    align-self: stretch;
+}
+
 .faucetLinkContainer {
     display: flex;
     align-items: center;

@@ -27,26 +27,28 @@ const SettingsView: React.FC<SettingsViewProps> = ({}) => {
         </div>
       </div>
       <div className={styles.divider} />
-      <div className={styles.faucetLinkContainer}>
-        <IconG7tLarge />
-        <div className={styles.textContainer}>
-          <div className={styles.linkTitle}>Game7 Testnet</div>
-          <div className={styles.supportingText}>Request $G7 testnet tokens</div>
+      <div className={styles.faucetLinks}>
+        <div className={styles.faucetLinkContainer}>
+          <IconG7tLarge />
+          <div className={styles.textContainer}>
+            <div className={styles.linkTitle}>Game7 Testnet</div>
+            <div className={styles.supportingText}>Request $G7 testnet tokens</div>
+          </div>
+          <button className={styles.button} onClick={() => handleClick(L3_NETWORK)}>
+            Request
+          </button>
         </div>
-        <button className={styles.button} onClick={() => handleClick(L3_NETWORK)}>
-          Request
-        </button>
-      </div>
-      <div className={styles.divider} />
-      <div className={styles.faucetLinkContainer}>
-        <IconArbitrumLarge />
-        <div className={styles.textContainer}>
-          <div className={styles.linkTitle}>Arbitrum Sepolia</div>
-          <div className={styles.supportingText}>Request $G7 testnet tokens on Arbitrum Sepolia</div>
+        <div className={styles.divider} />
+        <div className={styles.faucetLinkContainer}>
+          <IconArbitrumLarge />
+          <div className={styles.textContainer}>
+            <div className={styles.linkTitle}>Arbitrum Sepolia</div>
+            <div className={styles.supportingText}>Request $G7 testnet tokens on Arbitrum Sepolia</div>
+          </div>
+          <button className={styles.button} onClick={() => handleClick(L2_NETWORK)}>
+            Request
+          </button>
         </div>
-        <button className={styles.button} onClick={() => handleClick(L2_NETWORK)}>
-          Request
-        </button>
       </div>
     </div>
   )
