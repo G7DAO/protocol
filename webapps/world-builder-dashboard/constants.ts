@@ -38,7 +38,7 @@ export const L2_NETWORK: HighNetworkInterface = {
 export const L3_NETWORK: HighNetworkInterface = {
   chainId: 13746,
   name: 'conduit-orbit-deployer',
-  displayName: 'G7 Testnet',
+  displayName: 'Game7 Testnet',
   rpcs: ['https://rpc-game7-testnet-0ilneybprf.t.conduit.xyz'],
   blockExplorerUrls: ['https://explorer-game7-testnet-0ilneybprf.t.conduit.xyz'],
   nativeCurrency: {
