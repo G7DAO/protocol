@@ -2,7 +2,7 @@
     display: flex;
     width: 660px;
     max-width: 660px;
-    padding: 20px;
+    padding: 19px;
     flex-direction: column;
     align-items: flex-start;
     gap: 20px;
@@ -170,8 +170,8 @@
     border: none;
 }
 
-.warningContainer {
-    display: flex;
+.warningContainer, .errorContainer {
+    text-align: center;
     width: 100%;
     justify-content: center;
     padding: 2px 8px;
@@ -190,8 +190,16 @@
     line-height: 18px; /* 150% */
 }
 
+.errorContainer {
+    border-radius: 16px;
+    background: var(--Error-50, #FEF3F2);
+    mix-blend-mode: var(--mix-blend, multiply);
+    color: var(--Error-700, #B42318);
+}
+
 .time {
     width: 100px;
+    white-space: nowrap;
 }
 
 
