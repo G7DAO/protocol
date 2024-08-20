@@ -31,7 +31,7 @@ const BridgeMessage: React.FC<BridgeMessageProps> = ({ message, setMessage, erro
     } else {
       setErrors({ destination: 'invalid address' })
     }
-    setMessage({ data: newDestination })
+    setMessage({ destination: newDestination })
   }
 
   return (
