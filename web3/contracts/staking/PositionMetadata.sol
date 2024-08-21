@@ -3,8 +3,8 @@ pragma solidity ^0.8.24;
 
 import { Base64 } from "@openzeppelin/contracts/utils/Base64.sol";
 import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
-
 import { StakingPool, Position } from "./data.sol";
+import "./SVGGenerate.sol";
 
 contract PositionMetadata {
     function metadataBytes(
@@ -12,11 +12,13 @@ contract PositionMetadata {
         Position memory position,
         StakingPool memory pool
     ) public pure returns (bytes memory) {
+        string memory image = Base64.encode(bytes(generateSVGImage()));
         bytes memory result = abi.encodePacked(
             '{"token_id":"',
             Strings.toString(positionTokenID),
             // TODO(zomglings): Change image URI
-            '","image": "https://badges.moonstream.to/test/staking_logo.png"',
+            '","image": "',
+            'data:image/svg+xml;base64,',
             ',"result_version":1,"attributes": ['
         );
 
@@ -72,5 +74,10 @@ contract PositionMetadata {
                     Base64.encode(metadataBytes(positionTokenID, position, pool))
                 )
             );
+    }
+    
+    // todo: add position params later
+    function generateSVGImage() internal pure returns (string memory svg) {
+        return SVGGenerate.generateSVG();
     }
 }

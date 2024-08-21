@@ -33,6 +33,7 @@ describe('Staker', function () {
         const positionTokenID = (await staker.TotalPositions()) - 1n;
 
         const metadataDataURI = await staker.tokenURI(positionTokenID);
+        console.log("metadatauri", metadataDataURI);
         const metadataBase64 = metadataDataURI.split(',')[1];
         const metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
 
