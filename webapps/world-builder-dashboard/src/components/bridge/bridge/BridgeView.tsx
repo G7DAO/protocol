@@ -198,7 +198,7 @@ const BridgeView = ({
       <TransactionSummary
         direction={direction}
         gasBalance={Number((direction === 'DEPOSIT' ? lowNetworkNativeBalance : highNetworkNativeBalance) ?? 0)}
-        address={connectedAccount ?? '0x'}
+        address={connectedAccount}
         transferTime={
           direction === 'DEPOSIT'
             ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`

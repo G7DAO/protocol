@@ -7,6 +7,7 @@ import styles from './NotificationsDropModal.module.css'
 import modalStyles from './NotificationsModal.module.css'
 // Assets and Icons
 import IconClose from '@/assets/IconClose'
+import IconCloseSmall from '@/assets/IconCloseSmall'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 // Components
 import { BridgeNotification } from '@/components/notifications/NotificationsButton'
@@ -104,6 +105,19 @@ const toastClassName = (status: string) => {
   }
 }
 
+const iconCloseClassName = (status: string) => {
+  switch (status) {
+    case 'COMPLETED':
+      return styles.iconCloseCompleted
+    case 'CLAIMABLE':
+      return styles.iconCloseClaimable
+    case 'FAILED':
+      return styles.iconCloseError
+    default:
+      return styles.iconCloseCompleted
+  }
+}
+
 export const FloatingNotification = ({ notifications }: { notifications: BridgeNotification[] }) => {
   const { setIsDropdownOpened } = useBridgeNotificationsContext()
   const handleClick = () => {
@@ -115,16 +129,17 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
 
   if (notifications.length > 1) {
     return (
-      <div
-        onClick={handleClick}
-        className={styles.toastMultiple}
-      >{`You have ${notifications.length} new notifications. Click here to view`}</div>
+      <div onClick={handleClick} className={styles.toastMultiple}>
+        {`You have ${notifications.length} new notifications. Click here to view`}
+        <IconCloseSmall className={styles.closeIconMultiple} />
+      </div>
     )
   }
 
   return (
     <div onClick={handleClick} className={toastClassName(notifications[0].status)}>
       {copy(notifications[0])}
+      <IconCloseSmall className={iconCloseClassName(notifications[0].status)} />
     </div>
   )
 }
@@ -171,9 +186,11 @@ export const NotificationsModal: React.FC<NotificationsDropModalProps> = ({ noti
 
   return (
     <div className={modalStyles.container}>
-      <IconClose className={modalStyles.closeButton} onClick={() => setIsModalOpened(false)} />
       <div className={modalStyles.header}>
-        <div className={modalStyles.title}>Notifications</div>
+        <div className={modalStyles.title}>
+          Notifications
+          <IconClose className={modalStyles.closeButton} onClick={() => setIsModalOpened(false)} />
+        </div>
         <div className={modalStyles.supportingText}>Review your notification center</div>
       </div>
       <div className={modalStyles.itemsContainer} ref={itemsContainerRef}>

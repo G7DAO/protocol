@@ -48,3 +48,8 @@
     top: 0;
     transform: translateX(12px) translateY(-50%);
 }
+
+/* Mantine classes */
+.dropdown {
+    background: var(--Base-White, #ffffff) !important;
+}

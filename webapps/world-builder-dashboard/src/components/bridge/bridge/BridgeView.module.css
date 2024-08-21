@@ -38,9 +38,9 @@
 }
 
 .directionContainer {
-  padding: 4px;
+  padding: 3px;
   gap: 8px;
-  border-radius: 6px;
+  border-radius: 8px;
   display: flex;
   background: var(--Base-White, #ffffff);
   border: 1px solid var(--Gray-100, #f2f4f7);
@@ -72,7 +72,7 @@
 
 .networksContainer {
   display: flex;
-  padding: 12px;
+  padding: 11px;
   justify-content: center;
   align-items: center;
   gap: 20px;
@@ -86,37 +86,16 @@
 .networkSelect {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
   flex: 1;
 }
+
 .label {
   font-size: 12px;
   font-weight: 600;
   line-height: 18px;
-  color: var(--Gray-600, #475467);
+  color: var(--Gray-500, #667085);
   min-width: 30px;
-}
-
-.networkSelectSelect {
-  padding: 1px 10px;
-  align-items: center;
-  gap: 8px;
-  align-self: stretch;
-
-  border-radius: 8px;
-  border: 1px solid #d0d5dd;
-  background: var(--Base-White, #ffffff);
-
-  box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
-  color: var(--Gray-900, #101828);
-
-  /* Text sm/Medium */
-  font-family: Inter, sans-serif;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 20px; /* 142.857% */
-  width: 100%;
 }
 
 .network {
@@ -250,7 +229,7 @@
   line-height: 18px; /* 150% */
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1199px) {
     .container {
       width: 100%;
       padding: 15px;

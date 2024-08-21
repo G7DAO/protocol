@@ -1,0 +1,38 @@
+.containerOn, .containerOff {
+    display: flex;
+    width: 32px;
+    height: 20px;
+    padding: 2px;
+    justify-content: flex-end;
+    align-items: center;
+
+    border-radius: 12px;
+    background: var(--Success-500, #12B76A);
+
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.containerOff {
+    background: var(--Gray-100, #F2F4F7);
+}
+
+.thumbOn, .thumbOff {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--Base-White, #FFF);
+    filter: drop-shadow(0px 1px 2px rgba(16, 24, 40, 0.06)) drop-shadow(0px 1px 3px rgba(16, 24, 40, 0.10));
+
+    position: absolute;
+    left: 2px;
+    z-index: 10;
+    transition: all 0.1s ease-in-out;
+}
+
+.thumbOn {
+    left: 100%;
+    transform: translateX(calc(-100% - 2px));
+}
+

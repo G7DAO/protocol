@@ -68,7 +68,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const { switchChain, connectedAccount } = useBlockchainContext()
   const queryClient = useQueryClient()
   const { refetchNewNotifications } = useBridgeNotificationsContext()
-  const smallView = useMediaQuery('(max-width: 767px)')
+  const smallView = useMediaQuery('(max-width: 1199px)')
 
   const execute = useMutation(
     async (highNetworkHash: string | undefined) => {
@@ -180,7 +180,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       </div>
                     </a>
                   </div>
-                  <div className={styles.gridItem}>
+                  <div className={styles.gridItemImportant}>
                     <div>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
                   </div>
                 </>
@@ -221,7 +221,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     </a>
                   </div>
 
-                  <div className={styles.gridItem}>
+                  <div className={styles.gridItemImportant}>
                     <div>{ETA(status.data?.timestamp, withdrawal.challengePeriod)}</div>
                   </div>
                 </>

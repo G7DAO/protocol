@@ -36,6 +36,9 @@ const HistoryDesktop: React.FC<WithdrawTransactionsProps> = () => {
                     <Fragment key={idx}>{tx.lowNetworkHash && <Deposit deposit={tx} />}</Fragment>
                   )
                 )}
+              {messages.data.filter((tx) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL').length === 0 && (
+                <div className={styles.noTransactions}> No transactions yet</div>
+              )}
             </div>
           </div>
         )}

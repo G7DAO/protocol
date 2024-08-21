@@ -25,7 +25,7 @@
 
     border-radius: 16px;
     background: var(--Warning-50, #FFFAEB);
-    mix-blend-mode: multiply;
+    mix-blend-mode: var(--mix-blend, multiply);
 }
 
 
@@ -71,7 +71,7 @@
     padding: 0;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1199px) {
     .warningWrapper {
         padding: 0 16px;
     }

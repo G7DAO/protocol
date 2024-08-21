@@ -25,10 +25,11 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const { connectedAccount, isConnecting, getProvider, connectWallet } = useBlockchainContext()
   const [animatedInterval, setAnimatedInterval] = useState('')
   const [nextClaimTimestamp, setNextClaimTimestamp] = useState(0)
+  const [networkError, setNetworkError] = useState('')
   const { faucetTargetChainId } = useUISettings()
 
   const { refetchNewNotifications } = useBridgeNotificationsContext()
-  const smallView = useMediaQuery('(max-width: 767px)')
+  const smallView = useMediaQuery('(max-width: 1199px)')
 
   useEffect(() => {
     const targetNetwork = [L1_NETWORK, L2_NETWORK, L3_NETWORK].find((n) => n.chainId === faucetTargetChainId)
@@ -50,6 +51,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const queryClient = useQueryClient()
   const claim = useMutation(
     async ({ isL2Target, signer }: { isL2Target: boolean; signer: Signer }) => {
+      setNetworkError('')
       if (window.ethereum) {
         const contractAbi = [
           {
@@ -70,14 +72,14 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
 
         const contract = new ethers.Contract(G7T_FAUCET_ADDRESS, contractAbi, signer)
         const tx = isL2Target ? await contract.claim() : await contract.claimL3()
-        const receipt = tx.wait() // Wait for the transaction to be mined
+        const receipt = await tx.wait() // Wait for the transaction to be mined
         const type: 'CLAIM' | 'DEPOSIT' | 'WITHDRAWAL' = 'CLAIM'
         return {
           type,
           amount: '1',
           highNetworkChainId: selectedNetwork.chainId,
           lowNetworkChainId: FAUCET_CHAIN.chainId,
-          lowNetworkHash: receipt.hash,
+          lowNetworkHash: receipt.transactionHash,
           lowNetworkTimestamp: Date.now() / 1000,
           completionTimestamp: Date.now() / 1000,
           newTransaction: true
@@ -121,6 +123,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
         refetchNewNotifications(connectedAccount ?? '')
       },
       onError: (e: Error) => {
+        setNetworkError('Something went wrong. Try again, please')
         console.error('Transaction failed:', e)
         console.log(e)
       }
@@ -222,29 +225,35 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
           <div className={styles.addressPlaceholder}>Please connect a wallet...</div>
         )}
       </div>
-      {nextClaimAvailable.isLoading && <div className={styles.warningContainer}>Checking faucet permissions...</div>}
+      {!!networkError && <div className={styles.errorContainer}>{networkError}.</div>}
+      {!networkError && nextClaimAvailable.isLoading && (
+        <div className={styles.warningContainer}>Checking faucet permissions...</div>
+      )}
+
       {!nextClaimAvailable.isLoading &&
+        !networkError &&
         (selectedNetwork.chainId === L2_NETWORK.chainId
           ? nextClaimAvailable.data?.L2.isAvailable
           : nextClaimAvailable.data?.L3.isAvailable) && (
           <div className={styles.hintBadge}>You may only request funds to a connected wallet.</div>
         )}
-      {!nextClaimAvailable.isLoading && !connectedAccount && (
+      {!nextClaimAvailable.isLoading && !connectedAccount && !networkError && (
         <div className={styles.hintBadge}>You may only request funds to a connected wallet.</div>
       )}
       {selectedNetwork.chainId === L2_NETWORK.chainId &&
         nextClaimAvailable.data &&
         !nextClaimAvailable.data.L2.isAvailable && (
-          <div className={styles.warningContainer}>
-            {`Already requested today. Come back in `}
+          <div className={styles.errorContainer}>
+            {`You requested funds recently. Come back in `}
             <span className={styles.time}>{animatedInterval}</span>
           </div>
         )}
       {selectedNetwork.chainId === L3_NETWORK.chainId &&
         nextClaimAvailable.data &&
         !nextClaimAvailable.data.L3.isAvailable && (
-          <div className={styles.warningContainer}>
-            {`Already requested today. Come back in `} <span className={styles.time}>{` ${animatedInterval}`}</span>
+          <div className={styles.errorContainer}>
+            {`You requested funds recently. Come back in `}{' '}
+            <span className={styles.time}>{` ${animatedInterval}`}</span>
           </div>
         )}
       <button

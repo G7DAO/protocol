@@ -10,22 +10,27 @@ button {
   --Blue-100: #d1e9ff;
   --Blue-200: #b3d8ff;
   --Blue-700: #175cd3;
+  --Blue-800: #1849A9;
   --Warning-50: #fffaeb;
   --Warning-100: #FEF0C7;
   --Warning-200: #FEDF89;
   --Warning-300: #fec84b;
   --Warning-600: #DC6803;
   --Warning-700: #b54708;
+  --Warning-800: #93370D;
   --Success-50: #ecfdf3;
   --Success-100: #D1FADF;
   --Success-200: #A6F4C5;
+  --Success-500: #12B76A;
   --Success-700: #027a48;
-  --Error-50: #B42318;
+  --Success-800: #05603A;
+  --Error-50: #FEF3F2;
   --Error-100: #FEE4E2;
   --Error-200: #FECDCA;
   --Error-500: #F04438;
   --Error-600: #d92d20;
-  --Error-700: #FEF3F2;
+  --Error-700: #B42318;
+  --Error-800: #912018;
   --Gray-50: #f9fafb;
   --Gray-100: #f2f4f7;
   --Gray-200: #eaecf0;
@@ -48,38 +53,46 @@ button {
   --Purple-100: #EBE9FE;
   --Purple-200: #D9D6FE;
   --Purple-700: #5925DC;
+  --Purple-800: #4A1FB8;
   --Blue-light-700: #026aa2;
   --Blue-light-50: #f0f9ff;
   --Indigo-50: #eef4ff;
   --Indigo-700: #3538cd;
   --Gray-25: #fcfcfd;
   --Gray-900: #101828;
+  --mix-blend: multiply;
 }
 
 [data-theme='dark'] {
-  --Blue-50: #0a1a2f;
-  --Blue-100: #102a4b;
-  --Blue-200: #183b68;
-  --Blue-700: #9bbffb;
+  --mix-blend: normal;
 
-  --Warning-50: #2e2503;
-  --Warning-100: #634d0d;
-  --Warning-200: #b38a20;
-  --Warning-300: #ffbe4a;
-  --Warning-600: #ffae00;
-  --Warning-700: #ff9500;
+  --Blue-50: #cce4ff;   /* Adjusted from #eff8ff */
+  --Blue-100: #aad1ff;  /* Adjusted from #d1e9ff */
+  --Blue-200: #8abfff;  /* Adjusted from #b3d8ff */
+  --Blue-700: #164bbf;  /* Adjusted from #175cd3 */
+  --Blue-800: #12399f;  /* New: Darker blue shade */
 
-  --Success-50: #133022;
-  --Success-100: #245a3d;
-  --Success-200: #43a36e;
-  --Success-700: #9be7b0;
+  --Warning-50: #ffe4a1;   /* Adjusted from #fffaeb */
+  --Warning-100: #fdd67a;  /* Adjusted from #FEF0C7 */
+  --Warning-200: #f8bb4a;  /* Adjusted from #FEDF89 */
+  --Warning-300: #e8a229;  /* Adjusted from #fec84b */
+  --Warning-600: #c06503;  /* Adjusted from #DC6803 */
+  --Warning-700: #924206;  /* Adjusted from #b54708 */
+  --Warning-800: #703205;  /* New: Darker warning shade */
 
-  --Error-50: #3b0b0b;
-  --Error-100: #7a1e1e;
-  --Error-200: #d63434;
-  --Error-500: #ff6b6b;
-  --Error-600: #ff3b3b;
-  --Error-700: #ffcccc;
+  --Success-50: #FFF;  /* Adjusted from #ecfdf3 */
+  --Success-100: #9deac7; /* Adjusted from #D1FADF */
+  --Success-200: #79ddab; /* Adjusted from #A6F4C5 */
+  --Success-700: #026637; /* Adjusted from #027a48 */
+  --Success-800: #024e2b; /* New: Darker success shade */
+
+  --Error-50: #d11d14;   /* Adjusted from #B42318 */
+  --Error-100: #f8c8c6;  /* Adjusted from #FEE4E2 */
+  --Error-200: #f8a49f;  /* Adjusted from #FECDCA */
+  --Error-500: #e53b29;  /* Adjusted from #F04438 */
+  --Error-600: #c62c1a;  /* Adjusted from #d92d20 */
+  --Error-700: #fbeae8;  /* Adjusted from #FEF3F2 */
+  --Error-800: #aa2714;  /* New: Darker error shade */
 
   --Gray-50: #101214;
   --Gray-100: #1a1c20;
@@ -87,7 +100,6 @@ button {
   --Gray-300: #3b3f44;
   --Gray-600: #8a8e94;
   --Gray-700: #a1a6ad;
-
 
   --Primary-25: #2a1e20;
   --Primary-50: #3d2b2f;
@@ -110,6 +122,7 @@ button {
   --Purple-100: #3e3166;
   --Purple-200: #65569e;
   --Purple-700: #c7c1f9;
+  --Purple-800: #4d3c8e;  /* New: Darker purple shade */
 
   --Blue-light-700: #024d75;
   --Blue-light-50: #0a1a2f;

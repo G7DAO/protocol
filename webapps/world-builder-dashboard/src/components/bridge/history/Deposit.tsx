@@ -60,7 +60,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                 )}
               </div>
             </a>
-            <div className={styles.gridItem}>
+            <div className={styles.gridItemImportant}>
               {status.data && status.data.highNetworkTimestamp ? (
                 <div>{timeAgo(status.data.highNetworkTimestamp)}</div>
               ) : (
