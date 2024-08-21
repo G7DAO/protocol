@@ -1,9 +1,9 @@
 import { L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../../../constants'
-import styles from './BridgeView.module.css'
-import { Icon } from 'summon-ui'
+import styles from './NetworkSelector.module.css'
 import { Combobox, Group, InputBase, InputBaseProps, useCombobox } from 'summon-ui/mantine'
 import IconArbitrumOne from '@/assets/IconArbitrumOne'
 import IconCheck from '@/assets/IconCheck'
+import IconChevronDown from '@/assets/IconChevronDown'
 import IconEthereum from '@/assets/IconEthereum'
 import IconG7T from '@/assets/IconG7T'
 import { HighNetworkInterface, NetworkInterface } from '@/contexts/BlockchainContext'
@@ -19,7 +19,7 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork }: NetworkSelecto
     onDropdownClose: () => combobox.resetSelectedOption()
   })
 
-  const icon = (chainId: number) => {
+  const networkLogo = (chainId: number) => {
     switch (chainId) {
       case L1_NETWORK.chainId:
         return <IconEthereum />
@@ -48,23 +48,15 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork }: NetworkSelecto
       <Combobox.Target>
         <InputBase
           component='button'
-          className={styles.networkSelectSelect}
+          className={styles.inputBase}
           pointer
           variant='unstyled'
-          leftSection={
-            selectedNetwork.chainId === L3_NETWORK.chainId ? (
-              <IconG7T />
-            ) : selectedNetwork.chainId === L1_NETWORK.chainId ? (
-              <IconEthereum />
-            ) : (
-              <IconArbitrumOne />
-            )
-          }
-          rightSection={networks.length > 1 ? <Icon name={'ChevronDown'} color={'#667085'} /> : ''}
+          leftSection={networkLogo(selectedNetwork.chainId)}
+          rightSection={networks.length > 1 ? <IconChevronDown className={styles.chevron} /> : ''}
           rightSectionPointerEvents='none'
           onClick={() => combobox.toggleDropdown()}
         >
-          <span className={styles.networkSelectNetworkName}>{selectedNetwork.displayName}</span>
+          <span className={styles.inputBaseNetworkName}>{selectedNetwork.displayName}</span>
         </InputBase>
       </Combobox.Target>
 
@@ -85,7 +77,7 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork }: NetworkSelecto
                     }
                   >
                     <div className={styles.optionLeftSection}>
-                      {icon(n.chainId)}
+                      {networkLogo(n.chainId)}
                       {n.displayName}
                     </div>
                     {n.chainId === selectedNetwork.chainId && <IconCheck />}
