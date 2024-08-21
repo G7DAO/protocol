@@ -12,13 +12,14 @@ contract PositionMetadata {
         Position memory position,
         StakingPool memory pool
     ) public pure returns (bytes memory) {
+        // encode the image
         string memory image = Base64.encode(bytes(generateSVGImage()));
         bytes memory result = abi.encodePacked(
             '{"token_id":"',
             Strings.toString(positionTokenID),
-            // TODO(zomglings): Change image URI
             '","image": "',
             'data:image/svg+xml;base64,',
+            image,
             ',"result_version":1,"attributes": ['
         );
 
