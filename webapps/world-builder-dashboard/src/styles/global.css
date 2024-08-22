@@ -61,6 +61,8 @@ button {
   --Gray-25: #fcfcfd;
   --Gray-900: #101828;
   --mix-blend: multiply;
+  --Switch-thumb-bg: #FFF;
+  --Switch-off-track-bg: #F2F4F7;
 }
 
 [data-theme='dark'] {
@@ -132,4 +134,7 @@ button {
 
   --Gray-25: #181a1d;
   --Gray-900: #f1f1f1;
+
+  --Switch-thumb-bg: #667085;
+  --Switch-off-track-bg: #98A2B3;
 }
