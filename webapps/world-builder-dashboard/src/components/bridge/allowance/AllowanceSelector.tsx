@@ -1,16 +1,17 @@
 import styles from './AllowanceSelector.module.css'
-import { Icon } from 'summon-ui'
-import { Combobox, InputBase, InputBaseProps, useCombobox } from 'summon-ui/mantine'
+import { Combobox, useCombobox } from 'summon-ui/mantine'
 import IconCheck from '@/assets/IconCheck'
+import IconChevronDown from '@/assets/IconChevronDown'
 
 type AllowanceSelectorProps = {
   balance: number
   onChange: (newAllowance: number) => void
   allowance: number
   amount: number
-} & InputBaseProps
+  disabled: boolean
+}
 
-const AllowanceSelector = ({ balance, onChange, allowance, amount }: AllowanceSelectorProps) => {
+const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled }: AllowanceSelectorProps) => {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption()
   })
@@ -23,6 +24,7 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount }: AllowanceSe
         onChange(Number(val))
         combobox.closeDropdown()
       }}
+      disabled={disabled}
     >
       <Combobox.Target>
         <div
