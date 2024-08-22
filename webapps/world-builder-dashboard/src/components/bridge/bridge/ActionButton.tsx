@@ -255,9 +255,10 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
         opened={isAllowanceModalOpened}
         onClose={() => setIsAllowanceModalOpened(false)}
         withCloseButton={false}
-        padding={'24px'}
+        padding={'23px'}
         size={'400px'}
         radius={'12px'}
+        classNames={{ body: styles.body }}
       >
         <ApproveAllowance
           balance={Number(lowNetworkBalance ?? '0')}
