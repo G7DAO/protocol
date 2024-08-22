@@ -25,29 +25,23 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount }: AllowanceSe
       }}
     >
       <Combobox.Target>
-        <InputBase
-          component='button'
-          type='button'
-          w={'100%'}
-          color={'#344054'}
-          pointer
-          variant='unstyled'
-          className={styles.container}
-          rightSection={<Icon name={'ChevronDown'} color={'#667085'} />}
-          rightSectionPointerEvents='none'
+        <div
+          className={disabled ? styles.containerDisabled : styles.container}
           onClick={() => combobox.toggleDropdown()}
         >
-          {allowance}
+          <div className={styles.value}>{allowance}</div>
           <button
-            className={styles.button}
+            className={styles.minButton}
             onClick={(e) => {
               onChange(amount)
               e.stopPropagation()
             }}
+            disabled={disabled}
           >
             MIN
           </button>
-        </InputBase>
+          <IconChevronDown className={styles.chevron} />
+        </div>
       </Combobox.Target>
 
       <Combobox.Dropdown className={styles.dropdownContainer}>
