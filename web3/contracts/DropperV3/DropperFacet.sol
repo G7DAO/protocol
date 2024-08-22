@@ -122,13 +122,13 @@ contract DropperFacet is
         uint256 amount,
         address authorizationTokenAddress,
         uint256 authorizationPoolId,
-        uint256 numberOfClaims,
+        uint256 maxNumberOfTokens,
         string memory uri
     ) internal onlyTerminusAdmin returns (uint256) {
         uint256 dropId = _createDrop(tokenType, tokenAddress, tokenId, amount, authorizationTokenAddress, authorizationPoolId, uri);
         LibDropper.DropperStorage storage ds = LibDropper.dropperStorage();
         ds.IsFlashDrop[dropId] = true;
-        ds.NumOfClaims[dropId] = numberOfClaims;
+        ds.maxNumberOfTokens[dropId] = maxNumberOfTokens;
         return dropId;
     }
 
@@ -332,6 +332,7 @@ contract DropperFacet is
                 amount,
                 ""
             );
+            amount =1; 
         } else if (claimToken.tokenType == TokenType.erc1155_type()) {
             IERC1155 erc1155Contract = IERC1155(claimToken.tokenAddress);
             erc1155Contract.safeTransferFrom(
@@ -358,9 +359,9 @@ contract DropperFacet is
             revert("Dropper: _claim -- Unknown token type in claim");
         }
 
-        ds.ClaimCount[dropId]++;
+        ds.ClaimCount[dropId] += amount;
         //FlashDrop makes drop inactive once ClaimCount hits it's limit
-        if(ds.NumOfClaims[dropId] == ds.ClaimCount[dropId] && ds.IsFlashDrop[dropId]){
+        if(ds.maxNumberOfTokens[dropId] == ds.ClaimCount[dropId] && ds.IsFlashDrop[dropId]){
             ds.IsDropActive[dropId] = false; 
         }
         ds.DropRequestClaimed[dropId][requestID] = true;
