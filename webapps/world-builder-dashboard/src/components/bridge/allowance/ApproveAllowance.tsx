@@ -50,9 +50,7 @@ const ApproveAllowance: React.FC<ApproveAllowanceProps> = ({ amount, balance, on
           <IconClose onClick={onClose} className={styles.closeButton} />
         </div>
         <div className={styles.supportingText}>
-          {allowanceProps.allowance && allowanceProps.allowance > 0
-            ? 'We need permission for higher token allowances in order to facilitate this transaction.'
-            : 'Our contracts need permission to interact with your tokens on your behalf.'}
+          We need permission for token allowances in order to facilitate transactions.
         </div>
         <div className={styles.divider} />
       </div>
