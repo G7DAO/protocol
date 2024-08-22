@@ -26,8 +26,9 @@ library LibDropper {
         mapping(uint256 => TerminusAuthorization) DropAuthorizations;
         mapping(uint256 => DroppableToken) DropToken;
         mapping(uint256 => string) DropURI;
+        //Flash Drop Mappings
         mapping(uint256 => bool) IsFlashDrop;
-        mapping(uint256 => uint256) maxNumberOfTokens;
+        mapping(uint256 => uint256) MaxNumberOfTokens;
         mapping(uint256 => uint256) ClaimCount;
         // dropID => requestID => true if claimed and false if not
         mapping(uint256 => mapping(uint256 => bool)) DropRequestClaimed;

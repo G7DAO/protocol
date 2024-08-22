@@ -124,11 +124,11 @@ contract DropperFacet is
         uint256 authorizationPoolId,
         uint256 maxNumberOfTokens,
         string memory uri
-    ) internal onlyTerminusAdmin returns (uint256) {
+    ) external onlyTerminusAdmin returns (uint256) {
         uint256 dropId = _createDrop(tokenType, tokenAddress, tokenId, amount, authorizationTokenAddress, authorizationPoolId, uri);
         LibDropper.DropperStorage storage ds = LibDropper.dropperStorage();
         ds.IsFlashDrop[dropId] = true;
-        ds.maxNumberOfTokens[dropId] = maxNumberOfTokens;
+        ds.MaxNumberOfTokens[dropId] = maxNumberOfTokens;
         return dropId;
     }
 
@@ -141,7 +141,7 @@ contract DropperFacet is
         address authorizationTokenAddress,
         uint256 authorizationPoolId,
         string memory uri
-    ) internal onlyTerminusAdmin returns (uint256) {
+    ) external onlyTerminusAdmin returns (uint256) {
         return _createDrop(tokenType, tokenAddress, tokenId, amount, authorizationTokenAddress, authorizationPoolId, uri);
         
     }
@@ -216,7 +216,7 @@ contract DropperFacet is
     ) external onlyTerminusAdmin {
         LibDropper.DropperStorage storage ds = LibDropper.dropperStorage();
         if(ds.IsFlashDrop[dropId] && status){
-            status = ds.maxNumberOfTokens[dropId] > ds.ClaimCount[dropId] ? status : false;
+            status = ds.MaxNumberOfTokens[dropId] > ds.ClaimCount[dropId] ? status : false;
         }
         ds.IsDropActive[dropId] = status;
         emit DropStatusChanged(dropId, status);
@@ -364,7 +364,7 @@ contract DropperFacet is
 
         ds.ClaimCount[dropId] += amount;
         //FlashDrop makes drop inactive once ClaimCount hits it's limit
-        if(ds.maxNumberOfTokens[dropId] == ds.ClaimCount[dropId] && ds.IsFlashDrop[dropId]){
+        if(ds.MaxNumberOfTokens[dropId] == ds.ClaimCount[dropId] && ds.IsFlashDrop[dropId]){
             ds.IsDropActive[dropId] = false; 
         }
         ds.DropRequestClaimed[dropId][requestID] = true;
