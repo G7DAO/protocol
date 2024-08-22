@@ -52,13 +52,15 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount }: AllowanceSe
 
       <Combobox.Dropdown className={styles.dropdownContainer}>
         <Combobox.Options>
-          {[25, 50, 75, 100].map((n) => (
-            <Combobox.Option className={styles.optionContainer} value={String((balance * n) / 100)} key={n}>
-              <div className={styles.optionPercent}>{`${n}%`}</div>
-              <div className={styles.optionValue}>{(balance * n) / 100}</div>
-              {allowance === (balance * n) / 100 && <IconCheck />}
-            </Combobox.Option>
-          ))}
+          {[25, 50, 75, 100]
+            .filter((n) => (n * balance) / 100 >= amount)
+            .map((n) => (
+              <Combobox.Option className={styles.optionContainer} value={String((balance * n) / 100)} key={n}>
+                <div className={styles.optionPercent}>{`${n}%`}</div>
+                <div className={styles.optionValue}>{(balance * n) / 100}</div>
+                {allowance === (balance * n) / 100 && <IconCheck />}
+              </Combobox.Option>
+            ))}
         </Combobox.Options>
       </Combobox.Dropdown>
     </Combobox>
