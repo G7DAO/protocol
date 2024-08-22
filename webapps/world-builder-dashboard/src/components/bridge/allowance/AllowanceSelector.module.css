@@ -1,8 +1,12 @@
-.container {
-    padding: 0 0 0 14px;
+.container, .containerDisabled {
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 13px;
 
     border-radius: 8px;
-    border: 1px solid var(--Gray-100, #F2F4F7);
+    border: 1px solid #F2F4F7;
     background: var(--Base-White, #FFF);
     color: var(--Gray-700, #344054);
 
@@ -11,7 +15,21 @@
     font-size: 14px;
     font-style: normal;
     line-height: 20px; /* 142.857% */
-    position: relative;
+    /*position: relative;*/
+    width: 100%;
+    cursor: pointer;
+}
+
+.container:hover {
+    background: var(--Gray-50, #F9FAFB);
+}
+
+.containerDisabled {
+    cursor: not-allowed;
+}
+
+.value {
+    flex: 1;
 }
 
 .rightSection {
