@@ -67,7 +67,8 @@ const ApproveAllowance: React.FC<ApproveAllowanceProps> = ({ amount, balance, on
           </div>
         </div>
         <div className={styles.hintText}>
-          {`You have ${allowanceProps.allowance} tokens allowed but need ${amount} allowed. Please select an amount you are comfortable with.`}
+          Set token limit to allow the bridge contract to perform token transfers on your behalf. It cannot move funds
+          without your permission.
         </div>
       </div>
       <button className={styles.approveButton} onClick={handleApprove}>
