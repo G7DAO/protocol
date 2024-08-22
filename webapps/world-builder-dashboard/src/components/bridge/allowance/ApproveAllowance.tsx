@@ -63,6 +63,7 @@ const ApproveAllowance: React.FC<ApproveAllowanceProps> = ({ amount, balance, on
               amount={amount}
               onChange={(value) => setNewAllowance(String(value))}
               allowance={Number(newAllowance)}
+              disabled={approveAllowance.isLoading}
             />
           </div>
         </div>
@@ -71,7 +72,7 @@ const ApproveAllowance: React.FC<ApproveAllowanceProps> = ({ amount, balance, on
           without your permission.
         </div>
       </div>
-      <button className={styles.approveButton} onClick={handleApprove}>
+      <button className={styles.approveButton} onClick={handleApprove} disabled={approveAllowance.isLoading}>
         {approveAllowance.isLoading ? 'Approving...' : approveAllowance.isSuccess ? 'Allowance approved' : 'Approve'}
       </button>
     </div>
