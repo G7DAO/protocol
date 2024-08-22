@@ -215,6 +215,9 @@ contract DropperFacet is
         bool status
     ) external onlyTerminusAdmin {
         LibDropper.DropperStorage storage ds = LibDropper.dropperStorage();
+        if(ds.IsFlashDrop[dropId] && status){
+            status = ds.maxNumberOfTokens[dropId] > ds.ClaimCount[dropId] ? status : false;
+        }
         ds.IsDropActive[dropId] = status;
         emit DropStatusChanged(dropId, status);
     }
