@@ -129,7 +129,7 @@
     flex: 1 0 0;
 
     border-radius: 8px;
-    border: 1px solid var(--Primary-600, #EF233B);
+    border: none;
     background: var(--Primary-600, #EF233B);
 
     /* Shadow/xs */
@@ -143,5 +143,25 @@
     line-height: 20px; /* 142.857% */
     margin-top: 24px;
     align-self: stretch;
+}
+
+.approveButton:disabled {
+    cursor: not-allowed;
+}
+
+.approveButtonLabel, .approveButtonLabelLoading {
+    color: var(--Base-White, #ffffff);
+
+    /* Text sm/Semibold */
+
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 20px; /* 142.857% */
+    text-transform: capitalize;
+}
+
+.approveButtonLabelLoading {
+    opacity: 0.7;
 }
 
