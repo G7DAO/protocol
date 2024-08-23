@@ -7,20 +7,23 @@ import { StakingPool, Position } from "./data.sol";
 import "./SVGGenerate.sol";
 
 contract PositionMetadata {
+
     function metadataBytes(
         uint256 positionTokenID,
         Position memory position,
         StakingPool memory pool
     ) public pure returns (bytes memory) {
         // encode the image
-        string memory image = Base64.encode(bytes(generateSVGImage()));
-        bytes memory result = abi.encodePacked(
+        string memory image = Base64.encode(bytes(SVGGenerate.generateSVG(positionTokenID, position, pool)));
+        bytes memory result = bytes(
+            abi.encodePacked(
             '{"token_id":"',
             Strings.toString(positionTokenID),
             '","image": "',
             'data:image/svg+xml;base64,',
             image,
             ',"result_version":1,"attributes": ['
+        )
         );
 
         result = abi.encodePacked(result, '{"trait_type":"Pool ID","value":"', Strings.toString(position.poolID), '"}');
@@ -77,8 +80,4 @@ contract PositionMetadata {
             );
     }
     
-    // todo: add position params later
-    function generateSVGImage() internal pure returns (string memory svg) {
-        return SVGGenerate.generateSVG();
-    }
 }
