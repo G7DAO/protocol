@@ -58,11 +58,17 @@ bindings/Terminus/Terminus.go: hardhat
 	mkdir -p bindings/Terminus/TerminusInitializer
 	seer evm generate --package TerminusInitializer --output bindings/Terminus/TerminusInitializer/TerminusInitializer.go --hardhat web3/artifacts/contracts/terminus/TerminusInitializer.sol/TerminusInitializer.json --cli --struct TerminusInitializer
 
-bindings/DropperV2/DropperV2.go: hardhat
-	mkdir -p bindings/DropperV2
-	seer evm generate --package DropperFacet --output bindings/DropperV2/DropperFacet.go --hardhat web3/artifacts/contracts/dropperv2/DropperFacet.sol/DropperFacet.json --cli --struct DropperFacet	
+bindings/Dropper/DropperV2.go: hardhat
+	mkdir -p bindings/Dropper/DropperV2
+	seer evm generate --package DropperFacet --output bindings/Dropper/DropperV2/DropperFacet.go --hardhat web3/artifacts/contracts/dropperv2/DropperFacet.sol/DropperFacet.json --cli --struct DropperFacet	
 
-bindings: bindings/ERC20/ERC20.go bindings/TokenFaucet/TokenFaucet.go bindings/WrappedNativeToken/WrappedNativeToken.go bindings/Staker/Staker.go bindings/MockERC20/MockERC20.go bindings/MockERC721/MockERC721.go bindings/MockERC1155/MockERC1155.go bindings/Diamond/Diamond.go bindings/Terminus/Terminus.go bindings/DropperV2/DropperV2.go
+bindings/Dropper/DropperV3.go: hardhat
+	mkdir -p bindings/Dropper/DropperV3
+	seer evm generate --package DropperV3Facet --output bindings/Dropper/DropperV3/DropperV3Facet.go --hardhat web3/artifacts/contracts/dropper-V3/DropperV3Facet.sol/DropperV3Facet.json --cli --struct DropperV3Facet	
+	
+
+
+bindings: bindings/ERC20/ERC20.go bindings/TokenFaucet/TokenFaucet.go bindings/WrappedNativeToken/WrappedNativeToken.go bindings/Staker/Staker.go bindings/MockERC20/MockERC20.go bindings/MockERC721/MockERC721.go bindings/MockERC1155/MockERC1155.go bindings/Diamond/Diamond.go bindings/Terminus/Terminus.go bindings/Dropper/DropperV2.go bindings/Dropper/DropperV3.go
 
 test-web3:
 	cd web3 && npx hardhat test
@@ -73,7 +79,7 @@ test-graffiti:
 test: test-web3 test-graffiti
 
 clean:
-	rm -rf bindings/ERC20/* bin/* bindings/TokenFaucet/* bindings/WrappedNativeToken/* bindings/Staker/* bindings/MockERC20/* bindings/MockERC721/* bindings/MockERC1155/* bindings/Diamond/* bindings/Terminus/* bindings/DropperV2/*
+	rm -rf bindings/ERC20/* bin/* bindings/TokenFaucet/* bindings/WrappedNativeToken/* bindings/Staker/* bindings/MockERC20/* bindings/MockERC721/* bindings/MockERC1155/* bindings/Diamond/* bindings/Terminus/* bindings/Dropper
 
 clean-web3:
 	rm -rf web3/node_modules web3/artifacts

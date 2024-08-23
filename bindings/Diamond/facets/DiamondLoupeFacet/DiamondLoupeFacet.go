@@ -472,6 +472,86 @@ func CreateDiamondLoupeFacetDeploymentCommand() *cobra.Command {
 	return cmd
 }
 
+func CreateFacetAddressCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var functionSelector [4]byte
+	var functionSelectorRaw string
+
+	var capture0 common.Address
+
+	cmd := &cobra.Command{
+		Use:   "facet-address",
+		Short: "Call the FacetAddress view method on a DiamondLoupeFacet contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			var functionSelectorIntermediate []byte
+
+			var functionSelectorIntermediateHexDecodeErr error
+			functionSelectorIntermediate, functionSelectorIntermediateHexDecodeErr = hex.DecodeString(functionSelectorRaw)
+			if functionSelectorIntermediateHexDecodeErr != nil {
+				return functionSelectorIntermediateHexDecodeErr
+			}
+
+			copy(functionSelector[:], functionSelectorIntermediate)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewDiamondLoupeFacet(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := DiamondLoupeFacetCallerSession{
+				Contract: &contract.DiamondLoupeFacetCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.FacetAddress(
+				functionSelector,
+			)
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0.Hex())
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	cmd.Flags().StringVar(&functionSelectorRaw, "function-selector", "", "function-selector argument ([4]byte)")
+
+	return cmd
+}
 func CreateFacetAddressesCommand() *cobra.Command {
 	var contractAddressRaw, rpc string
 	var contractAddress common.Address
@@ -755,86 +835,6 @@ func CreateSupportsInterfaceCommand() *cobra.Command {
 
 	return cmd
 }
-func CreateFacetAddressCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var functionSelector [4]byte
-	var functionSelectorRaw string
-
-	var capture0 common.Address
-
-	cmd := &cobra.Command{
-		Use:   "facet-address",
-		Short: "Call the FacetAddress view method on a DiamondLoupeFacet contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			var functionSelectorIntermediate []byte
-
-			var functionSelectorIntermediateHexDecodeErr error
-			functionSelectorIntermediate, functionSelectorIntermediateHexDecodeErr = hex.DecodeString(functionSelectorRaw)
-			if functionSelectorIntermediateHexDecodeErr != nil {
-				return functionSelectorIntermediateHexDecodeErr
-			}
-
-			copy(functionSelector[:], functionSelectorIntermediate)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewDiamondLoupeFacet(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := DiamondLoupeFacetCallerSession{
-				Contract: &contract.DiamondLoupeFacetCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.FacetAddress(
-				functionSelector,
-			)
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0.Hex())
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	cmd.Flags().StringVar(&functionSelectorRaw, "function-selector", "", "function-selector argument ([4]byte)")
-
-	return cmd
-}
 
 var ErrNoRPCURL error = errors.New("no RPC URL provided -- please pass an RPC URL from the command line or set the DIAMOND_LOUPE_FACET_RPC_URL environment variable")
 
@@ -970,6 +970,9 @@ func CreateDiamondLoupeFacetCommand() *cobra.Command {
 	cmdDeployDiamondLoupeFacet.GroupID = DeployGroup.ID
 	cmd.AddCommand(cmdDeployDiamondLoupeFacet)
 
+	cmdViewFacetAddress := CreateFacetAddressCommand()
+	cmdViewFacetAddress.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewFacetAddress)
 	cmdViewFacetAddresses := CreateFacetAddressesCommand()
 	cmdViewFacetAddresses.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewFacetAddresses)
@@ -982,9 +985,6 @@ func CreateDiamondLoupeFacetCommand() *cobra.Command {
 	cmdViewSupportsInterface := CreateSupportsInterfaceCommand()
 	cmdViewSupportsInterface.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewSupportsInterface)
-	cmdViewFacetAddress := CreateFacetAddressCommand()
-	cmdViewFacetAddress.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewFacetAddress)
 
 	return cmd
 }

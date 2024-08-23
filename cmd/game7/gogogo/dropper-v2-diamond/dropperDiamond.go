@@ -1,4 +1,4 @@
-package dropperGogogo
+package dropperV2Gogogo
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 	"github.com/G7DAO/protocol/bindings/Diamond/facets/DiamondCutFacet"
 	"github.com/G7DAO/protocol/bindings/Diamond/facets/DiamondLoupeFacet"
 	"github.com/G7DAO/protocol/bindings/Diamond/facets/OwnershipFacet"
-	DropperFacet "github.com/G7DAO/protocol/bindings/DropperV2"
+	DropperFacet "github.com/G7DAO/protocol/bindings/Dropper/DropperV2"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"

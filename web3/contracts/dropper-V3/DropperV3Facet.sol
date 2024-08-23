@@ -29,7 +29,7 @@ import "../libraries/TokenType.sol";
  * @author Game7 World Builder team: worldbuilder - at - game7.io
  * @notice This contract manages drops for Native Tokens, ERC20, ERC1155, and ERC721 tokens.
  */
-contract DropperFacet is
+contract DropperV3Facet is
     ERC721Holder,
     ERC1155Holder,
     TerminusPermissions,
