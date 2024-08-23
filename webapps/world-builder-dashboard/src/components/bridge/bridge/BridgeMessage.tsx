@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styles from './BridgeMessage.module.css'
 import { ethers } from 'ethers'
 import { Tooltip } from 'summon-ui/mantine'
@@ -10,10 +10,17 @@ interface BridgeMessageProps {
   setMessage: (arg0: { destination?: string; data?: string }) => void
   errors: { data: string; destination: string }
   setErrors: (arg0: { data?: string; destination?: string }) => void
+  isExpanded: boolean
+  setIsExpanded: (arg0: boolean) => void
 }
-const BridgeMessage: React.FC<BridgeMessageProps> = ({ message, setMessage, errors, setErrors }) => {
-  const [isExpanded, setIsExpanded] = useState(false)
-
+const BridgeMessage: React.FC<BridgeMessageProps> = ({
+  message,
+  setMessage,
+  errors,
+  setErrors,
+  isExpanded,
+  setIsExpanded
+}) => {
   const handleDataChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newData = e.target.value
     if (!newData || /^0x[0-9a-fA-F]+$/.test(newData)) {
