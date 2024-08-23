@@ -13,13 +13,16 @@ const useERC20Balance = ({ tokenAddress, account, rpc }: UseERC20BalanceProps) =
     ['ERC20Balance', tokenAddress, account, rpc],
     async () => {
       if (!account || tokenAddress === ethers.constants.AddressZero) {
-        return '0'
+        return { formatted: '0', raw: ethers.BigNumber.from('0') }
       }
       const provider = new ethers.providers.JsonRpcProvider(rpc)
       const ERC20Contract = new ethers.Contract(tokenAddress, ERC20_ABI, provider)
 
       const balance = await ERC20Contract.balanceOf(account)
-      return ethers.utils.formatEther(balance)
+      return {
+        formatted: ethers.utils.formatEther(balance),
+        raw: balance // BigNumber
+      }
     },
     {
       refetchInterval: 50000,
