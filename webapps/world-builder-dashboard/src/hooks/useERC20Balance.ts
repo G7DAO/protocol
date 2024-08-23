@@ -51,15 +51,13 @@ export const useERC20Allowance = ({ tokenAddress, owner, spender, rpc }: UseERC2
 
 export const fetchERC20Allowance = async ({ tokenAddress, owner, spender, rpc }: UseERC20AllowanceProps) => {
   if (!owner || !spender || tokenAddress === ethers.constants.AddressZero) {
-    return 0
+    return { formatted: '0', raw: ethers.BigNumber.from('0') }
   }
   const provider = new ethers.providers.JsonRpcProvider(rpc)
   const ERC20Contract = new ethers.Contract(tokenAddress, ERC20_ABI, provider)
-
   const allowance = await ERC20Contract.allowance(owner, spender)
-  const bigNumberValue = ethers.BigNumber.from(allowance._hex)
-  const decimalString = ethers.utils.formatUnits(bigNumberValue, 18)
-  return parseFloat(decimalString)
+
+  return { formatted: ethers.utils.formatUnits(allowance, 18), raw: allowance }
 }
 
 export default useERC20Balance
