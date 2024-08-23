@@ -1,13 +1,15 @@
 import styles from './AllowanceSelector.module.css'
+import { ethers } from 'ethers'
 import { Combobox, useCombobox } from 'summon-ui/mantine'
 import IconCheck from '@/assets/IconCheck'
 import IconChevronDown from '@/assets/IconChevronDown'
+import { formatBigNumber } from '@/utils/web3utils'
 
 type AllowanceSelectorProps = {
-  balance: number
-  onChange: (newAllowance: number) => void
-  allowance: number
-  amount: number
+  balance: ethers.BigNumber
+  onChange: (newAllowance: ethers.BigNumber) => void
+  allowance: ethers.BigNumber
+  amount: ethers.BigNumber
   disabled: boolean
 }
 
@@ -21,7 +23,12 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled }: A
       store={combobox}
       variant='unstyled'
       onOptionSubmit={(val: string) => {
-        onChange(Number(val))
+        const amountInWei = ethers.utils.parseUnits(val, 18)
+        try {
+          onChange(ethers.BigNumber.from(amountInWei))
+        } catch (e) {
+          console.log(e)
+        }
         combobox.closeDropdown()
       }}
       disabled={disabled}
@@ -31,7 +38,7 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled }: A
           className={disabled ? styles.containerDisabled : styles.container}
           onClick={() => combobox.toggleDropdown()}
         >
-          <div className={styles.value}>{allowance}</div>
+          <div className={styles.value}>{formatBigNumber(allowance)}</div>
           <button
             className={styles.minButton}
             onClick={(e) => {
@@ -49,12 +56,16 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled }: A
       <Combobox.Dropdown className={styles.dropdownContainer}>
         <Combobox.Options>
           {[25, 50, 75, 100]
-            .filter((n) => (n * balance) / 100 >= amount)
-            .map((n) => (
-              <Combobox.Option className={styles.optionContainer} value={String((balance * n) / 100)} key={n}>
+            .map((n) => {
+              const percentage = balance.mul(ethers.BigNumber.from(n)).div(ethers.BigNumber.from(100))
+              return { n, percentage }
+            })
+            .filter(({ percentage }) => percentage.gt(amount))
+            .map(({ n, percentage }) => (
+              <Combobox.Option className={styles.optionContainer} value={ethers.utils.formatEther(percentage)} key={n}>
                 <div className={styles.optionPercent}>{`${n}%`}</div>
-                <div className={styles.optionValue}>{(balance * n) / 100}</div>
-                {allowance === (balance * n) / 100 && <IconCheck />}
+                <div className={styles.optionValue}>{formatBigNumber(percentage)}</div>
+                {allowance.eq(percentage) && <IconCheck />}
               </Combobox.Option>
             ))}
         </Combobox.Options>

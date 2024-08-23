@@ -26,6 +26,7 @@ import useERC20Balance from '@/hooks/useERC20Balance'
 import useEthUsdRate from '@/hooks/useEthUsdRate'
 import useNativeBalance from '@/hooks/useNativeBalance'
 import { DepositDirection } from '@/pages/BridgePage/BridgePage'
+import { estimateOutboundTransferGas } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { estimateDepositERC20ToNativeFee } from '@/utils/bridge/depositERC20ToNative'
 import { getStakeNativeTxData } from '@/utils/bridge/stakeContractInfo'
 import { estimateWithdrawFee } from '@/utils/bridge/withdrawNativeToken'
@@ -76,12 +77,25 @@ const BridgeView = ({
     }
     let est
     if (direction === 'DEPOSIT') {
-      est = await estimateDepositERC20ToNativeFee(
-        value,
-        MAX_ALLOWANCE_ACCOUNT,
-        selectedLowNetwork,
-        selectedHighNetwork as HighNetworkInterface
-      )
+      if (selectedLowNetwork.chainId === L1_NETWORK.chainId) {
+        const provider = new ethers.providers.JsonRpcProvider(L1_NETWORK.rpcs[0])
+        const estimation = await estimateOutboundTransferGas(
+          selectedHighNetwork.routerSpender ?? '',
+          selectedLowNetwork.g7TokenAddress,
+          MAX_ALLOWANCE_ACCOUNT,
+          ethers.utils.parseEther(value),
+          '0x',
+          provider
+        )
+        est = estimation.fee
+      } else {
+        est = await estimateDepositERC20ToNativeFee(
+          value,
+          MAX_ALLOWANCE_ACCOUNT,
+          selectedLowNetwork,
+          selectedHighNetwork as HighNetworkInterface
+        )
+      }
     } else {
       est = await estimateWithdrawFee(value, connectedAccount, selectedLowNetwork)
     }
@@ -169,8 +183,9 @@ const BridgeView = ({
         setValue={setValue}
         balance={
           direction === 'DEPOSIT'
-            ? lowNetworkBalance ?? '0'
-            : (selectedHighNetwork.chainId === L3_NETWORK.chainId ? l3NativeBalance : highNetworkBalance) ?? '0'
+            ? lowNetworkBalance?.formatted ?? '0'
+            : (selectedHighNetwork.chainId === L3_NETWORK.chainId ? l3NativeBalance : highNetworkBalance?.formatted) ??
+              '0'
         }
         rate={g7tUsdRate.data ?? 0}
         isFetchingBalance={
@@ -219,7 +234,7 @@ const BridgeView = ({
       {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
       <ActionButton
         direction={direction}
-        amount={value}
+        amount={isNaN(Number(value)) ? 0 : Number(value)}
         isDisabled={!!inputErrorMessages.value || !!inputErrorMessages.destination || !!inputErrorMessages.data}
         setErrorMessage={setNetworkErrorMessage}
         L2L3message={message}
