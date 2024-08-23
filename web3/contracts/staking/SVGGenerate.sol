@@ -50,6 +50,7 @@ library SVGGenerate {
             : pool.tokenType == 721
             ? "ERC721"
             : "ERC1155";
+
         svg = string(
             abi.encodePacked(
                 '<svg width="1840" height="1920" viewBox="0 0 2000 2000" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">',
@@ -103,7 +104,7 @@ library SVGGenerate {
                 '<rect x="241" y="1461.5" width="126" height="48" rx="21" fill="#18181B" fill-opacity="0.8"/>',
                 '<rect x="241" y="1461.5" width="126" height="48" rx="21" stroke="#737373" stroke-width="2"/>',
                 '<text fill="#FFEFB8" xml:space="preserve" style="white-space: pre" font-family="\'Inter\'" font-size="28" font-weight="bold" letter-spacing="0em"><tspan x="260" y="1495.68">',tokenTypeString,'</tspan></text>',
-                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="\'Inter\'" font-size="32" letter-spacing="0em"><tspan x="388" y="1477.77">', poolIdString, '</tspan><tspan x="388" y="1516.77">9639935</tspan></text>',
+                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="\'Inter\'" font-size="32" letter-spacing="0em"><tspan x="388" y="1477.77">', poolIdString, '</tspan></text>',
                 '</g>',
                 '<rect x="122" y="82" width="1756" height="1836" rx="78" stroke="url(#paint3_linear_1689_1102)" stroke-width="4"/>',
                 '</g>',
