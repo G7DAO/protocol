@@ -1,6 +1,7 @@
 import styles from './AllowanceSelector.module.css'
 import { ethers } from 'ethers'
-import { Combobox, useCombobox } from 'summon-ui/mantine'
+import { Combobox, Tooltip, useCombobox } from 'summon-ui/mantine'
+import IconAlertCircle from '@/assets/IconAlertCircle'
 import IconCheck from '@/assets/IconCheck'
 import IconChevronDown from '@/assets/IconChevronDown'
 import { formatBigNumber } from '@/utils/web3utils'
@@ -68,6 +69,20 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled }: A
                 {allowance.eq(percentage) && <IconCheck />}
               </Combobox.Option>
             ))}
+          <Combobox.Option
+            className={styles.optionContainer}
+            value={ethers.utils.formatEther(ethers.constants.MaxUint256)}
+          >
+            <div className={styles.optionPercent}>Infinite</div>
+            <div className={styles.optionValue}>
+              (Testnet Only)
+              <Tooltip arrowSize={8} radius={'8px'} label={'For developers and testnet purposes only.'} withArrow>
+                <IconAlertCircle className={styles.chevron} />
+              </Tooltip>
+            </div>
+
+            {allowance.eq(ethers.constants.MaxUint256) && <IconCheck />}
+          </Combobox.Option>
         </Combobox.Options>
       </Combobox.Dropdown>
     </Combobox>
