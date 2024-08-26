@@ -69,11 +69,7 @@ library SVGGenerate {
                 '<g filter="url(#filter1_d_1689_1102)">',
                 '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="\'Inter\'" font-size="380" font-weight="800" letter-spacing="-0.04em"><tspan x="447.124" y="583.682">G7</tspan></text>',
                 '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="\'Inter\'" font-size="380" letter-spacing="-0.04em"><tspan x="220" y="583.682">$</tspan></text>',
-                '<rect x="1655" y="181" width="127" height="48" rx="21" fill="#FFEFB8" fill-opacity="0.4"/>',
-                '<rect x="1655" y="181" width="127" height="48" rx="21" stroke="#737373" stroke-width="2"/>',
-                '<text fill="#FFEFB8" xml:space="preserve" style="white-space: pre" font-family="\'Inter\'" font-size="28" font-weight="bold" letter-spacing="0em"><tspan x="1674" y="215.182">',
-                poolAdminString,
-                "</tspan></text>",
+                generateAdminElement(poolAdminString),
                 "</g>",
                 '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="\'Inter\'" font-size="58.7383" font-weight="800" letter-spacing="0.01em"><tspan x="220" y="1756.22">FORK THE WORLD.</tspan></text>',
                 '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="\'Inter\'" font-size="58.7383" font-weight="800" letter-spacing="0.01em"><tspan x="220" y="1811.22">OWN THE FUTURE.</tspan></text>',
@@ -128,5 +124,40 @@ library SVGGenerate {
                 "</svg>"
             )
         );
+    }
+
+    function generateAdminElement(string memory poolAdminString) public pure returns (string memory) {
+        uint256 averageCharWidth = 16;
+        uint256 horizontalPadding = 20;
+        uint256 paddingFromBorder = 96;
+
+        // calculate correct rect width from text width and find center of text
+        uint256 textWidth = bytes(poolAdminString).length * averageCharWidth;
+        uint256 rectWidth = textWidth + (horizontalPadding * 2);
+        uint256 textY = 181 + (48 / 2) + (28 / 2) - 4;
+
+        // Build SVG string with minimal variables
+        return
+            string(
+                abi.encodePacked(
+                    '<rect x="',
+                    (rectWidth - horizontalPadding).toString(),
+                    '" y="181" width="',
+                    rectWidth.toString(),
+                    '" height="48" rx="21" fill="#FFEFB8" fill-opacity="0.4"/>',
+                    '<rect x="',
+                    (rectWidth - horizontalPadding).toString(),
+                    '" y="181" width="',
+                    rectWidth.toString(),
+                    '" height="48" rx="21" stroke="#737373" stroke-width="2"/>',
+                    '<text x="',
+                    (textWidth + horizontalPadding + 15).toString(),
+                    '" y="',
+                    textY.toString(),
+                    '" fill="#FFEFB8" font-family="Inter, sans-serif" font-size="28" font-weight="bold">',
+                    poolAdminString,
+                    "</text>"
+                )
+            );
     }
 }
