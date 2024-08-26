@@ -1,8 +1,12 @@
-.container {
-    padding: 0 0 0 14px;
+.container, .containerDisabled {
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 13px;
 
     border-radius: 8px;
-    border: 1px solid var(--Gray-100, #F2F4F7);
+    border: 1px solid #F2F4F7;
     background: var(--Base-White, #FFF);
     color: var(--Gray-700, #344054);
 
@@ -11,7 +15,20 @@
     font-size: 14px;
     font-style: normal;
     line-height: 20px; /* 142.857% */
-    position: relative;
+    width: 100%;
+    cursor: pointer;
+}
+
+.container:hover {
+    background: var(--Gray-50, #F9FAFB);
+}
+
+.containerDisabled {
+    cursor: not-allowed;
+}
+
+.value {
+    flex: 1;
 }
 
 .rightSection {
@@ -21,11 +38,7 @@
     position: relative;
 }
 
-.button {
-    position: absolute;
-    z-index: 300;
-    right: 50px;
-    top: 5px;
+.minButton {
     border: none;
     display: flex;
     padding: 4px 8px;
@@ -44,6 +57,19 @@
     line-height: 18px; /* 150% */
 }
 
+.minButton:disabled {
+    background: var(--Gray-600, #475467);
+    cursor: not-allowed;
+}
+
+.chevron {
+    stroke: var(--Gray-500, #667085);
+}
+
+.chevron:hover {
+    stroke: var(--Gray-600, #475467);
+}
+
 .optionContainer {
     display: flex;
     padding: 10px 10px 10px 8px !important;
@@ -54,8 +80,17 @@
     border-radius: 6px;
 }
 
+.optionContainer:hover {
+    background: var(--Gray-50, #F9FAFB) !important;
+}
+
 .dropdownContainer {
-    padding: 6px !important;
+    border-radius: 8px !important;
+    border: 1px solid var(--Gray-200, #EAECF0) !important;;
+    background: var(--Base-White, #FFF) !important;;
+
+    /* Shadow/lg */
+    box-shadow: 0 12px 16px -4px rgba(16, 24, 40, 0.08), 0 4px 6px -2px rgba(16, 24, 40, 0.03) !important;;
 }
 
 .optionPercent {
@@ -69,6 +104,9 @@
 }
 
 .optionValue {
+    display: flex;
+    gap: 8px;
+    align-items: center;
     color: var(--Gray-600, #475467);
 
     /* Text sm/Regular */

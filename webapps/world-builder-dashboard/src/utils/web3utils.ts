@@ -20,15 +20,31 @@ export const getNetwork = (chainId: number) => {
 }
 
 export const tokenTypes = [
-  { value: "1", label: "Native" },
-  { value: "20", label: "ERC20" },
-  { value: "721", label: "ERC721" },
-  { value: "1155", label: "ERC1155" }
-];
+  { value: '1', label: 'Native' },
+  { value: '20', label: 'ERC20' },
+  { value: '721', label: 'ERC721' },
+  { value: '1155', label: 'ERC1155' }
+]
 
-export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
-export const doesContractExist = async (address: string, provider: ethers.providers.Provider | null): Promise<boolean> => {
+export const doesContractExist = async (
+  address: string,
+  provider: ethers.providers.Provider | null
+): Promise<boolean> => {
   const smartContractCode = await provider?.getCode(address)
-  return smartContractCode !== "0x"
+  return smartContractCode !== '0x'
+}
+
+export const formatBigNumber = (bigNumber: ethers.BigNumber, lengthLimit = 25, units = 18) => {
+  const formattedString = ethers.utils.formatUnits(bigNumber, units)
+  if (formattedString.length < lengthLimit) {
+    return formattedString
+  }
+  const bigNumberString = bigNumber.toString()
+  const firstDigit = bigNumberString[0]
+  const remainingDigits = bigNumberString.slice(1, 3)
+  const exponent = bigNumberString.length - 1 - units
+
+  return `${firstDigit}.${remainingDigits}e+${exponent}`
 }

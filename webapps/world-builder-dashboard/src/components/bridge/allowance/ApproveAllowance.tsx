@@ -1,25 +1,33 @@
 import React, { useState } from 'react'
 import { useMutation } from 'react-query'
 import styles from './ApproveAllowance.module.css'
+import { ethers } from 'ethers'
 import IconClose from '@/assets/IconClose'
 import AllowanceSelector from '@/components/bridge/allowance/AllowanceSelector'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { ERC20AllowanceProps } from '@/types'
 import { approve } from '@/utils/bridge/approveERC20'
+import { formatBigNumber } from '@/utils/web3utils'
 
 interface ApproveAllowanceProps {
   onSuccess: () => void
   onClose: () => void
-  amount: number
-  balance: number
+  amount: ethers.BigNumber
+  balance: ethers.BigNumber
   allowanceProps: ERC20AllowanceProps
 }
 const ApproveAllowance: React.FC<ApproveAllowanceProps> = ({ amount, balance, onClose, onSuccess, allowanceProps }) => {
-  const [newAllowance, setNewAllowance] = useState(String(balance))
+  const [newAllowance, setNewAllowance] = useState(amount)
   const { getProvider } = useBlockchainContext()
 
   const approveAllowance = useMutation(
-    async ({ newAllowance, allowanceProps }: { newAllowance: string; allowanceProps: ERC20AllowanceProps }) => {
+    async ({
+      newAllowance,
+      allowanceProps
+    }: {
+      newAllowance: ethers.BigNumber
+      allowanceProps: ERC20AllowanceProps
+    }) => {
       const provider = await getProvider(allowanceProps.network)
       const signer = provider.getSigner()
       return approve(newAllowance, signer, allowanceProps.tokenAddress, allowanceProps.spender)
@@ -50,30 +58,32 @@ const ApproveAllowance: React.FC<ApproveAllowanceProps> = ({ amount, balance, on
           <IconClose onClick={onClose} className={styles.closeButton} />
         </div>
         <div className={styles.supportingText}>
-          {allowanceProps.allowance && allowanceProps.allowance > 0
-            ? 'We need permission for higher token allowances in order to facilitate this transaction.'
-            : 'Our contracts need permission to interact with your tokens on your behalf.'}
+          We need permission for token allowances in order to facilitate transactions.
         </div>
         <div className={styles.divider} />
       </div>
       <div className={styles.content}>
         <div className={styles.inputContainer}>
-          <div className={styles.inputLabel}>{`Allowance (${balance} Avail.)`}</div>
+          <div className={styles.inputLabel}>{`Allowance (${formatBigNumber(balance)} Avail.)`}</div>
           <div className={styles.inputRow}>
             <AllowanceSelector
               balance={balance}
               amount={amount}
-              onChange={(value) => setNewAllowance(String(value))}
-              allowance={Number(newAllowance)}
+              onChange={(value) => setNewAllowance(value)}
+              allowance={newAllowance}
+              disabled={approveAllowance.isLoading}
             />
           </div>
         </div>
         <div className={styles.hintText}>
-          {`You have ${allowanceProps.allowance} tokens allowed but need ${amount} allowed. Please select an amount you are comfortable with.`}
+          Set token limit to allow the bridge contract to perform token transfers on your behalf. It cannot move funds
+          without your permission.
         </div>
       </div>
-      <button className={styles.approveButton} onClick={handleApprove}>
-        {approveAllowance.isLoading ? 'Approving...' : approveAllowance.isSuccess ? 'Allowance approved' : 'Approve'}
+      <button className={styles.approveButton} onClick={handleApprove} disabled={approveAllowance.isLoading}>
+        <div className={approveAllowance.isLoading ? styles.approveButtonLabelLoading : styles.approveButtonLabel}>
+          {approveAllowance.isLoading ? 'Approving...' : approveAllowance.isSuccess ? 'Allowance approved' : 'Approve'}
+        </div>
       </button>
     </div>
   )
