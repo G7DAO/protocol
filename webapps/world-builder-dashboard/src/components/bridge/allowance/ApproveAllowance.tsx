@@ -81,7 +81,9 @@ const ApproveAllowance: React.FC<ApproveAllowanceProps> = ({ amount, balance, on
         </div>
       </div>
       <button className={styles.approveButton} onClick={handleApprove} disabled={approveAllowance.isLoading}>
-        {approveAllowance.isLoading ? 'Approving...' : approveAllowance.isSuccess ? 'Allowance approved' : 'Approve'}
+        <div className={approveAllowance.isLoading ? styles.approveButtonLabelLoading : styles.approveButtonLabel}>
+          {approveAllowance.isLoading ? 'Approving...' : approveAllowance.isSuccess ? 'Allowance approved' : 'Approve'}
+        </div>
       </button>
     </div>
   )
