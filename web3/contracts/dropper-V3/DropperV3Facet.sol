@@ -361,12 +361,16 @@ contract DropperV3Facet is
         } else {
             revert("Dropper: _claim -- Unknown token type in claim");
         }
-
+        
         ds.ClaimCount[dropId] += amount;
         //FlashDrop makes drop inactive once ClaimCount hits it's limit
-        if(ds.MaxNumberOfTokens[dropId] == ds.ClaimCount[dropId] && ds.IsFlashDrop[dropId]){
-            ds.IsDropActive[dropId] = false; 
+        if(ds.IsFlashDrop[dropId]){
+            require(ds.ClaimCount[dropId] <= ds.MaxNumberOfTokens[dropId], "FD: Claims exceed Tokens to distribute");
+            if(ds.MaxNumberOfTokens[dropId] == ds.ClaimCount[dropId]){
+                ds.IsDropActive[dropId] = false; 
         }
+        }
+
         ds.DropRequestClaimed[dropId][requestID] = true;
 
         emit Claimed(dropId, msg.sender, signer, requestID, amount);
