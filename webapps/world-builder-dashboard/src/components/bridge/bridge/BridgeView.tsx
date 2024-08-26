@@ -39,6 +39,7 @@ const BridgeView = ({
 }) => {
   const [value, setValue] = useState('0')
   const [message, setMessage] = useState<{ destination: string; data: string }>({ destination: '', data: '' })
+  const [isMessageExpanded, setIsMessageExpanded] = useState(false)
   const [inputErrorMessages, setInputErrorMessages] = useState({ value: '', data: '', destination: '' })
   const [networkErrorMessage, setNetworkErrorMessage] = useState('')
   const { isMessagingEnabled } = useUISettings()
@@ -185,6 +186,8 @@ const BridgeView = ({
       />
       {direction === 'DEPOSIT' && selectedLowNetwork.chainId === L2_NETWORK.chainId && isMessagingEnabled && (
         <BridgeMessage
+          isExpanded={isMessageExpanded}
+          setIsExpanded={setIsMessageExpanded}
           message={message}
           setMessage={(newMessage) => {
             setMessage((prev) => ({ ...prev, ...newMessage }))
@@ -222,7 +225,7 @@ const BridgeView = ({
         amount={value}
         isDisabled={!!inputErrorMessages.value || !!inputErrorMessages.destination || !!inputErrorMessages.data}
         setErrorMessage={setNetworkErrorMessage}
-        L2L3message={message}
+        L2L3message={isMessageExpanded ? message : { data: '', destination: '' }}
       />
     </div>
   )

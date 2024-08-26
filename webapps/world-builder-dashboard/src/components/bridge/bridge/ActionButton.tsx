@@ -241,7 +241,12 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
       <button
         className={styles.container}
         onClick={handleClick}
-        disabled={getLabel() === 'Submit' && (isDisabled || Number(amount) <= 0)}
+        disabled={
+          getLabel() === 'Submit' &&
+          (isDisabled ||
+            Number(amount) < 0 ||
+            ((!L2L3message?.destination || !L2L3message.data) && Number(amount) === 0))
+        }
       >
         <div
           className={
