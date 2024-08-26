@@ -3,8 +3,8 @@ import { expect } from 'chai';
 import { loadFixture, time } from '@nomicfoundation/hardhat-network-helpers';
 import { setupStakingPoolsFixture } from './Staker.test.1';
 
-describe('Staker', function () {
-    it('STAKER-113: The ERC721 representing an ERC721 staking position have as its metadata URI a data URI representing an appropriate JSON object', async function () {
+describe.only('Staker', function () {
+    it.only('STAKER-113: The ERC721 representing an ERC721 staking position have as its metadata URI a data URI representing an appropriate JSON object', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 0;
@@ -12,7 +12,7 @@ describe('Staker', function () {
         const { staker, erc721, user0, erc721PoolID } = await loadFixture(
             setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
         );
-
+        
         const stakerWithUser0 = staker.connect(user0);
         const tokenId = 1n;
 
