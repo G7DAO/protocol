@@ -55,7 +55,7 @@ library SVGGenerate {
             abi.encodePacked(
                 '<svg width="1840" height="1920" viewBox="0 0 2000 2000" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">',
                 '<style>',
-                '@import url(\'https://fonts.googleapis.com/css2?family=Inter&amp;display=swap\');',
+                '@import url(\'https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900&amp;1,14..32,100..900&amp;display=swap\');',
                 'text { font-family: \'Inter\', sans-serif; }',
                 '</style>',
                 '<g filter="url(#filter0_d_1689_1102)">',
