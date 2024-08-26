@@ -76,10 +76,7 @@ library SVGGenerate {
                 '<rect x="1668.77" y="1705.77" width="107.459" height="107.459" rx="53.7295" stroke="#CBCFCB" stroke-width="7.54098"/>',
                 '<path d="M1693.75 1741.59L1705.21 1759.03H1720.05L1716.68 1753.9H1727.38L1714.61 1773.35L1722.03 1784.64L1750.31 1741.59H1693.75Z" fill="#CBCFCB"/>',
                 '<path d="M1693.75 1741.59L1705.21 1759.03H1720.05L1716.68 1753.9H1727.38L1714.61 1773.35L1722.03 1784.64L1750.31 1741.59H1693.75Z" fill="#CBCFCB"/>',
-                '<rect x="221" y="873" width="1558" height="77" rx="19" fill="#CBCFCB" fill-opacity="0.2"/>',
-                '<rect x="221" y="873" width="1558" height="77" rx="19" stroke="#737373" stroke-width="2"/>',
-                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="\'Inter\'" font-size="32" font-weight="500" letter-spacing="0em"><tspan x="240" y="923.136">Token Address</tspan></text>',
-                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="\'Inter\'" font-size="32" letter-spacing="0em"><tspan x="959.125" y="923.136">0x9ed191DB1829371F116Deb9748c26B49467a592A</tspan></text>',
+                generateTokenAddressElement(poolAdminString),
                 '<rect x="221" y="998" width="1558" height="190" rx="19" fill="#18181B" fill-opacity="0.8"/>',
                 '<rect x="221" y="998" width="1558" height="190" rx="19" stroke="#737373" stroke-width="2"/>',
                 '<rect x="241" y="1018" width="248" height="48" rx="21" fill="#18181B" fill-opacity="0.8"/>',
@@ -157,6 +154,21 @@ library SVGGenerate {
                     '" fill="#FFEFB8" font-family="Inter, sans-serif" font-size="28" font-weight="bold">',
                     poolAdminString,
                     "</text>"
+                )
+            );
+    }
+
+    // very basic looking, may improve upon in the future
+    function generateTokenAddressElement(string memory tokenAddress) public pure returns (string memory) {
+        return
+            string(
+                abi.encodePacked(
+                    '<rect x="221" y="873" width="1558" height="77" rx="19" fill="#CBCFCB" fill-opacity="0.2"/>',
+                    '<rect x="221" y="873" width="1558" height="77" rx="19" stroke="#737373" stroke-width="2"/>',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Inter, sans-serif" font-size="32" font-weight="500" letter-spacing="0em"><tspan x="260" y="923.136">Token Address</tspan></text>',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Inter, sans-serif" font-size="32" letter-spacing="0em"><tspan x="1019" y="923.136">',
+                    tokenAddress,
+                    "</tspan></text>"
                 )
             );
     }
