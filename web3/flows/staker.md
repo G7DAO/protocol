@@ -308,7 +308,7 @@ any attempt they make to configure the pool should raise an error with signature
     error NonAdministrator();
 ```
 
-#### `STAKER-113`: A non-administrator (of any pool) should not be able to transfer administration of that pool to another account
+#### `STAKER-138`: A non-administrator (of any pool) should not be able to transfer administration of that pool to another account
 
 Any attempt should revert with
 
@@ -316,7 +316,7 @@ Any attempt should revert with
     error NonAdministrator();
 ```
 
-#### `STAKER-114`: A non-administrator of a staking pool should not be able to transfer administration of that pool to another account, even if they are an administrator of another pool
+#### `STAKER-139`: A non-administrator of a staking pool should not be able to transfer administration of that pool to another account, even if they are an administrator of another pool
 
 Any attempt should revert with
 

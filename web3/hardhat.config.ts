@@ -2,6 +2,7 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import * as dotenv from 'dotenv'
 import { ChainId, NetworkExplorer, NetworkName, rpcUrls } from "./constants/network";
+import "@nomicfoundation/hardhat-foundry";
 
 dotenv.config()
 

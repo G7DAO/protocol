@@ -83,7 +83,7 @@ describe("TokenFaucet", function () {
     const block = await receipt?.getBlock()
     const claimBlockTimestamp = block?.timestamp
     expect(await token.balanceOf(owner.address)).to.equal(faucetAmount);
-    expect(await tokenFaucet.lastClaimedTimestamp(owner.address)).to.equal(claimBlockTimestamp);
+    expect(await tokenFaucet.lastClaimedL2Timestamp(owner.address)).to.equal(claimBlockTimestamp);
   });
 
   it("Should NOT allow claiming tokens if time interval not passed", async function () {

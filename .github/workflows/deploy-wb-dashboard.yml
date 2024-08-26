@@ -1,7 +1,7 @@
 on:
     push:
       branches:
-        - wallet-address
+        - main
       paths:
         - 'webapps/world-builder-dashboard/**'
 
@@ -10,10 +10,10 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - name: Checkout repository and wallet-address branch
+            - name: Checkout repository and main branch
               uses: actions/checkout@v2
               with:
-                  ref: wallet-address
+                  ref: main
 
             - name: Set up node.js
               uses: actions/setup-node@v3
