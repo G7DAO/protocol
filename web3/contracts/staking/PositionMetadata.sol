@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 // OZ imports
 import { Base64 } from "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "hardhat/console.sol";
 
 // Internal imports
 import { StakingPool, Position } from "./data.sol";
@@ -104,11 +105,11 @@ contract PositionMetadata {
     ) private pure returns (string memory svg) {
         string memory tokenAmountOrIdString = pool.tokenType == 721 ? "Token ID" : "Amount staked";
         string memory poolAdminString = Strings.toHexString(uint256(uint160(pool.administrator)), 20);
-        string memory amountOrTokenIDString = position.amountOrTokenID.toString();
-        string memory stakeTimestampStr = position.stakeTimestamp.toString();
+        string memory amountOrTokenIDString = (position.amountOrTokenID).toString();
+        string memory stakeTimestampStr = (position.stakeTimestamp).toString();
         string memory unlockTimestampStr = (position.unstakeInitiatedAt + pool.lockupSeconds).toString();
-        string memory cooldownStr = pool.cooldownSeconds.toString();
-        string memory poolIdString = (position.amountOrTokenID).toString();
+        string memory cooldownStr = (pool.cooldownSeconds).toString();
+        string memory poolIdString = (position.poolID).toString();
         string memory tokenTypeString = pool.tokenType == 1
             ? "Native"
             : pool.tokenType == 20
@@ -169,10 +170,7 @@ contract PositionMetadata {
                 "</tspan></text>",
                 '<rect x="221" y="1429" width="1558" height="113" rx="19" fill="#18181B" fill-opacity="0.8"/>',
                 '<rect x="221" y="1429" width="1558" height="113" rx="19" stroke="#737373" stroke-width="2"/>',
-                generateTokenTypeElement(tokenTypeString),
-                '<text fill="#CBCFCB" , xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="388" y="1477.77">',
-                poolIdString,
-                "</tspan></text>",
+                generateTokenTypeElement(tokenTypeString, poolIdString),
                 "</g>",
                 '<rect x="122" y="82" width="1756" height="1836" rx="78" stroke="url(#paint3_linear_1689_1102)" stroke-width="4"/>',
                 "</g>",
@@ -184,28 +182,28 @@ contract PositionMetadata {
     function generateAdminElement(string memory poolAdminString) public pure returns (string memory) {
         uint256 averageCharWidth = 17;
         uint256 horizontalPadding = 20;
+        uint256 borderPadding = 96;
 
         // calculate correct rect width from text width and find center of text
         uint256 textWidth = bytes(poolAdminString).length * averageCharWidth;
         uint256 rectWidth = textWidth + (horizontalPadding * 2);
+        uint256 xPos = 1840 - rectWidth - 96;
         uint256 textY = 181 + (48 / 2) + (28 / 2) - 4;
 
         // Build SVG string with minimal variables
         return
             string(
                 abi.encodePacked(
-                    '<rect x="',
-                    (rectWidth - horizontalPadding).toString(),
-                    '" y="181" width="',
+                    '<rect x="',xPos.toString(),'" y="181" width="',
                     rectWidth.toString(),
                     '" height="48" rx="21" fill="#FFEFB8" fill-opacity="0.4"/>',
                     '<rect x="',
-                    (rectWidth - horizontalPadding).toString(),
+                    xPos.toString(),
                     '" y="181" width="',
                     rectWidth.toString(),
                     '" height="48" rx="21" stroke="#737373" stroke-width="2"/>',
                     '<text x="',
-                    (textWidth + horizontalPadding + 15).toString(),
+                    (xPos + horizontalPadding + 10).toString(),
                     '" y="',
                     textY.toString(),
                     '" fill="#FFEFB8" font-family="Courier New" font-size="28" font-weight="bold">',
@@ -250,20 +248,20 @@ contract PositionMetadata {
         );
     }
 
-    function generateTokenTypeElement(string memory tokenTypeString) public pure returns (string memory) {
+    function generateTokenTypeElement(string memory tokenTypeString, string memory poolIdString) public pure returns (string memory) {
         uint256 averageCharWidth = 18;
         uint256 horizontalPadding = 20;
-
         // calculate correct rect width from text width and find center of text
         uint256 textWidth = bytes(tokenTypeString).length * averageCharWidth;
         uint256 rectWidth = textWidth + horizontalPadding;
-
-        // Build SVG string with minimal variables
         return
             string(
                 abi.encodePacked(
                     '<rect x="241" y="1461.5" width="', rectWidth.toString(),'" height="48" rx="21" fill="#FFEFB8" fill-opacity="0.4"/>',
-                    '<text x="260" y="1495.68" fill="#FFEFB8" font-family="Courier New" font-size="28" font-weight="bold">', tokenTypeString, '</text>'
+                    '<text x="260" y="1495.68" fill="#FFEFB8" font-family="Courier New" font-size="28" font-weight="bold">', tokenTypeString, '</text>',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="388" y="1495.68">',
+                    poolIdString,
+                    "</tspan></text>"
                 )
             );
     }
