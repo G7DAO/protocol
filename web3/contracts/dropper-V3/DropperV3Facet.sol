@@ -50,6 +50,7 @@ contract DropperV3Facet is
         uint256 amount
     );
     event DropStatusChanged(uint256 indexed dropId, bool status);
+    event DropMaxTokensChanged(uint256 indexed dropId, uint256 maxNumberOfTokens);
     event DropURIChanged(uint256 indexed dropId, string uri);
     event DropAuthorizationChanged(
         uint256 indexed dropId,
@@ -115,7 +116,7 @@ contract DropperV3Facet is
         return (ss.name, ss.version);
     }
 
-    function createFlashDrop(
+    function createDrop(
         uint256 tokenType,
         address tokenAddress,
         uint256 tokenId,
@@ -124,37 +125,7 @@ contract DropperV3Facet is
         uint256 authorizationPoolId,
         uint256 maxNumberOfTokens,
         string memory uri
-    ) external onlyTerminusAdmin returns (uint256) {
-        uint256 dropId = _createDrop(tokenType, tokenAddress, tokenId, amount, authorizationTokenAddress, authorizationPoolId, uri);
-        LibDropper.DropperStorage storage ds = LibDropper.dropperStorage();
-        ds.IsFlashDrop[dropId] = true;
-        ds.MaxNumberOfTokens[dropId] = maxNumberOfTokens;
-        return dropId;
-    }
-
-
-    function createDrop(
-        uint256 tokenType,
-        address tokenAddress,
-        uint256 tokenId,
-        uint256 amount,
-        address authorizationTokenAddress,
-        uint256 authorizationPoolId,
-        string memory uri
-    ) external onlyTerminusAdmin returns (uint256) {
-        return _createDrop(tokenType, tokenAddress, tokenId, amount, authorizationTokenAddress, authorizationPoolId, uri);
-        
-    }
-
-    function _createDrop(
-        uint256 tokenType,
-        address tokenAddress,
-        uint256 tokenId,
-        uint256 amount,
-        address authorizationTokenAddress,
-        uint256 authorizationPoolId,
-        string memory uri
-    ) internal returns (uint256) {
+    ) external payable returns (uint256) {
         require(
             tokenType == TokenType.erc20_type() ||
                 tokenType == TokenType.erc721_type() ||
@@ -194,6 +165,9 @@ contract DropperV3Facet is
             authorizationPoolId
         );
 
+        ds.MaxNumberOfTokens[ds.NumDrops] = maxNumberOfTokens;
+        emit DropMaxTokensChanged(ds.NumDrops, maxNumberOfTokens);
+
         ds.DropURI[ds.NumDrops] = uri;
         emit DropURIChanged(ds.NumDrops, uri);
 
@@ -210,14 +184,17 @@ contract DropperV3Facet is
         return LibDropper.dropperStorage().DropToken[dropId];
     }
 
+    function setMaxNumberOfToken(uint256 dropId, uint256 maxNumberOfTokens) external onlyTerminusAdmin {
+        LibDropper.DropperStorage storage ds = LibDropper.dropperStorage();
+        ds.MaxNumberOfTokens[dropId] = maxNumberOfTokens;
+        emit DropMaxTokensChanged(dropId, maxNumberOfTokens);
+    }
+
     function setDropStatus(
         uint256 dropId,
         bool status
     ) external onlyTerminusAdmin {
         LibDropper.DropperStorage storage ds = LibDropper.dropperStorage();
-        if(ds.IsFlashDrop[dropId] && status){
-            status = ds.MaxNumberOfTokens[dropId] > ds.ClaimCount[dropId] ? status : false;
-        }
         ds.IsDropActive[dropId] = status;
         emit DropStatusChanged(dropId, status);
     }
@@ -362,14 +339,8 @@ contract DropperV3Facet is
             revert("Dropper: _claim -- Unknown token type in claim");
         }
         
+        require(ds.ClaimCount[dropId] + amount <= ds.MaxNumberOfTokens[dropId], "DF: Claims exceed Tokens to distribute");
         ds.ClaimCount[dropId] += amount;
-        //FlashDrop makes drop inactive once ClaimCount hits it's limit
-        if(ds.IsFlashDrop[dropId]){
-            require(ds.ClaimCount[dropId] <= ds.MaxNumberOfTokens[dropId], "FD: Claims exceed Tokens to distribute");
-            if(ds.MaxNumberOfTokens[dropId] == ds.ClaimCount[dropId]){
-                ds.IsDropActive[dropId] = false; 
-        }
-        }
 
         ds.DropRequestClaimed[dropId][requestID] = true;
 
