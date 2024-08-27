@@ -151,7 +151,7 @@ contract PositionMetadata {
                 '<rect x="221" y="998" width="1558" height="190" rx="19" fill="#18181B" fill-opacity="0.8"/>',
                 '<rect x="221" y="998" width="1558" height="190" rx="19" stroke="#737373" stroke-width="2"/>',
                 generateTokenIdOrAmountElement(tokenAmountOrIdString),
-                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Noto Sans" font-size="80" font-weight="bold" letter-spacing="0em"><tspan x="240" y="1157.18">',
+                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Noto Sans" font-size="80" font-weight="bold" letter-spacing="0em"><tspan x="260" y="1157.18">',
                 amountOrTokenIDString,
                 "</tspan></text>",
                 '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Noto Sans" font-size="32" letter-spacing="0em"><tspan x="220" y="1266.14">Staked at</tspan></text>',
@@ -190,7 +190,7 @@ contract PositionMetadata {
 
         // calculate correct rect width from text width and find center of text
         uint256 textWidth = bytes(poolAdminString).length * averageCharWidth;
-        uint256 rectWidth = textWidth + (horizontalPadding * 2);
+        uint256 rectWidth = textWidth + horizontalPadding;
         uint256 xPos = 1840 - rectWidth - borderPadding;
         uint256 textY = 181 + (48 / 2) + (28 / 2) - 4;
 
@@ -225,8 +225,8 @@ contract PositionMetadata {
                 abi.encodePacked(
                     '<rect x="221" y="873" width="1558" height="77" rx="19" fill="#CBCFCB" fill-opacity="0.2"/>',
                     '<rect x="221" y="873" width="1558" height="77" rx="19" stroke="#737373" stroke-width="2"/>',
-                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre"  font-family="',fontFamily,'"  font-size="32" font-weight="500" letter-spacing="0em"><tspan x="250" y="923.136">Token Address</tspan></text>',
-                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre"  font-family="',fontFamily,'"  font-size="32" letter-spacing="0em"><tspan x="949" y="923.136">',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="',fontFamily,'" font-size="32" font-weight="500" letter-spacing="0em"><tspan x="250" y="923.136">Token Address</tspan></text>',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="',fontFamily,'" font-size="32" letter-spacing="0em"><tspan x="980" y="923.136">',
                     tokenAddress,
                     "</tspan></text>"
                 )
