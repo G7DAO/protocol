@@ -38,23 +38,22 @@ export const sendWithdrawTransaction = async (
 }
 
 export const estimateWithdrawFee = async (
-  amountInNative: string,
+  value: string,
   destination: string,
-  lowNetwork: NetworkInterface
+  provider: ethers.Signer | ethers.providers.Provider
 ) => {
-  const lowNetworkProvider = new providers.JsonRpcProvider(lowNetwork.rpcs[0])
-
   try {
-    const amountInWei = ethers.utils.parseEther(amountInNative.toString())
-    const arbSysContract = new ethers.Contract(arbSysAddress, arbSysABI, lowNetworkProvider)
+    const valueInWei = ethers.utils.parseEther(value)
+    const arbSysContract = new ethers.Contract(arbSysAddress, arbSysABI, provider)
 
     const estimatedGas = await arbSysContract.estimateGas.withdrawEth(destination, {
-      value: amountInWei
+      value: valueInWei,
+      from: destination
     })
 
-    const gasPrice = await lowNetworkProvider.getGasPrice()
+    const gasPrice = await provider.getGasPrice()
     const estimatedFee = gasPrice.mul(estimatedGas)
-    return ethers.utils.formatEther(estimatedFee)
+    return { estimatedFee, estimatedGas, gasPrice }
   } catch (error) {
     console.error('Fee estimation failed:', error)
     throw error
