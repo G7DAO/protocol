@@ -183,13 +183,14 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
   const withdraw = useMutation(
     async (amount: string) => {
       const provider = await getProvider(selectedHighNetwork)
+      const signer = provider.getSigner()
       if (!provider || !connectedAccount) {
         throw new Error("Wallet isn't connected")
       }
       if (selectedHighNetwork.chainId !== L3_NETWORK.chainId) {
-        return sendWithdrawERC20Transaction(amount, connectedAccount)
+        return sendWithdrawERC20Transaction(amount, connectedAccount, signer)
       }
-      return sendWithdrawTransaction(amount, connectedAccount)
+      return sendWithdrawTransaction(amount, connectedAccount, signer)
     },
     {
       onSuccess: async (record: TransactionRecord) => {
