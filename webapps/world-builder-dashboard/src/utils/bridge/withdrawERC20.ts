@@ -38,3 +38,58 @@ export const sendWithdrawERC20Transaction = async (
     throw error
   }
 }
+
+class GasEstimationError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'GasEstimationError'
+  }
+}
+
+export const estimateWithdrawGasAndFee = async (
+  value: string,
+  from: string,
+  destination: string,
+  signerOrProvider: ethers.Signer | ethers.providers.Provider
+): Promise<{ estimatedGas: ethers.BigNumber; gasPrice: ethers.BigNumber; estimatedFee: ethers.BigNumber }> => {
+  try {
+    if (!ethers.utils.isAddress(destination)) {
+      throw new GasEstimationError('Invalid destination address')
+    }
+
+    if (!ethers.utils.isAddress(from)) {
+      throw new GasEstimationError('Invalid sender address')
+    }
+
+    if (!value || isNaN(Number(value)) || Number(value) < 0) {
+      throw new GasEstimationError('Invalid value: must be a non-negative number')
+    }
+
+    let valueInWei
+    try {
+      valueInWei = ethers.utils.parseEther(value)
+    } catch (error) {
+      throw new GasEstimationError('Invalid value format: must be a valid Ether amount')
+    }
+
+    const routerContract = new ethers.Contract(L2GatewayRouterAddress, L2GatewayRouterABI, signerOrProvider)
+    const estimatedGas = await routerContract.estimateGas.outboundTransfer(
+      L1_NETWORK.g7TokenAddress,
+      destination,
+      valueInWei,
+      '0x',
+      { from }
+    )
+    const gasPrice = await signerOrProvider.getGasPrice()
+    const estimatedFee = estimatedGas.mul(gasPrice)
+
+    return {
+      estimatedGas,
+      gasPrice,
+      estimatedFee
+    }
+  } catch (error: any) {
+    console.error('Gas and fee estimation failed:', error)
+    throw new GasEstimationError('Gas and fee estimation failed: ' + error.message)
+  }
+}
