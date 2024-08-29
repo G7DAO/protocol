@@ -1,42 +1,9 @@
 import { L2_NETWORK, L3_NETWORK } from '../../../constants'
-import { ethers, providers } from 'ethers'
-import { NetworkInterface } from '@/contexts/BlockchainContext'
+import { ethers } from 'ethers'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
-
-export interface WithdrawRecord {
-  amount: string
-  lowNetworkChainId: number
-  highNetworkChainId: number
-  highNetworkHash: string
-  lowNetworkHash?: string
-  highNetworkTimestamp: number
-  lowNetworkBlockNumber?: number
-  complete?: boolean
-  challengePeriod: number //seconds
-}
+import { arbSysABI } from '@/web3/ABI/arbSys_abi'
 
 const arbSysAddress = '0x0000000000000000000000000000000000000064'
-const arbSysABI = [
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'destination',
-        type: 'address'
-      }
-    ],
-    name: 'withdrawEth',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256'
-      }
-    ],
-    stateMutability: 'payable',
-    type: 'function'
-  }
-]
 
 export const sendWithdrawTransaction = async (
   amountInNative: string,
