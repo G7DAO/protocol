@@ -25,7 +25,7 @@ library DateTime {
 
     uint16 constant ORIGIN_YEAR = 1970;
 
-    function isLeapYear(uint16 year) public pure returns (bool) {
+    function isLeapYear(uint16 year) internal pure returns (bool) {
         if (year % 4 != 0) {
             return false;
         }
@@ -38,12 +38,12 @@ library DateTime {
         return true;
     }
 
-    function leapYearsBefore(uint year) public pure returns (uint) {
+    function leapYearsBefore(uint year) internal pure returns (uint) {
         year -= 1;
         return year / 4 - year / 100 + year / 400;
     }
 
-    function getDaysInMonth(uint8 month, uint16 year) public pure returns (uint8) {
+    function getDaysInMonth(uint8 month, uint16 year) internal pure returns (uint8) {
         if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
             return 31;
         } else if (month == 4 || month == 6 || month == 9 || month == 11) {
@@ -100,7 +100,7 @@ library DateTime {
         dt.weekday = getWeekday(timestamp);
     }
 
-    function getYear(uint timestamp) public pure returns (uint16) {
+    function getYear(uint timestamp) internal pure returns (uint16) {
         uint secondsAccountedFor = 0;
         uint16 year;
         uint numLeapYears;
@@ -123,43 +123,43 @@ library DateTime {
         return year;
     }
 
-    function getMonth(uint timestamp) public pure returns (uint8) {
+    function getMonth(uint timestamp) internal pure returns (uint8) {
         return parseTimestamp(timestamp).month;
     }
 
-    function getDay(uint timestamp) public pure returns (uint8) {
+    function getDay(uint timestamp) internal pure returns (uint8) {
         return parseTimestamp(timestamp).day;
     }
 
-    function getHour(uint timestamp) public pure returns (uint8) {
+    function getHour(uint timestamp) internal pure returns (uint8) {
         return uint8((timestamp / HOUR_IN_SECONDS) % 24);
     }
 
-    function getMinute(uint timestamp) public pure returns (uint8) {
+    function getMinute(uint timestamp) internal pure returns (uint8) {
         return uint8((timestamp / MINUTE_IN_SECONDS) % 60);
     }
 
-    function getSecond(uint timestamp) public pure returns (uint8) {
+    function getSecond(uint timestamp) internal pure returns (uint8) {
         return uint8(timestamp % 60);
     }
 
-    function getWeekday(uint timestamp) public pure returns (uint8) {
+    function getWeekday(uint timestamp) internal pure returns (uint8) {
         return uint8((timestamp / DAY_IN_SECONDS + 4) % 7);
     }
 
-    function toTimestamp(uint16 year, uint8 month, uint8 day) public pure returns (uint timestamp) {
+    function toTimestamp(uint16 year, uint8 month, uint8 day) internal pure returns (uint timestamp) {
         return toTimestamp(year, month, day, 0, 0, 0);
     }
 
-    function toTimestamp(uint16 year, uint8 month, uint8 day, uint8 hour) public pure returns (uint timestamp) {
+    function toTimestamp(uint16 year, uint8 month, uint8 day, uint8 hour) internal pure returns (uint timestamp) {
         return toTimestamp(year, month, day, hour, 0, 0);
     }
 
-    function toTimestamp(uint16 year, uint8 month, uint8 day, uint8 hour, uint8 minute) public pure returns (uint timestamp) {
+    function toTimestamp(uint16 year, uint8 month, uint8 day, uint8 hour, uint8 minute) internal pure returns (uint timestamp) {
         return toTimestamp(year, month, day, hour, minute, 0);
     }
 
-    function toTimestamp(uint16 year, uint8 month, uint8 day, uint8 hour, uint8 minute, uint8 second) public pure returns (uint timestamp) {
+    function toTimestamp(uint16 year, uint8 month, uint8 day, uint8 hour, uint8 minute, uint8 second) internal pure returns (uint timestamp) {
         uint16 i;
 
         // Year
