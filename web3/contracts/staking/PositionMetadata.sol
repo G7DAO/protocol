@@ -156,16 +156,16 @@ contract PositionMetadata {
                 tokenSymbol,
                 "</tspan></text>",
                 '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="220" letter-spacing="-0.04em"><tspan x="220" y="583.682">$</tspan></text>',
-                generateAdminElement(poolAdminString),
+                // generateAdminElement(poolAdminString),
                 "</g>",
-                '<rect x="1668.77" y="1705.77" width="107.459" height="107.459" rx="53.7295" stroke="#CBCFCB" stroke-width="7.54098"/>',
-                '<path d="M1693.75 1741.59L1705.21 1759.03H1720.05L1716.68 1753.9H1727.38L1714.61 1773.35L1722.03 1784.64L1750.31 1741.59H1693.75Z" fill="#CBCFCB"/>',
-                '<path d="M1693.75 1741.59L1705.21 1759.03H1720.05L1716.68 1753.9H1727.38L1714.61 1773.35L1722.03 1784.64L1750.31 1741.59H1693.75Z" fill="#CBCFCB"/>',
-                generateTokenAddressElement(poolAdminString),
-                '<rect x="221" y="998" width="1558" height="190" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                '<rect x="221" y="998" width="1558" height="190" rx="19" stroke="#737373" stroke-width="2"/>',
+                '<rect x="1636.541" y="181" width="107.459" height="107.459" rx="53.7295" stroke="#CBCFCB" stroke-width="7.54098"/>',
+                '<path d="M1661.9905 212.5045L1673.4495 229.9445H1688.2895L1684.9200 224.8145H1695.6200L1682.8500 244.2645L1690.2700 255.5545L1718.5500 212.5045H1661.9905Z" fill="#CBCFCB"/>',
+                '<path d="M1661.9905 212.5045L1673.4495 229.9445H1688.2895L1684.9200 224.8145H1695.6200L1682.8500 244.2645L1690.2700 255.5545L1718.5500 212.5045H1661.9905Z" fill="#CBCFCB"/>',
+                // generateTokenAddressElement(poolAdminString),
+                '<rect x="221" y="873" width="1558" height="122" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                '<rect x="221" y="873" width="1558" height="122" rx="19" stroke="#737373" stroke-width="2"/>',
                 generateTokenIdOrAmountElement(tokenAmountOrIdString),
-                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="80" font-weight="bold" letter-spacing="0em"><tspan x="260" y="1157.18">',
+                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="80" font-weight="bold" letter-spacing="0em"><tspan x="260" y="950.18">',
                 amountOrTokenIDString,
                 "</tspan></text>",
                 '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="220" y="1266.14">Staked at</tspan></text>',
@@ -255,20 +255,10 @@ contract PositionMetadata {
 
     function generateTokenIdOrAmountElement(string memory tokenIdOrAmountString) public pure returns (string memory) {
         string memory fontFamily = "Courier New";
-        uint256 averageCharWidth = 18;
-        uint256 horizontalPadding = 20;
-
-        // calculate correct rect width from text width and find center of text
-        uint256 textWidth = bytes(tokenIdOrAmountString).length * averageCharWidth;
-        uint256 rectWidth = textWidth + (horizontalPadding * 2);
-
         return (
             string(
                 abi.encodePacked(
-                    '<rect x="241" y="1018" width="',
-                    (rectWidth - horizontalPadding).toString(),
-                    '" height="48" rx="21" stroke="#737373" stroke-width="2"/>',
-                    '<text x="260" y="1052.18" fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="',
+                    '<text x="220" y="844.14" fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="',
                     fontFamily,
                     '"  font-size="28" font-weight="bold" letter-spacing="0em">',
                     tokenIdOrAmountString,
