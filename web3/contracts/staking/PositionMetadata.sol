@@ -8,12 +8,13 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 
-import "hardhat/console.sol";
-
 // Internal imports
 import { StakingPool, Position } from "./data.sol";
+import "../utils/DateTIme.sol";
 
 contract PositionMetadata {
+    using Strings for uint8;
+    using Strings for uint16;
     using Strings for uint256;
     using Strings for address;
 
@@ -101,6 +102,19 @@ contract PositionMetadata {
         );
     }
 
+    function formatDateTime(DateTime._DateTime memory dt) internal pure returns (string memory) {
+        return string(
+            abi.encodePacked(
+                dt.year.toString(), "-",
+                dt.month.toString(), "-",
+                dt.day.toString(), " ",
+                dt.hour.toString(), ":",
+                dt.minute.toString(), ":",
+                dt.second.toString()
+            )
+        );
+    }
+
     function generateSVGForeground(
         Position memory position,
         StakingPool memory pool
@@ -108,8 +122,8 @@ contract PositionMetadata {
         string memory tokenAmountOrIdString = pool.tokenType == 721 ? "Token ID" : "Amount staked";
         string memory poolAdminString = Strings.toHexString(uint256(uint160(pool.administrator)), 20);
         string memory amountOrTokenIDString = (position.amountOrTokenID).toString();
-        string memory stakeTimestampStr = (position.stakeTimestamp).toString();
-        string memory unlockTimestampStr = (position.unstakeInitiatedAt + pool.lockupSeconds).toString();
+        string memory stakeTimestampStr = formatDateTime(DateTime.parseTimestamp(position.stakeTimestamp));
+        string memory unlockTimestampStr = formatDateTime(DateTime.parseTimestamp(position.unstakeInitiatedAt + pool.lockupSeconds));
         string memory cooldownStr = (pool.cooldownSeconds).toString();
         string memory poolIdString = (position.poolID).toString();
         string memory tokenTypeString = pool.tokenType == 1
@@ -125,10 +139,6 @@ contract PositionMetadata {
         svg = string(
             abi.encodePacked(
                 '<svg width="1840" height="1920" viewBox="0 0 2000 2000" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">',
-                // "<style>",
-                // "@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900&amp;1,14..32,100..900&amp;display=swap');",
-                // "text { font-family: 'Inter'; }",
-                // "</style>",
                 '<g filter="url(#filter0_d_1689_1102)">',
                 '<g clip-path="url(#clip1_1689_1102)">',
                 '<rect x="120" y="80" width="1760" height="1840" rx="80" fill="#292929"/>',
@@ -142,8 +152,6 @@ contract PositionMetadata {
                 '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="220" letter-spacing="-0.04em"><tspan x="220" y="583.682">$</tspan></text>',
                 generateAdminElement(poolAdminString),
                 "</g>",
-                // '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="58.7383" font-weight="800" letter-spacing="0.01em"><tspan x="220" y="1756.22">FORK THE WORLD.</tspan></text>',
-                // '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="58.7383" font-weight="800" letter-spacing="0.01em"><tspan x="220" y="1811.22">OWN THE FUTURE.</tspan></text>',
                 '<rect x="1668.77" y="1705.77" width="107.459" height="107.459" rx="53.7295" stroke="#CBCFCB" stroke-width="7.54098"/>',
                 '<path d="M1693.75 1741.59L1705.21 1759.03H1720.05L1716.68 1753.9H1727.38L1714.61 1773.35L1722.03 1784.64L1750.31 1741.59H1693.75Z" fill="#CBCFCB"/>',
                 '<path d="M1693.75 1741.59L1705.21 1759.03H1720.05L1716.68 1753.9H1727.38L1714.61 1773.35L1722.03 1784.64L1750.31 1741.59H1693.75Z" fill="#CBCFCB"/>',
@@ -190,7 +198,7 @@ contract PositionMetadata {
 
         // calculate correct rect width from text width and find center of text
         uint256 textWidth = bytes(poolAdminString).length * averageCharWidth;
-        uint256 rectWidth = textWidth + horizontalPadding;
+        uint256 rectWidth = textWidth + (horizontalPadding * 2);
         uint256 xPos = 1840 - rectWidth - borderPadding;
         uint256 textY = 181 + (48 / 2) + (28 / 2) - 4;
 
@@ -207,7 +215,7 @@ contract PositionMetadata {
                     rectWidth.toString(),
                     '" height="48" rx="21" stroke="#737373" stroke-width="2"/>',
                     '<text x="',
-                    (xPos + horizontalPadding + 10).toString(),
+                    (xPos + horizontalPadding).toString(),
                     '" y="',
                     textY.toString(),
                     '" fill="#FFEFB8" font-family="Courier New" font-size="28" font-weight="bold">',
