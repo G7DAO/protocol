@@ -6,22 +6,15 @@ import { arbSysABI } from '@/web3/ABI/arbSys_abi'
 const arbSysAddress = '0x0000000000000000000000000000000000000064'
 
 export const sendWithdrawTransaction = async (
-  amountInNative: string,
-  destination: string
+  value: string,
+  destination: string,
+  signer: ethers.Signer
 ): Promise<TransactionRecord> => {
   try {
-    if (!window.ethereum) {
-      throw new Error('no provider')
-    }
-    const amountInWei = ethers.utils.parseEther(amountInNative.toString())
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    await provider.send('eth_requestAccounts', [])
-    const signer = provider.getSigner()
-
+    const valueInWei = ethers.utils.parseEther(value)
     const arbSysContract = new ethers.Contract(arbSysAddress, arbSysABI, signer)
-
     const txRequest = await arbSysContract.populateTransaction.withdrawEth(destination, {
-      value: amountInWei
+      value: valueInWei
     })
 
     const txResponse = await signer.sendTransaction(txRequest)
@@ -31,7 +24,7 @@ export const sendWithdrawTransaction = async (
 
     return {
       type: 'WITHDRAWAL',
-      amount: amountInNative,
+      amount: value,
       lowNetworkChainId: L2_NETWORK.chainId,
       highNetworkChainId: L3_NETWORK.chainId,
       highNetworkHash: txResponse.hash,
