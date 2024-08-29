@@ -9,7 +9,7 @@ const formatCurrency = (value: number) => {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 2,
-    maximumFractionDigits: 18
+    maximumFractionDigits: 2
   })
   return formatter.format(value)
 }
