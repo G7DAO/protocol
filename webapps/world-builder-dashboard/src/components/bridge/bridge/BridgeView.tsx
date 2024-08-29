@@ -29,6 +29,7 @@ import { DepositDirection } from '@/pages/BridgePage/BridgePage'
 import { estimateOutboundTransferGas } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { estimateDepositERC20ToNativeFee } from '@/utils/bridge/depositERC20ToNative'
 import { getStakeNativeTxData } from '@/utils/bridge/stakeContractInfo'
+import { estimateWithdrawGasAndFee } from '@/utils/bridge/withdrawERC20'
 import { estimateWithdrawFee } from '@/utils/bridge/withdrawNativeToken'
 
 const BridgeView = ({
@@ -98,7 +99,15 @@ const BridgeView = ({
         )
       }
     } else {
-      est = await estimateWithdrawFee(value, connectedAccount, selectedLowNetwork)
+      if (selectedHighNetwork.chainId === L2_NETWORK.chainId) {
+        const provider = new ethers.providers.JsonRpcProvider(L2_NETWORK.rpcs[0])
+        const estimation = await estimateWithdrawGasAndFee(value, connectedAccount, connectedAccount, provider)
+        est = ethers.utils.formatEther(estimation.estimatedFee)
+      } else {
+        const provider = new ethers.providers.JsonRpcProvider(L3_NETWORK.rpcs[0])
+        const estimation = await estimateWithdrawFee(value, connectedAccount, provider)
+        est = ethers.utils.formatEther(estimation.estimatedFee)
+      }
     }
     return est
   })
@@ -184,9 +193,9 @@ const BridgeView = ({
         setValue={setValue}
         balance={
           direction === 'DEPOSIT'
-            ? lowNetworkBalance?.formatted ?? '0'
-            : (selectedHighNetwork.chainId === L3_NETWORK.chainId ? l3NativeBalance : highNetworkBalance?.formatted) ??
-              '0'
+            ? (lowNetworkBalance?.formatted ?? '0')
+            : ((selectedHighNetwork.chainId === L3_NETWORK.chainId ? l3NativeBalance : highNetworkBalance?.formatted) ??
+              '0')
         }
         rate={g7tUsdRate.data ?? 0}
         isFetchingBalance={
@@ -230,8 +239,8 @@ const BridgeView = ({
         tokenRate={g7tUsdRate.data ?? 0}
         gasTokenSymbol={
           direction === 'DEPOSIT'
-            ? selectedLowNetwork.nativeCurrency?.symbol ?? ''
-            : selectedHighNetwork.nativeCurrency?.symbol ?? ''
+            ? (selectedLowNetwork.nativeCurrency?.symbol ?? '')
+            : (selectedHighNetwork.nativeCurrency?.symbol ?? '')
         }
       />
       {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
