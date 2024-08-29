@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.24;
 
-import { IERC20 } from '../interfaces/IERC20.sol';
+import { IERC20 } from "../interfaces/IERC20.sol";
 
 /**
  * @title ERC20 Token
@@ -37,13 +37,12 @@ contract ERC20 is IERC20 {
     }
 
     function transferFrom(address from, address to, uint256 amount) public returns (bool) {
-        require(balanceOf[from] >= amount, 'ERC20: transfer amount exceeds balance');
-        
+        require(balanceOf[from] >= amount, "ERC20: transfer amount exceeds balance");
 
         if (msg.sender != from && allowance[from][msg.sender] != type(uint256).max) {
-            require(allowance[from][msg.sender] >= amount, 'ERC20: insufficient allowance');
+            require(allowance[from][msg.sender] >= amount, "ERC20: insufficient allowance");
             allowance[from][msg.sender] -= amount;
-        } 
+        }
 
         balanceOf[from] -= amount;
         balanceOf[to] += amount;
@@ -52,5 +51,4 @@ contract ERC20 is IERC20 {
 
         return true;
     }
-
 }

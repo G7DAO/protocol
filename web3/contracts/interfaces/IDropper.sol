@@ -17,34 +17,12 @@ interface IDropper {
     }
 
     // events
-    event Claimed(
-        uint256 dropId,
-        address claimant,
-        address signer,
-        uint256 requestID,
-        uint256 amount
-    );
-    event DropAuthorizationChanged(
-        uint256 dropId,
-        address terminusAddress,
-        uint256 poolId
-    );
-    event DropCreated(
-        uint256 dropId,
-        uint256 tokenType,
-        address tokenAddress,
-        uint256 tokenId,
-        uint256 amount
-    );
+    event Claimed(uint256 dropId, address claimant, address signer, uint256 requestID, uint256 amount);
+    event DropAuthorizationChanged(uint256 dropId, address terminusAddress, uint256 poolId);
+    event DropCreated(uint256 dropId, uint256 tokenType, address tokenAddress, uint256 tokenId, uint256 amount);
     event DropStatusChanged(uint256 dropId, bool status);
     event DropURIChanged(uint256 dropId, string uri);
-    event Withdrawal(
-        address recipient,
-        uint256 tokenType,
-        address tokenAddress,
-        uint256 tokenId,
-        uint256 amount
-    );
+    event Withdrawal(address recipient, uint256 tokenType, address tokenAddress, uint256 tokenId, uint256 amount);
 
     // functions
     function claim(
@@ -64,10 +42,7 @@ interface IDropper {
         uint256 amount
     ) external view returns (bytes32);
 
-    function claimStatus(
-        uint256 dropId,
-        uint256 requestId
-    ) external view returns (bool);
+    function claimStatus(uint256 dropId, uint256 requestId) external view returns (bool);
 
     function createDrop(
         uint256 tokenType,
@@ -83,10 +58,7 @@ interface IDropper {
 
     function dropUri(uint256 dropId) external view returns (string memory);
 
-    function dropperVersion()
-        external
-        view
-        returns (string memory, string memory);
+    function dropperVersion() external view returns (string memory, string memory);
 
     function erc1155_type() external view returns (uint256);
 
@@ -96,14 +68,9 @@ interface IDropper {
 
     function getDrop(uint256 dropId) external view returns (Compound0 memory);
 
-    function getDropAuthorization(
-        uint256 dropId
-    ) external view returns (Compound1 memory);
+    function getDropAuthorization(uint256 dropId) external view returns (Compound1 memory);
 
-    function init(
-        address terminusAdminContractAddress,
-        uint256 terminusAdminPoolID
-    ) external;
+    function init(address terminusAdminContractAddress, uint256 terminusAdminPoolID) external;
 
     function numDrops() external view returns (uint256);
 
@@ -115,13 +82,7 @@ interface IDropper {
         bytes memory
     ) external returns (bytes4);
 
-    function onERC1155Received(
-        address,
-        address,
-        uint256,
-        uint256,
-        bytes memory
-    ) external returns (bytes4);
+    function onERC1155Received(address, address, uint256, uint256, bytes memory) external returns (bytes4);
 
     function onERC721Received(
         address operator,
@@ -130,11 +91,7 @@ interface IDropper {
         bytes memory data
     ) external returns (bytes4);
 
-    function setDropAuthorization(
-        uint256 dropId,
-        address terminusAddress,
-        uint256 poolId
-    ) external;
+    function setDropAuthorization(uint256 dropId, address terminusAddress, uint256 poolId) external;
 
     function setDropStatus(uint256 dropId, bool status) external;
 
@@ -142,19 +99,11 @@ interface IDropper {
 
     function supportsInterface(bytes4 interfaceId) external view returns (bool);
 
-    function surrenderPoolControl(
-        uint256 poolId,
-        address terminusAddress,
-        address newPoolController
-    ) external;
+    function surrenderPoolControl(uint256 poolId, address terminusAddress, address newPoolController) external;
 
     function terminus_mintable_type() external view returns (uint256);
 
-    function withdrawERC1155(
-        address tokenAddress,
-        uint256 tokenId,
-        uint256 amount
-    ) external;
+    function withdrawERC1155(address tokenAddress, uint256 tokenId, uint256 amount) external;
 
     function withdrawERC20(address tokenAddress, uint256 amount) external;
 

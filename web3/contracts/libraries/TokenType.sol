@@ -2,8 +2,7 @@
 pragma solidity ^0.8.0;
 
 library TokenType {
-
-    function native_token_type() public pure returns (uint256){
+    function native_token_type() public pure returns (uint256) {
         return 1;
     }
 
@@ -22,5 +21,4 @@ library TokenType {
     function erc1155_type() public pure returns (uint256) {
         return 1155;
     }
-
 }

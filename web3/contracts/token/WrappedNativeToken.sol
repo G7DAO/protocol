@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import { IERC20 } from '../interfaces/IERC20.sol';
+import { IERC20 } from "../interfaces/IERC20.sol";
 
 /**
  * @title Wrapped Native Token
@@ -35,13 +35,12 @@ contract WrappedNativeToken is IERC20 {
     }
 
     function transferFrom(address from, address to, uint256 amount) public returns (bool) {
-        require(balanceOf[from] >= amount, 'ERC20: transfer amount exceeds balance');
-        
+        require(balanceOf[from] >= amount, "ERC20: transfer amount exceeds balance");
 
         if (msg.sender != from && allowance[from][msg.sender] != type(uint256).max) {
-            require(allowance[from][msg.sender] >= amount, 'ERC20: insufficient allowance');
+            require(allowance[from][msg.sender] >= amount, "ERC20: insufficient allowance");
             allowance[from][msg.sender] -= amount;
-        } 
+        }
 
         balanceOf[from] -= amount;
         balanceOf[to] += amount;
@@ -60,7 +59,7 @@ contract WrappedNativeToken is IERC20 {
         balanceOf[msg.sender] += msg.value;
         emit Deposit(msg.sender, msg.value);
     }
-    
+
     function withdraw(uint _amount) public {
         require(_amount > 0, "zero value");
         require(balanceOf[msg.sender] >= _amount);

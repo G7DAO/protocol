@@ -46,29 +46,29 @@ bindings/MockERC1155/MockERC1155.go: hardhat
 
 bindings/Diamond/Diamond.go: hardhat
 	mkdir -p bindings/Diamond
-	seer evm generate --package Diamond --output bindings/Diamond/Diamond.go --hardhat web3/artifacts/contracts/diamond/Diamond.sol/Diamond.json --cli --struct Diamond
+	seer evm generate --package Diamond --output bindings/Diamond/Diamond.go --hardhat web3/artifacts/contracts/drops/diamond/Diamond.sol/Diamond.json --cli --struct Diamond
 	mkdir -p bindings/Diamond/facets/DiamondCutFacet
-	seer evm generate --package DiamondCutFacet --output bindings/Diamond/facets/DiamondCutFacet/DiamondCutFacet.go --hardhat web3/artifacts/contracts/diamond/facets/DiamondCutFacet.sol/DiamondCutFacet.json --cli --struct DiamondCutFacet
+	seer evm generate --package DiamondCutFacet --output bindings/Diamond/facets/DiamondCutFacet/DiamondCutFacet.go --hardhat web3/artifacts/contracts/drops/diamond/facets/DiamondCutFacet.sol/DiamondCutFacet.json --cli --struct DiamondCutFacet
 	mkdir -p bindings/Diamond/facets/DiamondLoupeFacet
-	seer evm generate --package DiamondLoupeFacet --output bindings/Diamond/facets/DiamondLoupeFacet/DiamondLoupeFacet.go --hardhat web3/artifacts/contracts/diamond/facets/DiamondLoupeFacet.sol/DiamondLoupeFacet.json --cli --struct DiamondLoupeFacet
+	seer evm generate --package DiamondLoupeFacet --output bindings/Diamond/facets/DiamondLoupeFacet/DiamondLoupeFacet.go --hardhat web3/artifacts/contracts/drops/diamond/facets/DiamondLoupeFacet.sol/DiamondLoupeFacet.json --cli --struct DiamondLoupeFacet
 	mkdir -p bindings/Diamond/facets/OwnershipFacet
-	seer evm generate --package OwnershipFacet --output bindings/Diamond/facets/OwnershipFacet/OwnershipFacet.go --hardhat web3/artifacts/contracts/diamond/facets/OwnershipFacet.sol/OwnershipFacet.json --cli --struct OwnershipFacet
+	seer evm generate --package OwnershipFacet --output bindings/Diamond/facets/OwnershipFacet/OwnershipFacet.go --hardhat web3/artifacts/contracts/drops/diamond/facets/OwnershipFacet.sol/OwnershipFacet.json --cli --struct OwnershipFacet
 
 bindings/Terminus/Terminus.go: hardhat
 	mkdir -p bindings/Terminus/ERC1155WithTerminusStorage
-	seer evm generate --package ERC1155WithTerminusStorage --output bindings/Terminus/ERC1155WithTerminusStorage/ERC1155WithTerminusStorage.go --hardhat web3/artifacts/contracts/terminus/ERC1155WithTerminusStorage.sol/ERC1155WithTerminusStorage.json --cli --struct ERC1155WithTerminusStorage
+	seer evm generate --package ERC1155WithTerminusStorage --output bindings/Terminus/ERC1155WithTerminusStorage/ERC1155WithTerminusStorage.go --hardhat web3/artifacts/contracts/drops/terminus/ERC1155WithTerminusStorage.sol/ERC1155WithTerminusStorage.json --cli --struct ERC1155WithTerminusStorage
 	mkdir -p bindings/Terminus/TerminusFacet
-	seer evm generate --package TerminusFacet --output bindings/Terminus/TerminusFacet/TerminusFacet.go --hardhat web3/artifacts/contracts/terminus/TerminusFacet.sol/TerminusFacet.json --cli --struct TerminusFacet
+	seer evm generate --package TerminusFacet --output bindings/Terminus/TerminusFacet/TerminusFacet.go --hardhat web3/artifacts/contracts/drops/terminus/TerminusFacet.sol/TerminusFacet.json --cli --struct TerminusFacet
 	mkdir -p bindings/Terminus/TerminusInitializer
-	seer evm generate --package TerminusInitializer --output bindings/Terminus/TerminusInitializer/TerminusInitializer.go --hardhat web3/artifacts/contracts/terminus/TerminusInitializer.sol/TerminusInitializer.json --cli --struct TerminusInitializer
+	seer evm generate --package TerminusInitializer --output bindings/Terminus/TerminusInitializer/TerminusInitializer.go --hardhat web3/artifacts/contracts/drops/terminus/TerminusInitializer.sol/TerminusInitializer.json --cli --struct TerminusInitializer
 
 bindings/Dropper/DropperV2.go: hardhat
 	mkdir -p bindings/Dropper/DropperV2
-	seer evm generate --package DropperFacet --output bindings/Dropper/DropperV2/DropperFacet.go --hardhat web3/artifacts/contracts/dropperv2/DropperFacet.sol/DropperFacet.json --cli --struct DropperFacet	
+	seer evm generate --package DropperFacet --output bindings/Dropper/DropperV2/DropperFacet.go --hardhat web3/artifacts/contracts/drops/dropperv2/DropperFacet.sol/DropperFacet.json --cli --struct DropperFacet	
 
 bindings/Dropper/DropperV3.go: hardhat
 	mkdir -p bindings/Dropper/DropperV3
-	seer evm generate --package DropperV3Facet --output bindings/Dropper/DropperV3/DropperV3Facet.go --hardhat web3/artifacts/contracts/dropper-V3/DropperV3Facet.sol/DropperV3Facet.json --cli --struct DropperV3Facet	
+	seer evm generate --package DropperV3Facet --output bindings/Dropper/DropperV3/DropperV3Facet.go --hardhat web3/artifacts/contracts/drops/dropper-V3/DropperV3Facet.sol/DropperV3Facet.json --cli --struct DropperV3Facet	
 	
 
 

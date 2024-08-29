@@ -65,16 +65,11 @@ interface IInventory {
 
     // Constraint: Admin
     // Emits: SlotCreated, NewSlotURI, NewSlotPersistence
-    function createSlot(
-        bool persistent,
-        string memory slotURI
-    ) external returns (uint256);
+    function createSlot(bool persistent, string memory slotURI) external returns (uint256);
 
     function numSlots() external view returns (uint256);
 
-    function getSlotById(
-        uint256 slotId
-    ) external view returns (Slot memory slots);
+    function getSlotById(uint256 slotId) external view returns (Slot memory slots);
 
     function getSlotURI(uint256 slotId) external view returns (string memory);
 
@@ -119,15 +114,7 @@ interface IInventory {
 
     // Constraint: Non-reentrant.
     // Emits: ItemUnequipped
-    function unequip(
-        uint256 subjectTokenId,
-        uint256 slot,
-        bool unequipAll,
-        uint256 amount
-    ) external;
+    function unequip(uint256 subjectTokenId, uint256 slot, bool unequipAll, uint256 amount) external;
 
-    function getEquippedItem(
-        uint256 subjectTokenId,
-        uint256 slot
-    ) external view returns (EquippedItem memory item);
+    function getEquippedItem(uint256 subjectTokenId, uint256 slot) external view returns (EquippedItem memory item);
 }
