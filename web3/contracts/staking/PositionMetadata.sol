@@ -161,14 +161,13 @@ contract PositionMetadata {
                 '<rect x="1636.541" y="181" width="107.459" height="107.459" rx="53.7295" stroke="#CBCFCB" stroke-width="7.54098"/>',
                 '<path d="M1661.9905 212.5045L1673.4495 229.9445H1688.2895L1684.9200 224.8145H1695.6200L1682.8500 244.2645L1690.2700 255.5545L1718.5500 212.5045H1661.9905Z" fill="#CBCFCB"/>',
                 '<path d="M1661.9905 212.5045L1673.4495 229.9445H1688.2895L1684.9200 224.8145H1695.6200L1682.8500 244.2645L1690.2700 255.5545L1718.5500 212.5045H1661.9905Z" fill="#CBCFCB"/>',
-                // generateTokenAddressElement(poolAdminString),
                 '<rect x="221" y="873" width="1558" height="122" rx="19" fill="#18181B" fill-opacity="0.8"/>',
                 '<rect x="221" y="873" width="1558" height="122" rx="19" stroke="#737373" stroke-width="2"/>',
                 generateTokenIdOrAmountElement(tokenAmountOrIdString, amountOrTokenIDString),
-                '<rect x="221" y="1429" width="1558" height="113" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                '<rect x="221" y="1429" width="1558" height="113" rx="19" stroke="#737373" stroke-width="2"/>',
-                generateTokenTypeElement(tokenTypeString, poolIdString),
                 generateStakingPeriodElements('1100', '1071.14', stakeTimestampStr, unlockTimestampStr, cooldownStr),
+                '<rect x="221" y="1302" width="1033" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                '<rect x="221" y="1302" width="1033" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
+                generateTokenTypeElement(tokenTypeString, poolIdString),
                 "</g>",
                 '<rect x="122" y="82" width="1756" height="1836" rx="78" stroke="url(#paint3_linear_1689_1102)" stroke-width="4"/>',
                 "</g>",
@@ -256,25 +255,25 @@ contract PositionMetadata {
         string memory poolIdString
     ) public pure returns (string memory) {
         string memory fontFamily = "Courier New";
-        uint256 averageCharWidth = 18;
+        uint256 averageCharWidth = 16;
         uint256 horizontalPadding = 20;
         // calculate correct rect width from text width and find center of text
         uint256 textWidth = bytes(tokenTypeString).length * averageCharWidth;
-        uint256 rectWidth = textWidth + horizontalPadding;
+        uint256 rectWidth = textWidth + (horizontalPadding * 2);
         return
             string(
                 abi.encodePacked(
-                    '<rect x="241" y="1461.5" width="',
+                    '<rect x="241" y="1322" width="',
                     rectWidth.toString(),
-                    '" height="48" rx="21" fill="#FFEFB8" fill-opacity="0.4"/>',
-                    '<text x="260" y="1495.68" fill="#FFEFB8" font-family="',
+                    '" height="48" rx="21" stroke="#FFEFB8" stroke-width="0.4"/>',
+                    '<text x="260" y="1357" fill="#FFEFB8" font-family="',
                     fontFamily,
                     '" font-size="28" font-weight="bold">',
                     tokenTypeString,
                     "</text>",
                     '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="',
                     fontFamily,
-                    '" font-size="32" letter-spacing="0em"><tspan x="388" y="1495.68">',
+                    '" font-size="32" letter-spacing="0em"><tspan x="388" y="1357">',
                     poolIdString,
                     "</tspan></text>"
                 )
