@@ -85,7 +85,10 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
         <div className={styles.itemName}>Estimated gas fee</div>
         {!!fee ? (
           <div className={styles.valueContainer}>
-            <div className={styles.value} title={`balance: ${String(gasBalance)}`}>{`${fee} ${gasTokenSymbol}`}</div>
+            <div
+              className={styles.value}
+              title={`balance: ${String(gasBalance)}`}
+            >{`${fee.toFixed(18).replace(/\.?0+$/, '')} ${gasTokenSymbol}`}</div>
             {!!(fee * (direction === 'DEPOSIT' ? ethRate : tokenRate)) && (
               <div className={styles.valueNote}>
                 {formatCurrency(fee * (direction === 'DEPOSIT' ? ethRate : tokenRate))}
