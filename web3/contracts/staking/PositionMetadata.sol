@@ -248,7 +248,7 @@ contract PositionMetadata {
         string memory tokenAddressString,
         string memory amountOrTokenIdString
     ) public pure returns (string memory) {
-        string memory mainWidth = "1070";
+        string memory mainWidth = "1558";
         string memory tokenIdSection = "";
 
         uint256 averageCharWidth = 16;
@@ -258,7 +258,7 @@ contract PositionMetadata {
         uint256 rectWidth = textWidth + (horizontalPadding * 2);
 
         if (keccak256(abi.encodePacked(tokenTypeString)) == keccak256(abi.encodePacked("ERC1155"))) {
-            // mainWidth = "1070";
+            mainWidth = "1070";
             tokenIdSection = string(
                 abi.encodePacked(
                     '<rect x="1317" y="1302" width="462" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
@@ -280,7 +280,7 @@ contract PositionMetadata {
                     '<rect x="221" y="1302" width="',
                     mainWidth,
                     '" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
-                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="221" y="1273.14">Token</tspan></text>',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="34" letter-spacing="0em"><tspan x="221" y="1273.14">Token</tspan></text>',
                     '<rect x="241" y="1322" width="',
                     rectWidth.toString(),
                     '" height="48" rx="21" stroke="#FFEFB8" stroke-width="0.4"/>',
