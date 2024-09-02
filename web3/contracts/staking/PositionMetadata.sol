@@ -120,7 +120,7 @@ contract PositionMetadata {
     ) private view returns (string memory svg) {
         string memory tokenAmountOrIdString = pool.tokenType == 721 ? "Token ID" : "Amount staked";
         string memory amountOrTokenIDString = (position.amountOrTokenID).toString();
-        
+
         // Timestamp string manipulations
         // string memory stakeTimestampStr = formatDateTime(DateTime.parseTimestamp(position.stakeTimestamp));
         string memory stakeTimestampStr = "2024-12-21 11:29:19";
@@ -166,7 +166,7 @@ contract PositionMetadata {
                 '<rect x="221" y="873" width="1558" height="122" rx="19" fill="#18181B" fill-opacity="0.8"/>',
                 '<rect x="221" y="873" width="1558" height="122" rx="19" stroke="#737373" stroke-width="2"/>',
                 generateTokenIdOrAmountElement(tokenAmountOrIdString, amountOrTokenIDString),
-                generateStakingPeriodElements('1100', '1071.14', stakeTimestampStr, unlockTimestampStr, cooldownStr),
+                generateStakingPeriodElements("1100", "1071.14", stakeTimestampStr, unlockTimestampStr, cooldownStr),
                 '<rect x="221" y="1302" width="1070" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
                 '<rect x="221" y="1302" width="1070" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
                 '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="221" y="1273.14">Token</tspan></text>',
@@ -174,15 +174,20 @@ contract PositionMetadata {
                 '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="1316" y="1273.14">Token ID</tspan></text>',
                 '<rect x="1317" y="1302" width="462" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
                 '<rect x="1317" y="1302" width="462" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
-                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="1355" y="1357">',amountOrTokenIDString,'</tspan></text>',
+                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="1355" y="1357">',
+                amountOrTokenIDString,
+                "</tspan></text>",
                 // Pool ID
                 '<rect x="221" y="1529" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
                 '<rect x="221" y="1529" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
                 '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="221" y="1500.14">Pool ID</tspan></text>',
-                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="1584">',poolIdString,'</tspan></text>',
+                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="1584">',
+                poolIdString,
+                "</tspan></text>",
                 "</g>",
                 '<rect x="122" y="82" width="1756" height="1836" rx="78" stroke="url(#paint3_linear_1689_1102)" stroke-width="4"/>',
                 "</g>",
+                generateDefs(),
                 "</svg>"
             )
         );
@@ -224,7 +229,10 @@ contract PositionMetadata {
             );
     }
 
-    function generateTokenIdOrAmountElement(string memory tokenIdOrAmountString, string memory amountOrTokenIDString) public pure returns (string memory) {
+    function generateTokenIdOrAmountElement(
+        string memory tokenIdOrAmountString,
+        string memory amountOrTokenIDString
+    ) public pure returns (string memory) {
         string memory fontFamily = "Courier New";
         return (
             string(
@@ -234,7 +242,7 @@ contract PositionMetadata {
                     '"  font-size="32" letter-spacing="0em">',
                     tokenIdOrAmountString,
                     "</text>",
-                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="80" font-weight="bold" letter-spacing="0em"><tspan x="260" y="957">',                
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="80" font-weight="bold" letter-spacing="0em"><tspan x="260" y="957">',
                     amountOrTokenIDString,
                     "</tspan></text>"
                 )
@@ -274,35 +282,71 @@ contract PositionMetadata {
 
     function generateStakingPeriodElements(
         string memory yPos,
-        string memory titleYPos,        
+        string memory titleYPos,
         string memory stakeTimestampStr,
         string memory unlockTimestampStr,
         string memory cooldownStr
     ) public pure returns (string memory) {
-        return string(
-            abi.encodePacked(
-                '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="220" y="', titleYPos ,'">Staked at</tspan></text>',
-                '<rect x="221" y="', yPos, '" width="522" height="86" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                '<rect x="221" y="', yPos, '" width="522" height="86" rx="19" stroke="#737373" stroke-width="2"/>',
-                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="1157.55">',
-                stakeTimestampStr,
-                "</tspan></text>",
-                '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="768" y="', titleYPos ,'">Unlocks at</tspan></text>',
-                '<rect x="769" y="', yPos, '" width="522" height="86" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                '<rect x="769" y="', yPos, '" width="522" height="86" rx="19" stroke="#737373" stroke-width="2"/>',
-                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="808" y="1157.55">',
-                unlockTimestampStr,
-                "</tspan></text>",
-                '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="1316" y="', titleYPos ,'">Cooldown</tspan></text>',
-                '<rect x="1317" y="', yPos, '" width="462" height="86" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                '<rect x="1317" y="', yPos, '" width="462" height="86" rx="19" stroke="#737373" stroke-width="2"/>',
-                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="1356" y="1157.55">',
-                cooldownStr, ' seconds', 
-                "</tspan></text>"
-            )
-        );
+        return
+            string(
+                abi.encodePacked(
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="220" y="',
+                    titleYPos,
+                    '">Staked at</tspan></text>',
+                    '<rect x="221" y="',
+                    yPos,
+                    '" width="522" height="86" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                    '<rect x="221" y="',
+                    yPos,
+                    '" width="522" height="86" rx="19" stroke="#737373" stroke-width="2"/>',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="1157.55">',
+                    stakeTimestampStr,
+                    "</tspan></text>",
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="768" y="',
+                    titleYPos,
+                    '">Unlocks at</tspan></text>',
+                    '<rect x="769" y="',
+                    yPos,
+                    '" width="522" height="86" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                    '<rect x="769" y="',
+                    yPos,
+                    '" width="522" height="86" rx="19" stroke="#737373" stroke-width="2"/>',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="808" y="1157.55">',
+                    unlockTimestampStr,
+                    "</tspan></text>",
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="1316" y="',
+                    titleYPos,
+                    '">Cooldown</tspan></text>',
+                    '<rect x="1317" y="',
+                    yPos,
+                    '" width="462" height="86" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                    '<rect x="1317" y="',
+                    yPos,
+                    '" width="462" height="86" rx="19" stroke="#737373" stroke-width="2"/>',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="1356" y="1157.55">',
+                    cooldownStr,
+                    " seconds",
+                    "</tspan></text>"
+                )
+            );
     }
 
+    function generateDefs() public pure returns (string memory) {
+        return
+            string(
+                abi.encodePacked(
+                    '<g style="mix-blend-mode:overlay">',
+                    '<path d="120 1835L-8.04289e-05 115.99988L1756 115.99995L1756 1835L0 1835Z" fill="url(#paint0_linear_1896_187)" fill-opacity="0.8"/>',
+                    "</g>",
+                    "<defs>",
+                    '<linearGradient id="paint0_linear_1896_187" x1="-4.02145e-05" y1="915" x2="1756" y2="915" gradientUnits="userSpaceOnUse">',
+                    '<stop stop-color="#1B1B1B" stop-opacity="0"/>'
+                    '<stop offset="1" stop-color="#1B1B1B"/>',
+                    "</linearGradient>",
+                    "</defs>"
+                )
+            );
+    }
 
     function returnTokenSymbolNative() public view returns (string memory) {
         uint256 chainId = block.chainid;
