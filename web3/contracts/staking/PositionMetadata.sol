@@ -122,12 +122,13 @@ contract PositionMetadata {
         string memory amountOrTokenIDString = (position.amountOrTokenID).toString();
         
         // Timestamp string manipulations
-        string memory stakeTimestampStr = formatDateTime(DateTime.parseTimestamp(position.stakeTimestamp));
-        string memory unlockTimestampStr = formatDateTime(DateTime.parseTimestamp(position.stakeTimestamp + pool.lockupSeconds));
+        // string memory stakeTimestampStr = formatDateTime(DateTime.parseTimestamp(position.stakeTimestamp));
+        string memory stakeTimestampStr = "2024-12-21 11:29:19";
+        // string memory unlockTimestampStr = formatDateTime(DateTime.parseTimestamp(position.stakeTimestamp + pool.lockupSeconds));
+        string memory unlockTimestampStr = "2024-12-31 11:29:19";
         string memory cooldownStr = (pool.cooldownSeconds).toString();
 
         // Pool data strings
-        string memory poolAdminString = Strings.toHexString(uint256(uint160(pool.administrator)), 20);
         string memory poolIdString = (position.poolID).toString();
         string memory tokenTypeString = pool.tokenType == 1
             ? "Native"
@@ -170,10 +171,10 @@ contract PositionMetadata {
                 '<rect x="221" y="1302" width="1033" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
                 '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="221" y="1273.14">Token</tspan></text>',
                 generateTokenTypeElement(tokenTypeString, tokenAddressString),
-                '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="1276" y="1273.14">Token ID</tspan></text>',
-                '<rect x="1277" y="1302" width="502" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                '<rect x="1277" y="1302" width="502" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
-                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="1315" y="1357">',amountOrTokenIDString,'</tspan></text>',
+                '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="1316" y="1273.14">Token ID</tspan></text>',
+                '<rect x="1317" y="1302" width="462" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                '<rect x="1317" y="1302" width="462" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
+                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="1355" y="1357">',amountOrTokenIDString,'</tspan></text>',
                 // Pool ID
                 '<rect x="221" y="1532.6" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
                 '<rect x="221" y="1532.6" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
@@ -219,26 +220,6 @@ contract PositionMetadata {
                     '" fill="#FFEFB8" font-family="Courier New" font-size="28" font-weight="bold">',
                     poolAdminString,
                     "</text>"
-                )
-            );
-    }
-
-    // very basic looking, may improve upon in the future
-    function generateTokenAddressElement(string memory tokenAddress) public pure returns (string memory) {
-        string memory fontFamily = "Courier New";
-        return
-            string(
-                abi.encodePacked(
-                    '<rect x="221" y="873" width="1558" height="77" rx="19" fill="#CBCFCB" fill-opacity="0.2"/>',
-                    '<rect x="221" y="873" width="1558" height="77" rx="19" stroke="#737373" stroke-width="2"/>',
-                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="',
-                    fontFamily,
-                    '" font-size="32" font-weight="500" letter-spacing="0em"><tspan x="250" y="923.136">Token Address</tspan></text>',
-                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="',
-                    fontFamily,
-                    '" font-size="32" letter-spacing="0em"><tspan x="960" y="923.136">',
-                    tokenAddress,
-                    "</tspan></text>"
                 )
             );
     }
@@ -301,21 +282,21 @@ contract PositionMetadata {
         return string(
             abi.encodePacked(
                 '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="220" y="', titleYPos ,'">Staked at</tspan></text>',
-                '<rect x="221" y="', yPos, '" width="502" height="86" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                '<rect x="221" y="', yPos, '" width="502" height="86" rx="19" stroke="#737373" stroke-width="2"/>',
+                '<rect x="221" y="', yPos, '" width="522" height="86" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                '<rect x="221" y="', yPos, '" width="522" height="86" rx="19" stroke="#737373" stroke-width="2"/>',
                 '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="1157.55">',
                 stakeTimestampStr,
                 "</tspan></text>",
-                '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="748" y="', titleYPos ,'">Unlocks at</tspan></text>',
-                '<rect x="749" y="', yPos, '" width="502" height="86" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                '<rect x="749" y="', yPos, '" width="502" height="86" rx="19" stroke="#737373" stroke-width="2"/>',
-                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="788" y="1157.55">',
+                '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="768" y="', titleYPos ,'">Unlocks at</tspan></text>',
+                '<rect x="769" y="', yPos, '" width="522" height="86" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                '<rect x="769" y="', yPos, '" width="522" height="86" rx="19" stroke="#737373" stroke-width="2"/>',
+                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="808" y="1157.55">',
                 unlockTimestampStr,
                 "</tspan></text>",
-                '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="1276" y="', titleYPos ,'">Cooldown</tspan></text>',
-                '<rect x="1277" y="', yPos, '" width="502" height="86" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                '<rect x="1277" y="', yPos, '" width="502" height="86" rx="19" stroke="#737373" stroke-width="2"/>',
-                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="1316" y="1157.55">',
+                '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="1316" y="', titleYPos ,'">Cooldown</tspan></text>',
+                '<rect x="1317" y="', yPos, '" width="462" height="86" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                '<rect x="1317" y="', yPos, '" width="462" height="86" rx="19" stroke="#737373" stroke-width="2"/>',
+                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="1356" y="1157.55">',
                 cooldownStr, ' seconds', 
                 "</tspan></text>"
             )
