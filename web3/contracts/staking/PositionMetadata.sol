@@ -119,7 +119,8 @@ contract PositionMetadata {
         StakingPool memory pool
     ) private view returns (string memory svg) {
         string memory tokenAmountOrIdString = pool.tokenType == 721 ? "Token ID" : "Amount staked";
-        string memory amountOrTokenIDString = (position.amountOrTokenID).toString();
+        // string memory tokenAmountOrIdString = "Amount staked";
+        string memory amountOrTokenIdString = (position.amountOrTokenID).toString();
 
         // Timestamp string manipulations
         // string memory stakeTimestampStr = formatDateTime(DateTime.parseTimestamp(position.stakeTimestamp));
@@ -137,6 +138,7 @@ contract PositionMetadata {
                 : pool.tokenType == 721
                     ? "ERC721"
                     : "ERC1155";
+        // string memory tokenTypeString = "ERC1155";
         string memory tokenSymbol = pool.tokenType == 1
             ? returnTokenSymbolNative()
             : returnTokenSymbol(pool.tokenType, pool.tokenAddress);
@@ -165,18 +167,9 @@ contract PositionMetadata {
                 '<path d="M1661.9905 220.5045L1673.4495 237.9445H1688.2895L1684.9200 232.8145H1695.6200L1682.8500 252.2645L1690.2700 264.5545L1718.5500 220.5045H1661.9905Z" fill="#CBCFCB"/>',
                 '<rect x="221" y="873" width="1558" height="122" rx="19" fill="#18181B" fill-opacity="0.8"/>',
                 '<rect x="221" y="873" width="1558" height="122" rx="19" stroke="#737373" stroke-width="2"/>',
-                generateTokenIdOrAmountElement(tokenAmountOrIdString, amountOrTokenIDString),
+                generateTokenIdOrAmountElement(tokenAmountOrIdString, amountOrTokenIdString),
                 generateStakingPeriodElements("1100", "1071.14", stakeTimestampStr, unlockTimestampStr, cooldownStr),
-                '<rect x="221" y="1302" width="1070" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                '<rect x="221" y="1302" width="1070" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
-                '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="221" y="1273.14">Token</tspan></text>',
-                generateTokenTypeElement(tokenTypeString, tokenAddressString),
-                '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="1316" y="1273.14">Token ID</tspan></text>',
-                '<rect x="1317" y="1302" width="462" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                '<rect x="1317" y="1302" width="462" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
-                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="1355" y="1357">',
-                amountOrTokenIDString,
-                "</tspan></text>",
+                generateTokenTypeElement(tokenTypeString, tokenAddressString, amountOrTokenIdString),
                 // Pool ID
                 '<rect x="221" y="1529" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
                 '<rect x="221" y="1529" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
@@ -252,30 +245,54 @@ contract PositionMetadata {
 
     function generateTokenTypeElement(
         string memory tokenTypeString,
-        string memory tokenAddressString
+        string memory tokenAddressString,
+        string memory amountOrTokenIdString
     ) public pure returns (string memory) {
-        string memory fontFamily = "Courier New";
+        string memory mainWidth = "1070";
+        string memory tokenIdSection = "";
+
         uint256 averageCharWidth = 16;
         uint256 horizontalPadding = 20;
         // calculate correct rect width from text width and find center of text
         uint256 textWidth = bytes(tokenTypeString).length * averageCharWidth;
         uint256 rectWidth = textWidth + (horizontalPadding * 2);
+
+        if (keccak256(abi.encodePacked(tokenTypeString)) == keccak256(abi.encodePacked("ERC1155"))) {
+            // mainWidth = "1070";
+            tokenIdSection = string(
+                abi.encodePacked(
+                    '<rect x="1317" y="1302" width="462" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                    '<rect x="1317" y="1302" width="462" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="1316" y="1273.14">Token ID</tspan></text>',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="1355" y="1357">',
+                    amountOrTokenIdString,
+                    "</tspan></text>"
+                )
+            );
+        }
+
         return
             string(
                 abi.encodePacked(
+                    '<rect x="221" y="1302" width="',
+                    mainWidth,
+                    '" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                    '<rect x="221" y="1302" width="',
+                    mainWidth,
+                    '" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="221" y="1273.14">Token</tspan></text>',
                     '<rect x="241" y="1322" width="',
                     rectWidth.toString(),
                     '" height="48" rx="21" stroke="#FFEFB8" stroke-width="0.4"/>',
-                    '<text x="260" y="1357" fill="#FFEFB8" font-family="',
-                    fontFamily,
-                    '" font-size="28" font-weight="bold">',
+                    '<text x="260" y="1357" fill="#FFEFB8" font-family="Courier New" font-size="28" font-weight="bold">',
                     tokenTypeString,
                     "</text>",
-                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="',
-                    fontFamily,
-                    '" font-size="32" letter-spacing="0em"><tspan x="388" y="1357">',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="',
+                    (241 + rectWidth + 20).toString(),
+                    '" y="1357">',
                     tokenAddressString,
-                    "</tspan></text>"
+                    "</tspan></text>",
+                    tokenIdSection
                 )
             );
     }
