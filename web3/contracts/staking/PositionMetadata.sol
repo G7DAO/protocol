@@ -119,14 +119,11 @@ contract PositionMetadata {
         StakingPool memory pool
     ) private view returns (string memory svg) {
         string memory tokenAmountOrIdString = pool.tokenType == 721 ? "Token ID" : "Amount staked";
-        // string memory tokenAmountOrIdString = "Amount staked";
         string memory amountOrTokenIdString = (position.amountOrTokenID).toString();
 
         // Timestamp string manipulations
-        // string memory stakeTimestampStr = formatDateTime(DateTime.parseTimestamp(position.stakeTimestamp));
-        string memory stakeTimestampStr = "2024-12-21 11:29:19";
-        // string memory unlockTimestampStr = formatDateTime(DateTime.parseTimestamp(position.stakeTimestamp + pool.lockupSeconds));
-        string memory unlockTimestampStr = "2024-12-31 11:29:19";
+        string memory stakeTimestampStr = formatDateTime(DateTime.parseTimestamp(position.stakeTimestamp));
+        string memory unlockTimestampStr = formatDateTime(DateTime.parseTimestamp(position.stakeTimestamp + pool.lockupSeconds));
         string memory cooldownStr = (pool.cooldownSeconds).toString();
 
         // Pool data strings
@@ -138,8 +135,8 @@ contract PositionMetadata {
                 : pool.tokenType == 721
                     ? "ERC721"
                     : "ERC1155";
-        // string memory tokenTypeString = "ERC1155";
-        string memory tokenSymbol = pool.tokenType == 1
+                    
+        string memory tokenSymbolString = pool.tokenType == 1
             ? returnTokenSymbolNative()
             : returnTokenSymbol(pool.tokenType, pool.tokenAddress);
 
@@ -148,40 +145,54 @@ contract PositionMetadata {
         svg = string(
             abi.encodePacked(
                 '<svg width="1840" height="1920" viewBox="0 0 2000 2000" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">',
-                '<g filter="url(#filter0_d_1689_1102)">',
-                '<g clip-path="url(#clip1_1689_1102)">',
                 '<rect x="120" y="80" width="1760" height="1840" rx="80" fill="#292929"/>',
-                '<rect x="120" y="80" width="1760" height="1840" rx="80" fill="url(#pattern0_1689_1102)" fill-opacity="0.8"/>',
-                '<rect x="120" y="80" width="1756" height="1840" fill="url(#paint1_linear_1689_1102)"/>',
-                '<g style="mix-blend-mode:overlay">',
-                '<rect x="120" y="1920" width="1840" height="1756" transform="rotate(-90 120 1920)" fill="url(#paint2_linear_1689_1102)" fill-opacity="0.8"/>',
-                "</g>",
-                '<g filter="url(#filter1_d_1689_1102)">',
-                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="220" font-weight="800" letter-spacing="-0.04em"><tspan x="350.124" y="583.682">',
-                tokenSymbol,
-                "</tspan></text>",
-                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="220" letter-spacing="-0.04em"><tspan x="220" y="583.682">$</tspan></text>',
-                "</g>",
-                '<rect x="1636.541" y="181" width="107.459" height="107.459" rx="53.7295" stroke="#CBCFCB" stroke-width="7.54098"/>',
-                '<path d="M1661.9905 220.5045L1673.4495 237.9445H1688.2895L1684.9200 232.8145H1695.6200L1682.8500 252.2645L1690.2700 264.5545L1718.5500 220.5045H1661.9905Z" fill="#CBCFCB"/>',
-                '<path d="M1661.9905 220.5045L1673.4495 237.9445H1688.2895L1684.9200 232.8145H1695.6200L1682.8500 252.2645L1690.2700 264.5545L1718.5500 220.5045H1661.9905Z" fill="#CBCFCB"/>',
-                '<rect x="221" y="873" width="1558" height="122" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                '<rect x="221" y="873" width="1558" height="122" rx="19" stroke="#737373" stroke-width="2"/>',
+                // '<rect x="120" y="80" width="1760" height="1840" rx="80" fill="url(#pattern0_1689_1102)" fill-opacity="0.4"/>',
+                // '<g filter="url(#filter0_d_1689_1102)">',
+                // '<g clip-path="url(#clip1_1689_1102)">',
+
+                // todo: figure out fill="url(#paint1_linear_1689_1102)"
+                // '<rect x="120" y="80" width="1756" height="1840" fill="#FF0000"/>',
+
+                // todo: another one to figure out
+                // '<g style="mix-blend-mode:overlay">',
+                // '<rect x="120" y="1920" width="1840" height="1756" transform="rotate(-90 120 1920)" fill="url(#paint2_linear_1689_1102)" fill-opacity="0.8"/>',
+                // '</g>',
+                generateLogo(),
+                generateTokenSymbol(tokenSymbolString),
                 generateTokenIdOrAmountElement(tokenAmountOrIdString, amountOrTokenIdString),
                 generateStakingPeriodElements("1100", "1071.14", stakeTimestampStr, unlockTimestampStr, cooldownStr),
                 generateTokenTypeElement(tokenTypeString, tokenAddressString, amountOrTokenIdString),
-                // Pool ID
-                '<rect x="221" y="1529" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                '<rect x="221" y="1529" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
-                '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="221" y="1500.14">Pool ID</tspan></text>',
-                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="1584">',
-                poolIdString,
-                "</tspan></text>",
-                "</g>",
-                '<rect x="122" y="82" width="1756" height="1836" rx="78" stroke="url(#paint3_linear_1689_1102)" stroke-width="4"/>',
-                "</g>",
+                generatePoolIdElement(poolIdString),
+                // "</g>",
+                // todo: figure out stroke url 
+                // '<rect x="122" y="82" width="1756" height="1836" rx="78" stroke="url(#paint3_linear_1689_1102)" stroke-width="4"/>',
+                // "</g>",
                 generateDefs(),
                 "</svg>"
+            )
+        );
+    }
+
+    function generateLogo() public pure returns (string memory) {
+        return string(
+            abi.encodePacked(
+                '<rect x="1636.541" y="181" width="107.459" height="107.459" rx="53.7295" stroke="#FF0000" stroke-width="15.54098"/>',
+                '<rect x="1636.541" y="181" width="107.459" height="107.459" rx="53.7295" stroke="#CBCFCB" stroke-width="7.54098"/>',
+                '<path d="M1661.9905 220.5045L1673.4495 237.9445H1688.2895L1684.9200 232.8145H1695.6200L1682.8500 252.2645L1690.2700 264.5545L1718.5500 220.5045H1661.9905Z" fill="#CBCFCB"/>'
+            )
+        );
+    }
+
+    function generateTokenSymbol(string memory tokenSymbolString) public pure returns (string memory) {
+        return string(
+            abi.encodePacked(
+                // todo: figure out url stuff. If closer to wednesday, delete and submit PR
+                // '<g filter="url(#filter1_d_1689_1102)">',
+                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="220" font-weight="800" letter-spacing="-0.04em"><tspan x="350.124" y="583.682">',
+                tokenSymbolString,
+                "</tspan></text>",
+                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="220" letter-spacing="-0.04em"><tspan x="220" y="583.682">$</tspan></text>'
+                // "</g>",
             )
         );
     }
@@ -230,6 +241,8 @@ contract PositionMetadata {
         return (
             string(
                 abi.encodePacked(
+                    '<rect x="221" y="873" width="1558" height="122" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                    '<rect x="221" y="873" width="1558" height="122" rx="19" stroke="#737373" stroke-width="2"/>',
                     '<text x="220" y="844.14" fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="',
                     fontFamily,
                     '"  font-size="32" letter-spacing="0em">',
@@ -346,6 +359,21 @@ contract PositionMetadata {
                     "</tspan></text>"
                 )
             );
+    }
+
+    function generatePoolIdElement(string memory poolIdString) public pure returns (string memory) {
+        return(
+            string(
+                abi.encodePacked(
+                '<rect x="221" y="1529" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                '<rect x="221" y="1529" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
+                '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="221" y="1500.14">Pool ID</tspan></text>',
+                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="1584">',
+                poolIdString,
+                "</tspan></text>"
+                )
+            )
+        );
     }
 
     function generateDefs() public pure returns (string memory) {
