@@ -140,6 +140,8 @@ contract PositionMetadata {
             ? returnTokenSymbolNative()
             : returnTokenSymbol(pool.tokenType, pool.tokenAddress);
 
+        string memory tokenAddressString = Strings.toHexString(uint256(uint160(pool.tokenAddress)), 20);
+
         svg = string(
             abi.encodePacked(
                 '<svg width="1840" height="1920" viewBox="0 0 2000 2000" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">',
@@ -152,22 +154,31 @@ contract PositionMetadata {
                 '<rect x="120" y="1920" width="1840" height="1756" transform="rotate(-90 120 1920)" fill="url(#paint2_linear_1689_1102)" fill-opacity="0.8"/>',
                 "</g>",
                 '<g filter="url(#filter1_d_1689_1102)">',
-                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="220" font-weight="800" letter-spacing="-0.04em"><tspan x="340.124" y="583.682">',
+                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="220" font-weight="800" letter-spacing="-0.04em"><tspan x="350.124" y="583.682">',
                 tokenSymbol,
                 "</tspan></text>",
                 '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="220" letter-spacing="-0.04em"><tspan x="220" y="583.682">$</tspan></text>',
-                // generateAdminElement(poolAdminString),
                 "</g>",
                 '<rect x="1636.541" y="181" width="107.459" height="107.459" rx="53.7295" stroke="#CBCFCB" stroke-width="7.54098"/>',
-                '<path d="M1661.9905 212.5045L1673.4495 229.9445H1688.2895L1684.9200 224.8145H1695.6200L1682.8500 244.2645L1690.2700 255.5545L1718.5500 212.5045H1661.9905Z" fill="#CBCFCB"/>',
-                '<path d="M1661.9905 212.5045L1673.4495 229.9445H1688.2895L1684.9200 224.8145H1695.6200L1682.8500 244.2645L1690.2700 255.5545L1718.5500 212.5045H1661.9905Z" fill="#CBCFCB"/>',
+                '<path d="M1661.9905 220.5045L1673.4495 237.9445H1688.2895L1684.9200 232.8145H1695.6200L1682.8500 252.2645L1690.2700 264.5545L1718.5500 220.5045H1661.9905Z" fill="#CBCFCB"/>',
+                '<path d="M1661.9905 220.5045L1673.4495 237.9445H1688.2895L1684.9200 232.8145H1695.6200L1682.8500 252.2645L1690.2700 264.5545L1718.5500 220.5045H1661.9905Z" fill="#CBCFCB"/>',
                 '<rect x="221" y="873" width="1558" height="122" rx="19" fill="#18181B" fill-opacity="0.8"/>',
                 '<rect x="221" y="873" width="1558" height="122" rx="19" stroke="#737373" stroke-width="2"/>',
                 generateTokenIdOrAmountElement(tokenAmountOrIdString, amountOrTokenIDString),
                 generateStakingPeriodElements('1100', '1071.14', stakeTimestampStr, unlockTimestampStr, cooldownStr),
                 '<rect x="221" y="1302" width="1033" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
                 '<rect x="221" y="1302" width="1033" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
-                generateTokenTypeElement(tokenTypeString, poolIdString),
+                '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="221" y="1273.14">Token</tspan></text>',
+                generateTokenTypeElement(tokenTypeString, tokenAddressString),
+                '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="1276" y="1273.14">Token ID</tspan></text>',
+                '<rect x="1277" y="1302" width="502" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                '<rect x="1277" y="1302" width="502" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
+                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="1315" y="1357">',amountOrTokenIDString,'</tspan></text>',
+                // Pool ID
+                '<rect x="221" y="1532.6" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                '<rect x="221" y="1532.6" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
+                '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="221" y="1503.74">Pool ID</tspan></text>',
+                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="1587.6">',poolIdString,'</tspan></text>',
                 "</g>",
                 '<rect x="122" y="82" width="1756" height="1836" rx="78" stroke="url(#paint3_linear_1689_1102)" stroke-width="4"/>',
                 "</g>",
@@ -239,7 +250,7 @@ contract PositionMetadata {
                 abi.encodePacked(
                     '<text x="220" y="844.14" fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="',
                     fontFamily,
-                    '"  font-size="28" font-weight="bold" letter-spacing="0em">',
+                    '"  font-size="32" font-weight="bold" letter-spacing="0em">',
                     tokenIdOrAmountString,
                     "</text>",
                     '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="80" font-weight="bold" letter-spacing="0em"><tspan x="260" y="957">',                
@@ -252,7 +263,7 @@ contract PositionMetadata {
 
     function generateTokenTypeElement(
         string memory tokenTypeString,
-        string memory poolIdString
+        string memory tokenAddressString
     ) public pure returns (string memory) {
         string memory fontFamily = "Courier New";
         uint256 averageCharWidth = 16;
@@ -274,7 +285,7 @@ contract PositionMetadata {
                     '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="',
                     fontFamily,
                     '" font-size="32" letter-spacing="0em"><tspan x="388" y="1357">',
-                    poolIdString,
+                    tokenAddressString,
                     "</tspan></text>"
                 )
             );
