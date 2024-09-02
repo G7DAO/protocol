@@ -6,7 +6,7 @@ import { Base64 } from "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
 // Internal imports
 import { StakingPool, Position } from "./data.sol";
@@ -369,13 +369,15 @@ contract PositionMetadata {
         uint256 chainId = block.chainid;
         // Ethereum mainnet or arbitrum sepolia
         if (chainId == 1 || chainId == 421614) return "ETH";
-        else if (chainId == 13746) return "G7";
+        // g7 conduit testnet or local hardhat node
+        else if (chainId == 13746 || chainId == 31337) return "G7";
         else return "N/A";
     }
 
     function returnTokenSymbol(uint256 tokenType, address tokenAddress) public view returns (string memory) {
         if (tokenType == 20) return ERC20(tokenAddress).symbol();
         else if (tokenType == 721) return ERC721(tokenAddress).symbol();
+        else if (tokenType == 1155) return "";
         else return "N/A";
     }
 }

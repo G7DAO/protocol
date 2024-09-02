@@ -9,10 +9,9 @@ describe.only('Staker', function () {
         const lockupSeconds = 3600;
         const cooldownSeconds = 0;
 
-        const { staker, erc721, erc20, erc1155, user0, erc721PoolID, erc20PoolID, erc1155PoolID, nativePoolID } = await loadFixture(
-            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
-        );
-        
+        const { staker, erc721, erc20, erc1155, user0, erc721PoolID, erc20PoolID, erc1155PoolID, nativePoolID } =
+            await loadFixture(setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds));
+
         const stakerWithUser0 = staker.connect(user0);
         const tokenId = 1n;
 
@@ -24,6 +23,7 @@ describe.only('Staker', function () {
         // Approve staker contract to transfer ERC721 token
         await erc721.connect(user0).approve(await staker.getAddress(), tokenId);
         await erc20.connect(user0).approve(await staker.getAddress(), 1000);
+        await erc1155.connect(user0).setApprovalForAll(await staker.getAddress(), true);
 
         // Stake ERC721 token
         let tx = await stakerWithUser0.stakeERC721(erc721PoolID, tokenId);
@@ -35,7 +35,7 @@ describe.only('Staker', function () {
         // Get the position token ID of the newly minted token
         let positionTokenID = (await staker.TotalPositions()) - 1n;
         let metadataDataURI = await staker.tokenURI(positionTokenID);
-        console.log("metadatauri", metadataDataURI);
+        console.log('metadataURI', metadataDataURI);
 
         tx = await stakerWithUser0.stakeERC20(erc20PoolID, 10);
         txReceipt = await tx.wait();
@@ -44,8 +44,25 @@ describe.only('Staker', function () {
         // Get the position token ID of the newly minted token
         positionTokenID = (await staker.TotalPositions()) - 1n;
         metadataDataURI = await staker.tokenURI(positionTokenID);
-        console.log("metadatauri 20", metadataDataURI);
+        console.log('metadatauri 20', metadataDataURI);
 
+        tx = await stakerWithUser0.stakeERC1155(erc1155PoolID, 1);
+        txReceipt = await tx.wait();
+        expect(txReceipt).to.not.be.null;
+
+        // Get the position token ID of the newly minted token
+        positionTokenID = (await staker.TotalPositions()) - 1n;
+        metadataDataURI = await staker.tokenURI(positionTokenID);
+        console.log('metadatauri 1155', metadataDataURI);
+
+        tx = await stakerWithUser0.stakeNative(nativePoolID, {value: 1000n});
+        txReceipt = await tx.wait();
+        expect(txReceipt).to.not.be.null;
+
+        // Get the position token ID of the newly minted token
+        positionTokenID = (await staker.TotalPositions()) - 1n;
+        metadataDataURI = await staker.tokenURI(positionTokenID);
+        console.log('metadatauri native', metadataDataURI);
 
         const metadataBase64 = metadataDataURI.split(',')[1];
         const metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
