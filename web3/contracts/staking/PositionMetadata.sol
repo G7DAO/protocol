@@ -249,7 +249,7 @@ contract PositionMetadata {
         string memory mainWidth = "1558";
         string memory tokenIdSection = "";
 
-        uint256 averageCharWidth = 16;
+        uint256 averageCharWidth = 18;
         uint256 horizontalPadding = 20;
         // calculate correct rect width from text width and find center of text
         uint256 textWidth = bytes(tokenTypeString).length * averageCharWidth;
@@ -278,11 +278,11 @@ contract PositionMetadata {
                     '<rect x="221" y="1302" width="',
                     mainWidth,
                     '" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
-                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="34" letter-spacing="0em"><tspan x="221" y="1273.14">Token</tspan></text>',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="221" y="1273.14">Token</tspan></text>',
                     '<rect x="241" y="1322" width="',
                     rectWidth.toString(),
                     '" height="48" rx="21" stroke="#FFEFB8" stroke-width="0.4"/>',
-                    '<text x="260" y="1357" fill="#FFEFB8" font-family="Courier New" font-size="28" font-weight="bold">',
+                    '<text x="260" y="1357" fill="#FFEFB8" font-family="Courier New" font-size="32" font-weight="bold">',
                     tokenTypeString,
                     "</text>",
                     '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="',

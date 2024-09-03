@@ -132,7 +132,7 @@ describe.only('Staker', function () {
         metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
 
         // Uncomment to get image and paste it in the browser to test! (ERC1155)
-        // console.log(metadata.image);
+        console.log(metadata.image);
 
         expect(metadata).to.deep.equal({
             token_id: positionTokenID.toString(),
@@ -176,7 +176,7 @@ describe.only('Staker', function () {
         metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
 
         // Uncomment to get image and paste it in the browser to test! (Native)
-        console.log(metadata.image);
+        // console.log(metadata.image);
 
         expect(metadata).to.deep.equal({
             token_id: positionTokenID.toString(),
