@@ -146,12 +146,12 @@ contract PositionMetadata {
             abi.encodePacked(
                 '<svg width="1840" height="1920" viewBox="0 0 2000 2000" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">',
                 '<rect x="120" y="80" width="1760" height="1840" rx="80" fill="#292929"/>',
-                // '<rect x="120" y="80" width="1760" height="1840" rx="80" fill="url(#pattern0_1689_1102)" fill-opacity="0.4"/>',
-                // '<g filter="url(#filter0_d_1689_1102)">',
-                // '<g clip-path="url(#clip1_1689_1102)">',
+                '<rect x="120" y="80" width="1760" height="1840" rx="80" fill="url(#pattern0_1689_1102)" fill-opacity="0.4"/>',
+                '<g filter="url(#filter0_d_1796_2)">',
+                '<g clip-path="url(#filter0_d_1796_2)">',
 
                 // todo: figure out fill="url(#paint1_linear_1689_1102)"
-                // '<rect x="120" y="80" width="1756" height="1840" fill="#FF0000"/>',
+                '<rect x="120" y="80" width="1756" height="1840" fill="url(#paint1_linear_1689_1102)"/>',
 
                 // todo: another one to figure out
                 // '<g style="mix-blend-mode:overlay">',
@@ -163,10 +163,10 @@ contract PositionMetadata {
                 generateStakingPeriodElements("1100", "1071.14", stakeTimestampStr, unlockTimestampStr, cooldownStr),
                 generateTokenTypeElement(tokenTypeString, tokenAddressString, amountOrTokenIdString),
                 generatePoolIdElement(poolIdString),
-                // "</g>",
+                "</g>",
                 // todo: figure out stroke url 
                 // '<rect x="122" y="82" width="1756" height="1836" rx="78" stroke="url(#paint3_linear_1689_1102)" stroke-width="4"/>',
-                // "</g>",
+                "</g>",
                 generateDefs(),
                 "</svg>"
             )
