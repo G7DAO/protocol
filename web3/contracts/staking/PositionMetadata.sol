@@ -32,7 +32,7 @@ contract PositionMetadata {
                 '","image": "',
                 "data:image/svg+xml;base64,",
                 image,
-                ',"result_version":1,"attributes": ['
+                '","result_version":1,"attributes": ['
             )
         );
 
@@ -176,7 +176,6 @@ contract PositionMetadata {
     function generateLogo() public pure returns (string memory) {
         return string(
             abi.encodePacked(
-                '<rect x="1636.541" y="181" width="107.459" height="107.459" rx="53.7295" stroke="#FF0000" stroke-width="15.54098"/>',
                 '<rect x="1636.541" y="181" width="107.459" height="107.459" rx="53.7295" stroke="#CBCFCB" stroke-width="7.54098"/>',
                 '<path d="M1661.9905 220.5045L1673.4495 237.9445H1688.2895L1684.9200 232.8145H1695.6200L1682.8500 252.2645L1690.2700 264.5545L1718.5500 220.5045H1661.9905Z" fill="#CBCFCB"/>'
             )
@@ -405,7 +404,7 @@ contract PositionMetadata {
     function returnTokenSymbol(uint256 tokenType, address tokenAddress) public view returns (string memory) {
         if (tokenType == 20) return ERC20(tokenAddress).symbol();
         else if (tokenType == 721) return ERC721(tokenAddress).symbol();
-        else if (tokenType == 1155) return "";
+        // else if (tokenType == 1155) return "";
         else return "N/A";
     }
 }
