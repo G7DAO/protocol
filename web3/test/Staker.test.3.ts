@@ -14,17 +14,21 @@ describe.only('Staker', function () {
 
         const stakerWithUser0 = staker.connect(user0);
         const tokenId = 1n;
+        const amountErc20 = 10n;
+        const amountErc1155 = 1n;
+        const amountNative = 10n;
 
         // Mint ERC721, 20 and 1155 token(s) to user0
         await erc721.mint(await user0.getAddress(), tokenId);
-        await erc20.mint(await user0.getAddress(), 1000);
-        await erc1155.mint(await user0.getAddress(), 1, 1);
+        await erc20.mint(await user0.getAddress(), amountErc20);
+        await erc1155.mint(await user0.getAddress(), tokenId, amountErc1155);
 
         // Approve staker contract to transfer ERC721 token
         await erc721.connect(user0).approve(await staker.getAddress(), tokenId);
-        await erc20.connect(user0).approve(await staker.getAddress(), 1000);
+        await erc20.connect(user0).approve(await staker.getAddress(), amountErc20);
         await erc1155.connect(user0).setApprovalForAll(await staker.getAddress(), true);
 
+        //#region ERC721
         // Stake ERC721 token
         let tx = await stakerWithUser0.stakeERC721(erc721PoolID, tokenId);
         let txReceipt = await tx.wait();
@@ -35,64 +39,171 @@ describe.only('Staker', function () {
         // Get the position token ID of the newly minted token
         let positionTokenID = (await staker.TotalPositions()) - 1n;
         let metadataDataURI = await staker.tokenURI(positionTokenID);
-        console.log('metadataURI', metadataDataURI);
 
-        tx = await stakerWithUser0.stakeERC20(erc20PoolID, 10);
+        let metadataBase64 = metadataDataURI.split(',')[1];
+        let metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
+
+        // Uncomment to get image and paste it in the browser to test! (ERC721)
+        // console.log(metadata.image);
+
+        expect(metadata).to.deep.equal({
+            token_id: positionTokenID.toString(),
+            image: metadata.image,
+            result_version: 1,
+            attributes: [
+                {
+                    trait_type: 'Pool ID',
+                    value: erc721PoolID.toString(),
+                },
+                {
+                    trait_type: 'Staked token ID',
+                    value: tokenId.toString(),
+                },
+                {
+                    trait_type: 'Staked at',
+                    value: block!.timestamp,
+                    display_type: 'number',
+                },
+                {
+                    trait_type: 'Lockup expires at',
+                    value: block!.timestamp + lockupSeconds,
+                    display_type: 'number',
+                },
+            ],
+        });
+        //#endregion
+
+        //#region ERC20
+        tx = await stakerWithUser0.stakeERC20(erc20PoolID, amountErc20);
         txReceipt = await tx.wait();
         expect(txReceipt).to.not.be.null;
+        block = await ethers.provider.getBlock(txReceipt!.blockNumber);
+        expect(block).to.not.be.null;
 
         // Get the position token ID of the newly minted token
         positionTokenID = (await staker.TotalPositions()) - 1n;
         metadataDataURI = await staker.tokenURI(positionTokenID);
-        console.log('metadatauri 20', metadataDataURI);
 
-        tx = await stakerWithUser0.stakeERC1155(erc1155PoolID, 1);
+        metadataBase64 = metadataDataURI.split(',')[1];
+        metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
+
+        // Uncomment to get image and paste it in the browser to test! (ERC20)
+        // console.log(metadata.image);
+
+        expect(metadata).to.deep.equal({
+            token_id: positionTokenID.toString(),
+            image: metadata.image,
+            result_version: 1,
+            attributes: [
+                {
+                    trait_type: 'Pool ID',
+                    value: erc20PoolID.toString(),
+                },
+                {
+                    trait_type: 'Staked amount',
+                    value: amountErc20.toString(),
+                },
+                {
+                    trait_type: 'Staked at',
+                    value: block!.timestamp,
+                    display_type: 'number',
+                },
+                {
+                    trait_type: 'Lockup expires at',
+                    value: block!.timestamp + lockupSeconds,
+                    display_type: 'number',
+                },
+            ],
+        });
+        //#endregion
+
+        //#region ERC1155
+        tx = await stakerWithUser0.stakeERC1155(erc1155PoolID, amountErc1155);
         txReceipt = await tx.wait();
         expect(txReceipt).to.not.be.null;
+        block = await ethers.provider.getBlock(txReceipt!.blockNumber);
+        expect(block).to.not.be.null;
 
         // Get the position token ID of the newly minted token
         positionTokenID = (await staker.TotalPositions()) - 1n;
         metadataDataURI = await staker.tokenURI(positionTokenID);
-        console.log('metadatauri 1155', metadataDataURI);
 
-        tx = await stakerWithUser0.stakeNative(nativePoolID, {value: 1000n});
+        metadataBase64 = metadataDataURI.split(',')[1];
+        metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
+
+        // Uncomment to get image and paste it in the browser to test! (ERC1155)
+        // console.log(metadata.image);
+
+        expect(metadata).to.deep.equal({
+            token_id: positionTokenID.toString(),
+            image: metadata.image,
+            result_version: 1,
+            attributes: [
+                {
+                    trait_type: 'Pool ID',
+                    value: erc1155PoolID.toString(),
+                },
+                {
+                    trait_type: 'Staked amount',
+                    value: amountErc1155.toString(),
+                },
+                {
+                    trait_type: 'Staked at',
+                    value: block!.timestamp,
+                    display_type: 'number',
+                },
+                {
+                    trait_type: 'Lockup expires at',
+                    value: block!.timestamp + lockupSeconds,
+                    display_type: 'number',
+                },
+            ],
+        });
+        //#endregion
+
+        //#region Native
+        tx = await stakerWithUser0.stakeNative(nativePoolID, {value: amountNative});
         txReceipt = await tx.wait();
         expect(txReceipt).to.not.be.null;
+        block = await ethers.provider.getBlock(txReceipt!.blockNumber);
+        expect(block).to.not.be.null;
 
         // Get the position token ID of the newly minted token
         positionTokenID = (await staker.TotalPositions()) - 1n;
         metadataDataURI = await staker.tokenURI(positionTokenID);
-        console.log('metadatauri native', metadataDataURI);
 
-        const metadataBase64 = metadataDataURI.split(',')[1];
-        const metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
-        console.log(metadata);
+        metadataBase64 = metadataDataURI.split(',')[1];
+        metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
 
-        // expect(metadata).to.deep.equal({
-        //     token_id: positionTokenID.toString(),
-        //     image: 'https://badges.moonstream.to/test/staking_logo.png',
-        //     result_version: 1,
-        //     attributes: [
-        //         {
-        //             trait_type: 'Pool ID',
-        //             value: erc721PoolID.toString(),
-        //         },
-        //         {
-        //             trait_type: 'Staked token ID',
-        //             value: tokenId.toString(),
-        //         },
-        //         {
-        //             trait_type: 'Staked at',
-        //             value: block!.timestamp,
-        //             display_type: 'number',
-        //         },
-        //         {
-        //             trait_type: 'Lockup expires at',
-        //             value: block!.timestamp + lockupSeconds,
-        //             display_type: 'number',
-        //         },
-        //     ],
-        // });
+        // Uncomment to get image and paste it in the browser to test! (Native)
+        // console.log(metadata.image);
+
+        expect(metadata).to.deep.equal({
+            token_id: positionTokenID.toString(),
+            image: metadata.image,
+            result_version: 1,
+            attributes: [
+                {
+                    trait_type: 'Pool ID',
+                    value: nativePoolID.toString(),
+                },
+                {
+                    trait_type: 'Staked amount',
+                    value: amountNative.toString(),
+                },
+                {
+                    trait_type: 'Staked at',
+                    value: block!.timestamp,
+                    display_type: 'number',
+                },
+                {
+                    trait_type: 'Lockup expires at',
+                    value: block!.timestamp + lockupSeconds,
+                    display_type: 'number',
+                },
+            ],
+        });
+        //#endregion
     });
 
     it('STAKER-114: The ERC721 representing a non-ERC721 staking position have as its metadata URI a data URI representing an appropriate JSON object', async function () {
