@@ -9,7 +9,7 @@ describe('Staker', function () {
         const lockupSeconds = 3600;
         const cooldownSeconds = 0;
 
-        const { staker, erc721, user0, erc721PoolID, nativePoolID } = await loadFixture(
+        const { staker, erc721, user0, erc721PoolID } = await loadFixture(
             setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
         );
 
@@ -206,7 +206,6 @@ describe('Staker', function () {
 
         // Get the position token ID of the newly minted token
         const positionTokenID = (await staker.TotalPositions()) - 1n;
-
         const metadataDataURI = await staker.tokenURI(positionTokenID);
         const metadataBase64 = metadataDataURI.split(',')[1];
         const metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
