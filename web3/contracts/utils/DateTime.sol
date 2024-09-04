@@ -1,6 +1,14 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.24;
 
+/**
+ * @title DateTime
+ * @author @pipermerriam on GitHub 
+ * @notice This Solidity library is not written by Game7. It is written by @pipermerriam.  
+ * You can find the full code here: https://github.com/pipermerriam/ethereum-datetime/blob/master/contracts/DateTime.sol
+ */
+
+
 library DateTime {
     /*
      *  Date and Time utilities for Ethereum contracts
