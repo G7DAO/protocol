@@ -18,6 +18,7 @@ contract PositionMetadata {
     using Strings for uint256;
     using Strings for address;
 
+
     function metadataBytes(
         uint256 positionTokenID,
         Position memory position,
@@ -151,7 +152,7 @@ contract PositionMetadata {
                 generateLogo(),
                 generateTokenSymbol(tokenSymbolString),
                 generateTokenIdOrAmountElement(tokenAmountOrIdString, amountOrTokenIdString),
-                generateStakingPeriodElements("1100", "1071.14", stakeTimestampStr, unlockTimestampStr, cooldownStr),
+                generateStakingPeriodElements("993", "964", stakeTimestampStr, unlockTimestampStr, cooldownStr),
                 generateTokenTypeElement(tokenTypeString, tokenAddressString, amountOrTokenIdString, poolIdString),
                 generateDefs(),
                 "</svg>"
@@ -169,14 +170,15 @@ contract PositionMetadata {
     }
 
     function generateTokenSymbol(string memory tokenSymbolString) public pure returns (string memory) {
+        string memory fontFamily = "Courier New";
         return string(
             abi.encodePacked(
                 // todo: figure out url stuff. If closer to wednesday, delete and submit PR
                 // '<g filter="url(#filter1_d_1689_1102)">',
-                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="220" font-weight="800" letter-spacing="-0.04em"><tspan x="350.124" y="583.682">',
+                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="',fontFamily,'" font-size="220" font-weight="800" letter-spacing="-0.04em"><tspan x="350.124" y="583.682">',
                 tokenSymbolString,
                 "</tspan></text>",
-                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="220" letter-spacing="-0.04em"><tspan x="220" y="583.682">$</tspan></text>'
+                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="',fontFamily,'" font-size="220" font-weight="bold" letter-spacing="-0.04em"><tspan x="220" y="583.682">$</tspan></text>'
                 // "</g>",
             )
         );
@@ -186,18 +188,18 @@ contract PositionMetadata {
         string memory tokenIdOrAmountString,
         string memory amountOrTokenIDString
     ) public pure returns (string memory) {
-        string memory fontFamily = "Courier New";
+        string memory fontFamily = 'Courier New';
         return (
             string(
                 abi.encodePacked(
-                    '<rect x="221" y="873" width="1558" height="122" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                    '<rect x="221" y="873" width="1558" height="122" rx="19" stroke="#737373" stroke-width="2"/>',
-                    '<text x="220" y="844.14" fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="',
+                    '<rect x="221" y="766" width="1558" height="122" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                    '<rect x="221" y="766" width="1558" height="122" rx="19" stroke="#737373" stroke-width="2"/>',
+                    '<text x="220" y="737" fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="',
                     fontFamily,
-                    '"  font-size="36" letter-spacing="0em">',
+                    '"  font-size="40" font-weight="bold" letter-spacing="0em">',
                     tokenIdOrAmountString,
                     "</text>",
-                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="80" font-weight="bold" letter-spacing="0em"><tspan x="260" y="957">',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="',fontFamily,'" font-size="80" font-weight="bold" letter-spacing="0em"><tspan x="260" y="850">',
                     amountOrTokenIDString,
                     "</tspan></text>"
                 )
@@ -212,22 +214,23 @@ contract PositionMetadata {
         string memory poolIdString
     ) public pure returns (string memory) {
         string memory tokenIdSection = "";
+        
         uint256 yPoolPad = 0;
-
-        uint256 averageCharWidth = 18;
+        uint256 averageCharWidth = 19;
         
         // calculate correct rect width from text width and find center of text
         uint256 textWidth = bytes(tokenTypeString).length * averageCharWidth;
         uint256 rectWidth = textWidth + 40;
+        // uint256 addressWidth = 
 
         if (keccak256(abi.encodePacked(tokenTypeString)) == keccak256(abi.encodePacked("ERC1155"))) {
-            yPoolPad = 227;
+            yPoolPad = 194;
             tokenIdSection = string(
                 abi.encodePacked(
-                    '<rect x="221" y="',(1302 + yPoolPad).toString(),'" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                    '<rect x="221" y="',(1302 + yPoolPad).toString(),'" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
-                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="36" letter-spacing="0em"><tspan x="221" y="',(1273 + yPoolPad).toString(),'">Token ID</tspan></text>',
-                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="',(1357 + yPoolPad).toString(),'">',
+                    '<rect x="221" y="',(1195 + yPoolPad).toString(),'" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                    '<rect x="221" y="',(1195 + yPoolPad).toString(),'" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="bold" letter-spacing="0em"><tspan x="221" y="',(1166 + yPoolPad).toString(),'">Token ID</tspan></text>',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="',(1250 + yPoolPad).toString(),'">',
                     amountOrTokenIdString,
                     "</tspan></text>"
                 )
@@ -237,25 +240,25 @@ contract PositionMetadata {
         return
             string(
                 abi.encodePacked(
-                    '<rect x="221" y="1302" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                    '<rect x="221" y="1302" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
-                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="36" letter-spacing="0em"><tspan x="221" y="1273.14">Token</tspan></text>',
-                    '<rect x="241" y="1322" width="',
+                    '<rect x="221" y="1195" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                    '<rect x="221" y="1195" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="bold" letter-spacing="0em"><tspan x="221" y="1166">Token</tspan></text>',
+                    '<rect x="241" y="1215" width="',
                     rectWidth.toString(),
                     '" height="48" rx="21" stroke="#FFEFB8" stroke-width="0.4"/>',
-                    '<text x="260" y="1357" fill="#FFEFB8" font-family="Courier New" font-size="32" font-weight="bold">',
+                    '<text x="260" y="1250" fill="#FFEFB8" font-family="Courier New" font-size="32" font-weight="bold">',
                     tokenTypeString,
                     "</text>",
                     '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="',
-                    (241 + rectWidth + 20).toString(),
-                    '" y="1357">',
+                    (241 + rectWidth + 30).toString(),
+                    '" y="1250">',
                     tokenAddressString,
                     "</tspan></text>",
                     tokenIdSection,
-                    '<rect x="221" y="',(1529 + yPoolPad).toString(),'" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                    '<rect x="221" y="',(1529 + yPoolPad).toString(),'" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
-                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="36" letter-spacing="0em"><tspan x="221" y="',(1500 + yPoolPad).toString(),'">Pool ID</tspan></text>',
-                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="',(1584 + yPoolPad).toString(),'">',
+                    '<rect x="221" y="',(1389 + yPoolPad).toString(),'" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                    '<rect x="221" y="',(1389 + yPoolPad).toString(),'" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="bold" letter-spacing="0em"><tspan x="221" y="',(1360 + yPoolPad).toString(),'">Pool ID</tspan></text>',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="',(1444 + yPoolPad).toString(),'">',
                     poolIdString,
                     "</tspan></text>"
                 )
@@ -268,11 +271,11 @@ contract PositionMetadata {
         string memory stakeTimestampStr,
         string memory unlockTimestampStr,
         string memory cooldownStr
-    ) public pure returns (string memory) {
+    ) public view returns (string memory) {
         return
             string(
                 abi.encodePacked(
-                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="36" letter-spacing="0em"><tspan x="220" y="',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="bold" letter-spacing="0em"><tspan x="220" y="',
                     titleYPos,
                     '">Staked at</tspan></text>',
                     '<rect x="221" y="',
@@ -281,10 +284,10 @@ contract PositionMetadata {
                     '<rect x="221" y="',
                     yPos,
                     '" width="522" height="86" rx="19" stroke="#737373" stroke-width="2"/>',
-                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="1157.55">',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="1051">',
                     stakeTimestampStr,
                     "</tspan></text>",
-                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="36" letter-spacing="0em"><tspan x="768" y="',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="bold" letter-spacing="0em"><tspan x="768" y="',
                     titleYPos,
                     '">Unlocks at</tspan></text>',
                     '<rect x="769" y="',
@@ -293,10 +296,10 @@ contract PositionMetadata {
                     '<rect x="769" y="',
                     yPos,
                     '" width="522" height="86" rx="19" stroke="#737373" stroke-width="2"/>',
-                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="808" y="1157.55">',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="808" y="1051">',
                     unlockTimestampStr,
                     "</tspan></text>",
-                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="36" letter-spacing="0em"><tspan x="1316" y="',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="bold" letter-spacing="0em"><tspan x="1316" y="',
                     titleYPos,
                     '">Cooldown</tspan></text>',
                     '<rect x="1317" y="',
@@ -305,7 +308,7 @@ contract PositionMetadata {
                     '<rect x="1317" y="',
                     yPos,
                     '" width="462" height="86" rx="19" stroke="#737373" stroke-width="2"/>',
-                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="1356" y="1157.55">',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="1356" y="1051">',
                     cooldownStr,
                     " seconds",
                     "</tspan></text>"
@@ -342,7 +345,24 @@ contract PositionMetadata {
     function returnTokenSymbol(uint256 tokenType, address tokenAddress) public view returns (string memory) {
         if (tokenType == 20) return ERC20(tokenAddress).symbol();
         else if (tokenType == 721) return ERC721(tokenAddress).symbol();
-        // else if (tokenType == 1155) return "";
+        else if (tokenType == 1155) {
+            string memory addressSlice = getAddressSlice(tokenAddress);
+            return addressSlice;
+        }
         else return "N/A";
     }
+
+    function getAddressSlice(address tokenAddress) public pure returns (string memory) {
+        // Convert address to a hex string
+        string memory hexAddress = Strings.toHexString(uint256(uint160(tokenAddress)), 20);
+        
+        // Get the first 5 characters after "0x"
+        bytes memory slice = new bytes(6);
+        for (uint i = 0; i < 6; i++) {
+            slice[i] = bytes(hexAddress)[i]; // Skip the "0x" prefix
+        }
+        
+        return string(slice);
+    }
+
 }
