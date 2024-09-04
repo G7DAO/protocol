@@ -90,11 +90,6 @@ contract PositionMetadata {
             );
     }
 
-    // Add positionParams in the future
-    function generateSVG(Position memory position, StakingPool memory pool) internal view returns (string memory svg) {
-        svg = string(abi.encodePacked(generateSVGForeground(position, pool)));
-    }
-
     function formatDateTime(DateTime._DateTime memory dt) internal pure returns (string memory) {
         return
             string(
@@ -113,6 +108,12 @@ contract PositionMetadata {
                 )
             );
     }
+
+    // Add positionParams in the future
+    function generateSVG(Position memory position, StakingPool memory pool) internal view returns (string memory svg) {
+        svg = string(abi.encodePacked(generateSVGForeground(position, pool)));
+    }
+
 
     function generateSVGForeground(
         Position memory position,
@@ -144,15 +145,14 @@ contract PositionMetadata {
 
         svg = string(
             abi.encodePacked(
-                '<svg width="1840" height="1920" viewBox="0 0 1840 1920" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">',
+                '<svg width="1960" height="2000" viewBox="0 0 1960 2000" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">',
                 '<rect x="120" y="80" width="1760" height="1840" rx="80" fill="#292929"/>',
                 '<rect x="120" y="80" width="1760" height="1840" rx="80" fill="url(#pattern0_1689_1102)" fill-opacity="0.4"/>',
                 generateLogo(),
                 generateTokenSymbol(tokenSymbolString),
                 generateTokenIdOrAmountElement(tokenAmountOrIdString, amountOrTokenIdString),
                 generateStakingPeriodElements("1100", "1071.14", stakeTimestampStr, unlockTimestampStr, cooldownStr),
-                generateTokenTypeElement(tokenTypeString, tokenAddressString, amountOrTokenIdString),
-                generatePoolIdElement(poolIdString),
+                generateTokenTypeElement(tokenTypeString, tokenAddressString, amountOrTokenIdString, poolIdString),
                 generateDefs(),
                 "</svg>"
             )
@@ -182,42 +182,6 @@ contract PositionMetadata {
         );
     }
 
-    function generateAdminElement(string memory poolAdminString) public pure returns (string memory) {
-        uint256 averageCharWidth = 17;
-        uint256 horizontalPadding = 20;
-        uint256 borderPadding = 96;
-
-        // calculate correct rect width from text width and find center of text
-        uint256 textWidth = bytes(poolAdminString).length * averageCharWidth;
-        uint256 rectWidth = textWidth + (horizontalPadding * 2);
-        uint256 xPos = 1840 - rectWidth - borderPadding;
-        uint256 textY = 181 + (48 / 2) + (28 / 2) - 4;
-
-        // Build SVG string with minimal variables
-        return
-            string(
-                abi.encodePacked(
-                    '<rect x="',
-                    xPos.toString(),
-                    '" y="181" width="',
-                    rectWidth.toString(),
-                    '" height="48" rx="21" fill="#FFEFB8" fill-opacity="0.4"/>',
-                    '<rect x="',
-                    xPos.toString(),
-                    '" y="181" width="',
-                    rectWidth.toString(),
-                    '" height="48" rx="21" stroke="#737373" stroke-width="2"/>',
-                    '<text x="',
-                    (xPos + horizontalPadding).toString(),
-                    '" y="',
-                    textY.toString(),
-                    '" fill="#FFEFB8" font-family="Courier New" font-size="28" font-weight="bold">',
-                    poolAdminString,
-                    "</text>"
-                )
-            );
-    }
-
     function generateTokenIdOrAmountElement(
         string memory tokenIdOrAmountString,
         string memory amountOrTokenIDString
@@ -244,25 +208,26 @@ contract PositionMetadata {
     function generateTokenTypeElement(
         string memory tokenTypeString,
         string memory tokenAddressString,
-        string memory amountOrTokenIdString
+        string memory amountOrTokenIdString,
+        string memory poolIdString
     ) public pure returns (string memory) {
-        string memory mainWidth = "1558";
         string memory tokenIdSection = "";
+        uint256 yPoolPad = 0;
 
         uint256 averageCharWidth = 18;
-        uint256 horizontalPadding = 20;
+        
         // calculate correct rect width from text width and find center of text
         uint256 textWidth = bytes(tokenTypeString).length * averageCharWidth;
-        uint256 rectWidth = textWidth + (horizontalPadding * 2);
+        uint256 rectWidth = textWidth + 40;
 
         if (keccak256(abi.encodePacked(tokenTypeString)) == keccak256(abi.encodePacked("ERC1155"))) {
-            mainWidth = "1070";
+            yPoolPad = 227;
             tokenIdSection = string(
                 abi.encodePacked(
-                    '<rect x="1317" y="1302" width="462" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                    '<rect x="1317" y="1302" width="462" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
-                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="36" letter-spacing="0em"><tspan x="1316" y="1273.14">Token ID</tspan></text>',
-                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="1355" y="1357">',
+                    '<rect x="221" y="',(1302 + yPoolPad).toString(),'" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                    '<rect x="221" y="',(1302 + yPoolPad).toString(),'" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="36" letter-spacing="0em"><tspan x="221" y="',(1273 + yPoolPad).toString(),'">Token ID</tspan></text>',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="',(1357 + yPoolPad).toString(),'">',
                     amountOrTokenIdString,
                     "</tspan></text>"
                 )
@@ -272,12 +237,8 @@ contract PositionMetadata {
         return
             string(
                 abi.encodePacked(
-                    '<rect x="221" y="1302" width="',
-                    mainWidth,
-                    '" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                    '<rect x="221" y="1302" width="',
-                    mainWidth,
-                    '" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
+                    '<rect x="221" y="1302" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                    '<rect x="221" y="1302" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
                     '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="36" letter-spacing="0em"><tspan x="221" y="1273.14">Token</tspan></text>',
                     '<rect x="241" y="1322" width="',
                     rectWidth.toString(),
@@ -285,12 +246,18 @@ contract PositionMetadata {
                     '<text x="260" y="1357" fill="#FFEFB8" font-family="Courier New" font-size="32" font-weight="bold">',
                     tokenTypeString,
                     "</text>",
-                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="33" letter-spacing="0em"><tspan x="',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="',
                     (241 + rectWidth + 20).toString(),
                     '" y="1357">',
                     tokenAddressString,
                     "</tspan></text>",
-                    tokenIdSection
+                    tokenIdSection,
+                    '<rect x="221" y="',(1529 + yPoolPad).toString(),'" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                    '<rect x="221" y="',(1529 + yPoolPad).toString(),'" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="36" letter-spacing="0em"><tspan x="221" y="',(1500 + yPoolPad).toString(),'">Pool ID</tspan></text>',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="',(1584 + yPoolPad).toString(),'">',
+                    poolIdString,
+                    "</tspan></text>"
                 )
             );
     }
@@ -344,21 +311,6 @@ contract PositionMetadata {
                     "</tspan></text>"
                 )
             );
-    }
-
-    function generatePoolIdElement(string memory poolIdString) public pure returns (string memory) {
-        return(
-            string(
-                abi.encodePacked(
-                '<rect x="221" y="1529" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                '<rect x="221" y="1529" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
-                '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="36" letter-spacing="0em"><tspan x="221" y="1500.14">Pool ID</tspan></text>',
-                '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="1584">',
-                poolIdString,
-                "</tspan></text>"
-                )
-            )
-        );
     }
 
     function generateDefs() public pure returns (string memory) {
