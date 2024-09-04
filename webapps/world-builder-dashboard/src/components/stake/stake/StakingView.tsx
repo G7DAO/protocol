@@ -5,7 +5,6 @@ import styles from './StakingView.module.css'
 import { doesContractExist, tokenTypes, ZERO_ADDRESS } from '@/utils/web3utils';
 import { ethers } from 'ethers';
 import ActionButtonStake from '../ActionButtonStake';
-import NFTCard from '@/assets/NFTCard';
 
 const StakingView = () => {
     const [tokenAddress, setTokenAddress] = useState<string>(ZERO_ADDRESS)
