@@ -144,7 +144,7 @@ contract PositionMetadata {
 
         svg = string(
             abi.encodePacked(
-                '<svg width="1840" height="1920" viewBox="0 0 2000 2000" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">',
+                '<svg width="1840" height="1920" viewBox="0 0 1840 1920" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">',
                 '<rect x="120" y="80" width="1760" height="1840" rx="80" fill="#292929"/>',
                 '<rect x="120" y="80" width="1760" height="1840" rx="80" fill="url(#pattern0_1689_1102)" fill-opacity="0.4"/>',
                 generateLogo(),
@@ -230,7 +230,7 @@ contract PositionMetadata {
                     '<rect x="221" y="873" width="1558" height="122" rx="19" stroke="#737373" stroke-width="2"/>',
                     '<text x="220" y="844.14" fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="',
                     fontFamily,
-                    '"  font-size="32" letter-spacing="0em">',
+                    '"  font-size="36" letter-spacing="0em">',
                     tokenIdOrAmountString,
                     "</text>",
                     '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="80" font-weight="bold" letter-spacing="0em"><tspan x="260" y="957">',
@@ -261,7 +261,7 @@ contract PositionMetadata {
                 abi.encodePacked(
                     '<rect x="1317" y="1302" width="462" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
                     '<rect x="1317" y="1302" width="462" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
-                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="1316" y="1273.14">Token ID</tspan></text>',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="36" letter-spacing="0em"><tspan x="1316" y="1273.14">Token ID</tspan></text>',
                     '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="1355" y="1357">',
                     amountOrTokenIdString,
                     "</tspan></text>"
@@ -278,14 +278,14 @@ contract PositionMetadata {
                     '<rect x="221" y="1302" width="',
                     mainWidth,
                     '" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
-                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="221" y="1273.14">Token</tspan></text>',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="36" letter-spacing="0em"><tspan x="221" y="1273.14">Token</tspan></text>',
                     '<rect x="241" y="1322" width="',
                     rectWidth.toString(),
                     '" height="48" rx="21" stroke="#FFEFB8" stroke-width="0.4"/>',
                     '<text x="260" y="1357" fill="#FFEFB8" font-family="Courier New" font-size="32" font-weight="bold">',
                     tokenTypeString,
                     "</text>",
-                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="33" letter-spacing="0em"><tspan x="',
                     (241 + rectWidth + 20).toString(),
                     '" y="1357">',
                     tokenAddressString,
@@ -305,7 +305,7 @@ contract PositionMetadata {
         return
             string(
                 abi.encodePacked(
-                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="220" y="',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="36" letter-spacing="0em"><tspan x="220" y="',
                     titleYPos,
                     '">Staked at</tspan></text>',
                     '<rect x="221" y="',
@@ -317,7 +317,7 @@ contract PositionMetadata {
                     '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="1157.55">',
                     stakeTimestampStr,
                     "</tspan></text>",
-                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="768" y="',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="36" letter-spacing="0em"><tspan x="768" y="',
                     titleYPos,
                     '">Unlocks at</tspan></text>',
                     '<rect x="769" y="',
@@ -329,7 +329,7 @@ contract PositionMetadata {
                     '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="808" y="1157.55">',
                     unlockTimestampStr,
                     "</tspan></text>",
-                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="1316" y="',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="36" letter-spacing="0em"><tspan x="1316" y="',
                     titleYPos,
                     '">Cooldown</tspan></text>',
                     '<rect x="1317" y="',
@@ -352,7 +352,7 @@ contract PositionMetadata {
                 abi.encodePacked(
                 '<rect x="221" y="1529" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
                 '<rect x="221" y="1529" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
-                '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="32" letter-spacing="0em"><tspan x="221" y="1500.14">Pool ID</tspan></text>',
+                '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="36" letter-spacing="0em"><tspan x="221" y="1500.14">Pool ID</tspan></text>',
                 '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="1584">',
                 poolIdString,
                 "</tspan></text>"
