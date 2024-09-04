@@ -99,8 +99,7 @@ const StakingView = () => {
 
     return (
         <div className={styles.container}>
-            <NFTCard />
-            {/* <div className={styles.headerContainer}>
+            <div className={styles.headerContainer}>
                 <div className={styles.title}>Create a Pool</div>
                 <div className={styles.subtitle}>Set your pool parameters</div>
             </div>
@@ -151,7 +150,7 @@ const StakingView = () => {
                 params={{ tokenType, tokenAddress, tokenID: tokenId, lockupSeconds, cooldownSeconds, transferable }}
                 isDisabled={inputErrorMessage.length !== 0}
                 setErrorMessage={setNetworkErrorMessage}
-            /> */}
+            />
         </div>
     )
 }

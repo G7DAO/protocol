@@ -216,7 +216,7 @@ contract PositionMetadata {
         string memory tokenIdSection = "";
         
         uint256 yPoolPad = 0;
-        uint256 averageCharWidth = 19;
+        uint256 averageCharWidth = 18;
         
         // calculate correct rect width from text width and find center of text
         uint256 textWidth = bytes(tokenTypeString).length * averageCharWidth;
@@ -271,7 +271,7 @@ contract PositionMetadata {
         string memory stakeTimestampStr,
         string memory unlockTimestampStr,
         string memory cooldownStr
-    ) public view returns (string memory) {
+    ) public pure returns (string memory) {
         return
             string(
                 abi.encodePacked(
