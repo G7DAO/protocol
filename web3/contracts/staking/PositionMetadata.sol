@@ -154,7 +154,6 @@ contract PositionMetadata {
                 generateTokenIdOrAmountElement(tokenAmountOrIdString, amountOrTokenIdString),
                 generateStakingPeriodElements("993", "964", stakeTimestampStr, unlockTimestampStr, cooldownStr),
                 generateTokenTypeElement(tokenTypeString, tokenAddressString, amountOrTokenIdString, poolIdString),
-                generateDefs(),
                 "</svg>"
             )
         );
@@ -312,23 +311,6 @@ contract PositionMetadata {
                     cooldownStr,
                     " seconds",
                     "</tspan></text>"
-                )
-            );
-    }
-
-    function generateDefs() public pure returns (string memory) {
-        return
-            string(
-                abi.encodePacked(
-                    '<g style="mix-blend-mode:overlay">',
-                    '<path d="120 1835L-8.04289e-05 115.99988L1756 115.99995L1756 1835L0 1835Z" fill="url(#paint0_linear_1896_187)" fill-opacity="0.8"/>',
-                    "</g>",
-                    "<defs>",
-                    '<linearGradient id="paint0_linear_1896_187" x1="-4.02145e-05" y1="915" x2="1756" y2="915" gradientUnits="userSpaceOnUse">',
-                    '<stop stop-color="#1B1B1B" stop-opacity="0"/>'
-                    '<stop offset="1" stop-color="#1B1B1B"/>',
-                    "</linearGradient>",
-                    "</defs>"
                 )
             );
     }
