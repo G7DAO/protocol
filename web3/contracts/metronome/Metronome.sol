@@ -1,20 +1,34 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.24;
 
-struct Schedule {
-    uint256 minBlocks;
-    uint256 maxBlocks;    
-}
-
 contract Metronome {
-    mapping(uint256 => Schedule) public Schedules;
-    mapping(uint256 => uint256) public ScheduleBalances;
+    // scheduleID => target number of seconds per block
+    mapping(uint256 => uint256) public Rates;
+    // scheduleID => current bounty for that schedule
+    mapping(uint256 => uint256) public Bounties;
     uint256 public NumSchedules;
+    // scheduleID => block number at which schedule last ticked
+    mapping(uint256 => uint256) public LastTick;
 
-    function createSchedule(uint256 minBlocks, uint256 maxBlocks) external payable returns (uint256 scheduleID) {
+    event ScheduleCreated(uint256 indexed scheduleID, uint256 rate);
+    event BountyIncreased(uint256 indexed scheduleID, uint256 value);
+    event Tick(uint256 indexed scheduleID, uint256 indexed executor, uint256 indexed blockNumber, uint256 bounty);
+
+    function createSchedule(uint256 rate) external payable returns (uint256 scheduleID) {
         scheduleID = NumSchedules;
         NumSchedules++;
-        Schedules[scheduleID] = Schedule(minBlocks, maxBlocks);
-        ScheduleBalances[scheduleID] = msg.value;
+        Rates[scheduleID] = rate;
+        Bounties[scheduleID] = msg.value;
+
+        emit ScheduleCreated(scheduleID, rate);
+        emit BountyIncreased(scheduleID, msg.value);
     }
+
+    function addBounty(uint256 scheduleID) external payable {
+        Bounties[scheduleID] += msg.value;
+        emit BountyIncreased(scheduleID, msg.value);
+    }
+
+    // function tick(uint256 scheduleID) external {
+    // }
 }
