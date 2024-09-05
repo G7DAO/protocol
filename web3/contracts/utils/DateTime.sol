@@ -6,6 +6,9 @@ pragma solidity ^0.8.24;
  * @author @pipermerriam on GitHub 
  * @notice This Solidity library is not written by Game7. It is written by @pipermerriam.  
  * You can find the full code here: https://github.com/pipermerriam/ethereum-datetime/blob/master/contracts/DateTime.sol
+ * Modifications made:
+ * - Changed into a library
+ * - Solidity version changed to fit our compiler
  */
 
 
