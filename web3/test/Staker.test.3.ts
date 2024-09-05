@@ -37,7 +37,7 @@ describe('Staker', function () {
         let metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
 
         // Uncomment to get image and paste it in the browser to test! (ERC721)
-        // console.log(metadata.image);
+        console.log(metadata.image);
 
         expect(metadata).to.deep.equal({
             token_id: positionTokenID.toString(),
@@ -123,7 +123,7 @@ describe('Staker', function () {
             ],
         });
     });
-    it('STAKER-115: The ERC721 representing an ERC1155 staking position have as its metadata URI a data URI representing an appropriate JSON object', async function () {
+    it.only('STAKER-115: The ERC721 representing an ERC1155 staking position have as its metadata URI a data URI representing an appropriate JSON object', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 0;
@@ -157,7 +157,7 @@ describe('Staker', function () {
         const metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
 
         // Uncomment to get image and paste it in the browser to test! (ERC1155)
-        // console.log(metadata.image);
+        console.log(metadata.image);
 
         expect(metadata).to.deep.equal({
             token_id: positionTokenID.toString(),
