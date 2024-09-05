@@ -42,7 +42,7 @@ const router = createBrowserRouter([
     element: <MainLayout />,
     children: [
       {
-        path: '/stake/*',
+        path: '/staker/*',
         element: <StakingPage />
       }
     ]

@@ -44,33 +44,33 @@ const StakingPage = () => {
       <div className={styles.top}>
         <div className={styles.headerContainer}>
           {notifications.data && <FloatingNotification notifications={newNotifications} />}
-          <div className={styles.title}>Stake</div>
+          <div className={styles.title}>Staker</div>
           <NotificationsButton notifications={notifications.data ?? []} />
         </div>
         <div className={styles.navigationContainer}>
           <button
             className={
-              location.pathname === '/stake' ? styles.selectedNavigationButton : styles.unselectedNavigationButton
+              location.pathname === '/staker' ? styles.selectedNavigationButton : styles.unselectedNavigationButton
             }
-            onClick={() => navigate('/stake')}
+            onClick={() => navigate('/staker')}
           >
             Create Pool
           </button>
           <button
             className={
-              location.pathname === '/stake/pools'
+              location.pathname === '/staker/pools'
                 ? styles.selectedNavigationButton
                 : styles.unselectedNavigationButton
             }
-            onClick={() => navigate('/stake/pools')}
+            onClick={() => navigate('/staker/pools')}
           >
             View Pools
           </button>
         </div>
       </div>
       <div className={styles.viewContainer}>
-        {location.pathname === '/stake' && <StakingView />}
-        {location.pathname === '/stake/pools' && <PoolsDesktop />}
+        {location.pathname === '/staker' && <StakingView />}
+        {location.pathname === '/staker/pools' && <PoolsDesktop />}
       </div>
     </div>
   )
