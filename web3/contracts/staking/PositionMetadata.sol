@@ -341,12 +341,12 @@ contract PositionMetadata {
         return
             string(
                 abi.encodePacked(
-                '<defs>',
-                '<linearGradient id="f1" x1="-4.02145e-05" y1="920" x2="1756" y2="920" gradientUnits="userSpaceOnUse">',
-                '<stop stop-color="#1B1B1B" stop-opacity="0.88"/>',
-                '<stop offset="1" stop-color="#1B1B1B" stop-opacity="1"/>',
-                '</linearGradient>',
-                '</defs>'
+                    "<defs>",
+                    '<linearGradient id="f1" x1="0" y1="920" x2="1960" y2="920" gradientUnits="userSpaceOnUse">',
+                    '<stop stop-color="#1B1B1B" stop-opacity=".85"/>',
+                    '<stop offset="1" stop-color="#1B1B1B"/>'
+                    "</linearGradient>",
+                    "</defs>"
                 )
             );
     }
