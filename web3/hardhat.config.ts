@@ -14,13 +14,6 @@ const { ETHSCAN_API_KEY, ARB_SCAN_API_KEY } = process.env;
 const config: HardhatUserConfig = {
     solidity: {
         version: '0.8.24',
-        settings: {
-            viaIR: true,
-            optimizer: {
-                enabled: true,
-                runs: 1_000_000,
-            },
-        },
     },
     gasReporter: {
         enabled: GAS_PROFILER,
