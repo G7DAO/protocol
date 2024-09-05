@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import styles from './MainLayout.module.css'
 import IconLogout from '@/assets/IconLogout'
+import ActionButtonStake from '@/components/stake/ActionButtonStake'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
 
@@ -31,14 +32,19 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
         </div>
       </div>
       <div className={styles.footer}>
-        {connectedAccount && (
-          <div className={styles.web3AddressContainer}>
-            <div
-              className={styles.web3address}
-            >{`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}</div>
-            {isMetaMask && <IconLogout onClick={disconnectWallet} className={styles.iconButton} />}
-          </div>
-        )}
+        <div className={styles.web3AddressContainer}>
+          {connectedAccount && (
+            <>
+              <div
+                className={styles.web3address}
+              >{`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}</div>
+              {isMetaMask && <IconLogout onClick={disconnectWallet} className={styles.iconButton} />}
+            </>
+          )}
+          {!connectedAccount && (
+              <ActionButtonStake actionType='CONNECT' isDisabled={false} setErrorMessage={() => {}} />
+          )}
+        </div>
       </div>
     </div>
   )
