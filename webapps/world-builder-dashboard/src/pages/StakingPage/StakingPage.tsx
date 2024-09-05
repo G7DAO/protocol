@@ -2,22 +2,18 @@
 import { useEffect, useState } from 'react'
 import { useQueryClient } from 'react-query'
 import { useLocation, useNavigate } from 'react-router-dom'
-
 // Styles
 import styles from './StakingPage.module.css'
-
-// Components
-import StakingView from '@/components/stake/stake/StakingView'
 import NotificationsButton from '@/components/notifications/NotificationsButton'
 import { FloatingNotification } from '@/components/notifications/NotificationsDropModal'
-
+import PoolsDesktop from '@/components/stake/pools/PoolsDesktop'
+// Components
+import StakingView from '@/components/stake/stake/StakingView'
 // Contexts
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
-
 // Hooks
 import { useNotifications, usePendingTransactions } from '@/hooks/useL2ToL1MessageStatus'
-import PoolsDesktop from '@/components/stake/pools/PoolsDesktop'
 
 const StakingPage = () => {
   const location = useLocation()
@@ -54,23 +50,40 @@ const StakingPage = () => {
             }
             onClick={() => navigate('/staker')}
           >
-            Create Pool
+            Pools
           </button>
           <button
+            disabled={true}
             className={
-              location.pathname === '/staker/pools'
+              location.pathname === '/staker/projects'
                 ? styles.selectedNavigationButton
                 : styles.unselectedNavigationButton
             }
             onClick={() => navigate('/staker/pools')}
+            style={{
+              color: location.pathname === '/staker/projects' ? 'white' : 'gray'
+            }}
           >
-            View Pools
+            Projects
+          </button>{' '}
+          <button
+            className={
+              location.pathname === '/staker/settings'
+                ? styles.selectedNavigationButton
+                : styles.unselectedNavigationButton
+            }
+            onClick={() => navigate('/staker/settings')}
+          >
+            Settings
           </button>
         </div>
       </div>
       <div className={styles.viewContainer}>
         {location.pathname === '/staker' && <StakingView />}
         {location.pathname === '/staker/pools' && <PoolsDesktop />}
+
+        {/* Uncomment when Projects ready. SAFE integration is a blocker/ */}
+        {/* {location.pathname === '/staker/projects' && <ProjectsDesktop />} */}
       </div>
     </div>
   )

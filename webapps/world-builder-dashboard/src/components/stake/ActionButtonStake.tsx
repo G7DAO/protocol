@@ -48,7 +48,7 @@ const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ actionType, param
       return 'Submitting...'
     }
     if (!connectedAccount) {
-      return 'Connect wallet'
+      return 'Connect Wallet'
     }
     return 'Submit'
   }
@@ -178,7 +178,7 @@ const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ actionType, param
           className={styles.container}
           onClick={handleClick}
           style={{ color: 'white' }}
-          disabled={getLabel() !== 'Connect wallet' && isDisabled}
+          disabled={getLabel() !== 'Connect Wallet' && isDisabled}
         >
           {getLabel() ?? 'Submit'}
         </button>
