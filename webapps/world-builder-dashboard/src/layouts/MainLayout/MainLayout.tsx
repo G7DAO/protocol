@@ -7,7 +7,7 @@ import styles from './MainLayout.module.css'
 
 // Local components and assets
 import IconDroplets02 from '@/assets/IconDroplets02'
-import StakerIcon from '@/assets/StakerIcon'
+import IconStaker from '@/assets/IconStaker'
 import IconWallet04 from '@/assets/IconWallet04'
 import DesktopSidebar from '@/layouts/MainLayout/DesktopSidebar'
 import MobileSidebar from '@/layouts/MainLayout/MobileSidebar'
@@ -18,7 +18,7 @@ interface MainLayoutProps {}
 const NAVIGATION_ITEMS = [
   { name: 'bridge', navigateTo: '/bridge', icon: <IconWallet04 /> },
   { name: 'faucet', navigateTo: '/faucet', icon: <IconDroplets02 /> },
-  { name: 'staker', navigateTo: '/staker', icon: <StakerIcon /> }
+  { name: 'staker', navigateTo: '/staker', icon: <IconStaker /> }
 ]
 const MainLayout: React.FC<MainLayoutProps> = ({}) => {
   const smallView = useMediaQuery('(max-width: 1199px)')

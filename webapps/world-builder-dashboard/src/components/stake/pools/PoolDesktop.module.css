@@ -6,13 +6,10 @@
 }
 
 .thStyles {
-  background-color: #f8f8f8;
-  padding: 12px 15px;
-  border-bottom: 2px solid #ddd;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--Gray-200, #eaecf0);
+  background: #f9fafb;
   text-align: left;
-  position: sticky;
-  top: 0;
-  z-index: 1;
   color: var(--Gray-600, #475467);
   /* Text xs/Medium */
   font-family: Inter;
@@ -22,14 +19,43 @@
   line-height: 18px; /* 150% */
 }
 
-.tdStyles {
-  padding: 12px 15px;
-  border-bottom: 1px solid #ddd;
+.thStylesWidth {
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--Gray-200, #eaecf0);
+  background: #f9fafb;
   text-align: left;
+  color: var(--Gray-600, #475467);
+  /* Text xs/Medium */
+  font-family: Inter;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 18px; /* 150% */
+  width: 195px;
+}
+
+.tdStyles {
+  padding: 16px 24px;
+  text-align: left;
+  height: 72px;
+  align-items: center;
+}
+
+/* Remove bottom border for the last row */
+tr:last-child .tdStyles {
+  border-bottom: none;
 }
 
 .trStyles {
   background-color: #f9f9f9;
+  /* border-bottom: 1px solid var(--Gray-200, #eaecf0); */
+  color: var(--Gray-700, #344054);
+  /* Text sm/Regular */
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 142.857% */
 }
 
 .trStyles:nth-child(even) {
@@ -46,7 +72,7 @@
 }
 
 .headerContainer {
-  display: flex;
+  /* display: flex; */
   padding: 20px 24px 0px 24px;
   align-items: flex-start;
   gap: 16px;
@@ -55,8 +81,8 @@
 
 .header {
   display: flex;
+  margin-bottom: 4px;
   align-items: center;
-  gap: 8px;
   align-self: stretch;
   /* Text lg/Semibold */
   font-family: Inter;

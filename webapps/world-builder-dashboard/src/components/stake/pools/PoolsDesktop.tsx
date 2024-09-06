@@ -1,72 +1,61 @@
 // External Libraries
 import React, { useEffect, useState } from 'react'
+import OptionsButton from './OptionsButton'
 // Styles
 import styles from './PoolDesktop.module.css'
-import OptionsButton from './OptionsButton';
-import PositionsTable from './PositionsTable';
-import usePools from '@/hooks/usePools';
-import { formatAddress } from '@/utils/addressFormat';
-import { tokenTypes } from '@/utils/web3utils';
+import PositionsTable from './PositionsTable'
 import { Pagination } from 'summon-ui/mantine'
+import usePools from '@/hooks/usePools'
+import { formatAddress } from '@/utils/addressFormat'
+import { tokenTypes } from '@/utils/web3utils'
 
-interface PoolDesktopProps { }
-
+interface PoolDesktopProps {}
 
 export interface Pool {
-  poolId: string;
-  poolName: string;
-  administrator: string;
-  owner: string;
-  tokenType: string;
-  tokenAddress: string;
-  tokenId: string;
-  lockdownPeriod: string;
-  cooldownPeriod: string;
-  transferable: boolean;
-  isImmutable: boolean;
+  poolId: string
+  poolName: string
+  administrator: string
+  owner: string
+  tokenType: string
+  tokenAddress: string
+  tokenId: string
+  lockdownPeriod: string
+  cooldownPeriod: string
+  transferable: boolean
+  isImmutable: boolean
 }
 
 const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
-  const { data } = usePools();
+  const { data } = usePools()
   const [activePool, setActivePool] = useState<string | null>(null)
   const [clickedPool, setClickedPool] = useState<number | null>(null)
   const [page, setPage] = useState<number>(0)
   const [maximumPages, setMaximumPages] = useState<number>(0)
   // for future, when the user is able to customize their own entries
-  const [entries, setEntries] = useState<number>(10);
+  const [entries, setEntries] = useState<number>(10)
 
   useEffect(() => {
     if (!data) {
       return
     }
     setMaximumPages(Math.ceil(data?.length / entries))
-    setEntries(10)
+    setEntries(5)
   }, [data])
 
-  const headers = [
-    'ID',
-    'Name',
-    'Token Type',
-    'Period',
-    'Cooldown',
-    'Transferrable',
-    ''
-  ];
+  const headers = ['ID', 'Name', 'Token Type', 'Period', 'Cooldown', 'Transferrable', '']
 
   const handleViewPositions = (poolId: string) => {
-    setActivePool(activePool === poolId ? null : poolId);
-  };
+    setActivePool(activePool === poolId ? null : poolId)
+  }
 
   const getTokenLabel = (tokenValue: string) => {
-    const type = tokenTypes.find((token => token.value === tokenValue))
-    return type?.label;
+    const type = tokenTypes.find((token) => token.value === tokenValue)
+    return type?.label
   }
 
   const toggleDropdown = (clickedPoolId: number | null) => {
-    if (clickedPoolId === clickedPool)
-      setClickedPool(null)
-    else
-      setClickedPool(clickedPoolId)
+    if (clickedPoolId === clickedPool) setClickedPool(null)
+    else setClickedPool(clickedPoolId)
   }
 
   return (
@@ -79,19 +68,20 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
           style={{ marginBottom: "20px" }}
         /> */}
         <div className={styles.headerContainer}>
-          <div className={styles.header}>
-            Pools
-          </div>
-          <div className={styles.subtitle}>
-            Manage and view your pools
-          </div>
+          <div className={styles.header}>Pools</div>
+          <div className={styles.subtitle}>Manage and view your pools</div>
         </div>
-        <div className={styles.gap}/>
+        <div className={styles.gap} />
         <table className={styles.tableStyles}>
           <thead>
             <tr>
               {headers.map((header) => (
-                <th key={header} className={styles.thStyles}>
+                <th
+                  key={header}
+                  className={`
+                    ${header !== 'ID' && header !== '' ? styles.thStylesWidth : styles.thStyles}  // Conditionally apply 'data' for non-ID and non-empty headers
+                  `}
+                >
                   {header}
                 </th>
               ))}
