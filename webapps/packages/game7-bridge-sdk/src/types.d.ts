@@ -90,3 +90,8 @@ export interface TransferParams {
   // TODO: Add `retryableGasOverrides` parameter for additional control over retryable tickets.
   // retryableGasOverrides?: GasOverrides;
 }
+
+/**
+ * Represents a type that can be either a Signer, a Provider, or an RPC URL string.
+ */
+export type SignerOrProvider = ethers.Signer | ethers.providers.Provider | string;
