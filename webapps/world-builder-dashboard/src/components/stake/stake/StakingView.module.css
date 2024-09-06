@@ -1,4 +1,4 @@
-.container {
+  .container {
   display: flex;
   width: 660px;
   max-width: 660px;
@@ -20,7 +20,6 @@
 
 .title {
   color: var(--Gray-900, #101828);
-
   /* Text lg/Semibold */
   font-size: 18px;
   font-style: normal;

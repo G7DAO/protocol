@@ -99,8 +99,8 @@ const StakingView = () => {
     return (
         <div className={styles.container}>
             <div className={styles.headerContainer}>
-                <div className={styles.title}>Create a Pool</div>
-                <div className={styles.subtitle}>Set your pool parameters</div>
+                <div className={styles.title}>Create Pool</div>
+                <div className={styles.subtitle}>TODO: ADD STEPPER HERE</div>
             </div>
             <div className={styles.addressContainer}>
                 <div className={styles.label}>Token Type</div>

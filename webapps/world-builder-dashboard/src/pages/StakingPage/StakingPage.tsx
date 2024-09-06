@@ -46,9 +46,11 @@ const StakingPage = () => {
         <div className={styles.navigationContainer}>
           <button
             className={
-              location.pathname === '/staker' ? styles.selectedNavigationButton : styles.unselectedNavigationButton
+              location.pathname === '/staker/pools' || location.pathname === '/staker'
+                ? styles.selectedNavigationButton
+                : styles.unselectedNavigationButton
             }
-            onClick={() => navigate('/staker')}
+            onClick={() => navigate('/staker/pools')}
           >
             Pools
           </button>
@@ -59,7 +61,7 @@ const StakingPage = () => {
                 ? styles.selectedNavigationButton
                 : styles.unselectedNavigationButton
             }
-            onClick={() => navigate('/staker/pools')}
+            onClick={() => navigate('/staker/projects')}
             style={{
               color: location.pathname === '/staker/projects' ? 'white' : 'gray'
             }}
@@ -79,11 +81,12 @@ const StakingPage = () => {
         </div>
       </div>
       <div className={styles.viewContainer}>
-        {location.pathname === '/staker' && <StakingView />}
-        {location.pathname === '/staker/pools' && <PoolsDesktop />}
-
+        {/* {location.pathname === '/staker/pools' && <StakingView />} */}
+        {(location.pathname === '/staker' || location.pathname === '/staker/pools') && <PoolsDesktop />}
         {/* Uncomment when Projects ready. SAFE integration is a blocker/ */}
         {/* {location.pathname === '/staker/projects' && <ProjectsDesktop />} */}
+        {/* Uncomment when Settings is ready */}
+        {/* {location.pathname === '/staler/settoings' &&^ <SettingsPool />} */}
       </div>
     </div>
   )

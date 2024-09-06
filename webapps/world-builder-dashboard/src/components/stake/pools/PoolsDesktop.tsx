@@ -44,17 +44,12 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
   }, [data])
 
   const headers = [
-    'Pool ID',
-    'Pool Name',
-    'Administrator',
-    'Owner',
+    'ID',
+    'Name',
     'Token Type',
-    'Token Address',
-    'Token ID',
-    'Lockdown period (s)',
-    'Cooldown period (s)',
-    'Is transferable?',
-    `Is immutable?`,
+    'Period',
+    'Cooldown',
+    'Transferrable',
     ''
   ];
 
@@ -75,14 +70,23 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
   }
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div className={styles.poolsContainer}>
       <div style={{ margin: 'auto', width: '100%' }}>
-        <Pagination
+        {/* <Pagination
           value={page + 1}
           onChange={(value) => setPage((value - 1) % maximumPages)}
           total={maximumPages}
           style={{ marginBottom: "20px" }}
-        />
+        /> */}
+        <div className={styles.headerContainer}>
+          <div className={styles.header}>
+            Pools
+          </div>
+          <div className={styles.subtitle}>
+            Manage and view your pools
+          </div>
+        </div>
+        <div className={styles.gap}/>
         <table className={styles.tableStyles}>
           <thead>
             <tr>
@@ -99,15 +103,10 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
                 <tr className={styles.trStyles}>
                   <td className={styles.tdStyles}>{item.poolId}</td>
                   <td className={styles.tdStyles}>{item.poolName}</td>
-                  <td className={styles.tdStyles}>{formatAddress(item.administrator)}</td>
-                  <td className={styles.tdStyles}>{formatAddress(item.owner)}</td>
                   <td className={styles.tdStyles}>{getTokenLabel(item.tokenType)}</td>
-                  <td className={styles.tdStyles}>{item.tokenType !== '1' ? formatAddress(item.tokenAddress) : "N/A"}</td>
-                  <td className={styles.tdStyles}>{item.tokenId}</td>
                   <td className={styles.tdStyles}>{item.lockdownPeriod}</td>
                   <td className={styles.tdStyles}>{item.cooldownPeriod}</td>
                   <td className={styles.tdStyles}>{item.transferable.toString()}</td>
-                  <td className={styles.tdStyles}>{item.isImmutable.toString()}</td>
                   <td className={styles.tdStyles}>
                     <OptionsButton
                       onViewPositions={() => handleViewPositions(item.poolId)}

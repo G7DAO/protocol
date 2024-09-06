@@ -2,17 +2,24 @@
   width: 100%;
   border-collapse: collapse;
   font-family: Arial, sans-serif;
+  border-radius: 12px;
 }
 
 .thStyles {
   background-color: #f8f8f8;
-  color: #333;
   padding: 12px 15px;
   border-bottom: 2px solid #ddd;
   text-align: left;
   position: sticky;
   top: 0;
   z-index: 1;
+  color: var(--Gray-600, #475467);
+  /* Text xs/Medium */
+  font-family: Inter;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 18px; /* 150% */
 }
 
 .tdStyles {
@@ -27,4 +34,49 @@
 
 .trStyles:nth-child(even) {
   background-color: #f1f1f1;
+}
+
+.poolsContainer {
+  border-radius: 12px;
+  border: 1px solid var(--Gray-200, #eaecf0);
+  background: var(--Base-White, #fff);
+  box-shadow:
+    0px 1px 3px 0px rgba(16, 24, 40, 0.1),
+    0px 1px 2px 0px rgba(16, 24, 40, 0.06);
+}
+
+.headerContainer {
+  display: flex;
+  padding: 20px 24px 0px 24px;
+  align-items: flex-start;
+  gap: 16px;
+  align-self: stretch;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  align-self: stretch;
+  /* Text lg/Semibold */
+  font-family: Inter;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 28px; /* 155.556% */
+}
+
+.subtitle {
+  align-self: stretch;
+  color: var(--Gray-600, #475467);
+  /* Text sm/Regular */
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 142.857% */
+}
+
+.gap {
+  margin-bottom: 20px;
 }

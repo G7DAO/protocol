@@ -159,7 +159,6 @@ const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ actionType, param
     },
     {
       onSuccess: async () => {
-        // add setup
         queryClient.refetchQueries(['pools'])
         navigate('/staker/pools')
       },
