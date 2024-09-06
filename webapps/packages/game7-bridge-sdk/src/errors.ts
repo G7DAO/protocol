@@ -9,6 +9,17 @@ export class BridgerError extends Error {
 }
 
 /**
+ * Custom error class for handling gas estimation errors.
+ */
+export class GasEstimationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'GasEstimationError';
+    Object.setPrototypeOf(this, GasEstimationError.prototype);
+  }
+}
+
+/**
  * Custom error class for errors related to unsupported networks.
  */
 export class UnsupportedNetworkError extends BridgerError {
