@@ -42,7 +42,7 @@ export const withdrawERC20 = async (
 
     await withdrawTx.wait();
     return withdrawTx;
-  } catch (error) {
+  } catch (error: any) {
     console.error('ERC20 Withdrawal transaction failed:', error);
     throw new BridgerError(`ERC20 withdrawal failed: ${error.message}`);
   }
@@ -84,7 +84,7 @@ export const withdrawNative = async (
     await txResponse.wait();
 
     return txResponse;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Native token withdrawal transaction failed:', error);
     throw new BridgerError(`Native withdrawal failed: ${error.message}`);
   }
