@@ -7,6 +7,7 @@
 
 .thStyles {
   padding: 12px 24px;
+  border-top: 1px solid var(--Gray-200, #eaecf0);
   border-bottom: 1px solid var(--Gray-200, #eaecf0);
   background-color: #f9fafb;
   text-align: left;
@@ -21,6 +22,7 @@
 
 .thStylesWidth {
   padding: 12px 24px;
+  border-top: 1px solid var(--Gray-200, #eaecf0);
   border-bottom: 1px solid var(--Gray-200, #eaecf0);
   background: #f9fafb;
   text-align: left;
@@ -41,10 +43,32 @@
   align-items: center;
 }
 
-/* Remove bottom border for the last row */
-tr:last-child .tdStyles {
+tr:last-child {
   border-bottom: none;
 }
+
+tr:last-child td:first-child {
+  border-bottom-left-radius: 12px;
+}
+
+tr:last-child td:last-child {
+  border-bottom-right-radius: 12px;
+}
+
+/* when data is loading, show this th style
+tr:not(:has(td)) th:last-child {
+  border-bottom-right-radius: 12px;
+  border-bottom: none;
+}
+tr:not(:has(td)) th:last-child {
+  border-bottom-right-radius: 12px;
+  border-bottom: none;
+}
+
+/* when data is loading, show this th style */
+/* tr:not(:has(td)) th {
+  border-bottom: none;
+} */ */
 
 .trStyles {
   background-color: #FFFFFF;
