@@ -8,7 +8,7 @@
 .thStyles {
   padding: 12px 24px;
   border-bottom: 1px solid var(--Gray-200, #eaecf0);
-  background: #f9fafb;
+  background-color: #f9fafb;
   text-align: left;
   color: var(--Gray-600, #475467);
   /* Text xs/Medium */
@@ -47,10 +47,9 @@ tr:last-child .tdStyles {
 }
 
 .trStyles {
-  background-color: #f9f9f9;
-  /* border-bottom: 1px solid var(--Gray-200, #eaecf0); */
+  background-color: #FFFFFF;
+  border-bottom: 1px solid var(--Gray-200, #eaecf0);
   color: var(--Gray-700, #344054);
-  /* Text sm/Regular */
   font-family: Inter;
   font-size: 14px;
   font-style: normal;
@@ -59,7 +58,7 @@ tr:last-child .tdStyles {
 }
 
 .trStyles:nth-child(even) {
-  background-color: #f1f1f1;
+  background-color: #F9FAFB;
 }
 
 .poolsContainer {
