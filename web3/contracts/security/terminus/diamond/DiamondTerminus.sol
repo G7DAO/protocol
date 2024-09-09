@@ -7,7 +7,7 @@ pragma solidity ^0.8.0;
 import { LibDiamondTerminus as LibDiamond } from "./libraries/LibDiamondTerminus.sol";
 import { IDiamondCut } from "./interfaces/IDiamondCut.sol";
 
-contract Diamond {
+contract DiamondTerminus {
     constructor(address _contractOwner, address _diamondCutFacet) payable {
         LibDiamond.setContractOwner(_contractOwner);
 

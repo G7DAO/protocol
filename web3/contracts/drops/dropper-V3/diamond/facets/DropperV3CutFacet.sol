@@ -7,7 +7,7 @@ pragma solidity ^0.8.0;
 import { IDiamondCut } from "../interfaces/IDiamondCut.sol";
 import { LibDiamondDropperV3 as LibDiamond } from "../libraries/LibDiamondDropperV3.sol";
 
-contract DiamondCutFacet is IDiamondCut {
+contract DropperV3CutFacet is IDiamondCut {
     /// @notice Add/replace/remove any number of functions and optionally execute
     ///         a function with delegatecall
     /// @param _diamondCut Contains the facet addresses and function selectors

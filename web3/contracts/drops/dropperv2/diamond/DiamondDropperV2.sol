@@ -7,7 +7,7 @@ pragma solidity ^0.8.0;
 import { LibDiamondMoonstream as LibDiamond } from "./libraries/LibDiamondMoonstream.sol";
 import { IDiamondCut } from "./interfaces/IDiamondCut.sol";
 
-contract Diamond {
+contract DiamondDropperV2 {
     constructor(address _contractOwner, address _diamondCutFacet) payable {
         LibDiamond.setContractOwner(_contractOwner);
 
