@@ -25,9 +25,9 @@ const OptionsButton: React.FC<OptionsButtonProps> = ({ onViewPositions, poolData
   }, [clickedPool])
 
   const handleOptionClick = (option: string) => {
-    if (option === 'View Positions') {
+    if (option === 'View') {
       onViewPositions()
-    } else if (option === 'Edit Pool') {
+    } else if (option === 'Edit') {
       setIsModalOpen(!isModalOpen)
     }
     setIsOpen(false)
@@ -46,11 +46,11 @@ const OptionsButton: React.FC<OptionsButtonProps> = ({ onViewPositions, poolData
       <IconThreeDots />
       {isOpen && (
         <div className={styles.dropdown}>
-          <div className={styles.dropdownItem} onClick={() => handleOptionClick('View Positions')}>
-            View Positions
+          <div className={styles.dropdownItem} onClick={() => handleOptionClick('View')}>
+            View
           </div>
-          <div className={styles.dropdownItem} onClick={() => handleOptionClick('Edit Pool')}>
-            Edit Pool
+          <div className={styles.dropdownItem} onClick={() => handleOptionClick('Edit')}>
+            Edit
           </div>
         </div>
       )}
