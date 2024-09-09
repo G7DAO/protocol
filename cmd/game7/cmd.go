@@ -11,27 +11,21 @@ import (
 	"github.com/G7DAO/protocol/bindings/ArbitrumL1OrbitGatewayRouter"
 	"github.com/G7DAO/protocol/bindings/ArbitrumL2CustomGateway"
 	"github.com/G7DAO/protocol/bindings/ArbitrumUpgradeExecutor"
-	DropperFacet "github.com/G7DAO/protocol/bindings/Dropper/DropperV2"
-	DropperV3Facet "github.com/G7DAO/protocol/bindings/Dropper/DropperV3"
+
 	"github.com/G7DAO/protocol/bindings/ERC20Inbox"
 	"github.com/G7DAO/protocol/bindings/PositionMetadata"
 	"github.com/G7DAO/protocol/bindings/Staker"
-	"github.com/G7DAO/protocol/bindings/Terminus/ERC1155WithTerminusStorage"
-	"github.com/G7DAO/protocol/bindings/Terminus/TerminusFacet"
+
 	"github.com/G7DAO/protocol/bindings/TokenFaucet"
 	"github.com/G7DAO/protocol/bridge"
 
-	"github.com/G7DAO/protocol/bindings/Diamond"
-	"github.com/G7DAO/protocol/bindings/Diamond/facets/DiamondCutFacet"
-	"github.com/G7DAO/protocol/bindings/Diamond/facets/DiamondLoupeFacet"
-	"github.com/G7DAO/protocol/bindings/Diamond/facets/OwnershipFacet"
 	"github.com/G7DAO/protocol/bindings/ERC20"
 	"github.com/G7DAO/protocol/bindings/MockERC1155"
 	"github.com/G7DAO/protocol/bindings/MockERC20"
 	"github.com/G7DAO/protocol/bindings/MockERC721"
 	"github.com/G7DAO/protocol/bindings/WrappedNativeToken"
 
-	dropperGogogo "github.com/G7DAO/protocol/cmd/game7/gogogo/dropper-v2-diamond"
+	dropperV2Gogogo "github.com/G7DAO/protocol/cmd/game7/gogogo/dropper-v2-diamond"
 	dropperV3Gogogo "github.com/G7DAO/protocol/cmd/game7/gogogo/dropper-v3-diamond"
 	terminusGogogo "github.com/G7DAO/protocol/cmd/game7/gogogo/terminus"
 	"github.com/G7DAO/protocol/cmd/game7/version"
@@ -80,21 +74,8 @@ func CreateRootCommand() *cobra.Command {
 	accountsCmd := accounts.CreateAccountsCommand()
 	accountsCmd.Use = "accounts"
 
-	diamondCmd := Diamond.CreateDiamondCommand()
-	//diamondCmd.Use := "diamond" //throwing error
-	diamondCutFacetCmd := DiamondCutFacet.CreateDiamondCutFacetCommand()
-	//diamondCutFacetCmd.Use := "diamond-cut-facet" //throwing error
-	diamondLoupeFacetCmd := DiamondLoupeFacet.CreateDiamondLoupeFacetCommand()
-	ownershipFacet := OwnershipFacet.CreateOwnershipFacetCommand()
-
-	erc1155WithTerminusStorageCmd := ERC1155WithTerminusStorage.CreateERC1155WithTerminusStorageCommand()
-	//erc1155WithTerminusStorageCmd.Use := "erc1155-with-terminus-storage" //throwing error
-	terminusFacetCmd := TerminusFacet.CreateTerminusFacetCommand()
-
 	terminusGogogoCmd := terminusGogogo.CreateGogogoCommand()
-	dropperGogogoCmd := dropperGogogo.CreateGogogoCommand()
-	dropperFacetCmd := DropperFacet.CreateDropperFacetCommand()
-	dropperV3FacetCmd := DropperV3Facet.CreateDropperV3FacetCommand()
+	dropperV2GogogoCmd := dropperV2Gogogo.CreateGogogoCommand()
 	dropperV3GogogoCmd := dropperV3Gogogo.CreateGogogoCommand()
 
 	wrappedNativeTokenCmd := WrappedNativeToken.CreateWrappedNativeTokenCommand()
@@ -108,7 +89,7 @@ func CreateRootCommand() *cobra.Command {
 
 	mockCmd := CreateMockCommand()
 
-	rootCmd.AddCommand(completionCmd, versionCmd, terminusGogogoCmd, dropperFacetCmd, dropperV3GogogoCmd, dropperV3FacetCmd, dropperGogogoCmd, diamondCmd, diamondLoupeFacetCmd, ownershipFacet, terminusFacetCmd, erc1155WithTerminusStorageCmd, diamondCutFacetCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd, accountsCmd, wrappedNativeTokenCmd, stakerCmd, mockCmd, positionMetadataCmd)
+	rootCmd.AddCommand(completionCmd, versionCmd, terminusGogogoCmd, dropperV3GogogoCmd, dropperV2GogogoCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd, accountsCmd, wrappedNativeTokenCmd, stakerCmd, mockCmd, positionMetadataCmd)
 
 	// By default, cobra Command objects write to stderr. We have to forcibly set them to output to
 	// stdout.

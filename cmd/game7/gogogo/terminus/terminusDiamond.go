@@ -7,11 +7,11 @@ import (
 	"math/big"
 	"os"
 
-	"github.com/G7DAO/protocol/bindings/Diamond"
-	"github.com/G7DAO/protocol/bindings/Diamond/facets/DiamondCutFacet"
-	"github.com/G7DAO/protocol/bindings/Diamond/facets/DiamondLoupeFacet"
-	"github.com/G7DAO/protocol/bindings/Diamond/facets/OwnershipFacet"
-	"github.com/G7DAO/protocol/bindings/Terminus/TerminusFacet"
+	"github.com/G7DAO/protocol/bindings/Security/Terminus/TerminusFacet"
+	"github.com/G7DAO/protocol/bindings/Security/Terminus/diamond/DiamondTerminus"
+	"github.com/G7DAO/protocol/bindings/Security/Terminus/diamond/facets/TerminusDiamondCutFacet"
+	"github.com/G7DAO/protocol/bindings/Security/Terminus/diamond/facets/TerminusDiamondLoupeFacet"
+	"github.com/G7DAO/protocol/bindings/Security/Terminus/diamond/facets/TerminusOwnershipFacet"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -55,7 +55,7 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 
 	// If diamondCutAddress is not provided, we must deploy a new DiamondCutFacet.
 	if addressIsZero(diamondCutAddress) {
-		address, diamondCutTransaction, _, diamondCutErr := DiamondCutFacet.DeployDiamondCutFacet(txOpts, client)
+		address, diamondCutTransaction, _, diamondCutErr := TerminusDiamondCutFacet.DeployTerminusDiamondCutFacet(txOpts, client)
 		if diamondCutErr != nil {
 			return deployedConfiguration, diamondCutErr
 		}
@@ -74,7 +74,7 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 	}
 
 	// Now we deploy a Diamond contract which uses the given DiamondCutFacet.
-	diamondAddress, diamondTransaction, _, diamondErr := Diamond.DeployDiamond(txOpts, client, owner, diamondCutAddress)
+	diamondAddress, diamondTransaction, _, diamondErr := DiamondTerminus.DeployDiamondTermiuns(txOpts, client, owner, diamondCutAddress)
 	if diamondErr != nil {
 		return deployedConfiguration, diamondErr
 	}
@@ -90,7 +90,7 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 
 	// If diamondLoupeAddress is not provided, we must deploy a new DiamondLoupeFacet.
 	if addressIsZero(diamondLoupeAddress) {
-		address, diamondLoupeTransaction, _, diamondLoupeErr := DiamondLoupeFacet.DeployDiamondLoupeFacet(txOpts, client)
+		address, diamondLoupeTransaction, _, diamondLoupeErr := TerminusDiamondLoupeFacet.DeployTerminusDiamondLoupeFacet(txOpts, client)
 		if diamondLoupeErr != nil {
 			return deployedConfiguration, diamondLoupeErr
 		}
@@ -110,7 +110,7 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 
 	// If ownershipAddress is not provided, we must deploy a new OwnershipFacet.
 	if addressIsZero(ownershipAddress) {
-		address, ownershipTransaction, _, ownershipErr := OwnershipFacet.DeployOwnershipFacet(txOpts, client)
+		address, ownershipTransaction, _, ownershipErr := TerminusOwnershipFacet.DeployTerminusOwnershipFacet(txOpts, client)
 		if ownershipErr != nil {
 			return deployedConfiguration, ownershipErr
 		}
@@ -151,7 +151,7 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 	// Method signature: true if it's already attached and false otherwise
 	attachedMethods := make(map[string]bool)
 
-	diamondCutABI, diamondCutABIErr := DiamondCutFacet.DiamondCutFacetMetaData.GetAbi()
+	diamondCutABI, diamondCutABIErr := TerminusDiamondCutFacet.TerminusDiamondCutFacetMetaData.GetAbi()
 	if diamondCutABIErr != nil {
 		return deployedConfiguration, diamondCutABIErr
 	}
@@ -161,8 +161,8 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 
 	// Facet cut actions: Add = 0, Replace = 1, Remove = 2
 
-	diamondLoupeCut := DiamondCutFacet.IDiamondCutFacetCut{FacetAddress: diamondLoupeAddress, Action: 0, FunctionSelectors: make([][4]byte, 0)}
-	diamondLoupeABI, diamondLoupeABIErr := DiamondLoupeFacet.DiamondLoupeFacetMetaData.GetAbi()
+	diamondLoupeCut := TerminusDiamondCutFacet.IDiamondCutFacetCut{FacetAddress: diamondLoupeAddress, Action: 0, FunctionSelectors: make([][4]byte, 0)}
+	diamondLoupeABI, diamondLoupeABIErr := TerminusDiamondLoupeFacet.TerminusDiamondLoupeFacetMetaData.GetAbi()
 	if diamondLoupeABIErr != nil {
 		return deployedConfiguration, diamondLoupeABIErr
 	}
@@ -174,8 +174,8 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 		}
 	}
 
-	ownershipCut := DiamondCutFacet.IDiamondCutFacetCut{FacetAddress: ownershipAddress, Action: 0, FunctionSelectors: make([][4]byte, 0)}
-	ownershipABI, ownershipABIErr := OwnershipFacet.OwnershipFacetMetaData.GetAbi()
+	ownershipCut := TerminusDiamondCutFacet.IDiamondCutFacetCut{FacetAddress: ownershipAddress, Action: 0, FunctionSelectors: make([][4]byte, 0)}
+	ownershipABI, ownershipABIErr := TerminusOwnershipFacet.TerminusOwnershipFacetMetaData.GetAbi()
 	if ownershipABIErr != nil {
 		return deployedConfiguration, ownershipABIErr
 	}
@@ -190,7 +190,7 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 	// Call data for contract initialization
 	var initCalldata []byte
 
-	terminusFacetCut := DiamondCutFacet.IDiamondCutFacetCut{FacetAddress: terminusAddress, Action: 0, FunctionSelectors: make([][4]byte, 0)}
+	terminusFacetCut := TerminusDiamondCutFacet.IDiamondCutFacetCut{FacetAddress: terminusAddress, Action: 0, FunctionSelectors: make([][4]byte, 0)}
 	terminusABI, terminusABIErr := TerminusFacet.TerminusFacetMetaData.GetAbi()
 	if terminusABIErr != nil {
 		return deployedConfiguration, terminusABIErr
@@ -208,12 +208,12 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 		}
 	}
 
-	diamondForCut, diamondForCutErr := DiamondCutFacet.NewDiamondCutFacet(diamondAddress, client)
+	diamondForCut, diamondForCutErr := TerminusDiamondCutFacet.NewTerminusDiamondCutFacet(diamondAddress, client)
 	if diamondForCutErr != nil {
 		return deployedConfiguration, diamondForCutErr
 	}
 
-	cuts := []DiamondCutFacet.IDiamondCutFacetCut{diamondLoupeCut, ownershipCut, terminusFacetCut}
+	cuts := []TerminusDiamondCutFacet.IDiamondCutFacetCut{diamondLoupeCut, ownershipCut, terminusFacetCut}
 
 	cutTransaction, cutTransactionErr := diamondForCut.DiamondCut(txOpts, cuts, terminusAddress, initCalldata)
 	if cutTransactionErr != nil {
@@ -295,17 +295,17 @@ func CreateV1Command() *cobra.Command {
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := Diamond.NewClient(rpc)
+			client, clientErr := DiamondTerminus.NewClient(rpc)
 			if clientErr != nil {
 				return clientErr
 			}
 
-			key, keyErr := Diamond.KeyFromFile(keyfile, password)
+			key, keyErr := DiamondTerminus.KeyFromFile(keyfile, password)
 			if keyErr != nil {
 				return keyErr
 			}
 
-			chainIDCtx, cancelChainIDCtx := Diamond.NewChainContext(timeout)
+			chainIDCtx, cancelChainIDCtx := DiamondTerminus.NewChainContext(timeout)
 			defer cancelChainIDCtx()
 			chainID, chainIDErr := client.ChainID(chainIDCtx)
 			if chainIDErr != nil {
@@ -317,7 +317,7 @@ func CreateV1Command() *cobra.Command {
 				return transactionOptsErr
 			}
 
-			Diamond.SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+			DiamondTerminus.SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
 
 			deployedConfiguration, setupErr := DiamondSetupV1(transactionOpts, client, contractOwner, diamondCutFacet, diamondLoupeFacet, ownershipFacet, terminusFacet)
 			if setupErr != nil {

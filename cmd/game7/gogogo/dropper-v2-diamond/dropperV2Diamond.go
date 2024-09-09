@@ -7,11 +7,11 @@ import (
 	"math/big"
 	"os"
 
-	"github.com/G7DAO/protocol/bindings/Diamond"
-	"github.com/G7DAO/protocol/bindings/Diamond/facets/DiamondCutFacet"
-	"github.com/G7DAO/protocol/bindings/Diamond/facets/DiamondLoupeFacet"
-	"github.com/G7DAO/protocol/bindings/Diamond/facets/OwnershipFacet"
 	DropperFacet "github.com/G7DAO/protocol/bindings/Dropper/DropperV2"
+	"github.com/G7DAO/protocol/bindings/Dropper/DropperV2/Diamond/DiamondDropperV2"
+	"github.com/G7DAO/protocol/bindings/Dropper/DropperV2/Diamond/facets/DropperV2CutFacet"
+	"github.com/G7DAO/protocol/bindings/Dropper/DropperV2/Diamond/facets/DropperV2LoupeFacet"
+	"github.com/G7DAO/protocol/bindings/Dropper/DropperV2/Diamond/facets/DropperV2OwnershipFacet"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -19,12 +19,12 @@ import (
 )
 
 type DiamondConfiguration struct {
-	Diamond           string
-	DiamondCutFacet   string
-	DiamondLoupeFacet string
-	OwnershipFacet    string
-	DropperFacet      string
-	Transactions      map[string]string
+	Diamond                 string
+	DropperV2CutFacet       string
+	DropperV2LoupeFacet     string
+	DropperV2OwnershipFacet string
+	DropperFacet            string
+	Transactions            map[string]string
 }
 
 // Returns true if the given address is the zero address and false otherwise.
@@ -53,9 +53,9 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 	deployedConfiguration := DiamondConfiguration{}
 	deployedConfiguration.Transactions = make(map[string]string)
 
-	// If diamondCutAddress is not provided, we must deploy a new DiamondCutFacet.
+	// If diamondCutAddress is not provided, we must deploy a new DropperV2CutFacet.
 	if addressIsZero(diamondCutAddress) {
-		address, diamondCutTransaction, _, diamondCutErr := DiamondCutFacet.DeployDiamondCutFacet(txOpts, client)
+		address, diamondCutTransaction, _, diamondCutErr := DropperV2CutFacet.DeployDropperV2CutFacet(txOpts, client)
 		if diamondCutErr != nil {
 			return deployedConfiguration, diamondCutErr
 		}
@@ -67,14 +67,14 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 		}
 
 		diamondCutAddress = address
-		deployedConfiguration.DiamondCutFacet = address.Hex()
-		deployedConfiguration.Transactions["DiamondCutFacetDeployment"] = diamondCutTransaction.Hash().Hex()
+		deployedConfiguration.DropperV2CutFacet = address.Hex()
+		deployedConfiguration.Transactions["DropperV2CutFacetDeployment"] = diamondCutTransaction.Hash().Hex()
 	} else {
-		deployedConfiguration.DiamondCutFacet = diamondCutAddress.Hex()
+		deployedConfiguration.DropperV2CutFacet = diamondCutAddress.Hex()
 	}
 
-	// Now we deploy a Diamond contract which uses the given DiamondCutFacet.
-	diamondAddress, diamondTransaction, _, diamondErr := Diamond.DeployDiamond(txOpts, client, owner, diamondCutAddress)
+	// Now we deploy a Diamond contract which uses the given DropperV2CutFacet.
+	diamondAddress, diamondTransaction, _, diamondErr := DiamondDropperV2.DeployDiamondDropperV2(txOpts, client, owner, diamondCutAddress)
 	if diamondErr != nil {
 		return deployedConfiguration, diamondErr
 	}
@@ -90,7 +90,7 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 
 	// If diamondLoupeAddress is not provided, we must deploy a new DiamondLoupeFacet.
 	if addressIsZero(diamondLoupeAddress) {
-		address, diamondLoupeTransaction, _, diamondLoupeErr := DiamondLoupeFacet.DeployDiamondLoupeFacet(txOpts, client)
+		address, diamondLoupeTransaction, _, diamondLoupeErr := DropperV2LoupeFacet.DeployDropperV2LoupeFacet(txOpts, client)
 		if diamondLoupeErr != nil {
 			return deployedConfiguration, diamondLoupeErr
 		}
@@ -102,15 +102,15 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 		}
 
 		diamondLoupeAddress = address
-		deployedConfiguration.DiamondLoupeFacet = address.Hex()
-		deployedConfiguration.Transactions["DiamondLoupeFacetDeployment"] = diamondLoupeTransaction.Hash().Hex()
+		deployedConfiguration.DropperV2LoupeFacet = address.Hex()
+		deployedConfiguration.Transactions["DropperV2LoupeFacetDeployment"] = diamondLoupeTransaction.Hash().Hex()
 	} else {
-		deployedConfiguration.DiamondLoupeFacet = diamondLoupeAddress.Hex()
+		deployedConfiguration.DropperV2LoupeFacet = diamondLoupeAddress.Hex()
 	}
 
 	// If ownershipAddress is not provided, we must deploy a new OwnershipFacet.
 	if addressIsZero(ownershipAddress) {
-		address, ownershipTransaction, _, ownershipErr := OwnershipFacet.DeployOwnershipFacet(txOpts, client)
+		address, ownershipTransaction, _, ownershipErr := DropperV2OwnershipFacet.DeployDropperV2OwnershipFacet(txOpts, client)
 		if ownershipErr != nil {
 			return deployedConfiguration, ownershipErr
 		}
@@ -122,10 +122,10 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 		}
 
 		ownershipAddress = address
-		deployedConfiguration.OwnershipFacet = address.Hex()
-		deployedConfiguration.Transactions["OwnershipFacetDeployment"] = ownershipTransaction.Hash().Hex()
+		deployedConfiguration.DropperV2OwnershipFacet = address.Hex()
+		deployedConfiguration.Transactions["DropperV2OwnershipFacetDeployment"] = ownershipTransaction.Hash().Hex()
 	} else {
-		deployedConfiguration.OwnershipFacet = ownershipAddress.Hex()
+		deployedConfiguration.DropperV2OwnershipFacet = ownershipAddress.Hex()
 	}
 
 	// If dropperAddress is not provided, we must deploy a new DropperFacet.
@@ -151,7 +151,7 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 	// Method signature: true if it's already attached and false otherwise
 	attachedMethods := make(map[string]bool)
 
-	diamondCutABI, diamondCutABIErr := DiamondCutFacet.DiamondCutFacetMetaData.GetAbi()
+	diamondCutABI, diamondCutABIErr := DropperV2CutFacet.DropperV2CutFacetMetaData.GetAbi()
 	if diamondCutABIErr != nil {
 		return deployedConfiguration, diamondCutABIErr
 	}
@@ -161,8 +161,8 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 
 	// Facet cut actions: Add = 0, Replace = 1, Remove = 2
 
-	diamondLoupeCut := DiamondCutFacet.IDiamondCutFacetCut{FacetAddress: diamondLoupeAddress, Action: 0, FunctionSelectors: make([][4]byte, 0)}
-	diamondLoupeABI, diamondLoupeABIErr := DiamondLoupeFacet.DiamondLoupeFacetMetaData.GetAbi()
+	diamondLoupeCut := DropperV2CutFacet.IDiamondCutFacetCut{FacetAddress: diamondLoupeAddress, Action: 0, FunctionSelectors: make([][4]byte, 0)}
+	diamondLoupeABI, diamondLoupeABIErr := DropperV2LoupeFacet.DropperV2LoupeFacetMetaData.GetAbi()
 	if diamondLoupeABIErr != nil {
 		return deployedConfiguration, diamondLoupeABIErr
 	}
@@ -174,8 +174,8 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 		}
 	}
 
-	ownershipCut := DiamondCutFacet.IDiamondCutFacetCut{FacetAddress: ownershipAddress, Action: 0, FunctionSelectors: make([][4]byte, 0)}
-	ownershipABI, ownershipABIErr := OwnershipFacet.OwnershipFacetMetaData.GetAbi()
+	ownershipCut := DropperV2CutFacet.IDiamondCutFacetCut{FacetAddress: ownershipAddress, Action: 0, FunctionSelectors: make([][4]byte, 0)}
+	ownershipABI, ownershipABIErr := DropperV2OwnershipFacet.DropperV2OwnershipFacetMetaData.GetAbi()
 	if ownershipABIErr != nil {
 		return deployedConfiguration, ownershipABIErr
 	}
@@ -190,7 +190,7 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 	// Call data for contract initialization
 	var initCalldata []byte
 
-	DropperFacetCut := DiamondCutFacet.IDiamondCutFacetCut{FacetAddress: dropperAddress, Action: 0, FunctionSelectors: make([][4]byte, 0)}
+	DropperFacetCut := DropperV2CutFacet.IDiamondCutFacetCut{FacetAddress: dropperAddress, Action: 0, FunctionSelectors: make([][4]byte, 0)}
 	dropperABI, dropperABIErr := DropperFacet.DropperFacetMetaData.GetAbi()
 	if dropperABIErr != nil {
 		return deployedConfiguration, dropperABIErr
@@ -208,12 +208,12 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 		}
 	}
 
-	diamondForCut, diamondForCutErr := DiamondCutFacet.NewDiamondCutFacet(diamondAddress, client)
+	diamondForCut, diamondForCutErr := DropperV2CutFacet.NewDropperV2CutFacet(diamondAddress, client)
 	if diamondForCutErr != nil {
 		return deployedConfiguration, diamondForCutErr
 	}
 
-	cuts := []DiamondCutFacet.IDiamondCutFacetCut{diamondLoupeCut, ownershipCut, DropperFacetCut}
+	cuts := []DropperV2CutFacet.IDiamondCutFacetCut{diamondLoupeCut, ownershipCut, DropperFacetCut}
 
 	cutTransaction, cutTransactionErr := diamondForCut.DiamondCut(txOpts, cuts, dropperAddress, initCalldata)
 	if cutTransactionErr != nil {
@@ -241,8 +241,8 @@ func CreateV1Command() *cobra.Command {
 	var terminusAdminContractAddress common.Address
 	var terminusAdminPoolId *big.Int
 	var contractOwnerRaw string
-	var diamondCutFacet, diamondLoupeFacet, ownershipFacet, DropperFacet common.Address
-	var diamondCutFacetRaw, diamondLoupeFacetRaw, ownershipFacetRaw, DropperFacetRaw, terminusAddressRaw, terminusPoolIdRaw string
+	var dropperV2CutFacet, dropperV2LoupeFacet, ownershipFacet, DropperFacet common.Address
+	var dropperV2CutFacetRaw, dropperV2LoupeFacetRaw, ownershipFacetRaw, DropperFacetRaw, terminusAddressRaw, terminusPoolIdRaw string
 
 	cmd := &cobra.Command{
 		Use:   "v1",
@@ -259,22 +259,22 @@ func CreateV1Command() *cobra.Command {
 			}
 			contractOwner = common.HexToAddress(contractOwnerRaw)
 
-			if diamondCutFacetRaw != "" {
-				if !common.IsHexAddress(diamondCutFacetRaw) {
+			if dropperV2CutFacetRaw != "" {
+				if !common.IsHexAddress(dropperV2CutFacetRaw) {
 					return fmt.Errorf("--diamond-cut-facet argument is not a valid Ethereum address")
 				}
-				diamondCutFacet = common.HexToAddress(diamondCutFacetRaw)
+				dropperV2CutFacet = common.HexToAddress(dropperV2CutFacetRaw)
 			} else {
-				diamondCutFacet = common.BigToAddress(big.NewInt(0))
+				dropperV2CutFacet = common.BigToAddress(big.NewInt(0))
 			}
 
-			if diamondLoupeFacetRaw != "" {
-				if !common.IsHexAddress(diamondLoupeFacetRaw) {
+			if dropperV2LoupeFacetRaw != "" {
+				if !common.IsHexAddress(dropperV2LoupeFacetRaw) {
 					return fmt.Errorf("--diamond-loupe-facet argument is not a valid Ethereum address")
 				}
-				diamondLoupeFacet = common.HexToAddress(diamondLoupeFacetRaw)
+				dropperV2LoupeFacet = common.HexToAddress(dropperV2LoupeFacetRaw)
 			} else {
-				diamondLoupeFacet = common.BigToAddress(big.NewInt(0))
+				dropperV2LoupeFacet = common.BigToAddress(big.NewInt(0))
 			}
 
 			if ownershipFacetRaw != "" {
@@ -312,17 +312,17 @@ func CreateV1Command() *cobra.Command {
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := Diamond.NewClient(rpc)
+			client, clientErr := DiamondDropperV2.NewClient(rpc)
 			if clientErr != nil {
 				return clientErr
 			}
 
-			key, keyErr := Diamond.KeyFromFile(keyfile, password)
+			key, keyErr := DiamondDropperV2.KeyFromFile(keyfile, password)
 			if keyErr != nil {
 				return keyErr
 			}
 
-			chainIDCtx, cancelChainIDCtx := Diamond.NewChainContext(timeout)
+			chainIDCtx, cancelChainIDCtx := DiamondDropperV2.NewChainContext(timeout)
 			defer cancelChainIDCtx()
 			chainID, chainIDErr := client.ChainID(chainIDCtx)
 			if chainIDErr != nil {
@@ -334,9 +334,9 @@ func CreateV1Command() *cobra.Command {
 				return transactionOptsErr
 			}
 
-			Diamond.SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+			DiamondDropperV2.SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
 
-			deployedConfiguration, setupErr := DiamondSetupV1(transactionOpts, client, contractOwner, diamondCutFacet, diamondLoupeFacet, ownershipFacet, DropperFacet, terminusAdminContractAddress, terminusAdminPoolId)
+			deployedConfiguration, setupErr := DiamondSetupV1(transactionOpts, client, contractOwner, dropperV2CutFacet, dropperV2LoupeFacet, ownershipFacet, DropperFacet, terminusAdminContractAddress, terminusAdminPoolId)
 			if setupErr != nil {
 				return setupErr
 			}
@@ -371,8 +371,8 @@ func CreateV1Command() *cobra.Command {
 	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
 
 	cmd.Flags().StringVar(&contractOwnerRaw, "contract-owner", "", "Address of account which should own the Diamond")
-	cmd.Flags().StringVar(&diamondCutFacetRaw, "diamond-cut-facet", "", "(Optional) address of pre-existing DiamondCutFacet that should be mounted onto the Diamond")
-	cmd.Flags().StringVar(&diamondLoupeFacetRaw, "diamond-loupe-facet", "", "(Optional) address of pre-existing DiamondLoupeFacet that should be mounted onto the Diamond")
+	cmd.Flags().StringVar(&dropperV2CutFacetRaw, "diamond-cut-facet", "", "(Optional) address of pre-existing DropperV2CutFacet that should be mounted onto the Diamond")
+	cmd.Flags().StringVar(&dropperV2LoupeFacetRaw, "diamond-loupe-facet", "", "(Optional) address of pre-existing DropperV2LoupeFacet that should be mounted onto the Diamond")
 	cmd.Flags().StringVar(&ownershipFacetRaw, "ownership-facet", "", "(Optional) address of pre-existing OwnershipFacet that should be mounted onto the Diamond")
 	cmd.Flags().StringVar(&DropperFacetRaw, "dropper-facet", "", "(Optional) address of pre-existing DropperFacet that should be mounted onto the Diamond")
 	cmd.Flags().StringVarP(&outfile, "output", "o", "", "Path to the file where the deployment configuration should be written")

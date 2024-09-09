@@ -7,11 +7,12 @@ import (
 	"math/big"
 	"os"
 
-	"github.com/G7DAO/protocol/bindings/Diamond"
-	"github.com/G7DAO/protocol/bindings/Diamond/facets/DiamondCutFacet"
-	"github.com/G7DAO/protocol/bindings/Diamond/facets/DiamondLoupeFacet"
-	"github.com/G7DAO/protocol/bindings/Diamond/facets/OwnershipFacet"
 	DropperV3Facet "github.com/G7DAO/protocol/bindings/Dropper/DropperV3"
+	"github.com/G7DAO/protocol/bindings/Dropper/DropperV3/Diamond/DiamondDropperV3"
+	"github.com/G7DAO/protocol/bindings/Dropper/DropperV3/Diamond/facets/DropperV3CutFacet"
+	"github.com/G7DAO/protocol/bindings/Dropper/DropperV3/Diamond/facets/DropperV3LoupeFacet"
+	"github.com/G7DAO/protocol/bindings/Dropper/DropperV3/Diamond/facets/DropperV3OwnershipFacet"
+
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -55,7 +56,7 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 
 	// If diamondCutAddress is not provided, we must deploy a new DiamondCutFacet.
 	if addressIsZero(diamondCutAddress) {
-		address, diamondCutTransaction, _, diamondCutErr := DiamondCutFacet.DeployDiamondCutFacet(txOpts, client)
+		address, diamondCutTransaction, _, diamondCutErr := DropperV3CutFacet.DeployDropperV3CutFacet(txOpts, client)
 		if diamondCutErr != nil {
 			return deployedConfiguration, diamondCutErr
 		}
@@ -68,13 +69,13 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 
 		diamondCutAddress = address
 		deployedConfiguration.DiamondCutFacet = address.Hex()
-		deployedConfiguration.Transactions["DiamondCutFacetDeployment"] = diamondCutTransaction.Hash().Hex()
+		deployedConfiguration.Transactions["DropperV3CutFacetDeployment"] = diamondCutTransaction.Hash().Hex()
 	} else {
 		deployedConfiguration.DiamondCutFacet = diamondCutAddress.Hex()
 	}
 
 	// Now we deploy a Diamond contract which uses the given DiamondCutFacet.
-	diamondAddress, diamondTransaction, _, diamondErr := Diamond.DeployDiamond(txOpts, client, owner, diamondCutAddress)
+	diamondAddress, diamondTransaction, _, diamondErr := DiamondDropperV3.DeployDiamondDropperV3(txOpts, client, owner, diamondCutAddress)
 	if diamondErr != nil {
 		return deployedConfiguration, diamondErr
 	}
@@ -88,9 +89,9 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 	deployedConfiguration.Diamond = diamondAddress.Hex()
 	deployedConfiguration.Transactions["DiamondDeployment"] = diamondTransaction.Hash().Hex()
 
-	// If diamondLoupeAddress is not provided, we must deploy a new DiamondLoupeFacet.
+	// If diamondLoupeAddress is not provided, we must deploy a new DropperV3LoupeFacet.
 	if addressIsZero(diamondLoupeAddress) {
-		address, diamondLoupeTransaction, _, diamondLoupeErr := DiamondLoupeFacet.DeployDiamondLoupeFacet(txOpts, client)
+		address, diamondLoupeTransaction, _, diamondLoupeErr := DropperV3LoupeFacet.DeployDropperV3LoupeFacet(txOpts, client)
 		if diamondLoupeErr != nil {
 			return deployedConfiguration, diamondLoupeErr
 		}
@@ -103,14 +104,14 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 
 		diamondLoupeAddress = address
 		deployedConfiguration.DiamondLoupeFacet = address.Hex()
-		deployedConfiguration.Transactions["DiamondLoupeFacetDeployment"] = diamondLoupeTransaction.Hash().Hex()
+		deployedConfiguration.Transactions["DropperV3LoupeFacetDeployment"] = diamondLoupeTransaction.Hash().Hex()
 	} else {
 		deployedConfiguration.DiamondLoupeFacet = diamondLoupeAddress.Hex()
 	}
 
 	// If ownershipAddress is not provided, we must deploy a new OwnershipFacet.
 	if addressIsZero(ownershipAddress) {
-		address, ownershipTransaction, _, ownershipErr := OwnershipFacet.DeployOwnershipFacet(txOpts, client)
+		address, ownershipTransaction, _, ownershipErr := DropperV3OwnershipFacet.DeployDropperV3OwnershipFacet(txOpts, client)
 		if ownershipErr != nil {
 			return deployedConfiguration, ownershipErr
 		}
@@ -123,7 +124,7 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 
 		ownershipAddress = address
 		deployedConfiguration.OwnershipFacet = address.Hex()
-		deployedConfiguration.Transactions["OwnershipFacetDeployment"] = ownershipTransaction.Hash().Hex()
+		deployedConfiguration.Transactions["DropperV3OwnershipFacetDeployment"] = ownershipTransaction.Hash().Hex()
 	} else {
 		deployedConfiguration.OwnershipFacet = ownershipAddress.Hex()
 	}
@@ -151,7 +152,7 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 	// Method signature: true if it's already attached and false otherwise
 	attachedMethods := make(map[string]bool)
 
-	diamondCutABI, diamondCutABIErr := DiamondCutFacet.DiamondCutFacetMetaData.GetAbi()
+	diamondCutABI, diamondCutABIErr := DropperV3CutFacet.DropperV3CutFacetMetaData.GetAbi()
 	if diamondCutABIErr != nil {
 		return deployedConfiguration, diamondCutABIErr
 	}
@@ -161,8 +162,8 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 
 	// Facet cut actions: Add = 0, Replace = 1, Remove = 2
 
-	diamondLoupeCut := DiamondCutFacet.IDiamondCutFacetCut{FacetAddress: diamondLoupeAddress, Action: 0, FunctionSelectors: make([][4]byte, 0)}
-	diamondLoupeABI, diamondLoupeABIErr := DiamondLoupeFacet.DiamondLoupeFacetMetaData.GetAbi()
+	diamondLoupeCut := DropperV3CutFacet.IDiamondCutFacetCut{FacetAddress: diamondLoupeAddress, Action: 0, FunctionSelectors: make([][4]byte, 0)}
+	diamondLoupeABI, diamondLoupeABIErr := DropperV3LoupeFacet.DropperV3LoupeFacetMetaData.GetAbi()
 	if diamondLoupeABIErr != nil {
 		return deployedConfiguration, diamondLoupeABIErr
 	}
@@ -174,8 +175,8 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 		}
 	}
 
-	ownershipCut := DiamondCutFacet.IDiamondCutFacetCut{FacetAddress: ownershipAddress, Action: 0, FunctionSelectors: make([][4]byte, 0)}
-	ownershipABI, ownershipABIErr := OwnershipFacet.OwnershipFacetMetaData.GetAbi()
+	ownershipCut := DropperV3CutFacet.IDiamondCutFacetCut{FacetAddress: ownershipAddress, Action: 0, FunctionSelectors: make([][4]byte, 0)}
+	ownershipABI, ownershipABIErr := DropperV3OwnershipFacet.DropperV3OwnershipFacetMetaData.GetAbi()
 	if ownershipABIErr != nil {
 		return deployedConfiguration, ownershipABIErr
 	}
@@ -190,7 +191,7 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 	// Call data for contract initialization
 	var initCalldata []byte
 
-	DropperFacetCut := DiamondCutFacet.IDiamondCutFacetCut{FacetAddress: dropperAddress, Action: 0, FunctionSelectors: make([][4]byte, 0)}
+	DropperFacetCut := DropperV3CutFacet.IDiamondCutFacetCut{FacetAddress: dropperAddress, Action: 0, FunctionSelectors: make([][4]byte, 0)}
 	dropperABI, dropperABIErr := DropperV3Facet.DropperV3FacetMetaData.GetAbi()
 	if dropperABIErr != nil {
 		return deployedConfiguration, dropperABIErr
@@ -208,12 +209,12 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 		}
 	}
 
-	diamondForCut, diamondForCutErr := DiamondCutFacet.NewDiamondCutFacet(diamondAddress, client)
+	diamondForCut, diamondForCutErr := DropperV3CutFacet.NewDropperV3CutFacet(diamondAddress, client)
 	if diamondForCutErr != nil {
 		return deployedConfiguration, diamondForCutErr
 	}
 
-	cuts := []DiamondCutFacet.IDiamondCutFacetCut{diamondLoupeCut, ownershipCut, DropperFacetCut}
+	cuts := []DropperV3CutFacet.IDiamondCutFacetCut{diamondLoupeCut, ownershipCut, DropperFacetCut}
 
 	cutTransaction, cutTransactionErr := diamondForCut.DiamondCut(txOpts, cuts, dropperAddress, initCalldata)
 	if cutTransactionErr != nil {
@@ -311,17 +312,17 @@ func CreateV1Command() *cobra.Command {
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := Diamond.NewClient(rpc)
+			client, clientErr := DiamondDropperV3.NewClient(rpc)
 			if clientErr != nil {
 				return clientErr
 			}
 
-			key, keyErr := Diamond.KeyFromFile(keyfile, password)
+			key, keyErr := DiamondDropperV3.KeyFromFile(keyfile, password)
 			if keyErr != nil {
 				return keyErr
 			}
 
-			chainIDCtx, cancelChainIDCtx := Diamond.NewChainContext(timeout)
+			chainIDCtx, cancelChainIDCtx := DiamondDropperV3.NewChainContext(timeout)
 			defer cancelChainIDCtx()
 			chainID, chainIDErr := client.ChainID(chainIDCtx)
 			if chainIDErr != nil {
@@ -333,7 +334,7 @@ func CreateV1Command() *cobra.Command {
 				return transactionOptsErr
 			}
 
-			Diamond.SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
+			DiamondDropperV3.SetTransactionParametersFromArgs(transactionOpts, nonce, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, gasLimit, simulate)
 
 			deployedConfiguration, setupErr := DiamondSetupV1(transactionOpts, client, contractOwner, diamondCutFacet, diamondLoupeFacet, ownershipFacet, DropperFacet, terminusAdminContractAddress, terminusAdminPoolId)
 			if setupErr != nil {
