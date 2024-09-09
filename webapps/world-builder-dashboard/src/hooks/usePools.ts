@@ -27,31 +27,51 @@ const fetchPools = async () => {
         const totalPools = await stakerContract.TotalPools();
         const totalPoolsNumber = totalPools.toNumber();
 
-        const calls = []
+        const poolCalls = []
+        const positionsCalls = []
 
         for (let i = 0; i < totalPoolsNumber; i++) {
-            calls.push({ target: STAKER_ADDRESS, callData: stakerContract.interface.encodeFunctionData('Pools', [i]) })
+            poolCalls.push({ target: STAKER_ADDRESS, callData: stakerContract.interface.encodeFunctionData('Pools', [i]) })
+            positionsCalls.push({ target: STAKER_ADDRESS, callData: stakerContract.interface.encodeFunctionData('CurrentPositionsInPool', [i]) })
         }
 
         // Aggregate all calls as one
-        const callData = multicallContract.interface.encodeFunctionData('tryAggregate', [false, calls]);
+        const poolsCallData = multicallContract.interface.encodeFunctionData('tryAggregate', [false, poolCalls])
+        const positionsCallData = multicallContract.interface.encodeFunctionData('tryAggregate', [false, positionsCalls])
 
         // define a raw call to be used with provider.call(), to avoid transacting.
-        const rawCall = {
+        const poolsRawCall = {
             to: MULTICALL_ADDRESS,
-            data: callData
-        };
+            data: poolsCallData
+        }
+
+        const positionsRawCall = {
+            to: MULTICALL_ADDRESS,
+            data: positionsCallData
+        }
+
 
         // Execute the call using the provider
-        const result = await provider.call(rawCall);
+        const poolsResult = await provider.call(poolsRawCall)
+        const positionsResult = await provider.call(positionsRawCall)
 
         // Decode the result from the tryAggregate call
-        const decodedResult = multicallContract.interface.decodeFunctionResult('tryAggregate', result);
+        const poolsDecodedResult = multicallContract.interface.decodeFunctionResult('tryAggregate', poolsResult);
+        const positionsDecodedResult = multicallContract.interface.decodeFunctionResult('tryAggregate', positionsResult);
 
         // Extract and decode the return data from each call
-        const poolDataArray = decodedResult[0].map((resultData: any) => {
+        const poolDataArray = poolsDecodedResult[0].map((resultData: any) => {
             return stakerContract.interface.decodeFunctionResult('Pools', resultData.returnData);
         });
+
+        const positionsDataArray = positionsDecodedResult[0].map((resultData: any) => {
+            return stakerContract.interface.decodeFunctionResult('CurrentPositionsInPool', resultData.returnData);
+        });
+
+        const positionNumbers = positionsDataArray.map((totalPositions: any) => {
+            console.log(totalPositions[0].toNumber())
+            return totalPositions[0];
+        })
 
         const pools: Pool[] = poolDataArray.map((poolData: any, i: number) => {
             const pool: Pool = {
@@ -64,6 +84,7 @@ const fetchPools = async () => {
                 tokenId: (poolData.tokenID).toString(),
                 lockdownPeriod: poolData.lockupSeconds.toNumber(),
                 cooldownPeriod: poolData.cooldownSeconds.toNumber(),
+                positions: positionNumbers[i].toNumber(),
                 transferable: poolData.transferable,
                 isImmutable: false
             }

@@ -21,6 +21,7 @@ export interface Pool {
   tokenId: string
   lockdownPeriod: string
   cooldownPeriod: string
+  positions: string
   transferable: boolean
   isImmutable: boolean
 }
@@ -42,7 +43,7 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
     setEntries(5)
   }, [data])
 
-  const headers = ['ID', 'Name', 'Token Type', 'Period', 'Cooldown', 'Transferrable', '']
+  const headers = ['ID', 'Name', 'Token Type', 'Period', 'Cooldown', 'Transferrable', 'Positions', '']
 
   const handleViewPositions = (poolId: string) => {
     setActivePool(activePool === poolId ? null : poolId)
@@ -79,7 +80,8 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
                 <th
                   key={header}
                   className={`
-                    ${header !== 'ID' && header !== '' ? styles.thStylesWidth : styles.thStyles}  // Conditionally apply 'data' for non-ID and non-empty headers
+                    ${header !== 'ID' && header !== '' ? styles.thStylesWidth : styles.thStyles} 
+                    ${!data  ? styles.loadingHeader : styles.loadedHeader}
                   `}
                 >
                   {header}
@@ -97,6 +99,7 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
                   <td className={styles.tdStyles}>{item.lockdownPeriod}</td>
                   <td className={styles.tdStyles}>{item.cooldownPeriod}</td>
                   <td className={styles.tdStyles}>{item.transferable.toString()}</td>
+                  <td className={styles.tdStyles}>{item.positions}</td>
                   <td className={styles.tdStyles}>
                     <OptionsButton
                       onViewPositions={() => handleViewPositions(item.poolId)}

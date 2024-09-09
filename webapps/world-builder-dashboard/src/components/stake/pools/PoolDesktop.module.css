@@ -7,8 +7,7 @@
 
 .thStyles {
   padding: 12px 24px;
-  border-top: 1px solid var(--Gray-200, #eaecf0);
-  border-bottom: 1px solid var(--Gray-200, #eaecf0);
+  border-top: 2px solid var(--Gray-200, #eaecf0);
   background-color: #f9fafb;
   text-align: left;
   color: var(--Gray-600, #475467);
@@ -22,8 +21,7 @@
 
 .thStylesWidth {
   padding: 12px 24px;
-  border-top: 1px solid var(--Gray-200, #eaecf0);
-  border-bottom: 1px solid var(--Gray-200, #eaecf0);
+  border-top: 2px solid var(--Gray-200, #eaecf0);
   background: #f9fafb;
   text-align: left;
   color: var(--Gray-600, #475467);
@@ -35,6 +33,23 @@
   line-height: 18px; /* 150% */
   width: 195px;
 }
+
+.loadingHeader {
+  border-bottom: none;
+}
+
+.loadingHeader:first-child {
+  border-bottom-left-radius: 12px;
+}
+
+.loadingHeader:last-child {
+  border-bottom-right-radius: 12px;
+}
+
+.loadedHeader {
+  border-bottom: 1px solid var(--Gray-200, #eaecf0);
+}
+
 
 .tdStyles {
   padding: 16px 24px;
@@ -54,21 +69,6 @@ tr:last-child td:first-child {
 tr:last-child td:last-child {
   border-bottom-right-radius: 12px;
 }
-
-/* when data is loading, show this th style
-tr:not(:has(td)) th:last-child {
-  border-bottom-right-radius: 12px;
-  border-bottom: none;
-}
-tr:not(:has(td)) th:last-child {
-  border-bottom-right-radius: 12px;
-  border-bottom: none;
-}
-
-/* when data is loading, show this th style */
-/* tr:not(:has(td)) th {
-  border-bottom: none;
-} */ */
 
 .trStyles {
   background-color: #FFFFFF;
