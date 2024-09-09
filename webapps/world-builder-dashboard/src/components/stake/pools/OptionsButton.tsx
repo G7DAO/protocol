@@ -39,6 +39,7 @@ const OptionsButton: React.FC<OptionsButtonProps> = ({ onViewPositions, poolData
 
   return (
     <div
+      style={{ cursor: 'pointer' }}
       onClick={() => {
         toggleDropdown(Number(poolData.poolId))
       }}

@@ -22,6 +22,10 @@
   line-height: 20px; /* 142.857% */
 }
 
+.threeDots:hover {
+  cursor: pointer;
+}
+
 .dropdown {
   /* display: flex; */
   position: absolute;
@@ -57,5 +61,6 @@
 }
 
 .dropdownItem:hover {
+  cursor: pointer;
   background-color: var(--Gray-100, #f2f4f7);
 }
