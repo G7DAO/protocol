@@ -20,7 +20,7 @@ import "./interfaces/ITerminus.sol";
 import "./diamond/security/DiamondReentrancyGuard.sol";
 import { LibDiamondMoonstream as LibDiamond } from "./diamond/libraries/LibDiamondMoonstream.sol";
 import "./diamond/libraries/LibSignatures.sol";
-import { TerminusPermissions } from "../terminus/TerminusPermissions.sol";
+import { TerminusPermissions } from "../../security/terminus/TerminusPermissions.sol";
 
 /**
  * @title Moonstream Dropper

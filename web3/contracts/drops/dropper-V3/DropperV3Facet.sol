@@ -21,7 +21,7 @@ import "./interfaces/ITerminus.sol";
 import "./diamond/security/DiamondReentrancyGuard.sol";
 import { LibDiamondDropperV3 as LibDiamond } from "./diamond/libraries/LibDiamondDropperV3.sol";
 import "./diamond/libraries/LibSignatures.sol";
-import { TerminusPermissions } from "../terminus/TerminusPermissions.sol";
+import { TerminusPermissions } from "../../security/terminus/TerminusPermissions.sol";
 import "../../libraries/TokenType.sol";
 
 /**
