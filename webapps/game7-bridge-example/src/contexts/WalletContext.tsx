@@ -50,7 +50,6 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   }
 
   const getProvider = async (network?: NetworkInterface) => {
-    console.log('getting')
     if (!window.ethereum) {
       throw new Error("Wallet isn't installed")
     }
@@ -66,6 +65,11 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       return new ethers.providers.Web3Provider(ethereum)
     }
     return walletProvider
+  }
+
+  const getSigner = async (network?: NetworkInterface) => {
+    const provider = await getProvider(network)
+    return (await provider.getSigner()) as ethers.Signer
   }
 
   const switchChain = async (chain: NetworkInterface) => {
