@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /**
- * Authors: Moonstream Engineering (engineering@moonstream.to)
+ * Authors: Game7 Engineering
  * GitHub: https://github.com/bugout-dev/dao
  *
  * Initializer for Terminus contract. Used when mounting a new TerminusFacet onto its diamond proxy.
@@ -11,7 +11,7 @@ pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/IERC1155MetadataURI.sol";
-import { LibDiamondMoonstream as LibDiamond } from "../diamond/libraries/LibDiamondMoonstream.sol";
+import { LibDiamondTerminus as LibDiamond } from "./diamond/libraries/LibDiamondTerminus.sol";
 import "./LibTerminus.sol";
 
 contract TerminusInitializer {

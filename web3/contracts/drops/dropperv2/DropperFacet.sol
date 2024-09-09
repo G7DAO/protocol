@@ -15,11 +15,11 @@ import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
 import "./LibDropper.sol";
-import "../../interfaces/IERC721Mint.sol";
-import "../../interfaces/ITerminus.sol";
-import "../diamond/security/DiamondReentrancyGuard.sol";
-import { LibDiamondMoonstream as LibDiamond } from "../diamond/libraries/LibDiamondMoonstream.sol";
-import "../diamond/libraries/LibSignatures.sol";
+import "./interfaces/IERC721Mint.sol";
+import "./interfaces/ITerminus.sol";
+import "./diamond/security/DiamondReentrancyGuard.sol";
+import { LibDiamondMoonstream as LibDiamond } from "./diamond/libraries/LibDiamondMoonstream.sol";
+import "./diamond/libraries/LibSignatures.sol";
 import { TerminusPermissions } from "../terminus/TerminusPermissions.sol";
 
 /**

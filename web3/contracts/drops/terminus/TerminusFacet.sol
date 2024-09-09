@@ -24,7 +24,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./ERC1155WithTerminusStorage.sol";
 import "./LibTerminus.sol";
 import "./TerminusInitializer.sol";
-import { LibDiamondMoonstream as LibDiamond } from "../diamond/libraries/LibDiamondMoonstream.sol";
+import {LibDiamondTerminus} from "./diamond/libraries/LibDiamondTerminus.sol";
 
 contract TerminusFacet is ERC1155WithTerminusStorage, TerminusInitializer {
     constructor() {

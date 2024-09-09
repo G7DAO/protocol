@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /**
- * Authors: Moonstream Engineering (engineering@moonstream.to)
+ * Authors: Game7 Engineering
  * GitHub: https://github.com/bugout-dev/engine
  * TODO: Need Updated information wanted for this
  */
@@ -16,11 +16,11 @@ import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
 import "./LibDropperV3.sol";
-import "../../interfaces/IERC721Mint.sol";
-import "../../interfaces/ITerminus.sol";
-import "../diamond/security/DiamondReentrancyGuard.sol";
-import { LibDiamondMoonstream as LibDiamond } from "../diamond/libraries/LibDiamondMoonstream.sol";
-import "../diamond/libraries/LibSignatures.sol";
+import "./interfaces/IERC721Mint.sol";
+import "./interfaces/ITerminus.sol";
+import "./diamond/security/DiamondReentrancyGuard.sol";
+import { LibDiamondDropperV3 as LibDiamond } from "./diamond/libraries/LibDiamondDropperV3.sol";
+import "./diamond/libraries/LibSignatures.sol";
 import { TerminusPermissions } from "../terminus/TerminusPermissions.sol";
 import "../../libraries/TokenType.sol";
 
