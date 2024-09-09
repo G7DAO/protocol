@@ -1,0 +1,48 @@
+.container {
+    display: flex;
+    gap: 20px;
+}
+
+
+.networkContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border: 1px solid #777777;
+    padding: 8px;
+
+}
+
+.networkName {
+
+}
+
+.networkNativeTokenSymbol {
+
+}
+
+.networkNativeTokenBalance {
+
+}
+
+.tokenContainer {}
+
+.tokenSymbol {}
+
+.tokenBalance {}
+
+.bridgerContainer {padding: 8px;}
+
+.bridgerDirection {}
+
+.bridgerAllowance {display: flex; align-items: center; gap: 20px}
+
+.bridgerAllowanceText {}
+
+.bridgerApproveButton {}
+
+.bridgerTransferData {}
+
+.bridgerFee {}
+
+.bridgerAmount {}
