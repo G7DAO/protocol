@@ -1,10 +1,12 @@
 // External Libraries
 import React, { useEffect, useState } from 'react'
+import ActionButtonStake from '../ActionButtonStake'
 import OptionsButton from './OptionsButton'
 // Styles
 import styles from './PoolDesktop.module.css'
 import PositionsTable from './PositionsTable'
 import { Pagination } from 'summon-ui/mantine'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import usePools from '@/hooks/usePools'
 import { formatAddress } from '@/utils/addressFormat'
 import { tokenTypes } from '@/utils/web3utils'
@@ -27,6 +29,7 @@ export interface Pool {
 }
 
 const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
+  const { connectedAccount } = useBlockchainContext()
   const { data } = usePools()
   const [activePool, setActivePool] = useState<string | null>(null)
   const [clickedPool, setClickedPool] = useState<number | null>(null)
@@ -70,9 +73,10 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
         /> */}
         <div className={styles.headerContainer}>
           <div className={styles.header}>Pools</div>
-          <div className={styles.subtitle}>Manage and view your pools</div>
+          <div className={styles.createPoolButton}>Create Pool</div>
         </div>
-        <div className={styles.gap} />
+        <div className={styles.subtitle}>Manage and view your pools</div>
+        <div className={styles.gap} />  
         <table className={styles.tableStyles}>
           <thead>
             <tr>
@@ -81,7 +85,7 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
                   key={header}
                   className={`
                     ${header !== 'ID' && header !== '' ? styles.thStylesWidth : styles.thStyles} 
-                    ${!data  ? styles.loadingHeader : styles.loadedHeader}
+                    ${!data ? styles.loadingHeader : styles.loadedHeader}
                   `}
                 >
                   {header}
@@ -90,39 +94,47 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
             </tr>
           </thead>
           <tbody>
-            {data?.slice(page * entries, entries * (page + 1)).map((item) => (
-              <React.Fragment key={item.poolId}>
-                <tr className={styles.trStyles}>
-                  <td className={styles.tdStyles}>{item.poolId}</td>
-                  <td className={styles.tdStyles}>{item.poolName}</td>
-                  <td className={styles.tdStyles}>{getTokenLabel(item.tokenType)}</td>
-                  <td className={styles.tdStyles}>{item.lockdownPeriod}</td>
-                  <td className={styles.tdStyles}>{item.cooldownPeriod}</td>
-                  <td className={styles.tdStyles}>{item.transferable.toString()}</td>
-                  <td className={styles.tdStyles}>{item.positions}</td>
-                  <td className={styles.tdStyles}>
-                    <OptionsButton
-                      onViewPositions={() => handleViewPositions(item.poolId)}
-                      poolData={{
-                        poolId: item.poolId,
-                        transferable: item.transferable,
-                        cooldownSeconds: item.cooldownPeriod,
-                        lockupSeconds: item.lockdownPeriod
-                      }}
-                      toggleDropdown={toggleDropdown}
-                      clickedPool={clickedPool}
-                    />
-                  </td>
-                </tr>
-                {activePool === item.poolId && (
+            {connectedAccount ? (
+              data?.slice(page * entries, entries * (page + 1)).map((item) => (
+                <React.Fragment key={item.poolId}>
                   <tr className={styles.trStyles}>
-                    <td colSpan={headers.length} className={styles.tdStyles}>
-                      <PositionsTable />
+                    <td className={styles.tdStyles}>{item.poolId}</td>
+                    <td className={styles.tdStyles}>{item.poolName}</td>
+                    <td className={styles.tdStyles}>{getTokenLabel(item.tokenType)}</td>
+                    <td className={styles.tdStyles}>{item.lockdownPeriod}</td>
+                    <td className={styles.tdStyles}>{item.cooldownPeriod}</td>
+                    <td className={styles.tdStyles}>{item.transferable.toString()}</td>
+                    <td className={styles.tdStyles}>{item.positions}</td>
+                    <td className={styles.tdStyles}>
+                      <OptionsButton
+                        onViewPositions={() => handleViewPositions(item.poolId)}
+                        poolData={{
+                          poolId: item.poolId,
+                          transferable: item.transferable,
+                          cooldownSeconds: item.cooldownPeriod,
+                          lockupSeconds: item.lockdownPeriod
+                        }}
+                        toggleDropdown={toggleDropdown}
+                        clickedPool={clickedPool}
+                      />
                     </td>
                   </tr>
-                )}
-              </React.Fragment>
-            ))}
+                  {activePool === item.poolId && (
+                    <tr className={styles.trStyles}>
+                      <td colSpan={headers.length} className={styles.tdStyles}>
+                        <PositionsTable />
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={headers.length} className={styles.loadingData}>
+                  Please connect a wallet to view or create your Pool
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
