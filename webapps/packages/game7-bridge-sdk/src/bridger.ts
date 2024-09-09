@@ -312,7 +312,7 @@ export default class Bridger {
   public async getAllowance(
     provider: ethers.Signer | ethers.providers.Provider | string,
     account: string,
-  ): Promise<BigNumber | null> {
+  ): Promise<BigNumber | null | undefined> {
     if (!this.isDeposit) {
       return null;
     }
