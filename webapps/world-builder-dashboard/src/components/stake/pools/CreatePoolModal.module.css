@@ -38,27 +38,29 @@
 
 .stepper {
   /* padding: 0px 24px 16px 24px; */
-  flex-direction: column;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   align-items: center;
-  align-self: stretch;
+  width: 100%;
 }
 
 .step {
   display: flex;
-  padding-top: 12px;
   flex-direction: column;
-  align-items: flex-start;
-  flex: 1 0 0;
-  border-top: 4px solid var(--Primary-700, #dd1534);
+  align-items: flex-start; /* Center the text horizontally */
+  flex: 1; /* Equal width for all steps */
+  border-top: 4px solid var(--Primary-700, #dd1534); /* Keep the red top border */
+  padding: 12px 0; /* Adjust padding to give space */
 }
 
 .stepText {
   color: var(--Primary-700, #dd1534);
-
   /* Text sm/Semibold */
   font-family: Inter;
   font-size: 14px;
   font-style: normal;
   font-weight: 600;
   line-height: 20px; /* 142.857% */
+  text-align: left;
 }
