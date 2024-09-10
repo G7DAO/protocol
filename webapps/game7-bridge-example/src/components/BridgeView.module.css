@@ -7,10 +7,16 @@
 .networkContainer {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 10px;
     border: 1px solid #777777;
     padding: 8px;
 
+}
+
+
+.tokenBalance {
+    display: flex;
+    gap: 8px;
 }
 
 .networkName {
@@ -25,24 +31,90 @@
 
 }
 
-.tokenContainer {}
+.tokenContainer { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; justify-content: start}
 
 .tokenSymbol {}
 
 .tokenBalance {}
 
-.bridgerContainer {padding: 8px;}
+.bridgerContainerWithdrawal, .bridgerContainerDeposit {gap: 4px; opacity: 0.7; position: relative; cursor: pointer; padding: 0; display: flex; flex-direction: column; justify-content: start;}
+.bridgerContainerWithdrawal {
+align-items: start;
+}
+.bridgerContainerWithdrawal:hover, .bridgerContainerDeposit:hover {
+    opacity: 1;
+    /*transform: scaleY(1.2);*/
+}
 
-.bridgerDirection {}
+.bridgerContainerDeposit:hover .runwayLights {
+    opacity: 1; /* Make lights visible when the container is hovered */
+}
 
-.bridgerAllowance {display: flex; align-items: center; gap: 20px}
+.bridgerContainerDeposit:hover .light {
+animation: moveLights 1s linear infinite;
+}
 
-.bridgerAllowanceText {}
+.bridgerContainerWithdrawal:hover .runwayLights {
+    opacity: 1; /* Make lights visible when the container is hovered */
+}
 
-.bridgerApproveButton {}
+.bridgerContainerWithdrawal:hover .light {
+    animation: moveLights 1s linear infinite;
+}
 
-.bridgerTransferData {}
 
-.bridgerFee {}
+/*.bridgerDirection {font-size: 16px; font-weight: 700; margin-top: 10px;}*/
 
-.bridgerAmount {}
+.bridgerAllowance {display: flex; align-items: center; gap: 4px;}
+
+.bridgerAllowanceText {font-size: 12px; }
+
+.editIcon {
+    padding: 8px;
+}
+
+.editIcon:hover {
+    padding: 7px;
+    border: 1px solid #777;
+}
+
+.bridgerApproveButton {font-size: 12px;}
+
+.bridgerTransferData {font-size: 12px;}
+
+.bridgerFee {font-size: 12px; text-align: start}
+
+.bridgerAmount {font-size: 12px;}
+
+.runwayLights {
+    display: flex;
+    /*position: relative;*/
+    overflow: hidden;
+    opacity: 0.3;
+    margin-left: -10px;
+}
+
+.light {
+    /*position: absolute;*/
+    left: 0;
+    top: 0;
+    /*width: 2px;*/
+    /*height: 2px;*/
+    /*background: linear-gradient(90deg, yellow, red);*/
+    /*border-radius: 50%;*/
+    margin: 0 10px;
+    /*animation: moveLights 1s linear infinite;*/
+    font-size: 10px;
+    font-weight: 700;
+}
+
+@keyframes moveLights {
+    100% {
+        opacity: 0.5;
+        scale: 1;
+    }
+    0% {
+        opacity: 1;
+        scale: 1.5;
+    }
+}
