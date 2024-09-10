@@ -23,21 +23,20 @@ describe('Staker', function () {
         await erc721.connect(user0).approve(await staker.getAddress(), tokenId);
 
         // Stake ERC721 token
-        let tx = await stakerWithUser0.stakeERC721(erc721PoolID, tokenId);
-        let txReceipt = await tx.wait();
+        const tx = await stakerWithUser0.stakeERC721(erc721PoolID, tokenId);
+        const txReceipt = await tx.wait();
         expect(txReceipt).to.not.be.null;
-        let block = await ethers.provider.getBlock(txReceipt!.blockNumber);
+        const block = await ethers.provider.getBlock(txReceipt!.blockNumber);
         expect(block).to.not.be.null;
 
         // Get the position token ID of the newly minted token
-        let positionTokenID = (await staker.TotalPositions()) - 1n;
-        let metadataDataURI = await staker.tokenURI(positionTokenID);
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+        const metadataDataURI = await staker.tokenURI(positionTokenID);
 
-        let metadataBase64 = metadataDataURI.split(',')[1];
-        let metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
-
+        const metadataBase64 = metadataDataURI.split(',')[1];
+        const metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
         // Uncomment to get image and paste it in the browser to test! (ERC721)
-        console.log(metadata.image);
+        // console.log(metadata.image);
 
         expect(metadata).to.deep.equal({
             token_id: positionTokenID.toString(),
@@ -96,6 +95,7 @@ describe('Staker', function () {
         const metadataDataURI = await staker.tokenURI(positionTokenID);
         const metadataBase64 = metadataDataURI.split(',')[1];
         const metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
+        // console.log(metadata.image);
 
         expect(metadata).to.deep.equal({
             token_id: positionTokenID.toString(),
@@ -123,7 +123,7 @@ describe('Staker', function () {
             ],
         });
     });
-    it.only('STAKER-115: The ERC721 representing an ERC1155 staking position have as its metadata URI a data URI representing an appropriate JSON object', async function () {
+    it('STAKER-115: The ERC721 representing an ERC1155 staking position have as its metadata URI a data URI representing an appropriate JSON object', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 0;
@@ -157,7 +157,7 @@ describe('Staker', function () {
         const metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
 
         // Uncomment to get image and paste it in the browser to test! (ERC1155)
-        console.log(metadata.image);
+        // console.log(metadata.image);
 
         expect(metadata).to.deep.equal({
             token_id: positionTokenID.toString(),
@@ -209,7 +209,7 @@ describe('Staker', function () {
         const metadataDataURI = await staker.tokenURI(positionTokenID);
         const metadataBase64 = metadataDataURI.split(',')[1];
         const metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
-
+        // console.log(metadata.image);
         expect(metadata).to.deep.equal({
             token_id: positionTokenID.toString(),
             image: metadata.image,
