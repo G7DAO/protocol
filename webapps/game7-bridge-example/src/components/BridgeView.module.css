@@ -73,6 +73,15 @@ animation: moveLights 1s linear infinite;
     padding: 8px;
 }
 
+.connectButton {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
 .editIcon:hover {
     padding: 7px;
     border: 1px solid #777;

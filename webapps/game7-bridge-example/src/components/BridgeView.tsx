@@ -206,15 +206,18 @@ const Network = ({ network }: { network: BridgeNetwork }) => {
 
 const BridgeView = () => {
   const networks = [L1_NETWORK, L2_NETWORK, L3_NETWORK].map((n) => new BridgeNetwork(n.chainId, [TG7T]))
-
+  const { account } = useWallet()
   return (
     <div>
-      <WalletConnection />
-      <div className={styles.container}>
-        {networks.map((network) => (
-          <Network network={network} key={network.chainId} />
-        ))}
-      </div>
+      {!account ? (
+        <WalletConnection />
+      ) : (
+        <div className={styles.container}>
+          {networks.map((network) => (
+            <Network network={network} key={network.chainId} />
+          ))}
+        </div>
+      )}
     </div>
   )
 }

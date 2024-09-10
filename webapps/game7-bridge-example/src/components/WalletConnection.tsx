@@ -1,14 +1,13 @@
 import React from 'react'
 import { useWallet } from '../contexts/WalletContext.tsx'
+import styles from './BridgeView.module.css'
 
 const WalletConnection = () => {
-  const { account, getProvider, error } = useWallet()
+  const { getProvider, error } = useWallet()
 
   return (
-    <div>
-      {!account && <button onClick={() => getProvider()}>Connect Wallet</button>}
-      {account && <p>Connected Account: {account}</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+    <div className={styles.connectButton} onClick={() => getProvider()}>
+      Connect wallet
     </div>
   )
 }

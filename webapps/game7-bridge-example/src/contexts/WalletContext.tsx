@@ -126,10 +126,6 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       window.ethereum.on('accountsChanged', (accounts: string[]) => {
         setAccount(accounts[0] || '')
       })
-
-      window.ethereum.on('chainChanged', () => {
-        window.location.reload()
-      })
     }
   }, [])
 
