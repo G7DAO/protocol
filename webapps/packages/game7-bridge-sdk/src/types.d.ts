@@ -62,6 +62,8 @@ export interface TransferParams {
    */
   signer: ethers.Signer;
 
+  destinationProvider: ethers.providers.Provider;
+
   /**
    * The network address of the entity receiving the funds. Defaults to the signer address.
    */
