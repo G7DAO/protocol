@@ -10,6 +10,35 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { connectedAccount } = useBlockchainContext()
 
+  // States the stepper
+  const steps = ['Details', 'Tokens', 'Settings', 'Admin']
+  const [currentStep, setCurrentStep] = useState<number>(3)
+  const [completedSteps, setCompletedSteps] = useState<boolean[]>(new Array(steps.length).fill(false))
+
+  const goToNextStep = () => {
+    if (currentStep < steps.length - 1 && completedSteps[currentStep]) {
+      setCurrentStep(currentStep + 1)
+    }
+  }
+
+  const goToPreviousStep = (stepIndex: number) => {
+    if (completedSteps[stepIndex]) {
+      setCurrentStep(stepIndex)
+    }
+  }
+
+  const completeCurrentStep = () => {
+    completedSteps[currentStep] = true
+  }
+
+  const getStepStyle = (stepIndex: number) => {
+    if (stepIndex === currentStep || completedSteps[currentStep] === true) {
+      return styles.step // Active stepelse {
+    } else {
+      return styles.stepLocked // Locked step
+    }
+  }
+
   useEffect(() => {
     console.log(isOpen)
   }, [isOpen])
@@ -40,18 +69,19 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
         >
           <div className={styles.stepperContainer}>
             <div className={styles.stepper}>
-              <div className={styles.step}>
-                <div className={styles.stepText}>Details</div>
-              </div>
-              <div className={styles.stepLocked}>
-                <div className={styles.stepTextLocked}>Tokens</div>
-              </div>
-              <div className={styles.stepLocked}>
-                <div className={styles.stepTextLocked}>Settings</div>
-              </div>
-              <div className={styles.stepLocked}>
-                <div className={styles.stepTextLocked}>Admin</div>
-              </div>
+              {steps.map((step, index) => (
+                <div
+                  key={index}
+                  className={getStepStyle(index)} // Apply dynamic class based on step state
+                  onClick={() => {
+                    if (completedSteps[index] || index === currentStep) {
+                      setCurrentStep(index) // Allow clicking on completed or active steps
+                    }
+                  }}
+                >
+                  <div className={index === currentStep ? styles.stepText : styles.stepTextLocked}>{step}</div>
+                </div>
+              ))}
             </div>
           </div>
           <div className={styles.inputRow}>

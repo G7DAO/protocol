@@ -74,7 +74,7 @@
 }
 
 .stepText {
-  color: var(--Primary-700, #dd1534);
+  color: var(--Primary-700, #344054);
   font-family: Inter;
   font-size: 14px;
   font-style: normal;
@@ -94,7 +94,7 @@
 }
 
 .stepTextCompleted {
-  color: var(--Gray-700, #344054);
+  color: var(--Gray-700, #dd1534);
   font-family: Inter;
   font-size: 14px;
   font-style: normal;
