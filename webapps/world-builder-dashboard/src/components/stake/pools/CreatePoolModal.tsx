@@ -61,7 +61,7 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
             </div>
             <div className={styles.inputContainer}>
               <div className={styles.label}>Pool Creator</div>
-              <div className={styles.addressText}>{connectedAccount}</div>
+              <div className={styles.addressText}>{connectedAccount ? connectedAccount : 'Account not connected'}</div>
             </div>
           </div>
           {/* Make component out of this in the future */}
@@ -71,7 +71,15 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
           </div>
           <div className={styles.inputFieldContainer}>
             <div className={styles.label}>Description</div>
-            <textarea className={styles.inputField} placeholder={connectedAccount} />
+            <textarea className={styles.inputField} placeholder={'Beep bop!'} />
+          </div>
+          <div className={styles.footerContainer}>
+            <div className={styles.closeButton}>
+              <div className={styles.closeText}>Close</div>
+            </div>
+            <div className={styles.nextButton}>
+              <div className={styles.nextText}>Next</div>
+            </div>
           </div>
         </Modal>
       )}
