@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import { TokenSenderABI } from '../abis/TokenSenderABI';
-import { GAME7_TESTNET_RPC_URL, KMS_CREDENTIALS, TOKEN_SENDER_ADDRESS } from '../config';
+import { GAME7_TESTNET_RPC_URL, KMS_CREDENTIALS, TOKEN_SENDER_ADDRESS, TOKEN_SENDER_AMOUNT } from '../config';
 import { AwsKmsSigner } from '../utils/ethers-aws-kms-signer';
 
 export class FaucetService {
@@ -16,7 +16,7 @@ export class FaucetService {
   }
 
   async requestFaucet(recipientAddress: string) {
-      const tx = await this.tokenSender.send(recipientAddress);
+      const tx = await this.tokenSender.send(recipientAddress, { value: TOKEN_SENDER_AMOUNT });
       await tx.wait();
       return tx.hash
   }
