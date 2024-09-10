@@ -19,6 +19,7 @@ contract Metronome is ReentrancyGuard {
     mapping(uint256 => uint256) public LastTick;
 
     event ScheduleCreated(uint256 indexed scheduleID, uint256 indexed remainder, uint256 indexed divisor, uint256 bounty);
+    event BalanceIncreased(uint256 indexed scheduleID, uint256 amount);
     event BountyClaimed(uint256 indexed scheduleID, address indexed forAddress, uint256 payment);
 
     error InvalidSchedule();
@@ -40,6 +41,11 @@ contract Metronome is ReentrancyGuard {
         Schedules[scheduleID] = Schedule(remainder, divisor, bounty);
         ScheduleBalances[scheduleID] = msg.value;
         emit ScheduleCreated(scheduleID, remainder, divisor, bounty);
+    }
+
+    function increaseBalance(uint256 scheduleID) external payable {
+        ScheduleBalances[scheduleID] += msg.value;
+        emit BalanceIncreased(scheduleID, msg.value);
     }
 
     function _claim(uint256 scheduleID, address forAddress) internal {
