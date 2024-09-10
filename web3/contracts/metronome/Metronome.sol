@@ -15,6 +15,8 @@ contract Metronome is ReentrancyGuard {
     // scheduleID => blockNumber => true if claimed already and false if not
     mapping(uint256 => mapping(uint256 => bool)) public ClaimedBounties;
     uint256 public NumSchedules;
+    // scheduleID => block number at which schedule last ticked
+    mapping(uint256 => uint256) public LastTick;
 
     event ScheduleCreated(uint256 indexed scheduleID, uint256 indexed remainder, uint256 indexed divisor, uint256 bounty);
     event BountyClaimed(uint256 indexed scheduleID, address indexed forAddress, uint256 payment);
