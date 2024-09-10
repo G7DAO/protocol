@@ -21,7 +21,7 @@ export class BridgeNetwork {
   public readonly tokens: BridgeToken[];
   public readonly name: string;
   public readonly symbol: string;
-  private readonly network: BridgeNetworkConfig;
+  public readonly network: BridgeNetworkConfig;
 
   /**
    * Creates an instance of a network configuration for bridging operations.

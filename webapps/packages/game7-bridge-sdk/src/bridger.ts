@@ -378,7 +378,7 @@ export default class Bridger {
    * @throws {BridgerError} If there is an issue with the transfer operation.
    */
   async transfer(params: TransferParams): Promise<ethers.ContractTransaction> {
-    const { amount, signer, destinationAddress, overrides } = params;
+    const { amount, signer, destinationAddress, overrides, destinationProvider } = params;
 
     const destination = destinationAddress ?? (await signer.getAddress());
     const originToken = this.token[this.originNetwork.chainId];
@@ -392,9 +392,17 @@ export default class Bridger {
       }
     } else {
       if (destinationToken === ethers.constants.AddressZero) {
-        return depositNative(amount, signer, overrides);
+        return depositNative(amount, this.destinationNetwork, signer, overrides);
       } else {
-        return depositERC20(amount, signer, overrides);
+        return depositERC20(
+          amount,
+          this.destinationNetwork.chainId,
+          destination,
+          originToken,
+          signer,
+          destinationProvider,
+          overrides,
+        );
       }
     }
   }
