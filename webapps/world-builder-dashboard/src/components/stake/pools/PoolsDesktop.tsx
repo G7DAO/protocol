@@ -1,6 +1,7 @@
 // External Libraries
 import React, { useEffect, useState } from 'react'
 import ActionButtonStake from '../ActionButtonStake'
+import CreatePoolModal from './CreatePoolModal'
 import OptionsButton from './OptionsButton'
 // Styles
 import styles from './PoolDesktop.module.css'
@@ -35,8 +36,8 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
   const [clickedPool, setClickedPool] = useState<number | null>(null)
   const [page, setPage] = useState<number>(0)
   const [maximumPages, setMaximumPages] = useState<number>(0)
-  // for future, when the user is able to customize their own entries
   const [entries, setEntries] = useState<number>(10)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     if (!data) {
@@ -44,7 +45,8 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
     }
     setMaximumPages(Math.ceil(data?.length / entries))
     setEntries(5)
-  }, [data])
+    console.log(isModalOpen)
+  }, [data, isModalOpen])
 
   const headers = ['ID', 'Name', 'Token Type', 'Period', 'Cooldown', 'Transferrable', 'Positions', '']
 
@@ -62,6 +64,10 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
     else setClickedPool(clickedPoolId)
   }
 
+  const handleModalClose = () => {
+    setIsModalOpen(false)
+  }
+
   return (
     <div className={styles.poolsContainer}>
       <div style={{ margin: 'auto', width: '100%' }}>
@@ -73,10 +79,10 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
         /> */}
         <div className={styles.headerContainer}>
           <div className={styles.header}>Pools</div>
-          <div className={styles.createPoolButton}>Create Pool</div>
+          <CreatePoolModal/>
         </div>
         <div className={styles.subtitle}>Manage and view your pools</div>
-        <div className={styles.gap} />  
+        <div className={styles.gap} />
         <table className={styles.tableStyles}>
           <thead>
             <tr>

@@ -51,28 +51,6 @@
   line-height: 20px; /* 142.857% */
 }
 
-.createPoolButton {
-  display: flex;
-  padding: 10px 16px;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-
-  /* Text sm/Semibold */
-  color: var(--Base-White, #fff);
-  font-family: Inter;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 20px; /* 142.857% */
-  border-radius: 8px;
-  border: 1px solid var(--Primary-600, #ef233b);
-  background: var(--Primary-600, #ef233b);
-
-  /* Shadow/xs */
-  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-}
-
 .loadingHeader {
   border-bottom: none;
 }
