@@ -287,7 +287,7 @@ export default class Bridger {
   private getDepositSpender() {
     let spenderAddress: string;
     if (this.token[this.destinationNetwork.chainId] === ethers.constants.AddressZero) {
-      spenderAddress = this.originNetwork.ethBridge?.inbox ?? '';
+      spenderAddress = this.destinationNetwork.ethBridge?.inbox ?? '';
     } else {
       spenderAddress = this.destinationNetwork.tokenBridge?.parentErc20Gateway ?? '';
     }
