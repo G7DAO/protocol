@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react'
 import styles from './CreatePoolModal.module.css'
 import EditPoolModal from './EditPoolModal'
 import { Modal, ModalProps } from 'summon-ui/mantine'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
 
 interface CreatePoolModalProps {}
 
 const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
   const [isOpen, setIsOpen] = useState(false)
+  const { connectedAccount } = useBlockchainContext()
 
   useEffect(() => {
     console.log(isOpen)
@@ -36,19 +38,40 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
           classNames={{ header: styles.header, body: styles.modal }}
           shadow='0px 20px 24px -4px rgba(16, 24, 40, 0.08) 0px 8px 8px -4px rgba(16, 24, 40, 0.03)'
         >
-          <div className={styles.stepper}>
-            <div className={styles.step}>
-              <div className={styles.stepText}>Details</div>
+          <div className={styles.stepperContainer}>
+            <div className={styles.stepper}>
+              <div className={styles.step}>
+                <div className={styles.stepText}>Details</div>
+              </div>
+              <div className={styles.stepLocked}>
+                <div className={styles.stepTextLocked}>Tokens</div>
+              </div>
+              <div className={styles.stepLocked}>
+                <div className={styles.stepTextLocked}>Settings</div>
+              </div>
+              <div className={styles.stepLocked}>
+                <div className={styles.stepTextLocked}>Admin</div>
+              </div>
             </div>
-            <div className={styles.step}>
-              <div className={styles.stepText}>Tokens</div>
+          </div>
+          <div className={styles.inputRow}>
+            <div className={styles.inputContainer}>
+              <div className={styles.label}>Connected Wallet Address</div>
+              <input className={styles.addressText} placeholder={connectedAccount} />
             </div>
-            <div className={styles.step}>
-              <div className={styles.stepText}>Settings</div>
+            <div className={styles.inputContainer}>
+              <div className={styles.label}>Pool Creator</div>
+              <div className={styles.addressText}>{connectedAccount}</div>
             </div>
-            <div className={styles.step}>
-              <div className={styles.stepText}>Admin</div>
-            </div>
+          </div>
+          {/* Make component out of this in the future */}
+          <div className={styles.inputContainer}>
+            <div className={styles.label}>Pool Name</div>
+            <input className={styles.addressText} placeholder={'Pool 0'} />
+          </div>
+          <div className={styles.inputFieldContainer}>
+            <div className={styles.label}>Description</div>
+            <textarea className={styles.inputField} placeholder={connectedAccount} />
           </div>
         </Modal>
       )}
