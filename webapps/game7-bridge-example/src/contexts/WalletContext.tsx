@@ -8,6 +8,7 @@ interface WalletContextType {
   error: string
   connectWallet: () => Promise<void>
   isConnecting: boolean
+  getSigner: (network?: NetworkInterface) => Promise<ethers.Signer>
   getProvider: (network?: NetworkInterface) => Promise<ethers.providers.Web3Provider>
   getRPCProvider: (network: NetworkInterface) => ethers.providers.JsonRpcProvider
 }
@@ -133,7 +134,9 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   }, [])
 
   return (
-    <WalletContext.Provider value={{ account, error, connectWallet, isConnecting, getProvider, getRPCProvider }}>
+    <WalletContext.Provider
+      value={{ account, error, connectWallet, isConnecting, getProvider, getRPCProvider, getSigner }}
+    >
       {children}
     </WalletContext.Provider>
   )
