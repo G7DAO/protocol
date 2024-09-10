@@ -15,6 +15,10 @@
     "node": "20.14.0"
   },
   "dependencies": {
+    "@aws-sdk/client-kms": "^3.645.0",
+    "@peculiar/asn1-ecc": "^2.3.13",
+    "@peculiar/asn1-schema": "^2.3.13",
+    "@peculiar/asn1-x509": "^2.3.13",
     "dotenv": "^16.4.5",
     "ethers": "^6.13.2",
     "express": "^4.19.2",
