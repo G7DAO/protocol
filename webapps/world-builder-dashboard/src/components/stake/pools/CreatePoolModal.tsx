@@ -93,8 +93,11 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                 <div className={styles.inputContainer}>
                   <div className={styles.label}>Project (optional)</div>
                   <ProjectSelector
-                    projects={['1', '2']}
-                    selectedProject={'1'}
+                    projects={[
+                      { projectId: 0, displayName: 'Sample project 1' },
+                      { projectId: 1, displayName: 'Sample project 2' }
+                    ]}
+                    selectedProject={{ projectId: 0, displayName: 'Sample project 1' }}
                     onChange={(e: any) => {
                       console.log(e)
                     }}
@@ -102,10 +105,9 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                 </div>
                 <div className={styles.inputContainer}>
                   <div className={styles.label}>Pool Creator</div>
-                  <input
-                    className={styles.addressText}
-                    placeholder={connectedAccount ? formatAddress(connectedAccount, false) : 'Wallet not connected'}
-                  />
+                  <div className={styles.addressText}>
+                    {connectedAccount ? formatAddress(connectedAccount, false) : 'Wallet not connected'}
+                  </div>
                 </div>
               </div>
               {/* Make component out of input container in the future */}

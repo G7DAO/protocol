@@ -20,7 +20,7 @@ const ProjectSelector = ({ projects, onChange, selectedProject }: ProjectSelecto
       store={combobox}
       variant='unstyled'
       onOptionSubmit={(val: string) => {
-        const newSelection = projects.find((n) => String(n.chainId) === val)
+        const newSelection = projects.find((n) => String(n.projectId) === val)
         if (newSelection) {
           onChange(newSelection)
         }
@@ -45,22 +45,22 @@ const ProjectSelector = ({ projects, onChange, selectedProject }: ProjectSelecto
         <Combobox.Options>
           {projects
             .sort((a, b) => {
-              if (a.chainId === selectedProject.chainId) return 1
-              if (b.chainId === selectedProject.chainId) return -1
+              if (a.projectId === selectedProject.projectId) return 1
+              if (b.projectId === selectedProject.projectId) return -1
               return 0
             })
             .map((n) => (
-              <Combobox.Option value={String(n.chainId)} key={n.chainId}>
+              <Combobox.Option value={String(n.projectId)} key={n.projectId}>
                 <Group>
                   <div
                     className={
-                      n.chainId === selectedProject.chainId ? styles.optionContainerSelected : styles.optionContainer
+                      n.projectId === selectedProject.projectId ? styles.optionContainerSelected : styles.optionContainer
                     }
                   >
                     <div className={styles.optionLeftSection}>
                       {n.displayName}
                     </div>
-                    {n.chainId === selectedProject.chainId && <IconCheck />}
+                    {n.projectId === selectedProject.projectId && <IconCheck />}
                   </div>
                 </Group>
               </Combobox.Option>

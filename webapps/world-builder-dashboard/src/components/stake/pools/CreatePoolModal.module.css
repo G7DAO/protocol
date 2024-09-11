@@ -130,6 +130,7 @@
   align-items: flex-start;
   gap: 6px;
   align-self: stretch;
+  padding-bottom: 16px;
 }
 
 .inputField {
@@ -142,6 +143,8 @@
   border-radius: 8px;
   border: 1px solid var(--Gray-100, #f2f4f7);
   background: var(--Base-White, #fff);
+  resize: none;
+  width: 100%;
 }
 
 .label {
