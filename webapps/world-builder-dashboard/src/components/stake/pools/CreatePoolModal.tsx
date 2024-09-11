@@ -18,7 +18,7 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
   const [completedSteps, setCompletedSteps] = useState<boolean[]>(new Array(steps.length).fill(false))
 
   const goToNextStep = () => {
-    if (currentStep < steps.length - 1 && completedSteps[currentStep]) {
+    if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1)
     }
   }
@@ -76,9 +76,9 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                   key={index}
                   className={getStepStyle(index)}
                   onClick={() => {
-                    if (completedSteps[index] || index === currentStep) {
+                    // if (completedSteps[index] || index === currentStep) {
                       setCurrentStep(index)
-                    }
+                    // }
                   }}
                 >
                   <div className={index === currentStep ? styles.stepText : styles.stepTextLocked}>{step}</div>
@@ -87,7 +87,7 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
             </div>
           </div>
           <div className={styles.border} />
-          <div style={{paddingTop: "16px"}} />
+          <div style={{ paddingTop: '16px' }} />
           {/* Details step */}
           {currentStep === 0 && (
             <>
@@ -122,16 +122,26 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                 <textarea className={styles.inputField} placeholder={'Beep bop!'} />
               </div>
               <div className={styles.border} />
-              <div className={styles.footerContainer}>
-                <div className={styles.closeButton}>
-                  <div className={styles.closeText}>Close</div>
-                </div>
-                <div className={styles.nextButton}>
-                  <div className={styles.nextText}>Next</div>
-                </div>
-              </div>
             </>
           )}
+          <div className={styles.footerContainer}>
+            <div
+              onClick={() => {
+                setIsOpen(false)
+              }}
+              className={styles.closeButton}
+            >
+              <div className={styles.closeText}>Close</div>
+            </div>
+            <div
+              onClick={() => {
+                currentStep != 3 ? goToNextStep() : console.log('Create')
+              }}
+              className={styles.nextButton}
+            >
+              <div className={styles.nextText}>{currentStep != 3 ? 'Next' : 'Create'} </div>
+            </div>
+          </div>
         </Modal>
       )}
     </>
