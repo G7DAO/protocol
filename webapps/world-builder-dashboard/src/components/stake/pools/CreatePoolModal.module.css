@@ -42,6 +42,7 @@
   align-items: center;
   gap: 16px;
   align-self: stretch;
+  padding-top: -10px;
 }
 
 .stepper {
@@ -109,7 +110,6 @@
   align-items: flex-start;
   gap: 16px;
   align-self: stretch;
-  padding-bottom: 16px;
 }
 
 .inputContainer {
@@ -119,6 +119,11 @@
   align-self: stretch;
   padding-bottom: 16px;
   flex-grow: 1;
+}
+
+.inputRow .inputContainer {
+  width: 50%;
+  max-width: 50%;
 }
 
 .inputFieldContainer {

@@ -94,28 +94,28 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
           {/* Details step */}
           {currentStep === 0 && (
             <>
-              <div className={styles.inputRow}>
-                <div className={styles.inputContainer}>
-                  <div className={styles.label}>Project (optional)</div>
-                  <ProjectSelector
-                    projects={[
-                      { projectId: 0, displayName: 'Sample project 1' },
-                      { projectId: 1, displayName: 'Sample project 2' }
-                    ]}
-                    selectedProject={{ projectId: 0, displayName: 'Sample project 1' }}
-                    onChange={(e: any) => {
-                      console.log(e)
-                    }}
-                  />
-                </div>
-                {/* May remove due to the pool creator needing to be added at the end */}
-                {/* <div className={styles.inputContainer}>
+              {/* <div className={styles.inputRow}> */}
+              <div className={styles.inputContainer}>
+                <div className={styles.label}>Project (optional)</div>
+                <ProjectSelector
+                  projects={[
+                    { projectId: 0, displayName: 'Sample project 1' },
+                    { projectId: 1, displayName: 'Sample project 2' }
+                  ]}
+                  selectedProject={{ projectId: 0, displayName: 'Sample project 1' }}
+                  onChange={(e: any) => {
+                    console.log(e)
+                  }}
+                />
+              </div>
+              {/* May remove due to the pool creator needing to be added at the end */}
+              {/* <div className={styles.inputContainer}>
                   <div className={styles.label}>Pool Creator</div>
                   <div className={styles.addressText}>
                     {connectedAccount ? formatAddress(connectedAccount, false) : 'Wallet not connected'}
                   </div>
                 </div> */}
-              </div>
+              {/* </div> */}
               {/* Make component out of input container in the future */}
               <div className={styles.inputContainer}>
                 <div className={styles.label}>Pool Name (optional)</div>
@@ -149,16 +149,55 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
               </div>
               {/* Make component out of input container in the future */}
               <div className={styles.inputContainer}>
-                <div className={styles.label}>Pool Name (optional)</div>
+                <div className={styles.label}>Token Address</div>
                 <input className={styles.addressText} placeholder={'Pool 0'} />
               </div>
-              <div className={styles.inputFieldContainer}>
-                <div className={styles.label}>Description (optional)</div>
-                <textarea className={styles.inputField} placeholder={'Beep bop!'} />
+              <div className={styles.inputContainer}>
+                <div className={styles.label}>Token ID</div>
+                <input className={styles.addressText} placeholder={'0'} />
               </div>
               <div className={styles.border} />
             </>
           )}
+          {currentStep === 2 && (
+            <>
+              <div className={styles.inputRow}>
+                <div className={styles.inputContainer}>
+                  <div className={styles.label}>Lockup period</div>
+                  <input className={styles.addressText} placeholder={'0'} type='number' />
+                </div>
+                {/* May remove due to the pool creator needing to be added at the end */}
+                <div className={styles.inputContainer}>
+                  <div className={styles.label}>''</div>
+                  <NetworkSelector
+                    networks={[L1_NETWORK, L2_NETWORK, L3_NETWORK]}
+                    selectedNetwork={selectedNetwork}
+                    onChange={setSelectedNetwork}
+                  />
+                </div>
+              </div>{' '}
+              <div className={styles.inputRow}>
+                <div className={styles.inputContainer}>
+                  <div className={styles.label}>Cooldown period</div>
+                  <input className={styles.addressText} placeholder={'0'} type='number' />
+                </div>
+                {/* May remove due to the pool creator needing to be added at the end */}
+                <div className={styles.inputContainer}>
+                  <div className={styles.label}>''</div>
+                  <NetworkSelector
+                    networks={[L1_NETWORK, L2_NETWORK, L3_NETWORK]}
+                    selectedNetwork={selectedNetwork}
+                    onChange={setSelectedNetwork}
+                  />
+                </div>
+              </div>
+              <div className={styles.inputContainer}>
+                <div className={styles.label}>Transferability</div>
+                <input className={styles.addressText} placeholder={'Pool 0'} />
+              </div>
+            </>
+          )}
+          {currentStep === 3 && <></>}
           <div className={styles.footerContainer}>
             <div
               onClick={() => {
