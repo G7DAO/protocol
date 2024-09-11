@@ -125,14 +125,13 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                 <div className={styles.label}>Description (optional)</div>
                 <textarea className={styles.inputField} placeholder={'Beep bop!'} />
               </div>
-              <div className={styles.border} />
             </>
           )}
           {currentStep === 1 && (
             <>
               <div className={styles.inputRow}>
                 <div className={styles.inputContainer}>
-                  <div className={styles.label}>Project (optional)</div>
+                  <div className={styles.label}>Chain</div>
                   <NetworkSelector
                     networks={[L1_NETWORK, L2_NETWORK, L3_NETWORK]}
                     selectedNetwork={selectedNetwork}
@@ -142,9 +141,18 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                 {/* May remove due to the pool creator needing to be added at the end */}
                 <div className={styles.inputContainer}>
                   <div className={styles.label}>Token Type</div>
-                  <div className={styles.addressText}>
-                    {connectedAccount ? formatAddress(connectedAccount, false) : 'Wallet not connected'}
-                  </div>
+                  <ValueSelector
+                    values={[
+                      { valueId: 1, displayName: 'Native' },
+                      { valueId: 20, displayName: 'ERC20' },
+                      { valueId: 721, displayName: 'ERC721' },
+                      { valueId: 1155, displayName: 'ERC1155' }
+                    ]}
+                    selectedValue={{ valueId: 1155, displayName: 'ERC1155' }}
+                    onChange={(e: any) => {
+                      console.log(e)
+                    }}
+                  />
                 </div>
               </div>
               {/* Make component out of input container in the future */}
@@ -156,7 +164,6 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                 <div className={styles.label}>Token ID</div>
                 <input className={styles.addressText} placeholder={'0'} />
               </div>
-              <div className={styles.border} />
             </>
           )}
           {currentStep === 2 && (
@@ -168,18 +175,23 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                 </div>
                 {/* May remove due to the pool creator needing to be added at the end */}
                 <div className={styles.inputContainer}>
-                  <div className={styles.label}>''</div>
+                  <div className={styles.label}>Duration unit</div>
                   <ValueSelector
                     values={[
-                      { valueId: 0, displayName: 'Hours' },
-                      { valueId: 1, displayName: 'Days' },
-                      { valueId: 2, displayName: 'Months' }
+                      { valueId: 0, displayName: 'Seconds' },
+                      { valueId: 1, displayName: 'Minutes' },
+                      { valueId: 2, displayName: 'Hours' },
+                      { valueId: 3, displayName: 'Days' },
+                      { valueId: 4, displayName: 'Weeks' },
+                      { valueId: 5, displayName: 'Months (30 days)' }
                     ]}
-                    selectedValue={{ valueId: 0, displayName: 'Hours' }}
-                    onChange={setSelectedNetwork}
+                    selectedValue={{ valueId: 0, displayName: 'Seconds' }}
+                    onChange={(e: any) => {
+                      console.log(e)
+                    }}
                   />
                 </div>
-              </div>{' '}
+              </div>
               <div className={styles.inputRow}>
                 <div className={styles.inputContainer}>
                   <div className={styles.label}>Cooldown period</div>
@@ -187,15 +199,20 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                 </div>
                 {/* May remove due to the pool creator needing to be added at the end */}
                 <div className={styles.inputContainer}>
-                  <div className={styles.label}>''</div>
+                  <div className={styles.label}>Duration unit</div>
                   <ValueSelector
                     values={[
-                      { valueId: 0, displayName: 'Hours' },
-                      { valueId: 1, displayName: 'Days' },
-                      { valueId: 2, displayName: 'Months' }
+                      { valueId: 0, displayName: 'Seconds' },
+                      { valueId: 1, displayName: 'Minutes' },
+                      { valueId: 2, displayName: 'Hours' },
+                      { valueId: 3, displayName: 'Days' },
+                      { valueId: 4, displayName: 'Weeks' },
+                      { valueId: 5, displayName: 'Months (30 days)' }
                     ]}
-                    selectedValue={{ valueId: 0, displayName: 'Hours' }}
-                    onChange={setSelectedNetwork}
+                    selectedValue={{ valueId: 0, displayName: 'Seconds' }}
+                    onChange={(e: any) => {
+                      console.log(e)
+                    }}
                   />
                 </div>
               </div>
@@ -205,7 +222,29 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
               </div>
             </>
           )}
-          {currentStep === 3 && <></>}
+          {currentStep === 3 && (
+            <>
+              <div className={styles.inputContainer}>
+                <div className={styles.label}>Administrator</div>
+                <ValueSelector
+                  values={[
+                    { valueId: 0, displayName: 'Connected Wallet' },
+                    { valueId: 1, displayName: 'Zero address' },
+                    { valueId: 1, displayName: 'Another wallet' }
+                  ]}
+                  selectedValue={{ valueId: 0, displayName: 'Hours' }}
+                  onChange={(e: any) => {
+                    console.log(e)
+                  }}
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <div className={styles.label}>Administrator Address</div>
+                <div className={styles.addressText}>{connectedAccount ? connectedAccount : 'Wallet not connected'}</div>
+              </div>
+            </>
+          )}
+          <div className={styles.border} />
           <div className={styles.footerContainer}>
             <div
               onClick={() => {
