@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../../../constants'
 import styles from './CreatePoolModal.module.css'
 import EditPoolModal from './EditPoolModal'
-import ProjectSelector from './ProjectSelector'
+import ValueSelector from './ValueSelector'
 import { Modal } from 'summon-ui/mantine'
 import NetworkSelector from '@/components/bridge/bridge/NetworkSelector'
 import { NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
@@ -97,12 +97,12 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
               {/* <div className={styles.inputRow}> */}
               <div className={styles.inputContainer}>
                 <div className={styles.label}>Project (optional)</div>
-                <ProjectSelector
-                  projects={[
-                    { projectId: 0, displayName: 'Sample project 1' },
-                    { projectId: 1, displayName: 'Sample project 2' }
+                <ValueSelector
+                  values={[
+                    { valueId: 0, displayName: 'Sample project 1' },
+                    { valueId: 1, displayName: 'Sample project 2' }
                   ]}
-                  selectedProject={{ projectId: 0, displayName: 'Sample project 1' }}
+                  selectedValue={{ valueId: 0, displayName: 'Sample project 1' }}
                   onChange={(e: any) => {
                     console.log(e)
                   }}
@@ -169,9 +169,13 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                 {/* May remove due to the pool creator needing to be added at the end */}
                 <div className={styles.inputContainer}>
                   <div className={styles.label}>''</div>
-                  <NetworkSelector
-                    networks={[L1_NETWORK, L2_NETWORK, L3_NETWORK]}
-                    selectedNetwork={selectedNetwork}
+                  <ValueSelector
+                    values={[
+                      { valueId: 0, displayName: 'Hours' },
+                      { valueId: 1, displayName: 'Days' },
+                      { valueId: 2, displayName: 'Months' }
+                    ]}
+                    selectedValue={{ valueId: 0, displayName: 'Hours' }}
                     onChange={setSelectedNetwork}
                   />
                 </div>
@@ -184,9 +188,13 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                 {/* May remove due to the pool creator needing to be added at the end */}
                 <div className={styles.inputContainer}>
                   <div className={styles.label}>''</div>
-                  <NetworkSelector
-                    networks={[L1_NETWORK, L2_NETWORK, L3_NETWORK]}
-                    selectedNetwork={selectedNetwork}
+                  <ValueSelector
+                    values={[
+                      { valueId: 0, displayName: 'Hours' },
+                      { valueId: 1, displayName: 'Days' },
+                      { valueId: 2, displayName: 'Months' }
+                    ]}
+                    selectedValue={{ valueId: 0, displayName: 'Hours' }}
                     onChange={setSelectedNetwork}
                   />
                 </div>
