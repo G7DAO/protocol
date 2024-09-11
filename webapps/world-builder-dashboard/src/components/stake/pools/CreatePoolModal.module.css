@@ -38,7 +38,6 @@
 
 .stepperContainer {
   display: flex;
-  padding-bottom: 16px;
   flex-direction: column;
   align-items: center;
   gap: 16px;
@@ -46,13 +45,12 @@
 }
 
 .stepper {
-  padding: 0px 0 16px 0px;
+  padding: 0px 0 0px 0px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  border-bottom: 1px solid var(--Gray-200, #eaecf0);
 }
 
 .step {
@@ -199,8 +197,13 @@
   background: var(--Base-White, #fff);
 }
 
+.border {
+  border: 1px solid var(--Gray-100, #f2f4f7);
+  width: calc(100% + 48px);
+  margin-left: -24px;
+}
+
 .footerContainer {
-  border-top: 1px solid var(--Gray-100, #f2f4f7);
   display: flex;
   flex-direction: row;
   padding: 12px 0px 0px 0px;

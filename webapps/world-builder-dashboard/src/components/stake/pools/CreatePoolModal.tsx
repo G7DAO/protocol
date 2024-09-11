@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styles from './CreatePoolModal.module.css'
 import EditPoolModal from './EditPoolModal'
 import ProjectSelector from './ProjectSelector'
-import { Modal, ModalProps } from 'summon-ui/mantine'
+import { Modal, ModalProps, Stepper } from 'summon-ui/mantine'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { formatAddress } from '@/utils/addressFormat'
 
@@ -86,6 +86,8 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
               ))}
             </div>
           </div>
+          <div className={styles.border} />
+          <div style={{paddingTop: "16px"}} />
           {/* Details step */}
           {currentStep === 0 && (
             <>
@@ -119,6 +121,7 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                 <div className={styles.label}>Description</div>
                 <textarea className={styles.inputField} placeholder={'Beep bop!'} />
               </div>
+              <div className={styles.border} />
               <div className={styles.footerContainer}>
                 <div className={styles.closeButton}>
                   <div className={styles.closeText}>Close</div>
