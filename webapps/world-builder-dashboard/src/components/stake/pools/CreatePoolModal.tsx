@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
+import { L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../../../constants'
 import styles from './CreatePoolModal.module.css'
 import EditPoolModal from './EditPoolModal'
 import ProjectSelector from './ProjectSelector'
-import { Modal, ModalProps, Stepper } from 'summon-ui/mantine'
-import { useBlockchainContext } from '@/contexts/BlockchainContext'
+import { Modal } from 'summon-ui/mantine'
+import NetworkSelector from '@/components/bridge/bridge/NetworkSelector'
+import { NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
 import { formatAddress } from '@/utils/addressFormat'
 
 interface CreatePoolModalProps {}
@@ -16,6 +18,7 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
   const steps = ['Details', 'Tokens', 'Settings', 'Admin']
   const [currentStep, setCurrentStep] = useState<number>(0)
   const [completedSteps, setCompletedSteps] = useState<boolean[]>(new Array(steps.length).fill(false))
+  const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L1_NETWORK)
 
   const goToNextStep = () => {
     if (currentStep < steps.length - 1) {
@@ -77,7 +80,7 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                   className={getStepStyle(index)}
                   onClick={() => {
                     // if (completedSteps[index] || index === currentStep) {
-                      setCurrentStep(index)
+                    setCurrentStep(index)
                     // }
                   }}
                 >
@@ -105,8 +108,40 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                     }}
                   />
                 </div>
-                <div className={styles.inputContainer}>
+                {/* May remove due to the pool creator needing to be added at the end */}
+                {/* <div className={styles.inputContainer}>
                   <div className={styles.label}>Pool Creator</div>
+                  <div className={styles.addressText}>
+                    {connectedAccount ? formatAddress(connectedAccount, false) : 'Wallet not connected'}
+                  </div>
+                </div> */}
+              </div>
+              {/* Make component out of input container in the future */}
+              <div className={styles.inputContainer}>
+                <div className={styles.label}>Pool Name (optional)</div>
+                <input className={styles.addressText} placeholder={'Pool 0'} />
+              </div>
+              <div className={styles.inputFieldContainer}>
+                <div className={styles.label}>Description (optional)</div>
+                <textarea className={styles.inputField} placeholder={'Beep bop!'} />
+              </div>
+              <div className={styles.border} />
+            </>
+          )}
+          {currentStep === 1 && (
+            <>
+              <div className={styles.inputRow}>
+                <div className={styles.inputContainer}>
+                  <div className={styles.label}>Project (optional)</div>
+                  <NetworkSelector
+                    networks={[L1_NETWORK, L2_NETWORK, L3_NETWORK]}
+                    selectedNetwork={selectedNetwork}
+                    onChange={setSelectedNetwork}
+                  />
+                </div>
+                {/* May remove due to the pool creator needing to be added at the end */}
+                <div className={styles.inputContainer}>
+                  <div className={styles.label}>Token Type</div>
                   <div className={styles.addressText}>
                     {connectedAccount ? formatAddress(connectedAccount, false) : 'Wallet not connected'}
                   </div>
@@ -114,11 +149,11 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
               </div>
               {/* Make component out of input container in the future */}
               <div className={styles.inputContainer}>
-                <div className={styles.label}>Pool Name</div>
+                <div className={styles.label}>Pool Name (optional)</div>
                 <input className={styles.addressText} placeholder={'Pool 0'} />
               </div>
               <div className={styles.inputFieldContainer}>
-                <div className={styles.label}>Description</div>
+                <div className={styles.label}>Description (optional)</div>
                 <textarea className={styles.inputField} placeholder={'Beep bop!'} />
               </div>
               <div className={styles.border} />
