@@ -12,7 +12,7 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
 
   // States the stepper
   const steps = ['Details', 'Tokens', 'Settings', 'Admin']
-  const [currentStep, setCurrentStep] = useState<number>(3)
+  const [currentStep, setCurrentStep] = useState<number>(0)
   const [completedSteps, setCompletedSteps] = useState<boolean[]>(new Array(steps.length).fill(false))
 
   const goToNextStep = () => {
@@ -72,10 +72,10 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
               {steps.map((step, index) => (
                 <div
                   key={index}
-                  className={getStepStyle(index)} // Apply dynamic class based on step state
+                  className={getStepStyle(index)}
                   onClick={() => {
                     if (completedSteps[index] || index === currentStep) {
-                      setCurrentStep(index) // Allow clicking on completed or active steps
+                      setCurrentStep(index)
                     }
                   }}
                 >
@@ -84,33 +84,41 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
               ))}
             </div>
           </div>
-          <div className={styles.inputRow}>
-            <div className={styles.inputContainer}>
-              <div className={styles.label}>Connected Wallet Address</div>
-              <input className={styles.addressText} placeholder={connectedAccount} />
-            </div>
-            <div className={styles.inputContainer}>
-              <div className={styles.label}>Pool Creator</div>
-              <div className={styles.addressText}>{connectedAccount ? connectedAccount : 'Account not connected'}</div>
-            </div>
-          </div>
-          {/* Make component out of this in the future */}
-          <div className={styles.inputContainer}>
-            <div className={styles.label}>Pool Name</div>
-            <input className={styles.addressText} placeholder={'Pool 0'} />
-          </div>
-          <div className={styles.inputFieldContainer}>
-            <div className={styles.label}>Description</div>
-            <textarea className={styles.inputField} placeholder={'Beep bop!'} />
-          </div>
-          <div className={styles.footerContainer}>
-            <div className={styles.closeButton}>
-              <div className={styles.closeText}>Close</div>
-            </div>
-            <div className={styles.nextButton}>
-              <div className={styles.nextText}>Next</div>
-            </div>
-          </div>
+          {/* Details step */}
+          {currentStep === 0 && (
+            <>
+              <div className={styles.inputRow}>
+                <div className={styles.inputContainer}>
+                  <div className={styles.label}>Pool name (optional)</div>
+                  <input className={styles.addressText} placeholder={'Pool 0'} />
+                </div>
+                <div className={styles.inputContainer}>
+                  <div className={styles.label}>Pool Creator</div>
+                  <input
+                    className={styles.addressText}
+                    placeholder={connectedAccount ? connectedAccount : 'Wallet not connected'}
+                  />
+                </div>
+              </div>
+              {/* Make component out of input container in the future */}
+              <div className={styles.inputContainer}>
+                <div className={styles.label}>Pool Name</div>
+                <input className={styles.addressText} placeholder={'Pool 0'} />
+              </div>
+              <div className={styles.inputFieldContainer}>
+                <div className={styles.label}>Description</div>
+                <textarea className={styles.inputField} placeholder={'Beep bop!'} />
+              </div>
+              <div className={styles.footerContainer}>
+                <div className={styles.closeButton}>
+                  <div className={styles.closeText}>Close</div>
+                </div>
+                <div className={styles.nextButton}>
+                  <div className={styles.nextText}>Next</div>
+                </div>
+              </div>
+            </>
+          )}
         </Modal>
       )}
     </>
