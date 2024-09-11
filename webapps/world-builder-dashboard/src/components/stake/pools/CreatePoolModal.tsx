@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import styles from './CreatePoolModal.module.css'
 import EditPoolModal from './EditPoolModal'
+import ProjectSelector from './ProjectSelector'
 import { Modal, ModalProps } from 'summon-ui/mantine'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
+import { formatAddress } from '@/utils/addressFormat'
 
 interface CreatePoolModalProps {}
 
@@ -89,14 +91,20 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
             <>
               <div className={styles.inputRow}>
                 <div className={styles.inputContainer}>
-                  <div className={styles.label}>Pool name (optional)</div>
-                  <input className={styles.addressText} placeholder={'Pool 0'} />
+                  <div className={styles.label}>Project (optional)</div>
+                  <ProjectSelector
+                    projects={['1', '2']}
+                    selectedProject={'1'}
+                    onChange={(e: any) => {
+                      console.log(e)
+                    }}
+                  />
                 </div>
                 <div className={styles.inputContainer}>
                   <div className={styles.label}>Pool Creator</div>
                   <input
                     className={styles.addressText}
-                    placeholder={connectedAccount ? connectedAccount : 'Wallet not connected'}
+                    placeholder={connectedAccount ? formatAddress(connectedAccount, false) : 'Wallet not connected'}
                   />
                 </div>
               </div>
