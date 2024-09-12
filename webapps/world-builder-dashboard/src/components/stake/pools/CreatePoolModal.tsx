@@ -3,7 +3,8 @@ import { L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../../../constants'
 import styles from './CreatePoolModal.module.css'
 import EditPoolModal from './EditPoolModal'
 import ValueSelector from './ValueSelector'
-import { Modal } from 'summon-ui/mantine'
+import { Modal, Tooltip, Switch } from 'summon-ui/mantine'
+import IconInfoCircle from '@/assets/IconInfoCircle'
 import NetworkSelector from '@/components/bridge/bridge/NetworkSelector'
 import { NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
 import { formatAddress } from '@/utils/addressFormat'
@@ -217,8 +218,23 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                 </div>
               </div>
               <div className={styles.inputContainer}>
-                <div className={styles.label}>Transferability</div>
-                <input className={styles.addressText} placeholder={'Pool 0'} />
+                <div className={styles.label}>
+                  Transferability
+                  <Tooltip
+                    arrowSize={8}
+                    radius={'8px'}
+                    label={
+                      'Enable to allow staked position NFTs to be transferred between usersSend a data message to a contract or address on a destination chain'
+                    }
+                    withArrow
+                  >
+                    <IconInfoCircle style={{ marginLeft: '6px' }} />
+                  </Tooltip>
+                </div>
+                <div className={styles.addressText}>
+                  <>Transferrable</>
+                  <Switch defaultChecked color='teal' />
+                </div>
               </div>
             </>
           )}

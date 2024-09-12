@@ -104,6 +104,17 @@
   text-align: left;
 }
 
+.inputToggle {
+  display: flex;
+  width: 36px;
+  height: 20px;
+  padding: 2px;
+  justify-content: flex-end;
+  align-items: center;
+  border-radius: 12px;
+  background: var(--Success-500, #12b76a)
+}
+
 .inputRow {
   display: flex;
   flex-direction: row;
@@ -151,6 +162,8 @@
 }
 
 .label {
+  display: flex;
+  flex-direction: row;
   color: var(--Gray-700, #344054);
 
   /* Text sm/Medium */
@@ -183,6 +196,7 @@
 
 .addressText {
   display: flex;
+  justify-content: space-between;
   padding: 10px 14px;
   align-items: center;
   gap: 8px;
@@ -198,7 +212,7 @@
   font-weight: 400;
   line-height: 24px; /* 150% */
   border-radius: 8px;
-  border: 1px solid var(--Gray-200, #EAECF0);
+  border: 1px solid var(--Gray-200, #eaecf0);
   background: var(--Base-White, #fff);
 }
 
