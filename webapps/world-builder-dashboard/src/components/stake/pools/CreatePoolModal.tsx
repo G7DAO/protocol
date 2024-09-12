@@ -42,7 +42,6 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
   const [transferrability, setTransferrability] = useState<boolean>(false)
 
   const goToNextStep = () => {
-    console.log('beep?')
     if (currentStep < steps.length - 1) {
       completeCurrentStep()
       setCurrentStep(currentStep + 1)
@@ -97,10 +96,6 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
       return styles.stepLocked // Locked step
     }
   }
-
-  useEffect(() => {
-    console.log(isOpen)
-  }, [isOpen])
 
   return (
     <>
@@ -310,7 +305,11 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
             </div>
             <div
               onClick={() => {
-                currentStep != 3 ? { goToNextStep } : console.log('Create')
+                goToNextStep()
+                // currentStep != 3 ? () => {
+                //   console.log(currentStep);
+                //   goToNextStep()
+                // } : console.log('Create')
               }}
               className={styles.nextButton}
             >
