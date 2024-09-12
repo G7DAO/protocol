@@ -1,28 +1,50 @@
 import React, { useEffect, useState } from 'react'
 import { L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../../../constants'
 import styles from './CreatePoolModal.module.css'
-import EditPoolModal from './EditPoolModal'
 import ValueSelector from './ValueSelector'
-import { Modal, Tooltip, Switch } from 'summon-ui/mantine'
+import { Modal, Tooltip } from 'summon-ui/mantine'
+import Switch from '@/components/commonComponents/switch/Switch'
 import IconInfoCircle from '@/assets/IconInfoCircle'
 import NetworkSelector from '@/components/bridge/bridge/NetworkSelector'
 import { NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
+import { epochTimes, tokenTypes, ZERO_ADDRESS } from '@/utils/web3utils'
 import { formatAddress } from '@/utils/addressFormat'
 
-interface CreatePoolModalProps {}
+interface CreatePoolModalProps { }
 
 const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { connectedAccount } = useBlockchainContext()
 
-  // States the stepper
+  // Stepper states
   const steps = ['Details', 'Tokens', 'Settings', 'Admin']
   const [currentStep, setCurrentStep] = useState<number>(0)
   const [completedSteps, setCompletedSteps] = useState<boolean[]>(new Array(steps.length).fill(false))
-  const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L1_NETWORK)
+
+  // Metadata states. Note, we need access to the db to make this work
+  const [project, setProject] = useState<{}>()
+  const [poolName, setPoolName] = useState<string>("")
+  const [poolDescription, setPoolDescription] = useState<string>("")
+
+  // Tokens states
+  const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L3_NETWORK)
+  const [tokenType, setTokenType] = useState(tokenTypes[0])
+  const [tokenAddress, setTokenAddress] = useState<string>(ZERO_ADDRESS)
+  const [tokenId, setTokenId] = useState<string>('0');
+
+  // Settings states
+  const [lockupPeriod, setLockupPeriod] = useState<string>("0")
+  const [lockupDuration, setLockupDuration] = useState<number>(0);
+  const [lockupDurationUnit, setLockupDurationUnit] = useState(epochTimes[0])
+  const [cooldownPeriod, setCooldownPeriod] = useState<string>("0")
+  const [cooldownDuration, setCooldownDuration] = useState<number>(0)
+  const [cooldownDurationUnit, setCooldownDurationUnit] = useState(epochTimes[0])
+  const [transferrability, setTransferrability] = useState<boolean>(false)
 
   const goToNextStep = () => {
+    console.log('beep?')
     if (currentStep < steps.length - 1) {
+      completeCurrentStep()
       setCurrentStep(currentStep + 1)
     }
   }
@@ -32,9 +54,40 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
       setCurrentStep(stepIndex)
     }
   }
-
   const completeCurrentStep = () => {
-    completedSteps[currentStep] = true
+    const updatedSteps = [...completedSteps];
+    console.log(updatedSteps)
+    updatedSteps[currentStep] = true;
+    console.log(updatedSteps)
+    setCompletedSteps(updatedSteps);
+  };
+
+  const handleLockupDurationChange = (e: any) => {
+    setLockupDuration(e.target.value)
+    const period = (e.target.value * lockupDurationUnit.value).toString()
+    console.log("Lockup duration: ", period)
+    setLockupPeriod(period)
+  }
+
+  const handleLockupDurationUnitChange = (e: any) => {
+    setLockupDurationUnit(e)
+    const period = ((e.value) * lockupDuration).toString()
+    console.log("Lockup duration: ", period)
+    setLockupPeriod(period)
+  }
+
+  const handleCooldownDurationChange = (e: any) => {
+    setCooldownDuration(e.target.value)
+    const period = (e.target.value * cooldownDurationUnit.value).toString()
+    console.log("Cooldown period: ", period)
+    setCooldownPeriod(period)
+  }
+
+  const handleCooldownDurationUnitChange = (e: any) => {
+    setCooldownDurationUnit(e)
+    const period = ((e.value) * cooldownDuration).toString()
+    console.log("Cooldown period: ", period)
+    setCooldownPeriod(period)
   }
 
   const getStepStyle = (stepIndex: number) => {
@@ -80,9 +133,9 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                   key={index}
                   className={getStepStyle(index)}
                   onClick={() => {
-                    // if (completedSteps[index] || index === currentStep) {
-                    setCurrentStep(index)
-                    // }
+                    if (completedSteps[index] || index === currentStep) {
+                      setCurrentStep(index)
+                    }
                   }}
                 >
                   <div className={index === currentStep ? styles.stepText : styles.stepTextLocked}>{step}</div>
@@ -92,6 +145,7 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
           </div>
           <div className={styles.border} />
           <div style={{ paddingTop: '16px' }} />
+
           {/* Details step */}
           {currentStep === 0 && (
             <>
@@ -100,8 +154,7 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                 <div className={styles.label}>Project (optional)</div>
                 <ValueSelector
                   values={[
-                    { valueId: 0, displayName: 'Sample project 1' },
-                    { valueId: 1, displayName: 'Sample project 2' }
+                    { valueId: 0, displayName: 'Sample project 1' }
                   ]}
                   selectedValue={{ valueId: 0, displayName: 'Sample project 1' }}
                   onChange={(e: any) => {
@@ -120,7 +173,7 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
               {/* Make component out of input container in the future */}
               <div className={styles.inputContainer}>
                 <div className={styles.label}>Pool Name (optional)</div>
-                <input className={styles.addressText} placeholder={'Pool 0'} />
+                <input className={styles.textInput} placeholder={'Pool 0'} />
               </div>
               <div className={styles.inputFieldContainer}>
                 <div className={styles.label}>Description (optional)</div>
@@ -128,13 +181,15 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
               </div>
             </>
           )}
+
+          {/* Tokens step */}
           {currentStep === 1 && (
             <>
               <div className={styles.inputRow}>
                 <div className={styles.inputContainer}>
                   <div className={styles.label}>Chain</div>
                   <NetworkSelector
-                    networks={[L1_NETWORK, L2_NETWORK, L3_NETWORK]}
+                    networks={[L3_NETWORK]}
                     selectedNetwork={selectedNetwork}
                     onChange={setSelectedNetwork}
                   />
@@ -143,77 +198,60 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                 <div className={styles.inputContainer}>
                   <div className={styles.label}>Token Type</div>
                   <ValueSelector
-                    values={[
-                      { valueId: 1, displayName: 'Native' },
-                      { valueId: 20, displayName: 'ERC20' },
-                      { valueId: 721, displayName: 'ERC721' },
-                      { valueId: 1155, displayName: 'ERC1155' }
-                    ]}
-                    selectedValue={{ valueId: 1155, displayName: 'ERC1155' }}
-                    onChange={(e: any) => {
-                      console.log(e)
-                    }}
+                    values={tokenTypes}
+                    selectedValue={tokenType}
+                    onChange={setTokenType}
                   />
                 </div>
               </div>
               {/* Make component out of input container in the future */}
-              <div className={styles.inputContainer}>
-                <div className={styles.label}>Token Address</div>
-                <input className={styles.addressText} placeholder={'Pool 0'} />
-              </div>
-              <div className={styles.inputContainer}>
-                <div className={styles.label}>Token ID</div>
-                <input className={styles.addressText} placeholder={'0'} />
-              </div>
+              {tokenType.valueId !== "1" && (
+                <>
+                  <div className={styles.inputContainer}>
+                    <div className={styles.label}>Address</div>
+                    <input className={styles.textInput} placeholder={'0x0'} value={tokenAddress} onChange={(e) => { setTokenAddress(e.target.value) }} />
+                  </div>
+                  {tokenType.valueId === "1155" && (
+                    <div className={styles.inputContainer}>
+                      <div className={styles.label}>Token ID</div>
+                      <input className={styles.textInput} placeholder={'0'} value={tokenId} onChange={(e) => { setTokenId(e.target.value) }} />
+                    </div>
+                  )}
+                </>
+              )}
             </>
           )}
+
+          {/* Settings step */}
           {currentStep === 2 && (
             <>
               <div className={styles.inputRow}>
                 <div className={styles.inputContainer}>
                   <div className={styles.label}>Lockup period</div>
-                  <input className={styles.addressText} placeholder={'0'} type='number' />
+                  <input className={styles.textInput} placeholder={'0'} type='number' value={lockupDuration} onChange={handleLockupDurationChange} />
                 </div>
                 {/* May remove due to the pool creator needing to be added at the end */}
                 <div className={styles.inputContainer}>
                   <div className={styles.label}>Duration unit</div>
                   <ValueSelector
-                    values={[
-                      { valueId: 0, displayName: 'Seconds' },
-                      { valueId: 1, displayName: 'Minutes' },
-                      { valueId: 2, displayName: 'Hours' },
-                      { valueId: 3, displayName: 'Days' },
-                      { valueId: 4, displayName: 'Weeks' },
-                      { valueId: 5, displayName: 'Months (30 days)' }
-                    ]}
-                    selectedValue={{ valueId: 0, displayName: 'Seconds' }}
-                    onChange={(e: any) => {
-                      console.log(e)
-                    }}
+                    values={epochTimes}
+                    selectedValue={lockupDurationUnit}
+                    onChange={handleLockupDurationUnitChange}
                   />
                 </div>
               </div>
               <div className={styles.inputRow}>
                 <div className={styles.inputContainer}>
                   <div className={styles.label}>Cooldown period</div>
-                  <input className={styles.addressText} placeholder={'0'} type='number' />
+                  <input className={styles.textInput} placeholder={'0'} type='number' value={cooldownDuration} onChange={handleCooldownDurationChange} />
                 </div>
                 {/* May remove due to the pool creator needing to be added at the end */}
                 <div className={styles.inputContainer}>
                   <div className={styles.label}>Duration unit</div>
                   <ValueSelector
-                    values={[
-                      { valueId: 0, displayName: 'Seconds' },
-                      { valueId: 1, displayName: 'Minutes' },
-                      { valueId: 2, displayName: 'Hours' },
-                      { valueId: 3, displayName: 'Days' },
-                      { valueId: 4, displayName: 'Weeks' },
-                      { valueId: 5, displayName: 'Months (30 days)' }
-                    ]}
-                    selectedValue={{ valueId: 0, displayName: 'Seconds' }}
-                    onChange={(e: any) => {
-                      console.log(e)
-                    }}
+                    values={epochTimes}
+                    selectedValue={cooldownDurationUnit}
+                    onChange={handleCooldownDurationUnitChange}
                   />
                 </div>
               </div>
@@ -232,12 +270,14 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                   </Tooltip>
                 </div>
                 <div className={styles.addressText}>
-                  <>Transferrable</>
-                  <Switch defaultChecked color='teal' />
+                  Transferrable
+                  <Switch checked={transferrability} onToggle={() => setTransferrability(!transferrability)} />
                 </div>
               </div>
             </>
           )}
+
+          {/* Administrator step */}
           {currentStep === 3 && (
             <>
               <div className={styles.inputContainer}>
@@ -245,10 +285,8 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                 <ValueSelector
                   values={[
                     { valueId: 0, displayName: 'Connected Wallet' },
-                    { valueId: 1, displayName: 'Zero address' },
-                    { valueId: 1, displayName: 'Another wallet' }
                   ]}
-                  selectedValue={{ valueId: 0, displayName: 'Hours' }}
+                  selectedValue={{ valueId: 0, displayName: 'Connected Wallet' }}
                   onChange={(e: any) => {
                     console.log(e)
                   }}
@@ -272,7 +310,7 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
             </div>
             <div
               onClick={() => {
-                currentStep != 3 ? goToNextStep() : console.log('Create')
+                currentStep != 3 ? { goToNextStep } : console.log('Create')
               }}
               className={styles.nextButton}
             >

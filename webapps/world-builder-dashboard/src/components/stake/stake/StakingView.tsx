@@ -9,7 +9,7 @@ import ActionButtonStake from '../ActionButtonStake';
 const StakingView = () => {
     const [tokenAddress, setTokenAddress] = useState<string>(ZERO_ADDRESS)
     const [tokenId, setTokenId] = useState<string>('0');
-    const [tokenType, setTokenType] = useState<string>(tokenTypes[0].value)
+    const [tokenType, setTokenType] = useState<string>(tokenTypes[0].valueId)
     const [lockupSeconds, setLockupSeconds] = useState<string>("0")
     const [cooldownSeconds, setCooldownSeconds] = useState<string>("0")
     const [transferable, setTransferable] = useState<boolean>(false)
@@ -108,8 +108,8 @@ const StakingView = () => {
                     <option disabled>Please choose one option</option>
                     {tokenTypes.map((tokenType) => {
                         return (
-                            <option key={tokenType.value} value={tokenType.value}>
-                                {tokenType.label}
+                            <option key={tokenType.valueId} value={tokenType.valueId}>
+                                {tokenType.displayName}
                             </option>
                         );
                     })}

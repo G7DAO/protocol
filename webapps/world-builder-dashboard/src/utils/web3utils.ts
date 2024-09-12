@@ -20,10 +20,19 @@ export const getNetwork = (chainId: number) => {
 }
 
 export const tokenTypes = [
-  { value: '1', label: 'Native' },
-  { value: '20', label: 'ERC20' },
-  { value: '721', label: 'ERC721' },
-  { value: '1155', label: 'ERC1155' }
+  { valueId: '1', displayName: 'Native' },
+  { valueId: '20', displayName: 'ERC20' },
+  { valueId: '721', displayName: 'ERC721' },
+  { valueId: '1155', displayName: 'ERC1155' }
+]
+
+export const epochTimes = [
+  { valueId: "0", displayName: 'Second(s)', value: 1 },
+  { valueId: "1", displayName: 'Minute(s)', value: 60 },
+  { valueId: "2", displayName: 'Hour(s)', value: 3600 },
+  { valueId: "3", displayName: 'Day(s)', value: 86400 },
+  { valueId: "4", displayName: 'Week(s)', value: 608400 },
+  { valueId: "5", displayName: 'Month(s) (30 days)', value: 2592000 }
 ]
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'

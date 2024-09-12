@@ -112,7 +112,7 @@
   justify-content: flex-end;
   align-items: center;
   border-radius: 12px;
-  background: var(--Success-500, #12b76a)
+  background: var(--Success-500, #12b76a);
 }
 
 .inputRow {
@@ -194,6 +194,15 @@
   background: var(--Base-White, #fff);
 }
 
+input:focus {
+  border: 1px solid var(--Primary-500, black);
+  box-shadow: none;
+}
+
+input:focus-visible {
+  outline: 1;
+}
+
 .addressText {
   display: flex;
   justify-content: space-between;
@@ -214,6 +223,10 @@
   border-radius: 8px;
   border: 1px solid var(--Gray-200, #eaecf0);
   background: var(--Base-White, #fff);
+}
+
+.error {
+  border: 1px solid var(--color-error-Error-500, #f04438);
 }
 
 .border {
