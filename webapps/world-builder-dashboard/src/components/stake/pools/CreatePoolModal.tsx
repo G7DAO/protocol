@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../../../constants'
+import { L3_NETWORK } from '../../../../constants'
 import styles from './CreatePoolModal.module.css'
 import ValueSelector from './ValueSelector'
 import { Modal, Tooltip } from 'summon-ui/mantine'
@@ -52,29 +52,26 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
 
   useEffect(() => {
     if (completedSteps[currentStep]) {
-      console.log("going to next step")
-      setCurrentStep((prevStep) => prevStep + 1);
+      setCurrentStep((prevStep) => prevStep + 1)
     }
     if (window.ethereum) {
-      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
-      setProvider(web3Provider);
+      const web3Provider = new ethers.providers.Web3Provider(window.ethereum)
+      setProvider(web3Provider)
     } else {
-      addErrorMessage("Ethereum provider not found. Please install a wallet.");
+      addErrorMessage("Ethereum provider not found. Please install a wallet.")
     }
   }, [completedSteps, window.ethereum]); // Will run every time `completedSteps` changes
 
   const goToNextStep = () => {
     if (currentStep < steps.length - 1) {
-      console.log("going to next step..")
-      completeCurrentStep();  // This will update the `completedSteps` array
+      completeCurrentStep()  // This will update the `completedSteps` array
     }
   };
 
   const completeCurrentStep = () => {
     const updatedSteps = [...completedSteps];
-    updatedSteps[currentStep] = true;
-    setCompletedSteps(updatedSteps);
-    console.log("current step completed")
+    updatedSteps[currentStep] = true
+    setCompletedSteps(updatedSteps)
   };
 
 
@@ -389,7 +386,18 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                 className={styles.nextButton}
               >
                 <div className={styles.nextText}> Next </div>
-              </div> : <ActionButtonStake actionType='CREATEPOOL' isDisabled={false} setErrorMessage={() => { }} />}
+              </div> : 
+              <ActionButtonStake params={{
+                tokenType: tokenType.valueId,
+                tokenAddress,
+                tokenID: tokenId,
+                lockupSeconds: lockupPeriod,
+                cooldownSeconds: cooldownPeriod,
+                transferable: transferrability
+              }}
+                actionType='CREATEPOOL'
+                isDisabled={false}
+                setErrorMessage={() => { }} />}
           </div>
         </Modal>
       )}

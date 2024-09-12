@@ -69,7 +69,6 @@ const fetchPools = async () => {
         });
 
         const positionNumbers = positionsDataArray.map((totalPositions: any) => {
-            console.log(totalPositions[0].toNumber())
             return totalPositions[0];
         })
 

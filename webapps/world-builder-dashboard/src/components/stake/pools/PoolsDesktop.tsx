@@ -34,9 +34,9 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
   const { data } = usePools()
   const [activePool, setActivePool] = useState<string | null>(null)
   const [clickedPool, setClickedPool] = useState<number | null>(null)
-  const [page, setPage] = useState<number>(0)
-  const [maximumPages, setMaximumPages] = useState<number>(0)
-  const [entries, setEntries] = useState<number>(10)
+  const [page, setPage] = useState<number>(5)
+  const [maximumPages, setMaximumPages] = useState<number>(10)
+  const [entries, setEntries] = useState<number>(30)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
@@ -45,18 +45,17 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
     }
     setMaximumPages(Math.ceil(data?.length / entries))
     setEntries(5)
-    console.log(isModalOpen)
   }, [data, isModalOpen])
 
-  const headers = ['ID', 'Name', 'Token Type', 'Period', 'Cooldown', 'Transferrable', 'Positions', '']
+  const headers = ['ID', 'Name', 'Token Type', 'Lockup Period', 'Cooldown Period', 'Transferrable', 'Positions', '']
 
   const handleViewPositions = (poolId: string) => {
     setActivePool(activePool === poolId ? null : poolId)
   }
 
   const getTokenLabel = (tokenValue: string) => {
-    const type = tokenTypes.find((token) => token.value === tokenValue)
-    return type?.label
+    const type = tokenTypes.find((token) => token.valueId === tokenValue)
+    return type?.displayName
   }
 
   const toggleDropdown = (clickedPoolId: number | null) => {
