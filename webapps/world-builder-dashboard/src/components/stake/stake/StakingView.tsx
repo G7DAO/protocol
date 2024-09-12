@@ -86,7 +86,6 @@ const StakingView = () => {
             addErrorMessage("Token contract does not exist!")
         else
             removeErrorMessage("Token contract does not exist!")
-
     }
 
     const preventNegative = (value: any) => {

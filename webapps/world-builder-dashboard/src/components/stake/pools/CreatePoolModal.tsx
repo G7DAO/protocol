@@ -7,7 +7,8 @@ import Switch from '@/components/commonComponents/switch/Switch'
 import IconInfoCircle from '@/assets/IconInfoCircle'
 import NetworkSelector from '@/components/bridge/bridge/NetworkSelector'
 import { NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
-import { epochTimes, tokenTypes, ZERO_ADDRESS } from '@/utils/web3utils'
+import { doesContractExist, epochTimes, tokenTypes, ZERO_ADDRESS } from '@/utils/web3utils'
+import { ethers } from 'ethers';
 import { formatAddress } from '@/utils/addressFormat'
 
 interface CreatePoolModalProps { }
@@ -15,6 +16,7 @@ interface CreatePoolModalProps { }
 const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { connectedAccount } = useBlockchainContext()
+  const [provider, setProvider] = useState<ethers.providers.Web3Provider | null>(null);
 
   // Stepper states
   const steps = ['Details', 'Tokens', 'Settings', 'Admin']
@@ -41,23 +43,49 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
   const [cooldownDurationUnit, setCooldownDurationUnit] = useState(epochTimes[0])
   const [transferrability, setTransferrability] = useState<boolean>(false)
 
+  // Admin states (to be added later when Staker is updated to V2)
+
+  // Error states
+  const [inputErrorMessage, setInputErrorMessage] = useState<string[]>([])
+  const arrayOfErrors: any[] = []
+
+  useEffect(() => {
+    if (completedSteps[currentStep]) {
+      setCurrentStep((prevStep) => prevStep + 1);
+    }
+    if (window.ethereum) {
+      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+      setProvider(web3Provider);
+    } else {
+      addErrorMessage("Ethereum provider not found. Please install a wallet.");
+    }
+  }, [completedSteps, window.ethereum]); // Will run every time `completedSteps` changes
+
   const goToNextStep = () => {
     if (currentStep < steps.length - 1) {
-      completeCurrentStep()
-      setCurrentStep(currentStep + 1)
+      completeCurrentStep();  // This will update the `completedSteps` array
     }
-  }
+  };
 
-  const goToPreviousStep = (stepIndex: number) => {
-    if (completedSteps[stepIndex]) {
-      setCurrentStep(stepIndex)
+  const addErrorMessage = (message: string) => {
+    if (arrayOfErrors.includes(message) || inputErrorMessage.includes(message)) return
+    setInputErrorMessage((prevMessages) => [...prevMessages, message]);
+    arrayOfErrors.push(message)
+  };
+
+  const removeErrorMessage = (message: string) => {
+    setInputErrorMessage((prevMessages) =>
+      prevMessages.filter((msg) => msg !== message)
+    );
+    const index = arrayOfErrors.indexOf(message);
+    if (index > -1) { // only splice array when item is found
+      arrayOfErrors.splice(index, 1); // 2nd parameter means remove one item only
     }
-  }
+  };
+
   const completeCurrentStep = () => {
     const updatedSteps = [...completedSteps];
-    console.log(updatedSteps)
     updatedSteps[currentStep] = true;
-    console.log(updatedSteps)
     setCompletedSteps(updatedSteps);
   };
 
@@ -87,6 +115,49 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
     const period = ((e.value) * cooldownDuration).toString()
     console.log("Cooldown period: ", period)
     setCooldownPeriod(period)
+  }
+
+  const handleTokenSelect = (tokenValue: any) => {
+    setTokenType(tokenValue)
+    handleAddressChange(tokenAddress, tokenValue)
+    if (tokenValue === "1") {
+      setTokenAddress(ZERO_ADDRESS)
+      removeErrorMessage("Token address is not an address!")
+      removeErrorMessage("Token address cannot be a zero address")
+      removeErrorMessage("Token contract does not exist!")
+      return
+    }
+    if (tokenValue !== "1155") {
+      setTokenId('0')
+      return
+    }
+  }
+
+  const handleAddressChange = async (address: string, tokenType?: string) => {
+    if (tokenType === "1") {
+      setTokenAddress(ZERO_ADDRESS);
+      removeErrorMessage("Token address is not an address!")
+      removeErrorMessage("Token address cannot be a zero address")
+      removeErrorMessage("Token contract does not exist!")
+      return;
+    }
+
+    setTokenAddress(address);
+    if (!ethers.utils.isAddress(address))
+      addErrorMessage("Token address is not an address!")
+    else
+      removeErrorMessage("Token address is not an address!")
+
+    if (address === ZERO_ADDRESS && tokenType !== "1")
+      addErrorMessage("Token address cannot be a zero address")
+    else
+      removeErrorMessage("Token address cannot be a zero address")
+
+    const contractExists = await doesContractExist(address, provider)
+    if (!contractExists)
+      addErrorMessage("Token contract does not exist!")
+    else
+      removeErrorMessage("Token contract does not exist!")
   }
 
   const getStepStyle = (stepIndex: number) => {
@@ -195,7 +266,7 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                   <ValueSelector
                     values={tokenTypes}
                     selectedValue={tokenType}
-                    onChange={setTokenType}
+                    onChange={(e) => handleTokenSelect(e)}
                   />
                 </div>
               </div>
@@ -203,8 +274,10 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
               {tokenType.valueId !== "1" && (
                 <>
                   <div className={styles.inputContainer}>
-                    <div className={styles.label}>Address</div>
-                    <input className={styles.textInput} placeholder={'0x0'} value={tokenAddress} onChange={(e) => { setTokenAddress(e.target.value) }} />
+                    <div className={styles.label}>Address
+                      <div className={styles.errorInput}>Token address does not exist!</div>
+                    </div>
+                    <input className={styles.textInput} placeholder={'0x0'} value={tokenAddress} onChange={(e) => { handleAddressChange(e.target.value, "") }} />
                   </div>
                   {tokenType.valueId === "1155" && (
                     <div className={styles.inputContainer}>
