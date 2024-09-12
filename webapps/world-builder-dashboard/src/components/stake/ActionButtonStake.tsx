@@ -174,12 +174,13 @@ const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ actionType, param
     if (direction === 'CREATEPOOL' || direction === 'EDITPOOL' || direction === 'CONNECT') {
       return (
         <button
-          className={styles.container}
+          className={direction === "CREATEPOOL" ? styles.createButton : styles.container}
           onClick={handleClick}
           style={{ color: 'white' }}
           disabled={getLabel() !== 'Connect Wallet' && isDisabled}
         >
-          {getLabel() ?? 'Submit'}
+          {getLabel() ?? direction === 'CREATEPOOL' ? 
+          <div className={styles.createText}>Create</div> : 'Submit'}
         </button>
       )
     }

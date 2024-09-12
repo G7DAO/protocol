@@ -10,6 +10,7 @@ import { NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainCon
 import { doesContractExist, epochTimes, tokenTypes, ZERO_ADDRESS } from '@/utils/web3utils'
 import { ethers } from 'ethers';
 import { formatAddress } from '@/utils/addressFormat'
+import ActionButtonStake from '../ActionButtonStake'
 
 interface CreatePoolModalProps { }
 
@@ -51,6 +52,7 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
 
   useEffect(() => {
     if (completedSteps[currentStep]) {
+      console.log("going to next step")
       setCurrentStep((prevStep) => prevStep + 1);
     }
     if (window.ethereum) {
@@ -63,9 +65,18 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
 
   const goToNextStep = () => {
     if (currentStep < steps.length - 1) {
+      console.log("going to next step..")
       completeCurrentStep();  // This will update the `completedSteps` array
     }
   };
+
+  const completeCurrentStep = () => {
+    const updatedSteps = [...completedSteps];
+    updatedSteps[currentStep] = true;
+    setCompletedSteps(updatedSteps);
+    console.log("current step completed")
+  };
+
 
   const addErrorMessage = (message: string) => {
     if (arrayOfErrors.includes(message) || inputErrorMessage.includes(message)) return
@@ -81,12 +92,6 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
     if (index > -1) { // only splice array when item is found
       arrayOfErrors.splice(index, 1); // 2nd parameter means remove one item only
     }
-  };
-
-  const completeCurrentStep = () => {
-    const updatedSteps = [...completedSteps];
-    updatedSteps[currentStep] = true;
-    setCompletedSteps(updatedSteps);
   };
 
   const handleLockupDurationChange = (e: any) => {
@@ -376,18 +381,15 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
             >
               <div className={styles.closeText}>Close</div>
             </div>
-            <div
-              onClick={() => {
-                goToNextStep()
-                // currentStep != 3 ? () => {
-                //   console.log(currentStep);
-                //   goToNextStep()
-                // } : console.log('Create')
-              }}
-              className={styles.nextButton}
-            >
-              <div className={styles.nextText}>{currentStep != 3 ? 'Next' : 'Create'} </div>
-            </div>
+            {currentStep !== 3 ?
+              <div
+                onClick={() => {
+                  goToNextStep()
+                }}
+                className={styles.nextButton}
+              >
+                <div className={styles.nextText}> Next </div>
+              </div> : <ActionButtonStake actionType='CREATEPOOL' isDisabled={false} setErrorMessage={() => { }} />}
           </div>
         </Modal>
       )}
