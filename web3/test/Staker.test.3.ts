@@ -1,10 +1,10 @@
 import { ethers } from 'hardhat';
 import { expect } from 'chai';
-import { loadFixture, time } from '@nomicfoundation/hardhat-network-helpers';
-import { setupStakingPoolsFixture } from './Staker.test.1';
+import { loadFixture, setNextBlockBaseFeePerGas, time } from '@nomicfoundation/hardhat-network-helpers';
+import { setupStakingPoolsFixture, setupFixture } from './Staker.test.1';
 
 describe('Staker', function () {
-    it('STAKER-113: The ERC721 representing an ERC721 staking position have as its metadata URI a data URI representing an appropriate JSON object', async function () {
+    it.only('STAKER-113: The ERC721 representing an ERC721 staking position have as its metadata URI a data URI representing an appropriate JSON object', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 0;
@@ -12,6 +12,8 @@ describe('Staker', function () {
         const { staker, erc721, user0, erc721PoolID } = await loadFixture(
             setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
         );
+
+        const { positionMetadata } = await setupFixture();
 
         const stakerWithUser0 = staker.connect(user0);
         const tokenId = 1n;
@@ -32,12 +34,13 @@ describe('Staker', function () {
         // Get the position token ID of the newly minted token
         const positionTokenID = (await staker.TotalPositions()) - 1n;
         const metadataDataURI = await staker.tokenURI(positionTokenID);
-
         const metadataBase64 = metadataDataURI.split(',')[1];
         const metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
-        // Uncomment to get image and paste it in the browser to test! (ERC721)
-        // console.log(metadata.image);
-
+        const position = await staker.Positions(positionTokenID);
+        const pool = await staker.Pools(erc721PoolID);
+        const metadataPos = await positionMetadata.metadata(positionTokenID, position, pool);
+        const metadataPosBase64 = metadataDataURI.split(',')[1];
+        const metadataPosFinal = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
         expect(metadata).to.deep.equal({
             token_id: positionTokenID.toString(),
             image: metadata.image,

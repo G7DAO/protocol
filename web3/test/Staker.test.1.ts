@@ -20,7 +20,7 @@ export async function setupFixture() {
     const ERC1155 = await ethers.getContractFactory('MockERC1155');
     const erc1155 = await ERC1155.deploy();
 
-    return { staker, erc20, erc721, erc1155, anyone, admin0, admin1, user0, user1, user2 };
+    return { positionMetadata, staker, erc20, erc721, erc1155, anyone, admin0, admin1, user0, user1, user2 };
 }
 
 export function setupStakingPoolsFixture(transferable: boolean, lockupSeconds: number, cooldownSeconds: number) {
