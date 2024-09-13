@@ -8,6 +8,7 @@ import styles from '@/components/bridge/bridge/ActionButton.module.css'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { createPool } from '@/utils/stake/createPool'
 import { editPool } from '@/utils/stake/editPool'
+import useBugout from '@/hooks/useBugout'
 
 export interface CreatePoolParams {
   tokenType: string
@@ -37,7 +38,7 @@ export interface ActionButtonStakeProps {
 
 const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ actionType, params, isDisabled, setErrorMessage }) => {
   const { connectedAccount, isConnecting, getProvider, connectWallet } = useBlockchainContext()
-
+  const { createPoolEntry } = useBugout();
   const navigate = useNavigate()
 
   const getLabel = (): String | undefined => {
@@ -111,7 +112,14 @@ const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ actionType, param
           transferable,
           connectedAccount,
           provider
-        )
+        ).then(x => {
+          createPoolEntry('061cc427-cef2-4da7-8239-09c651998529', tokenAddress, 'g7', 'Test Pool',
+            {
+              id: 1,
+              description: "Bla ble bla"
+            }
+          )
+        })
       } else {
         throw new Error('No wallet installed')
       }
@@ -179,8 +187,8 @@ const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ actionType, param
           style={{ color: 'white' }}
           disabled={getLabel() !== 'Connect Wallet' && isDisabled}
         >
-          {getLabel() ?? direction === 'CREATEPOOL' ? 
-          <div className={styles.createText}>Create</div> : 'Submit'}
+          {getLabel() ?? direction === 'CREATEPOOL' ?
+            <div className={styles.createText}>Create</div> : 'Submit'}
         </button>
       )
     }

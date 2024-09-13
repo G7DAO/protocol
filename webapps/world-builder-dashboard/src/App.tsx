@@ -14,6 +14,8 @@ import en from '@/lang/en.json'
 import { AuthProvider } from '@/providers/AuthProvider'
 import router from '@/router'
 import './styles/global.css'
+import BugoutClient from '@bugout/bugout-js'
+import { useEffect } from 'react'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
