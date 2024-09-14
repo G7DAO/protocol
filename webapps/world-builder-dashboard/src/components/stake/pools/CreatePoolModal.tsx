@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import { L3_NETWORK } from '../../../../constants'
+import ActionButtonStake from '../ActionButtonStake'
 import styles from './CreatePoolModal.module.css'
 import ValueSelector from './ValueSelector'
+import { ethers } from 'ethers'
 import { Modal, Tooltip } from 'summon-ui/mantine'
-import Switch from '@/components/commonComponents/switch/Switch'
 import IconInfoCircle from '@/assets/IconInfoCircle'
 import NetworkSelector from '@/components/bridge/bridge/NetworkSelector'
+import Switch from '@/components/commonComponents/switch/Switch'
 import { NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
-import { doesContractExist, epochTimes, tokenTypes, ZERO_ADDRESS } from '@/utils/web3utils'
-import { ethers } from 'ethers';
 import { formatAddress } from '@/utils/addressFormat'
-import ActionButtonStake from '../ActionButtonStake'
+import { doesContractExist, epochTimes, tokenTypes, ZERO_ADDRESS } from '@/utils/web3utils'
 
-interface CreatePoolModalProps { }
+interface CreatePoolModalProps {}
 
 const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { connectedAccount } = useBlockchainContext()
-  const [provider, setProvider] = useState<ethers.providers.Web3Provider | null>(null);
+  const [provider, setProvider] = useState<ethers.providers.Web3Provider | null>(null)
 
   // Stepper states
   const steps = ['Details', 'Tokens', 'Settings', 'Admin']
@@ -26,20 +26,20 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
 
   // Metadata states. Note, we need access to the db to make this work
   const [project, setProject] = useState<{}>()
-  const [poolName, setPoolName] = useState<string>("")
-  const [poolDescription, setPoolDescription] = useState<string>("")
+  const [poolName, setPoolName] = useState<string>('')
+  const [poolDescription, setPoolDescription] = useState<string>('')
 
   // Tokens states
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L3_NETWORK)
   const [tokenType, setTokenType] = useState(tokenTypes[0])
   const [tokenAddress, setTokenAddress] = useState<string>(ZERO_ADDRESS)
-  const [tokenId, setTokenId] = useState<string>('0');
+  const [tokenId, setTokenId] = useState<string>('0')
 
   // Settings states
-  const [lockupPeriod, setLockupPeriod] = useState<string>("0")
-  const [lockupDuration, setLockupDuration] = useState<number>(0);
+  const [lockupPeriod, setLockupPeriod] = useState<string>('0')
+  const [lockupDuration, setLockupDuration] = useState<number>(0)
   const [lockupDurationUnit, setLockupDurationUnit] = useState(epochTimes[0])
-  const [cooldownPeriod, setCooldownPeriod] = useState<string>("0")
+  const [cooldownPeriod, setCooldownPeriod] = useState<string>('0')
   const [cooldownDuration, setCooldownDuration] = useState<number>(0)
   const [cooldownDurationUnit, setCooldownDurationUnit] = useState(epochTimes[0])
   const [transferrability, setTransferrability] = useState<boolean>(false)
@@ -51,120 +51,110 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
   const arrayOfErrors: any[] = []
 
   useEffect(() => {
-    if (completedSteps[currentStep]) {
-      setCurrentStep((prevStep) => prevStep + 1)
-    }
     if (window.ethereum) {
       const web3Provider = new ethers.providers.Web3Provider(window.ethereum)
       setProvider(web3Provider)
     } else {
-      addErrorMessage("Ethereum provider not found. Please install a wallet.")
+      addErrorMessage('Ethereum provider not found. Please install a wallet.')
     }
-  }, [completedSteps, window.ethereum]); // Will run every time `completedSteps` changes
+  }, [completedSteps, window.ethereum]) // Will run every time `completedSteps` changes
 
   const goToNextStep = () => {
     if (currentStep < steps.length - 1) {
-      completeCurrentStep()  // This will update the `completedSteps` array
+      setCurrentStep(currentStep + 1)
+      completeCurrentStep()
     }
-  };
+  }
 
   const completeCurrentStep = () => {
-    const updatedSteps = [...completedSteps];
+    const updatedSteps = [...completedSteps]
     updatedSteps[currentStep] = true
     setCompletedSteps(updatedSteps)
-  };
-
+  }
 
   const addErrorMessage = (message: string) => {
     if (arrayOfErrors.includes(message) || inputErrorMessage.includes(message)) return
-    setInputErrorMessage((prevMessages) => [...prevMessages, message]);
+    setInputErrorMessage((prevMessages) => [...prevMessages, message])
     arrayOfErrors.push(message)
-  };
+  }
 
   const removeErrorMessage = (message: string) => {
-    setInputErrorMessage((prevMessages) =>
-      prevMessages.filter((msg) => msg !== message)
-    );
-    const index = arrayOfErrors.indexOf(message);
-    if (index > -1) { // only splice array when item is found
-      arrayOfErrors.splice(index, 1); // 2nd parameter means remove one item only
+    setInputErrorMessage((prevMessages) => prevMessages.filter((msg) => msg !== message))
+    const index = arrayOfErrors.indexOf(message)
+    if (index > -1) {
+      // only splice array when item is found
+      arrayOfErrors.splice(index, 1) // 2nd parameter means remove one item only
     }
-  };
+  }
 
   const handleLockupDurationChange = (e: any) => {
     setLockupDuration(e.target.value)
     const period = (e.target.value * lockupDurationUnit.value).toString()
-    console.log("Lockup duration: ", period)
+    console.log('Lockup duration: ', period)
     setLockupPeriod(period)
   }
 
   const handleLockupDurationUnitChange = (e: any) => {
     setLockupDurationUnit(e)
-    const period = ((e.value) * lockupDuration).toString()
-    console.log("Lockup duration: ", period)
+    const period = (e.value * lockupDuration).toString()
+    console.log('Lockup duration: ', period)
     setLockupPeriod(period)
   }
 
   const handleCooldownDurationChange = (e: any) => {
     setCooldownDuration(e.target.value)
     const period = (e.target.value * cooldownDurationUnit.value).toString()
-    console.log("Cooldown period: ", period)
+    console.log('Cooldown period: ', period)
     setCooldownPeriod(period)
   }
 
   const handleCooldownDurationUnitChange = (e: any) => {
     setCooldownDurationUnit(e)
-    const period = ((e.value) * cooldownDuration).toString()
-    console.log("Cooldown period: ", period)
+    const period = (e.value * cooldownDuration).toString()
+    console.log('Cooldown period: ', period)
     setCooldownPeriod(period)
   }
 
   const handleTokenSelect = (tokenValue: any) => {
     setTokenType(tokenValue)
     handleAddressChange(tokenAddress, tokenValue)
-    if (tokenValue === "1") {
+    if (tokenValue === '1') {
       setTokenAddress(ZERO_ADDRESS)
-      removeErrorMessage("Token address is not an address!")
-      removeErrorMessage("Token address cannot be a zero address")
-      removeErrorMessage("Token contract does not exist!")
+      removeErrorMessage('Token address is not an address!')
+      removeErrorMessage('Token address cannot be a zero address')
+      removeErrorMessage('Token contract does not exist!')
       return
     }
-    if (tokenValue !== "1155") {
+    if (tokenValue !== '1155') {
       setTokenId('0')
       return
     }
   }
 
   const handleAddressChange = async (address: string, tokenType?: string) => {
-    if (tokenType === "1") {
-      setTokenAddress(ZERO_ADDRESS);
-      removeErrorMessage("Token address is not an address!")
-      removeErrorMessage("Token address cannot be a zero address")
-      removeErrorMessage("Token contract does not exist!")
-      return;
+    if (tokenType === '1') {
+      setTokenAddress(ZERO_ADDRESS)
+      removeErrorMessage('Token address is not an address!')
+      removeErrorMessage('Token address cannot be a zero address')
+      removeErrorMessage('Token contract does not exist!')
+      return
     }
 
-    setTokenAddress(address);
-    if (!ethers.utils.isAddress(address))
-      addErrorMessage("Token address is not an address!")
-    else
-      removeErrorMessage("Token address is not an address!")
+    setTokenAddress(address)
+    if (!ethers.utils.isAddress(address)) addErrorMessage('Token address is not an address!')
+    else removeErrorMessage('Token address is not an address!')
 
-    if (address === ZERO_ADDRESS && tokenType !== "1")
-      addErrorMessage("Token address cannot be a zero address")
-    else
-      removeErrorMessage("Token address cannot be a zero address")
+    if (address === ZERO_ADDRESS && tokenType !== '1') addErrorMessage('Token address cannot be a zero address')
+    else removeErrorMessage('Token address cannot be a zero address')
 
     const contractExists = await doesContractExist(address, provider)
-    if (!contractExists)
-      addErrorMessage("Token contract does not exist!")
-    else
-      removeErrorMessage("Token contract does not exist!")
+    if (!contractExists) addErrorMessage('Token contract does not exist!')
+    else removeErrorMessage('Token contract does not exist!')
   }
 
   const getStepStyle = (stepIndex: number) => {
-    if (stepIndex === currentStep || completedSteps[currentStep] === true) {
-      return styles.step // Active stepelse {
+    if (stepIndex === currentStep || completedSteps[stepIndex] === true) {
+      return styles.step 
     } else {
       return styles.stepLocked // Locked step
     }
@@ -206,7 +196,7 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                     }
                   }}
                 >
-                  <div className={index === currentStep ? styles.stepText : styles.stepTextLocked}>{step}</div>
+                  <div className={index === currentStep ? styles.stepText : completedSteps[index] ? styles.stepTextCompleted : styles.stepTextLocked}>{step}</div>
                 </div>
               ))}
             </div>
@@ -221,9 +211,7 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
               <div className={styles.inputContainer}>
                 <div className={styles.label}>Project (optional)</div>
                 <ValueSelector
-                  values={[
-                    { valueId: 0, displayName: 'Sample project 1' }
-                  ]}
+                  values={[{ valueId: 0, displayName: 'Sample project 1' }]}
                   selectedValue={{ valueId: 0, displayName: 'Sample project 1' }}
                   onChange={(e: any) => {
                     console.log(e)
@@ -265,26 +253,37 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                 {/* May remove due to the pool creator needing to be added at the end */}
                 <div className={styles.inputContainer}>
                   <div className={styles.label}>Token Type</div>
-                  <ValueSelector
-                    values={tokenTypes}
-                    selectedValue={tokenType}
-                    onChange={(e) => handleTokenSelect(e)}
-                  />
+                  <ValueSelector values={tokenTypes} selectedValue={tokenType} onChange={(e) => handleTokenSelect(e)} />
                 </div>
               </div>
               {/* Make component out of input container in the future */}
-              {tokenType.valueId !== "1" && (
+              {tokenType.valueId !== '1' && (
                 <>
                   <div className={styles.inputContainer}>
-                    <div className={styles.label}>Address
+                    <div className={styles.label}>
+                      Address
                       <div className={styles.errorInput}>Token address does not exist!</div>
                     </div>
-                    <input className={styles.textInput} placeholder={'0x0'} value={tokenAddress} onChange={(e) => { handleAddressChange(e.target.value, "") }} />
+                    <input
+                      className={`${styles.textInput}`}
+                      placeholder={'0x0'}
+                      value={tokenAddress}
+                      onChange={(e) => {
+                        handleAddressChange(e.target.value, '')
+                      }}
+                    />
                   </div>
-                  {tokenType.valueId === "1155" && (
+                  {tokenType.valueId === '1155' && (
                     <div className={styles.inputContainer}>
                       <div className={styles.label}>Token ID</div>
-                      <input className={styles.textInput} placeholder={'0'} value={tokenId} onChange={(e) => { setTokenId(e.target.value) }} />
+                      <input
+                        className={styles.textInput}
+                        placeholder={'0'}
+                        value={tokenId}
+                        onChange={(e) => {
+                          setTokenId(e.target.value)
+                        }}
+                      />
                     </div>
                   )}
                 </>
@@ -298,7 +297,13 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
               <div className={styles.inputRow}>
                 <div className={styles.inputContainer}>
                   <div className={styles.label}>Lockup period</div>
-                  <input className={styles.textInput} placeholder={'0'} type='number' value={lockupDuration} onChange={handleLockupDurationChange} />
+                  <input
+                    className={styles.textInput}
+                    placeholder={'0'}
+                    type='number'
+                    value={lockupDuration}
+                    onChange={handleLockupDurationChange}
+                  />
                 </div>
                 {/* May remove due to the pool creator needing to be added at the end */}
                 <div className={styles.inputContainer}>
@@ -313,7 +318,13 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
               <div className={styles.inputRow}>
                 <div className={styles.inputContainer}>
                   <div className={styles.label}>Cooldown period</div>
-                  <input className={styles.textInput} placeholder={'0'} type='number' value={cooldownDuration} onChange={handleCooldownDurationChange} />
+                  <input
+                    className={styles.textInput}
+                    placeholder={'0'}
+                    type='number'
+                    value={cooldownDuration}
+                    onChange={handleCooldownDurationChange}
+                  />
                 </div>
                 {/* May remove due to the pool creator needing to be added at the end */}
                 <div className={styles.inputContainer}>
@@ -353,9 +364,7 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
               <div className={styles.inputContainer}>
                 <div className={styles.label}>Administrator</div>
                 <ValueSelector
-                  values={[
-                    { valueId: 0, displayName: 'Connected Wallet' },
-                  ]}
+                  values={[{ valueId: 0, displayName: 'Connected Wallet' }]}
                   selectedValue={{ valueId: 0, displayName: 'Connected Wallet' }}
                   onChange={(e: any) => {
                     console.log(e)
@@ -378,7 +387,7 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
             >
               <div className={styles.closeText}>Close</div>
             </div>
-            {currentStep !== 3 ?
+            {currentStep !== 3 ? (
               <div
                 onClick={() => {
                   goToNextStep()
@@ -386,18 +395,22 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                 className={styles.nextButton}
               >
                 <div className={styles.nextText}> Next </div>
-              </div> : 
-              <ActionButtonStake params={{
-                tokenType: tokenType.valueId,
-                tokenAddress,
-                tokenID: tokenId,
-                lockupSeconds: lockupPeriod,
-                cooldownSeconds: cooldownPeriod,
-                transferable: transferrability
-              }}
+              </div>
+            ) : (
+              <ActionButtonStake
+                params={{
+                  tokenType: tokenType.valueId,
+                  tokenAddress,
+                  tokenID: tokenId,
+                  lockupSeconds: lockupPeriod,
+                  cooldownSeconds: cooldownPeriod,
+                  transferable: transferrability
+                }}
                 actionType='CREATEPOOL'
                 isDisabled={false}
-                setErrorMessage={() => { }} />}
+                setErrorMessage={() => {}}
+              />
+            )}
           </div>
         </Modal>
       )}

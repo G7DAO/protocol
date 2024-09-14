@@ -187,8 +187,7 @@ const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ actionType, param
           style={{ color: 'white' }}
           disabled={getLabel() !== 'Connect Wallet' && isDisabled}
         >
-          {getLabel() ?? direction === 'CREATEPOOL' ?
-            <div className={styles.createText}>Create</div> : 'Submit'}
+          {getLabel() ??  'Submit'}
         </button>
       )
     }
