@@ -34,9 +34,9 @@ const PoolsDesktop: React.FC<PoolDesktopProps> = () => {
   const { data } = usePools()
   const [activePool, setActivePool] = useState<string | null>(null)
   const [clickedPool, setClickedPool] = useState<number | null>(null)
-  const [page, setPage] = useState<number>(5)
+  const [page, setPage] = useState<number>(6)
   const [maximumPages, setMaximumPages] = useState<number>(10)
-  const [entries, setEntries] = useState<number>(30)
+  const [entries, setEntries] = useState<number>(40)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {

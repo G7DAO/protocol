@@ -4,7 +4,7 @@ import ActionButtonStake from '../ActionButtonStake'
 import styles from './CreatePoolModal.module.css'
 import ValueSelector from './ValueSelector'
 import { ethers } from 'ethers'
-import { Modal, Tooltip } from 'summon-ui/mantine'
+import { Flex, Modal, Tooltip } from 'summon-ui/mantine'
 import IconInfoCircle from '@/assets/IconInfoCircle'
 import NetworkSelector from '@/components/bridge/bridge/NetworkSelector'
 import Switch from '@/components/commonComponents/switch/Switch'
@@ -154,7 +154,7 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
 
   const getStepStyle = (stepIndex: number) => {
     if (stepIndex === currentStep || completedSteps[stepIndex] === true) {
-      return styles.step 
+      return styles.step
     } else {
       return styles.stepLocked // Locked step
     }
@@ -196,7 +196,17 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                     }
                   }}
                 >
-                  <div className={index === currentStep ? styles.stepText : completedSteps[index] ? styles.stepTextCompleted : styles.stepTextLocked}>{step}</div>
+                  <div
+                    className={
+                      index === currentStep
+                        ? styles.stepText
+                        : completedSteps[index]
+                          ? styles.stepTextCompleted
+                          : styles.stepTextLocked
+                    }
+                  >
+                    {step}
+                  </div>
                 </div>
               ))}
             </div>
@@ -260,12 +270,12 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
               {tokenType.valueId !== '1' && (
                 <>
                   <div className={styles.inputContainer}>
-                    <div className={styles.label}>
-                      Address
+                    <div className={styles.labelErrorWrapper}>
+                      <div className={styles.label}>Address</div>
                       <div className={styles.errorInput}>Token address does not exist!</div>
                     </div>
                     <input
-                      className={`${styles.textInput}`}
+                      className={`${styles.textInput} ${styles.error}`}
                       placeholder={'0x0'}
                       value={tokenAddress}
                       onChange={(e) => {

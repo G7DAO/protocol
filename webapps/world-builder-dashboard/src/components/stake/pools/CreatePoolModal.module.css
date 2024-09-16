@@ -128,6 +128,7 @@
   flex-direction: column;
   gap: 6px;
   align-self: stretch;
+  align-items: flex-start;
   padding-bottom: 16px;
   flex-grow: 1;
 }
@@ -162,8 +163,6 @@
 }
 
 .label {
-  display: flex;
-  flex-direction: row;
   color: var(--Gray-700, #344054);
 
   /* Text sm/Medium */
@@ -172,6 +171,12 @@
   font-style: normal;
   font-weight: 500;
   line-height: 20px; /* 142.857% */
+}
+
+.labelErrorWrapper {
+  display: flex;
+  justify-content: space-between; /* Distributes the label and error to opposite sides */
+  width: 100%; /* Makes sure the error is aligned with the right edge of the input */
 }
 
 .textInput {
@@ -212,7 +217,7 @@ input:focus-visible {
   align-self: stretch;
   width: 100%;
 
-  color: var(--Gray-500, #667085);
+  color: var(--Gray-500, #101828);
 
   /* Text md/Regular */
   font-family: Inter;
@@ -230,8 +235,6 @@ input:focus-visible {
 }
 
 .errorInput {
-  display: flex;
-  align-items: end;
   color: var(--Error-600, #d92d20);
   text-align: right;
   /* Text sm/Medium */
