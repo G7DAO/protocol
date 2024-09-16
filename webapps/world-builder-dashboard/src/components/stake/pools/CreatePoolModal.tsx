@@ -47,7 +47,9 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
   // Admin states (to be added later when Staker is updated to V2)
 
   // Error states
-  const [inputErrorMessage, setInputErrorMessage] = useState<string[]>([])
+  const [errors, setErrors] = useState<any>({
+    tokenAddress: []
+  })
   const arrayOfErrors: any[] = []
 
   useEffect(() => {
@@ -55,7 +57,7 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
       const web3Provider = new ethers.providers.Web3Provider(window.ethereum)
       setProvider(web3Provider)
     } else {
-      addErrorMessage('Ethereum provider not found. Please install a wallet.')
+      addErrorMessage('Ethereum provider not found. Please install a wallet.', 'tokenAddress')
     }
   }, [completedSteps, window.ethereum]) // Will run every time `completedSteps` changes
 
@@ -72,19 +74,42 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
     setCompletedSteps(updatedSteps)
   }
 
-  const addErrorMessage = (message: string) => {
-    if (arrayOfErrors.includes(message) || inputErrorMessage.includes(message)) return
-    setInputErrorMessage((prevMessages) => [...prevMessages, message])
-    arrayOfErrors.push(message)
-  }
+  const addErrorMessage = (message: string, fieldName: string) => {
+    const fieldErrors = errors[fieldName] || [];
+  
+    if (fieldErrors.includes(message)) return; 
+    setErrors((prevErrors: any) => {
+      let updatedFieldErrors = prevErrors[fieldName] || [];
+      updatedFieldErrors = updatedFieldErrors.filter((err) => err.trim() !== '');
+  
+      return {
+        ...prevErrors,
+        [fieldName]: [...updatedFieldErrors, message]
+      };
+    });
+  
+    arrayOfErrors.push(message);
+  };
+  
 
-  const removeErrorMessage = (message: string) => {
-    setInputErrorMessage((prevMessages) => prevMessages.filter((msg) => msg !== message))
-    const index = arrayOfErrors.indexOf(message)
-    if (index > -1) {
-      // only splice array when item is found
-      arrayOfErrors.splice(index, 1) // 2nd parameter means remove one item only
-    }
+  const removeErrorMessage = (message: string, fieldName: string) => {
+    setErrors((prevErrors: any) => {
+      let fieldErrors = prevErrors[fieldName]
+
+      if (!Array.isArray(fieldErrors) || !fieldErrors.includes(message)) {
+        return prevErrors
+      }
+
+      fieldErrors = fieldErrors.filter((err) => err.trim() !== '')
+
+      const updatedFieldErrors = fieldErrors.filter((err) => err !== message)
+      return updatedFieldErrors.length > 0
+        ? { ...prevErrors, [fieldName]: updatedFieldErrors }
+        : Object.keys(prevErrors).reduce((acc: any, key: any) => {
+            if (key !== fieldName) acc[key] = prevErrors[key]
+            return acc
+          }, {})
+    })
   }
 
   const handleLockupDurationChange = (e: any) => {
@@ -120,9 +145,9 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
     handleAddressChange(tokenAddress, tokenValue)
     if (tokenValue === '1') {
       setTokenAddress(ZERO_ADDRESS)
-      removeErrorMessage('Token address is not an address!')
-      removeErrorMessage('Token address cannot be a zero address')
-      removeErrorMessage('Token contract does not exist!')
+      removeErrorMessage('Token address is not an address!', 'tokenAddress')
+      removeErrorMessage('Token address cannot be a zero address', 'tokenAddress')
+      removeErrorMessage('Token contract does not exist!', 'tokenAddress')
       return
     }
     if (tokenValue !== '1155') {
@@ -132,24 +157,28 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
   }
 
   const handleAddressChange = async (address: string, tokenType?: string) => {
+    console.log(address)
     if (tokenType === '1') {
       setTokenAddress(ZERO_ADDRESS)
-      removeErrorMessage('Token address is not an address!')
-      removeErrorMessage('Token address cannot be a zero address')
-      removeErrorMessage('Token contract does not exist!')
+      removeErrorMessage('Token address is not an address!', 'tokenAddress')
+      removeErrorMessage('Token address cannot be a zero address', 'tokenAddress')
+      removeErrorMessage('Token contract does not exist!', 'tokenAddress')
       return
     }
 
     setTokenAddress(address)
-    if (!ethers.utils.isAddress(address)) addErrorMessage('Token address is not an address!')
-    else removeErrorMessage('Token address is not an address!')
+    if (!ethers.utils.isAddress(address)) addErrorMessage('Token address is not an address!', 'tokenAddress')
+    else removeErrorMessage('Token address is not an address!', 'tokenAddress')
 
-    if (address === ZERO_ADDRESS && tokenType !== '1') addErrorMessage('Token address cannot be a zero address')
-    else removeErrorMessage('Token address cannot be a zero address')
+    if (address === ZERO_ADDRESS && tokenType !== '1') {
+      addErrorMessage('Token address cannot be a zero address', 'tokenAddress')
+    } else removeErrorMessage('Token address cannot be a zero address', 'tokenAddress')
 
     const contractExists = await doesContractExist(address, provider)
-    if (!contractExists) addErrorMessage('Token contract does not exist!')
-    else removeErrorMessage('Token contract does not exist!')
+    if (ethers.utils.isAddress(address)) {
+      if (!contractExists) addErrorMessage('Token contract does not exist!', 'tokenAddress')
+      else removeErrorMessage('Token contract does not exist!', 'tokenAddress')
+    }
   }
 
   const getStepStyle = (stepIndex: number) => {
@@ -272,11 +301,13 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                   <div className={styles.inputContainer}>
                     <div className={styles.labelErrorWrapper}>
                       <div className={styles.label}>Address</div>
-                      <div className={styles.errorInput}>Token address does not exist!</div>
+                      <div className={styles.errorInput}>
+                        {errors.tokenAddress && errors.tokenAddress.length > 0 ? errors.tokenAddress.join(' & ') : ''}
+                      </div>
                     </div>
                     <input
-                      className={`${styles.textInput} ${styles.error}`}
-                      placeholder={'0x0'}
+                      className={`${styles.textInput} ${errors.tokenAddress?.length > 0 ? styles.error : ''}`}
+                      placeholder={ZERO_ADDRESS}
                       value={tokenAddress}
                       onChange={(e) => {
                         handleAddressChange(e.target.value, '')
@@ -287,6 +318,7 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
                     <div className={styles.inputContainer}>
                       <div className={styles.label}>Token ID</div>
                       <input
+                        type='number'
                         className={styles.textInput}
                         placeholder={'0'}
                         value={tokenId}
@@ -400,9 +432,12 @@ const CreatePoolModal: React.FC<CreatePoolModalProps> = () => {
             {currentStep !== 3 ? (
               <div
                 onClick={() => {
-                  goToNextStep()
+                  console.log(errors.tokenAddress?.length)
+                  errors.tokenAddress?.length === 0 || errors.tokenAddress === undefined  || currentStep != 1 ? goToNextStep() : () => {}
                 }}
-                className={styles.nextButton}
+                className={
+                  errors.tokenAddress?.length > 0 && currentStep === 1 ? styles.nextButtonDisabled : styles.nextButton
+                }
               >
                 <div className={styles.nextText}> Next </div>
               </div>

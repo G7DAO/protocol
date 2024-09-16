@@ -186,7 +186,7 @@
   gap: 8px;
   align-self: stretch;
 
-  color: var(--Gray-500, #667085);
+  color: var(--Gray-900, #101828);
 
   /* Text md/Regular */
   font-family: Inter;
@@ -295,6 +295,20 @@ input:focus-visible {
   border-radius: 8px;
   border: 1px solid var(--Primary-600, #ef233b);
   background: var(--Primary-600, #ef233b);
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  cursor: pointer;
+}
+
+.nextButtonDisabled {
+  display: flex;
+  width: 120px;
+  padding: 10px 16px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--Gray-600, #475467);
+  background: var(--Gray-600, #475467);
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
   cursor: pointer;
 }
