@@ -18,9 +18,12 @@ import { timeDifferenceInHoursAndMinutes, timeDifferenceInHoursMinutesAndSeconds
 import { faucetABI } from '@/web3/ABI/faucet_abi'
 import { Signer } from '@ethersproject/abstract-signer'
 import { useMediaQuery } from '@mantine/hooks'
+import ValueSelector from '../commonComponents/valueSelector/ValueSelector'
 
 interface FaucetViewProps { }
 const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
+  const [selectedAccountType, setSelectedAccountType] = useState({ valueId: 0, displayName: 'Connected wallet' })
+  const [address, setAddress] = useState<string>("")
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L3_NETWORK)
   const { connectedAccount, isConnecting, getProvider, connectWallet } = useBlockchainContext()
   const [animatedInterval, setAnimatedInterval] = useState('')
@@ -202,28 +205,15 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
         </div>
       </div>
       {/* <div className={styles.networksContainer}> */}
-      <button
-        className={styles.button}
-        onClick={handleClick}
-        disabled={
-          !!connectedAccount &&
-          (!nextClaimAvailable.data || !nextClaimAvailable.data.L3.isAvailable)
-          // (selectedNetwork.chainId === L2_NETWORK.chainId
-          //   ? !nextClaimAvailable.data.L2.isAvailable
-        }
-      >
-        {isConnecting
-          ? 'Connecting wallet...'
-          : claim.isLoading
-            ? 'Requesting...'
-            : connectedAccount
-              ? 'Request'
-              : 'Connect wallet'}
-      </button>
-      <div className={styles.gap}>
-        <div className={styles.gapBetween} />
-        Or
-        <div className={styles.gapBetween} />
+      <div className={styles.addressContainer}>
+        <div className={styles.label}>Address type</div>
+        <ValueSelector
+          values={[
+            { valueId: 0, displayName: 'Connected wallet' },
+            { valueId: 1, displayName: 'External address' }
+          ]}
+          selectedValue={selectedAccountType}
+          onChange={setSelectedAccountType} />
       </div>
       {/* <button
           className={selectedNetwork === L3_NETWORK ? styles.selectedNetworkButton : styles.networkButton}
@@ -242,10 +232,30 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
       <div className={styles.addressContainer}>
         <div className={styles.label}>Wallet Address</div>
         {connectedAccount ? (
-          <input className={styles.address} value={ smallView ? `${connectedAccount.slice(0, 6)}....${connectedAccount.slice(-4)}` : connectedAccount}/>
+          <input className={styles.address} value={selectedAccountType.valueId === 0 ? (smallView ? `${connectedAccount.slice(0, 6)}....${connectedAccount.slice(-4)}` : connectedAccount) : ''} disabled={selectedAccountType.valueId === 0} />
         ) : (
-        <div className={styles.addressPlaceholder}>Please connect a wallet...</div>
+          <div className={styles.addressPlaceholder}>Please connect a wallet...</div>
         )}
+      </div>
+      <div className={styles.addressContainer} style={{marginTop: '18px'}}>
+        <button
+          className={styles.button}
+          onClick={handleClick}
+          disabled={
+            !!connectedAccount &&
+            (!nextClaimAvailable.data || !nextClaimAvailable.data.L3.isAvailable)
+            // (selectedNetwork.chainId === L2_NETWORK.chainId
+            //   ? !nextClaimAvailable.data.L2.isAvailable
+          }
+        >
+          {isConnecting
+            ? 'Connecting wallet...'
+            : claim.isLoading
+              ? 'Requesting...'
+              : connectedAccount
+                ? 'Request'
+                : 'Connect wallet'}
+        </button>
       </div>
       {!!networkError && <div className={styles.errorContainer}>{networkError}.</div>}
       {
