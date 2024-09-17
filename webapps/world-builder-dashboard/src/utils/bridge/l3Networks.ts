@@ -139,7 +139,7 @@ export const L3_NETWORKS = [
   },
   {
     chainInfo: {
-      minL2BaseFee: 10000000,
+    minL2BaseFee: 10000000,
       networkFeeReceiver: '0x252431e84d5e22435a0c833c2220770c52f59633',
       infrastructureFeeCollector: '0x252431e84d5e22435a0c833c2220770c52f59633',
       batchPoster: '0x8d77fDe7c1c812877631a6f7Efc9036dcB6481AC',
