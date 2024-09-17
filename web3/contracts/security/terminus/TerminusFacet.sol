@@ -26,7 +26,7 @@ import "./LibTerminus.sol";
 import "./TerminusInitializer.sol";
 import {LibDiamondTerminus} from "./diamond/libraries/LibDiamondTerminus.sol";
 
-contract TerminusFacet is ERC1155WithTerminusStorage, TerminusInitializer {
+contract TerminusFacet is ERC1155WithTerminusStorage, TerminusInitializer{
     constructor() {
         LibTerminus.TerminusStorage storage ts = LibTerminus.terminusStorage();
         ts.controller = msg.sender;

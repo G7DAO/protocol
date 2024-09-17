@@ -22,12 +22,21 @@ const config: HardhatUserConfig = {
       },
     ],
     overrides: {
-      "contracts/terminus/TerminusFacet.sol": {
+      "contracts/security/terminus/TerminusFacet.sol": {
         version: "0.8.24",
         settings:{
           optimizer: {
             enabled: true,
             runs: 200
+          },
+        },
+      },
+      "contracts/drops/dropper-V3/DropperV3Facet.sol" : {
+        version: "0.8.24",
+        settings: {
+          optimizer: {
+            enabled:true,
+            runs:200
           },
         },
       },

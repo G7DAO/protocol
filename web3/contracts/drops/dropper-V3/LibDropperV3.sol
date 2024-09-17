@@ -6,6 +6,8 @@ struct DroppableToken {
     address tokenAddress; // address of the token
     uint256 tokenId;
     uint256 amount;
+    uint256 maxNumberOfTokens;
+    uint256 claimCount;
 }
 
 struct TerminusAuthorization {
@@ -25,8 +27,7 @@ library LibDropper {
         mapping(uint256 => TerminusAuthorization) DropAuthorizations;
         mapping(uint256 => DroppableToken) DropToken;
         mapping(uint256 => string) DropURI;
-        mapping(uint256 => uint256) MaxNumberOfTokens;
-        mapping(uint256 => uint256) ClaimCount;
+
         // dropID => requestID => true if claimed and false if not
         mapping(uint256 => mapping(uint256 => bool)) DropRequestClaimed;
     }

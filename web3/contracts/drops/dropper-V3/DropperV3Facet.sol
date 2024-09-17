@@ -42,7 +42,8 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         uint256 indexed tokenType,
         address indexed tokenAddress,
         uint256 indexed tokenId,
-        uint256 amount
+        uint256 amount,
+        uint256 maxNumberOfTokens
     );
     event DropStatusChanged(uint256 indexed dropId, bool status);
     event DropMaxTokensChanged(uint256 indexed dropId, uint256 maxNumberOfTokens);
@@ -55,13 +56,6 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         uint256 indexed tokenId,
         uint256 amount
     );
-
-    address terminusAdminContractAddress;
-    uint256 terminusAdminPoolID;
-    constructor(address _terminusAdminContractAddress, uint256 _terminusAdminPoolId) {
-        terminusAdminContractAddress = _terminusAdminContractAddress;
-        terminusAdminPoolID = _terminusAdminPoolId;
-    }
 
     modifier onlyTerminusAdmin() {
         LibDropper.DropperStorage storage ds = LibDropper.dropperStorage();
@@ -78,7 +72,7 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         _;
     }
 
-    function init() external {
+    function init(address _terminusAdminContractAddress, uint256 _terminusAdminPoolId) external {
         LibDiamond.enforceIsContractOwner();
 
         // Set up server side signing parameters for EIP712
@@ -87,8 +81,8 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         // Initialize Terminus administration information
         LibDropper.DropperStorage storage ds = LibDropper.dropperStorage();
 
-        ds.TerminusAdminContractAddress = terminusAdminContractAddress;
-        ds.TerminusAdminPoolID = terminusAdminPoolID;
+        ds.TerminusAdminContractAddress = _terminusAdminContractAddress;
+        ds.TerminusAdminPoolID = _terminusAdminPoolId;
     }
 
     function adminTerminusInfo() external view returns (address, uint) {
@@ -110,7 +104,7 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         uint256 authorizationPoolId,
         uint256 maxNumberOfTokens,
         string memory uri
-    ) external payable returns (uint256) {
+    ) external onlyTerminusAdmin payable returns (uint256) {
         require(
             tokenType == TokenType.erc20_type() ||
                 tokenType == TokenType.erc721_type() ||
@@ -134,8 +128,9 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         tokenMetadata.tokenAddress = tokenAddress;
         tokenMetadata.tokenId = tokenId;
         tokenMetadata.amount = amount;
+        tokenMetadata.maxNumberOfTokens = maxNumberOfTokens;
         ds.DropToken[ds.NumDrops] = tokenMetadata;
-        emit DropCreated(ds.NumDrops, tokenType, tokenAddress, tokenId, amount);
+        emit DropCreated(ds.NumDrops, tokenType, tokenAddress, tokenId, amount, maxNumberOfTokens);
 
         ds.IsDropActive[ds.NumDrops] = true;
         emit DropStatusChanged(ds.NumDrops, true);
@@ -146,7 +141,6 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         });
         emit DropAuthorizationChanged(ds.NumDrops, authorizationTokenAddress, authorizationPoolId);
 
-        ds.MaxNumberOfTokens[ds.NumDrops] = maxNumberOfTokens;
         emit DropMaxTokensChanged(ds.NumDrops, maxNumberOfTokens);
 
         ds.DropURI[ds.NumDrops] = uri;
@@ -165,7 +159,7 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
 
     function setMaxNumberOfTokens(uint256 dropId, uint256 maxNumberOfTokens) external onlyTerminusAdmin {
         LibDropper.DropperStorage storage ds = LibDropper.dropperStorage();
-        ds.MaxNumberOfTokens[dropId] = maxNumberOfTokens;
+        ds.DropToken[dropId].maxNumberOfTokens = maxNumberOfTokens;
         emit DropMaxTokensChanged(dropId, maxNumberOfTokens);
     }
 
@@ -273,10 +267,10 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         }
 
         require(
-            ds.ClaimCount[dropId] + amount <= ds.MaxNumberOfTokens[dropId],
+            ds.DropToken[dropId].claimCount + amount <= ds.DropToken[dropId].maxNumberOfTokens,
             "DF: Claims exceed Tokens to distribute"
         );
-        ds.ClaimCount[dropId] += amount;
+        ds.DropToken[dropId].claimCount += amount;
 
         ds.DropRequestClaimed[dropId][requestID] = true;
 

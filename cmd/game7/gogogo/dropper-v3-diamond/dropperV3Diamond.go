@@ -131,7 +131,7 @@ func DiamondSetupV1(txOpts *bind.TransactOpts, client *ethclient.Client, owner c
 
 	// If dropperAddress is not provided, we must deploy a new DropperFacet.
 	if addressIsZero(dropperAddress) {
-		address, dropperTransaction, _, dropperErr := DropperV3Facet.DeployDropperV3Facet(txOpts, client, terminusAddress, terminusPoolId)
+		address, dropperTransaction, _, dropperErr := DropperV3Facet.DeployDropperV3Facet(txOpts, client)
 		if dropperErr != nil {
 			return deployedConfiguration, dropperErr
 		}
