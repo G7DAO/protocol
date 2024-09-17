@@ -19,8 +19,8 @@ import { faucetABI } from '@/web3/ABI/faucet_abi'
 import { Signer } from '@ethersproject/abstract-signer'
 import { useMediaQuery } from '@mantine/hooks'
 
-interface FaucetViewProps {}
-const FaucetView: React.FC<FaucetViewProps> = ({}) => {
+interface FaucetViewProps { }
+const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L3_NETWORK)
   const { connectedAccount, isConnecting, getProvider, connectWallet } = useBlockchainContext()
   const [animatedInterval, setAnimatedInterval] = useState('')
@@ -198,73 +198,18 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
       <div className={styles.header}>
         <div className={styles.title}>Testnet Faucet</div>
         <div className={styles.supportingText}>
-          {`Request 1 ${L3_NATIVE_TOKEN_SYMBOL} per day to your wallet address.`}
+          {`Request and get 1 ${L3_NATIVE_TOKEN_SYMBOL} per day to your wallet or an external address on G7 network.`}
         </div>
       </div>
-      <div className={styles.networksContainer}>
-        <button
-          className={selectedNetwork === L3_NETWORK ? styles.selectedNetworkButton : styles.networkButton}
-          onClick={() => setSelectedNetwork(L3_NETWORK)}
-        >
-          {L3_NETWORK.displayName}
-        </button>
-        <button
-          className={selectedNetwork === L2_NETWORK ? styles.selectedNetworkButton : styles.networkButton}
-          onClick={() => setSelectedNetwork(L2_NETWORK)}
-        >
-          {L2_NETWORK.displayName}
-        </button>
-      </div>
-      <div className={styles.addressContainer}>
-        <div className={styles.label}>Connected Wallet Address</div>
-        {connectedAccount ? (
-          <div className={styles.address}>
-            {smallView ? `${connectedAccount.slice(0, 6)}....${connectedAccount.slice(-4)}` : connectedAccount}
-          </div>
-        ) : (
-          <div className={styles.addressPlaceholder}>Please connect a wallet...</div>
-        )}
-      </div>
-      {!!networkError && <div className={styles.errorContainer}>{networkError}.</div>}
-      {!networkError && nextClaimAvailable.isLoading && (
-        <div className={styles.warningContainer}>Checking faucet permissions...</div>
-      )}
-
-      {!nextClaimAvailable.isLoading &&
-        !networkError &&
-        (selectedNetwork.chainId === L2_NETWORK.chainId
-          ? nextClaimAvailable.data?.L2.isAvailable
-          : nextClaimAvailable.data?.L3.isAvailable) && (
-          <div className={styles.hintBadge}>You may only request funds to a connected wallet.</div>
-        )}
-      {!nextClaimAvailable.isLoading && !connectedAccount && !networkError && (
-        <div className={styles.hintBadge}>You may only request funds to a connected wallet.</div>
-      )}
-      {selectedNetwork.chainId === L2_NETWORK.chainId &&
-        nextClaimAvailable.data &&
-        !nextClaimAvailable.data.L2.isAvailable && (
-          <div className={styles.errorContainer}>
-            {`You requested funds recently. Come back in `}
-            <span className={styles.time}>{animatedInterval}</span>
-          </div>
-        )}
-      {selectedNetwork.chainId === L3_NETWORK.chainId &&
-        nextClaimAvailable.data &&
-        !nextClaimAvailable.data.L3.isAvailable && (
-          <div className={styles.errorContainer}>
-            {`You requested funds recently. Come back in `}{' '}
-            <span className={styles.time}>{` ${animatedInterval}`}</span>
-          </div>
-        )}
+      {/* <div className={styles.networksContainer}> */}
       <button
         className={styles.button}
         onClick={handleClick}
         disabled={
           !!connectedAccount &&
-          (!nextClaimAvailable.data ||
-            (selectedNetwork.chainId === L2_NETWORK.chainId
-              ? !nextClaimAvailable.data.L2.isAvailable
-              : !nextClaimAvailable.data.L3.isAvailable))
+          (!nextClaimAvailable.data || !nextClaimAvailable.data.L3.isAvailable)
+          // (selectedNetwork.chainId === L2_NETWORK.chainId
+          //   ? !nextClaimAvailable.data.L2.isAvailable
         }
       >
         {isConnecting
@@ -275,7 +220,75 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
               ? 'Request'
               : 'Connect wallet'}
       </button>
-    </div>
+      <div className={styles.gap}>
+        <div className={styles.gapBetween} />
+        Or
+        <div className={styles.gapBetween} />
+      </div>
+      {/* <button
+          className={selectedNetwork === L3_NETWORK ? styles.selectedNetworkButton : styles.networkButton}
+          onClick={() => setSelectedNetwork(L3_NETWORK)}
+        >
+          {L3_NETWORK.displayName}
+        </button>
+        <button
+          className={selectedNetwork === L2_NETWORK ? styles.selectedNetworkButton : styles.networkButton}
+          onClick={() => setSelectedNetwork(L2_NETWORK)}
+        >
+          {L2_NETWORK.displayName}
+        </button> */}
+      {/* </div> */}
+      {/* TODO: MAKE A COMPONENT */}
+      <div className={styles.addressContainer}>
+        <div className={styles.label}>Wallet Address</div>
+        {connectedAccount ? (
+          <input className={styles.address} value={ smallView ? `${connectedAccount.slice(0, 6)}....${connectedAccount.slice(-4)}` : connectedAccount}/>
+        ) : (
+        <div className={styles.addressPlaceholder}>Please connect a wallet...</div>
+        )}
+      </div>
+      {!!networkError && <div className={styles.errorContainer}>{networkError}.</div>}
+      {
+        !networkError && nextClaimAvailable.isLoading && (
+          <div className={styles.warningContainer}>Checking faucet permissions...</div>
+        )
+      }
+
+      {
+        !nextClaimAvailable.isLoading &&
+        !networkError &&
+        (selectedNetwork.chainId === L2_NETWORK.chainId
+          ? nextClaimAvailable.data?.L2.isAvailable
+          : nextClaimAvailable.data?.L3.isAvailable) && (
+          <div className={styles.hintBadge}>You may only request funds to a connected wallet.</div>
+        )
+      }
+      {
+        !nextClaimAvailable.isLoading && !connectedAccount && !networkError && (
+          <div className={styles.hintBadge}>You may only request funds to a connected wallet.</div>
+        )
+      }
+      {
+        selectedNetwork.chainId === L2_NETWORK.chainId &&
+        nextClaimAvailable.data &&
+        !nextClaimAvailable.data.L2.isAvailable && (
+          <div className={styles.errorContainer}>
+            {`You requested funds recently. Come back in `}
+            <span className={styles.time}>{animatedInterval}</span>
+          </div>
+        )
+      }
+      {
+        selectedNetwork.chainId === L3_NETWORK.chainId &&
+        nextClaimAvailable.data &&
+        !nextClaimAvailable.data.L3.isAvailable && (
+          <div className={styles.errorContainer}>
+            {`You requested funds recently. Come back in `}{' '}
+            <span className={styles.time}>{` ${animatedInterval}`}</span>
+          </div>
+        )
+      }
+    </div >
   )
 }
 export default FaucetView
