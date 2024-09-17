@@ -7,6 +7,7 @@ import {
   TOKEN_SENDER_AMOUNT,
 } from '../config';
 import { AwsKmsSigner } from '../utils/ethers-aws-kms-signer';
+import { toUnixTimestamp } from '../utils/date';
 
 export class FaucetService {
   tokenSender: ethers.Contract;
@@ -31,11 +32,30 @@ export class FaucetService {
     );
   }
 
-  async requestFaucet(recipientAddress: string) {
+  async send(recipientAddress: string) {
     const tx = await this.tokenSender.send(recipientAddress, {
       value: TOKEN_SENDER_AMOUNT,
     });
     await tx.wait();
     return tx.hash;
+  }
+
+  async lastSentTimestamp(recipientAddress: string) {
+    const lastSentTimestamp =
+      await this.tokenSender.lastSentTimestamp.staticCall(recipientAddress);
+    return Number(lastSentTimestamp);
+  }
+
+  async getInterval() {
+    const interval = await this.tokenSender.faucetTimeInterval.staticCall();
+    return Number(interval);
+  }
+
+  async getRemainingTime(recipientAddress: string) {
+    const lastSentTimestamp = await this.lastSentTimestamp(recipientAddress);
+    const interval = await this.getInterval();
+    const remainingTime = interval - (toUnixTimestamp(new Date()) - lastSentTimestamp);
+    if (remainingTime <= 0) return 0;
+    else return remainingTime;
   }
 }

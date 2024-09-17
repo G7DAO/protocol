@@ -11,7 +11,20 @@ const faucetRoutes = (): Router => {
   FaucetRouter.post(
     '/request/:recipientAddress',
     zodValidor(requestFaucetPayload),
-    (req: Request, res: Response) => faucetController.requestFaucet(req, res)
+    (req: Request, res: Response) => faucetController.sendTokens(req, res)
+  );
+
+  FaucetRouter.get('/timestamp/:recipientAddress', 
+    zodValidor(requestFaucetPayload),
+    (req: Request, res: Response) => faucetController.getLastSentTimestamp(req, res)
+  );
+  FaucetRouter.get('/interval',  
+    (req: Request, res: Response) => faucetController.getInterval(req, res)
+  );
+
+  FaucetRouter.get('/countdown/:recipientAddress', 
+    zodValidor(requestFaucetPayload),
+    (req: Request, res: Response) => faucetController.getRemainingTime(req, res)
   );
 
   return FaucetRouter;
