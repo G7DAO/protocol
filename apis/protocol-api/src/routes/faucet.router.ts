@@ -1,8 +1,8 @@
 import { Router, Request, Response } from 'express';
 
-import { zodValidor } from '../../middlewares/zodValidator.middleware';
-import { FaucetController } from '../../controllers';
-import { requestFaucetPayload } from '../../payloads/faucet.payload';
+import { zodValidor } from '../middlewares/zodValidator.middleware';
+import { FaucetController } from '../controllers';
+import { requestFaucetPayload } from '../payloads/faucet.payload';
 
 const faucetRoutes = (): Router => {
   const FaucetRouter = Router();

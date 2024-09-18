@@ -3,7 +3,7 @@ import http from 'node:http';
 import express, { Request, Response } from 'express';
 
 import { API_PORT, API_HOST } from './config';
-import routes from './routes/v1';
+import routes from './routes';
 
 const app = express();
 app.use(express.json());
