@@ -3,7 +3,6 @@ import { ethers } from 'ethers';
 
 const ZodEthereumAddress = z.custom(
   (value: any) => {
-    console.log('value', value);
     return ethers.isAddress(value)
   },
   {
