@@ -9,6 +9,7 @@ import { L3_NETWORK } from '../../../../constants'
 import { roundToDecimalPlaces } from '@/utils/web3utils'
 import IconUSDC from '@/assets/IconUSDC'
 import IconG7T from '@/assets/IconG7T'
+import TokenRow from '../tokenRow/TokenRow'
 
 interface WalletButtonProps { }
 
@@ -47,41 +48,10 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
                 classNames={{ header: styles.header, title: styles.title }}
                 shadow='box-shadow: 0px 20px 24px -4px rgba(16, 24, 40, 0.08), 0px 8px 8px -4px rgba(16, 24, 40, 0.03);'
             >
+
                 <div className={styles.modalContent}>
                     <div className={styles.tokensContainer}>
-                        <div className={styles.tokenRow}>
-                            <div className={styles.tokenInformation}>
-                                <div className={styles.tokenIconContainer}>
-                                    <IconUSDC className={styles.token} />
-                                </div>
-                                <div className={styles.tokenTextContainer}>
-                                    <div className={styles.tokenTitle}>
-                                        USDC
-                                    </div>
-                                    <div className={styles.tokenSymbol}>
-                                        USDC
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className={styles.tokenRow}>
-                            <div className={styles.tokenInformation}>
-                                <div className={styles.tokenIconContainer}>
-                                    <IconG7T className={styles.token} />
-                                </div>
-                                <div className={styles.tokenTextContainer}>
-                                    <div className={styles.tokenTitle}>
-                                        G7DAO
-                                    </div>
-                                    <div className={styles.tokenSymbol}>
-                                        G7T
-                                    </div>
-                                </div>
-                            </div>
-                            <div className={styles.balanceText}>
-                                1.2
-                            </div>
-                        </div>
+                        <TokenRow name={'USDC'} symbol={'USDC'} balance={'3000'} Icon={IconUSDC} />
                     </div>
                 </div>
             </Modal>
