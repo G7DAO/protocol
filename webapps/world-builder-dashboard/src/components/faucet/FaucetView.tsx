@@ -19,6 +19,7 @@ import { faucetABI } from '@/web3/ABI/faucet_abi'
 import { Signer } from '@ethersproject/abstract-signer'
 import { useMediaQuery } from '@mantine/hooks'
 import ValueSelector from '../commonComponents/valueSelector/ValueSelector'
+import { ZERO_ADDRESS } from '@/utils/web3utils'
 
 interface FaucetViewProps { }
 const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
@@ -201,7 +202,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
       <div className={styles.header}>
         <div className={styles.title}>Testnet Faucet</div>
         <div className={styles.supportingText}>
-          {`Request and get 1 ${L3_NATIVE_TOKEN_SYMBOL} per day to your wallet or an external address on G7 network.`}
+          {`Request and get 1 ${L3_NATIVE_TOKEN_SYMBOL} per day to your connected wallet or a another wallet address on G7 network.`}
         </div>
       </div>
       {/* <div className={styles.networksContainer}> */}
@@ -210,7 +211,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
         <ValueSelector
           values={[
             { valueId: 0, displayName: 'Connected wallet' },
-            { valueId: 1, displayName: 'External address' }
+            { valueId: 1, displayName: 'Other wallet' }
           ]}
           selectedValue={selectedAccountType}
           onChange={setSelectedAccountType} />
@@ -232,12 +233,12 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
       <div className={styles.addressContainer}>
         <div className={styles.label}>Wallet Address</div>
         {connectedAccount ? (
-          <input className={styles.address} value={selectedAccountType.valueId === 0 ? (smallView ? `${connectedAccount.slice(0, 6)}....${connectedAccount.slice(-4)}` : connectedAccount) : ''} disabled={selectedAccountType.valueId === 0} />
+          <input placeholder={ZERO_ADDRESS} className={styles.address} value={selectedAccountType.valueId === 0 ? (smallView ? `${connectedAccount.slice(0, 6)}....${connectedAccount.slice(-4)}` : connectedAccount) : ''} disabled={selectedAccountType.valueId === 0} />
         ) : (
           <div className={styles.addressPlaceholder}>Please connect a wallet...</div>
         )}
       </div>
-      <div className={styles.addressContainer} style={{marginTop: '18px'}}>
+      <div className={styles.addressContainer} style={{ marginTop: '18px' }}>
         <button
           className={styles.button}
           onClick={handleClick}
