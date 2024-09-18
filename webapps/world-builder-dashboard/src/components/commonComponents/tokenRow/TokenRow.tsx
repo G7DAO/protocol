@@ -13,7 +13,7 @@ const TokenRow: React.FC<TokenRowProps> = ({ name, symbol, balance, Icon }) => {
         <div className={styles.tokenRow}>
             <div className={styles.tokenInformation}>
                 <div className={styles.tokenIconContainer}>
-                    <Icon />
+                    <Icon className={styles.token}/>
                 </div>
                 <div className={styles.tokenTextContainer}>
                     <div className={styles.tokenTitle}>
