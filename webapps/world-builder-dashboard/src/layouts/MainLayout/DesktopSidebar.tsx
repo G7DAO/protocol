@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import styles from './MainLayout.module.css'
 import IconLogout from '@/assets/IconLogout'
@@ -6,6 +6,8 @@ import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
 import IconWallet04 from '@/assets/IconWallet04'
 import IconFullScreen from '@/assets/IconFullScreen'
+import { Modal } from 'summon-ui/mantine'
+import WalletButton from '@/components/commonComponents/walletButton/WalletButton'
 
 interface DesktopSidebarProps {
   navigationItems: { name: string; navigateTo: string; icon: ReactNode }[]
@@ -14,6 +16,11 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
   const location = useLocation()
   const navigate = useNavigate()
   const { connectedAccount, isMetaMask, disconnectWallet } = useBlockchainContext()
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+
+  const handleModalClose = () => {
+    setIsModalOpen(false)
+  }
 
   return (
     <div className={styles.sideBar}>
@@ -33,13 +40,7 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
         </div>
       </div>
       <div className={styles.footer}>
-        <div className={styles.walletButtonContainer}>
-          <div className={styles.iconWalletBalance}>
-            <IconWallet04 />
-            <div className={styles.balance}>Balance: </div>
-          </div>
-          <div className={styles.iconContainer}><IconFullScreen /></div>
-        </div>
+        <WalletButton />
         {connectedAccount && (
           <div className={styles.web3AddressContainer}>
             <div
