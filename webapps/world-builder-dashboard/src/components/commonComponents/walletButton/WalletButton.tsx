@@ -10,6 +10,7 @@ import { roundToDecimalPlaces } from '@/utils/web3utils'
 import IconUSDC from '@/assets/IconUSDC'
 import IconG7T from '@/assets/IconG7T'
 import TokenRow from '../tokenRow/TokenRow'
+import IconEthereum from '@/assets/IconEthereum'
 
 interface WalletButtonProps { }
 
@@ -51,7 +52,9 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
 
                 <div className={styles.modalContent}>
                     <div className={styles.tokensContainer}>
+                        <TokenRow name={'Game7DAO'} symbol={'G7T'} balance={'300.2334'} Icon={IconG7T} />
                         <TokenRow name={'USDC'} symbol={'USDC'} balance={'3000'} Icon={IconUSDC} />
+                        <TokenRow name={'Ethereum'} symbol={'ETH'} balance={'3'} Icon={IconEthereum} />
                     </div>
                 </div>
             </Modal>
