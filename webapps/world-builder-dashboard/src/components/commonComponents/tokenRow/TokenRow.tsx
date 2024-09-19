@@ -1,42 +1,57 @@
 import React, { useEffect, useState } from 'react'
 import styles from './TokenRow.module.css'
-import { ethers } from 'ethers'
+import { ZERO_ADDRESS } from '@/utils/web3utils'
+import useNativeBalance from '@/hooks/useNativeBalance'
+import useERC20Balance from '@/hooks/useERC20Balance'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 
 interface TokenRowProps {
-  name: string
-  address: string
-  symbol: string
-  balance: string
-  Icon: React.FC<React.SVGProps<SVGSVGElement>>
+    name: string
+    address: string
+    symbol: string
+    rpc: string
+    Icon: React.FC<React.SVGProps<SVGSVGElement>>
 }
 
-const TokenRow: React.FC<TokenRowProps> = ({ name, address, symbol, Icon }) => {
-  const { walletProvider } = useBlockchainContext()
-  const [balance, setBalance] = useState<string>()
-
-  useEffect(() => {
-    const getBalance = async () => {
-      const balance = ethers.utils.formatEther(await walletProvider?.getBalance(address)!)
-      setBalance(balance)
+const useTokenBalance = (address: string, rpc: string, connectedAccount: string) => {
+    if (address === ZERO_ADDRESS) {
+        const { data: balance, isFetching } = useNativeBalance({
+            account: connectedAccount,
+            rpc,
+        });
+        return { balance, isFetching };
+    } else {
+        const { data: balance, isFetching } = useERC20Balance({
+            tokenAddress: address,
+            account: connectedAccount,
+            rpc,
+        });
+        const formattedBalance = balance?.formatted
+        return { balance: formattedBalance, isFetching };
     }
-    getBalance()
-  }, [walletProvider])
+};
 
-  return (
-    <div className={styles.tokenRow}>
-      <div className={styles.tokenInformation}>
-        <div className={styles.tokenIconContainer}>
-          <Icon className={styles.token} />
+
+const TokenRow: React.FC<TokenRowProps> = ({ name, address, symbol, rpc, Icon }) => {
+    const { connectedAccount } = useBlockchainContext()
+    const { balance, isFetching } = useTokenBalance(address, rpc, connectedAccount!);
+
+    return (
+        <div className={styles.tokenRow}>
+            <div className={styles.tokenInformation}>
+                <div className={styles.tokenIconContainer}>
+                    <Icon className={styles.token} />
+                </div>
+                <div className={styles.tokenTextContainer}>
+                    <div className={styles.tokenTitle}>{name}</div>
+                    <div className={styles.tokenSymbol}>{symbol}</div>
+                </div>
+            </div>
+            <div className={styles.balanceText}>
+                {balance ? `${balance}` : '0'}
+            </div>
         </div>
-        <div className={styles.tokenTextContainer}>
-          <div className={styles.tokenTitle}>{name}</div>
-          <div className={styles.tokenSymbol}>{symbol}</div>
-        </div>
-      </div>
-      <div className={styles.balanceText}>{balance}</div>
-    </div>
-  )
+    )
 }
 
 export default TokenRow

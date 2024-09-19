@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query'
+import { useQuery } from 'react-query' 
 import { ethers } from 'ethers'
 import { ERC20_ABI } from '@/web3/ABI/erc20_abi'
 
