@@ -15,7 +15,7 @@ app.route('/').get((req: Request, res: Response) => {
   res.send('Hello World!');
 });
 
-app.use('/api/v1', routes());
+app.use('/api', routes());
 
 server
   .listen({ port: API_PORT, hostname: API_HOST }, async () => {
