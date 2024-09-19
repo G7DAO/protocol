@@ -8,7 +8,6 @@
   "devDependencies": {
     "@nomicfoundation/hardhat-foundry": "^1.1.2",
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-    "@types/keythereum": "^1.2.5",
     "hardhat": "^2.22.4",
     "prettier": "^3.3.2",
     "prettier-plugin-solidity": "^1.3.1"
