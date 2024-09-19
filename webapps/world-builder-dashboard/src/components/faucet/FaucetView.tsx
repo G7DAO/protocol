@@ -44,6 +44,17 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
     }
   }, [faucetTargetChainId])
 
+  useEffect(() => {
+    const fetchNetwork = async () => {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const network = await provider.getNetwork();
+      console.log(network.chainId)
+      // setSelectedNetwork(network.chainId); // Set the network chainId in state
+    };
+
+    fetchNetwork();
+  }, []);
+
   const handleClick = async () => {
     // if (!connectedAccount) {
     //   await connectWallet()

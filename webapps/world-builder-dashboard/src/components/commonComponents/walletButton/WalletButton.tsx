@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { L3_NETWORK } from '../../../../constants'
 import TokenRow from '../tokenRow/TokenRow'
 import styles from './WalletButton.module.css'
@@ -11,11 +11,14 @@ import IconWallet04 from '@/assets/IconWallet04'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import useNativeBalance from '@/hooks/useNativeBalance'
 import { roundToDecimalPlaces } from '@/utils/web3utils'
+import { getTokensForNetwork } from '@/utils/tokens'
 
-interface WalletButtonProps {}
+interface WalletButtonProps { }
 
 const WalletButton: React.FC<WalletButtonProps> = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const [tokens, setTokens] = useState<any[]>([])
+  const { walletProvider } = useBlockchainContext()
   const { connectedAccount } = useBlockchainContext()
   const handleModalClose = () => {
     setIsModalOpen(false)
@@ -25,6 +28,12 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
     account: connectedAccount,
     rpc: L3_NETWORK.rpcs[0]
   })
+
+  useEffect(() => {
+    const tokens_ = getTokensForNetwork(walletProvider?.network?.chainId)
+    setTokens(tokens_)
+  }, [walletProvider])
+
 
   return (
     <>
@@ -59,11 +68,18 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
       >
         <div className={styles.modalContent}>
           <div className={styles.tokensContainer}>
-            <TokenRow name={'Game7DAO'} symbol={'G7T'} balance={'300.2334'} Icon={IconG7T} />
-            <div className={styles.gap} />
-            <TokenRow name={'USDC'} symbol={'USDC'} balance={'3000'} Icon={IconUSDC} />
-            <div className={styles.gap} />
-            <TokenRow name={'Ethereum'} symbol={'ETH'} balance={'3'} Icon={IconEthereum} />
+            {tokens.map((token, index) => (
+              <React.Fragment key={token.symbol}>
+                <TokenRow
+                  name={token.name}
+                  symbol={token.symbol}
+                  balance={''}  // You will fetch the balance separately here
+                  Icon={token.Icon}
+                />
+                {index !== tokens.length - 1 && <div className={styles.gap} />}
+              </React.Fragment>
+            ))}
+
           </div>
         </div>
         <div className={styles.border} />
