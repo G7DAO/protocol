@@ -223,6 +223,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
       <div className={styles.addressContainer}>
         <div className={styles.label}>Wallet Address</div>
         {connectedAccount ? (
+          <input placeholder={ZERO_ADDRESS} className={styles.address} value={selectedAccountType.valueId === 0 ? (smallView ? `${connectedAccount.slice(0, 6)}....${connectedAccount.slice(-4)}` : connectedAccount) : ''} disabled={selectedAccountType.valueId === 0} />
           <input
             placeholder={ZERO_ADDRESS}
             className={styles.address}
@@ -294,6 +295,9 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
             {`You requested funds recently. Come back in `}{' '}
             <span className={styles.time}>{` ${animatedInterval}`}</span>
           </div>
+        )
+      }
+    </div >
         )
       }
     </div>
