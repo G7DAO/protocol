@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 
-const BASE_URL = 'https://9545-109-49-122-187.ngrok-free.app';
+const BASE_URL = 'http://localhost:4000';
 
 export const useFaucetAPI = () => {
   const [loading, setLoading] = useState(false);

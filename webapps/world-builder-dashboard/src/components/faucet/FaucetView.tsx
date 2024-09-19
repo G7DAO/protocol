@@ -223,14 +223,13 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
       <div className={styles.addressContainer}>
         <div className={styles.label}>Wallet Address</div>
         {connectedAccount ? (
-          <input placeholder={ZERO_ADDRESS} className={styles.address} value={selectedAccountType.valueId === 0 ? (smallView ? `${connectedAccount.slice(0, 6)}....${connectedAccount.slice(-4)}` : connectedAccount) : ''} disabled={selectedAccountType.valueId === 0} />
           <input
             placeholder={ZERO_ADDRESS}
             className={styles.address}
             value={connectedAccount && selectedAccountType.valueId === 0 ? connectedAccount : address}
-            onChange={(e) => { 
-              console.log(e.target.value); 
-              setAddress(e.target.value) 
+            onChange={(e) => {
+              console.log(e.target.value);
+              setAddress(e.target.value)
             }} />
         ) : (
           <div className={styles.addressPlaceholder}>Please connect a wallet...</div>
@@ -297,10 +296,8 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
           </div>
         )
       }
-    </div >
-        )
-      }
     </div>
   )
 }
+
 export default FaucetView
