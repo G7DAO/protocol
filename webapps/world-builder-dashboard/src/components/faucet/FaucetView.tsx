@@ -20,12 +20,14 @@ import { Signer } from '@ethersproject/abstract-signer'
 import { useMediaQuery } from '@mantine/hooks'
 import ValueSelector from '../commonComponents/valueSelector/ValueSelector'
 import { ZERO_ADDRESS } from '@/utils/web3utils'
+import { useFaucetAPI } from '@/hooks/useFaucetAPI'
 
 interface FaucetViewProps { }
 const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const [selectedAccountType, setSelectedAccountType] = useState({ valueId: 0, displayName: 'Connected wallet' })
   const [address, setAddress] = useState<string>("")
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L3_NETWORK)
+  const { requestFaucet } = useFaucetAPI()
   const { connectedAccount, isConnecting, getProvider, connectWallet } = useBlockchainContext()
   const [animatedInterval, setAnimatedInterval] = useState('')
   const [nextClaimTimestamp, setNextClaimTimestamp] = useState(0)
@@ -43,13 +45,14 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   }, [faucetTargetChainId])
 
   const handleClick = async () => {
-    if (!connectedAccount) {
-      await connectWallet()
-      return
-    }
-    const provider = await getProvider(L2_NETWORK)
-    const signer = provider.getSigner()
-    claim.mutate({ isL2Target: selectedNetwork.chainId === L2_NETWORK.chainId, signer })
+    // if (!connectedAccount) {
+    //   await connectWallet()
+    //   return
+    // }
+    // const provider = await getProvider(L2_NETWORK)
+    // const signer = provider.getSigner()
+    // claim.mutate({ isL2Target: selectedNetwork.chainId === L2_NETWORK.chainId, signer })
+    await requestFaucet(address)
   }
 
   const queryClient = useQueryClient()
@@ -216,24 +219,18 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
           selectedValue={selectedAccountType}
           onChange={setSelectedAccountType} />
       </div>
-      {/* <button
-          className={selectedNetwork === L3_NETWORK ? styles.selectedNetworkButton : styles.networkButton}
-          onClick={() => setSelectedNetwork(L3_NETWORK)}
-        >
-          {L3_NETWORK.displayName}
-        </button>
-        <button
-          className={selectedNetwork === L2_NETWORK ? styles.selectedNetworkButton : styles.networkButton}
-          onClick={() => setSelectedNetwork(L2_NETWORK)}
-        >
-          {L2_NETWORK.displayName}
-        </button> */}
-      {/* </div> */}
       {/* TODO: MAKE A COMPONENT */}
       <div className={styles.addressContainer}>
         <div className={styles.label}>Wallet Address</div>
         {connectedAccount ? (
-          <input placeholder={ZERO_ADDRESS} className={styles.address} value={selectedAccountType.valueId === 0 ? (smallView ? `${connectedAccount.slice(0, 6)}....${connectedAccount.slice(-4)}` : connectedAccount) : ''} disabled={selectedAccountType.valueId === 0} />
+          <input
+            placeholder={ZERO_ADDRESS}
+            className={styles.address}
+            value={connectedAccount && selectedAccountType.valueId === 0 ? connectedAccount : address}
+            onChange={(e) => { 
+              console.log(e.target.value); 
+              setAddress(e.target.value) 
+            }} />
         ) : (
           <div className={styles.addressPlaceholder}>Please connect a wallet...</div>
         )}
@@ -299,7 +296,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
           </div>
         )
       }
-    </div >
+    </div>
   )
 }
 export default FaucetView
