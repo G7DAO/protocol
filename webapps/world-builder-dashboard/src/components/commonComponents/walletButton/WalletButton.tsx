@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from 'react'
-import { ETH_USD_CONTRACT_ADDRESS, L3_NETWORK } from '../../../../constants'
+import { ALL_NETWORKS, ETH_USD_CONTRACT_ADDRESS, L3_NETWORK } from '../../../../constants'
 import TokenRow from '../tokenRow/TokenRow'
 import styles from './WalletButton.module.css'
-import { Modal } from 'summon-ui/mantine' 
+import { Modal } from 'summon-ui/mantine'
 import IconFullScreen from '@/assets/IconFullScreen'
 import IconWallet04 from '@/assets/IconWallet04'
-import { useBlockchainContext } from '@/contexts/BlockchainContext'  
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import useNativeBalance from '@/hooks/useNativeBalance'
 import { getTokensForNetwork } from '@/utils/tokens'
 import { roundToDecimalPlaces } from '@/utils/web3utils'
- 
-interface WalletButtonProps { }
- 
+
+interface WalletButtonProps {}
+
 const WalletButton: React.FC<WalletButtonProps> = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
-  const [balances, setBalances] = useState<any>({});
   const [tokens, setTokens] = useState<any[]>([])
   const { walletProvider, connectedAccount } = useBlockchainContext()
-  const handleModalClose = () => { 
+  const handleModalClose = () => {
     setIsModalOpen(false)
   }
 
@@ -26,10 +25,13 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
     rpc: L3_NETWORK.rpcs[0]
   })
 
-
   useEffect(() => {
-    const tokens_ = getTokensForNetwork(walletProvider?.network?.chainId)
-    setTokens(tokens_)
+    const fetchTokens = async () => {
+      const chainId = (await walletProvider?.getNetwork()!).chainId
+      const _tokens = getTokensForNetwork(chainId)
+      setTokens(_tokens)
+    }
+    fetchTokens()
   }, [walletProvider])
 
   return (
