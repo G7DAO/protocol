@@ -68,7 +68,7 @@ export const L3_NETWORKS = [
       utils: '0xDaE6924DAFBefb0eb7Ae2B398958920dE61173F2',
       validatorWalletCreator: '0x85Feb8fE05794c2384b848235942490a6610C64B',
       upgradeExecutor: '0xaf0B28462B18df0D7e3b2Ee64684d625f8C3Cb8C',
-      upgradeExecutorL2: '0xee2439C4C47b84aA718a8f899AECf274Cd759eF6',
+      upgradeExecutorL2: '0xee2439C4C47b84aA718a8f899AECf274Cd759eF6'
     },
     tokenBridgeContracts: {
       l2Contracts: {
@@ -139,7 +139,7 @@ export const L3_NETWORKS = [
   },
   {
     chainInfo: {
-    minL2BaseFee: 10000000,
+      minL2BaseFee: 10000000,
       networkFeeReceiver: '0x252431e84d5e22435a0c833c2220770c52f59633',
       infrastructureFeeCollector: '0x252431e84d5e22435a0c833c2220770c52f59633',
       batchPoster: '0x8d77fDe7c1c812877631a6f7Efc9036dcB6481AC',
