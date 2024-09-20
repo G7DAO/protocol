@@ -256,6 +256,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
           onClick={handleClick}
           disabled={
             !!connectedAccount && (!nextClaimAvailable.data || !nextClaimAvailable.data.L3.isAvailable)
+            || !ethers.utils.isAddress(address)
             // (selectedNetwork.chainId === L2_NETWORK.chainId
             //   ? !nextClaimAvailable.data.L2.isAvailable
           }
