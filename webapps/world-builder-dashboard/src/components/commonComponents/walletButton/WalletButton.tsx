@@ -15,24 +15,24 @@ interface WalletButtonProps {}
 const WalletButton: React.FC<WalletButtonProps> = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [tokens, setTokens] = useState<any[]>([])
-  const { walletProvider, connectedAccount } = useBlockchainContext()
+  const { walletProvider, connectedAccount, chainId } = useBlockchainContext()
   const handleModalClose = () => {
     setIsModalOpen(false)
   }
 
-  const { data: l3NativeBalance, isFetching: isFetchingL3NativeBalance } = useNativeBalance({
+  const { data: nativeBalance } = useNativeBalance({
     account: connectedAccount,
-    rpc: L3_NETWORK.rpcs[0]
+    rpc: ALL_NETWORKS.find((network) => network.chainId === chainId)?.rpcs[0]!
   })
 
+  const fetchTokens = async () => {
+    const _tokens = getTokensForNetwork(chainId)
+    setTokens(_tokens)
+  }
+
   useEffect(() => {
-    const fetchTokens = async () => {
-      const chainId = (await walletProvider?.getNetwork()!).chainId
-      const _tokens = getTokensForNetwork(chainId)
-      setTokens(_tokens)
-    }
     fetchTokens()
-  }, [walletProvider])
+  }, [chainId])
 
   return (
     <>
@@ -45,10 +45,11 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
         <div className={styles.iconWalletBalance}>
           <IconWallet04 />
           <div className={styles.balance}>
-            Balance:{' '}
-            {isFetchingL3NativeBalance
-              ? ''
-              : roundToDecimalPlaces(Number(l3NativeBalance), 2) + ' ' + L3_NETWORK.nativeCurrency?.symbol}
+            {nativeBalance
+              ? roundToDecimalPlaces(Number(nativeBalance), 4) +
+                ' ' +
+                ALL_NETWORKS.find((network) => network.chainId === chainId)?.nativeCurrency?.symbol
+              : ''} 
           </div>
         </div>
         <div className={styles.iconContainer}>

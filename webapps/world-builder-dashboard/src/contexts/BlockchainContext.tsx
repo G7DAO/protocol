@@ -16,6 +16,8 @@ interface BlockchainContextType {
   setSelectedHighNetwork: (network: NetworkInterface) => void
   isMetaMask: boolean
   getProvider: (network: NetworkInterface) => Promise<ethers.providers.Web3Provider>
+  setChainId: (chainId: number) => void
+  chainId: number
   isConnecting: boolean
 }
 
@@ -57,7 +59,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   const [selectedHighNetwork, _setSelectedHighNetwork] = useState<NetworkInterface>(DEFAULT_HIGH_NETWORK)
   const [isMetaMask, setIsMetaMask] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
-
+  const [chainId, setChainId] = useState<number>(L1_NETWORK.chainId)
   const [connectedAccount, setConnectedAccount] = useState<string>()
   const tokenAddress = '0x5f88d811246222F6CB54266C42cc1310510b9feA'
 
@@ -92,6 +94,26 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
       }
     }
   }, [window.ethereum])
+
+  const fetchChainId = async () => {
+    const _chainId = (await walletProvider?.getNetwork()!)?.chainId
+    setChainId(_chainId)
+  }
+
+  const handleChainChanged = (hexedChainId: string) => {
+    const newChainId = parseInt(hexedChainId, 16) // Convert hex chainId to decimal
+    setChainId(newChainId)
+    console.log(`Network changed to chainId: ${newChainId}`)
+  }
+
+  useEffect(() => {
+    fetchChainId()
+
+    // if chain changed, set the new chain id
+    if (window.ethereum?.on) {
+      window.ethereum.on('chainChanged', handleChainChanged)
+    }
+  }, [walletProvider])
 
   const handleAccountsChanged = async () => {
     const ethereum = window.ethereum
@@ -228,6 +250,8 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
         selectedHighNetwork,
         setSelectedHighNetwork,
         isMetaMask,
+        setChainId,
+        chainId,
         disconnectWallet,
         getProvider,
         isConnecting
