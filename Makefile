@@ -1,6 +1,6 @@
 .PHONY: clean generate regenerate test docs redocs hardhat bindings test-graffiti test-web3 clean-web3 deepclean
 
-build: hardhat bindings bin/game7 bin/graffiti
+build: hardhat bindings bin/game7 bin/graffiti bin/safe
 
 rebuild: clean generate build
 
@@ -11,6 +11,10 @@ bin/game7:
 bin/graffiti:
 	mkdir -p bin
 	go build -o bin/graffiti ./cmd/graffiti
+
+bin/safe:
+	mkdir -p bin
+	go build -o bin/safe ./cmd/safe
 
 bindings/ERC20/ERC20.go: hardhat
 	mkdir -p bindings/ERC20
@@ -48,7 +52,11 @@ bindings/TokenSender/TokenSender.go: hardhat
 	mkdir -p bindings/TokenSender
 	seer evm generate --package TokenSender --output bindings/TokenSender/TokenSender.go --hardhat web3/artifacts/contracts/faucet/TokenSender.sol/TokenSender.json --cli --struct TokenSender
 
-bindings: bindings/ERC20/ERC20.go bindings/TokenFaucet/TokenFaucet.go bindings/WrappedNativeToken/WrappedNativeToken.go bindings/Staker/Staker.go bindings/MockERC20/MockERC20.go bindings/MockERC721/MockERC721.go bindings/MockERC1155/MockERC1155.go bindings/PositionMetadata/PositionMetadata.go bindings/TokenSender/TokenSender.go
+bindings/ImmutableCreate2Factory/ImmutableCreate2Factory.go: hardhat
+	mkdir -p bindings/ImmutableCreate2Factory
+	seer evm generate --package ImmutableCreate2Factory --output bindings/ImmutableCreate2Factory/ImmutableCreate2Factory.go --hardhat web3/artifacts/contracts/deploy/ImmutableCreate2Factory.sol/ImmutableCreate2Factory.json --cli --struct ImmutableCreate2Factory
+
+bindings: bindings/ERC20/ERC20.go bindings/TokenFaucet/TokenFaucet.go bindings/WrappedNativeToken/WrappedNativeToken.go bindings/Staker/Staker.go bindings/MockERC20/MockERC20.go bindings/MockERC721/MockERC721.go bindings/MockERC1155/MockERC1155.go bindings/PositionMetadata/PositionMetadata.go bindings/TokenSender/TokenSender.go bindings/ImmutableCreate2Factory/ImmutableCreate2Factory.go
 
 test-web3:
 	cd web3 && npx hardhat test
@@ -59,7 +67,7 @@ test-graffiti:
 test: test-web3 test-graffiti
 
 clean:
-	rm -rf bindings/ERC20/* bin/* bindings/TokenFaucet/* bindings/WrappedNativeToken/* bindings/Staker/* bindings/MockERC20/* bindings/MockERC721/* bindings/MockERC1155/* bindings/PositionMetadata/* bindings/TokenSender/*
+	rm -rf bindings/ERC20/* bin/* bindings/TokenFaucet/* bindings/WrappedNativeToken/* bindings/Staker/* bindings/MockERC20/* bindings/MockERC721/* bindings/MockERC1155/* bindings/PositionMetadata/* bindings/TokenSender/* bindings/ImmutableCreate2Factory/*
 
 clean-web3:
 	rm -rf web3/node_modules web3/artifacts
