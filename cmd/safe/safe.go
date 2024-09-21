@@ -9,8 +9,10 @@ import (
 	"math/big"
 	"net/http"
 
+	"github.com/G7DAO/protocol/bindings/GnosisSafe" // Make sure this import path is correct
 	"github.com/G7DAO/protocol/bindings/ImmutableCreate2Factory"
 	"github.com/G7DAO/protocol/bindings/TokenSender"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/math"
@@ -142,6 +144,18 @@ func createSafeProposal(rpcURL string, key *keystore.Key, safeAddress, to common
 		return fmt.Errorf("failed to get chain ID: %v", err)
 	}
 
+	// Create a new instance of the GnosisSafe contract
+	safeInstance, err := GnosisSafe.NewGnosisSafe(safeAddress, client)
+	if err != nil {
+		return fmt.Errorf("failed to create GnosisSafe instance: %v", err)
+	}
+
+	// Fetch the current nonce from the Safe contract
+	nonce, err := safeInstance.Nonce(&bind.CallOpts{})
+	if err != nil {
+		return fmt.Errorf("failed to fetch nonce from Safe contract: %v", err)
+	}
+
 	safeTransactionData := SafeTransactionData{
 		To:             to.Hex(),
 		Value:          value.String(),
@@ -152,7 +166,7 @@ func createSafeProposal(rpcURL string, key *keystore.Key, safeAddress, to common
 		GasPrice:       "0",
 		GasToken:       NativeTokenAddress,
 		RefundReceiver: NativeTokenAddress, // Changed to match the example
-		Nonce:          0,                  // This should be fetched from the Safe
+		Nonce:          nonce.Uint64(),     // Use the fetched nonce
 	}
 
 	// Calculate SafeTxHash
