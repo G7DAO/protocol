@@ -23,7 +23,7 @@ export async function dropperClaimMessageHash(
   ): Promise<{ domain: any; types: any; message: any }> {
     const domain = {
       name: "Game7 Dropper",
-      version: "0.3.0",
+      version: "3.0",
       chainId: chainId,
       verifyingContract: dropperAddress,
     };

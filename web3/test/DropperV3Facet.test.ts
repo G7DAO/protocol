@@ -583,9 +583,9 @@ describe("DropperV3Facet", async function(){
                 requestID,
                 blockDeadline,
                 amount,
-                admin0.address,
+                user0.address,
                 signature
-            )).to.be.revertedWith('Dropper: _claim -- Invalid signature for claim.');
+            )).to.be.revertedWith('Dropper: _claim -- Unauthorized signer for drop');
         });
 
         it('DropperV3-17: Revert on Deadline Past', async function() {
@@ -762,7 +762,7 @@ describe("DropperV3Facet", async function(){
             )).to.be.revertedWith('Failed to send Native Token');
         });
 
-        it('DropperV3-22: Revert on Uknown Type', async function() {
+        it('DropperV3-22: Revert on Unknown Type', async function() {
             
             const dropId = 5;
             const requestID = 7;

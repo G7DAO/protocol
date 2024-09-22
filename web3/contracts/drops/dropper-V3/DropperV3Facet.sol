@@ -26,7 +26,7 @@ import "../../libraries/TokenType.sol";
 
 /**
  * @title Game7 Dropper
- * @author Game7 World Builder team: worldbuilder - at - game7.io
+ * @author Game7 World Builder team:  worldbuilder@game7.io
  * @notice This contract manages drops for Native Tokens, ERC20, ERC1155, and ERC721 tokens.
  */
 contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, DiamondReentrancyGuard {
@@ -76,7 +76,7 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         LibDiamond.enforceIsContractOwner();
 
         // Set up server side signing parameters for EIP712
-        LibSignatures._setEIP712Parameters("Game7 Dropper", "0.3.0");
+        LibSignatures._setEIP712Parameters("Game7 Dropper", "3.0");
 
         // Initialize Terminus administration information
         LibDropper.DropperStorage storage ds = LibDropper.dropperStorage();
@@ -118,6 +118,10 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
             tokenId == 0 || tokenType != TokenType.erc721_type(),
             "Dropper: createDrop -- TokenId should be zero for ERC721 drop."
         );
+
+        require(
+            tokenAddress == address(0) || tokenType != TokenType.native_token_type(),
+            "Dropper: createDrop -- TokenAddress should equal address(0) for native drop");
 
         LibDropper.DropperStorage storage ds = LibDropper.dropperStorage();
 
