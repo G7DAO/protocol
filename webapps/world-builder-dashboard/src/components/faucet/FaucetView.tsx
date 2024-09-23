@@ -250,28 +250,10 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
               </div>
             </>
           ) : (
-            <>
-              <div className={styles.selectorContainer}>
-                <div className={styles.label}>Account</div>
-                <select
-                  className={styles.selector}
-                  value={selectedAccountType} // This binds the selected value
-                  onChange={(e) => handleSelectAccountType(e.target.value)} // Use the selected value from the event
-                >
-                  {accounts ? (
-                    accounts.map((account, index) => (
-                      <option key={index} value={account}>
-                        {`Account ${index + 1}`}
-                      </option>
-                    ))
-                  ) : (
-                    <option value="" disabled>
-                      No accounts available
-                    </option>
-                  )}
-                </select>
-              </div>
-            </>
+            <div className={styles.selectorContainer}>
+              <div className={styles.label}>Account</div>
+              <ValueSelector values={[]} selectedValue={selectedAccountType} onChange={handleSelectAccountType} />
+            </div>
           )
           }
 
