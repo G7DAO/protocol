@@ -7,14 +7,14 @@ import IconFullScreen from '@/assets/IconFullScreen'
 import IconWallet04 from '@/assets/IconWallet04'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import useNativeBalance from '@/hooks/useNativeBalance'
-import { getTokensForNetwork } from '@/utils/tokens'
+import { getTokensForNetwork, Token } from '@/utils/tokens'
 import { roundToDecimalPlaces } from '@/utils/web3utils'
 
 interface WalletButtonProps { }
 
 const WalletButton: React.FC<WalletButtonProps> = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
-  const [tokens, setTokens] = useState<any[]>([])
+  const [tokens, setTokens] = useState<Token[]>([])
   const { connectedAccount, chainId } = useBlockchainContext()
   const handleModalClose = () => {
     setIsModalOpen(false)

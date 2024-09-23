@@ -21,9 +21,14 @@ import { ZERO_ADDRESS } from '@/utils/web3utils'
 import { faucetABI } from '@/web3/ABI/faucet_abi'
 import { Signer } from '@ethersproject/abstract-signer'
 
+interface AccountType {
+  valueId: number,
+  displayName: string
+}
+
 interface FaucetViewProps {}
 const FaucetView: React.FC<FaucetViewProps> = ({}) => {
-  const [selectedAccountType, setSelectedAccountType] = useState({ valueId: 1, displayName: 'Other wallet' })
+  const [selectedAccountType, setSelectedAccountType] = useState<AccountType>({ valueId: 1, displayName: 'Other wallet' })
   const [address, setAddress] = useState<string>('')
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L3_NETWORK)
   const { requestFaucet } = useFaucetAPI()
@@ -57,10 +62,9 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
     await requestFaucet(address)
   }
 
-  const handleSelectAccountType = (selectedAccountType: any) => {
+  const handleSelectAccountType = (selectedAccountType: AccountType) => {
     if (selectedAccountType.valueId === 0 && connectedAccount) setAddress(connectedAccount)
     else setAddress('')
-    console.log(selectedAccountType)
     setSelectedAccountType(selectedAccountType)
   }
 

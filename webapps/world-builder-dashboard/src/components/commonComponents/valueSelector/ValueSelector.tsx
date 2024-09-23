@@ -3,11 +3,15 @@ import { Combobox, Group, InputBase, InputBaseProps, useCombobox } from 'summon-
 import IconCheck from '@/assets/IconCheck'
 import IconChevronDown from '@/assets/IconChevronDown'
 
+interface ValueSelect {
+  valueId: number,
+  displayName: string
+}
 
 type ValueSelectorProps = {
-  values: any[]
-  selectedValue: any
-  onChange: (value: any) => void
+  values: ValueSelect[]
+  selectedValue: ValueSelect
+  onChange: (value: ValueSelect) => void
 } & InputBaseProps
 
 const ValueSelector = ({ values, onChange, selectedValue }: ValueSelectorProps) => {

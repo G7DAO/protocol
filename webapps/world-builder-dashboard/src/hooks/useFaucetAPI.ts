@@ -5,7 +5,7 @@ const BASE_URL = 'http://localhost:4000';
 export const useFaucetAPI = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [response, setResponse] = useState<any>(null);
+  const [response, setResponse] = useState<Record<string, any> | null>(null);
 
   const requestFaucet = useCallback(async (address: string) => {
     setLoading(true);
