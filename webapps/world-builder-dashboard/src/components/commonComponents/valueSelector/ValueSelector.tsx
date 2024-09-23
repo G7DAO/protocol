@@ -3,7 +3,7 @@ import { Combobox, Group, InputBase, InputBaseProps, useCombobox } from 'summon-
 import IconCheck from '@/assets/IconCheck'
 import IconChevronDown from '@/assets/IconChevronDown'
 
-interface ValueSelect {
+export interface ValueSelect {
   valueId: number,
   displayName: string
 }

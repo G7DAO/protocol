@@ -19,7 +19,7 @@ import { timeDifferenceInHoursAndMinutes, timeDifferenceInHoursMinutesAndSeconds
 import { ZERO_ADDRESS } from '@/utils/web3utils'
 import { faucetABI } from '@/web3/ABI/faucet_abi'
 import { Signer } from '@ethersproject/abstract-signer'
-import ValueSelector from '../commonComponents/valueSelector/ValueSelector'
+import AccountSelector from '../commonComponents/accountSelector/AccountSelector'
 
 interface AccountType {
   valueId: number,
@@ -252,7 +252,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
           ) : (
             <div className={styles.selectorContainer}>
               <div className={styles.label}>Account</div>
-              <ValueSelector values={[]} selectedValue={selectedAccountType} onChange={handleSelectAccountType} />
+              <AccountSelector values={[]} selectedValue={selectedAccountType} onChange={handleSelectAccountType} />
             </div>
           )
           }
