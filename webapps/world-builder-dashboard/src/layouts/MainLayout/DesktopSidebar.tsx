@@ -32,14 +32,16 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
         </div>
       </div>
       <div className={styles.footer}>
-        <WalletButton />
         {connectedAccount && (
-          <div className={styles.web3AddressContainer}>
-            <div
-              className={styles.web3address}
-            >{`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}</div>
-            {isMetaMask && <IconLogout onClick={disconnectWallet} className={styles.iconButton} />}
-          </div>
+          <>
+            <WalletButton />
+            <div className={styles.web3AddressContainer}>
+              <div
+                className={styles.web3address}
+              >{`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}</div>
+              {isMetaMask && <IconLogout onClick={disconnectWallet} className={styles.iconButton} />}
+            </div>
+          </>
         )}
       </div>
     </div>

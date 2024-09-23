@@ -8,7 +8,6 @@ import {
   L3_NATIVE_TOKEN_SYMBOL,
   L3_NETWORK
 } from '../../../constants'
-import ValueSelector from '../commonComponents/valueSelector/ValueSelector'
 import styles from './FaucetView.module.css'
 import { ethers } from 'ethers'
 import { NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
@@ -20,6 +19,7 @@ import { timeDifferenceInHoursAndMinutes, timeDifferenceInHoursMinutesAndSeconds
 import { ZERO_ADDRESS } from '@/utils/web3utils'
 import { faucetABI } from '@/web3/ABI/faucet_abi'
 import { Signer } from '@ethersproject/abstract-signer'
+import ValueSelector from '../commonComponents/valueSelector/ValueSelector'
 
 interface AccountType {
   valueId: number,
@@ -32,7 +32,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const [address, setAddress] = useState<string>('')
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L3_NETWORK)
   const { requestFaucet } = useFaucetAPI()
-  const { connectedAccount, isConnecting } = useBlockchainContext()
+  const { connectedAccount, connectWallet } = useBlockchainContext()
   const [animatedInterval, setAnimatedInterval] = useState('')
   const [nextClaimTimestamp, setNextClaimTimestamp] = useState(0)
   const [networkError, setNetworkError] = useState('')
@@ -49,7 +49,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
     if (selectedAccountType.valueId === 0 && connectedAccount) setAddress(connectedAccount)
   }, [faucetTargetChainId, selectedAccountType])
 
-  const handleClick = async () => {
+  const handleRequest = async () => {
     // TODO: DELETE LATER WHEN REQUEST IS FULLY INTEGRATED :D
     // if (!connectedAccount) {
     //   await connectWallet()
@@ -58,8 +58,11 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
     // const provider = await getProvider(L2_NETWORK)
     // const signer = provider.getSigner()
     // claim.mutate({ isL2Target: selectedNetwork.chainId === L2_NETWORK.chainId, signer })
-
     await requestFaucet(address)
+  }
+
+  const handleConnect = async () => {
+    if (!connectedAccount) connectWallet()
   }
 
   const handleSelectAccountType = (selectedAccountType: AccountType) => {
@@ -219,10 +222,59 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
       <div className={styles.header}>
         <div className={styles.title}>Testnet Faucet</div>
         <div className={styles.supportingText}>
-          {`Request and get 1 ${L3_NATIVE_TOKEN_SYMBOL} per day to your connected wallet or a another wallet address on G7 network.`}
+          Request and get <strong> 1{L3_NATIVE_TOKEN_SYMBOL} testnet token </strong> per day to your connected wallet or a another wallet address on G7 network.
         </div>
       </div>
-      {/* <div className={styles.networksContainer}> */}
+      <div className={styles.contentContainer}>
+        <div className={styles.addressSelectorContainer}>
+          <div className={styles.addressContainer}>
+            <div className={styles.label}>Recipient Address</div>
+            <input
+              placeholder={ZERO_ADDRESS}
+              className={styles.address}
+              value={connectedAccount && selectedAccountType.valueId === 0 ? connectedAccount : address}
+              onChange={(e) => {
+                setAddress(e.target.value)
+              }}
+            />
+          </div>
+          {!connectedAccount ? (
+            <>
+              <div className={styles.textSeparator}>
+                Or
+              </div>
+              <div className={styles.connectWalletButton} onClick={() => { handleConnect() }}>
+                <div className={styles.connectWalletText}>
+                  Connect Wallet
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className={styles.selectorContainer}>
+                <ValueSelector
+                  values={[
+                    { valueId: 0, displayName: 'Connected wallet' },
+                    { valueId: 1, displayName: 'Other wallet' }
+                  ]}
+                  selectedValue={selectedAccountType}
+                  onChange={(e) => {
+                    handleSelectAccountType(e)
+                  }}
+                />
+              </div>
+            </>
+          )
+          }
+
+        </div>
+        <div className={styles.requestTokensButton} onClick={() => { handleRequest() }}>
+          <div className={styles.requestTokensButtonText}>
+            Request Tokens
+          </div>
+        </div>
+      </div>
+      {/* <div className={styles.networksContainer}>
       <div className={styles.addressContainer}>
         <div className={styles.label}>Address type</div>
         <ValueSelector
@@ -236,7 +288,6 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
           }}
         />
       </div>
-      {/* TODO: MAKE A COMPONENT */}
       <div className={styles.addressContainer}>
         <div className={styles.label}>Wallet Address</div>
         <input
@@ -263,7 +314,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
               ? 'Requesting...'
               : 'Request'}
         </button>
-      </div>
+      </div> */}
       {!!networkError && <div className={styles.errorContainer}>{networkError}.</div>}
       {!networkError && nextClaimAvailable.isLoading && (
         <div className={styles.warningContainer}>Checking faucet permissions...</div>

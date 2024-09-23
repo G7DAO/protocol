@@ -9,7 +9,16 @@
 
   border-radius: 8px;
   border: 1px solid var(--Gray-200, #eaecf0);
-  background: var(--Base-White, #fff);
+  background: var(--Gray-50, #f9fafb);
+}
+
+.contentContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  align-self: stretch;
+  background: var(--Gray-25, #fcfcfd);
 }
 
 .header {
@@ -80,9 +89,84 @@
 .addressContainer {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 6px;
+  flex: 1 0 0;
+}
+
+.addressSelectorContainer {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
   align-self: stretch;
 }
+
+.textSeparator {
+  display: flex;
+  width: 16px;
+  height: 36px;
+  flex-direction: column;
+  justify-content: center;
+  color: var(--Gray-600, #475467);
+  /* Text sm/Regular */
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 142.857% */
+}
+
+.connectWalletButton {
+  cursor: pointer;
+  display: flex;
+  height: 36px;
+  padding: 8px var(--14px, 14px);
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--Primary-50, #ffebef);
+  background: var(--Primary-50, #ffebef);
+}
+
+.connectWalletText {
+  color: var(--Primary-700, #dd1534);
+
+  /* Text sm/Semibold */
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px; /* 142.857% */
+}
+
+.requestTokensButton {
+  cursor: pointer;
+  display: flex;
+  height: 36px;
+  padding: 8px var(--14px, 14px);
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--Primary-600, #ef233b);
+  background: var(--Primary-600, #ef233b);
+
+  /* Shadow/xs */
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+}
+
+.requestTokensButtonText {
+  color: var(--Base-White, #fff);
+
+  /* Text sm/Semibold */
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px; /* 142.857% */
+}
+
 
 .label {
   color: var(--Gray-600, #475467);
@@ -216,7 +300,7 @@
 .gapBetween {
   width: 341px;
   height: 1px;
-  background: #D0D5DD;
+  background: #d0d5dd;
 }
 
 @media (max-width: 1199px) {
