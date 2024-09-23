@@ -17,7 +17,7 @@ interface BlockchainContextType {
   isMetaMask: boolean
   getProvider: (network: NetworkInterface) => Promise<ethers.providers.Web3Provider>
   setChainId: (chainId: number) => void
-  chainId: number
+  chainId: number | undefined
   isConnecting: boolean
 }
 
@@ -59,7 +59,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   const [selectedHighNetwork, _setSelectedHighNetwork] = useState<NetworkInterface>(DEFAULT_HIGH_NETWORK)
   const [isMetaMask, setIsMetaMask] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
-  const [chainId, setChainId] = useState<number>(L1_NETWORK.chainId)
+  const [chainId, setChainId] = useState<number | undefined>(L1_NETWORK.chainId)
   const [connectedAccount, setConnectedAccount] = useState<string>()
   const tokenAddress = '0x5f88d811246222F6CB54266C42cc1310510b9feA'
 
@@ -96,7 +96,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   }, [window.ethereum])
 
   const fetchChainId = async () => {
-    const _chainId = (await walletProvider?.getNetwork()!)?.chainId
+    const _chainId = (await walletProvider?.getNetwork())?.chainId
     setChainId(_chainId)
   }
 

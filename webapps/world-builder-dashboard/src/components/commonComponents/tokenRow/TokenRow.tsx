@@ -13,7 +13,7 @@ interface TokenRowProps {
     Icon: React.FC<React.SVGProps<SVGSVGElement>>
 }
 
-const useTokenBalance = (address: string, rpc: string, connectedAccount: string) => {
+const useTokenBalance = (address: string, rpc: string, connectedAccount: string | undefined)=> {
     if (address === ZERO_ADDRESS) {
         const { data: balance, isFetching } = useNativeBalance({
             account: connectedAccount,
@@ -34,7 +34,7 @@ const useTokenBalance = (address: string, rpc: string, connectedAccount: string)
 
 const TokenRow: React.FC<TokenRowProps> = ({ name, address, symbol, rpc, Icon }) => {
     const { connectedAccount } = useBlockchainContext()
-    const { balance } = useTokenBalance(address, rpc, connectedAccount!);
+    const { balance } = useTokenBalance(address, rpc, connectedAccount);
 
     return (
         <div className={styles.tokenRow}>
