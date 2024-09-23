@@ -17,6 +17,8 @@ interface BlockchainContextType {
   isMetaMask: boolean
   getProvider: (network: NetworkInterface) => Promise<ethers.providers.Web3Provider>
   setChainId: (chainId: number) => void
+  accounts: string[]
+  setAccounts: (accounts: string[]) => void
   chainId: number | undefined
   isConnecting: boolean
 }
@@ -61,6 +63,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   const [isConnecting, setIsConnecting] = useState(false)
   const [chainId, setChainId] = useState<number | undefined>(undefined)
   const [connectedAccount, setConnectedAccount] = useState<string>()
+  const [accounts, setAccounts] = useState<string[]>([''])
   const tokenAddress = '0x5f88d811246222F6CB54266C42cc1310510b9feA'
 
   const setSelectedLowNetwork = (network: NetworkInterface) => {
@@ -122,6 +125,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
       // @ts-ignore
       setIsMetaMask(window.ethereum?.isMetaMask && !window.ethereum?.overrideIsMetaMask)
       const accounts = await provider.listAccounts()
+      setAccounts(accounts)
       if (accounts.length > 0) {
         setConnectedAccount(accounts[0])
       } else {
@@ -254,7 +258,9 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
         chainId,
         disconnectWallet,
         getProvider,
-        isConnecting
+        isConnecting,
+        accounts,
+        setAccounts
       }}
     >
       {children}

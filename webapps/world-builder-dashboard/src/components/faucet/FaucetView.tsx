@@ -32,7 +32,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const [address, setAddress] = useState<string>('')
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L3_NETWORK)
   const { requestFaucet } = useFaucetAPI()
-  const { connectedAccount, connectWallet } = useBlockchainContext()
+  const { connectedAccount, connectWallet, accounts } = useBlockchainContext()
   const [animatedInterval, setAnimatedInterval] = useState('')
   const [nextClaimTimestamp, setNextClaimTimestamp] = useState(0)
   const [networkError, setNetworkError] = useState('')
@@ -252,16 +252,24 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
           ) : (
             <>
               <div className={styles.selectorContainer}>
-                <ValueSelector
-                  values={[
-                    { valueId: 0, displayName: 'Connected wallet' },
-                    { valueId: 1, displayName: 'Other wallet' }
-                  ]}
-                  selectedValue={selectedAccountType}
-                  onChange={(e) => {
-                    handleSelectAccountType(e)
-                  }}
-                />
+                <div className={styles.label}>Account</div>
+                <select
+                  className={styles.selector}
+                  value={selectedAccountType} // This binds the selected value
+                  onChange={(e) => handleSelectAccountType(e.target.value)} // Use the selected value from the event
+                >
+                  {accounts ? (
+                    accounts.map((account, index) => (
+                      <option key={index} value={account}>
+                        {`Account ${index + 1}`}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="" disabled>
+                      No accounts available
+                    </option>
+                  )}
+                </select>
               </div>
             </>
           )

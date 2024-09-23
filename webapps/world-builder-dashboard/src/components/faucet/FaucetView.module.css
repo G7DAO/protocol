@@ -101,6 +101,25 @@
   align-self: stretch;
 }
 
+.selectorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  align-self: stretch;
+}
+
+.selector {
+  display: flex;
+  padding: 8px 12px;
+  align-items: center;
+  gap: 8px;
+  align-self: stretch;
+  border-radius: 8px;
+  border: 1px solid var(--Gray-100, #f2f4f7);
+  background: var(--Base-White, #fff);
+}
+
 .textSeparator {
   display: flex;
   width: 16px;
@@ -166,7 +185,6 @@
   font-weight: 600;
   line-height: 20px; /* 142.857% */
 }
-
 
 .label {
   color: var(--Gray-600, #475467);

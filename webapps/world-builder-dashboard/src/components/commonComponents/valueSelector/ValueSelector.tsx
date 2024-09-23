@@ -12,9 +12,10 @@ type ValueSelectorProps = {
   values: ValueSelect[]
   selectedValue: ValueSelect
   onChange: (value: ValueSelect) => void
+  customClass?: string
 } & InputBaseProps
 
-const ValueSelector = ({ values, onChange, selectedValue }: ValueSelectorProps) => {
+const ValueSelector = ({ values, onChange, selectedValue, customClass }: ValueSelectorProps) => {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption()
   })
@@ -35,7 +36,7 @@ const ValueSelector = ({ values, onChange, selectedValue }: ValueSelectorProps) 
       <Combobox.Target>
         <InputBase
           component='button'
-          className={styles.inputBase}
+          className={customClass ? customClass : styles.inputBase}
           pointer
           variant='unstyled'
           rightSection={values.length > 1 ? <IconChevronDown className={styles.chevron} /> : ''}
