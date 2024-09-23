@@ -38,15 +38,6 @@ const router = createBrowserRouter([
       }
     ]
   },
-  // {
-  //   element: <MainLayout />,
-  //   children: [
-  //     {
-  //       path: '/stake/*',
-  //       element: <StakingPage />
-  //     }
-  //   ]
-  // },
   {
     path: '*',
     element: <NotFoundPage />
