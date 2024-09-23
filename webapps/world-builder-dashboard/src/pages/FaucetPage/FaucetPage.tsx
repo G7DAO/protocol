@@ -1,8 +1,6 @@
 // React and hooks
 import { useEffect, useState } from 'react'
 import { useQueryClient } from 'react-query'
-// Constants
-import { L3_NATIVE_TOKEN_SYMBOL } from '../../../constants'
 // Styles
 import bridgeStyles from '../BridgePage/BridgePage.module.css'
 import styles from './FaucetPage.module.css'

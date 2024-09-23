@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ALL_NETWORKS, ETH_USD_CONTRACT_ADDRESS, L3_NETWORK } from '../../../../constants'
+import { ALL_NETWORKS } from '../../../../constants'
 import TokenRow from '../tokenRow/TokenRow'
 import styles from './WalletButton.module.css'
 import { Modal } from 'summon-ui/mantine'
@@ -15,7 +15,7 @@ interface WalletButtonProps {}
 const WalletButton: React.FC<WalletButtonProps> = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [tokens, setTokens] = useState<any[]>([])
-  const { walletProvider, connectedAccount, chainId } = useBlockchainContext()
+  const { connectedAccount, chainId } = useBlockchainContext()
   const handleModalClose = () => {
     setIsModalOpen(false)
   }

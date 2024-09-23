@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import styles from './TokenRow.module.css'
 import { roundToDecimalPlaces, ZERO_ADDRESS } from '@/utils/web3utils'
 import useNativeBalance from '@/hooks/useNativeBalance'
@@ -34,7 +34,7 @@ const useTokenBalance = (address: string, rpc: string, connectedAccount: string)
 
 const TokenRow: React.FC<TokenRowProps> = ({ name, address, symbol, rpc, Icon }) => {
     const { connectedAccount } = useBlockchainContext()
-    const { balance, isFetching } = useTokenBalance(address, rpc, connectedAccount!);
+    const { balance } = useTokenBalance(address, rpc, connectedAccount!);
 
     return (
         <div className={styles.tokenRow}>

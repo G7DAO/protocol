@@ -20,7 +20,6 @@ import { timeDifferenceInHoursAndMinutes, timeDifferenceInHoursMinutesAndSeconds
 import { ZERO_ADDRESS } from '@/utils/web3utils'
 import { faucetABI } from '@/web3/ABI/faucet_abi'
 import { Signer } from '@ethersproject/abstract-signer'
-import { useMediaQuery } from '@mantine/hooks'
 
 interface FaucetViewProps {}
 const FaucetView: React.FC<FaucetViewProps> = ({}) => {
@@ -35,7 +34,6 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const { faucetTargetChainId } = useUISettings()
 
   const { refetchNewNotifications } = useBridgeNotificationsContext()
-  const smallView = useMediaQuery('(max-width: 1199px)')
 
   useEffect(() => {
     const targetNetwork = ALL_NETWORKS.find((n) => n.chainId === faucetTargetChainId)
@@ -230,7 +228,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
           ]}
           selectedValue={selectedAccountType}
           onChange={(e) => {
-            handleSelectAccountType(e, address)
+            handleSelectAccountType(e)
           }}
         />
       </div>
