@@ -215,6 +215,7 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         uint256 requestID,
         uint256 blockDeadline,
         uint256 amount,
+        address recipient,
         address signer,
         bytes memory signature
     ) internal virtual {
@@ -235,7 +236,7 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
             "Dropper: _claim -- That (dropID, requestID) pair has already been claimed"
         );
 
-        bytes32 hash = claimMessageHash(dropId, requestID, msg.sender, blockDeadline, amount);
+        bytes32 hash = claimMessageHash(dropId, requestID, recipient, blockDeadline, amount);
         require(
             SignatureChecker.isValidSignatureNow(signer, hash, signature),
             "Dropper: _claim -- Invalid signature for claim."
@@ -281,6 +282,18 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         emit Claimed(dropId, msg.sender, signer, requestID, amount);
     }
 
+    function claimFor(
+        uint256 dropId,
+        uint256 requestID,
+        uint256 blockDeadline,
+        uint256 amount,
+        address recipient,
+        address signer,
+        bytes memory signature
+    ) public virtual diamondNonReentrant {
+        _claim(dropId, requestID, blockDeadline, amount, recipient, signer, signature);
+    }
+
     function claim(
         uint256 dropId,
         uint256 requestID,
@@ -289,7 +302,27 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         address signer,
         bytes memory signature
     ) public virtual diamondNonReentrant {
-        _claim(dropId, requestID, blockDeadline, amount, signer, signature);
+        _claim(dropId, requestID, blockDeadline, amount, msg.sender ,signer, signature);
+    }
+
+    function batchClaimFor(
+        uint256[] memory dropIDList,
+        uint256[] memory requestIDList,
+        uint256[] memory blockDeadlineList,
+        uint256[] memory amountList,
+        address[] memory recipientList,
+        address[] memory signerList,
+        bytes[] memory signatureList
+    ) public virtual diamondNonReentrant{
+
+        _batchClaim(
+        dropIDList,
+        requestIDList,
+        blockDeadlineList,
+        amountList,
+        recipientList,
+        signerList,
+        signatureList);
     }
 
     function batchClaim(
@@ -299,7 +332,33 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         uint256[] memory amountList,
         address[] memory signerList,
         bytes[] memory signatureList
-    ) public virtual diamondNonReentrant {
+    ) public virtual diamondNonReentrant{
+
+        uint256 l = signatureList.length;
+        address[] memory recipientList = new address[](l);
+        for(uint i =0; i<l; i++){
+            recipientList[i] = msg.sender;
+        }
+
+        _batchClaim(
+        dropIDList,
+        requestIDList,
+        blockDeadlineList,
+        amountList,
+        recipientList,
+        signerList,
+        signatureList);
+    }
+
+    function _batchClaim(
+        uint256[] memory dropIDList,
+        uint256[] memory requestIDList,
+        uint256[] memory blockDeadlineList,
+        uint256[] memory amountList,
+        address[] memory recipientList,
+        address[] memory signerList,
+        bytes[] memory signatureList
+    ) internal virtual {
         require(
             dropIDList.length == requestIDList.length,
             "Dropper: batchClaim -- dropIDList and requestIDList length mismatch"
@@ -320,6 +379,9 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
             dropIDList.length == signatureList.length,
             "Dropper: batchClaim -- dropIDList and signatureList length mismatch"
         );
+        require(
+            recipientList.length == signatureList.length,
+            "Dropper: batachClaim -- recipientList and signatureList length mismatch");
 
         uint256 i = 0;
         for (i = 0; i < dropIDList.length; i++) {
@@ -328,6 +390,7 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
                 requestIDList[i],
                 blockDeadlineList[i],
                 amountList[i],
+                recipientList[i],
                 signerList[i],
                 signatureList[i]
             );

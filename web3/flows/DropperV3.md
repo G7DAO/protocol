@@ -1,5 +1,6 @@
 
 # `Dropper V3`: Execution flows for DropperV3Facet, handling token drops
+# `STAKER`: Execution flows for Staker, Game7's permissionless staking protocol
 
 This document outlines the execution flows for the `DropperV3Facet` contract, used to create, manage, and claim token drops in a permissionless way.
 
