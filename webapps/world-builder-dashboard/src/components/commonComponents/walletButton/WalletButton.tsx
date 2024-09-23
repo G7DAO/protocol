@@ -10,7 +10,7 @@ import useNativeBalance from '@/hooks/useNativeBalance'
 import { getTokensForNetwork } from '@/utils/tokens'
 import { roundToDecimalPlaces } from '@/utils/web3utils'
 
-interface WalletButtonProps {}
+interface WalletButtonProps { }
 
 const WalletButton: React.FC<WalletButtonProps> = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
@@ -22,7 +22,7 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
 
   const { data: nativeBalance } = useNativeBalance({
     account: connectedAccount,
-    rpc: ALL_NETWORKS.find((network) => network.chainId === chainId)?.rpcs[0]!
+    rpc: ALL_NETWORKS.find((network) => network.chainId === chainId)?.rpcs[0] || ''
   })
 
   const fetchTokens = async () => {
@@ -47,9 +47,9 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
           <div className={styles.balance}>
             {nativeBalance
               ? roundToDecimalPlaces(Number(nativeBalance), 4) +
-                ' ' +
-                ALL_NETWORKS.find((network) => network.chainId === chainId)?.nativeCurrency?.symbol
-              : ''} 
+              ' ' +
+              ALL_NETWORKS.find((network) => network.chainId === chainId)?.nativeCurrency?.symbol
+              : ''}
           </div>
         </div>
         <div className={styles.iconContainer}>
