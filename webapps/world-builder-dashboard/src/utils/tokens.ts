@@ -18,7 +18,7 @@ export const getTokensForNetwork = (chainId: number | undefined): Token[] => {
             return [
                 {
                     name: 'Game7DAO',
-                    symbol: 'G7T',
+                    symbol: 'TG7T',
                     address: L1_NETWORK.g7TokenAddress,
                     Icon: IconG7T,
                     rpc: L1_NETWORK.rpcs[0],
@@ -42,7 +42,7 @@ export const getTokensForNetwork = (chainId: number | undefined): Token[] => {
             return [
                 {
                     name: 'Game7DAO',
-                    symbol: 'G7T',
+                    symbol: 'TG7T',
                     address: L2_NETWORK.g7TokenAddress,
                     Icon: IconG7T,
                     rpc: L2_NETWORK.rpcs[0],

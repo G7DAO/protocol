@@ -59,7 +59,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   const [selectedHighNetwork, _setSelectedHighNetwork] = useState<NetworkInterface>(DEFAULT_HIGH_NETWORK)
   const [isMetaMask, setIsMetaMask] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
-  const [chainId, setChainId] = useState<number | undefined>(L1_NETWORK.chainId)
+  const [chainId, setChainId] = useState<number | undefined>(undefined)
   const [connectedAccount, setConnectedAccount] = useState<string>()
   const tokenAddress = '0x5f88d811246222F6CB54266C42cc1310510b9feA'
 

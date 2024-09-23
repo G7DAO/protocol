@@ -26,8 +26,8 @@ interface AccountType {
   displayName: string
 }
 
-interface FaucetViewProps {}
-const FaucetView: React.FC<FaucetViewProps> = ({}) => {
+interface FaucetViewProps { }
+const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const [selectedAccountType, setSelectedAccountType] = useState<AccountType>({ valueId: 1, displayName: 'Other wallet' })
   const [address, setAddress] = useState<string>('')
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L3_NETWORK)
@@ -239,37 +239,29 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
       {/* TODO: MAKE A COMPONENT */}
       <div className={styles.addressContainer}>
         <div className={styles.label}>Wallet Address</div>
-        {connectedAccount ? (
-          <input
-            placeholder={ZERO_ADDRESS}
-            className={styles.address}
-            value={connectedAccount && selectedAccountType.valueId === 0 ? connectedAccount : address}
-            onChange={(e) => {
-              setAddress(e.target.value)
-            }}
-          />
-        ) : (
-          <div className={styles.addressPlaceholder}>Please connect a wallet...</div>
-        )}
+        <input
+          placeholder={ZERO_ADDRESS}
+          className={styles.address}
+          value={connectedAccount && selectedAccountType.valueId === 0 ? connectedAccount : address}
+          onChange={(e) => {
+            setAddress(e.target.value)
+          }}
+        />
       </div>
       <div className={styles.addressContainer} style={{ marginTop: '18px' }}>
         <button
           className={styles.button}
           onClick={handleClick}
           disabled={
-            !!connectedAccount && (!nextClaimAvailable.data || !nextClaimAvailable.data.L3.isAvailable)
+            (!nextClaimAvailable.data || !nextClaimAvailable.data.L3.isAvailable)
             || !ethers.utils.isAddress(address)
-            // (selectedNetwork.chainId === L2_NETWORK.chainId
-            //   ? !nextClaimAvailable.data.L2.isAvailable
           }
         >
           {isConnecting
             ? 'Connecting wallet...'
             : claim.isLoading
               ? 'Requesting...'
-              : connectedAccount
-                ? 'Request'
-                : 'Connect wallet'}
+              : 'Request'}
         </button>
       </div>
       {!!networkError && <div className={styles.errorContainer}>{networkError}.</div>}
