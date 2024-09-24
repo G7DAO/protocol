@@ -1,18 +1,10 @@
 import cors from 'cors';
-
-// Parse allowed origins
-const allowedOriginsStr = process.env.PROTOCOL_API_CORS_WHITELIST || '';
-const allowedOriginsArray = allowedOriginsStr.split(',').filter(Boolean);
-
-const allowedOrigins: { [key: string]: boolean } = allowedOriginsArray.reduce(
-  (acc, origin) => ({ ...acc, [origin]: true }),
-  {}
-);
+import { allowedOrigins } from '../config';
 
 // CORS configuration
 export const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {
-    if (!origin || !allowedOriginsArray.length || allowedOrigins['*']) {
+    if (!origin || allowedOrigins['*']) {
       callback(null, '*');
     } else if (allowedOrigins[origin]) {
       callback(null, origin);
