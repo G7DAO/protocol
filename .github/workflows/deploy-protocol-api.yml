@@ -1,11 +1,11 @@
 name: Deploy protocol API
 
 on:
-    push:
-        branches:
-        - main
-        paths:
-        - 'apis/protocol-api/**'
+  push:
+    branches:
+      - main
+    paths:
+      - "api/**"
 
 jobs:
   build:
@@ -15,8 +15,8 @@ jobs:
       - name: Checkout repository and main branch
         uses: actions/checkout@v2
         with:
-            ref: main
-      
+          ref: main
+
       - name: Write down submodule commit sha
         working-directory: ./
         run: |
@@ -86,5 +86,5 @@ jobs:
           do
             ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -A ubuntu@"${BASTION_HOST_IP}" \
               ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -A ubuntu@"${host}" \
-              /home/ubuntu/protocol/apis/protocol-api/deploy/deploy.bash
+              /home/ubuntu/protocol/api/deploy/deploy.bash
           done
