@@ -9,12 +9,16 @@ import IconWallet04 from '@/assets/IconWallet04'
 import DesktopSidebar from '@/layouts/MainLayout/DesktopSidebar'
 import MobileSidebar from '@/layouts/MainLayout/MobileSidebar'
 import { useMediaQuery } from '@mantine/hooks'
+import IconExplorer from '@/assets/IconExplorer'
+import IconDocumentation from '@/assets/IconDocumentation'
 
 interface MainLayoutProps {}
 
 const NAVIGATION_ITEMS = [
   { name: 'bridge', navigateTo: '/bridge', icon: <IconWallet04 /> },
   { name: 'faucet', navigateTo: '/faucet', icon: <IconDroplets02 /> },
+  { name: 'explorer', navigateTo: 'https://google.com', icon: <IconExplorer /> },
+  { name: 'documentation', navigateTo: 'https://google.com', icon: <IconDocumentation /> },
 ]
 const MainLayout: React.FC<MainLayoutProps> = ({}) => {
   const smallView = useMediaQuery('(max-width: 1199px)')
