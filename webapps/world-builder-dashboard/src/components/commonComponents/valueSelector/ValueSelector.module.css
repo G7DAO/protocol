@@ -9,7 +9,7 @@
     background: var(--Base-White, #FFF);
 
     box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
-    color: var(--Gray-700, #344054);
+    color: var(--Gray-700, #344054) !important;
 
     /* Text sm/Medium */
     font-family: Inter, sans-serif;
@@ -26,7 +26,7 @@
 }
 
 .inputBaseNetworkName {
-    color: var(--Gray-700, #344054);
+    color: var(--Gray-700, #344054) !important;
 }
 
 /* Mantine components  - !important should be used in every line*/
