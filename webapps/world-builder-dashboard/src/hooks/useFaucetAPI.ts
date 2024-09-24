@@ -7,7 +7,7 @@ export const useFaucetAPI = () => {
   const [error, setError] = useState<string | null>(null);
   const [response, setResponse] = useState<Record<string, any> | null>(null);
 
-  const requestFaucet = useCallback(async (address: string) => {
+  const requestFaucet = useCallback(async (address: string | undefined) => {
     setLoading(true);
     setError(null);
 
