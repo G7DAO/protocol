@@ -1,8 +1,7 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 
 /**
- * Authors: Moonstream Engineering (engineering@moonstream.to)
- * GitHub: https://github.com/bugout-dev/dao
+ * Authors: Game7 Engineering 
  */
 
 pragma solidity ^0.8.0;

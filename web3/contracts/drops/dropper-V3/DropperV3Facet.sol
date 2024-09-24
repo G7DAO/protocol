@@ -1,9 +1,7 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 
 /**
  * Authors: Game7 Engineering
- * GitHub: https://github.com/bugout-dev/engine
- * TODO: Need Updated information wanted for this
  */
 
 pragma solidity ^0.8.9;
@@ -251,22 +249,22 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
 
         if (claimToken.tokenType == TokenType.erc20_type()) {
             IERC20 erc20Contract = IERC20(claimToken.tokenAddress);
-            bool sent = erc20Contract.transfer(msg.sender, amount);
+            bool sent = erc20Contract.transfer(recipient, amount);
             require(sent, "Failed to send ERC20");
         } else if (claimToken.tokenType == TokenType.erc721_type()) {
             IERC721 erc721Contract = IERC721(claimToken.tokenAddress);
-            erc721Contract.safeTransferFrom(address(this), msg.sender, amount, "");
+            erc721Contract.safeTransferFrom(address(this), recipient, amount, "");
             //Amount change after safeTransferFrom only on erc721. Since amount is used as tokenId for erc721 transfers
             amount = 1;
         } else if (claimToken.tokenType == TokenType.erc1155_type()) {
             IERC1155 erc1155Contract = IERC1155(claimToken.tokenAddress);
-            erc1155Contract.safeTransferFrom(address(this), msg.sender, claimToken.tokenId, amount, "");
+            erc1155Contract.safeTransferFrom(address(this), recipient, claimToken.tokenId, amount, "");
         } else if (claimToken.tokenType == TokenType.native_token_type()) {
-            (bool sent, ) = payable(msg.sender).call{ value: amount }("");
+            (bool sent, ) = payable(recipient).call{ value: amount }("");
             require(sent, "Failed to send Native Token");
         } else if (claimToken.tokenType == TokenType.terminus_mintable_type()) {
             ITerminus terminusFacetContract = ITerminus(claimToken.tokenAddress);
-            terminusFacetContract.mint(msg.sender, claimToken.tokenId, amount, "");
+            terminusFacetContract.mint(recipient, claimToken.tokenId, amount, "");
         } else {
             revert("Dropper: _claim -- Unknown token type in claim");
         }
@@ -279,7 +277,7 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
 
         ds.DropRequestClaimed[dropId][requestID] = true;
 
-        emit Claimed(dropId, msg.sender, signer, requestID, amount);
+        emit Claimed(dropId, recipient, signer, requestID, amount);
     }
 
     function claimFor(
