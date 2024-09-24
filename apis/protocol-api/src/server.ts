@@ -4,10 +4,12 @@ import express, { Request, Response } from 'express';
 
 import { API_PORT, API_HOST, allowedOriginsArray } from './config';
 import routes from './routes';
+import { corsMiddleware } from './middlewares/cors.middleware';
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded());
+app.use(corsMiddleware);
 
 const server = http.createServer(app);
 
