@@ -7,7 +7,7 @@ import { ERC20_ABI } from './abi/ERC20_ABI';
 import { L2GatewayRouterABI } from './abi/L2GatewayRouterABI';
 
 // Internal Modules - Actions
-import { depositERC20, depositNative } from './actions/deposit';
+import { depositERC20, depositNative, estimateOutboundTransferGas } from './actions/deposit';
 import { withdrawERC20, withdrawNative } from './actions/withdraw';
 
 // Internal Modules - Errors
@@ -269,7 +269,22 @@ export default class Bridger {
     from?: string,
   ): Promise<GasAndFeeEstimation> {
     // TODO: Implement depositERC20 logic
-    throw new BridgerError('Deposit estimation for ERC20 tokens is not implemented.');
+    const contractAddress = this.destinationNetwork.tokenBridge?.parentGatewayRouter;
+    const tokenAddress = this.token[this.originNetwork.chainId];
+    const to = from;
+    const data = '0x';
+    if (typeof provider === 'string') {
+      provider = new ethers.providers.JsonRpcProvider(provider);
+    }
+
+    return await estimateOutboundTransferGas(
+      contractAddress ?? '',
+      tokenAddress,
+      to ?? '',
+      amount,
+      data,
+      provider as ethers.providers.Provider,
+    );
   }
 
   /**
