@@ -3,6 +3,7 @@ import { L3_NATIVE_TOKEN_SYMBOL } from '../../../../constants'
 import styles from './ValueToBridge.module.css'
 import IconG7TSmall from '@/assets/IconG7TSmall'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
+import IconChevronDownSelector from '@/assets/IconChevronDownSelector'
 
 const formatCurrency = (value: number) => {
   const formatter = new Intl.NumberFormat('en-US', {
@@ -74,6 +75,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
         <div className={styles.tokenGroup}>
           <IconG7TSmall />
           <div className={styles.tokenSymbol}>{L3_NATIVE_TOKEN_SYMBOL}</div>
+          <IconChevronDownSelector />
         </div>
       </div>
       <div className={styles.header}>
