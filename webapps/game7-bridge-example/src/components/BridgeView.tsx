@@ -12,15 +12,13 @@ import Bridger from 'game7-bridge-sdk/dist/bridger'
 import IconEdit02 from '../assets/IconEdit02.tsx'
 import { getWithdrawalStatus } from 'game7-bridge-sdk/dist/utils/transactionStatus'
 
-const BridgerView = ({ bridger }: { bridger: Bridger }) => {
+const BridgerView = ({ bridger, amount }: { bridger: Bridger; amount?: ethers.BigNumber }) => {
   const { account, getSigner } = useWallet()
   const rpc = useMemo(() => getRPC(bridger.originNetwork.chainId), [bridger.originNetwork.chainId])
   const fee = useQuery(
     ['fee', bridger, account],
     async () => {
-      // let retryableGasOverrides?: GasOverrides;
-
-      const fee = await bridger.getGasAndFeeEstimation(ethers.BigNumber.from(0), rpc, account)
+      const fee = await bridger.getGasAndFeeEstimation(amount ?? ethers.utils.parseEther('0'), rpc, account)
       return ethers.utils.formatEther(fee.estimatedFee)
     },
     {
@@ -70,6 +68,9 @@ const BridgerView = ({ bridger }: { bridger: Bridger }) => {
       //0x630d46c87e1df9ab91b8f6311b711033fc11b95ef3487135af5e0726506f4135
       // 0xc2c6cff17958df71b2507aa41393d9085ad4492b631271a590fdc7a834cb4275 L2->L3
       // 0x9a0d867b6523f1d55bbb0d1b16779c5cb433744f646bd9209f382142bb10ec06 L2->L1
+      // 0x4f7aaf3d84d69a27123523deb85827982143c83fe6862eb1dca8c5ebef369740 L3->L2
+      // 0x4d011728e4b8002750a0dcb8f2b18d7f17a08c278acda381d26d6eb9c460157f L3->L2
+      // 0x8460187b8602c2cf2436f7821836c9097182d550a31cefaa07fb6352c013981e L2->L3
     }
   })
 
@@ -91,7 +92,7 @@ const BridgerView = ({ bridger }: { bridger: Bridger }) => {
       onMouseUp={(e) => handleTransferClick(e)}
     >
       <div className={styles.runwayLights}>
-        {[0, 1, 2, 3, 4, 5, 6].map((_, idx) => (
+        {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((_, idx) => (
           <div
             className={styles.light}
             key={idx}
@@ -111,7 +112,7 @@ const BridgerView = ({ bridger }: { bridger: Bridger }) => {
         {`Estimated fee: ${fee.data ?? "can't fetch"}${fee.data ? ` ${bridger.originNetwork.nativeCurrency?.symbol ?? ''} ` : ''}`}
       </div>
       <div className={styles.runwayLights}>
-        {[0, 1, 2, 3, 4, 5, 6].map((_, idx) => (
+        {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((_, idx) => (
           <div
             className={styles.light}
             key={idx}
