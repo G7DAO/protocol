@@ -10,6 +10,7 @@ import { BridgeNetwork } from 'game7-bridge-sdk/dist/bridgeNetwork'
 import { BridgeToken } from 'game7-bridge-sdk/dist/bridgeToken'
 import Bridger from 'game7-bridge-sdk/dist/bridger'
 import IconEdit02 from '../assets/IconEdit02.tsx'
+import { getWithdrawalStatus } from 'game7-bridge-sdk/dist/utils/transactionStatus'
 
 const BridgerView = ({ bridger }: { bridger: Bridger }) => {
   const { account, getSigner } = useWallet()
@@ -207,6 +208,17 @@ const Network = ({ network }: { network: BridgeNetwork }) => {
 const BridgeView = () => {
   const networks = [L1_NETWORK, L2_NETWORK, L3_NETWORK].map((n) => new BridgeNetwork(n.chainId, [TG7T]))
   const { account } = useWallet()
+  const status = useQuery(['messageStatus'], async () => {
+    const parentRPC = getRPC(11155111)
+    const childRPC = getRPC(421614)
+    const parentProvider = new ethers.providers.JsonRpcProvider(parentRPC) as ethers.providers.Provider
+    const childProvider = new ethers.providers.JsonRpcProvider(childRPC) as ethers.providers.Provider
+    const res = await getWithdrawalStatus(
+      '0xb2b271b7e7d613f97ee496f61acc9620b197cd4dc0eae5d18a2812bd2dc512a7',
+      parentProvider,
+      childProvider
+    )
+  })
   return (
     <div>
       {!account ? (
