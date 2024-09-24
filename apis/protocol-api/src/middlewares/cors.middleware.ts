@@ -4,7 +4,6 @@ import cors from 'cors';
 const allowedOriginsStr = process.env.PROTOCOL_API_CORS || '';
 const allowedOriginsArray = allowedOriginsStr.split(',').filter(Boolean);
 
-// Set allowedOrigins to "*" if no origins are specified, otherwise create a hash table
 const allowedOrigins: { [key: string]: boolean } = allowedOriginsArray.reduce((acc, origin) => ({ ...acc, [origin]: true }), {});
 
 // CORS configuration
