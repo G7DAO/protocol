@@ -62,7 +62,7 @@ export const TG7T: TokenAddressMap = {
 export const NETWORKS = [L1_NETWORK, L2_NETWORK, L3_NETWORK]
 
 export const getRPC = (chainId: number) => {
-  const rpc =  NETWORKS.find((n) => n.chainId === chainId)?.rpcs[0]
+  const rpc = NETWORKS.find((n) => n.chainId === chainId)?.rpcs[0]
   if (!rpc) {
     throw new Error(`No RPC provider for chainId ${chainId}`)
   }
