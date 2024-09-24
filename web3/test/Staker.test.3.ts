@@ -4,7 +4,7 @@ import { loadFixture, setNextBlockBaseFeePerGas, time } from '@nomicfoundation/h
 import { setupStakingPoolsFixture, setupFixture } from './Staker.test.1';
 
 describe('Staker', function () {
-    it.only('STAKER-113: The ERC721 representing an ERC721 staking position have as its metadata URI a data URI representing an appropriate JSON object', async function () {
+    it('STAKER-113: The ERC721 representing an ERC721 staking position have as its metadata URI a data URI representing an appropriate JSON object', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 0;
@@ -36,11 +36,10 @@ describe('Staker', function () {
         const metadataDataURI = await staker.tokenURI(positionTokenID);
         const metadataBase64 = metadataDataURI.split(',')[1];
         const metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
-        const position = await staker.Positions(positionTokenID);
-        const pool = await staker.Pools(erc721PoolID);
-        const metadataPos = await positionMetadata.metadata(positionTokenID, position, pool);
-        const metadataPosBase64 = metadataDataURI.split(',')[1];
-        const metadataPosFinal = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
+
+        // Uncomment to see the image
+        // console.log(metadata.image);
+
         expect(metadata).to.deep.equal({
             token_id: positionTokenID.toString(),
             image: metadata.image,
@@ -94,10 +93,11 @@ describe('Staker', function () {
 
         // Get the position token ID of the newly minted tokens
         const positionTokenID = (await staker.TotalPositions()) - 1n;
-
         const metadataDataURI = await staker.tokenURI(positionTokenID);
         const metadataBase64 = metadataDataURI.split(',')[1];
         const metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
+
+        // Uncomment to see the image
         // console.log(metadata.image);
 
         expect(metadata).to.deep.equal({
@@ -155,7 +155,6 @@ describe('Staker', function () {
         // Get the position token ID of the newly minted token
         const positionTokenID = (await staker.TotalPositions()) - 1n;
         const metadataDataURI = await staker.tokenURI(positionTokenID);
-
         const metadataBase64 = metadataDataURI.split(',')[1];
         const metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
 
@@ -212,7 +211,10 @@ describe('Staker', function () {
         const metadataDataURI = await staker.tokenURI(positionTokenID);
         const metadataBase64 = metadataDataURI.split(',')[1];
         const metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
+
+        // Uncomment to see the image
         // console.log(metadata.image);
+
         expect(metadata).to.deep.equal({
             token_id: positionTokenID.toString(),
             image: metadata.image,
