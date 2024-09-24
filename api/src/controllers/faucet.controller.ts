@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { FaucetService } from '../services';
+import { ethers } from 'ethers';
 
 export class FaucetController {
   private faucetService: FaucetService;
@@ -10,9 +11,10 @@ export class FaucetController {
   async sendTokens(req: Request, res: Response) {
     try {
       const { recipientAddress } = req.params;
-      console.log(`[FaucetController::sendTokens] Sending tokens to ${recipientAddress}`);
-      const response = await this.faucetService.send(recipientAddress);
-      console.log(`[FaucetController::sendTokens] Tokens sent to ${recipientAddress}: ${response}`);
+      const checksummedAddress = ethers.getAddress(recipientAddress);
+      console.log(`[FaucetController::sendTokens] Sending tokens to ${checksummedAddress}`);
+      const response = await this.faucetService.send(checksummedAddress);
+      console.log(`[FaucetController::sendTokens] Tokens sent to ${checksummedAddress}: ${response}`);
       return res.status(200).send({ status: 'success', result: response });
     } catch (error) {
       console.log(`[FaucetController::sendTokens] Error sending tokens: ${error}`);
@@ -23,9 +25,10 @@ export class FaucetController {
   async getLastSentTimestamp(req: Request, res: Response) {
     try {
       const { recipientAddress } = req.params;
-      console.log(`[FaucetController::getLastSentTimestamp] Retrieving last sent timestamp for ${recipientAddress}`);
-      const response = await this.faucetService.lastSentTimestamp(recipientAddress);
-      console.log(`[FaucetController::getLastSentTimestamp] Last sent timestamp retrieved for ${recipientAddress}: ${response}`);
+      const checksummedAddress = ethers.getAddress(recipientAddress);
+      console.log(`[FaucetController::getLastSentTimestamp] Retrieving last sent timestamp for ${checksummedAddress}`);
+      const response = await this.faucetService.lastSentTimestamp(checksummedAddress);
+      console.log(`[FaucetController::getLastSentTimestamp] Last sent timestamp retrieved for ${checksummedAddress}: ${response}`);
       return res.status(200).send({ status: 'success', result: response });
     } catch (error) {
       console.log(`[FaucetController::getLastSentTimestamp] Error retrieving last sent timestamp: ${error}`);
@@ -48,9 +51,10 @@ export class FaucetController {
   async getRemainingTime(req: Request, res: Response) {
     try {
       const { recipientAddress } = req.params;
-      console.log(`[FaucetController::getRemainingTime] Retrieving remaining time for ${recipientAddress}`);
-      const response = await this.faucetService.getRemainingTime(recipientAddress);
-      console.log(`[FaucetController::getRemainingTime] Remaining time retrieved for ${recipientAddress}: ${response}`);
+      const checksummedAddress = ethers.getAddress(recipientAddress);
+      console.log(`[FaucetController::getRemainingTime] Retrieving remaining time for ${checksummedAddress}`);
+      const response = await this.faucetService.getRemainingTime(checksummedAddress);
+      console.log(`[FaucetController::getRemainingTime] Remaining time retrieved for ${checksummedAddress}: ${response}`);
       return res.status(200).send({ status: 'success', result: response });
     } catch (error) {
       console.log(`[FaucetController::getRemainingTime] Error retrieving remaining time: ${error}`);
