@@ -19,12 +19,14 @@
     "@peculiar/asn1-ecc": "^2.3.13",
     "@peculiar/asn1-schema": "^2.3.13",
     "@peculiar/asn1-x509": "^2.3.13",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "ethers": "^6.13.2",
     "express": "^4.19.2",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.16.5",
