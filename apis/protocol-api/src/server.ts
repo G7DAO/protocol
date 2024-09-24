@@ -15,6 +15,10 @@ app.route('/').get((req: Request, res: Response) => {
   res.send('Hello World!');
 });
 
+app.route('/ping').get((req: Request, res: Response) => {
+  res.send({ status: 'ok' });
+});
+
 app.use('/api', routes());
 
 server
