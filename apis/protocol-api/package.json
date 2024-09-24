@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:prod": "node ./dist/server.js",
+    "start:prod": "node ./dist/src/server.js",
     "build": "tsc",
     "dev": "nodemon ./src/server.ts"
   },
