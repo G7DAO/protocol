@@ -6,8 +6,6 @@ const setupRouter = (): Router => {
   const router = Router();
 
   router.use(corsMiddleware);
-
-  // Mount other routers
   router.use('/faucet', faucetRouter());
 
   return router;
