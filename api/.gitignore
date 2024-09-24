@@ -346,3 +346,5 @@ test.env
 
 pnpm-lock.yaml
 package-lock.json
+
+.secrets/

@@ -16,7 +16,7 @@ PREFIX_CRIT="${C_RED}[CRIT]${C_RESET} [$(date +%d-%m\ %T)]"
 # Main
 AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:-us-east-1}"
 REPO_DIR="${REPO_DIR:-/home/ubuntu/protocol}"
-APP_DIR="${REPO_DIR}/apis/protocol-api"
+APP_DIR="${REPO_DIR}/api"
 SECRETS_DIR="${SECRETS_DIR:-/home/ubuntu/protocol-secrets}"
 PARAMETERS_ENV_PATH="${SECRETS_DIR}/app-protocol-api.env"
 SCRIPT_DIR="$(realpath $(dirname $0))"
