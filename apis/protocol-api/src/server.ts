@@ -2,7 +2,7 @@ import http from 'node:http';
 
 import express, { Request, Response } from 'express';
 
-import { API_PORT, API_HOST } from './config';
+import { API_PORT, API_HOST, allowedOriginsArray } from './config';
 import routes from './routes';
 
 const app = express();
@@ -11,12 +11,14 @@ app.use(express.urlencoded());
 
 const server = http.createServer(app);
 
-app.route('/').get((req: Request, res: Response) => {
-  res.send('Hello World!');
-});
-
 app.route('/ping').get((req: Request, res: Response) => {
   res.send({ status: 'ok' });
+});
+
+app.route('/status').get((req: Request, res: Response) => {
+  res.send({
+    cors_whitelist: allowedOriginsArray,
+  });
 });
 
 app.use('/api', routes());
