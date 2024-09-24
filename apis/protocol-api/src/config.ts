@@ -2,9 +2,9 @@ import * as dotenv from 'dotenv';
 import { ethers } from 'ethers';
 dotenv.config();
 
-export const PROTOCOL_API_TOKEN_SENDER_ADDRESS = process.env.PROTOCOL_API_TOKEN_SENDER_ADDRESS || '0x6601b6D6227985549dD571048B1ef180269ee9fC';
-export const PROTOCOL_API_PORT = process.env.PROTOCOL_API_PORT || 4000;
-export const PROTOCOL_API_HOST = process.env.PROTOCOL_API_HOST || 'localhost';
+export const TOKEN_SENDER_ADDRESS = process.env.PROTOCOL_API_TOKEN_SENDER_ADDRESS || '0x6601b6D6227985549dD571048B1ef180269ee9fC';
+export const API_PORT = process.env.PROTOCOL_API_PORT || 4000;
+export const API_HOST = process.env.PROTOCOL_API_HOST || 'localhost';
 export const GAME7_TESTNET_RPC_URL = process.env.GAME7_TESTNET_RPC_URL || 'https://rpc-game7-testnet-0ilneybprf.t.conduit.xyz';
 export const KMS_CREDENTIALS = {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID || 'AKIAxxxxxxxxxxxxxxxx', // credentials for your IAM user with KMS access
