@@ -4,13 +4,16 @@ import cors from 'cors';
 const allowedOriginsStr = process.env.PROTOCOL_API_CORS_WHITELIST || '';
 const allowedOriginsArray = allowedOriginsStr.split(',').filter(Boolean);
 
-const allowedOrigins: { [key: string]: boolean } = allowedOriginsArray.reduce((acc, origin) => ({ ...acc, [origin]: true }), {});
+const allowedOrigins: { [key: string]: boolean } = allowedOriginsArray.reduce(
+  (acc, origin) => ({ ...acc, [origin]: true }),
+  {}
+);
 
 // CORS configuration
 export const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {
     if (!origin || !allowedOriginsArray.length) {
-      callback(null, "*");
+      callback(null, '*');
     } else if (allowedOrigins[origin]) {
       callback(null, origin);
     } else {
