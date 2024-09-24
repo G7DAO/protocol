@@ -9,7 +9,7 @@ const allowedOrigins: { [key: string]: boolean } = allowedOriginsArray.reduce((a
 // CORS configuration
 export const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {
-    if (!origin || allowedOriginsArray.length === 0) {
+    if (!origin || !allowedOriginsArray.length) {
       callback(null, "*");
     } else if (allowedOrigins[origin]) {
       callback(null, origin);
