@@ -22,15 +22,21 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
           {navigationItems.map((item) => (
             <div
               className={location.pathname.startsWith(item.navigateTo) ? styles.selectedNavButton : styles.navButton}
-              onClick={() => navigate(item.navigateTo)}
+              onClick={() => {
+                if (item.name === 'documentation' || item.name === 'explorer') {
+                  window.open(item.navigateTo, '_blank'); // For external links
+                } else {
+                  navigate(item.navigateTo); // For internal navigation
+                }
+              }}  
               key={item.name}
             >
               <div className={styles.navBeginning}>
                 {item.icon}
                 {item.name}
-                <div>
-                  {item.name === 'documentation' || item.name === 'explorer' ? (<IconExternalLink />) : ('')}
-                </div>
+              </div>
+              <div style={{ display: 'flex' }}>
+                {item.name === 'documentation' || item.name === 'explorer' ? (<IconExternalLink />) : ('')}
               </div>
             </div>
           ))}
