@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styles from './MessagingSettings.module.css'
-import { Switch } from 'summon-ui/mantine'
 import IconMessageSquare02 from '@/assets/IconMessageSquare02'
+import Switch from '@/components/commonComponents/switch/Switch'
 import { useUISettings } from '@/contexts/UISettingsContext'
 
 interface MessagingSettingsProps {}
@@ -61,13 +61,7 @@ const MessagingSettings: React.FC<MessagingSettingsProps> = ({}) => {
           </div>
         </div>
       </div>
-      <Switch
-        color='#12B76A'
-        checked={isMessagingEnabled}
-        onChange={(event) => setIsMessagingEnabled(event.currentTarget.checked)}
-        classNames={{ track: styles.track, thumb: styles.thumb }}
-        size={'md'}
-      />
+      <Switch checked={isMessagingEnabled} onToggle={() => setIsMessagingEnabled(!isMessagingEnabled)} />
     </div>
   )
 }

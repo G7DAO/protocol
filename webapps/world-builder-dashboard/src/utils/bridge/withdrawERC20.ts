@@ -1,75 +1,32 @@
 import { L1_NETWORK, L2_NETWORK } from '../../../constants'
 import { ethers } from 'ethers'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
-
-const L2GatewayRouterABI = [
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '_l1Token',
-        type: 'address'
-      },
-      {
-        internalType: 'address',
-        name: '_to',
-        type: 'address'
-      },
-      {
-        internalType: 'uint256',
-        name: '_amount',
-        type: 'uint256'
-      },
-      {
-        internalType: 'bytes',
-        name: '_data',
-        type: 'bytes'
-      }
-    ],
-    name: 'outboundTransfer',
-    outputs: [
-      {
-        internalType: 'bytes',
-        name: '',
-        type: 'bytes'
-      }
-    ],
-    stateMutability: 'payable',
-    type: 'function'
-  }
-]
+import { L2GatewayRouterABI } from '@/web3/ABI/l2GatewayRouter_abi'
 
 const L2GatewayRouterAddress = '0x9fDD1C4E4AA24EEc1d913FABea925594a20d43C7'
 export const sendWithdrawERC20Transaction = async (
-  amountInNative: string,
-  destination: string
+  value: string,
+  destination: string,
+  signer: ethers.Signer
 ): Promise<TransactionRecord> => {
   try {
-    if (!window.ethereum) {
-      throw new Error('no provider')
-    }
-    const amountInWei = ethers.utils.parseEther(amountInNative.toString())
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    await provider.send('eth_requestAccounts', [])
-    const signer = provider.getSigner()
-
+    const valueInWei = ethers.utils.parseEther(value)
     const routerContract = new ethers.Contract(L2GatewayRouterAddress, L2GatewayRouterABI, signer)
 
     const txRequest = await routerContract.populateTransaction.outboundTransfer(
       L1_NETWORK.g7TokenAddress,
       destination,
-      amountInWei,
+      valueInWei,
       '0x'
     )
 
     const txResponse = await signer.sendTransaction(txRequest)
 
-    // Wait for the transaction to be mined
     await txResponse.wait()
 
     return {
       type: 'WITHDRAWAL',
-      amount: amountInNative,
+      amount: value,
       lowNetworkChainId: L1_NETWORK.chainId,
       highNetworkChainId: L2_NETWORK.chainId,
       highNetworkHash: txResponse.hash,
@@ -82,26 +39,57 @@ export const sendWithdrawERC20Transaction = async (
   }
 }
 
-export const estimateOutboundTransferGas = async (
-  contractAddress: string,
-  _l1Token: string,
-  _to: string,
-  _amount: ethers.BigNumberish,
-  _data: string | ethers.BytesLike,
-  provider: ethers.providers.Provider
-) => {
-  // Create a contract instance
-  const contract = new ethers.Contract(contractAddress, L2GatewayRouterABI, provider)
+class GasEstimationError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'GasEstimationError'
+  }
+}
 
-  // Estimate gas
+export const estimateWithdrawGasAndFee = async (
+  value: string,
+  from: string,
+  destination: string,
+  signerOrProvider: ethers.Signer | ethers.providers.Provider
+): Promise<{ estimatedGas: ethers.BigNumber; gasPrice: ethers.BigNumber; estimatedFee: ethers.BigNumber }> => {
   try {
-    const estimatedGas = await contract.estimateGas.outboundTransfer(_l1Token, _to, _amount, _data, {
-      value: ethers.utils.parseEther('0') // Adjust if the function requires ETH
-    })
-    console.log(`Estimated Gas: ${estimatedGas.toString()}`)
-    return estimatedGas
-  } catch (error) {
-    console.error('Error estimating gas:', error)
-    throw error
+    if (!ethers.utils.isAddress(destination)) {
+      throw new GasEstimationError('Invalid destination address')
+    }
+
+    if (!ethers.utils.isAddress(from)) {
+      throw new GasEstimationError('Invalid sender address')
+    }
+
+    if (!value || isNaN(Number(value)) || Number(value) < 0) {
+      throw new GasEstimationError('Invalid value: must be a non-negative number')
+    }
+
+    let valueInWei
+    try {
+      valueInWei = ethers.utils.parseEther(value)
+    } catch (error) {
+      throw new GasEstimationError('Invalid value format: must be a valid Ether amount')
+    }
+
+    const routerContract = new ethers.Contract(L2GatewayRouterAddress, L2GatewayRouterABI, signerOrProvider)
+    const estimatedGas = await routerContract.estimateGas.outboundTransfer(
+      L1_NETWORK.g7TokenAddress,
+      destination,
+      valueInWei,
+      '0x',
+      { from }
+    )
+    const gasPrice = await signerOrProvider.getGasPrice()
+    const estimatedFee = estimatedGas.mul(gasPrice)
+
+    return {
+      estimatedGas,
+      gasPrice,
+      estimatedFee
+    }
+  } catch (error: any) {
+    console.error('Gas and fee estimation failed:', error)
+    throw new GasEstimationError('Gas and fee estimation failed: ' + error.message)
   }
 }

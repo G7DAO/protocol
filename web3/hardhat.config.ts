@@ -1,8 +1,9 @@
-import { HardhatUserConfig } from 'hardhat/config';
-import '@nomicfoundation/hardhat-toolbox';
-import * as dotenv from 'dotenv';
-import { ChainId, NetworkExplorer, NetworkName, rpcUrls } from './constants/network';
-import '@nomicfoundation/hardhat-foundry';
+import { HardhatUserConfig } from "hardhat/config";
+import "@nomicfoundation/hardhat-toolbox";
+import * as dotenv from 'dotenv'
+import { ChainId, NetworkExplorer, NetworkName, rpcUrls } from "./constants/network";
+import "@nomicfoundation/hardhat-foundry";
+import "./tasks/deploy-safe";
 
 dotenv.config();
 
@@ -12,8 +13,36 @@ const GAS_PROFILER = yes.includes((process.env.GAS_PROFILER || '').toLowerCase()
 const { ETHSCAN_API_KEY, ARB_SCAN_API_KEY } = process.env;
 
 const config: HardhatUserConfig = {
-    solidity: {
-        version: '0.8.24',
+  solidity: {
+    compilers: [
+      {
+        version: "0.5.10",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 99999,
+          },
+        },
+      },
+      {
+        version: "0.8.24",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 99999,
+          },
+        },
+      },
+    ],
+  },
+  gasReporter: {
+    enabled: GAS_PROFILER,
+  },
+  etherscan: {
+    apiKey: {
+      [NetworkName.Ethereum]: ETHSCAN_API_KEY || '',
+      [NetworkName.ArbitrumOne]: ARB_SCAN_API_KEY || '',
+      [NetworkName.ArbitrumSepolia]: ARB_SCAN_API_KEY || '',
     },
     gasReporter: {
         enabled: GAS_PROFILER,

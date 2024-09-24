@@ -133,7 +133,7 @@
     border: 1px solid var(--Error-500, #F04438);
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1199px) {
     .button {
         width: 100%;
     }

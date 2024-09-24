@@ -50,7 +50,7 @@
 
   border-radius: 16px;
   background: var(--Gray-100, #f2f4f7);
-  mix-blend-mode: multiply;
+  mix-blend-mode: var(--mix-blend, multiply);
   color:  var(--Gray-700, #344054);
   text-align: center;
 

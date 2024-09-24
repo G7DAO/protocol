@@ -1,0 +1,17 @@
+[Unit]
+Description=Protocol API service
+After=network.target
+StartLimitIntervalSec=300
+StartLimitBurst=3
+
+[Service]
+WorkingDirectory=/home/ubuntu/protocol/apis/protocol-api
+EnvironmentFile=/home/ubuntu/protocol-secrets/app-protocol-api.env
+Environment=NODE_VERSION=20.14.0 NODE_ENV=production
+Restart=on-failure
+RestartSec=15s
+ExecStart=/home/ubuntu/.nvm/nvm-exec npm run start:prod
+SyslogIdentifier=protocol-api
+
+[Install]
+WantedBy=multi-user.target

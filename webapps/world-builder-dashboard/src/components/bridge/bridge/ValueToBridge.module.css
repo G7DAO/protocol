@@ -95,6 +95,11 @@
   background: var(--Base-White, #fff);
 }
 
+.input:disabled {
+  color: var(--Gray-500, #667085);
+  cursor: not-allowed;
+}
+
 .inputWithError {
   border: 1px solid var(--Error-500, #F04438);
 }
@@ -119,6 +124,11 @@
   cursor: pointer;
 }
 
+.maxButton:disabled {
+  background: var(--Gray-600, #475467);
+  cursor: not-allowed;
+}
+
 .tokenGroup {
   display: flex;
   padding: 19px 16px;
@@ -141,7 +151,7 @@
 }
 
 
-@media (max-width: 767px) {
+@media (max-width: 1199px) {
   .input {
     font-size: 18px;
     font-weight: 700;

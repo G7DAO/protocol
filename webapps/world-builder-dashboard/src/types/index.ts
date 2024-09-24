@@ -13,7 +13,6 @@ export interface LoginData {
 
 export interface ERC20AllowanceProps {
   network: NetworkInterface
-  allowance: number
   spender: string | undefined
   tokenAddress: string
 }

@@ -1,6 +1,7 @@
-import { providers } from 'ethers'
+import { ethers, providers } from 'ethers'
 import { NetworkInterface } from '@/contexts/BlockchainContext'
 import { convertToBigNumber } from '@/utils/web3utils'
+import { L2GatewayRouterABI } from '@/web3/ABI/l2GatewayRouter_abi'
 import { Erc20Bridger, getL2Network } from '@arbitrum/sdk'
 import { Signer } from '@ethersproject/abstract-signer'
 
@@ -67,5 +68,35 @@ export const depositERC20ArbitrumSDK = async (
     lowNetworkHash: depositTx.hash,
     lowNetworkTimestamp: Date.now() / 1000,
     retryableCreationTimeout: 15 * 60
+  }
+}
+
+export const estimateOutboundTransferGas = async (
+  contractAddress: string,
+  _l1Token: string,
+  _to: string,
+  _amount: ethers.BigNumberish,
+  _data: string | ethers.BytesLike,
+  provider: ethers.providers.Provider
+) => {
+  const contract = new ethers.Contract(contractAddress, L2GatewayRouterABI, provider)
+
+  try {
+    const estimatedGas = await contract.estimateGas.outboundTransfer(_l1Token, _to, _amount, _data, {
+      value: ethers.utils.parseEther('0') // Adjust if the function requires ETH
+    })
+    const multiplier = ethers.BigNumber.from('10')
+    const gasLimit = estimatedGas.mul(multiplier)
+    const gasPrice = await provider.getGasPrice()
+    const fee = gasLimit.mul(gasPrice)
+    return {
+      estimatedGas: ethers.utils.formatUnits(estimatedGas, 18),
+      gasLimit: ethers.utils.formatUnits(gasLimit, 18),
+      gasPrice,
+      fee: ethers.utils.formatEther(fee)
+    }
+  } catch (error) {
+    console.error('Error estimating gas:', error)
+    throw error
   }
 }

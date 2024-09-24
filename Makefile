@@ -44,7 +44,11 @@ bindings/MockERC1155/MockERC1155.go: hardhat
 	mkdir -p bindings/MockERC1155
 	seer evm generate --package MockERC1155 --output bindings/MockERC1155/MockERC1155.go --hardhat web3/artifacts/contracts/mock/tokens.sol/MockERC1155.json --cli --struct MockERC1155
 
-bindings: bindings/ERC20/ERC20.go bindings/TokenFaucet/TokenFaucet.go bindings/WrappedNativeToken/WrappedNativeToken.go bindings/Staker/Staker.go bindings/MockERC20/MockERC20.go bindings/MockERC721/MockERC721.go bindings/MockERC1155/MockERC1155.go bindings/PositionMetadata/PositionMetadata.go
+bindings/TokenSender/TokenSender.go: hardhat
+	mkdir -p bindings/TokenSender
+	seer evm generate --package TokenSender --output bindings/TokenSender/TokenSender.go --hardhat web3/artifacts/contracts/faucet/TokenSender.sol/TokenSender.json --cli --struct TokenSender
+
+bindings: bindings/ERC20/ERC20.go bindings/TokenFaucet/TokenFaucet.go bindings/WrappedNativeToken/WrappedNativeToken.go bindings/Staker/Staker.go bindings/MockERC20/MockERC20.go bindings/MockERC721/MockERC721.go bindings/MockERC1155/MockERC1155.go bindings/PositionMetadata/PositionMetadata.go bindings/TokenSender/TokenSender.go
 
 test-web3:
 	cd web3 && npx hardhat test
@@ -55,7 +59,7 @@ test-graffiti:
 test: test-web3 test-graffiti
 
 clean:
-	rm -rf bindings/ERC20/* bin/* bindings/TokenFaucet/* bindings/WrappedNativeToken/* bindings/Staker/* bindings/MockERC20/* bindings/MockERC721/* bindings/MockERC1155/* bindings/PositionMetadata/*
+	rm -rf bindings/ERC20/* bin/* bindings/TokenFaucet/* bindings/WrappedNativeToken/* bindings/Staker/* bindings/MockERC20/* bindings/MockERC721/* bindings/MockERC1155/* bindings/PositionMetadata/* bindings/TokenSender/*
 
 clean-web3:
 	rm -rf web3/node_modules web3/artifacts
