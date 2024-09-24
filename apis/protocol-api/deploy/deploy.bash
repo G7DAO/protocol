@@ -92,6 +92,7 @@ while IFS= read -r line; do
   echo "$UPDATED_LINE" >> "${PARAMETERS_ENV_PATH}.updated"
 done < "${PARAMETERS_ENV_PATH}"
 
+mv "${PARAMETERS_ENV_PATH}.updated" "${PARAMETERS_ENV_PATH}"
 chmod 0640 "${PARAMETERS_ENV_PATH}"
 
 echo
