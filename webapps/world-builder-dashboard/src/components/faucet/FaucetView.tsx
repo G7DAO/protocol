@@ -19,17 +19,12 @@ import { timeDifferenceInHoursAndMinutes, timeDifferenceInHoursMinutesAndSeconds
 import { ZERO_ADDRESS } from '@/utils/web3utils'
 import { faucetABI } from '@/web3/ABI/faucet_abi'
 import { Signer } from '@ethersproject/abstract-signer'
-import AccountSelector from '../commonComponents/accountSelector/AccountSelector'
-
-interface AccountType {
-  valueId: number,
-  displayName: string
-}
+import ValueSelector, { ValueSelect } from '../commonComponents/valueSelector/ValueSelector'
 
 interface FaucetViewProps { }
 const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
-  const [selectedAccountType, setSelectedAccountType] = useState<AccountType>({ valueId: 1, displayName: 'Other wallet' })
-  const [address, setAddress] = useState<string>('')
+  const [selectedAccountType, setSelectedAccountType] = useState<ValueSelect>({ valueId: 0, displayName: 'External Address', value: '' })
+  const [address, setAddress] = useState<string | undefined>('')
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L3_NETWORK)
   const { requestFaucet } = useFaucetAPI()
   const { connectedAccount, connectWallet, accounts } = useBlockchainContext()
@@ -40,13 +35,26 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
 
   const { refetchNewNotifications } = useBridgeNotificationsContext()
 
+  const values = [
+    {
+      valueId: 0,
+      displayName: 'External Address',
+      value: ''
+    },
+    ...accounts.map((account, index) => ({
+      valueId: index + 1,
+      displayName: 'Account ' + (index + 1),
+      value: account
+    }))
+  ];
+
   useEffect(() => {
     const targetNetwork = ALL_NETWORKS.find((n) => n.chainId === faucetTargetChainId)
     if (targetNetwork) {
       setSelectedNetwork(targetNetwork)
     }
 
-    if (selectedAccountType.valueId === 0 && connectedAccount) setAddress(connectedAccount)
+    if (selectedAccountType.valueId === 0) setAddress('')
   }, [faucetTargetChainId, selectedAccountType])
 
   const handleRequest = async () => {
@@ -65,9 +73,9 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
     if (!connectedAccount) connectWallet()
   }
 
-  const handleSelectAccountType = (selectedAccountType: AccountType) => {
-    if (selectedAccountType.valueId === 0 && connectedAccount) setAddress(connectedAccount)
-    else setAddress('')
+  const handleSelectAccountType = (selectedAccountType: ValueSelect) => {
+    if (selectedAccountType.valueId === 0 && !connectedAccount) setAddress('')
+    else setAddress(selectedAccountType.value)
     setSelectedAccountType(selectedAccountType)
   }
 
@@ -232,7 +240,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
             <input
               placeholder={ZERO_ADDRESS}
               className={styles.address}
-              value={connectedAccount && selectedAccountType.valueId === 0 ? connectedAccount : address}
+              value={!connectedAccount ? address : selectedAccountType.value}
               onChange={(e) => {
                 setAddress(e.target.value)
               }}
@@ -252,7 +260,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
           ) : (
             <div className={styles.selectorContainer}>
               <div className={styles.label}>Account</div>
-              <AccountSelector values={[]} selectedValue={selectedAccountType} onChange={handleSelectAccountType} />
+              <ValueSelector values={values} selectedValue={selectedAccountType} onChange={handleSelectAccountType} />
             </div>
           )
           }

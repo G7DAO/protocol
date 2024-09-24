@@ -1,11 +1,12 @@
 import styles from './ValueSelector.module.css'
 import { Combobox, Group, InputBase, InputBaseProps, useCombobox } from 'summon-ui/mantine'
 import IconCheck from '@/assets/IconCheck'
-import IconChevronDown from '@/assets/IconChevronDown'
+import IconChevronDownSelector from '@/assets/IconChevronDownSelector'
 
 export interface ValueSelect {
   valueId: number,
-  displayName: string
+  displayName: string,
+  value: string
 }
 
 type ValueSelectorProps = {
@@ -38,7 +39,7 @@ const ValueSelector = ({ values, onChange, selectedValue }: ValueSelectorProps) 
           className={styles.inputBase}
           pointer
           variant='unstyled'
-          rightSection={values.length > 1 ? <IconChevronDown className={styles.chevron} /> : ''}
+          rightSection={values.length > 0 ? <IconChevronDownSelector className={styles.chevron} /> : ''}
           rightSectionPointerEvents='none'
           onClick={() => combobox.toggleDropdown()}
         >

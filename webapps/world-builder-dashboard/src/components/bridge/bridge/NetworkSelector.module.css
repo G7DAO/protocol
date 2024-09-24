@@ -9,15 +9,14 @@
     background: var(--Base-White, #ffffff);
 
     box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
-    color: var(--Gray-700, #344054);
+    color: var(--Gray-500, #667085) !important;
 
-    /* Text sm/Medium */
-    font-family: Inter, sans-serif;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 20px; /* 142.857% */
-    width: 100%;
+    font-family: Inter !important;
+    font-size: 14px !important;
+    font-style: normal !important;
+    font-weight: 400 !important;
+    line-height: 20px !important;
+    width: 100% !important;
 }
 
 .inputBase:hover {
@@ -25,7 +24,7 @@
 }
 
 .inputBaseNetworkName {
-    color: var(--Gray-700, #344054);
+    color: var(--Gray-500, #667085) !important;
 }
 
 /* Mantine components  - !important should be used in every line*/
@@ -46,13 +45,14 @@
 
 .option {
     padding: 0 !important;
-    color: var(--Gray-700, #344054) !important;
-
     /* Text sm/Medium */
+    color: var(--Gray-500, #667085) !important;
+
+    font-family: Inter !important;
     font-size: 14px !important;
     font-style: normal !important;
-    font-weight: 500 !important;
-    line-height: 20px !important; /* 142.857% */
+    font-weight: 400 !important;
+    line-height: 20px !important;
 }
 
 .option:hover {
@@ -81,5 +81,7 @@
 }
 
 .chevron {
-    stroke: var(--Gray-500, #667085);
+    stroke: var(--Gray-500, #667085) !important;
+    width: 16px;
+    height: 16px;
 }

@@ -20,6 +20,19 @@
   align-self: stretch;
 }
 
+.networksContainer {
+  display: flex;
+  padding: 11px;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  align-self: stretch;
+
+  border-radius: 8px;
+  border: 1px solid var(--Gray-100, #f2f4f7);
+  background: var(--Base-White, #ffffff);
+}
+
 .header {
   display: flex;
   flex-direction: column;
@@ -220,6 +233,7 @@
   align-items: center;
   gap: 8px;
   align-self: stretch;
+  height: 36px;
 
   border-radius: 8px;
   border: 1px solid var(--Gray-100, #f2f4f7);
@@ -351,11 +365,4 @@
     background: var(--Base-White, #fff);
     border-radius: 8px;
   }
-}
-
-select {
-  appearance: none;
-  border: none;
-  width: 100%;
-  padding-right: 8px;
 }

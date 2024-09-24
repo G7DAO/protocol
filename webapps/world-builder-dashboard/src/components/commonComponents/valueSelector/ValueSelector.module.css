@@ -1,6 +1,5 @@
 .inputBase {
-    display: flex;
-    /* padding: 8px 12px; */
+    padding: 0px 12px;
     align-items: center;
     gap: 8px;
     align-self: stretch;
@@ -8,6 +7,18 @@
     border-radius: 8px;
     border: 1px solid var(--Gray-100, #F2F4F7);
     background: var(--Base-White, #FFF);
+
+    box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
+    color: var(--Gray-700, #344054);
+
+    /* Text sm/Medium */
+    font-family: Inter, sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px; /* 142.857% */
+    width: 191px;
+    height: 36px;
 }
 
 .inputBase:hover {
@@ -35,6 +46,7 @@
 }
 
 .option {
+    height: 36px;
     padding: 0 !important;
     color: var(--Gray-700, #344054) !important;
 
@@ -51,6 +63,7 @@
 
 
 .optionContainer, .optionContainerSelected {
+    height: 36px;
     display: flex;
     padding: 10px 10px 10px 8px;
     align-items: center;
