@@ -13,8 +13,6 @@ describe('Staker', function () {
             setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
         );
 
-        const { positionMetadata } = await setupFixture();
-
         const stakerWithUser0 = staker.connect(user0);
         const tokenId = 1n;
 
