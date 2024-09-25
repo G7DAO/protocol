@@ -12,4 +12,4 @@ export async function deployTerminusDiamond() {
     const diamond = await deployDiamond(["TerminusFacet"], initCalldata);
     const terminusFacet = await ethers.getContractAt("TerminusFacet", diamond);
     return terminusFacet
-}
+}  

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * Authors: Game7 Engineering 
+ * Authors: Game7 Engineering
  */
 
 pragma solidity ^0.8.0;
@@ -36,9 +36,9 @@ contract ClaimProxy is Ownable {
             tokenType == 1 || tokenType == 20 || tokenType == 721 || tokenType == 1155,
             "Invalid token type. Valid types: 20, 721, 1155. Figure it out."
         );
-        if (tokenType == 1){
+        if (tokenType == 1) {
             (bool sent, ) = payable(msg.sender).call{ value: address(this).balance }("");
-            require(sent, "Failed to send Native Token");            
+            require(sent, "Failed to send Native Token");
         } else if (tokenType == 20) {
             IERC20 token = IERC20(tokenAddress);
             uint256 balance = token.balanceOf(address(this));

@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * Authors: Game7 Engineering
+ * Authors: Game7 World Builder
+ * Email: worldbuilder@game7.io
  */
 
 pragma solidity ^0.8.9;
@@ -102,7 +103,7 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         uint256 authorizationPoolId,
         uint256 maxNumberOfTokens,
         string memory uri
-    ) external onlyTerminusAdmin payable returns (uint256) {
+    ) external payable onlyTerminusAdmin returns (uint256) {
         require(
             tokenType == TokenType.erc20_type() ||
                 tokenType == TokenType.erc721_type() ||
@@ -119,7 +120,8 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
 
         require(
             tokenAddress == address(0) || tokenType != TokenType.native_token_type(),
-            "Dropper: createDrop -- TokenAddress should equal address(0) for native drop");
+            "Dropper: createDrop -- TokenAddress should equal address(0) for native drop"
+        );
 
         LibDropper.DropperStorage storage ds = LibDropper.dropperStorage();
 
@@ -300,7 +302,7 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         address signer,
         bytes memory signature
     ) public virtual diamondNonReentrant {
-        _claim(dropId, requestID, blockDeadline, amount, msg.sender ,signer, signature);
+        _claim(dropId, requestID, blockDeadline, amount, msg.sender, signer, signature);
     }
 
     function batchClaimFor(
@@ -311,16 +313,8 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         address[] memory recipientList,
         address[] memory signerList,
         bytes[] memory signatureList
-    ) public virtual diamondNonReentrant{
-
-        _batchClaim(
-        dropIDList,
-        requestIDList,
-        blockDeadlineList,
-        amountList,
-        recipientList,
-        signerList,
-        signatureList);
+    ) public virtual diamondNonReentrant {
+        _batchClaim(dropIDList, requestIDList, blockDeadlineList, amountList, recipientList, signerList, signatureList);
     }
 
     function batchClaim(
@@ -330,22 +324,14 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         uint256[] memory amountList,
         address[] memory signerList,
         bytes[] memory signatureList
-    ) public virtual diamondNonReentrant{
-
+    ) public virtual diamondNonReentrant {
         uint256 l = signatureList.length;
         address[] memory recipientList = new address[](l);
-        for(uint i =0; i<l; i++){
+        for (uint i = 0; i < l; i++) {
             recipientList[i] = msg.sender;
         }
 
-        _batchClaim(
-        dropIDList,
-        requestIDList,
-        blockDeadlineList,
-        amountList,
-        recipientList,
-        signerList,
-        signatureList);
+        _batchClaim(dropIDList, requestIDList, blockDeadlineList, amountList, recipientList, signerList, signatureList);
     }
 
     function _batchClaim(
@@ -379,7 +365,8 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         );
         require(
             recipientList.length == signatureList.length,
-            "Dropper: batachClaim -- recipientList and signatureList length mismatch");
+            "Dropper: batachClaim -- recipientList and signatureList length mismatch"
+        );
 
         uint256 i = 0;
         for (i = 0; i < dropIDList.length; i++) {
@@ -443,5 +430,6 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
     }
 
     receive() external payable {}
+
     fallback() external payable {}
 }

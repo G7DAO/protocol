@@ -20,7 +20,7 @@ export async function getContractFunctionSelectors(contractName: string) {
     return functionSelectors;
 }
 
-/**
+/** 
  * Encode a parameter for a function
  * @param input The parameter to encode
  * @returns The encoded parameter

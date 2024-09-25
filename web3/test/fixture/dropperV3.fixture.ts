@@ -17,22 +17,22 @@ export async function deployDropperV3Contracts() {
 
     const terminusDiamond = await deployTerminusDiamond();
     const terminusDiamondAddress = await terminusDiamond.getAddress();
-    
+
     const executoirPoolId = await terminusDiamond.createPoolV1.staticCall(100, false, false);
     await terminusDiamond.createPoolV1(100, false, false);
     await terminusDiamond.isApprovedForPool(executoirPoolId, admin0.address);
     await terminusDiamond.mint(admin0.address, executoirPoolId, 2, '0x');
 
     const initCalldata = await encodeFunctionWithArgs('DropperV3Facet', 'init', [
-        terminusDiamondAddress, 
+        terminusDiamondAddress,
         executoirPoolId
     ])
 
     const dropperV3Address = await deployDiamond(
         ['DropperV3Facet'],
         initCalldata);
-    
+
     const dropperV3Facet = await ethers.getContractAt('DropperV3Facet', dropperV3Address);
 
-    return { dropperV3Facet, terminusDiamond ,erc20, erc721, erc1155, admin0};
-}
+    return { dropperV3Facet, terminusDiamond, erc20, erc721, erc1155, admin0 };
+} 

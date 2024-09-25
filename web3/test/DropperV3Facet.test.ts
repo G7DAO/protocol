@@ -1,15 +1,15 @@
 import { ethers } from 'hardhat';
-import {expect } from 'chai';
+import { expect } from 'chai';
 import { HardhatEthersSigner } from '../helpers/type';
 import { loadFixture, time } from '@nomicfoundation/hardhat-network-helpers';
 import { deployDropperV3Contracts } from './fixture/dropperV3.fixture';
-import { dropperClaimMessageHash } from './helpers/utils/dropperV3Signer'; 
+import { dropperClaimMessageHash } from './helpers/utils/dropperV3Signer';
 import { TerminusFacet, DropperV3Facet, MockERC1155, MockERC20, MockERC721 } from '../typechain-types';
 import { ONE_DAY } from '../constants/time';
 
 
 
-describe("DropperV3Facet", async function(){
+describe("DropperV3Facet", async function () {
 
     let admin0: HardhatEthersSigner;
     let admin1: HardhatEthersSigner;
@@ -29,13 +29,13 @@ describe("DropperV3Facet", async function(){
     const tokenId = 1n;
     const InitialTokenBalance = ethers.parseEther('1000');
 
-    before(async function(){
+    before(async function () {
         [admin1, user0, user1] = await ethers.getSigners();
     })
 
-    beforeEach(async function() {
+    beforeEach(async function () {
         const contracts = await loadFixture(deployDropperV3Contracts);
-        
+
         admin0 = contracts.admin0;
         terminusFacet = contracts.terminusDiamond;
         dropperV3Facet = contracts.dropperV3Facet;
@@ -47,19 +47,19 @@ describe("DropperV3Facet", async function(){
 
     })
 
-    describe('CreateDrop function', async function() {
+    describe('CreateDrop function', async function () {
 
-        it('DropperV3-1: Address should be Proper', async function (){
+        it('DropperV3-1: Address should be Proper', async function () {
             expect(await terminusFacet.getAddress()).to.be.properAddress;
             expect(await dropperV3Facet.getAddress()).to.be.properAddress;
         })
 
-       it("DropperV3-2: Create a new drop with Native token type", async function () {
+        it("DropperV3-2: Create a new drop with Native token type", async function () {
             const tokenType = 1;
             const maxNumberOfTokens = 100;
             const amount = 0;
             const uri = "https://example.com/metadata";
-    
+
             const tx = await dropperV3Facet.createDrop(
                 tokenType,
                 ethers.ZeroAddress,
@@ -71,13 +71,13 @@ describe("DropperV3Facet", async function(){
                 uri,
                 { value: ethers.parseEther("0.1") } // If the function is payable, send some Ether
             );
-    
+
             await tx.wait();
-    
+
             const drop = await dropperV3Facet.getDrop(1); // Assuming this function exists
             expect(drop.tokenType).to.equal(tokenType);
             expect(drop.tokenAddress).to.equal(ethers.ZeroAddress);
-            expect(drop.amount).to.equal(amount); 
+            expect(drop.amount).to.equal(amount);
         });
 
         it("DropperV3-3: Create a new drop with ERC20 token type", async function () {
@@ -86,7 +86,7 @@ describe("DropperV3Facet", async function(){
             const amount = 0;
             const erc20Address = await mockERC20.getAddress();
             const uri = "https://example.com/metadata";
-    
+
             const tx = await dropperV3Facet.createDrop(
                 tokenType,
                 erc20Address,
@@ -96,17 +96,17 @@ describe("DropperV3Facet", async function(){
                 authorizationPoolId,
                 maxNumberOfTokens,
                 uri,
-                { value: ethers.parseEther("0") } 
+                { value: ethers.parseEther("0") }
             );
-    
+
             await tx.wait();
-    
+
             const drop = await dropperV3Facet.getDrop(1); // Assuming this function exists
             expect(drop.tokenType).to.equal(tokenType);
             expect(drop.tokenAddress).to.equal(erc20Address);
             expect(drop.amount).to.equal(amount);
             expect(drop.maxNumberOfTokens).to.equal(maxNumberOfTokens);
-            
+
         });
 
         it("DropperV3-4: Create a new drop with ERC721 token type", async function () {
@@ -115,7 +115,7 @@ describe("DropperV3Facet", async function(){
             const amount = 0;
             const erc721Address = await mockERC721.getAddress();
             const uri = "https://example.com/metadata";
-    
+
             const tx = await dropperV3Facet.createDrop(
                 tokenType,
                 erc721Address,
@@ -125,17 +125,17 @@ describe("DropperV3Facet", async function(){
                 authorizationPoolId,
                 maxNumberOfTokens,
                 uri,
-                { value: ethers.parseEther("0") } 
+                { value: ethers.parseEther("0") }
             );
-    
+
             await tx.wait();
-    
+
             const drop = await dropperV3Facet.getDrop(1); // Assuming this function exists
             expect(drop.tokenType).to.equal(tokenType);
             expect(drop.tokenAddress).to.equal(erc721Address);
             expect(drop.amount).to.equal(amount);
             expect(drop.maxNumberOfTokens).to.equal(maxNumberOfTokens);
-            
+
         });
 
         it("DropperV3-5: Create a new drop with ERC1155 token type", async function () {
@@ -144,7 +144,7 @@ describe("DropperV3Facet", async function(){
             const amount = 0;
             const erc1155Address = await mockERC1155.getAddress();
             const uri = "https://example.com/metadata";
-    
+
             const tx = await dropperV3Facet.createDrop(
                 tokenType,
                 erc1155Address,
@@ -154,17 +154,17 @@ describe("DropperV3Facet", async function(){
                 authorizationPoolId,
                 maxNumberOfTokens,
                 uri,
-                { value: ethers.parseEther("0") } 
+                { value: ethers.parseEther("0") }
             );
-    
+
             await tx.wait();
-    
+
             const drop = await dropperV3Facet.getDrop(1); // Assuming this function exists
             expect(drop.tokenType).to.equal(tokenType);
             expect(drop.tokenAddress).to.equal(erc1155Address);
             expect(drop.amount).to.equal(amount);
             expect(drop.maxNumberOfTokens).to.equal(maxNumberOfTokens);
-            
+
         });
 
         it("DropperV3-6: Revert if the token type is unknown", async function () {
@@ -172,7 +172,7 @@ describe("DropperV3Facet", async function(){
             const amount = 0;
             const maxNumberOfTokens = 100;
             const uri = "https://example.com/metadata";
-    
+
             await expect(
                 dropperV3Facet.connect(admin0).createDrop(
                     invalidTokenType,
@@ -193,7 +193,7 @@ describe("DropperV3Facet", async function(){
             const amount = 0;
             const maxNumberOfTokens = 100;
             const uri = "https://example.com/metadata";
-    
+
             await expect(
                 dropperV3Facet.connect(admin0).createDrop(
                     tokenType,
@@ -211,17 +211,17 @@ describe("DropperV3Facet", async function(){
 
     });
 
-    describe("Claim function", async function(){
-        
+    describe("Claim function", async function () {
+
         let chainId: number;
         let dropperV3Address: string;
 
-        beforeEach(async function() {
+        beforeEach(async function () {
             const tokenType = 1;
             const maxNumberOfTokens = 100;
             const amount = 0;
             const uri = "https://example.com/metadata";
-    
+
             const tx = await dropperV3Facet.createDrop(
                 tokenType,
                 ethers.ZeroAddress,
@@ -233,11 +233,11 @@ describe("DropperV3Facet", async function(){
                 uri,
                 { value: ethers.parseEther("0.00000000000000005") } // If the function is payable, send some Ether
             );
-    
+
             await tx.wait();
 
-            const erc20Address = await mockERC20.getAddress();  
-           
+            const erc20Address = await mockERC20.getAddress();
+
             const e20tx = await dropperV3Facet.createDrop(
                 20,
                 erc20Address,
@@ -247,9 +247,9 @@ describe("DropperV3Facet", async function(){
                 authorizationPoolId,
                 maxNumberOfTokens,
                 uri,
-                { value: ethers.parseEther("0") } 
+                { value: ethers.parseEther("0") }
             );
-    
+
             await e20tx.wait();
 
             const erc721Address = await mockERC721.getAddress();
@@ -263,11 +263,11 @@ describe("DropperV3Facet", async function(){
                 authorizationPoolId,
                 maxNumberOfTokens,
                 uri,
-                { value: ethers.parseEther("0") } 
+                { value: ethers.parseEther("0") }
             );
-    
+
             await e721tx.wait();
-        
+
             const erc1155Address = await mockERC1155.getAddress();
 
             const e1155tx = await dropperV3Facet.createDrop(
@@ -279,12 +279,12 @@ describe("DropperV3Facet", async function(){
                 authorizationPoolId,
                 maxNumberOfTokens,
                 uri,
-                { value: ethers.parseEther("0") } 
+                { value: ethers.parseEther("0") }
             );
 
             await e1155tx.wait();
             const dropperAddress = dropperV3Facet.getAddress()
-        
+
             await mockERC721.mint(dropperAddress, tokenId);
             await mockERC20.mint(dropperAddress, InitialTokenBalance);
             await mockERC1155.mint(dropperAddress, tokenId, InitialTokenBalance);
@@ -295,9 +295,9 @@ describe("DropperV3Facet", async function(){
             dropperV3Address = await dropperV3Facet.getAddress();
         });
 
-    
-        it('DropperV3-8: Claim Native Token', async function() {
-            
+
+        it('DropperV3-8: Claim Native Token', async function () {
+
             const dropId = 1;
             const requestID = 7;
             const blockDeadline = Math.floor(Date.now() / 1000) + 3600;
@@ -331,8 +331,8 @@ describe("DropperV3Facet", async function(){
             expect(dropToken.claimCount).to.be.equal(amount);
         });
 
-        it('DropperV3-9: Claim ERC20 Token', async function() {
-            
+        it('DropperV3-9: Claim ERC20 Token', async function () {
+
             const dropId = 2;
             const requestID = 7;
             const blockDeadline = Math.floor(Date.now() / 1000) + 3600;
@@ -366,8 +366,8 @@ describe("DropperV3Facet", async function(){
             expect(dropToken.claimCount).to.be.equal(amount);
         });
 
-        it('DropperV3-10: Claim ERC721 Token', async function() {
-            
+        it('DropperV3-10: Claim ERC721 Token', async function () {
+
             const dropId = 3;
             const requestID = 7;
             const blockDeadline = Math.floor(Date.now() / 1000) + 3600;
@@ -401,8 +401,8 @@ describe("DropperV3Facet", async function(){
             expect(dropToken.claimCount).to.be.equal(amount);
         });
 
-        it('DropperV3-11: Claim ERC1155 Token', async function() {
-            
+        it('DropperV3-11: Claim ERC1155 Token', async function () {
+
             const dropId = 4;
             const requestID = 7;
             const blockDeadline = Math.floor(Date.now() / 1000) + 3600;
@@ -436,8 +436,8 @@ describe("DropperV3Facet", async function(){
             expect(dropToken.claimCount).to.be.equal(amount);
         });
 
-        it('DropperV3-12: Revert on sending claim request twice', async function() {
-            
+        it('DropperV3-12: Revert on sending claim request twice', async function () {
+
             const dropId = 4;
             const requestID = 7;
             const blockDeadline = Math.floor(Date.now() / 1000) + 3600;
@@ -465,7 +465,7 @@ describe("DropperV3Facet", async function(){
 
             await tx.wait();
 
-            
+
             await expect(dropperV3Facet.connect(user1).claim(
                 dropId,
                 requestID,
@@ -475,8 +475,8 @@ describe("DropperV3Facet", async function(){
                 signature)).to.be.revertedWith('Dropper: _claim -- That (dropID, requestID) pair has already been claimed');
         });
 
-        it('DropperV3-13: Revert on bad signer', async function() {
-            
+        it('DropperV3-13: Revert on bad signer', async function () {
+
             const dropId = 4;
             const requestID = 7;
             const blockDeadline = Math.floor(Date.now() / 1000) + 3600;
@@ -502,10 +502,10 @@ describe("DropperV3Facet", async function(){
                 signature
             )).to.be.revertedWith('Dropper: _claim -- Unauthorized signer for drop');
 
-        });        
-        
-        it('DropperV3-14: Revert on bad signer', async function() {
-            
+        });
+
+        it('DropperV3-14: Revert on bad signer', async function () {
+
             const dropId = 4;
             const requestID = 7;
             const blockDeadline = Math.floor(Date.now() / 1000) + 3600;
@@ -532,8 +532,8 @@ describe("DropperV3Facet", async function(){
             )).to.be.revertedWith('Dropper: _claim -- Unauthorized signer for drop');
         });
 
-        it('DropperV3-15: Revert on bad signature message, with correct signer', async function() {
-            
+        it('DropperV3-15: Revert on bad signature message, with correct signer', async function () {
+
             const dropId = 4;
             const requestID = 7;
             const blockDeadline = Math.floor(Date.now() / 1000) + 3600;
@@ -560,8 +560,8 @@ describe("DropperV3Facet", async function(){
             )).to.be.revertedWith('Dropper: _claim -- Invalid signature for claim.');
         });
 
-        it('DropperV3-16: Revert on bad signature and signer, correct messageHash', async function() {
-            
+        it('DropperV3-16: Revert on bad signature and signer, correct messageHash', async function () {
+
             const dropId = 4;
             const requestID = 7;
             const blockDeadline = Math.floor(Date.now() / 1000) + 3600;
@@ -588,8 +588,8 @@ describe("DropperV3Facet", async function(){
             )).to.be.revertedWith('Dropper: _claim -- Unauthorized signer for drop');
         });
 
-        it('DropperV3-17: Revert on Deadline Past', async function() {
-            
+        it('DropperV3-17: Revert on Deadline Past', async function () {
+
             const dropId = 4;
             const requestID = 7;
             const blockDeadline = Math.floor(Date.now() / 1000) + 3600;
@@ -616,8 +616,8 @@ describe("DropperV3Facet", async function(){
             )).to.be.revertedWith('Dropper: _claim -- Block deadline exceeded.');
         });
 
-        it('DropperV3-18: Revert on Inactive Drop', async function() {
-            
+        it('DropperV3-18: Revert on Inactive Drop', async function () {
+
             const dropId = 4;
             const requestID = 7;
             const blockDeadline = Math.floor(Date.now() / 1000) + 3600;
@@ -634,7 +634,7 @@ describe("DropperV3Facet", async function(){
             );
             const signature = await admin0.signTypedData(domain, types, message);
 
-            await dropperV3Facet.setDropStatus(dropId,false);
+            await dropperV3Facet.setDropStatus(dropId, false);
 
             await expect(dropperV3Facet.connect(user1).claim(
                 dropId,
@@ -646,8 +646,8 @@ describe("DropperV3Facet", async function(){
             )).to.be.revertedWith('Dropper: _claim -- cannot claim inactive drop');
         });
 
-        it('DropperV3-19: Revert on Token send failure', async function() {
-            
+        it('DropperV3-19: Revert on Token send failure', async function () {
+
             const dropId = 2;
             const requestID = 7;
             const blockDeadline = Math.floor(Date.now() / 1000) + 3600;
@@ -665,7 +665,7 @@ describe("DropperV3Facet", async function(){
             const signature = await admin0.signTypedData(domain, types, message);
 
             const erc20Address = await mockERC20.getAddress();
-            
+
             await dropperV3Facet.withdrawERC20(erc20Address, InitialTokenBalance);
 
             await expect(dropperV3Facet.connect(user1).claim(
@@ -678,8 +678,8 @@ describe("DropperV3Facet", async function(){
             )).to.be.reverted;
         });
 
-        it('DropperV3-20: Revert on ERC721 claim on tokenId not owned by dropper', async function() {
-            
+        it('DropperV3-20: Revert on ERC721 claim on tokenId not owned by dropper', async function () {
+
             const dropId = 3;
             const requestID = 7;
             const blockDeadline = Math.floor(Date.now() / 1000) + 3600;
@@ -706,8 +706,8 @@ describe("DropperV3Facet", async function(){
             )).to.be.reverted;
         });
 
-        it('DropperV3-20: Revert on not enough to claim', async function() {
-            
+        it('DropperV3-20: Revert on not enough to claim', async function () {
+
             const dropId = 4;
             const requestID = 7;
             const blockDeadline = Math.floor(Date.now() / 1000) + 3600;
@@ -734,8 +734,8 @@ describe("DropperV3Facet", async function(){
             )).to.be.revertedWith('DF: Claims exceed Tokens to distribute');
         });
 
-        it('DropperV3-21: Revert on Native Transfer Failure', async function() {
-            
+        it('DropperV3-21: Revert on Native Transfer Failure', async function () {
+
             const dropId = 1;
             const requestID = 7;
             const blockDeadline = Math.floor(Date.now() / 1000) + 3600;
@@ -762,8 +762,8 @@ describe("DropperV3Facet", async function(){
             )).to.be.revertedWith('Failed to send Native Token');
         });
 
-        it('DropperV3-22: Revert on Unknown Type', async function() {
-            
+        it('DropperV3-22: Revert on Unknown Type', async function () {
+
             const dropId = 5;
             const requestID = 7;
             const blockDeadline = Math.floor(Date.now() / 1000) + 3600;
@@ -783,7 +783,7 @@ describe("DropperV3Facet", async function(){
             //activate a non-initalized dropId to give tokenType 0 during claims.
             await dropperV3Facet.setDropStatus(dropId, true);
             const terminusAddress = await terminusFacet.getAddress();
-            await dropperV3Facet.setDropAuthorization(dropId, terminusAddress,1);
+            await dropperV3Facet.setDropAuthorization(dropId, terminusAddress, 1);
 
             await expect(dropperV3Facet.connect(user1).claim(
                 dropId,
