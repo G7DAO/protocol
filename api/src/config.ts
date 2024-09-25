@@ -44,7 +44,7 @@ export const swaggerOptions: SwaggerOptions = {
     },
     servers: [
       {
-        url: `${PROTOCOL_API_URL}`,
+        url: PROTOCOL_API_URL,
       },
     ],
   },
