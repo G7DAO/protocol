@@ -6,7 +6,7 @@ import IconChevronDownSelector from '@/assets/IconChevronDownSelector'
 export interface ValueSelect {
   valueId: number,
   displayName: string,
-  value: string
+  value: string | undefined
 }
 
 type ValueSelectorProps = {

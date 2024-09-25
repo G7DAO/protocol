@@ -7,7 +7,7 @@
     border-radius: 8px;
     border: 1px solid var(--Gray-100, #F2F4F7);
     background: var(--Base-White, #FFF);
-    width: 191px;
+    width: 191px !important;
     height: 36px;
 }
 
@@ -23,6 +23,8 @@
     font-weight: 500;
     line-height: 20px;
 }
+
+/* Mantine modules use !important please */
 
 .dropdown {
     padding: 0 !important;
@@ -55,7 +57,7 @@
 .optionContainer, .optionContainerSelected {
     height: 36px;
     display: flex;
-    padding: 10px 10px 10px 8px;
+    /* padding: 10px 10px 10px 8px; */
     align-items: center;
     gap: 8px;
     flex: 1 0 0;
@@ -76,3 +78,4 @@
 .chevron {
     stroke: var(--Gray-500, #667085);
 }
+

@@ -36,11 +36,11 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
       displayName: `External\u00A0Address`,
       value: ''
     },
-    ...accounts.map((account, index) => ({
-      valueId: index + 1,
-      displayName: `Account ${(index + 1)}`,
-      value: account
-    }))
+    {
+      valueId: 1,
+      displayName: `Connected\u00A0Account`,
+      value: connectedAccount
+    }
   ];
 
   useEffect(() => {
