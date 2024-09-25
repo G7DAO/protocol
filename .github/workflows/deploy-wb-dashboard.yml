@@ -3,6 +3,7 @@ on:
       branches:
         - main
       paths:
+        - '.github/workflows/deploy-wb-dashboard.yml'
         - 'webapps/world-builder-dashboard/**'
 
 jobs:
@@ -20,7 +21,7 @@ jobs:
               with:
                   node-version: "20.14.0"
 
-            - name: Install and bild production app
+            - name: Install and build production app
               working-directory: ./webapps/world-builder-dashboard
               run: |
                   npm install
@@ -29,8 +30,8 @@ jobs:
             - name: Publish to CloudFlare Page
               uses: cloudflare/pages-action@v1
               with:
-                    apiToken: ${{ secrets.CF_API_TOKEN_BETA_DEV }}
-                    accountId: ${{ secrets.CF_ACCOUNT_ID_BETA_DEV }}
-                    projectName: ${{ secrets.CF_PROJECT_NAME_WB_DASHBOARD_BETA_DEV }}
+                    apiToken: ${{ secrets.CF_API_TOKEN_PROD }}
+                    accountId: ${{ secrets.CF_ACCOUNT_ID_PROD }}
+                    projectName: ${{ secrets.CF_PROJECT_NAME_WB_DASHBOARD_PROD }}
                     directory: ./webapps/world-builder-dashboard/dist
                     gitHubToken: ${{ secrets.GITHUB_TOKEN }}
