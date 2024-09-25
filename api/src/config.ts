@@ -42,7 +42,7 @@ export const swaggerOptions: SwaggerOptions = {
     },
     servers: [
       {
-        url: 'http://localhost:4000/api',
+        url: 'https://api.game7.build/api',
       },
     ],
   },
