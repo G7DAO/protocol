@@ -319,6 +319,7 @@ describe("DropperV3Facet", async function () {
                 requestID,
                 blockDeadline,
                 amount,
+                user1.address,
                 admin0.address,
                 signature
             );
@@ -354,6 +355,7 @@ describe("DropperV3Facet", async function () {
                 requestID,
                 blockDeadline,
                 amount,
+                user1.address,
                 admin0.address,
                 signature
             );
@@ -389,6 +391,7 @@ describe("DropperV3Facet", async function () {
                 requestID,
                 blockDeadline,
                 amount,
+                user1.address,
                 admin0.address,
                 signature
             );
@@ -424,6 +427,7 @@ describe("DropperV3Facet", async function () {
                 requestID,
                 blockDeadline,
                 amount,
+                user1.address,
                 admin0.address,
                 signature
             );
@@ -459,6 +463,7 @@ describe("DropperV3Facet", async function () {
                 requestID,
                 blockDeadline,
                 amount,
+                user1.address,
                 admin0.address,
                 signature
             );
@@ -471,6 +476,7 @@ describe("DropperV3Facet", async function () {
                 requestID,
                 blockDeadline,
                 amount,
+                user1.address,
                 admin0.address,
                 signature)).to.be.revertedWith('Dropper: _claim -- That (dropID, requestID) pair has already been claimed');
         });
@@ -498,6 +504,7 @@ describe("DropperV3Facet", async function () {
                 requestID,
                 blockDeadline,
                 amount,
+                user1.address,
                 user0.address,
                 signature
             )).to.be.revertedWith('Dropper: _claim -- Unauthorized signer for drop');
@@ -527,6 +534,7 @@ describe("DropperV3Facet", async function () {
                 requestID,
                 blockDeadline,
                 amount,
+                user1.address,
                 user0.address,
                 signature
             )).to.be.revertedWith('Dropper: _claim -- Unauthorized signer for drop');
@@ -555,6 +563,7 @@ describe("DropperV3Facet", async function () {
                 requestID,
                 blockDeadline,
                 amount,
+                user1.address,
                 admin0.address,
                 signature
             )).to.be.revertedWith('Dropper: _claim -- Invalid signature for claim.');
@@ -583,6 +592,7 @@ describe("DropperV3Facet", async function () {
                 requestID,
                 blockDeadline,
                 amount,
+                user1.address,
                 user0.address,
                 signature
             )).to.be.revertedWith('Dropper: _claim -- Unauthorized signer for drop');
@@ -611,6 +621,7 @@ describe("DropperV3Facet", async function () {
                 requestID,
                 blockDeadline,
                 amount,
+                user1.address,
                 admin0.address,
                 signature
             )).to.be.revertedWith('Dropper: _claim -- Block deadline exceeded.');
@@ -641,6 +652,7 @@ describe("DropperV3Facet", async function () {
                 requestID,
                 blockDeadline,
                 amount,
+                user1.address,
                 admin0.address,
                 signature
             )).to.be.revertedWith('Dropper: _claim -- cannot claim inactive drop');
@@ -673,6 +685,7 @@ describe("DropperV3Facet", async function () {
                 requestID,
                 blockDeadline,
                 amount,
+                user1.address,
                 admin0.address,
                 signature
             )).to.be.reverted;
@@ -701,6 +714,7 @@ describe("DropperV3Facet", async function () {
                 requestID,
                 blockDeadline,
                 amount,
+                user1.address,
                 admin0.address,
                 signature
             )).to.be.reverted;
@@ -729,6 +743,7 @@ describe("DropperV3Facet", async function () {
                 requestID,
                 blockDeadline,
                 amount,
+                user1.address,
                 admin0.address,
                 signature
             )).to.be.revertedWith('DF: Claims exceed Tokens to distribute');
@@ -757,6 +772,7 @@ describe("DropperV3Facet", async function () {
                 requestID,
                 blockDeadline,
                 amount,
+                user1.address,
                 admin0.address,
                 signature
             )).to.be.revertedWith('Failed to send Native Token');
@@ -790,6 +806,7 @@ describe("DropperV3Facet", async function () {
                 requestID,
                 blockDeadline,
                 amount,
+                user1.address,
                 admin0.address,
                 signature
             )).to.be.revertedWith('Dropper: _claim -- Unknown token type in claim');
