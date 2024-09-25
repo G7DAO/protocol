@@ -33,7 +33,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const values = [
     {
       valueId: 0,
-      displayName: 'External Address',
+      displayName: `External\u00A0Address`,
       value: ''
     },
     ...accounts.map((account, index) => ({
@@ -51,10 +51,6 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
 
     if (selectedAccountType.valueId === 0) setAddress('')
   }, [faucetTargetChainId, selectedAccountType])
-
-  useEffect(() => {
-    console.log(requesting)
-  }, [setRequesting, requesting])
 
   const handleConnect = async () => {
     if (!connectedAccount) connectWallet()
