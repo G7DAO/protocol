@@ -4,11 +4,8 @@ import { useQuery } from 'react-query'
 const BASE_URL = 'https://api.game7.build'
 
 export const useFaucetAPI = () => {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [response, setResponse] = useState<Record<string, any> | null>(null)
 
-  const getFaucetTimestamp = (address: string | undefined) => {
+  const useFaucetTimestamp = (address: string | undefined) => {
     return useQuery(
       ['faucetTimestamp', address],
       async () => {
@@ -22,14 +19,14 @@ export const useFaucetAPI = () => {
         return data.result;
       },
       {
-        enabled: !!address, // only run if address exists
-        retry: false, // disables retry on failure
+        enabled: !!address,
+        retry: false,
       }
     );
   };
 
 
-  const getFaucetInterval = () => {
+  const useFaucetInterval = () => {
     return useQuery(
       'faucetInterval',
       async () => {
@@ -43,12 +40,12 @@ export const useFaucetAPI = () => {
         return data.result;
       },
       {
-        retry: false, // disables retry on failure
+        retry: false,
       }
     );
   };
 
-  const getFaucetCountdown = (address: string) => {
+  const useFaucetCountdown = (address: string) => {
     return useQuery(
       ['faucetCountdown', address],
       async () => {
@@ -69,11 +66,8 @@ export const useFaucetAPI = () => {
   };
 
   return {
-    loading,
-    error,
-    response,
-    getFaucetTimestamp,
-    getFaucetInterval,
-    getFaucetCountdown,
+    useFaucetTimestamp,
+    useFaucetInterval,
+    useFaucetCountdown,
   }
 }

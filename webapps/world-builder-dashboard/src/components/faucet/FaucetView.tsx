@@ -21,7 +21,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const [selectedAccountType, setSelectedAccountType] = useState<ValueSelect>({ valueId: 0, displayName: 'External Address', value: '' })
   const [address, setAddress] = useState<string | undefined>('')
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L3_NETWORK)
-  const { getFaucetInterval, getFaucetTimestamp } = useFaucetAPI()
+  const { useFaucetInterval, useFaucetTimestamp } = useFaucetAPI()
   const { connectedAccount, connectWallet, accounts, chainId } = useBlockchainContext()
   const [animatedInterval, setAnimatedInterval] = useState('')
   const [nextClaimTimestamp, setNextClaimTimestamp] = useState(0)
@@ -141,14 +141,16 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
     return timestampInMillis <= currentInMillis
   }
 
+  const lastClaimedTimestampQuery = useFaucetTimestamp(address);
+  const faucetIntervalQuery = useFaucetInterval();
+
   const nextClaimAvailable = useQuery(
     ['nextFaucetClaimTimestamp', address],
     async () => {
-      if (address === '') return
 
-      const lastClaimedL3Timestamp = Number(await getFaucetTimestamp(address))
+      const lastClaimedL3Timestamp = Number(lastClaimedTimestampQuery.data)
 
-      const faucetTimeInterval = Number(await getFaucetInterval())
+      const faucetTimeInterval = Number(faucetIntervalQuery.data)
       const nextClaimL3Timestamp = lastClaimedL3Timestamp + faucetTimeInterval
 
       const intervalL3 = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimL3Timestamp)
@@ -158,7 +160,11 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
       return { faucetTimeInterval, L3 }
     },
     {
-      enabled: !!address
+      enabled: !!address &&
+        !lastClaimedTimestampQuery.isLoading &&
+        !faucetIntervalQuery.isLoading &&
+        !lastClaimedTimestampQuery.isError &&
+        !faucetIntervalQuery.isError
     }
   )
 
