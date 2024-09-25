@@ -30,6 +30,8 @@ export const allowedOriginsArray = allowedOriginsStr.split(',').filter(Boolean);
 export const allowedOrigins: { [key: string]: boolean } =
   allowedOriginsArray.reduce((acc, origin) => ({ ...acc, [origin]: true }), {});
 
+const PROTOCOL_API_URL = process.env.PROTOCOL_API_BASE_URL || 'https://api.game7.build';
+
 export const swaggerOptions: SwaggerOptions = {
   swaggerDefinition: {
     openapi: '3.0.0',
@@ -42,7 +44,7 @@ export const swaggerOptions: SwaggerOptions = {
     },
     servers: [
       {
-        url: 'https://api.game7.build/api',
+        url: `${PROTOCOL_API_URL}/api`,
       },
     ],
   },

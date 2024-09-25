@@ -16,7 +16,7 @@ app.use(corsMiddleware);
 const server = http.createServer(app);
 
 const swaggerSpec = swaggerjsdoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.route('/ping').get((req: Request, res: Response) => {
   res.send({ status: 'ok' });
