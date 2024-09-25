@@ -93,8 +93,6 @@ const faucetRoutes = (): Router => {
    *         description: A successful response
    *       '404':
    *         description: Recipient address not found
-   *       '429':
-   *         description: Too many requests
    */
   FaucetRouter.get(
     '/countdown/:recipientAddress',
