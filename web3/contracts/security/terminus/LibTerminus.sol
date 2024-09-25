@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 
 /**
  * Authors: Moonstream Engineering (engineering@moonstream.to)
@@ -8,9 +8,6 @@
  * As Terminus is an extension of ERC1155, this library can also be used to implement bare ERC1155 contracts
  * using the common storage pattern (e.g. for use in diamond proxies).
  */
-
-// TODO(zomglings): Should we support EIP1761 in addition to ERC1155 or roll our own scopes and feature flags?
-// https://eips.ethereum.org/EIPS/eip-1761
 
 pragma solidity ^0.8.9;
 

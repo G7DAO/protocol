@@ -3,6 +3,7 @@ import "@nomicfoundation/hardhat-toolbox";
 import * as dotenv from 'dotenv'
 import { ChainId, NetworkExplorer, NetworkName, rpcUrls } from "./constants/network";
 import "@nomicfoundation/hardhat-foundry";
+import "./tasks/deploy-safe";
 
 dotenv.config()
 
@@ -18,29 +19,24 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: "0.8.24",
-      },
-    ],
-    overrides: {
-      "contracts/security/terminus/TerminusFacet.sol": {
-        version: "0.8.24",
-        settings:{
+        version: "0.5.10",
+        settings: {
           optimizer: {
             enabled: true,
-            runs: 200
+            runs: 99999,
           },
         },
       },
-      "contracts/drops/dropper-V3/DropperV3Facet.sol" : {
+      {
         version: "0.8.24",
         settings: {
           optimizer: {
-            enabled:true,
-            runs:200
+            enabled: true,
+            runs: 99999,
           },
         },
       },
-    },
+    ],
   },
   gasReporter: {
     enabled: GAS_PROFILER,

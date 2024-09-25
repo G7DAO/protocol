@@ -1,8 +1,7 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 
 /**
  * Authors: Game7 Engineering
- * GitHub: https://github.com/bugout-dev/dao
  *
  * Initializer for Terminus contract. Used when mounting a new TerminusFacet onto its diamond proxy.
  */

@@ -16,20 +16,15 @@ interface UISettingsProviderProps {
 }
 
 export const UISettingsProvider: React.FC<UISettingsProviderProps> = ({ children }) => {
-  const [isMessagingEnabled, setIsMessagingEnabled] = useState<boolean>(true)
+  const [isMessagingEnabled, setIsMessagingEnabled] = useState<boolean | undefined>(undefined)
   const [faucetTargetChainId, setFaucetTargetChainId] = useState<number>(1)
-  const [theme, setTheme] = useState<'light' | 'dark'>('light')
+  const [theme, setTheme] = useState<'light' | 'dark' | undefined>(undefined)
 
   useEffect(() => {
     const storedIsMessagingEnabled = localStorage.getItem('isMessagingEnabled')
-    const storedFaucetTargetChainId = localStorage.getItem('faucetTargetChainId')
     const storedTheme = localStorage.getItem('theme')
-
     if (storedIsMessagingEnabled !== null) {
       setIsMessagingEnabled(JSON.parse(storedIsMessagingEnabled))
-    }
-    if (storedFaucetTargetChainId !== null) {
-      setFaucetTargetChainId(Number(storedFaucetTargetChainId))
     }
     if (storedTheme) {
       setTheme(storedTheme as 'light' | 'dark')
@@ -37,16 +32,16 @@ export const UISettingsProvider: React.FC<UISettingsProviderProps> = ({ children
   }, [])
 
   useEffect(() => {
-    localStorage.setItem('isMessagingEnabled', JSON.stringify(isMessagingEnabled))
+    if (isMessagingEnabled !== undefined) {
+      localStorage.setItem('isMessagingEnabled', JSON.stringify(isMessagingEnabled))
+    }
   }, [isMessagingEnabled])
 
   useEffect(() => {
-    localStorage.setItem('faucetTargetChainId', faucetTargetChainId.toString())
-  }, [faucetTargetChainId])
-
-  useEffect(() => {
-    localStorage.setItem('theme', theme)
-    document.documentElement.setAttribute('data-theme', theme)
+    if (theme) {
+      localStorage.setItem('theme', theme)
+      document.documentElement.setAttribute('data-theme', theme)
+    }
   }, [theme])
 
   const toggleTheme = () => {
@@ -56,11 +51,11 @@ export const UISettingsProvider: React.FC<UISettingsProviderProps> = ({ children
   return (
     <UISettingsContext.Provider
       value={{
-        isMessagingEnabled,
         faucetTargetChainId,
+        isMessagingEnabled: isMessagingEnabled ?? true,
         setIsMessagingEnabled,
         setFaucetTargetChainId,
-        theme,
+        theme: theme ?? 'light',
         toggleTheme
       }}
     >

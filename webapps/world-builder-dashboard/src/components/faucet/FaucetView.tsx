@@ -21,7 +21,7 @@ import { useMediaQuery } from '@mantine/hooks'
 
 interface FaucetViewProps {}
 const FaucetView: React.FC<FaucetViewProps> = ({}) => {
-  const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L2_NETWORK)
+  const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L3_NETWORK)
   const { connectedAccount, isConnecting, getProvider, connectWallet } = useBlockchainContext()
   const [animatedInterval, setAnimatedInterval] = useState('')
   const [nextClaimTimestamp, setNextClaimTimestamp] = useState(0)

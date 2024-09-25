@@ -1,60 +1,20 @@
 import { L2_NETWORK, L3_NETWORK } from '../../../constants'
-import { ethers, providers } from 'ethers'
-import { NetworkInterface } from '@/contexts/BlockchainContext'
+import { ethers } from 'ethers'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
-
-export interface WithdrawRecord {
-  amount: string
-  lowNetworkChainId: number
-  highNetworkChainId: number
-  highNetworkHash: string
-  lowNetworkHash?: string
-  highNetworkTimestamp: number
-  lowNetworkBlockNumber?: number
-  complete?: boolean
-  challengePeriod: number //seconds
-}
+import { arbSysABI } from '@/web3/ABI/arbSys_abi'
 
 const arbSysAddress = '0x0000000000000000000000000000000000000064'
-const arbSysABI = [
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'destination',
-        type: 'address'
-      }
-    ],
-    name: 'withdrawEth',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256'
-      }
-    ],
-    stateMutability: 'payable',
-    type: 'function'
-  }
-]
 
 export const sendWithdrawTransaction = async (
-  amountInNative: string,
-  destination: string
+  value: string,
+  destination: string,
+  signer: ethers.Signer
 ): Promise<TransactionRecord> => {
   try {
-    if (!window.ethereum) {
-      throw new Error('no provider')
-    }
-    const amountInWei = ethers.utils.parseEther(amountInNative.toString())
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    await provider.send('eth_requestAccounts', [])
-    const signer = provider.getSigner()
-
+    const valueInWei = ethers.utils.parseEther(value)
     const arbSysContract = new ethers.Contract(arbSysAddress, arbSysABI, signer)
-
     const txRequest = await arbSysContract.populateTransaction.withdrawEth(destination, {
-      value: amountInWei
+      value: valueInWei
     })
 
     const txResponse = await signer.sendTransaction(txRequest)
@@ -64,7 +24,7 @@ export const sendWithdrawTransaction = async (
 
     return {
       type: 'WITHDRAWAL',
-      amount: amountInNative,
+      amount: value,
       lowNetworkChainId: L2_NETWORK.chainId,
       highNetworkChainId: L3_NETWORK.chainId,
       highNetworkHash: txResponse.hash,
@@ -78,23 +38,22 @@ export const sendWithdrawTransaction = async (
 }
 
 export const estimateWithdrawFee = async (
-  amountInNative: string,
+  value: string,
   destination: string,
-  lowNetwork: NetworkInterface
+  provider: ethers.Signer | ethers.providers.Provider
 ) => {
-  const lowNetworkProvider = new providers.JsonRpcProvider(lowNetwork.rpcs[0])
-
   try {
-    const amountInWei = ethers.utils.parseEther(amountInNative.toString())
-    const arbSysContract = new ethers.Contract(arbSysAddress, arbSysABI, lowNetworkProvider)
+    const valueInWei = ethers.utils.parseEther(value)
+    const arbSysContract = new ethers.Contract(arbSysAddress, arbSysABI, provider)
 
     const estimatedGas = await arbSysContract.estimateGas.withdrawEth(destination, {
-      value: amountInWei
+      value: valueInWei,
+      from: destination
     })
 
-    const gasPrice = await lowNetworkProvider.getGasPrice()
+    const gasPrice = await provider.getGasPrice()
     const estimatedFee = gasPrice.mul(estimatedGas)
-    return ethers.utils.formatEther(estimatedFee)
+    return { estimatedFee, estimatedGas, gasPrice }
   } catch (error) {
     console.error('Fee estimation failed:', error)
     throw error
