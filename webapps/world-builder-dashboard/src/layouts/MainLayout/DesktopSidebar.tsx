@@ -4,6 +4,7 @@ import styles from './MainLayout.module.css'
 import IconLogout from '@/assets/IconLogout'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
+import WalletButton from '@/components/commonComponents/walletButton/WalletButton'
 import IconExternalLink from '@/assets/IconExternalLink'
 
 interface DesktopSidebarProps {
@@ -12,7 +13,7 @@ interface DesktopSidebarProps {
 const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { connectedAccount, isMetaMask, disconnectWallet } = useBlockchainContext()
+  const { connectedAccount, isMetaMask, connectWallet, disconnectWallet } = useBlockchainContext()
 
   return (
     <div className={styles.sideBar}>
@@ -43,12 +44,21 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
         </div>
       </div>
       <div className={styles.footer}>
-        {connectedAccount && (
-          <div className={styles.web3AddressContainer}>
-            <div
-              className={styles.web3address}
-            >{`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}</div>
-            {isMetaMask && <IconLogout onClick={disconnectWallet} className={styles.iconButton} />}
+        {connectedAccount ? (
+          <>
+            <WalletButton />
+            <div className={styles.web3AddressContainer}>              
+              <div className={styles.web3address}>
+                {`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}
+              </div>
+              {isMetaMask && <IconLogout onClick={disconnectWallet} className={styles.iconButton} />}
+            </div>
+          </>
+        ) : (
+          <div className={styles.connectWalletButton} onClick={connectWallet}>
+            <div className={styles.connectWalletText}>
+              Connect Wallet
+            </div>
           </div>
         )}
       </div>
