@@ -20,7 +20,7 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
     setIsModalOpen(false)
   }
 
-  const { data: nativeBalance } = useNativeBalance({
+  const { data: nativeBalance, isfe } = useNativeBalance({
     account: connectedAccount,
     rpc: ALL_NETWORKS.find((network) => network.chainId === chainId)?.rpcs[0] || ''
   })
@@ -49,7 +49,7 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
               ? roundToDecimalPlaces(Number(nativeBalance), 4) +
               ' ' +
               ALL_NETWORKS.find((network) => network.chainId === chainId)?.nativeCurrency?.symbol
-              : ''}
+              : 'Fetching...'}
           </div>
         </div>
         <div className={styles.iconContainer}>

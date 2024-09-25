@@ -240,64 +240,10 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
           </div>
         </div>
       </div>
-      {/* <div className={styles.networksContainer}>
-      <div className={styles.addressContainer}>
-        <div className={styles.label}>Address type</div>
-        <ValueSelector
-          values={[
-            { valueId: 0, displayName: 'Connected wallet' },
-            { valueId: 1, displayName: 'Other wallet' }
-          ]}
-          selectedValue={selectedAccountType}
-          onChange={(e) => {
-            handleSelectAccountType(e)
-          }}
-        />
-      </div>
-      <div className={styles.addressContainer}>
-        <div className={styles.label}>Wallet Address</div>
-        <input
-          placeholder={ZERO_ADDRESS}
-          className={styles.address}
-          value={connectedAccount && selectedAccountType.valueId === 0 ? connectedAccount : address}
-          onChange={(e) => {
-            setAddress(e.target.value)
-          }}
-        />
-      </div>
-      <div className={styles.addressContainer} style={{ marginTop: '18px' }}>
-        <button
-          className={styles.button}
-          onClick={handleClick}
-          disabled={
-            (!nextClaimAvailable.data || !nextClaimAvailable.data.L3.isAvailable)
-            || !ethers.utils.isAddress(address)
-          }
-        >
-          {isConnecting
-            ? 'Connecting wallet...'
-            : claim.isLoading
-              ? 'Requesting...'
-              : 'Request'}
-        </button>
-      </div> */}
       {!!networkError && <div className={styles.errorContainer}>{networkError}.</div>}
       {!networkError && nextClaimAvailable.isLoading && (
         <div className={styles.warningContainer}>Checking faucet permissions...</div>
       )}
-
-      {/* May delete. Probably will */}
-      {/* 
-      {!nextClaimAvailable.isLoading &&
-        !networkError &&
-        (selectedNetwork.chainId === L2_NETWORK.chainId
-          ? nextClaimAvailable.data?.L2.isAvailable
-          : nextClaimAvailable.data?.L3.isAvailable) && (
-          <div className={styles.hintBadge}>You may only request funds to a connected wallet.</div>
-        )}
-      {!nextClaimAvailable.isLoading && !connectedAccount && !networkError && (
-        <div className={styles.hintBadge}>You may only request funds to a connected wallet.</div>
-      )} */}
       {selectedNetwork.chainId === L3_NETWORK.chainId &&
         nextClaimAvailable.data &&
         !nextClaimAvailable.data.L3.isAvailable && (
