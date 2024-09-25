@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv';
 import { ethers } from 'ethers';
+import { SwaggerOptions } from 'swagger-ui-express';
 dotenv.config();
 
 export const TOKEN_SENDER_ADDRESS =
@@ -28,3 +29,23 @@ const allowedOriginsStr = process.env.PROTOCOL_API_CORS_WHITELIST || '';
 export const allowedOriginsArray = allowedOriginsStr.split(',').filter(Boolean);
 export const allowedOrigins: { [key: string]: boolean } =
   allowedOriginsArray.reduce((acc, origin) => ({ ...acc, [origin]: true }), {});
+
+export const swaggerOptions: SwaggerOptions = {
+  swaggerDefinition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Protocol API',
+      description: 'Protocol API Information',
+      contact: {
+        name: 'G7 Protocol',
+      },
+    },
+    servers: [
+      {
+        url: 'http://localhost:4000/api',
+      },
+    ],
+  },
+  apis: ['./src/routes/*.ts'],
+  version: '1.0.0',
+};
