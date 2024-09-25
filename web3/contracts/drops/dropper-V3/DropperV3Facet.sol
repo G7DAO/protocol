@@ -282,7 +282,7 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         emit Claimed(dropId, recipient, signer, requestID, amount);
     }
 
-    function claimFor(
+    function claim(
         uint256 dropId,
         uint256 requestID,
         uint256 blockDeadline,
@@ -294,18 +294,7 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         _claim(dropId, requestID, blockDeadline, amount, recipient, signer, signature);
     }
 
-    function claim(
-        uint256 dropId,
-        uint256 requestID,
-        uint256 blockDeadline,
-        uint256 amount,
-        address signer,
-        bytes memory signature
-    ) public virtual diamondNonReentrant {
-        _claim(dropId, requestID, blockDeadline, amount, msg.sender, signer, signature);
-    }
-
-    function batchClaimFor(
+    function batchClaim(
         uint256[] memory dropIDList,
         uint256[] memory requestIDList,
         uint256[] memory blockDeadlineList,
@@ -314,23 +303,6 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         address[] memory signerList,
         bytes[] memory signatureList
     ) public virtual diamondNonReentrant {
-        _batchClaim(dropIDList, requestIDList, blockDeadlineList, amountList, recipientList, signerList, signatureList);
-    }
-
-    function batchClaim(
-        uint256[] memory dropIDList,
-        uint256[] memory requestIDList,
-        uint256[] memory blockDeadlineList,
-        uint256[] memory amountList,
-        address[] memory signerList,
-        bytes[] memory signatureList
-    ) public virtual diamondNonReentrant {
-        uint256 l = signatureList.length;
-        address[] memory recipientList = new address[](l);
-        for (uint i = 0; i < l; i++) {
-            recipientList[i] = msg.sender;
-        }
-
         _batchClaim(dropIDList, requestIDList, blockDeadlineList, amountList, recipientList, signerList, signatureList);
     }
 
