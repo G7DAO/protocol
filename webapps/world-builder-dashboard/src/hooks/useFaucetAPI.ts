@@ -7,31 +7,6 @@ export const useFaucetAPI = () => {
   const [error, setError] = useState<string | null>(null)
   const [response, setResponse] = useState<Record<string, any> | null>(null)
 
-  const requestFaucet = useCallback(async (address: string | undefined) => {
-    setLoading(true)
-    setError(null)
-
-    try {
-      const res = await fetch(`${BASE_URL}/api/faucet/request/${address}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      if (!res.ok) {
-        throw new Error(`Error: ${res.statusText}`)
-      }
-
-      const data = await res.json()
-      setResponse(data)
-    } catch (err: any) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
   const getFaucetTimestamp = useCallback(async (address: string | undefined) => {
     setLoading(true)
     setError(null)
@@ -105,7 +80,6 @@ export const useFaucetAPI = () => {
     loading,
     error,
     response,
-    requestFaucet,
     getFaucetTimestamp,
     getFaucetInterval,
     getFaucetCountdown,

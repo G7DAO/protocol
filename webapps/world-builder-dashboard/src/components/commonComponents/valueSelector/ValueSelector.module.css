@@ -7,16 +7,6 @@
     border-radius: 8px;
     border: 1px solid var(--Gray-100, #F2F4F7);
     background: var(--Base-White, #FFF);
-
-    box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
-    color: var(--Gray-700, #344054) !important;
-
-    /* Text sm/Medium */
-    font-family: Inter, sans-serif;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 20px; /* 142.857% */
     width: 191px;
     height: 36px;
 }
@@ -26,18 +16,20 @@
 }
 
 .inputBaseNetworkName {
-    color: var(--Gray-700, #344054) !important;
+    color: var(--Gray-500, #344054) !important;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px;
 }
 
-/* Mantine components  - !important should be used in every line*/
 .dropdown {
     padding: 0 !important;
     background: var(--Base-White, #FFF) !important;
     border-radius: 8px  !important;
     border: 1px solid var(--Gray-200, #EAECF0)  !important;
     background: var(--Base-White, #FFF) !important;
-
-    /* Shadow/lg */
     box-shadow: 0 12px 16px -4px rgba(16, 24, 40, 0.08), 0 4px 6px -2px rgba(16, 24, 40, 0.03) !important;
 }
 
@@ -48,9 +40,7 @@
 .option {
     height: 36px;
     padding: 0 !important;
-    color: var(--Gray-700, #344054) !important;
-
-    /* Text sm/Medium */
+    color: var(--Gray-500, #344054) !important;
     font-size: 14px !important;
     font-style: normal !important;
     font-weight: 500 !important;

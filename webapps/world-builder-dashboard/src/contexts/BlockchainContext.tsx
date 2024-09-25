@@ -107,12 +107,21 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     setChainId(newChainId)
   }
 
+  const handleAccountChanged = (accounts: string[]) => {
+    const account = accounts[0]
+    setConnectedAccount(account)
+  }
+
   useEffect(() => {
     fetchChainId()
-
-    // if chain changed, set the new chain id
     if (window.ethereum?.on) {
       window.ethereum.on('chainChanged', handleChainChanged)
+    }
+  }, [walletProvider])
+
+  useEffect(() => {
+    if (window.ethereum?.on) {
+      window.ethereum.on('accountsChanged', handleAccountChanged)
     }
   }, [walletProvider])
 
