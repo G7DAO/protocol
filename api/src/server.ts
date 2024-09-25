@@ -28,7 +28,7 @@ app.route('/status').get((req: Request, res: Response) => {
   });
 });
 
-app.use('/api', routes());
+app.use(routes());
 
 server
   .listen({ port: API_PORT, hostname: API_HOST }, async () => {
