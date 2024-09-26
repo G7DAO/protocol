@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { L3_NATIVE_TOKEN_SYMBOL } from '../../../../constants'
 import styles from './ValueToBridge.module.css'
-import IconG7TSmall from '@/assets/IconG7TSmall'
-import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import IconChevronDownSelector from '@/assets/IconChevronDownSelector'
+import IconG7TSmall from '@/assets/IconG7TSmall'
+import TokenSelector from '@/components/commonComponents/tokenSelector/TokenSelector'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
+import { getTokensForNetwork, Token } from '@/utils/tokens'
 
 const formatCurrency = (value: number) => {
   const formatter = new Intl.NumberFormat('en-US', {
@@ -35,6 +37,20 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   errorMessage,
   setErrorMessage
 }) => {
+  const { chainId } = useBlockchainContext()
+  const [tokens, setTokens] = useState<Token[]>([])
+  const [token, setToken] = useState<Token>()
+
+  const fetchTokens = async () => {
+    const _tokens = getTokensForNetwork(chainId)
+    setToken(_tokens[0])
+    setTokens(_tokens)
+  }
+
+  useEffect(() => {
+    fetchTokens()
+  }, [chainId])
+
   useEffect(() => {
     const num = Number(value)
     if (isNaN(num) || num < 0) {
@@ -72,11 +88,14 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
         <button className={styles.maxButton} onClick={() => setValue(String(balance))} disabled={!connectedAccount}>
           MAX
         </button>
-        <div className={styles.tokenGroup}>
+        {tokens.length > 0 && token && (
+          <TokenSelector tokens={tokens} selectedToken={token} onChange={(token: Token) => setToken(token)} />
+        )}
+        {/* <div className={styles.tokenGroup}>
           <IconG7TSmall />
           <div className={styles.tokenSymbol}>{L3_NATIVE_TOKEN_SYMBOL}</div>
           <IconChevronDownSelector />
-        </div>
+        </div> */}
       </div>
       <div className={styles.header}>
         <div className={styles.label}>{rate > 0 ? formatCurrency(Number(value) * rate) : ' '}</div>

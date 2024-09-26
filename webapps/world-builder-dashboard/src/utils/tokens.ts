@@ -3,6 +3,7 @@ import IconG7T from "@/assets/IconG7T";
 import IconUSDC from "@/assets/IconUSDC";
 import IconEthereum from "@/assets/IconEthereum";
 import { ZERO_ADDRESS } from "./web3utils";
+import { ReactNode } from "react";
 
 export interface Token {
     name: string,
@@ -34,7 +35,7 @@ export const getTokensForNetwork = (chainId: number | undefined): Token[] => {
                     name: 'Ethereum',
                     symbol: 'ETH',
                     address: ZERO_ADDRESS,
-                    Icon: IconEthereum,
+                    Icon:  IconEthereum,
                     rpc: L1_NETWORK.rpcs[0],
                 },
             ];

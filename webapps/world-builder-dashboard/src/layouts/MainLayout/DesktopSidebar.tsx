@@ -29,7 +29,7 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
                 } else {
                   navigate(item.navigateTo); // For internal navigation
                 }
-              }}  
+            }}  
               key={item.name}
             >
               <div className={styles.navBeginning}>
