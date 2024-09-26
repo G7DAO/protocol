@@ -3,7 +3,6 @@ import IconG7T from "@/assets/IconG7T";
 import IconUSDC from "@/assets/IconUSDC";
 import IconEthereum from "@/assets/IconEthereum";
 import { ZERO_ADDRESS } from "./web3utils";
-import { ReactNode } from "react";
 
 export interface Token {
     name: string,

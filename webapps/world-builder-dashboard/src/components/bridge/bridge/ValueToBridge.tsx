@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { L3_NATIVE_TOKEN_SYMBOL } from '../../../../constants'
 import styles from './ValueToBridge.module.css'
-import IconChevronDownSelector from '@/assets/IconChevronDownSelector'
-import IconG7TSmall from '@/assets/IconG7TSmall'
 import TokenSelector from '@/components/commonComponents/tokenSelector/TokenSelector'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { getTokensForNetwork, Token } from '@/utils/tokens'

@@ -1,0 +1,148 @@
+.inputBase {
+  display: flex;
+  padding: var(--20px, 20px) 16px;
+
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+
+  /* border-radius: 8px; */
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border-left: 1px solid var(--Gray-100, #f2f4f7);
+  background: var(--Base-White, #fff);
+  width: 117px !important;
+  height: 60px;
+}
+
+.inputBase:hover {
+  background: var(--Gray-25, #fcfcfd);
+}
+
+.inputBaseNetworkName {
+  color: var(--Gray-500, #344054) !important;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+/* Mantine modules use !important please */
+
+.dropdown {
+  padding: 4px 0px !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  flex: 1 0 0 !important;
+  align-self: stretch !important;
+  width: 320px !important;
+  padding: 0 !important;
+  background: var(--Base-White, #fff) !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--Gray-200, #eaecf0) !important;
+  background: var(--Base-White, #fff) !important;
+  box-shadow:
+    0 12px 16px -4px rgba(16, 24, 40, 0.08),
+    0 4px 6px -2px rgba(16, 24, 40, 0.03) !important;
+}
+
+.options {
+  display: flex;
+  padding: 2px 6px !important;
+  width: 308px !important;
+  display: flex !important;
+  padding: 4px 0px !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  flex: 1 0 0 !important;
+  align-self: stretch !important;
+}
+
+.option {
+  width: 308px !important;
+  display: flex !important;
+  padding: 10px 10px 10px 8px !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 8px !important;
+  flex: 1 0 0;
+  /* height: 24px !important; */
+  color: var(--Gray-500, #344054) !important;
+  font-size: 14px !important;
+  font-style: normal !important;
+  font-weight: 500 !important;
+  line-height: 20px !important; /* 142.857% */
+}
+
+.option:hover {
+  background-color: transparent !important;
+}
+
+.optionContainer,
+.optionContainerSelected {
+  width: 312px;
+  height: 36px;
+  display: flex;
+  padding: 10px 10px 10px 8px;
+  align-items: center;
+  gap: 8px;
+  flex: 1 0 0;
+
+  border-radius: 6px;
+}
+.optionContainerSelected {
+  background: var(--Gray-50, #f9fafb);
+}
+
+.optionLeftSection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 0 0;
+}
+
+.chevron {
+  stroke: var(--Gray-500, #667085);
+}
+
+.tokenAdderContainer {
+  display: flex;
+  padding: 10px 10px 10px 8px;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 8px;
+  flex: 1 0 0;
+  align-self: stretch;
+}
+
+.tokenAddressInput {
+  display: flex;
+  height: 40px;
+  padding: 10px var(--14px, 14px);
+  align-items: center;
+  border: 1px solid var(--Gray-100, #f2f4f7);
+  border-radius: 8px;
+}
+
+.importButton {
+  display: flex;
+  padding: 10px 16px;
+  height: 40px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--Primary-600, #ef233b);
+  background: var(--Primary-600, #ef233b);
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+}
+
+.importText {
+  color: var(--Base-White, #fff);
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px;
+}

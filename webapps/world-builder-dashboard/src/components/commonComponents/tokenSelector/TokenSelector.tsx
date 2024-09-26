@@ -35,11 +35,11 @@ const TokenSelector = ({ tokens, onChange, selectedToken }: TokenSelectorProps) 
           pointer
           variant='unstyled'
           leftSection={<selectedToken.Icon />}
-          rightSection={tokens.length > 1 ? <IconChevronDown className={styles.chevron} /> : ''}
+          rightSection={tokens && tokens.length > 0 ? <IconChevronDown className={styles.chevron} /> : ''}
           rightSectionPointerEvents='none'
           onClick={() => combobox.toggleDropdown()}
         >
-          <span className={styles.inputBaseNetworkName}>{selectedToken.name}</span>
+          <span className={styles.inputBaseNetworkName}>{selectedToken.symbol}</span>
         </InputBase>
       </Combobox.Target>
 
@@ -61,13 +61,23 @@ const TokenSelector = ({ tokens, onChange, selectedToken }: TokenSelectorProps) 
                   >
                     <div className={styles.optionLeftSection}>
                       {<n.Icon />}
-                      {n.name}
+                      {n.symbol}
                     </div>
                     {n.address === selectedToken.address && <IconCheck />}
                   </div>
                 </Group>
               </Combobox.Option>
             ))}
+          <Combobox.Footer>
+            <Group>
+              <div className={styles.tokenAdderContainer}>
+                <input className={styles.tokenAddressInput} value={''} placeholder='Token address' />
+                <div className={styles.importButton}>
+                  <div className={styles.importText}>Import</div>
+                </div>
+              </div>
+            </Group>
+          </Combobox.Footer>
         </Combobox.Options>
       </Combobox.Dropdown>
     </Combobox>

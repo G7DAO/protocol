@@ -22,7 +22,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const [address, setAddress] = useState<string | undefined>('')
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L3_NETWORK)
   const { useFaucetInterval, useFaucetTimestamp } = useFaucetAPI()
-  const { connectedAccount, connectWallet, accounts, chainId } = useBlockchainContext()
+  const { connectedAccount, connectWallet, chainId } = useBlockchainContext()
   const [animatedInterval, setAnimatedInterval] = useState('')
   const [nextClaimTimestamp, setNextClaimTimestamp] = useState(0)
   const [networkError, setNetworkError] = useState('')
