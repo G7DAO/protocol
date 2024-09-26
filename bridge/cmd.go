@@ -11,7 +11,7 @@ import (
 )
 
 func CreateBridgeCommand() *cobra.Command {
-	crossChainCmd := &cobra.Command{
+	bridgeCmd := &cobra.Command{
 		Use:   "bridge",
 		Short: "Bridge tokens between chains",
 		Run: func(cmd *cobra.Command, args []string) {
@@ -19,16 +19,28 @@ func CreateBridgeCommand() *cobra.Command {
 		},
 	}
 
-	bridgeL1ToL2Cmd := CreateBridgeL1ToL2Command()
-	bridgeL1ToL3Cmd := CreateBridgeL1ToL3Command()
+	bridgeCmd.AddCommand(CreateBridgeNativeTokenCommand())
+	bridgeCmd.AddCommand(CreateBridgeERC20Command())
 
-	crossChainCmd.AddCommand(bridgeL1ToL2Cmd)
-	crossChainCmd.AddCommand(bridgeL1ToL3Cmd)
-
-	return crossChainCmd
+	return bridgeCmd
 }
 
-func CreateBridgeL1ToL2Command() *cobra.Command {
+func CreateBridgeNativeTokenCommand() *cobra.Command {
+	nativeTokenCmd := &cobra.Command{
+		Use:   "native-token",
+		Short: "Bridge native tokens between chains",
+		Run: func(cmd *cobra.Command, args []string) {
+			cmd.Help()
+		},
+	}
+
+	nativeTokenCmd.AddCommand(CreateBridgeNativeTokenL1ToL2Command())
+	nativeTokenCmd.AddCommand(CreateBridgeNativeTokenL1ToL3Command())
+
+	return nativeTokenCmd
+}
+
+func CreateBridgeNativeTokenL1ToL2Command() *cobra.Command {
 	var keyFile, password, l1Rpc, l2Rpc, inboxRaw, toRaw, l2CallValueRaw, l2CalldataRaw string
 	var inboxAddress, to common.Address
 	var l2CallValue *big.Int
@@ -77,7 +89,7 @@ func CreateBridgeL1ToL2Command() *cobra.Command {
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Println("Bridging from", inboxAddress.Hex(), "to", to.Hex())
-			transaction, transactionErr := Bridge(inboxAddress, keyFile, password, l1Rpc, l2Rpc, to, l2CallValue, l2Calldata)
+			transaction, transactionErr := NativeTokenBridge(inboxAddress, keyFile, password, l1Rpc, l2Rpc, to, l2CallValue, l2Calldata)
 			if transactionErr != nil {
 				fmt.Fprintln(cmd.ErrOrStderr(), transactionErr.Error())
 				return transactionErr
@@ -101,7 +113,7 @@ func CreateBridgeL1ToL2Command() *cobra.Command {
 	return createCmd
 }
 
-func CreateBridgeL1ToL3Command() *cobra.Command {
+func CreateBridgeNativeTokenL1ToL3Command() *cobra.Command {
 	var keyFile, password, l1TokenRaw, l3FeeTokenL1AddrRaw, l1l2RouterRaw, l2l3RouterOrInboxRaw, toRaw, amountRaw, l3CalldataRaw, l1Rpc, l2Rpc, l3Rpc, teleporterAddressRaw string
 	teleportParams := &TeleportParams{}
 	var teleporterAddress common.Address
@@ -194,6 +206,88 @@ func CreateBridgeL1ToL3Command() *cobra.Command {
 	createCmd.Flags().StringVar(&l2Rpc, "l2-rpc", "", "L2 RPC URL")
 	createCmd.Flags().StringVar(&l3Rpc, "l3-rpc", "", "L3 RPC URL")
 	createCmd.Flags().StringVar(&teleporterAddressRaw, "teleporter", "", "Teleporter contract address")
+
+	return createCmd
+}
+
+func CreateBridgeERC20Command() *cobra.Command {
+	erc20Cmd := &cobra.Command{
+		Use:   "erc20",
+		Short: "Bridge ERC20 tokens between chains",
+		Run: func(cmd *cobra.Command, args []string) {
+			cmd.Help()
+		},
+	}
+
+	erc20Cmd.AddCommand(CreateBridgeERC20L1ToL2Command())
+
+	return erc20Cmd
+}
+
+func CreateBridgeERC20L1ToL2Command() *cobra.Command {
+	var keyFile, password, l1Rpc, routerRaw, tokenAddressRaw, toRaw, amountRaw string
+	var routerAddress, tokenAddress, to common.Address
+	var amount *big.Int
+
+	createCmd := &cobra.Command{
+		Use:   "l1-to-l2",
+		Short: "Bridge ERC20 tokens from L1 to L2",
+		Long:  `Bridge ERC20 tokens from L1 to L2 with a single transaction and arbitrary calldata`,
+
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if !common.IsHexAddress(routerRaw) {
+				return errors.New("invalid router address")
+			}
+			routerAddress = common.HexToAddress(routerRaw)
+
+			if !common.IsHexAddress(toRaw) {
+				return errors.New("invalid recipient address")
+			}
+			to = common.HexToAddress(toRaw)
+
+			if !common.IsHexAddress(tokenAddressRaw) {
+				return errors.New("invalid token address")
+			}
+			tokenAddress = common.HexToAddress(tokenAddressRaw)
+
+			amount = new(big.Int)
+			if amountRaw != "" {
+				_, ok := amount.SetString(amountRaw, 10)
+				if !ok {
+					return errors.New("invalid L2 call value")
+				}
+			} else {
+				fmt.Println("No amount provided, defaulting to 0")
+				amount.SetInt64(0)
+			}
+
+			if keyFile == "" {
+				return errors.New("keyfile is required")
+			}
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			fmt.Println("Bridging", tokenAddress.Hex(), "to", to.Hex())
+			transaction, transactionErr := ERC20Bridge(routerAddress, keyFile, password, l1Rpc, tokenAddress, to, amount)
+			if transactionErr != nil {
+				fmt.Fprintln(cmd.ErrOrStderr(), transactionErr.Error())
+				return transactionErr
+			}
+
+			fmt.Println("Transaction sent:", transaction.Hash().Hex())
+
+			return nil
+		},
+	}
+
+	createCmd.Flags().StringVar(&password, "password", "", "Password to encrypt accounts with")
+	createCmd.Flags().StringVar(&keyFile, "keyfile", "", "Keyfile to sign transaction with")
+	createCmd.Flags().StringVar(&l1Rpc, "l1-rpc", "", "L1 RPC URL")
+	createCmd.Flags().StringVar(&routerRaw, "router", "", "Router address")
+	createCmd.Flags().StringVar(&toRaw, "to", "", "Recipient address")
+	createCmd.Flags().StringVar(&tokenAddressRaw, "token", "", "Token address")
+	createCmd.Flags().StringVar(&amountRaw, "amount", "", "Amount to send")
 
 	return createCmd
 }
