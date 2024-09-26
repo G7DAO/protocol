@@ -49,7 +49,6 @@
 
 .options {
   display: flex;
-  padding: 2px 6px !important;
   width: 308px !important;
   display: flex !important;
   padding: 4px 0px !important;
@@ -60,12 +59,12 @@
 }
 
 .option {
+  display: flex;
   width: 308px !important;
-  display: flex !important;
-  padding: 10px 10px 10px 8px !important;
-  flex-direction: column !important;
-  align-items: flex-start !important;
-  gap: 8px !important;
+  align-items: center !important;
+  padding: 2px 6px !important;
+  align-items: center;
+  align-self: stretch;
   flex: 1 0 0;
   /* height: 24px !important; */
   color: var(--Gray-500, #344054) !important;
@@ -123,6 +122,12 @@
   align-items: center;
   border: 1px solid var(--Gray-100, #f2f4f7);
   border-radius: 8px;
+  /* color: var(--Gray-500, #667085);
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px;*/
 }
 
 .importButton {

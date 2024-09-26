@@ -39,7 +39,8 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   const [token, setToken] = useState<Token>()
 
   const fetchTokens = async () => {
-    const _tokens = getTokensForNetwork(chainId)
+    const _tokens = getTokensForNetwork(chainId, connectedAccount)
+    console.log(_tokens)
     setToken(_tokens[0])
     setTokens(_tokens)
   }

@@ -1,8 +1,11 @@
+import { useState } from 'react'
 import styles from './TokenSelector.module.css'
 import { Combobox, Group, InputBase, InputBaseProps, useCombobox } from 'summon-ui/mantine'
 import IconCheck from '@/assets/IconCheck'
 import IconChevronDown from '@/assets/IconChevronDown'
+import IconG7T from '@/assets/IconG7T'
 import { Token } from '@/utils/tokens'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
 
 type TokenSelectorProps = {
   tokens: Token[]
@@ -14,6 +17,24 @@ const TokenSelector = ({ tokens, onChange, selectedToken }: TokenSelectorProps) 
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption()
   })
+
+  const [tokenAddress, setTokenAddress] = useState<string>('')
+  const {connectedAccount, chainId} = useBlockchainContext()
+
+  const addToken = (tokenAddress: string) => {
+    const storageKey = `${connectedAccount}-${chainId}`
+    const existingTokens = JSON.parse(localStorage.getItem(storageKey) || '[]')
+    const token = {
+        name: tokenAddress,
+        symbol: 'TEST',
+        address: tokenAddress,
+        rpc: ''
+    }
+
+    const updatedTokens = [...existingTokens, token]
+    localStorage.setItem(storageKey, JSON.stringify(updatedTokens))
+    console.log(`Token ${token.name} added for user ${connectedAccount} on chain ${chainId}`)
+  }
 
   return (
     <Combobox
@@ -68,17 +89,24 @@ const TokenSelector = ({ tokens, onChange, selectedToken }: TokenSelectorProps) 
                 </Group>
               </Combobox.Option>
             ))}
-          <Combobox.Footer>
+          {/* <Combobox>
             <Group>
-              <div className={styles.tokenAdderContainer}>
-                <input className={styles.tokenAddressInput} value={''} placeholder='Token address' />
-                <div className={styles.importButton}>
-                  <div className={styles.importText}>Import</div>
-                </div>
-              </div>
             </Group>
-          </Combobox.Footer>
+          </Combobox> */}
         </Combobox.Options>
+        <div className={styles.tokenAdderContainer}>
+          <input
+            className={styles.tokenAddressInput}
+            value={tokenAddress}
+            placeholder='Token address'
+            onChange={(e) => {
+              setTokenAddress(e.target.value)
+            }}
+          />
+          <div className={styles.importButton} onClick={() => addToken(tokenAddress)}>
+            <div className={styles.importText}>Import</div>
+          </div>
+        </div>
       </Combobox.Dropdown>
     </Combobox>
   )
