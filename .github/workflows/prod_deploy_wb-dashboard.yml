@@ -3,11 +3,11 @@ on:
       branches:
         - main
       paths:
-        - '.github/workflows/deploy-wb-dashboard.yml'
+        - '.github/workflows/prod_deploy_wb-dashboard.yml'
         - 'webapps/world-builder-dashboard/**'
 
 jobs:
-    deploy:
+    prod_deploy_wb-dashboard:
         runs-on: ubuntu-latest
 
         steps:
