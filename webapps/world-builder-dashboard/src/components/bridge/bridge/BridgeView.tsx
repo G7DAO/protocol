@@ -31,6 +31,7 @@ import { estimateDepositERC20ToNativeFee } from '@/utils/bridge/depositERC20ToNa
 import { getStakeNativeTxData } from '@/utils/bridge/stakeContractInfo'
 import { estimateWithdrawGasAndFee } from '@/utils/bridge/withdrawERC20'
 import { estimateWithdrawFee } from '@/utils/bridge/withdrawNativeToken'
+import { Token } from '@/utils/tokens'
 
 const BridgeView = ({
   direction,
@@ -191,6 +192,7 @@ const BridgeView = ({
         symbol={L3_NATIVE_TOKEN_SYMBOL}
         value={value}
         setValue={setValue}
+        onTokenChange={(token: Token) => {console.log(token)}}
         balance={
           direction === 'DEPOSIT'
             ? (lowNetworkBalance?.formatted ?? '0')
@@ -207,6 +209,7 @@ const BridgeView = ({
         }
         errorMessage={inputErrorMessages.value}
         setErrorMessage={(msg) => setInputErrorMessages((prev) => ({ ...prev, value: msg }))}
+        selectedChainId={selectedLowNetwork.chainId}
       />
       {direction === 'DEPOSIT' && selectedLowNetwork.chainId === L2_NETWORK.chainId && isMessagingEnabled && (
         <BridgeMessage

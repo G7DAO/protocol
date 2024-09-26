@@ -23,6 +23,8 @@ interface ValueToBridgeProps {
   isFetchingBalance?: boolean
   errorMessage: string
   setErrorMessage: (arg0: string) => void
+  onTokenChange: (token: Token) => void
+  selectedChainId: number
 }
 const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   setValue,
@@ -32,22 +34,24 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   rate,
   isFetchingBalance,
   errorMessage,
-  setErrorMessage
+  setErrorMessage,
+  onTokenChange,
+  selectedChainId
 }) => {
-  const { chainId } = useBlockchainContext()
   const [tokens, setTokens] = useState<Token[]>([])
   const [token, setToken] = useState<Token>()
   const { connectedAccount } = useBlockchainContext()
 
   const fetchTokens = async () => {
-    const _tokens = getTokensForNetwork(chainId, connectedAccount)
+    const _tokens = getTokensForNetwork(selectedChainId, connectedAccount)
     setToken(_tokens[0])
     setTokens(_tokens)
   }
 
   useEffect(() => {
+    console.log(selectedChainId)
     fetchTokens()
-  }, [chainId])
+  }, [selectedChainId])
 
   useEffect(() => {
     const num = Number(value)
@@ -73,6 +77,11 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
     fetchTokens()
   }
 
+  const handleTokenChange = (token: Token) => {
+    setToken(token)
+    onTokenChange(token)
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -90,7 +99,13 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
           MAX
         </button>
         {tokens.length > 0 && token && (
-          <TokenSelector tokens={tokens} selectedToken={token} onChange={(token: Token) => setToken(token)} onTokenAdded={handleTokenAdded}/>
+          <TokenSelector
+            tokens={tokens}
+            selectedToken={token}
+            onChange={(token: Token) => handleTokenChange(token)}
+            onTokenAdded={handleTokenAdded}
+            selectedChainId={selectedChainId}
+          />
         )}
         {/* <div className={styles.tokenGroup}>
           <IconG7TSmall />

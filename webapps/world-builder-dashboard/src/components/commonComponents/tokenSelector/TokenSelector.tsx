@@ -11,18 +11,19 @@ type TokenSelectorProps = {
   selectedToken: Token
   onChange: (token: Token) => void
   onTokenAdded: () => void
+  selectedChainId: number
 } & InputBaseProps
 
-const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded }: TokenSelectorProps) => {
+const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selectedChainId }: TokenSelectorProps) => {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption()
   })
 
   const [tokenAddress, setTokenAddress] = useState<string>('')
-  const { connectedAccount, chainId } = useBlockchainContext()
+  const { connectedAccount } = useBlockchainContext()
 
   const addToken = (tokenAddress: string) => {
-    const storageKey = `${connectedAccount}-${chainId}`
+    const storageKey = `${connectedAccount}-${selectedChainId}`
     const existingTokens = JSON.parse(localStorage.getItem(storageKey) || '[]')
     const token = {
       name: tokenAddress,
