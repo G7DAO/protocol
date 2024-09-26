@@ -1,12 +1,15 @@
-name: Smart Contracts CI
+name: Smart Contracts Test
 
 on:
   pull_request:
     branches:
       - "main"
+    paths:
+        - '.github/workflows/test_web3.yml'
+        - 'web3/**'
 
 jobs:
-  tests:
+  test_web3:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
