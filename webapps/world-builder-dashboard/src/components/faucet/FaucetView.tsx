@@ -22,7 +22,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const [address, setAddress] = useState<string | undefined>('')
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L3_NETWORK)
   const { useFaucetInterval, useFaucetTimestamp } = useFaucetAPI()
-  const { connectedAccount, connectWallet, accounts, chainId } = useBlockchainContext()
+  const { connectedAccount, connectWallet, chainId } = useBlockchainContext()
   const [animatedInterval, setAnimatedInterval] = useState('')
   const [nextClaimTimestamp, setNextClaimTimestamp] = useState(0)
   const [networkError, setNetworkError] = useState('')
@@ -67,7 +67,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
     async ({ address }: { isL2Target: boolean; address: string | undefined }) => {
       setRequesting(true)
 
-      const res = await fetch(`https://api.game7.build/api/faucet/request/${address}`, {
+      const res = await fetch(`https://api.game7.build/faucet/request/${address}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

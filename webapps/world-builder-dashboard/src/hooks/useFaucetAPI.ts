@@ -1,4 +1,3 @@
-import { useState, useCallback } from 'react'
 import { useQuery } from 'react-query'
 
 const BASE_URL = 'https://api.game7.build'
@@ -9,7 +8,7 @@ export const useFaucetAPI = () => {
     return useQuery(
       ['faucetTimestamp', address],
       async () => {
-        const res = await fetch(`${BASE_URL}/api/faucet/timestamp/${address}`, {
+        const res = await fetch(`${BASE_URL}/faucet/timestamp/${address}`, {
           method: 'GET',
         });
         if (!res.ok) {
@@ -30,7 +29,7 @@ export const useFaucetAPI = () => {
     return useQuery(
       'faucetInterval',
       async () => {
-        const res = await fetch(`${BASE_URL}/api/faucet/interval`, {
+        const res = await fetch(`${BASE_URL}/faucet/interval`, {
           method: 'GET',
         });
         if (!res.ok) {
@@ -49,7 +48,7 @@ export const useFaucetAPI = () => {
     return useQuery(
       ['faucetCountdown', address],
       async () => {
-        const res = await fetch(`${BASE_URL}/api/faucet/countdown/${address}`, {
+        const res = await fetch(`${BASE_URL}/faucet/countdown/${address}`, {
           method: 'GET',
         });
         if (!res.ok) {
