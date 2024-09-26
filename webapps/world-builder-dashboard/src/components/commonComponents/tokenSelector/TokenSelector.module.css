@@ -108,10 +108,17 @@
 .tokenAdderContainer {
   display: flex;
   padding: 10px 10px 10px 8px;
-  flex-direction: row;
+  flex-direction: column;
   align-items: flex-start;
   gap: 8px;
   flex: 1 0 0;
+  align-self: stretch;
+}
+
+.tokenAdder {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
   align-self: stretch;
 }
 
@@ -128,6 +135,10 @@
   font-style: normal;
   font-weight: 500;
   line-height: 24px;*/
+}
+
+.tokenAddressInput .error {
+  border: 1px solid var(--color-error-Error-500, #f04438);
 }
 
 .importButton {
@@ -150,4 +161,27 @@
   font-style: normal;
   font-weight: 600;
   line-height: 20px;
+}
+
+.tokenAdderError {
+  display: flex;
+  padding: 2px 8px;
+  justify-content: center;
+  align-items: center;
+  align-self: stretch;
+  border-radius: 16px;
+  background: var(--Error-50, #fef3f2);
+  mix-blend-mode: multiply;
+}
+
+.tokenErrorText {
+  color: var(--Error-700, #b42318);
+  text-align: center;
+
+  /* Text xs/Medium */
+  font-family: Inter;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 18px; /* 150% */
 }

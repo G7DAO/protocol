@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import styles from './TokenSelector.module.css'
+import { ethers } from 'ethers'
 import { Combobox, Group, InputBase, InputBaseProps, useCombobox } from 'summon-ui/mantine'
 import IconCheck from '@/assets/IconCheck'
 import IconChevronDown from '@/assets/IconChevronDown'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { Token } from '@/utils/tokens'
+import { doesContractExist } from '@/utils/web3utils'
 
 type TokenSelectorProps = {
   tokens: Token[]
@@ -20,7 +22,17 @@ const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selected
   })
 
   const [tokenAddress, setTokenAddress] = useState<string>('')
+  const [error, setError] = useState<string>('')
   const { connectedAccount } = useBlockchainContext()
+
+  const handleTokenInput = (address: string) => {
+    setTokenAddress(address)
+    const web3Provider = new ethers.providers.Web3Provider(window.ethereum)
+    if (!ethers.utils.isAddress(address)) setError('Not an address!')
+    else if (!doesContractExist(address, web3Provider)) setError(`Contract doesn't exist!`)
+    else if (tokens.find((token) => token.address === address)) setError('Token already exists')
+    else setError('')
+  }
 
   const addToken = (tokenAddress: string) => {
     const storageKey = `${connectedAccount}-${selectedChainId}`
@@ -96,17 +108,24 @@ const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selected
           </Combobox> */}
         </Combobox.Options>
         <div className={styles.tokenAdderContainer}>
-          <input
-            className={styles.tokenAddressInput}
-            value={tokenAddress}
-            placeholder='Token address'
-            onChange={(e) => {
-              setTokenAddress(e.target.value)
-            }}
-          />
-          <div className={styles.importButton} onClick={() => addToken(tokenAddress)}>
-            <div className={styles.importText}>Import</div>
+          <div className={styles.tokenAdder}>
+            <input
+              className={styles.tokenAddressInput}
+              value={tokenAddress}
+              placeholder='Token address'
+              onChange={(e) => {
+                handleTokenInput(e.target.value)
+              }}
+            />
+            <div className={styles.importButton} onClick={() => addToken(tokenAddress)}>
+              <div className={styles.importText}>Import</div>
+            </div>
           </div>
+          {error && error.length > 0 && (
+            <div className={styles.tokenAdderError}>
+              <div className={styles.tokenErrorText}>{error}</div>
+            </div>
+          )}
         </div>
       </Combobox.Dropdown>
     </Combobox>
