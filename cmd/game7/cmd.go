@@ -11,9 +11,11 @@ import (
 	"github.com/G7DAO/protocol/bindings/ArbitrumL1OrbitGatewayRouter"
 	"github.com/G7DAO/protocol/bindings/ArbitrumL2CustomGateway"
 	"github.com/G7DAO/protocol/bindings/ArbitrumUpgradeExecutor"
+
 	"github.com/G7DAO/protocol/bindings/ERC20Inbox"
 	"github.com/G7DAO/protocol/bindings/PositionMetadata"
 	"github.com/G7DAO/protocol/bindings/Staker"
+
 	"github.com/G7DAO/protocol/bindings/TokenFaucet"
 	"github.com/G7DAO/protocol/bindings/TokenSender"
 	"github.com/G7DAO/protocol/bridge"
@@ -23,6 +25,10 @@ import (
 	"github.com/G7DAO/protocol/bindings/MockERC20"
 	"github.com/G7DAO/protocol/bindings/MockERC721"
 	"github.com/G7DAO/protocol/bindings/WrappedNativeToken"
+
+	dropperV2Gogogo "github.com/G7DAO/protocol/cmd/game7/gogogo/dropper-v2-diamond"
+	dropperV3Gogogo "github.com/G7DAO/protocol/cmd/game7/gogogo/dropper-v3-diamond"
+	terminusGogogo "github.com/G7DAO/protocol/cmd/game7/gogogo/terminus"
 	"github.com/G7DAO/protocol/cmd/game7/version"
 )
 
@@ -72,6 +78,10 @@ func CreateRootCommand() *cobra.Command {
 	accountsCmd := accounts.CreateAccountsCommand()
 	accountsCmd.Use = "accounts"
 
+	terminusGogogoCmd := terminusGogogo.CreateGogogoCommand()
+	dropperV2GogogoCmd := dropperV2Gogogo.CreateGogogoCommand()
+	dropperV3GogogoCmd := dropperV3Gogogo.CreateGogogoCommand()
+
 	wrappedNativeTokenCmd := WrappedNativeToken.CreateWrappedNativeTokenCommand()
 	wrappedNativeTokenCmd.Use = "wrapped-native-token"
 
@@ -83,7 +93,7 @@ func CreateRootCommand() *cobra.Command {
 
 	mockCmd := CreateMockCommand()
 
-	rootCmd.AddCommand(completionCmd, versionCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd, accountsCmd, wrappedNativeTokenCmd, stakerCmd, mockCmd, positionMetadataCmd, tokenSenderCmd)
+	rootCmd.AddCommand(completionCmd, versionCmd, terminusGogogoCmd, dropperV3GogogoCmd, dropperV2GogogoCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd, accountsCmd, wrappedNativeTokenCmd, stakerCmd, mockCmd, positionMetadataCmd, tokenSenderCmd)
 
 	// By default, cobra Command objects write to stderr. We have to forcibly set them to output to
 	// stdout.
