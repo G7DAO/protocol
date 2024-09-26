@@ -49,7 +49,6 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   }
 
   useEffect(() => {
-    console.log(selectedChainId)
     fetchTokens()
   }, [selectedChainId])
 

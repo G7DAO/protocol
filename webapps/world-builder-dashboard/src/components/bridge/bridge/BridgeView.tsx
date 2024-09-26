@@ -209,7 +209,7 @@ const BridgeView = ({
         }
         errorMessage={inputErrorMessages.value}
         setErrorMessage={(msg) => setInputErrorMessages((prev) => ({ ...prev, value: msg }))}
-        selectedChainId={selectedLowNetwork.chainId}
+        selectedChainId={direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId}
       />
       {direction === 'DEPOSIT' && selectedLowNetwork.chainId === L2_NETWORK.chainId && isMessagingEnabled && (
         <BridgeMessage
