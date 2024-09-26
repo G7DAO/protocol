@@ -3,37 +3,37 @@ import styles from './TokenSelector.module.css'
 import { Combobox, Group, InputBase, InputBaseProps, useCombobox } from 'summon-ui/mantine'
 import IconCheck from '@/assets/IconCheck'
 import IconChevronDown from '@/assets/IconChevronDown'
-import IconG7T from '@/assets/IconG7T'
-import { Token } from '@/utils/tokens'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
+import { Token } from '@/utils/tokens'
 
 type TokenSelectorProps = {
   tokens: Token[]
   selectedToken: Token
   onChange: (token: Token) => void
+  onTokenAdded: () => void
 } & InputBaseProps
 
-const TokenSelector = ({ tokens, onChange, selectedToken }: TokenSelectorProps) => {
+const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded }: TokenSelectorProps) => {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption()
   })
 
   const [tokenAddress, setTokenAddress] = useState<string>('')
-  const {connectedAccount, chainId} = useBlockchainContext()
+  const { connectedAccount, chainId } = useBlockchainContext()
 
   const addToken = (tokenAddress: string) => {
     const storageKey = `${connectedAccount}-${chainId}`
     const existingTokens = JSON.parse(localStorage.getItem(storageKey) || '[]')
     const token = {
-        name: tokenAddress,
-        symbol: 'TEST',
-        address: tokenAddress,
-        rpc: ''
+      name: tokenAddress,
+      symbol: 'TEST',
+      address: tokenAddress,
+      rpc: ''
     }
 
     const updatedTokens = [...existingTokens, token]
     localStorage.setItem(storageKey, JSON.stringify(updatedTokens))
-    console.log(`Token ${token.name} added for user ${connectedAccount} on chain ${chainId}`)
+    onTokenAdded()
   }
 
   return (

@@ -1,7 +1,8 @@
 import { L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../constants'
-import { tokenTypes, ZERO_ADDRESS } from './web3utils'
+import { ZERO_ADDRESS } from './web3utils'
 import IconEthereum from '@/assets/IconEthereum'
 import IconG7T from '@/assets/IconG7T'
+import IconTokenNoSynbol from '@/assets/IconTokenNoSymbol'
 import IconUSDC from '@/assets/IconUSDC'
 
 export interface Token {
@@ -17,7 +18,7 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
   const storedTokens = JSON.parse(localStorage.getItem(storageKey) || '[]')
   const storedTokensWithItems = storedTokens.map((token: any) => ({
     ...token,
-    Icon: IconG7T
+    Icon: IconTokenNoSynbol
   }))
   switch (chainId) {
     case L1_NETWORK.chainId:

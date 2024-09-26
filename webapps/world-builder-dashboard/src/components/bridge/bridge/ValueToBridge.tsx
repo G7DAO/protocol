@@ -37,10 +37,10 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   const { chainId } = useBlockchainContext()
   const [tokens, setTokens] = useState<Token[]>([])
   const [token, setToken] = useState<Token>()
+  const { connectedAccount } = useBlockchainContext()
 
   const fetchTokens = async () => {
     const _tokens = getTokensForNetwork(chainId, connectedAccount)
-    console.log(_tokens)
     setToken(_tokens[0])
     setTokens(_tokens)
   }
@@ -62,13 +62,16 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
     setErrorMessage('')
   }, [value, balance])
 
-  const { connectedAccount } = useBlockchainContext()
-
   useEffect(() => {
     if (!connectedAccount) {
       setValue('0')
     }
   }, [connectedAccount])
+
+  const handleTokenAdded = () => {
+    // Refetch tokens after a new token is added
+    fetchTokens()
+  }
 
   return (
     <div className={styles.container}>
@@ -87,7 +90,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
           MAX
         </button>
         {tokens.length > 0 && token && (
-          <TokenSelector tokens={tokens} selectedToken={token} onChange={(token: Token) => setToken(token)} />
+          <TokenSelector tokens={tokens} selectedToken={token} onChange={(token: Token) => setToken(token)} onTokenAdded={handleTokenAdded}/>
         )}
         {/* <div className={styles.tokenGroup}>
           <IconG7TSmall />
