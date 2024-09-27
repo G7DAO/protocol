@@ -1,25 +1,22 @@
-import { HardhatUserConfig } from "hardhat/config";
-import "@nomicfoundation/hardhat-toolbox";
-import * as dotenv from 'dotenv'
-import { ChainId, NetworkExplorer, NetworkName, rpcUrls } from "./constants/network";
-import "@nomicfoundation/hardhat-foundry";
-import "./tasks/deploy-safe";
+import { HardhatUserConfig } from 'hardhat/config';
+import '@nomicfoundation/hardhat-toolbox';
+import * as dotenv from 'dotenv';
+import { ChainId, NetworkExplorer, NetworkName, rpcUrls } from './constants/network';
+import '@nomicfoundation/hardhat-foundry';
+import './tasks/deploy-safe';
 
-dotenv.config()
+dotenv.config();
 
-const yes = ["true", "t", "yes", "y", "1"]
-const GAS_PROFILER = yes.includes((process.env.GAS_PROFILER || "").toLowerCase());
+const yes = ['true', 't', 'yes', 'y', '1'];
+const GAS_PROFILER = yes.includes((process.env.GAS_PROFILER || '').toLowerCase());
 
-const {
-  ETHSCAN_API_KEY,
-  ARB_SCAN_API_KEY,
-} = process.env
+const { ETHSCAN_API_KEY, ARB_SCAN_API_KEY } = process.env;
 
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: "0.5.10",
+        version: '0.5.10',
         settings: {
           optimizer: {
             enabled: true,
@@ -28,7 +25,7 @@ const config: HardhatUserConfig = {
         },
       },
       {
-        version: "0.8.24",
+        version: '0.8.24',
         settings: {
           optimizer: {
             enabled: true,
@@ -49,22 +46,22 @@ const config: HardhatUserConfig = {
     },
     customChains: [
       {
-          network: NetworkName.Game7OrbitArbSepolia,
-          chainId: ChainId.Game7OrbitArbSepolia,
-          urls: {
-              apiURL: `${NetworkExplorer.Game7OrbitArbSepolia}/api`,
-              browserURL: NetworkExplorer.Game7OrbitArbSepolia,
-          },
+        network: NetworkName.Game7OrbitArbSepolia,
+        chainId: ChainId.Game7OrbitArbSepolia,
+        urls: {
+          apiURL: `${NetworkExplorer.Game7OrbitArbSepolia}/api`,
+          browserURL: NetworkExplorer.Game7OrbitArbSepolia,
+        },
       },
       {
-          network: NetworkName.Game7OrbitBaseSepolia,
-          chainId: ChainId.Game7OrbitBaseSepolia,
-          urls: {
-              apiURL: `${NetworkExplorer.Game7OrbitBaseSepolia}/api`,
-              browserURL: NetworkExplorer.Game7OrbitBaseSepolia,
-          },
+        network: NetworkName.Game7OrbitBaseSepolia,
+        chainId: ChainId.Game7OrbitBaseSepolia,
+        urls: {
+          apiURL: `${NetworkExplorer.Game7OrbitBaseSepolia}/api`,
+          browserURL: NetworkExplorer.Game7OrbitBaseSepolia,
+        },
       },
-  ],
+    ],
   },
   networks: {
     [NetworkName.Ethereum]: {
@@ -86,8 +83,9 @@ const config: HardhatUserConfig = {
     [NetworkName.ArbitrumSepolia]: {
       url: rpcUrls[ChainId.ArbitrumSepolia],
       chainId: ChainId.ArbitrumSepolia,
-    }
-  },
-};
+    },
+  }
+}
+
 
 export default config;
