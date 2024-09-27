@@ -50,20 +50,20 @@ const BridgeView = ({
   const { isMessagingEnabled } = useUISettings()
   const g7tUsdRate = useQuery(['rate'], () => 2501.32)
   const { data: ethUsdRate } = useEthUsdRate()
-  const { connectedAccount, selectedLowNetwork,    setSelectedLowNetwork, selectedHighNetwork, setSelectedHighNetwork } =
+  const { connectedAccount, selectedLowNetwork, setSelectedLowNetwork, selectedHighNetwork, setSelectedHighNetwork } =
     useBlockchainContext()
 
-  const { data: lowNetworkBalance, isFetching: isFetchingLowNetworkBalance } = useERC20Balance({
+  const { isFetching: isFetchingLowNetworkBalance } = useERC20Balance({
     tokenAddress: selectedLowNetwork.g7TokenAddress,
     account: connectedAccount,
     rpc: selectedLowNetwork.rpcs[0]
   })
-  const { data: highNetworkBalance, isFetching: isFetchingHighNetworkBalance } = useERC20Balance({
+  const { isFetching: isFetchingHighNetworkBalance } = useERC20Balance({
     tokenAddress: selectedHighNetwork.g7TokenAddress,
     account: connectedAccount,
     rpc: selectedHighNetwork.rpcs[0]
   })
-  const { data: l3NativeBalance, isFetching: isFetchingL3NativeBalance } = useNativeBalance({
+  const { isFetching: isFetchingL3NativeBalance } = useNativeBalance({
     account: connectedAccount,
     rpc: L3_NETWORK.rpcs[0]
   })
