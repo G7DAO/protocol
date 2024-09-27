@@ -17,7 +17,7 @@ interface MainLayoutProps {}
 const NAVIGATION_ITEMS = [
   { name: 'bridge', navigateTo: '/bridge', icon: <IconWallet04 /> },
   { name: 'faucet', navigateTo: '/faucet', icon: <IconDroplets02 /> },
-  { name: 'explorer', navigateTo: 'https://explorer-game7-testnet-0ilneybprf.t.conduit.xyz/', icon: <IconExplorer /> },
+  { name: 'explorer', navigateTo: 'https://testnet.game7.io/', icon: <IconExplorer /> },
   { name: 'documentation', navigateTo: 'https://wiki.game7.io/developer-documents-external/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network/world-builder', icon: <IconDocumentation /> },
 ]
 const MainLayout: React.FC<MainLayoutProps> = ({}) => {
