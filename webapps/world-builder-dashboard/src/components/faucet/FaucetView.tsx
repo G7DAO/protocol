@@ -33,12 +33,12 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const values = [
     {
       valueId: 0,
-      displayName: `External\u00A0Address`,
+      displayName: `External Address`,
       value: ''
     },
     {
       valueId: 1,
-      displayName: `Connected\u00A0Account`,
+      displayName: `Connected Account`,
       value: connectedAccount
     }
   ];
