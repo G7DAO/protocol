@@ -52,6 +52,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
     if (selectedAccountType.valueId === 0) setAddress('')
 
     if (!connectedAccount) setAddress('')
+    else { setAddress(connectedAccount) }
   }, [faucetTargetChainId, selectedAccountType, connectedAccount])
 
   const handleConnect = async () => {
@@ -198,7 +199,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
       <div className={styles.header}>
         <div className={styles.title}>Testnet Faucet</div>
         <div className={styles.supportingText}>
-          Request and get <strong> 1{L3_NATIVE_TOKEN_SYMBOL} testnet token </strong> per day to your connected wallet or a another wallet address on G7 network.
+          Request and get <strong> 1{L3_NATIVE_TOKEN_SYMBOL} testnet token </strong> to your connected wallet or an external address on G7 network.
         </div>
       </div>
       <div className={styles.contentContainer}>

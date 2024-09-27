@@ -1,11 +1,11 @@
 .container {
   display: flex;
-  width: 759px;
-  max-width: 759px;
-  padding: 20px;
+  width: 660px;
+  max-width: 660px;
+  padding: var(--20px, 20px);
   flex-direction: column;
   align-items: flex-start;
-  gap: 20px;
+  gap: var(--20px, 20px);
 
   border-radius: 8px;
   border: 1px solid var(--Gray-200, #eaecf0);
