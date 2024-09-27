@@ -1,6 +1,6 @@
 import React from 'react'
 import styles from './TokenRow.module.css'
-import { roundToDecimalPlaces, ZERO_ADDRESS } from '@/utils/web3utils'
+import { ZERO_ADDRESS } from '@/utils/web3utils'
 import useNativeBalance from '@/hooks/useNativeBalance'
 import useERC20Balance from '@/hooks/useERC20Balance'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
@@ -13,7 +13,7 @@ interface TokenRowProps {
     Icon: React.FC<React.SVGProps<SVGSVGElement>>
 }
 
-const useTokenBalance = (address: string, rpc: string, connectedAccount: string | undefined)=> {
+const useTokenBalance = (address: string, rpc: string, connectedAccount: string | undefined) => {
     if (address === ZERO_ADDRESS) {
         const { data: balance, isFetching } = useNativeBalance({
             account: connectedAccount,
@@ -48,7 +48,7 @@ const TokenRow: React.FC<TokenRowProps> = ({ name, address, symbol, rpc, Icon })
                 </div>
             </div>
             <div className={styles.balanceText}>
-                {balance ? `${roundToDecimalPlaces(Number(balance), 4)}` : '0'}
+                {balance ? `${Number(balance).toFixed(4)}` : '0'}
             </div>
         </div>
     )

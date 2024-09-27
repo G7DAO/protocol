@@ -8,7 +8,6 @@ import IconWallet04 from '@/assets/IconWallet04'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import useNativeBalance from '@/hooks/useNativeBalance'
 import { getTokensForNetwork, Token } from '@/utils/tokens'
-import { roundToDecimalPlaces } from '@/utils/web3utils'
 
 interface WalletButtonProps { }
 
@@ -46,7 +45,7 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
           <IconWallet04 />
           <div className={styles.balance}>
             {nativeBalance
-              ? roundToDecimalPlaces(Number(nativeBalance), 4) +
+              ? Number(nativeBalance).toFixed(4) +
               ' ' +
               ALL_NETWORKS.find((network) => network.chainId === chainId)?.nativeCurrency?.symbol
               : 'Fetching...'}
