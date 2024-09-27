@@ -24,13 +24,13 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
     rpc: ALL_NETWORKS.find((network) => network.chainId === chainId)?.rpcs[0] || L3_NETWORK.rpcs[0]
   })
 
-  const fetchTokens = async () => {
+  const getTokens = async () => {
     const _tokens = getTokensForNetwork(chainId)
     setTokens(_tokens)
   }
 
   useEffect(() => {
-    fetchTokens()
+    getTokens()
   }, [chainId])
 
   return (

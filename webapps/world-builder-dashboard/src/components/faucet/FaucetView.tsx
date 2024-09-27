@@ -50,7 +50,9 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
     }
 
     if (selectedAccountType.valueId === 0) setAddress('')
-  }, [faucetTargetChainId, selectedAccountType])
+
+    if (!connectedAccount) setAddress('')
+  }, [faucetTargetChainId, selectedAccountType, connectedAccount])
 
   const handleConnect = async () => {
     if (!connectedAccount) connectWallet()
@@ -161,10 +163,8 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
     },
     {
       enabled: !!address &&
-        !lastClaimedTimestampQuery.isLoading &&
-        !faucetIntervalQuery.isLoading &&
-        !lastClaimedTimestampQuery.isError &&
-        !faucetIntervalQuery.isError
+        !!lastClaimedTimestampQuery.data &&
+        !!faucetIntervalQuery.data
     }
   )
 
@@ -208,7 +208,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
             <input
               placeholder={ZERO_ADDRESS}
               className={styles.address}
-              value={selectedAccountType.valueId === 0 ? address : selectedAccountType.value}
+              value={address}
               onChange={(e) => {
                 setAddress(e.target.value)
               }}
