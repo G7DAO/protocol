@@ -1,11 +1,12 @@
 import { BigNumber, ethers, PayableOverrides } from 'ethers';
-import { Erc20Bridger, getArbitrumNetwork } from '@arbitrum/sdk';
+import { Erc20Bridger, EthBridger, getArbitrumNetwork } from '@arbitrum/sdk';
 import { UnsupportedNetworkError } from '../errors';
 import { ERC20_INBOX_ABI } from '../abi/erc20_inbox_abi';
 import { BridgeNetworkConfig } from '../networks';
 import { Erc20DepositParams } from '@arbitrum/sdk/dist/lib/assetBridger/erc20Bridger';
 import { L2GatewayRouterABI } from '../abi/L2GatewayRouterABI';
 import { GasAndFeeEstimation } from '../types';
+import { EthDepositParams } from '@arbitrum/sdk/dist/lib/assetBridger/ethBridger';
 
 export const depositERC20 = async (
   amount: BigNumber,
@@ -49,6 +50,24 @@ export const depositNative = async (
   // Wait for the transaction to be mined
   await txResponse.wait();
   return txResponse;
+};
+
+export const depositETH = async (
+  amount: BigNumber,
+  destinationNetworkChainId: number,
+  signer: ethers.Signer,
+  overrides?: PayableOverrides,
+): Promise<ethers.ContractTransaction> => {
+  const destinationNetwork = getArbitrumNetwork(destinationNetworkChainId);
+  if (!destinationNetwork) {
+    throw new UnsupportedNetworkError(destinationNetworkChainId);
+  }
+  const ethBridger = new EthBridger(destinationNetwork);
+  const params: EthDepositParams = {
+    amount,
+    parentSigner: signer,
+  };
+  return await ethBridger.deposit(params);
 };
 
 export const estimateOutboundTransferGas = async (
