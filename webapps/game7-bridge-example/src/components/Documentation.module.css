@@ -1,0 +1,62 @@
+.container {
+    display: flex;
+    gap: 40px;
+    /*border-radius: 12px;*/
+    /*background-color: #1e1f22;*/
+    padding: 12px;
+    width: 100vw;
+    margin-top: 20px;
+}
+
+.topics {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: start;
+    width: 230px;
+    /*padding: 50px 0 20px 20px;*/
+    /*background-color: black;*/
+    padding-left: 20px;
+    padding-top: 30px;
+    border-right: 1px solid gray;
+}
+
+.topic, .topicSelected {
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.topicSelected {
+    opacity: 1;
+}
+
+
+.content {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    gap: 8px;
+    text-align: start;
+    min-height: 152px;
+}
+
+.reservedWord {
+    height: fit-content;
+    color: #c88cdc;
+}
+
+.parameter {
+    color: #62afe1;
+}
+
+.property {
+    color: #ff9696;
+}
+
+.interface {
+    color: #ffc86e;
+}
+
+.methodName {
+    color: #ffc86e;
+}
