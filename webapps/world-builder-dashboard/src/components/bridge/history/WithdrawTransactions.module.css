@@ -159,11 +159,11 @@
 }
 
 .gridNodeCompleted {
-  width: 16px;
-  height: 144px;
+  /* width: 16px;
+  height: 144px; */
   position: absolute;
-  left: 16px;
-  top: 36px;
+  left: 45px;
+  top: 77px;
   stroke-width: 1px;
   stroke: #dbe1e9;
 }

@@ -13,6 +13,7 @@ import { ethers } from 'ethers'
 import { Skeleton } from 'summon-ui/mantine'
 import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
+import IconWithdrawalNodeCompleted from '@/assets/IconWithdrawalNodeCompleted'
 import WithdrawalMobile from '@/components/bridge/history/WithdrawalMobile'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
@@ -21,7 +22,6 @@ import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 import { L2ToL1MessageStatus, L2ToL1MessageWriter, L2TransactionReceipt } from '@arbitrum/sdk'
 import { useMediaQuery } from '@mantine/hooks'
-import IconWithdrawalNodeCompleted from '@/assets/IconWithdrawalNodeCompleted'
 
 export const networkRPC = (chainId: number | undefined) => {
   const network = [L3_NETWORK, L2_NETWORK].find((n) => n.chainId === chainId)
@@ -160,9 +160,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
               {status.data?.status === L2ToL1MessageStatus.EXECUTED && (
                 <>
                   <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
-                    {/* <div className={styles.gridNodeCompleted}>
-                      <IconWithdrawalNodeCompleted />
-                    </div> */}
+                    <IconWithdrawalNodeCompleted className={styles.gridNodeCompleted} />
                     <div className={styles.typeWithdrawal}>
                       <IconArrowNarrowUp stroke={'#026AA2'} />
                       Withdraw
@@ -188,9 +186,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     <div>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
                   </div>
                   <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
-                    <div className={styles.typeCompleted}>
-                      Initiate
-                    </div>
+                    <div className={styles.typeCompleted}>Initiate</div>
                   </div>
                   <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
                   <div className={styles.gridItem}>{`${status.data?.amount} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
@@ -212,9 +208,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     <div>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
                   </div>
                   <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
-                    <div className={styles.typeCompleted}>
-                      Finalize
-                    </div>
+                    <div className={styles.typeCompleted}>Finalize</div>
                   </div>
                   <div className={styles.gridItem}>{timeAgo(withdrawal?.completionTimestamp)}</div>
                   <div className={styles.gridItem}>{`${status.data?.amount} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
@@ -264,7 +258,10 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         </a>
                       </div>
                       <div className={styles.gridItem}>
-                        <button className={styles.claimButton} onClick={() => execute.mutate(status.data.highNetworkHash)}>
+                        <button
+                          className={styles.claimButton}
+                          onClick={() => execute.mutate(status.data.highNetworkHash)}
+                        >
                           {execute.isLoading ? 'Claiming...' : 'Claim now'}
                         </button>
                       </div>
@@ -290,8 +287,8 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       </div>
                     </>
                   )}
-                </>)}
-
+                </>
+              )}
             </>
           )}
         </>
