@@ -33,7 +33,7 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
         {
           name: 'USDC',
           symbol: 'USDC',
-          address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC example
+          address: '0xf08A50178dfcDe18524640EA6618a1f965821715',
           Icon: IconUSDC,
           rpc: L1_NETWORK.rpcs[0]
         },

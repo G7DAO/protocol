@@ -42,14 +42,14 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   const [token, setToken] = useState<Token>()
   const { connectedAccount } = useBlockchainContext()
 
-  const fetchTokens = async () => {
+  const getTokens = async () => {
     const _tokens = getTokensForNetwork(selectedChainId, connectedAccount)
     handleTokenChange(_tokens[0])
     setTokens(_tokens)
   }
 
   useEffect(() => {
-    fetchTokens()
+    getTokens()
   }, [selectedChainId])
 
   useEffect(() => {
@@ -72,8 +72,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   }, [connectedAccount])
 
   const handleTokenAdded = () => {
-    // Refetch tokens after a new token is added
-    fetchTokens()
+    getTokens()
   }
 
   const handleTokenChange = (token: Token) => {
