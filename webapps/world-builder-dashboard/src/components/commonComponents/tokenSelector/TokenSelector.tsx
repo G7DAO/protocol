@@ -7,6 +7,8 @@ import IconChevronDown from '@/assets/IconChevronDown'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { Token } from '@/utils/tokens'
 import { doesContractExist } from '@/utils/web3utils'
+import { ALL_NETWORKS } from '../../../../constants'
+import { useERC20Symbol } from '@/hooks/useERC20Balance'
 
 type TokenSelectorProps = {
   tokens: Token[]
@@ -35,18 +37,25 @@ const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selected
   }
 
   const addToken = (tokenAddress: string) => {
-    const storageKey = `${connectedAccount}-${selectedChainId}`
-    const existingTokens = JSON.parse(localStorage.getItem(storageKey) || '[]')
-    const token = {
-      name: tokenAddress,
-      symbol: 'TEST',
-      address: tokenAddress,
-      rpc: ''
-    }
+    try {
+      const storageKey = `${connectedAccount}-${selectedChainId}`
+      const existingTokens = JSON.parse(localStorage.getItem(storageKey) || '[]')
+      const rpc = ALL_NETWORKS.find((network) => network.chainId === selectedChainId)?.rpcs[0]
+      const token = {
+        name: `${tokenAddress.slice(0, 6)}`,
+        symbol: `${tokenAddress.slice(0, 6)}`,
+        address: tokenAddress,
+        rpc: rpc
+      }
 
-    const updatedTokens = [...existingTokens, token]
-    localStorage.setItem(storageKey, JSON.stringify(updatedTokens))
-    onTokenAdded()
+      const updatedTokens = [...existingTokens, token]
+      localStorage.setItem(storageKey, JSON.stringify(updatedTokens))
+      onTokenAdded()
+    }
+    catch (err) {
+      console.log(err)
+      setError(err);
+    }
   }
 
   return (
@@ -102,15 +111,12 @@ const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selected
                 </Group>
               </Combobox.Option>
             ))}
-          {/* <Combobox>
-            <Group>
-            </Group>
-          </Combobox> */}
         </Combobox.Options>
         <div className={styles.tokenAdderContainer}>
           <div className={styles.tokenAdder}>
             <input
-              className={styles.tokenAddressInput}
+              className={`${styles.tokenAddressInput} ${error && error.length > 0 ? styles.error : ''
+                }`}
               value={tokenAddress}
               placeholder='Token address'
               onChange={(e) => {

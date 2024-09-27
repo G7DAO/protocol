@@ -21,6 +21,7 @@ import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 import { L2ToL1MessageStatus, L2ToL1MessageWriter, L2TransactionReceipt } from '@arbitrum/sdk'
 import { useMediaQuery } from '@mantine/hooks'
+import IconWithdrawalNodeCompleted from '@/assets/IconWithdrawalNodeCompleted'
 
 export const networkRPC = (chainId: number | undefined) => {
   const network = [L3_NETWORK, L2_NETWORK].find((n) => n.chainId === chainId)
@@ -156,18 +157,21 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
             <WithdrawalMobile withdrawal={withdrawal} execute={execute} status={status} />
           ) : (
             <>
-              <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
-                <div className={styles.typeWithdrawal}>
-                  <IconArrowNarrowUp stroke={'#026AA2'} />
-                  Withdraw
-                </div>
-              </div>
-              <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
-              <div className={styles.gridItem}>{`${status.data?.amount} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
-              <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
-              <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
               {status.data?.status === L2ToL1MessageStatus.EXECUTED && (
                 <>
+                  <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
+                    {/* <div className={styles.gridNodeCompleted}>
+                      <IconWithdrawalNodeCompleted />
+                    </div> */}
+                    <div className={styles.typeWithdrawal}>
+                      <IconArrowNarrowUp stroke={'#026AA2'} />
+                      Withdraw
+                    </div>
+                  </div>
+                  <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
+                  <div className={styles.gridItem}>{`${status.data?.amount} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
+                  <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
+                  <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
                   <div className={styles.gridItem}>
                     <a
                       href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
@@ -175,7 +179,55 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       className={styles.explorerLink}
                     >
                       <div className={styles.settled}>
-                        Settled
+                        Completed
+                        <IconLinkExternal02 stroke={'#027A48'} />
+                      </div>
+                    </a>
+                  </div>
+                  <div className={styles.gridItemImportant}>
+                    <div>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
+                  </div>
+                  <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
+                    <div className={styles.typeCompleted}>
+                      Initiate
+                    </div>
+                  </div>
+                  <div className={styles.gridItem}>{timeAgo(withdrawal?.completionTimestamp)}</div>
+                  <div className={styles.gridItem}>{`${status.data?.amount} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
+                  <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
+                  <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
+                  <div className={styles.gridItem}>
+                    <a
+                      href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
+                      target={'_blank'}
+                      className={styles.explorerLink}
+                    >
+                      <div className={styles.settled}>
+                        Completed
+                        <IconLinkExternal02 stroke={'#027A48'} />
+                      </div>
+                    </a>
+                  </div>
+                  <div className={styles.gridItemImportant}>
+                    <div>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
+                  </div>
+                  <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
+                    <div className={styles.typeCompleted}>
+                      Finalize
+                    </div>
+                  </div>
+                  <div className={styles.gridItem}>{timeAgo(withdrawal?.completionTimestamp)}</div>
+                  <div className={styles.gridItem}>{`${status.data?.amount} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
+                  <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
+                  <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
+                  <div className={styles.gridItem}>
+                    <a
+                      href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
+                      target={'_blank'}
+                      className={styles.explorerLink}
+                    >
+                      <div className={styles.settled}>
+                        Completed
                         <IconLinkExternal02 stroke={'#027A48'} />
                       </div>
                     </a>
@@ -185,47 +237,61 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                   </div>
                 </>
               )}
-              {status.data?.status === L2ToL1MessageStatus.CONFIRMED && (
+              {status.data?.status != L2ToL1MessageStatus.EXECUTED && (
                 <>
-                  <div className={styles.gridItem}>
-                    <a
-                      href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
-                      target={'_blank'}
-                      className={styles.explorerLink}
-                    >
-                      <div className={styles.claimable}>
-                        Claimable
-                        <IconLinkExternal02 stroke={'#B54708'} />
+                  <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
+                    <div className={styles.typeWithdrawal}>
+                      <IconArrowNarrowUp stroke={'#026AA2'} />
+                      Withdraw
+                    </div>
+                  </div>
+                  <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
+                  <div className={styles.gridItem}>{`${status.data?.amount} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
+                  <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
+                  <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
+                  {status.data?.status === L2ToL1MessageStatus.CONFIRMED && (
+                    <>
+                      <div className={styles.gridItem}>
+                        <a
+                          href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
+                          target={'_blank'}
+                          className={styles.explorerLink}
+                        >
+                          <div className={styles.claimable}>
+                            Claimable
+                            <IconLinkExternal02 stroke={'#B54708'} />
+                          </div>
+                        </a>
                       </div>
-                    </a>
-                  </div>
-                  <div className={styles.gridItem}>
-                    <button className={styles.claimButton} onClick={() => execute.mutate(status.data.highNetworkHash)}>
-                      {execute.isLoading ? 'Claiming...' : 'Claim now'}
-                    </button>
-                  </div>
-                </>
-              )}
-              {status.data?.status === L2ToL1MessageStatus.UNCONFIRMED && (
-                <>
-                  <div className={styles.gridItem}>
-                    <a
-                      href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
-                      target={'_blank'}
-                      className={styles.explorerLink}
-                    >
-                      <div className={styles.pending}>
-                        Pending
-                        <IconLinkExternal02 stroke={'#175CD3'} />
+                      <div className={styles.gridItem}>
+                        <button className={styles.claimButton} onClick={() => execute.mutate(status.data.highNetworkHash)}>
+                          {execute.isLoading ? 'Claiming...' : 'Claim now'}
+                        </button>
                       </div>
-                    </a>
-                  </div>
+                    </>
+                  )}
+                  {status.data?.status === L2ToL1MessageStatus.UNCONFIRMED && (
+                    <>
+                      <div className={styles.gridItem}>
+                        <a
+                          href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
+                          target={'_blank'}
+                          className={styles.explorerLink}
+                        >
+                          <div className={styles.pending}>
+                            Pending
+                            <IconLinkExternal02 stroke={'#175CD3'} />
+                          </div>
+                        </a>
+                      </div>
 
-                  <div className={styles.gridItemImportant}>
-                    <div>{ETA(status.data?.timestamp, withdrawal.challengePeriod)}</div>
-                  </div>
-                </>
-              )}
+                      <div className={styles.gridItemImportant}>
+                        <div>{ETA(status.data?.timestamp, withdrawal.challengePeriod)}</div>
+                      </div>
+                    </>
+                  )}
+                </>)}
+
             </>
           )}
         </>
