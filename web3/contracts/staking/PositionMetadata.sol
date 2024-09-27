@@ -300,7 +300,80 @@ contract PositionMetadata {
 
         return string(abi.encodePacked(tokenTypeSection, tokenIdSection, poolIdSection));
     }
-    
+
+    function generateTextElement(
+        string memory xPos,
+        string memory yPos,
+        string memory textContent,
+        bool isBold
+    ) internal pure returns (string memory) {
+        string memory fontWeight = isBold ? "bold" : "normal";
+        return
+            string(
+                abi.encodePacked(
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="',
+                    fontWeight,
+                    '" letter-spacing="0em"><tspan x="',
+                    xPos,
+                    '" y="',
+                    yPos,
+                    '">',
+                    textContent,
+                    "</tspan></text>"
+                )
+            );
+    }
+
+    function generateRectElement(
+        string memory xPos,
+        string memory yPos,
+        string memory width,
+        string memory height
+    ) internal pure returns (string memory) {
+        return
+            string(
+                abi.encodePacked(
+                    '<rect x="',
+                    xPos,
+                    '" y="',
+                    yPos,
+                    '" width="',
+                    width,
+                    '" height="',
+                    height,
+                    '" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                    '<rect x="',
+                    xPos,
+                    '" y="',
+                    yPos,
+                    '" width="',
+                    width,
+                    '" height="',
+                    height,
+                    '" rx="19" stroke="#737373" stroke-width="2"/>'
+                )
+            );
+    }
+
+    function generateValueElement(
+        string memory xPos,
+        string memory yPos,
+        string memory value
+    ) internal pure returns (string memory) {
+        return
+            string(
+                abi.encodePacked(
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="',
+                    xPos,
+                    '" y="',
+                    yPos,
+                    '">',
+                    value,
+                    "</tspan></text>"
+                )
+            );
+    }
+
     function generateStakingPeriodElements(
         string memory yPos,
         string memory titleYPos,
@@ -308,46 +381,34 @@ contract PositionMetadata {
         string memory unlockTimestampStr,
         string memory cooldownStr
     ) public pure returns (string memory) {
+        string memory stakeText = generateTextElement("220", titleYPos, "Staked at", true);
+        string memory stakeRect = generateRectElement("221", yPos, "522", "86");
+        string memory stakeValue = generateValueElement("260", "1051", stakeTimestampStr);
+
+        string memory unlockText = generateTextElement("768", titleYPos, "Unlocks at", true);
+        string memory unlockRect = generateRectElement("769", yPos, "522", "86");
+        string memory unlockValue = generateValueElement("808", "1051", unlockTimestampStr);
+
+        string memory cooldownText = generateTextElement("1316", titleYPos, "Cooldown", true);
+        string memory cooldownRect = generateRectElement("1317", yPos, "462", "86");
+        string memory cooldownValue = generateValueElement(
+            "1356",
+            "1051",
+            string(abi.encodePacked(cooldownStr, " seconds"))
+        );
+
         return
             string(
                 abi.encodePacked(
-                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="bold" letter-spacing="0em"><tspan x="220" y="',
-                    titleYPos,
-                    '">Staked at</tspan></text>',
-                    '<rect x="221" y="',
-                    yPos,
-                    '" width="522" height="86" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                    '<rect x="221" y="',
-                    yPos,
-                    '" width="522" height="86" rx="19" stroke="#737373" stroke-width="2"/>',
-                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="1051">',
-                    stakeTimestampStr,
-                    "</tspan></text>",
-                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="bold" letter-spacing="0em"><tspan x="768" y="',
-                    titleYPos,
-                    '">Unlocks at</tspan></text>',
-                    '<rect x="769" y="',
-                    yPos,
-                    '" width="522" height="86" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                    '<rect x="769" y="',
-                    yPos,
-                    '" width="522" height="86" rx="19" stroke="#737373" stroke-width="2"/>',
-                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="808" y="1051">',
-                    unlockTimestampStr,
-                    "</tspan></text>",
-                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="bold" letter-spacing="0em"><tspan x="1316" y="',
-                    titleYPos,
-                    '">Cooldown</tspan></text>',
-                    '<rect x="1317" y="',
-                    yPos,
-                    '" width="462" height="86" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                    '<rect x="1317" y="',
-                    yPos,
-                    '" width="462" height="86" rx="19" stroke="#737373" stroke-width="2"/>',
-                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="1356" y="1051">',
-                    cooldownStr,
-                    " seconds",
-                    "</tspan></text>"
+                    stakeText,
+                    stakeRect,
+                    stakeValue,
+                    unlockText,
+                    unlockRect,
+                    unlockValue,
+                    cooldownText,
+                    cooldownRect,
+                    cooldownValue
                 )
             );
     }
