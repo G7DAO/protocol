@@ -1,5 +1,6 @@
 // React and hooks
 import { useEffect, useState } from 'react'
+import { Helmet } from 'react-helmet-async'
 import { useQueryClient } from 'react-query'
 import { useLocation, useNavigate } from 'react-router-dom'
 // Styles
@@ -44,6 +45,11 @@ const BridgePage = () => {
 
   return (
     <div className={styles.container}>
+      <Helmet>
+        <meta name='title' content='The official G7 bridge' />
+        <meta name='description' content='Bridge tokens to and from the G7 network through the G7 official bridge.' />
+        <meta name='robots' content='index, follow' />
+      </Helmet>
       <div className={styles.top}>
         <div className={styles.headerContainer}>
           {notifications.data && <FloatingNotification notifications={newNotifications} />}

@@ -1,5 +1,6 @@
 // React and hooks
 import { useEffect, useState } from 'react'
+import { Helmet } from 'react-helmet-async'
 import { useQueryClient } from 'react-query'
 // Constants
 import { L3_NATIVE_TOKEN_SYMBOL } from '../../../constants'
@@ -36,6 +37,11 @@ const BridgePage = () => {
 
   return (
     <div className={bridgeStyles.container}>
+      <Helmet>
+        <meta name='title' content='G7 Sepolia faucet' />
+        <meta name='description' content='Get G7 testnet tokens and begin participating in the Game7 network.' />
+        <meta name='robots' content='index, follow' />
+      </Helmet>
       <div className={bridgeStyles.top}>
         <div className={bridgeStyles.headerContainer}>
           {notifications.data && <FloatingNotification notifications={newNotifications} />}
