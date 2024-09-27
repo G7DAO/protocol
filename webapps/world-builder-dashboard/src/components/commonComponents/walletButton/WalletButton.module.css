@@ -37,6 +37,10 @@
   gap: 8px;
 }
 
+.iconButton {
+  stroke: #667085;
+}
+
 .m-615af6c9 {
   color: var(--Gray-900, #101828);
   font-family: Inter;

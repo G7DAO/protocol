@@ -42,7 +42,7 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
               {isMetaMask && <IconLogout onClick={disconnectWallet} className={styles.iconButton} />}
             </div>
           </>
-        ) : (
+      ) : (
           <div className={styles.connectWalletButton} onClick={connectWallet}>
             <div className={styles.connectWalletText}>
               Connect Wallet

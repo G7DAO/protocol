@@ -53,7 +53,7 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
           </div>
         </div>
         <div className={styles.iconContainer}>
-          <IconFullScreen />
+          <IconFullScreen className={styles.iconButton}/>
         </div>
       </div>
       <Modal
