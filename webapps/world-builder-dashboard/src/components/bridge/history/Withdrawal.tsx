@@ -192,7 +192,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       Initiate
                     </div>
                   </div>
-                  <div className={styles.gridItem}>{timeAgo(withdrawal?.completionTimestamp)}</div>
+                  <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
                   <div className={styles.gridItem}>{`${status.data?.amount} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
                   <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
                   <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
@@ -208,7 +208,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       </div>
                     </a>
                   </div>
-                  <div className={styles.gridItemImportant}>
+                  <div className={styles.gridItem}>
                     <div>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
                   </div>
                   <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
@@ -232,7 +232,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       </div>
                     </a>
                   </div>
-                  <div className={styles.gridItemImportant}>
+                  <div className={styles.gridItem}>
                     <div>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
                   </div>
                 </>
