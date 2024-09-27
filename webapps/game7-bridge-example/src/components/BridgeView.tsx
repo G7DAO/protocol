@@ -1,43 +1,81 @@
-import React, { useMemo } from 'react'
-import { ethers } from 'ethers'
+import React, { useEffect, useMemo, useState } from 'react'
+import { BigNumber, ethers, PayableOverrides } from 'ethers'
 import { useQuery, useMutation } from 'react-query'
 
 import styles from './BridgeView.module.css'
 import { useWallet } from '../contexts/WalletContext'
-import { getRPC, L1_NETWORK, L2_NETWORK, L3_NETWORK, NETWORKS, TG7T } from '../networks'
+import { ETH, getRPC, L1_NETWORK, L2_NETWORK, L3_NETWORK, NETWORKS, TG7T } from '../networks'
 import WalletConnection from './WalletConnection'
 import { BridgeNetwork } from 'game7-bridge-sdk/dist/bridgeNetwork'
 import { BridgeToken } from 'game7-bridge-sdk/dist/bridgeToken'
 import Bridger from 'game7-bridge-sdk/dist/bridger'
 import IconEdit02 from '../assets/IconEdit02.tsx'
 import { getWithdrawalStatus } from 'game7-bridge-sdk/dist/utils/transactionStatus'
+import { EthBridger, getArbitrumNetwork } from '@arbitrum/sdk'
+// import { UnsupportedNetworkError } from 'game7-bridge-sdk/dist/errors.ts'
+import { EthDepositParams } from '@arbitrum/sdk/dist/lib/assetBridger/ethBridger'
+import Documentation from './Documentation.tsx'
+
+export const depositETH = async (
+  amount: BigNumber,
+  destinationNetworkChainId: number,
+  signer: ethers.Signer,
+  overrides?: PayableOverrides
+): Promise<ethers.ContractTransaction> => {
+  const destinationNetwork = getArbitrumNetwork(destinationNetworkChainId)
+  if (!destinationNetwork) {
+    throw new Error(String(destinationNetworkChainId))
+  }
+  const ethBridger = new EthBridger(destinationNetwork)
+  const params: EthDepositParams = {
+    amount,
+    l1Signer: signer
+  }
+  return await ethBridger.deposit(params)
+}
 
 const BridgerView = ({ bridger, amount }: { bridger: Bridger; amount?: ethers.BigNumber }) => {
   const { account, getSigner } = useWallet()
   const rpc = useMemo(() => getRPC(bridger.originNetwork.chainId), [bridger.originNetwork.chainId])
+  const [text, setText] = useState(
+    `${bridger.isDeposit ? 'Deposit ' : 'Withdraw '}to ${bridger.destinationNetwork.name}`
+  )
+  const [hoverText, setHoverText] = useState('')
+
+  const originalText = `${bridger.isDeposit ? 'Deposit ' : 'Withdraw '}to ${bridger.destinationNetwork.name}`
+  // const hoverText = 'You are hovering!'
+
   const fee = useQuery(
     ['fee', bridger, account],
     async () => {
-      const fee = await bridger.getGasAndFeeEstimation(amount ?? ethers.utils.parseEther('0'), rpc, account)
-      return ethers.utils.formatEther(fee.estimatedFee)
+      try {
+        const fee = await bridger.getGasAndFeeEstimation(amount ?? ethers.utils.parseEther('0'), rpc, account)
+        const feeFormatted = ethers.utils.formatEther(fee.estimatedFee)
+        setHoverText(
+          `Estimated fee: ${feeFormatted ?? "can't fetch"}${feeFormatted ? ` ${bridger.originNetwork.nativeCurrency?.symbol ?? ''} ` : ''}`
+        )
+        return ethers.utils.formatEther(fee.estimatedFee)
+      } catch (e) {
+        setHoverText(`Estimated fee: can't fetch`)
+      }
     },
     {
       enabled: !!account && !!rpc
     }
   )
-  const allowance = useQuery(
-    ['allowance', bridger, account],
-    async () => {
-      const allowance = await bridger.getAllowance(rpc, account)
-      if (allowance) {
-        return ethers.utils.formatEther(allowance)
-      }
-      return allowance
-    },
-    {
-      enabled: !!rpc && !!account
-    }
-  )
+  // const allowance = useQuery(
+  //   ['allowance', bridger, account],
+  //   async () => {
+  //     const allowance = await bridger.getAllowance(rpc, account)
+  //     if (allowance) {
+  //       return ethers.utils.formatEther(allowance)
+  //     }
+  //     return allowance
+  //   },
+  //   {
+  //     enabled: !!rpc && !!account
+  //   }
+  // )
 
   const approveAllowance = useMutation({
     mutationFn: async (amount: string) => {
@@ -71,6 +109,7 @@ const BridgerView = ({ bridger, amount }: { bridger: Bridger; amount?: ethers.Bi
       // 0x4f7aaf3d84d69a27123523deb85827982143c83fe6862eb1dca8c5ebef369740 L3->L2
       // 0x4d011728e4b8002750a0dcb8f2b18d7f17a08c278acda381d26d6eb9c460157f L3->L2
       // 0x8460187b8602c2cf2436f7821836c9097182d550a31cefaa07fb6352c013981e L2->L3
+      // 0x6db1d677bc87d64d0adf0ef89d059e0a6b9a8f765af5dc0d2977f9d87aaf8677 L2->L1 ETH
     }
   })
 
@@ -86,13 +125,23 @@ const BridgerView = ({ bridger, amount }: { bridger: Bridger; amount?: ethers.Bi
     }
   }
 
+  const handleMouseEnter = () => {
+    setText(hoverText)
+  }
+
+  const handleMouseLeave = () => {
+    setText(originalText)
+  }
+
   return (
     <div
       className={bridger.isDeposit ? styles.bridgerContainerDeposit : styles.bridgerContainerWithdrawal}
       onMouseUp={(e) => handleTransferClick(e)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <div className={styles.runwayLights}>
-        {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((_, idx) => (
+        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((_, idx) => (
           <div
             className={styles.light}
             key={idx}
@@ -100,19 +149,24 @@ const BridgerView = ({ bridger, amount }: { bridger: Bridger; amount?: ethers.Bi
           >{`${bridger.isDeposit ? '>' : '<'}`}</div>
         ))}
       </div>
-      {allowance.data !== null && (
-        <div className={styles.bridgerAllowance}>
-          <div
-            className={styles.bridgerAllowanceText}
-          >{`Approved allowance: ${allowance.data ?? (allowance.data === null ? 'not needed' : "can't fetch")}`}</div>
-          <IconEdit02 id={'editAllowanceButton'} className={styles.editIcon} />
+      {/*{allowance.data !== null && (*/}
+      {/*  <div className={styles.bridgerAllowance}>*/}
+      {/*    <div*/}
+      {/*      className={styles.bridgerAllowanceText}*/}
+      {/*    >{`Approved allowance: ${allowance.data ?? (allowance.data === null ? 'not needed' : "can't fetch")}`}</div>*/}
+      {/*    <IconEdit02 id={'editAllowanceButton'} className={styles.editIcon} />*/}
+      {/*  </div>*/}
+      {/*)}*/}
+      {transfer.isLoading ? (
+        <div className={styles.spinner} />
+      ) : (
+        <div className={styles.bridgerFee}>
+          {text}
+          {/*{`Estimated fee: ${fee.data ?? "can't fetch"}${fee.data ? ` ${bridger.originNetwork.nativeCurrency?.symbol ?? ''} ` : ''}`}*/}
         </div>
       )}
-      <div className={styles.bridgerFee}>
-        {`Estimated fee: ${fee.data ?? "can't fetch"}${fee.data ? ` ${bridger.originNetwork.nativeCurrency?.symbol ?? ''} ` : ''}`}
-      </div>
       <div className={styles.runwayLights}>
-        {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((_, idx) => (
+        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((_, idx) => (
           <div
             className={styles.light}
             key={idx}
@@ -124,7 +178,7 @@ const BridgerView = ({ bridger, amount }: { bridger: Bridger; amount?: ethers.Bi
   )
 }
 
-const Token = ({ token }: { token: BridgeToken }) => {
+const Token = ({ token, hoveredItem }: { token: BridgeToken; hoveredItem: string }) => {
   const rpc = getRPC(token.chainId)
 
   const { account } = useWallet()
@@ -143,7 +197,7 @@ const Token = ({ token }: { token: BridgeToken }) => {
     }
   )
   const balance = useQuery(
-    ['balance', token.chainId, account],
+    ['balance', token.chainId, account, token.tokenAddresses],
     () => {
       return token.getBalance(rpc, account)
     },
@@ -155,20 +209,66 @@ const Token = ({ token }: { token: BridgeToken }) => {
       }
     }
   )
+
+  const bridger = token.bridgers.find((b) => b.isDeposit)
+
+  const allowance = useQuery(
+    ['allowance', bridger, account],
+    async () => {
+      if (!bridger) {
+        return 'not needed'
+      }
+      const allowance = await bridger.getAllowance(rpc, account)
+      console.log(allowance)
+      if (allowance === null) {
+        return 'not needed'
+      }
+      if (allowance) {
+        return ethers.utils.formatEther(allowance)
+      }
+      return allowance
+    },
+    {
+      enabled: !!rpc && !!account
+    }
+  )
+
+  if (!token.tokenAddresses[token.chainId]) {
+    return <></>
+  }
+
   return (
     <div className={styles.tokenContainer}>
       <div className={styles.tokenBalance}>
-        <div className={styles.tokenSymbol}>{symbol.data ? symbol.data : ''}</div>
-        <div className={styles.tokenSymbol}>{balance.data ? ethers.utils.formatEther(balance.data) : ''}</div>
+        <div
+          className={styles.tokenSymbol}
+        >{`${symbol.data ? symbol.data : ''}${token.tokenAddresses[token.chainId] === ethers.constants.AddressZero ? ' (native)' : ` ${token.address.slice(0, 6)}...${token.address.slice(-4)}`}`}</div>
+        <div className={styles.allowance}>
+          <div
+            className={styles.tokenBalanceNumber}
+          >{`Balance: ${balance.data ? ethers.utils.formatEther(balance.data) : ''}`}</div>
+          <div style={{ marginRight: '8px' }}>{'+'}</div>
+        </div>
+        <div className={styles.allowance}>
+          <div className={styles.tokenBalanceNumber}>{`Deposit allowance: ${allowance.data ?? ''}`}</div>
+          {allowance.data !== 'not needed' && allowance.data && (
+            <IconEdit02
+              id={'editAllowanceButton'}
+              className={`${styles.editIcon} ${hoveredItem === 'editAllowance' && token.chainId === 11155111 ? styles.scaled20p : ''}`}
+            />
+          )}
+        </div>
       </div>
-      {token.bridgers.map((b, idx) => (
-        <BridgerView bridger={b} key={idx} />
-      ))}
+      <div className={styles.bridgers}>
+        {token.bridgers.map((b, idx) => (
+          <BridgerView bridger={b} key={idx} />
+        ))}
+      </div>
     </div>
   )
 }
 
-const Network = ({ network }: { network: BridgeNetwork }) => {
+const Network = ({ network, hoveredItem }: { network: BridgeNetwork; hoveredItem: string }) => {
   const { account } = useWallet()
   const rpc = useMemo(() => {
     const found = NETWORKS.find((n) => n.chainId === network.chainId)?.rpcs[0]
@@ -178,57 +278,64 @@ const Network = ({ network }: { network: BridgeNetwork }) => {
     return found
   }, [network.chainId])
 
-  const balance = useQuery(
-    ['gasBalance', network.chainId, account],
-    async () => {
-      if (!account || !rpc) {
-        return
-      }
-      const provider = new ethers.providers.JsonRpcProvider(rpc) as ethers.providers.Provider
-      const balance = await network.getGasBalance(provider, account)
-      return ethers.utils.formatEther(balance)
-    },
-    {
-      enabled: !!account && !!rpc
-    }
-  )
+  // const balance = useQuery(
+  //   ['gasBalance', network.chainId, account],
+  //   async () => {
+  //     if (!account || !rpc) {
+  //       return
+  //     }
+  //     const provider = new ethers.providers.JsonRpcProvider(rpc) as ethers.providers.Provider
+  //     const balance = await network.getGasBalance(provider, account)
+  //     return ethers.utils.formatEther(balance)
+  //   },
+  //   {
+  //     enabled: !!account && !!rpc
+  //   }
+  // )
   return (
     <div className={styles.networkContainer}>
-      <div className={styles.networkName}>{network.name}</div>
-      <div className={styles.tokenBalance}>
-        <div className={styles.networkNativeTokenSymbol}>{network.symbol}</div>
-        <div className={styles.networkNativeTokenBalance}>{balance.data ?? '-'}</div>
+      <div
+        className={`${styles.networkName} ${hoveredItem === 'networkConstructor' && network.name === 'Sepolia' ? styles.scaled : ''}`}
+      >
+        {network.name}
       </div>
       {network.tokens.map((t, idx) => (
-        <Token token={t} key={idx} />
+        <Token hoveredItem={hoveredItem} token={t} key={idx} />
       ))}
     </div>
   )
 }
 
 const BridgeView = () => {
-  const networks = [L1_NETWORK, L2_NETWORK, L3_NETWORK].map((n) => new BridgeNetwork(n.chainId, [TG7T]))
+  const networks = [L1_NETWORK, L2_NETWORK, L3_NETWORK].map((n) => new BridgeNetwork(n.chainId, [TG7T, ETH]))
   const { account } = useWallet()
-  const status = useQuery(['messageStatus'], async () => {
-    const parentRPC = getRPC(11155111)
-    const childRPC = getRPC(421614)
-    const parentProvider = new ethers.providers.JsonRpcProvider(parentRPC) as ethers.providers.Provider
-    const childProvider = new ethers.providers.JsonRpcProvider(childRPC) as ethers.providers.Provider
-    const res = await getWithdrawalStatus(
-      '0xb2b271b7e7d613f97ee496f61acc9620b197cd4dc0eae5d18a2812bd2dc512a7',
-      parentProvider,
-      childProvider
-    )
-  })
+  // const status = useQuery(['messageStatus'], async () => {
+  //   const parentRPC = getRPC(11155111)
+  //   const childRPC = getRPC(421614)
+  //   const parentProvider = new ethers.providers.JsonRpcProvider(parentRPC) as ethers.providers.Provider
+  //   const childProvider = new ethers.providers.JsonRpcProvider(childRPC) as ethers.providers.Provider
+  //   const res = await getWithdrawalStatus(
+  //     '0xb2b271b7e7d613f97ee496f61acc9620b197cd4dc0eae5d18a2812bd2dc512a7',
+  //     parentProvider,
+  //     childProvider
+  //   )
+  // })
+  const [hoveredItem, setHoveredItem] = useState('')
+  useEffect(() => {
+    console.log(hoveredItem)
+  }, [hoveredItem])
   return (
     <div>
       {!account ? (
         <WalletConnection />
       ) : (
         <div className={styles.container}>
-          {networks.map((network) => (
-            <Network network={network} key={network.chainId} />
-          ))}
+          <Documentation setHoveredItem={setHoveredItem} />
+          <div className={styles.networksContainer}>
+            {networks.map((network) => (
+              <Network hoveredItem={hoveredItem} network={network} key={network.chainId} />
+            ))}
+          </div>
         </div>
       )}
     </div>
