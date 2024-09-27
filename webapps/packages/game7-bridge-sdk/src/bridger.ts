@@ -7,8 +7,13 @@ import { ERC20_ABI } from './abi/ERC20_ABI';
 import { L2GatewayRouterABI } from './abi/L2GatewayRouterABI';
 
 // Internal Modules - Actions
-import { depositERC20, depositNative, estimateOutboundTransferGas } from './actions/deposit';
-import { withdrawERC20, withdrawNative } from './actions/withdraw';
+import {
+  depositERC20,
+  depositETH,
+  depositNative,
+  estimateOutboundTransferGas,
+} from './actions/deposit';
+import { withdrawERC20, withdrawEth, withdrawNative } from './actions/withdraw';
 
 // Internal Modules - Errors
 import { BridgerError, GasEstimationError, UnsupportedNetworkError } from './errors';
@@ -401,12 +406,18 @@ export default class Bridger {
 
     if (!this.isDeposit) {
       if (originToken === ethers.constants.AddressZero) {
+        if (destinationToken === ethers.constants.AddressZero) {
+          return withdrawEth(amount, destination, signer, overrides);
+        }
         return withdrawNative(amount, destination, signer, this.originNetwork, overrides);
       } else {
         return withdrawERC20(destinationToken, amount, destination, signer, overrides);
       }
     } else {
       if (destinationToken === ethers.constants.AddressZero) {
+        if (originToken === ethers.constants.AddressZero) {
+          return depositETH(amount, this.destinationNetwork.chainId, signer);
+        }
         return depositNative(amount, this.destinationNetwork, signer, overrides);
       } else {
         return depositERC20(
