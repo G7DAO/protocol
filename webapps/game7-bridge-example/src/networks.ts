@@ -59,6 +59,11 @@ export const TG7T: TokenAddressMap = {
   11155111: '0xe2ef69e4af84dbefb0a75f8491f27a52bf047b01'
 }
 
+export const ETH: TokenAddressMap = {
+  421614: '0x0000000000000000000000000000000000000000',
+  11155111: '0x0000000000000000000000000000000000000000'
+}
+
 export const NETWORKS = [L1_NETWORK, L2_NETWORK, L3_NETWORK]
 
 export const getRPC = (chainId: number) => {
