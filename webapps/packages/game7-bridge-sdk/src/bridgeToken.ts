@@ -18,20 +18,22 @@ import { networks } from './networks';
  * Represents a token within a blockchain network that can be used in bridging operations.
  */
 export class BridgeToken {
-  private readonly token: TokenAddressMap;
+  public readonly tokenAddresses: TokenAddressMap;
+  public readonly address: string;
   public bridgers: Bridger[];
   public readonly chainId: number;
 
   /**
    * Creates an instance of the `BridgeToken` class, which represents a specific token within a blockchain network.
    *
-   * @param token - A `TokenAddressMap` object representing the token addresses associated with different chain IDs.
+   * @param tokenAddresses - A `TokenAddressMap` object representing the token addresses associated with different chain IDs.
    * @param network - The `BridgeNetwork` instance to which this token belongs.
    */
-  constructor(token: TokenAddressMap, network: BridgeNetwork) {
-    this.token = token;
+  constructor(tokenAddresses: TokenAddressMap, network: BridgeNetwork) {
+    this.tokenAddresses = tokenAddresses;
     this.chainId = network.chainId;
     this.bridgers = this.getBridgers();
+    this.address = tokenAddresses[network.chainId];
   }
 
   /**
@@ -55,7 +57,7 @@ export class BridgeToken {
       provider = new ethers.providers.JsonRpcProvider(provider);
     }
 
-    const tokenAddress = this.token[this.chainId];
+    const tokenAddress = this.tokenAddresses[this.chainId];
 
     if (!tokenAddress) {
       throw new Error('Token address not found for the specified network');
@@ -82,7 +84,7 @@ export class BridgeToken {
       provider = new ethers.providers.JsonRpcProvider(provider);
     }
 
-    const tokenAddress = this.token[this.chainId];
+    const tokenAddress = this.tokenAddresses[this.chainId];
 
     // Throw an error if the token address is not found for the specified network
     if (!tokenAddress) {
@@ -106,7 +108,7 @@ export class BridgeToken {
    */
   public getBridgers(chainIds?: number[]): Bridger[] {
     const bridgers: Bridger[] = [];
-    const availableChainIds = chainIds || Object.keys(this.token).map(Number);
+    const availableChainIds = chainIds || Object.keys(this.tokenAddresses).map(Number);
 
     for (const chainId of availableChainIds) {
       if (chainId === this.chainId) {
@@ -117,7 +119,7 @@ export class BridgeToken {
         const bridger = new Bridger(
           this.chainId, // originNetworkChainId
           chainId, // destinationNetworkChainId
-          this.token, // token mapping
+          this.tokenAddresses, // token mapping
         );
         bridgers.push(bridger);
       } catch (error: any) {
