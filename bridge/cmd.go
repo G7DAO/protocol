@@ -1,12 +1,14 @@
 package bridge
 
 import (
+	"context"
 	"encoding/hex"
 	"errors"
 	"fmt"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/spf13/cobra"
 )
 
@@ -225,9 +227,10 @@ func CreateBridgeERC20Command() *cobra.Command {
 }
 
 func CreateBridgeERC20L1ToL2Command() *cobra.Command {
-	var keyFile, password, l1Rpc, routerRaw, tokenAddressRaw, toRaw, amountRaw string
-	var routerAddress, tokenAddress, to common.Address
+	var keyFile, password, l1Rpc, routerRaw, tokenAddressRaw, toRaw, amountRaw, safeAddressRaw, safeApi string
+	var routerAddress, tokenAddress, to, safeAddress common.Address
 	var amount *big.Int
+	var safeOperation uint8
 
 	createCmd := &cobra.Command{
 		Use:   "l1-to-l2",
@@ -265,17 +268,50 @@ func CreateBridgeERC20L1ToL2Command() *cobra.Command {
 				return errors.New("keyfile is required")
 			}
 
+			if safeAddressRaw != "" {
+				if !common.IsHexAddress(safeAddressRaw) {
+					return fmt.Errorf("--safe is not a valid Ethereum address")
+				} else {
+					safeAddress = common.HexToAddress(safeAddressRaw)
+				}
+
+				if safeApi == "" {
+					client, clientErr := ethclient.DialContext(context.Background(), l1Rpc)
+					if clientErr != nil {
+						return clientErr
+					}
+
+					chainID, chainIDErr := client.ChainID(context.Background())
+					if chainIDErr != nil {
+						return chainIDErr
+					}
+					safeApi = "https://safe-client.safe.global/v1/chains/" + chainID.String() + "/transactions/" + safeAddress.Hex() + "/propose"
+					fmt.Println("--safe-api not specified, using default (", safeApi, ")")
+				}
+
+				if OperationType(safeOperation).String() == "Unknown" {
+					return fmt.Errorf("--safe-operation must be 0 (Call) or 1 (DelegateCall)")
+				}
+			}
+
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Println("Bridging", tokenAddress.Hex(), "to", to.Hex())
-			transaction, transactionErr := ERC20Bridge(routerAddress, keyFile, password, l1Rpc, tokenAddress, to, amount)
-			if transactionErr != nil {
-				fmt.Fprintln(cmd.ErrOrStderr(), transactionErr.Error())
-				return transactionErr
+			if safeAddressRaw == "" {
+				transaction, transactionErr := ERC20BridgeCall(routerAddress, keyFile, password, l1Rpc, tokenAddress, to, amount)
+				if transactionErr != nil {
+					fmt.Fprintln(cmd.ErrOrStderr(), transactionErr.Error())
+					return transactionErr
+				}
+				fmt.Println("Transaction sent:", transaction.Hash().Hex())
+			} else {
+				proposeErr := ERC20BridgePropose(routerAddress, keyFile, password, l1Rpc, tokenAddress, to, amount, safeAddress, safeApi, safeOperation)
+				if proposeErr != nil {
+					fmt.Fprintln(cmd.ErrOrStderr(), proposeErr.Error())
+					return proposeErr
+				}
 			}
-
-			fmt.Println("Transaction sent:", transaction.Hash().Hex())
 
 			return nil
 		},
@@ -288,6 +324,9 @@ func CreateBridgeERC20L1ToL2Command() *cobra.Command {
 	createCmd.Flags().StringVar(&toRaw, "to", "", "Recipient address")
 	createCmd.Flags().StringVar(&tokenAddressRaw, "token", "", "Token address")
 	createCmd.Flags().StringVar(&amountRaw, "amount", "", "Amount to send")
+	createCmd.Flags().StringVar(&safeAddressRaw, "safe", "", "Address of the Safe contract")
+	createCmd.Flags().StringVar(&safeApi, "safe-api", "", "Safe API for the Safe Transaction Service (optional)")
+	createCmd.Flags().Uint8Var(&safeOperation, "safe-operation", 0, "Safe operation type: 0 (Call) or 1 (DelegateCall)")
 
 	return createCmd
 }

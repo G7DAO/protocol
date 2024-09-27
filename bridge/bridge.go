@@ -90,48 +90,48 @@ func NativeTokenBridge(inboxAddress common.Address, keyFile string, password str
 	return transaction, nil
 }
 
-func ERC20Bridge(routerAddress common.Address, keyFile string, password string, l1Rpc string, tokenAddress common.Address, to common.Address, amount *big.Int) (*types.Transaction, error) {
+func GetERC20BridgeCalldataAndValue(routerAddress common.Address, keyFile string, password string, l1Rpc string, tokenAddress common.Address, to common.Address, amount *big.Int) ([]byte, *big.Int, error) {
 	key, keyErr := NodeInterface.KeyFromFile(keyFile, password)
 	if keyErr != nil {
 		fmt.Fprintln(os.Stderr, "keyErr", keyErr.Error())
-		return nil, keyErr
+		return nil, nil, keyErr
 	}
 
 	l1Client, l1ClientErr := ethclient.DialContext(context.Background(), l1Rpc)
 	if l1ClientErr != nil {
 		fmt.Fprintln(os.Stderr, "l1ClientErr", l1ClientErr.Error())
-		return nil, l1ClientErr
+		return nil, nil, l1ClientErr
 	}
 
 	gasPriceBid, gasPriceBidErr := l1Client.SuggestGasPrice(context.Background())
 	if gasPriceBidErr != nil {
 		fmt.Fprintln(os.Stderr, "gasPriceBidErr", gasPriceBidErr.Error())
-		return nil, gasPriceBidErr
+		return nil, nil, gasPriceBidErr
 	}
 
 	gasLimit, gasLimitErr := CalculateRetryableGasLimit(l1Client, key.Address, big.NewInt(0), to, big.NewInt(0), key.Address, key.Address, []byte{})
 	if gasLimitErr != nil {
 		fmt.Fprintln(os.Stderr, "gasLimitErr", gasLimitErr.Error())
-		return nil, gasLimitErr
+		return nil, nil, gasLimitErr
 	}
 	maxGas := big.NewInt(0).SetUint64(gasLimit)
 
 	router, routerErr := L1GatewayRouter.NewL1GatewayRouter(routerAddress, l1Client)
 	if routerErr != nil {
 		fmt.Fprintln(os.Stderr, "routerErr", routerErr.Error())
-		return nil, routerErr
+		return nil, nil, routerErr
 	}
 
 	outboundCalldata, outboundCalldataErr := router.GetOutboundCalldata(nil, tokenAddress, key.Address, to, amount, []byte{})
 	if outboundCalldataErr != nil {
 		fmt.Fprintln(os.Stderr, "outboundCalldataErr", outboundCalldataErr.Error())
-		return nil, outboundCalldataErr
+		return nil, nil, outboundCalldataErr
 	}
 
 	maxSubmissionCost, maxSubmissionCostErr := CalculateRetryableSubmissionFee(outboundCalldata, gasPriceBid)
 	if maxSubmissionCostErr != nil {
 		fmt.Fprintln(os.Stderr, "maxSubmissionCostErr", maxSubmissionCostErr.Error())
-		return nil, maxSubmissionCostErr
+		return nil, nil, maxSubmissionCostErr
 	}
 
 	executionCost := big.NewInt(0).Mul(maxGas, gasPriceBid)
@@ -147,19 +147,41 @@ func ERC20Bridge(routerAddress common.Address, keyFile string, password string, 
 	data, dataErr := arguments.Pack(maxSubmissionCost, []byte{}, tokenTotalFeeAmount)
 	if dataErr != nil {
 		fmt.Fprintln(os.Stderr, "dataErr", dataErr.Error())
-		return nil, dataErr
+		return nil, nil, dataErr
 	}
 
 	routerAbi, routerAbiErr := abi.JSON(strings.NewReader(L1GatewayRouter.L1GatewayRouterABI))
 	if routerAbiErr != nil {
 		fmt.Fprintln(os.Stderr, "routerAbiErr", routerAbiErr.Error())
-		return nil, routerAbiErr
+		return nil, nil, routerAbiErr
 	}
 
 	callData, callDataErr := routerAbi.Pack("outboundTransfer", tokenAddress, to, amount, maxGas, gasPriceBid, data)
 	if callDataErr != nil {
 		fmt.Fprintln(os.Stderr, "callDataErr", callDataErr.Error())
+		return nil, nil, callDataErr
+	}
+
+	return callData, tokenTotalFeeAmount, nil
+}
+
+func ERC20BridgeCall(routerAddress common.Address, keyFile string, password string, l1Rpc string, tokenAddress common.Address, to common.Address, amount *big.Int) (*types.Transaction, error) {
+	callData, tokenTotalFeeAmount, callDataErr := GetERC20BridgeCalldataAndValue(routerAddress, keyFile, password, l1Rpc, tokenAddress, to, amount)
+	if callDataErr != nil {
+		fmt.Fprintln(os.Stderr, "callDataErr", callDataErr.Error())
 		return nil, callDataErr
+	}
+
+	l1Client, l1ClientErr := ethclient.DialContext(context.Background(), l1Rpc)
+	if l1ClientErr != nil {
+		fmt.Fprintln(os.Stderr, "l1ClientErr", l1ClientErr.Error())
+		return nil, l1ClientErr
+	}
+
+	key, keyErr := NodeInterface.KeyFromFile(keyFile, password)
+	if keyErr != nil {
+		fmt.Fprintln(os.Stderr, "keyErr", keyErr.Error())
+		return nil, keyErr
 	}
 
 	fmt.Println("Sending transaction...")
@@ -179,4 +201,26 @@ func ERC20Bridge(routerAddress common.Address, keyFile string, password string, 
 	fmt.Println("Transaction mined!")
 
 	return transaction, nil
+}
+
+func ERC20BridgePropose(routerAddress common.Address, keyFile string, password string, l1Rpc string, tokenAddress common.Address, to common.Address, amount *big.Int, safeAddress common.Address, safeApi string, safeOperation uint8) error {
+	callData, tokenTotalFeeAmount, callDataErr := GetERC20BridgeCalldataAndValue(routerAddress, keyFile, password, l1Rpc, tokenAddress, to, amount)
+	if callDataErr != nil {
+		fmt.Fprintln(os.Stderr, "callDataErr", callDataErr.Error())
+		return callDataErr
+	}
+
+	l1Client, l1ClientErr := ethclient.DialContext(context.Background(), l1Rpc)
+	if l1ClientErr != nil {
+		fmt.Fprintln(os.Stderr, "l1ClientErr", l1ClientErr.Error())
+		return l1ClientErr
+	}
+
+	key, keyErr := NodeInterface.KeyFromFile(keyFile, password)
+	if keyErr != nil {
+		fmt.Fprintln(os.Stderr, "keyErr", keyErr.Error())
+		return keyErr
+	}
+
+	return CreateSafeProposal(l1Client, key, safeAddress, routerAddress, callData, tokenTotalFeeAmount, safeApi, OperationType(safeOperation))
 }
