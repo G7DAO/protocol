@@ -1,0 +1,91 @@
+name: Deploy protocol API
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/prod_deploy_protocol-api.yml'
+      - "api/**"
+
+jobs:
+  prod_deploy_protocol-api:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository and main branch
+        uses: actions/checkout@v2
+        with:
+          ref: main
+
+      - name: Write down submodule commit sha
+        working-directory: ./
+        run: |
+          git rev-parse HEAD >submodule-commit-sha.txt
+
+      - name: Bastion host IPs and protocol server IPs
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+        run: |
+          echo "Listing bastion hosts..."
+          aws ec2 describe-instances --output text \
+            --query "Reservations[*].Instances[*].PublicIpAddress" \
+            --filter Name=instance-state-name,Values=running Name=tag:bastion,Values=true \
+            | tee bastion-hosts.txt
+          echo
+          echo "Listing protocol API hosts..."
+          aws ec2 describe-instances --output text \
+            --query "Reservations[*].Instances[*].PrivateIpAddress" \
+            --filter Name=instance-state-name,Values=running Name=tag:protocol-api,Values=true \
+            | tee app-hosts.txt
+          echo
+
+      - name: Save bastion host SSH key
+        env:
+          AWS_SSH_WB_BASTION_CICD_KEYPAIR_B64: ${{ secrets.AWS_SSH_WB_BASTION_CICD_KEYPAIR_B64 }}
+        run: |
+          echo "${AWS_SSH_WB_BASTION_CICD_KEYPAIR_B64}" | base64 --decode >bastion.key
+          chmod 400 bastion.key
+
+      - name: Save deployment SSH key
+        env:
+          AWS_SSH_WB_INTERNAL_CICD_KEYPAIR_B64: ${{ secrets.AWS_SSH_WB_INTERNAL_CICD_KEYPAIR_B64 }}
+        run: |
+          echo "${AWS_SSH_WB_INTERNAL_CICD_KEYPAIR_B64}" | base64 --decode >deployment.key
+          chmod 400 deployment.key
+
+      - name: Update protocol API on each server
+        run: |
+          BASTION_HOST_IP=$(tail -n1 bastion-hosts.txt)
+          if [ -z "$BASTION_HOST_IP" ]
+          then
+            echo "No bastion hosts found!"
+            exit 1
+          fi
+
+          eval $(ssh-agent)
+          ssh-add bastion.key
+          ssh-add deployment.key
+
+          set -x
+
+          for host in $(cat app-hosts.txt)
+          do
+            ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -A ubuntu@"${BASTION_HOST_IP}" \
+              ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -A ubuntu@"${host}" git -C /home/ubuntu/protocol fetch origin
+          done
+
+          for host in $(cat app-hosts.txt)
+          do
+            ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -A ubuntu@"${BASTION_HOST_IP}" \
+              ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -A ubuntu@"${host}" git -C /home/ubuntu/protocol checkout "$(cat submodule-commit-sha.txt)"
+          done
+
+          for host in $(cat app-hosts.txt)
+          do
+            ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -A ubuntu@"${BASTION_HOST_IP}" \
+              ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -A ubuntu@"${host}" \
+              /home/ubuntu/protocol/api/deploy/deploy.bash
+          done
