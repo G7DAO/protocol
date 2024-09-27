@@ -1,6 +1,6 @@
 import React from 'react'
 import styles from './TokenRow.module.css'
-import { roundToDecimalPlaces, ZERO_ADDRESS } from '@/utils/web3utils'
+import { roundToDecimalPlaces } from '@/utils/web3utils'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import useTokenBalance from '@/hooks/useTokenBalance'
 

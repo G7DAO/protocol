@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { ALL_NETWORKS } from '../../../../constants'
 import styles from './TokenSelector.module.css'
 import { ethers } from 'ethers'
 import { Combobox, Group, InputBase, InputBaseProps, useCombobox } from 'summon-ui/mantine'
@@ -7,8 +8,6 @@ import IconChevronDown from '@/assets/IconChevronDown'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { Token } from '@/utils/tokens'
 import { doesContractExist } from '@/utils/web3utils'
-import { ALL_NETWORKS } from '../../../../constants'
-import { useERC20Symbol } from '@/hooks/useERC20Balance'
 
 type TokenSelectorProps = {
   tokens: Token[]
@@ -29,7 +28,11 @@ const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selected
 
   const handleTokenInput = (address: string) => {
     setTokenAddress(address)
-    const web3Provider = new ethers.providers.Web3Provider(window.ethereum)
+
+    let web3Provider
+    if (window.ethereum) web3Provider = new ethers.providers.Web3Provider(window.ethereum)
+    else throw new Error('Wallet is not installed')
+
     if (!ethers.utils.isAddress(address)) setError('Not an address!')
     else if (!doesContractExist(address, web3Provider)) setError(`Contract doesn't exist!`)
     else if (tokens.find((token) => token.address === address)) setError('Token already exists')
@@ -51,10 +54,9 @@ const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selected
       const updatedTokens = [...existingTokens, token]
       localStorage.setItem(storageKey, JSON.stringify(updatedTokens))
       onTokenAdded()
-    }
-    catch (err) {
+    } catch (err) {
       console.log(err)
-      setError(err);
+      setError(`` + err)
     }
   }
 
@@ -115,8 +117,7 @@ const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selected
         <div className={styles.tokenAdderContainer}>
           <div className={styles.tokenAdder}>
             <input
-              className={`${styles.tokenAddressInput} ${error && error.length > 0 ? styles.error : ''
-                }`}
+              className={`${styles.tokenAddressInput} ${error && error.length > 0 ? styles.error : ''}`}
               value={tokenAddress}
               placeholder='Token address'
               onChange={(e) => {
