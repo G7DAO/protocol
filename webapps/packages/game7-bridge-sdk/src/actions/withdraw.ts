@@ -1,5 +1,5 @@
 import { BigNumber, ethers, PayableOverrides } from 'ethers';
-import { Erc20Bridger } from '@arbitrum/sdk';
+import { Erc20Bridger, EthBridger } from '@arbitrum/sdk';
 
 import { arbSysABI } from '../abi/ArbSysABI';
 import { BridgeNetworkConfig } from '../networks';
@@ -87,5 +87,35 @@ export const withdrawNative = async (
   } catch (error: any) {
     console.error('Native token withdrawal transaction failed:', error);
     throw new BridgerError(`Native withdrawal failed: ${error.message}`);
+  }
+};
+
+export const withdrawEth = async (
+  amount: BigNumber,
+  destination: string,
+  signer: ethers.Signer,
+  overrides?: PayableOverrides,
+): Promise<ethers.ContractTransaction> => {
+  const provider = signer.provider;
+  if (!provider) {
+    throw new BridgerError(ERROR_MESSAGES.NO_PROVIDER);
+  }
+  const from = await signer.getAddress();
+  const ethBridger = await EthBridger.fromProvider(provider);
+
+  try {
+    const withdrawTx = await ethBridger.withdraw({
+      amount,
+      destinationAddress: destination,
+      from,
+      childSigner: signer,
+      overrides,
+    });
+
+    await withdrawTx.wait();
+    return withdrawTx;
+  } catch (error: any) {
+    console.error('ERC20 Withdrawal transaction failed:', error);
+    throw new BridgerError(`ERC20 withdrawal failed: ${error.message}`);
   }
 };
