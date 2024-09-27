@@ -50,8 +50,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
     }
 
     if (selectedAccountType.valueId === 0) setAddress('')
-
-    if (!connectedAccount) setAddress('')
+    else if (!connectedAccount) setAddress('')
     else { setAddress(connectedAccount) }
   }, [faucetTargetChainId, selectedAccountType, connectedAccount])
 
