@@ -23,7 +23,7 @@ This checklist describes how to bridge tokens
 - [ ] Teleporting tokens from L1 to L3 and calling stake function
 
 ```bash
-bin/game7 bridge l1-to-l3 \ 
+bin/game7 bridge native-token l1-to-l3 \ 
     --teleporter $TELEPORTER \
     --l1-rpc $L1_RPC \
     --l2-rpc $L2_RPC \
@@ -68,7 +68,7 @@ bin/game7 token approve \
 - [ ] bridge native tokens from L1 to L2 and calling stake function (works for L2 to L3 as well)
 
 ```bash
-bin/game7 bridge l1-to-l2 \ 
+bin/game7 bridge native-token l1-to-l2 \ 
     --inbox $INBOX \
     --l1-rpc $L1_RPC \
     --l2-rpc $L2_RPC \
@@ -80,3 +80,28 @@ bin/game7 bridge l1-to-l2 \
 ```
 
 Output: Transaction Hash
+
+## Bridge ERC20 tokens from L1 to L2
+
+### Environment variables
+
+- [ ] `export L1_RPC=<l1 rpc endpoint>`
+- [ ] `export KEY=<path to keyfile of account to fund>`
+- [ ] `export PASSWORD=<password for keyfile>`
+- [ ] `export L1_ROUTER=<l1 router address>`
+- [ ] `export L1_TOKEN=<l1 token address>`
+- [ ] `export L1_SAFE=<l1 safe address>`
+- [ ] `export L2_SAFE=<l2 safe address>`
+
+### Bridge Tokens
+
+```bash
+bin/game7 bridge erc20 l1-to-l2 \
+    --amount $AMOUNT \
+    --keyfile $KEY \
+    --router $L1_ROUTER \
+    --to $L2_SAFE \
+    --token $L1_TOKEN \
+    --l1-rpc $L1_RPC \
+    --safe $L1_SAFE
+```
