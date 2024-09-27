@@ -149,7 +149,7 @@ export const L3_NETWORKS = [
       chainId: 13746,
       parentChainId: 421614,
       nativeToken: '0x10adBf84548F923577Be12146eAc104C899D1E75',
-      rpcs: ['https://rpc-game7-testnet-0ilneybprf.t.conduit.xyz']
+      rpcs: ['https://testnet-rpc.game7.io/']
     },
     coreContracts: {
       rollup: '0x6cf5bFffc54cDd13B4747e8DF2C72ce8A95043c0',
