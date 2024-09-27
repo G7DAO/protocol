@@ -17,7 +17,7 @@ const useERC20Balance = ({ tokenAddress, account, rpc }: UseERC20BalanceProps) =
       }
       const provider = new ethers.providers.JsonRpcProvider(rpc)
       const ERC20Contract = new ethers.Contract(tokenAddress, ERC20_ABI, provider)
-
+      
       const balance = await ERC20Contract.balanceOf(account)
       return {
         formatted: ethers.utils.formatEther(balance),

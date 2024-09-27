@@ -5,7 +5,6 @@ import {
   DEFAULT_STAKE_NATIVE_POOL_ID,
   L1_NETWORK,
   L2_NETWORK,
-  L3_NATIVE_TOKEN_SYMBOL,
   L3_NETWORK,
   MAX_ALLOWANCE_ACCOUNT
 } from '../../../../constants'
@@ -51,7 +50,7 @@ const BridgeView = ({
   const { isMessagingEnabled } = useUISettings()
   const g7tUsdRate = useQuery(['rate'], () => 2501.32)
   const { data: ethUsdRate } = useEthUsdRate()
-  const { connectedAccount, selectedLowNetwork, setSelectedLowNetwork, selectedHighNetwork, setSelectedHighNetwork } =
+  const { connectedAccount, selectedLowNetwork,    setSelectedLowNetwork, selectedHighNetwork, setSelectedHighNetwork } =
     useBlockchainContext()
 
   const { data: lowNetworkBalance, isFetching: isFetchingLowNetworkBalance } = useERC20Balance({
