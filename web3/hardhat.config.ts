@@ -13,79 +13,79 @@ const GAS_PROFILER = yes.includes((process.env.GAS_PROFILER || '').toLowerCase()
 const { ETHSCAN_API_KEY, ARB_SCAN_API_KEY } = process.env;
 
 const config: HardhatUserConfig = {
-    solidity: {
-        compilers: [
-            {
-                version: '0.5.10',
-                settings: {
-                    optimizer: {
-                        enabled: true,
-                        runs: 99999,
-                    },
-                },
-            },
-            {
-                version: '0.8.24',
-                settings: {
-                    optimizer: {
-                        enabled: true,
-                        runs: 99999,
-                    },
-                },
-            },
-        ],
-    },
-    gasReporter: {
-      enabled: GAS_PROFILER,
-    },
-    etherscan: {
-      apiKey: {
-        [NetworkName.Ethereum]: ETHSCAN_API_KEY || '',
-        [NetworkName.ArbitrumOne]: ARB_SCAN_API_KEY || '',
-        [NetworkName.ArbitrumSepolia]: ARB_SCAN_API_KEY || '',
-      },
-      customChains: [
-        {
-          network: NetworkName.Game7OrbitArbSepolia,
-          chainId: ChainId.Game7OrbitArbSepolia,
-          urls: {
-            apiURL: `${NetworkExplorer.Game7OrbitArbSepolia}/api`,
-            browserURL: NetworkExplorer.Game7OrbitArbSepolia,
+  solidity: {
+    compilers: [
+      {
+        version: '0.5.10',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 99999,
           },
         },
-        {
-          network: NetworkName.Game7OrbitBaseSepolia,
-          chainId: ChainId.Game7OrbitBaseSepolia,
-          urls: {
-            apiURL: `${NetworkExplorer.Game7OrbitBaseSepolia}/api`,
-            browserURL: NetworkExplorer.Game7OrbitBaseSepolia,
+      },
+      {
+        version: '0.8.24',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 99999,
           },
         },
-      ],
+      },
+    ],
+  },
+  gasReporter: {
+    enabled: GAS_PROFILER,
+  },
+  etherscan: {
+    apiKey: {
+      [NetworkName.Ethereum]: ETHSCAN_API_KEY || '',
+      [NetworkName.ArbitrumOne]: ARB_SCAN_API_KEY || '',
+      [NetworkName.ArbitrumSepolia]: ARB_SCAN_API_KEY || '',
     },
-    networks: {
-      [NetworkName.Ethereum]: {
-        chainId: ChainId.Ethereum,
-        url: rpcUrls[ChainId.Ethereum],
-      },
-      [NetworkName.ArbitrumOne]: {
-        chainId: ChainId.ArbitrumOne,
-        url: rpcUrls[ChainId.ArbitrumOne],
-      },
-      [NetworkName.Game7OrbitArbSepolia]: {
-        url: rpcUrls[ChainId.Game7OrbitArbSepolia],
+    customChains: [
+      {
+        network: NetworkName.Game7OrbitArbSepolia,
         chainId: ChainId.Game7OrbitArbSepolia,
+        urls: {
+          apiURL: `${NetworkExplorer.Game7OrbitArbSepolia}/api`,
+          browserURL: NetworkExplorer.Game7OrbitArbSepolia,
+        },
       },
-      [NetworkName.Game7OrbitBaseSepolia]: {
-        url: rpcUrls[ChainId.Game7OrbitBaseSepolia],
+      {
+        network: NetworkName.Game7OrbitBaseSepolia,
         chainId: ChainId.Game7OrbitBaseSepolia,
+        urls: {
+          apiURL: `${NetworkExplorer.Game7OrbitBaseSepolia}/api`,
+          browserURL: NetworkExplorer.Game7OrbitBaseSepolia,
+        },
       },
-      [NetworkName.ArbitrumSepolia]: {
-        url: rpcUrls[ChainId.ArbitrumSepolia],
-        chainId: ChainId.ArbitrumSepolia,
-      },
+    ],
+  },
+  networks: {
+    [NetworkName.Ethereum]: {
+      chainId: ChainId.Ethereum,
+      url: rpcUrls[ChainId.Ethereum],
+    },
+    [NetworkName.ArbitrumOne]: {
+      chainId: ChainId.ArbitrumOne,
+      url: rpcUrls[ChainId.ArbitrumOne],
+    },
+    [NetworkName.Game7OrbitArbSepolia]: {
+      url: rpcUrls[ChainId.Game7OrbitArbSepolia],
+      chainId: ChainId.Game7OrbitArbSepolia,
+    },
+    [NetworkName.Game7OrbitBaseSepolia]: {
+      url: rpcUrls[ChainId.Game7OrbitBaseSepolia],
+      chainId: ChainId.Game7OrbitBaseSepolia,
+    },
+    [NetworkName.ArbitrumSepolia]: {
+      url: rpcUrls[ChainId.ArbitrumSepolia],
+      chainId: ChainId.ArbitrumSepolia,
     },
   }
-};
+}
+
 
 export default config;

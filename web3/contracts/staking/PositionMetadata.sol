@@ -130,11 +130,13 @@ contract PositionMetadata {
 
         // Pool data strings
         string memory poolIdString = (position.poolID).toString();
-        string memory tokenTypeString = pool.tokenType == 1 ? "Native" : pool.tokenType == 20
-            ? "ERC20"
-            : pool.tokenType == 721
-            ? "ERC721"
-            : "ERC1155";
+        string memory tokenTypeString = pool.tokenType == 1
+            ? "Native"
+            : pool.tokenType == 20
+                ? "ERC20"
+                : pool.tokenType == 721
+                    ? "ERC721"
+                    : "ERC1155";
 
         string memory tokenSymbolString = pool.tokenType == 1
             ? returnTokenSymbolNative()
@@ -168,21 +170,13 @@ contract PositionMetadata {
     }
 
     function generateTokenSymbol(string memory tokenSymbolString) public pure returns (string memory) {
-        string memory fontFamily = "Courier New";
         return
             string(
                 abi.encodePacked(
-                    // todo: figure out url stuff. If closer to wednesday, delete and submit PR
-                    // '<g filter="url(#filter1_d_1689_1102)">',
-                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="',
-                    fontFamily,
-                    '" font-size="220" font-weight="800" letter-spacing="-0.04em"><tspan x="350.124" y="583.682">',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="220" font-weight="800" letter-spacing="-0.04em"><tspan x="350.124" y="583.682">',
                     tokenSymbolString,
                     "</tspan></text>",
-                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="',
-                    fontFamily,
-                    '" font-size="220" font-weight="bold" letter-spacing="-0.04em"><tspan x="220" y="583.682">$</tspan></text>'
-                    // "</g>",
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="220" font-weight="bold" letter-spacing="-0.04em"><tspan x="220" y="583.682">$</tspan></text>'
                 )
             );
     }
@@ -191,20 +185,15 @@ contract PositionMetadata {
         string memory tokenIdOrAmountString,
         string memory amountOrTokenIDString
     ) public pure returns (string memory) {
-        string memory fontFamily = "Courier New";
         return (
             string(
                 abi.encodePacked(
                     '<rect x="221" y="766" width="1558" height="122" rx="19" fill="#18181B" fill-opacity="0.8"/>',
                     '<rect x="221" y="766" width="1558" height="122" rx="19" stroke="#737373" stroke-width="2"/>',
-                    '<text x="220" y="737" fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="',
-                    fontFamily,
-                    '"  font-size="40" font-weight="bold" letter-spacing="0em">',
+                    '<text x="220" y="737" fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New"  font-size="40" font-weight="bold" letter-spacing="0em">',
                     tokenIdOrAmountString,
                     "</text>",
-                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="',
-                    fontFamily,
-                    '" font-size="80" font-weight="bold" letter-spacing="0em"><tspan x="260" y="850">',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="80" font-weight="bold" letter-spacing="0em"><tspan x="260" y="850">',
                     amountOrTokenIDString,
                     "</tspan></text>"
                 )
@@ -212,25 +201,17 @@ contract PositionMetadata {
         );
     }
 
-    function generateTokenTypeElement(
+    function generateTokenIdSection(
         string memory tokenTypeString,
-        string memory tokenAddressString,
         string memory amountOrTokenIdString,
-        string memory poolIdString
-    ) public pure returns (string memory) {
-        string memory tokenIdSection = "";
+        uint256 yPoolPad
+    ) internal pure returns (string memory) {
+        if (keccak256(abi.encodePacked(tokenTypeString)) != keccak256(abi.encodePacked("ERC1155"))) {
+            return "";
+        }
 
-        uint256 yPoolPad = 0;
-        uint256 averageCharWidth = 18;
-
-        // calculate correct rect width from text width and find center of text
-        uint256 textWidth = bytes(tokenTypeString).length * averageCharWidth;
-        uint256 rectWidth = textWidth + 40;
-        // uint256 addressWidth =
-
-        if (keccak256(abi.encodePacked(tokenTypeString)) == keccak256(abi.encodePacked("ERC1155"))) {
-            yPoolPad = 194;
-            tokenIdSection = string(
+        return
+            string(
                 abi.encodePacked(
                     '<rect x="221" y="',
                     (1195 + yPoolPad).toString(),
@@ -248,8 +229,13 @@ contract PositionMetadata {
                     "</tspan></text>"
                 )
             );
-        }
+    }
 
+    function generateTokenTypeSection(
+        string memory tokenTypeString,
+        string memory tokenAddressString,
+        uint256 rectWidth
+    ) internal pure returns (string memory) {
         return
             string(
                 abi.encodePacked(
@@ -266,8 +252,15 @@ contract PositionMetadata {
                     (241 + rectWidth + 30).toString(),
                     '" y="1250">',
                     tokenAddressString,
-                    "</tspan></text>",
-                    tokenIdSection,
+                    "</tspan></text>"
+                )
+            );
+    }
+
+    function generatePoolIdSection(string memory poolIdString, uint256 yPoolPad) internal pure returns (string memory) {
+        return
+            string(
+                abi.encodePacked(
                     '<rect x="221" y="',
                     (1389 + yPoolPad).toString(),
                     '" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
@@ -286,6 +279,28 @@ contract PositionMetadata {
             );
     }
 
+    function generateTokenTypeElement(
+        string memory tokenTypeString,
+        string memory tokenAddressString,
+        string memory amountOrTokenIdString,
+        string memory poolIdString
+    ) public pure returns (string memory) {
+        uint256 yPoolPad = (keccak256(abi.encodePacked(tokenTypeString)) == keccak256(abi.encodePacked("ERC1155")))
+            ? 194
+            : 0;
+
+        // calculate correct rect width from text width and find center of text
+        uint256 textWidth = bytes(tokenTypeString).length * 18;
+        uint256 rectWidth = textWidth + 40;
+
+        // Token sections
+        string memory tokenIdSection = generateTokenIdSection(tokenTypeString, amountOrTokenIdString, yPoolPad);
+        string memory tokenTypeSection = generateTokenTypeSection(tokenTypeString, tokenAddressString, rectWidth);
+        string memory poolIdSection = generatePoolIdSection(poolIdString, yPoolPad);
+
+        return string(abi.encodePacked(tokenTypeSection, tokenIdSection, poolIdSection));
+    }
+    
     function generateStakingPeriodElements(
         string memory yPos,
         string memory titleYPos,
@@ -352,11 +367,10 @@ contract PositionMetadata {
     }
 
     function returnTokenSymbolNative() public view returns (string memory) {
-        uint256 chainId = block.chainid;
         // Ethereum mainnet or arbitrum sepolia
-        if (chainId == 1 || chainId == 421614) return "ETH";
+        if (block.chainid == 1 || block.chainid == 421614) return "ETH";
         // g7 conduit testnet or local hardhat node
-        else if (chainId == 13746 || chainId == 31337) return "G7";
+        else if (block.chainid == 13746 || block.chainid == 31337) return "G7";
         else return "N/A";
     }
 
