@@ -18,7 +18,7 @@ describe('Staker', function () {
         const stakeAmount = ethers.parseEther('1');
 
         // Stake native tokens
-        const stakeTx = await stakerWithUser0.stakeNative(nativePoolID, { value: stakeAmount });
+        const stakeTx = await stakerWithUser0.stakeNative(user0,nativePoolID, { value: stakeAmount });
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -78,7 +78,7 @@ describe('Staker', function () {
         await erc20.connect(user0).approve(await staker.getAddress(), stakeAmount);
 
         // Stake ERC20 tokens
-        const stakeTx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC20(user0,erc20PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -135,7 +135,7 @@ describe('Staker', function () {
         await erc721.connect(user0).approve(await staker.getAddress(), tokenId);
 
         // Stake ERC721 token
-        const stakeTx = await stakerWithUser0.stakeERC721(erc721PoolID, tokenId);
+        const stakeTx = await stakerWithUser0.stakeERC721(user0,erc721PoolID, tokenId);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -186,7 +186,7 @@ describe('Staker', function () {
         await erc1155.connect(user0).setApprovalForAll(await staker.getAddress(), true);
 
         // Stake ERC1155 tokens
-        const stakeTx = await stakerWithUser0.stakeERC1155(erc1155PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC1155(user0,erc1155PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -237,7 +237,7 @@ describe('Staker', function () {
         const stakeAmount = ethers.parseEther('1');
 
         // Stake native tokens
-        const stakeTx = await stakerWithUser0.stakeNative(nativePoolID, { value: stakeAmount });
+        const stakeTx = await stakerWithUser0.stakeNative(user0,nativePoolID, { value: stakeAmount });
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -290,7 +290,7 @@ describe('Staker', function () {
         await erc20.connect(user0).approve(await staker.getAddress(), stakeAmount);
 
         // Stake ERC20 tokens
-        const stakeTx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC20(user0,erc20PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -343,7 +343,7 @@ describe('Staker', function () {
         await erc721.connect(user0).approve(await staker.getAddress(), tokenId);
 
         // Stake ERC721 token
-        const stakeTx = await stakerWithUser0.stakeERC721(erc721PoolID, tokenId);
+        const stakeTx = await stakerWithUser0.stakeERC721(user0,erc721PoolID, tokenId);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -390,7 +390,7 @@ describe('Staker', function () {
         await erc1155.connect(user0).setApprovalForAll(await staker.getAddress(), true);
 
         // Stake ERC1155 tokens
-        const stakeTx = await stakerWithUser0.stakeERC1155(erc1155PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC1155(user0,erc1155PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -438,7 +438,7 @@ describe('Staker', function () {
         const stakeAmount = ethers.parseEther('1');
 
         // Stake native tokens
-        const stakeTx = await stakerWithUser0.stakeNative(nativePoolID, { value: stakeAmount });
+        const stakeTx = await stakerWithUser0.stakeNative(user0,nativePoolID, { value: stakeAmount });
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -492,7 +492,7 @@ describe('Staker', function () {
         await erc20.connect(user0).approve(await staker.getAddress(), stakeAmount);
 
         // Stake ERC20 tokens
-        const stakeTx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC20(user0,erc20PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -546,7 +546,7 @@ describe('Staker', function () {
         await erc721.connect(user0).approve(await staker.getAddress(), tokenId);
 
         // Stake ERC721 token
-        const stakeTx = await stakerWithUser0.stakeERC721(erc721PoolID, tokenId);
+        const stakeTx = await stakerWithUser0.stakeERC721(user0,erc721PoolID, tokenId);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -603,7 +603,7 @@ describe('Staker', function () {
         await erc1155.connect(user0).setApprovalForAll(await staker.getAddress(), true);
 
         // Stake ERC1155 tokens
-        const stakeTx = await stakerWithUser0.stakeERC1155(erc1155PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC1155(user0,erc1155PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -654,7 +654,7 @@ describe('Staker', function () {
         const stakeAmount = ethers.parseEther('1');
 
         // Stake native tokens
-        const stakeTx = await stakerWithUser0.stakeNative(nativePoolID, { value: stakeAmount });
+        const stakeTx = await stakerWithUser0.stakeNative(user0,nativePoolID, { value: stakeAmount });
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -708,7 +708,7 @@ describe('Staker', function () {
         await erc20.connect(user0).approve(await staker.getAddress(), stakeAmount);
 
         // Stake ERC20 tokens
-        const stakeTx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC20(user0,erc20PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -762,7 +762,7 @@ describe('Staker', function () {
         await erc721.connect(user0).approve(await staker.getAddress(), tokenId);
 
         // Stake ERC721 token
-        const stakeTx = await stakerWithUser0.stakeERC721(erc721PoolID, tokenId);
+        const stakeTx = await stakerWithUser0.stakeERC721(user0,erc721PoolID, tokenId);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -811,7 +811,7 @@ describe('Staker', function () {
         await erc1155.connect(user0).setApprovalForAll(await staker.getAddress(), true);
 
         // Stake ERC1155 tokens
-        const stakeTx = await stakerWithUser0.stakeERC1155(erc1155PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC1155(user0,erc1155PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -858,7 +858,7 @@ describe('Staker', function () {
         const stakeAmount = ethers.parseEther('1');
 
         // Stake native tokens
-        const stakeTx = await stakerWithUser0.stakeNative(nativePoolID, { value: stakeAmount });
+        const stakeTx = await stakerWithUser0.stakeNative(user0,nativePoolID, { value: stakeAmount });
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -922,7 +922,7 @@ describe('Staker', function () {
         await erc20.connect(user0).approve(await staker.getAddress(), stakeAmount);
 
         // Stake ERC20 tokens
-        const stakeTx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC20(user0,erc20PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -986,7 +986,7 @@ describe('Staker', function () {
         await erc721.connect(user0).approve(await staker.getAddress(), tokenId);
 
         // Stake ERC721 token
-        const stakeTx = await stakerWithUser0.stakeERC721(erc721PoolID, tokenId);
+        const stakeTx = await stakerWithUser0.stakeERC721(user0,erc721PoolID, tokenId);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -1044,7 +1044,7 @@ describe('Staker', function () {
         await erc1155.connect(user0).setApprovalForAll(await staker.getAddress(), true);
 
         // Stake ERC1155 tokens
-        const stakeTx = await stakerWithUser0.stakeERC1155(erc1155PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC1155(user0,erc1155PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -1101,7 +1101,7 @@ describe('Staker', function () {
         const stakeAmount = ethers.parseEther('1');
 
         // Stake native tokens
-        const stakeTx = await stakerWithUser0.stakeNative(nativePoolID, { value: stakeAmount });
+        const stakeTx = await stakerWithUser0.stakeNative(user0,nativePoolID, { value: stakeAmount });
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -1165,7 +1165,7 @@ describe('Staker', function () {
         await erc20.connect(user0).approve(await staker.getAddress(), stakeAmount);
 
         // Stake ERC20 tokens
-        const stakeTx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC20(user0,erc20PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -1226,7 +1226,7 @@ describe('Staker', function () {
         await erc721.connect(user0).approve(await staker.getAddress(), tokenId);
 
         // Stake ERC721 token
-        const stakeTx = await stakerWithUser0.stakeERC721(erc721PoolID, tokenId);
+        const stakeTx = await stakerWithUser0.stakeERC721(user0,erc721PoolID, tokenId);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -1287,7 +1287,7 @@ describe('Staker', function () {
         await erc1155.connect(user0).setApprovalForAll(await staker.getAddress(), true);
 
         // Stake ERC1155 tokens
-        const stakeTx = await stakerWithUser0.stakeERC1155(erc1155PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC1155(user0,erc1155PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -1342,7 +1342,7 @@ describe('Staker', function () {
         const stakeAmount = ethers.parseEther('1');
 
         // Stake native tokens
-        const stakeTx = await stakerWithUser0.stakeNative(nativePoolID, { value: stakeAmount });
+        const stakeTx = await stakerWithUser0.stakeNative(user0,nativePoolID, { value: stakeAmount });
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -1413,7 +1413,7 @@ describe('Staker', function () {
         await erc20.connect(user0).approve(await staker.getAddress(), stakeAmount);
 
         // Stake ERC20 tokens
-        const stakeTx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC20(user0,erc20PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -1484,7 +1484,7 @@ describe('Staker', function () {
         await erc721.connect(user0).approve(await staker.getAddress(), tokenId);
 
         // Stake ERC721 token
-        const stakeTx = await stakerWithUser0.stakeERC721(erc721PoolID, tokenId);
+        const stakeTx = await stakerWithUser0.stakeERC721(user0,erc721PoolID, tokenId);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -1555,7 +1555,7 @@ describe('Staker', function () {
         await erc1155.connect(user0).setApprovalForAll(await staker.getAddress(), true);
 
         // Stake ERC1155 tokens
-        const stakeTx = await stakerWithUser0.stakeERC1155(erc1155PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC1155(user0,erc1155PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -1626,7 +1626,7 @@ describe('Staker', function () {
         const user0BalanceBefore = await ethers.provider.getBalance(await user0.getAddress());
 
         // Stake native tokens
-        const stakeTx = await stakerWithUser0.stakeNative(nativePoolID, { value: stakeAmount });
+        const stakeTx = await stakerWithUser0.stakeNative(user0,nativePoolID, { value: stakeAmount });
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -1700,7 +1700,7 @@ describe('Staker', function () {
         const user0BalanceBefore = await erc20.balanceOf(await user0.getAddress());
 
         // Stake ERC20 tokens
-        const stakeTx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC20(user0,erc20PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -1773,7 +1773,7 @@ describe('Staker', function () {
         expect(await erc721.ownerOf(tokenId)).to.equal(await user0.getAddress());
 
         // Stake ERC721 token
-        const stakeTx = await stakerWithUser0.stakeERC721(erc721PoolID, tokenId);
+        const stakeTx = await stakerWithUser0.stakeERC721(user0,erc721PoolID, tokenId);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -1844,7 +1844,7 @@ describe('Staker', function () {
         const user0BalanceBefore = await erc1155.balanceOf(await user0.getAddress(), erc1155TokenID);
 
         // Stake ERC1155 tokens
-        const stakeTx = await stakerWithUser0.stakeERC1155(erc1155PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC1155(user0,erc1155PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -1918,7 +1918,7 @@ describe('Staker', function () {
         const user0BalanceBefore = await ethers.provider.getBalance(await user0.getAddress());
 
         // Stake native tokens
-        const stakeTx = await stakerWithUser0.stakeNative(nativePoolID, { value: stakeAmount });
+        const stakeTx = await stakerWithUser0.stakeNative(user0,nativePoolID, { value: stakeAmount });
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -1985,7 +1985,7 @@ describe('Staker', function () {
         const user0BalanceBefore = await erc20.balanceOf(await user0.getAddress());
 
         // Stake ERC20 tokens
-        const stakeTx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC20(user0,erc20PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -2051,7 +2051,7 @@ describe('Staker', function () {
         expect(await erc721.ownerOf(tokenId)).to.equal(await user0.getAddress());
 
         // Stake ERC721 token
-        const stakeTx = await stakerWithUser0.stakeERC721(erc721PoolID, tokenId);
+        const stakeTx = await stakerWithUser0.stakeERC721(user0,erc721PoolID, tokenId);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -2114,7 +2114,7 @@ describe('Staker', function () {
         const user0BalanceBefore = await erc1155.balanceOf(await user0.getAddress(), erc1155TokenID);
 
         // Stake ERC1155 tokens
-        const stakeTx = await stakerWithUser0.stakeERC1155(erc1155PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC1155(user0,erc1155PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -2172,7 +2172,7 @@ describe('Staker', function () {
 
         // Stake native tokens
         const stakerBalanceBefore = await ethers.provider.getBalance(await staker.getAddress());
-        const stakeTx = await stakerWithUser0.stakeNative(nativePoolID, { value: stakeAmount });
+        const stakeTx = await stakerWithUser0.stakeNative(user0,nativePoolID, { value: stakeAmount });
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -2246,7 +2246,7 @@ describe('Staker', function () {
 
         // Stake native tokens
         const stakerBalanceBefore = await erc20.balanceOf(await staker.getAddress());
-        const stakeTx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC20(user0,erc20PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -2317,7 +2317,7 @@ describe('Staker', function () {
         await erc721.connect(user0).approve(await staker.getAddress(), tokenID);
 
         // Stake native tokens
-        const stakeTx = await stakerWithUser0.stakeERC721(erc721PoolID, tokenID);
+        const stakeTx = await stakerWithUser0.stakeERC721(user0,erc721PoolID, tokenID);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -2382,7 +2382,7 @@ describe('Staker', function () {
 
         // Stake native tokens
         const stakerBalanceBefore = await erc1155.balanceOf(await staker.getAddress(), erc1155TokenID);
-        const stakeTx = await stakerWithUser0.stakeERC1155(erc1155PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC1155(user0,erc1155PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -2451,7 +2451,7 @@ describe('Staker', function () {
 
         // Stake native tokens
         const stakerBalanceBefore = await ethers.provider.getBalance(await staker.getAddress());
-        const stakeTx = await stakerWithUser0.stakeNative(nativePoolID, { value: stakeAmount });
+        const stakeTx = await stakerWithUser0.stakeNative(user0,nativePoolID, { value: stakeAmount });
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -2525,7 +2525,7 @@ describe('Staker', function () {
 
         // Stake native tokens
         const stakerBalanceBefore = await erc20.balanceOf(await staker.getAddress());
-        const stakeTx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC20(user0,erc20PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -2596,7 +2596,7 @@ describe('Staker', function () {
         await erc721.connect(user0).approve(await staker.getAddress(), tokenID);
 
         // Stake native tokens
-        const stakeTx = await stakerWithUser0.stakeERC721(erc721PoolID, tokenID);
+        const stakeTx = await stakerWithUser0.stakeERC721(user0,erc721PoolID, tokenID);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -2661,7 +2661,7 @@ describe('Staker', function () {
 
         // Stake native tokens
         const stakerBalanceBefore = await erc1155.balanceOf(await staker.getAddress(), erc1155TokenID);
-        const stakeTx = await stakerWithUser0.stakeERC1155(erc1155PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC1155(user0,erc1155PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -2733,7 +2733,7 @@ describe('Staker', function () {
         const user1BalanceBefore = await ethers.provider.getBalance(await user1.getAddress());
 
         // Stake native tokens
-        const stakeTx = await stakerWithUser0.stakeNative(nativePoolID, { value: stakeAmount });
+        const stakeTx = await stakerWithUser0.stakeNative(user0,nativePoolID, { value: stakeAmount });
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -2811,7 +2811,7 @@ describe('Staker', function () {
         const user1BalanceBefore = await erc20.balanceOf(await user1.getAddress());
 
         // Stake ERC20 tokens
-        const stakeTx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC20(user0,erc20PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -2885,7 +2885,7 @@ describe('Staker', function () {
         expect(await erc721.ownerOf(tokenId)).to.equal(await user0.getAddress());
 
         // Stake ERC721 token
-        const stakeTx = await stakerWithUser0.stakeERC721(erc721PoolID, tokenId);
+        const stakeTx = await stakerWithUser0.stakeERC721(user0,erc721PoolID, tokenId);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -2955,7 +2955,7 @@ describe('Staker', function () {
         const user0BalanceBefore = await erc1155.balanceOf(await user0.getAddress(), erc1155TokenID);
 
         // Stake ERC1155 tokens
-        const stakeTx = await stakerWithUser0.stakeERC1155(erc1155PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC1155(user0,erc1155PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -3031,7 +3031,7 @@ describe('Staker', function () {
         const user1BalanceBefore = await ethers.provider.getBalance(await user1.getAddress());
 
         // Stake native tokens
-        const stakeTx = await stakerWithUser0.stakeNative(nativePoolID, { value: stakeAmount });
+        const stakeTx = await stakerWithUser0.stakeNative(user0,nativePoolID, { value: stakeAmount });
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -3106,7 +3106,7 @@ describe('Staker', function () {
         const user1BalanceBefore = await erc20.balanceOf(await user1.getAddress());
 
         // Stake ERC20 tokens
-        const stakeTx = await stakerWithUser0.stakeERC20(erc20PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC20(user0,erc20PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -3176,7 +3176,7 @@ describe('Staker', function () {
         expect(await erc721.ownerOf(tokenId)).to.equal(await user0.getAddress());
 
         // Stake ERC721 token
-        const stakeTx = await stakerWithUser0.stakeERC721(erc721PoolID, tokenId);
+        const stakeTx = await stakerWithUser0.stakeERC721(user0,erc721PoolID, tokenId);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
@@ -3244,7 +3244,7 @@ describe('Staker', function () {
         const user0BalanceBefore = await erc1155.balanceOf(await user0.getAddress(), erc1155TokenID);
 
         // Stake ERC1155 tokens
-        const stakeTx = await stakerWithUser0.stakeERC1155(erc1155PoolID, stakeAmount);
+        const stakeTx = await stakerWithUser0.stakeERC1155(user0,erc1155PoolID, stakeAmount);
         const stakeTxReceipt = await stakeTx.wait();
         expect(stakeTxReceipt).to.not.be.null;
         const stakeBlock = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);

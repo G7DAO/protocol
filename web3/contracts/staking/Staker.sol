@@ -13,6 +13,7 @@ import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 
 import { StakingPool, Position } from "./data.sol";
 import { PositionMetadata } from "./PositionMetadata.sol";
+import "hardhat/console.sol";
 
 /**
  * @notice The Staker contract allows users to permissionlessly create staking pools by specifying various parameters
@@ -407,11 +408,15 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         address positionOwner = ownerOf(positionTokenID);
         Position storage position = Positions[positionTokenID];
 
-        if (positionOwner != msg.sender || position.staker != msg.sender) {
+        StakingPool storage pool = Pools[position.poolID];
+
+        if (positionOwner != msg.sender && position.staker != msg.sender) {
             revert UnauthorizedForPosition(positionOwner, msg.sender);
         }
 
-        StakingPool storage pool = Pools[position.poolID];
+        if(positionOwner != msg.sender && position.staker != msg.sender && !pool.transferable) {
+            revert UnauthorizedForPosition(positionOwner, msg.sender);
+        }
 
         // Enforce lockup period
         if (block.timestamp < position.stakeTimestamp + pool.lockupSeconds) {
@@ -433,15 +438,17 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
      */
     function unstake(uint256 positionTokenID) external nonReentrant {
         Position storage position = Positions[positionTokenID];
+        StakingPool storage pool = Pools[position.poolID];
 
-        {
-            address positionOwner = ownerOf(positionTokenID);
-            if (positionOwner != msg.sender || position.staker != msg.sender) {
-                revert UnauthorizedForPosition(positionOwner, msg.sender);
-            }
+        address positionOwner = ownerOf(positionTokenID);
+
+        if (positionOwner != msg.sender && pool.transferable) {
+            revert UnauthorizedForPosition(positionOwner, msg.sender);
         }
 
-        StakingPool storage pool = Pools[position.poolID];
+        if(positionOwner != msg.sender && position.staker != msg.sender && !pool.transferable) {
+            revert UnauthorizedForPosition(positionOwner, msg.sender);
+        }
 
         // Enforce cooldown, but only if the pool has a cooldown period.
         if (pool.cooldownSeconds > 0) {
@@ -476,7 +483,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         if (pool.tokenType == NATIVE_TOKEN_TYPE) {
             payable(msg.sender).transfer(amountOrTokenID);
         } else if (pool.tokenType == ERC20_TOKEN_TYPE) {
-            IERC20(pool.tokenAddress).transferFrom(address(this), msg.sender, amountOrTokenID);
+            IERC20(pool.tokenAddress).safeTransfer(msg.sender, amountOrTokenID);
         } else if (pool.tokenType == ERC721_TOKEN_TYPE) {
             IERC721(pool.tokenAddress).safeTransferFrom(address(this), msg.sender, amountOrTokenID);
         } else if (pool.tokenType == ERC1155_TOKEN_TYPE) {
