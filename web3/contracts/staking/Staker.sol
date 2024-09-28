@@ -436,7 +436,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
 
         {
             address positionOwner = ownerOf(positionTokenID);
-            if (positionOwner != msg.sender || position[positionTokenID].staker != msg.sender) {
+            if (positionOwner != msg.sender || position.staker != msg.sender) {
                 revert UnauthorizedForPosition(positionOwner, msg.sender);
             }
         }
