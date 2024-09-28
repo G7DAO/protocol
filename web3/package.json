@@ -1,4 +1,5 @@
 {
+  "name": "@game7/protocol",
   "scripts": {
     "test": "hardhat test",
     "compile": "hardhat compile",
