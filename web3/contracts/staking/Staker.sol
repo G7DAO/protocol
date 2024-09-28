@@ -13,7 +13,6 @@ import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 
 import { StakingPool, Position } from "./data.sol";
 import { PositionMetadata } from "./PositionMetadata.sol";
-import "hardhat/console.sol";
 
 /**
  * @notice The Staker contract allows users to permissionlessly create staking pools by specifying various parameters
