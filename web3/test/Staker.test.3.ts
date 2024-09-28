@@ -948,4 +948,88 @@ describe('Staker', function () {
         const position = await staker.Positions(positionTokenID);
         expect(position.unstakeInitiatedAt).to.equal(0);
     });
+
+    it('`STAKER-133`: If a staker user who want to stake native tokens for another user try to stake using a transferable pool reverts', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, user0, user1, nativePoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+        const stakeAmount = ethers.parseEther('1');
+
+        // Stake native tokens
+        await expect(stakerWithUser0.stakeNative(user1, nativePoolID, { value: stakeAmount }))
+            .to.be.revertedWithCustomError(staker, 'PositionMustBeTransferable')
+    });
+
+    it('`STAKER-134`: If a staker user who want to stake erc20 tokens for another user try to stake using a transferable pool reverts', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, erc20, user0, user1, erc20PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+        const stakeAmount = 17n;
+
+        // Mint ERC20 token to user0
+        await erc20.mint(await user0.getAddress(), stakeAmount);
+
+        // Approve staker contract to transfer ERC721 token
+        await erc20.connect(user0).approve(await staker.getAddress(), stakeAmount);
+
+        // Stake ERC20 token - should fail because the pool id its transferable
+        await expect(stakerWithUser0.stakeERC20(user1, erc20PoolID, stakeAmount))
+            .to.be.revertedWithCustomError(staker, 'PositionMustBeTransferable')
+    });
+
+
+    it('`STAKER-135`: If a staker user who want to stake erc721 tokens for another user try to stake using a transferable pool reverts', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, erc721, user0, user1, erc721PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const tokenId = 1n;
+
+        // Mint ERC721 token to user0
+        await erc721.mint(await user0.getAddress(), tokenId);
+
+        // Approve staker contract to transfer ERC721 token
+        await erc721.connect(user0).approve(await staker.getAddress(), tokenId);
+
+        const stakerWithUser0 = staker.connect(user0);
+        // Stake ERC20 token - should fail because the pool id its transferable
+        await expect(stakerWithUser0.stakeERC721(user1, erc721PoolID, tokenId))
+            .to.be.revertedWithCustomError(staker, 'PositionMustBeTransferable')
+    });
+
+    it('`STAKER-136`: If a staker user who want to stake erc1155 tokens for another user try to stake using a transferable pool reverts', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, erc1155, user0, user1, erc1155PoolID, erc1155TokenID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+        const stakeAmount = 17n;
+
+        await erc1155.mint(await user0.getAddress(), erc1155TokenID, stakeAmount);
+        await erc1155.connect(user0).setApprovalForAll(await staker.getAddress(), true);
+
+        // Stake ERC1155 token - should fail because the pool id its transferable
+        await expect(stakerWithUser0.stakeERC1155(user1, erc1155PoolID, stakeAmount))
+            .to.be.revertedWithCustomError(staker, 'PositionMustBeTransferable')
+    });
 });

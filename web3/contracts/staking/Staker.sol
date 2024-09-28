@@ -88,6 +88,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
     error InvalidConfiguration();
     error NonAdministrator();
     error IncorrectTokenType(uint256 poolID, uint256 poolTokenType, uint256 tokenTypeArg);
+    error PositionMustBeTransferable();
     error NothingToStake();
     error NonZeroAddress();
     error UnauthorizedForPosition(address owner, address sender);
@@ -253,6 +254,10 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
             revert IncorrectTokenType(poolID, pool.tokenType, NATIVE_TOKEN_TYPE);
         }
 
+        if(pool.transferable && msg.sender != user) {
+            revert PositionMustBeTransferable();
+        }
+
         if (msg.value == 0) {
             revert NothingToStake();
         }
@@ -291,6 +296,10 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         StakingPool storage pool = Pools[poolID];
         if (pool.tokenType != ERC20_TOKEN_TYPE) {
             revert IncorrectTokenType(poolID, pool.tokenType, ERC20_TOKEN_TYPE);
+        }
+
+        if(pool.transferable && msg.sender != user) {
+            revert PositionMustBeTransferable();
         }
 
         if (amount == 0) {
@@ -334,6 +343,10 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
             revert IncorrectTokenType(poolID, pool.tokenType, ERC721_TOKEN_TYPE);
         }
 
+        if(pool.transferable && msg.sender != user) {
+            revert PositionMustBeTransferable();
+        }
+
         IERC721(pool.tokenAddress).safeTransferFrom(user, address(this), tokenID);
 
         positionTokenID = TotalPositions++;
@@ -367,6 +380,10 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         StakingPool storage pool = Pools[poolID];
         if (pool.tokenType != ERC1155_TOKEN_TYPE) {
             revert IncorrectTokenType(poolID, pool.tokenType, ERC1155_TOKEN_TYPE);
+        }
+
+        if(pool.transferable && msg.sender != user) {
+            revert PositionMustBeTransferable();
         }
 
         if (amount == 0) {
