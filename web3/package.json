@@ -4,7 +4,8 @@
     "test": "hardhat test",
     "compile": "hardhat compile",
     "extract-abis": "./extract-abis.sh",
-    "typechain": "hardhat typechain"
+    "typechain": "hardhat typechain",
+    "format": "prettier --write  \"**/*.ts\""
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-foundry": "^1.1.2",

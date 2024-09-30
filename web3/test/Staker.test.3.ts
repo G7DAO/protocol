@@ -1043,7 +1043,6 @@ describe('Staker', function () {
         expect(user0Balance).to.equal(1n);
     });
 
-
     it('`STAKER-137`: If a staker user who want to stake erc721 tokens for another user should successfully stake', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
@@ -1062,7 +1061,7 @@ describe('Staker', function () {
         await erc721.connect(admin0).approve(await staker.getAddress(), tokenId);
 
         const stakerWithAdmin0 = staker.connect(admin0);
-        const tx = await stakerWithAdmin0.stakeERC721(user0, erc721PoolID, tokenId)
+        const tx = await stakerWithAdmin0.stakeERC721(user0, erc721PoolID, tokenId);
         const txReceipt = await tx.wait();
         expect(txReceipt).to.not.be.null;
 
@@ -1088,7 +1087,7 @@ describe('Staker', function () {
         await erc721.connect(admin0).approve(await staker.getAddress(), tokenId);
 
         const stakerWithAdmin0 = staker.connect(admin0);
-        const tx = await stakerWithAdmin0.stakeERC721(user0, erc721PoolID, tokenId)
+        const tx = await stakerWithAdmin0.stakeERC721(user0, erc721PoolID, tokenId);
         const txReceipt = await tx.wait();
         expect(txReceipt).to.not.be.null;
 
@@ -1111,7 +1110,7 @@ describe('Staker', function () {
         await erc1155.mint(await admin0.getAddress(), erc1155TokenID, stakeAmount);
         await erc1155.connect(admin0).setApprovalForAll(await staker.getAddress(), true);
 
-        const tx = await stakerWithAdmin0.stakeERC1155(user0, erc1155PoolID, stakeAmount)
+        const tx = await stakerWithAdmin0.stakeERC1155(user0, erc1155PoolID, stakeAmount);
         const txReceipt = await tx.wait();
         expect(txReceipt).to.not.be.null;
 
@@ -1134,7 +1133,7 @@ describe('Staker', function () {
         await erc1155.mint(await admin0.getAddress(), erc1155TokenID, stakeAmount);
         await erc1155.connect(admin0).setApprovalForAll(await staker.getAddress(), true);
 
-        const tx = await stakerWithAdmin0.stakeERC1155(user0, erc1155PoolID, stakeAmount)
+        const tx = await stakerWithAdmin0.stakeERC1155(user0, erc1155PoolID, stakeAmount);
         const txReceipt = await tx.wait();
         expect(txReceipt).to.not.be.null;
 
@@ -1166,12 +1165,7 @@ describe('Staker', function () {
 
         await expect(unstakeTx)
             .to.emit(staker, 'Unstaked')
-            .withArgs(
-                positionTokenID,
-                await user0.getAddress(),
-                nativePoolID,
-                stakeAmount
-            );
+            .withArgs(positionTokenID, await user0.getAddress(), nativePoolID, stakeAmount);
 
         const user0BalanceAfter = await stakerWithAdmin0.balanceOf(await user0.getAddress());
 
@@ -1202,12 +1196,7 @@ describe('Staker', function () {
 
         await expect(unstakeTx)
             .to.emit(staker, 'Unstaked')
-            .withArgs(
-                positionTokenID,
-                await user0.getAddress(),
-                nativePoolID,
-                stakeAmount
-            );
+            .withArgs(positionTokenID, await user0.getAddress(), nativePoolID, stakeAmount);
         const user0BalanceAfter = await stakerWithAdmin0.balanceOf(await user0.getAddress());
 
         expect(user0BalanceAfter).to.equal(0n);
@@ -1235,7 +1224,11 @@ describe('Staker', function () {
         await time.setNextBlockTimestamp(stake1Block!.timestamp + lockupSeconds);
 
         const stakerWithUser0 = staker.connect(user0);
-        const transferTrx = await stakerWithUser0.transferFrom(await user0.getAddress(), await user1.getAddress(), positionTokenID);
+        const transferTrx = await stakerWithUser0.transferFrom(
+            await user0.getAddress(),
+            await user1.getAddress(),
+            positionTokenID
+        );
         await transferTrx.wait();
 
         const user0BalanceAfter = await stakerWithAdmin0.balanceOf(await user0.getAddress());
@@ -1244,10 +1237,7 @@ describe('Staker', function () {
         const initiateUnstakeTx = await stakerWithAdmin0.initiateUnstake(positionTokenID);
         await expect(initiateUnstakeTx)
             .to.emit(staker, 'UnstakeInitiated')
-            .withArgs(
-                positionTokenID,
-                await user1.getAddress(),
-            );
+            .withArgs(positionTokenID, await user1.getAddress());
 
         await initiateUnstakeTx.wait();
 
@@ -1255,12 +1245,7 @@ describe('Staker', function () {
         const tx = await stakerWithAdmin0.unstake(positionTokenID);
         await expect(tx)
             .to.emit(staker, 'Unstaked')
-            .withArgs(
-                positionTokenID,
-                await user1.getAddress(),
-                nativePoolID,
-                stakeAmount
-            );
+            .withArgs(positionTokenID, await user1.getAddress(), nativePoolID, stakeAmount);
 
         await tx.wait();
         const user1Balance = await stakerWithAdmin0.balanceOf(await user1.getAddress());
