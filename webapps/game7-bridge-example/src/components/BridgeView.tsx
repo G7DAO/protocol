@@ -15,6 +15,7 @@ import { EthBridger, getArbitrumNetwork } from '@arbitrum/sdk'
 // import { UnsupportedNetworkError } from 'game7-bridge-sdk/dist/errors.ts'
 import { EthDepositParams } from '@arbitrum/sdk/dist/lib/assetBridger/ethBridger'
 import Documentation from './Documentation.tsx'
+import TransferStatus from './TransferStatus.tsx'
 
 export const depositETH = async (
   amount: BigNumber,
@@ -111,6 +112,9 @@ const BridgerView = ({ bridger, amount }: { bridger: Bridger; amount?: ethers.Bi
       // 0x4d011728e4b8002750a0dcb8f2b18d7f17a08c278acda381d26d6eb9c460157f L3->L2
       // 0x8460187b8602c2cf2436f7821836c9097182d550a31cefaa07fb6352c013981e L2->L3
       // 0x6db1d677bc87d64d0adf0ef89d059e0a6b9a8f765af5dc0d2977f9d87aaf8677 L2->L1 ETH
+      // 0xb5ba500f030e662a3bd4742c8f090b819881c508c9b748d699cf7820253afea8 L2->L1 ETH
+      // 0x5311d470b7956262ad3329ea75bebb9fc01d9f07dde419e4dbcddae440215415 L2->L1 TG7T
+      // 0x3b3581e5000f84ddfd22e61e6a800a01ceba6246fb2042816967a0034978e9ec L2->L1 TG7T
     }
   })
 
@@ -337,6 +341,11 @@ const BridgeView = () => {
               <Network hoveredItem={hoveredItem} network={network} key={network.chainId} />
             ))}
           </div>
+          <TransferStatus
+            originChainId={421614}
+            destinationChainId={11155111}
+            txHash={'0x3b3581e5000f84ddfd22e61e6a800a01ceba6246fb2042816967a0034978e9ec'}
+          />
         </div>
       )}
     </div>
