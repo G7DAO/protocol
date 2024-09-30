@@ -77,11 +77,7 @@ export const estimateOutboundTransferGas = async (
   _data: string | ethers.BytesLike,
   provider: ethers.providers.Provider,
 ): Promise<GasAndFeeEstimation> => {
-  const contract = new ethers.Contract(
-    '0x9ed191DB1829371F116Deb9748c26B49467a592A',
-    L2GatewayRouterABI,
-    provider,
-  );
+  const contract = new ethers.Contract(contractAddress, L2GatewayRouterABI, provider);
   try {
     const estimatedGas = await contract.estimateGas.outboundTransfer(
       _l1Token,
