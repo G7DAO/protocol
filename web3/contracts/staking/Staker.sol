@@ -88,7 +88,6 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
     error NonAdministrator();
     error IncorrectTokenType(uint256 poolID, uint256 poolTokenType, uint256 tokenTypeArg);
     error NothingToStake();
-    error NonZeroAddress();
     error UnauthorizedForPosition(address owner, address sender);
     error InitiateUnstakeFirst(uint256 cooldownSeconds);
     error LockupNotExpired(uint256 expiresAt);
@@ -243,10 +242,6 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
      * @notice Allows anyone to open a position under a staking pool for native tokens.
      */
     function stakeNative(address positionHolder, uint256 poolID) external payable nonReentrant returns (uint256 positionTokenID) {
-        if(positionHolder == address(0)) {
-            revert NonZeroAddress();
-        }
-
         StakingPool storage pool = Pools[poolID];
         if (pool.tokenType != NATIVE_TOKEN_TYPE) {
             revert IncorrectTokenType(poolID, pool.tokenType, NATIVE_TOKEN_TYPE);
@@ -283,9 +278,6 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
      * ERC20 contract.
      */
     function stakeERC20(address positionHolder, uint256 poolID, uint256 amount) external nonReentrant returns (uint256 positionTokenID) {
-        if(positionHolder == address(0)) {
-            revert NonZeroAddress();
-        }
 
         StakingPool storage pool = Pools[poolID];
         if (pool.tokenType != ERC20_TOKEN_TYPE) {
@@ -326,10 +318,6 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
      */
     function stakeERC721(address positionHolder, uint256 poolID, uint256 tokenID) external nonReentrant returns (uint256 positionTokenID) {
 
-        if(positionHolder == address(0)) {
-            revert NonZeroAddress();
-        }
-
         StakingPool storage pool = Pools[poolID];
         if (pool.tokenType != ERC721_TOKEN_TYPE) {
             revert IncorrectTokenType(poolID, pool.tokenType, ERC721_TOKEN_TYPE);
@@ -361,9 +349,6 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
      * the `setApprovalForAll` method on the ERC1155 contract.
      */
     function stakeERC1155(address positionHolder, uint256 poolID, uint256 amount) external nonReentrant returns (uint256 positionTokenID) {
-        if(positionHolder == address(0)) {
-            revert NonZeroAddress();
-        }
         StakingPool storage pool = Pools[poolID];
         if (pool.tokenType != ERC1155_TOKEN_TYPE) {
             revert IncorrectTokenType(poolID, pool.tokenType, ERC1155_TOKEN_TYPE);
