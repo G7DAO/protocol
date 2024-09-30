@@ -949,87 +949,162 @@ describe('Staker', function () {
         expect(position.unstakeInitiatedAt).to.equal(0);
     });
 
-    it('`STAKER-133`: If a staker user who want to stake native tokens for another user try to stake using a transferable pool reverts', async function () {
+    it('`STAKER-133`: If an admin pool who want to stake native tokens for another user should successfully stake', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 0;
 
-        const { staker, user0, user1, nativePoolID } = await loadFixture(
+        const { staker, user0, nativePoolID, admin0 } = await loadFixture(
             setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
         );
 
-        const stakerWithUser0 = staker.connect(user0);
-        const stakeAmount = ethers.parseEther('1');
+        const stakerWithAdmin0 = staker.connect(admin0);
 
-        // Stake native tokens
-        await expect(stakerWithUser0.stakeNative(user1, nativePoolID, { value: stakeAmount }))
-            .to.be.revertedWithCustomError(staker, 'PositionMustBeTransferable')
+        const stakeAmount = ethers.parseEther('1');
+        const stakeTx = await stakerWithAdmin0.stakeNative(user0, nativePoolID, { value: stakeAmount });
+        const stakeTxReceipt = await stakeTx.wait();
+        expect(stakeTxReceipt).to.not.be.null;
+
+        const user0Balance = await stakerWithAdmin0.balanceOf(await user0.getAddress());
+
+        expect(user0Balance).to.equal(1n);
     });
 
-    it('`STAKER-134`: If a staker user who want to stake erc20 tokens for another user try to stake using a transferable pool reverts', async function () {
+    it('`STAKER-134`: If an admin pool who want to stake erc20 tokens for another user should successfully stake', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 0;
 
-        const { staker, erc20, user0, user1, erc20PoolID } = await loadFixture(
+        const { staker, erc20, user0, admin0, erc20PoolID } = await loadFixture(
             setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
         );
 
-        const stakerWithUser0 = staker.connect(user0);
+        const stakerWithAdmin0 = staker.connect(admin0);
         const stakeAmount = 17n;
 
-        // Mint ERC20 token to user0
-        await erc20.mint(await user0.getAddress(), stakeAmount);
+        // Mint ERC20 token to admin0
+        await erc20.mint(await admin0.getAddress(), stakeAmount);
 
         // Approve staker contract to transfer ERC721 token
-        await erc20.connect(user0).approve(await staker.getAddress(), stakeAmount);
+        await erc20.connect(admin0).approve(await staker.getAddress(), stakeAmount);
+        const stakeTx = await stakerWithAdmin0.stakeERC20(user0, erc20PoolID, stakeAmount);
 
-        // Stake ERC20 token - should fail because the pool id its transferable
-        await expect(stakerWithUser0.stakeERC20(user1, erc20PoolID, stakeAmount))
-            .to.be.revertedWithCustomError(staker, 'PositionMustBeTransferable')
+        const stakeTxReceipt = await stakeTx.wait();
+        expect(stakeTxReceipt).to.not.be.null;
+
+        const user0Balance = await stakerWithAdmin0.balanceOf(await user0.getAddress());
+        expect(user0Balance).to.equal(1n);
     });
 
 
-    it('`STAKER-135`: If a staker user who want to stake erc721 tokens for another user try to stake using a transferable pool reverts', async function () {
+    it('`STAKER-135`: If a staker user who want to stake erc721 tokens for another user should successfully stake', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 0;
 
-        const { staker, erc721, user0, user1, erc721PoolID } = await loadFixture(
+        const { staker, erc721, user0, admin0, erc721PoolID } = await loadFixture(
             setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
         );
 
         const tokenId = 1n;
 
         // Mint ERC721 token to user0
-        await erc721.mint(await user0.getAddress(), tokenId);
+        await erc721.mint(await admin0.getAddress(), tokenId);
 
         // Approve staker contract to transfer ERC721 token
-        await erc721.connect(user0).approve(await staker.getAddress(), tokenId);
+        await erc721.connect(admin0).approve(await staker.getAddress(), tokenId);
 
-        const stakerWithUser0 = staker.connect(user0);
-        // Stake ERC20 token - should fail because the pool id its transferable
-        await expect(stakerWithUser0.stakeERC721(user1, erc721PoolID, tokenId))
-            .to.be.revertedWithCustomError(staker, 'PositionMustBeTransferable')
+        const stakerWithAdmin0 = staker.connect(admin0);
+        const tx = await stakerWithAdmin0.stakeERC721(user0, erc721PoolID, tokenId)
+        const txReceipt = await tx.wait();
+        expect(txReceipt).to.not.be.null;
+
+        const user0Balance = await staker.balanceOf(await user0.getAddress());
+        expect(user0Balance).to.equal(1n);
     });
 
-    it('`STAKER-136`: If a staker user who want to stake erc1155 tokens for another user try to stake using a transferable pool reverts', async function () {
+    it('`STAKER-136`: If a staker user who want to stake erc1155 tokens for another user should successfully stake', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 0;
 
-        const { staker, erc1155, user0, user1, erc1155PoolID, erc1155TokenID } = await loadFixture(
+        const { staker, erc1155, user0, admin0, erc1155PoolID, erc1155TokenID } = await loadFixture(
             setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
         );
 
-        const stakerWithUser0 = staker.connect(user0);
+        const stakerWithAdmin0 = staker.connect(admin0);
         const stakeAmount = 17n;
 
-        await erc1155.mint(await user0.getAddress(), erc1155TokenID, stakeAmount);
-        await erc1155.connect(user0).setApprovalForAll(await staker.getAddress(), true);
+        await erc1155.mint(await admin0.getAddress(), erc1155TokenID, stakeAmount);
+        await erc1155.connect(admin0).setApprovalForAll(await staker.getAddress(), true);
 
-        // Stake ERC1155 token - should fail because the pool id its transferable
-        await expect(stakerWithUser0.stakeERC1155(user1, erc1155PoolID, stakeAmount))
-            .to.be.revertedWithCustomError(staker, 'PositionMustBeTransferable')
+        const tx = await stakerWithAdmin0.stakeERC1155(user0, erc1155PoolID, stakeAmount)
+        const txReceipt = await tx.wait();
+        expect(txReceipt).to.not.be.null;
+
+        const user0Balance = await staker.balanceOf(await user0.getAddress());
+        expect(user0Balance).to.equal(1n);
+    });
+
+    it('`STAKER-137`: As an admin pool I can unstake any position in the pool that still active', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, user0, nativePoolID, admin0 } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithAdmin0 = staker.connect(admin0);
+
+        const stakeAmount = ethers.parseEther('1');
+        const stakeTx = await stakerWithAdmin0.stakeNative(user0, nativePoolID, { value: stakeAmount });
+        const stakeTxReceipt = await stakeTx.wait();
+        const user0Balance = await stakerWithAdmin0.balanceOf(await user0.getAddress());
+        expect(user0Balance).to.equal(1n);
+
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+        const stake1Block = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        await time.setNextBlockTimestamp(stake1Block!.timestamp + lockupSeconds);
+        await stakerWithAdmin0.unstake(positionTokenID);
+        const user0BalanceAfter = await stakerWithAdmin0.balanceOf(await user0.getAddress());
+
+        expect(user0BalanceAfter).to.equal(0n);
+    });
+
+    it('`STAKER-137`: As an admin pool unstake should works even if the position holder were transferred', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, user0, nativePoolID, admin0, user1 } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithAdmin0 = staker.connect(admin0);
+
+        const stakeAmount = ethers.parseEther('1');
+        const stakeTx = await stakerWithAdmin0.stakeNative(user0, nativePoolID, { value: stakeAmount });
+        const stakeTxReceipt = await stakeTx.wait();
+        const user0Balance = await stakerWithAdmin0.balanceOf(await user0.getAddress());
+        expect(user0Balance).to.equal(1n);
+
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+        const stake1Block = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        await time.setNextBlockTimestamp(stake1Block!.timestamp + lockupSeconds);
+
+        const stakerWithUser0 = staker.connect(user0);
+        const transferTrx = await stakerWithUser0.transferFrom(await user0.getAddress(), await user1.getAddress(), positionTokenID);
+        await transferTrx.wait();
+
+        const user0BalanceAfter = await stakerWithAdmin0.balanceOf(await user0.getAddress());
+        expect(user0BalanceAfter).to.equal(0n);
+
+
+        const tx = await stakerWithAdmin0.unstake(positionTokenID);
+        await tx.wait();
+
+        const user1Balance = await stakerWithAdmin0.balanceOf(await user1.getAddress());
+        expect(user1Balance).to.equal(0n);
     });
 });

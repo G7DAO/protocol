@@ -38,5 +38,4 @@ struct Position {
     uint256 amountOrTokenID;
     uint256 stakeTimestamp;
     uint256 unstakeInitiatedAt;
-    address staker;
 }

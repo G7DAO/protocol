@@ -87,7 +87,6 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
     error InvalidConfiguration();
     error NonAdministrator();
     error IncorrectTokenType(uint256 poolID, uint256 poolTokenType, uint256 tokenTypeArg);
-    error PositionMustBeTransferable();
     error NothingToStake();
     error NonZeroAddress();
     error UnauthorizedForPosition(address owner, address sender);
@@ -253,10 +252,6 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
             revert IncorrectTokenType(poolID, pool.tokenType, NATIVE_TOKEN_TYPE);
         }
 
-        if(pool.transferable && msg.sender != positionHolder) {
-            revert PositionMustBeTransferable();
-        }
-
         if (msg.value == 0) {
             revert NothingToStake();
         }
@@ -268,8 +263,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
             poolID: poolID,
             amountOrTokenID: msg.value,
             stakeTimestamp: block.timestamp,
-            unstakeInitiatedAt: 0,
-            staker: msg.sender
+            unstakeInitiatedAt: 0
         });
 
         CurrentAmountInPool[poolID] += msg.value;
@@ -292,20 +286,18 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         if(positionHolder == address(0)) {
             revert NonZeroAddress();
         }
+
         StakingPool storage pool = Pools[poolID];
         if (pool.tokenType != ERC20_TOKEN_TYPE) {
             revert IncorrectTokenType(poolID, pool.tokenType, ERC20_TOKEN_TYPE);
         }
 
-        if(pool.transferable && msg.sender != positionHolder) {
-            revert PositionMustBeTransferable();
-        }
 
         if (amount == 0) {
             revert NothingToStake();
         }
 
-        IERC20(pool.tokenAddress).safeTransferFrom(positionHolder, address(this), amount);
+        IERC20(pool.tokenAddress).safeTransferFrom(msg.sender, address(this), amount);
 
         positionTokenID = TotalPositions++;
         _mint(positionHolder, positionTokenID);
@@ -314,8 +306,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
             poolID: poolID,
             amountOrTokenID: amount,
             stakeTimestamp: block.timestamp,
-            unstakeInitiatedAt: 0,
-            staker: msg.sender
+            unstakeInitiatedAt: 0
         });
 
         CurrentAmountInPool[poolID] += amount;
@@ -334,19 +325,17 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
      * or `setApprovalForAll` methods on the ERC721 contract.
      */
     function stakeERC721(address positionHolder, uint256 poolID, uint256 tokenID) external nonReentrant returns (uint256 positionTokenID) {
+
         if(positionHolder == address(0)) {
             revert NonZeroAddress();
         }
+
         StakingPool storage pool = Pools[poolID];
         if (pool.tokenType != ERC721_TOKEN_TYPE) {
             revert IncorrectTokenType(poolID, pool.tokenType, ERC721_TOKEN_TYPE);
         }
 
-        if(pool.transferable && msg.sender != positionHolder) {
-            revert PositionMustBeTransferable();
-        }
-
-        IERC721(pool.tokenAddress).safeTransferFrom(positionHolder, address(this), tokenID);
+        IERC721(pool.tokenAddress).safeTransferFrom(msg.sender, address(this), tokenID);
 
         positionTokenID = TotalPositions++;
         _mint(positionHolder, positionTokenID);
@@ -355,8 +344,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
             poolID: poolID,
             amountOrTokenID: tokenID,
             stakeTimestamp: block.timestamp,
-            unstakeInitiatedAt: 0,
-            staker: msg.sender
+            unstakeInitiatedAt: 0
         });
 
         CurrentAmountInPool[poolID]++;
@@ -381,10 +369,6 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
             revert IncorrectTokenType(poolID, pool.tokenType, ERC1155_TOKEN_TYPE);
         }
 
-        if(pool.transferable && msg.sender != positionHolder) {
-            revert PositionMustBeTransferable();
-        }
-
         if (amount == 0) {
             revert NothingToStake();
         }
@@ -398,8 +382,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
             poolID: poolID,
             amountOrTokenID: amount,
             stakeTimestamp: block.timestamp,
-            unstakeInitiatedAt: 0,
-            staker: msg.sender
+            unstakeInitiatedAt: 0
         });
 
         CurrentAmountInPool[poolID] += amount;
@@ -426,11 +409,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
 
         StakingPool storage pool = Pools[position.poolID];
 
-        if (positionOwner != msg.sender && position.staker != msg.sender) {
-            revert UnauthorizedForPosition(positionOwner, msg.sender);
-        }
-
-        if(positionOwner != msg.sender && position.staker != msg.sender && !pool.transferable) {
+        if (positionOwner != msg.sender && pool.administrator != msg.sender) {
             revert UnauthorizedForPosition(positionOwner, msg.sender);
         }
 
@@ -458,11 +437,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
 
         address positionOwner = ownerOf(positionTokenID);
 
-        if (positionOwner != msg.sender && pool.transferable) {
-            revert UnauthorizedForPosition(positionOwner, msg.sender);
-        }
-
-        if(positionOwner != msg.sender && position.staker != msg.sender && !pool.transferable) {
+        if (positionOwner != msg.sender && pool.administrator != msg.sender) {
             revert UnauthorizedForPosition(positionOwner, msg.sender);
         }
 
