@@ -11,6 +11,7 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 24px;
+  position: relative
 }
 
 .navbarContainer {
@@ -257,6 +258,5 @@ body {
 }
 
 .scrollBar {
-  flex: 1 0 0;
   fill: var(--Gray-200, #eaecf0);
 }
