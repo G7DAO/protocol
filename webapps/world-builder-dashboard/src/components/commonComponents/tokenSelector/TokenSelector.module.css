@@ -31,12 +31,11 @@
 /* Mantine modules use !important please */
 
 .dropdown {
-  padding: 4px 0px !important;
   flex-direction: column !important;
   align-items: flex-start !important;
   flex: 1 0 0 !important;
   align-self: stretch !important;
-  width: 320px !important;
+  width: fit-content !important;
   padding: 0 !important;
   background: var(--Base-White, #fff) !important;
   border-radius: 8px !important;
@@ -48,10 +47,9 @@
 }
 
 .options {
-  display: flex;
-  width: 308px !important;
+  width: fit-content !important;
   display: flex !important;
-  padding: 4px 0px !important;
+  padding: 2px 6px !important;
   flex-direction: column !important;
   align-items: flex-start !important;
   flex: 1 0 0 !important;
@@ -60,7 +58,6 @@
 
 .option {
   display: flex;
-  width: 308px !important;
   align-items: center !important;
   padding: 2px 6px !important;
   align-items: center;

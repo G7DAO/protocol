@@ -119,7 +119,7 @@ const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selected
             <input
               className={`${styles.tokenAddressInput} ${error && error.length > 0 ? styles.error : ''}`}
               value={tokenAddress}
-              placeholder='Token address'
+              placeholder='Import token address'
               onChange={(e) => {
                 handleTokenInput(e.target.value)
               }}
