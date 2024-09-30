@@ -31,8 +31,7 @@ interface IStaker {
         uint256 poolID,
         uint256 amountOrTokenID,
         uint256 stakeTimestamp,
-        uint256 unstakeInitiatedAt,
-        address staker
+        uint256 unstakeInitiatedAt
     );
 
     event StakingPoolCreated(
