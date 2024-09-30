@@ -188,11 +188,11 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                   <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
                     <div className={styles.typeCompleted}>Initiate</div>
                   </div>
-                  <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
-                  <div className={styles.gridItem}>{`${status.data?.amount} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
-                  <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
-                  <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
-                  <div className={styles.gridItem}>
+                  <div className={styles.gridItemInitiate}>{timeAgo(status.data?.timestamp)}</div>
+                  <div className={styles.gridItemInitiate}>{`${status.data?.amount} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
+                  <div className={styles.gridItemInitiate}>{status.data?.from ?? ''}</div>
+                  <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
+                  <div className={styles.gridItemInitiate}>
                     <a
                       href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
                       target={'_blank'}
@@ -204,17 +204,17 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       </div>
                     </a>
                   </div>
-                  <div className={styles.gridItem}>
+                  <div className={styles.gridItemInitiate}>
                     <div>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
                   </div>
                   <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
                     <div className={styles.typeCompleted}>Finalize</div>
                   </div>
-                  <div className={styles.gridItem}>{timeAgo(withdrawal?.completionTimestamp)}</div>
-                  <div className={styles.gridItem}>{`${status.data?.amount} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
-                  <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
-                  <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
-                  <div className={styles.gridItem}>
+                  <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.completionTimestamp)}</div>
+                  <div className={styles.gridItemInitiate}>{`${status.data?.amount} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
+                  <div className={styles.gridItemInitiate}>{status.data?.from ?? ''}</div>
+                  <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
+                  <div className={styles.gridItemInitiate}>
                     <a
                       href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
                       target={'_blank'}
@@ -226,7 +226,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       </div>
                     </a>
                   </div>
-                  <div className={styles.gridItem}>
+                  <div className={styles.gridItemInitiate}>
                     <div>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
                   </div>
                 </>
