@@ -19,7 +19,7 @@
 
 .networksContainer {
     display: flex;
-    gap: 20px;
+    gap: 60px;
     margin-left: 263px;
     border-left: 1px solid gray;
     padding-left: 40px;
@@ -67,7 +67,7 @@
     padding: 16px;
     background-color: #000;
     color: #dcc9d4;
-    margin-top: 10px; display: flex; flex-direction: column; gap: 15px;
+    display: flex; flex-direction: column; gap: 15px;
     justify-content: start;
     min-width: 270px;
     min-height: 260px;
