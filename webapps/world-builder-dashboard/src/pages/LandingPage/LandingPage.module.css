@@ -2,6 +2,7 @@ body {
   overflow: hidden;
 }
 
+/* navbar classes */
 .layout {
   display: flex;
   width: 100vw;
@@ -41,6 +42,7 @@ body {
 }
 
 .navbarItem {
+  cursor: pointer;
   display: flex;
   padding: 8px 12px;
   align-items: center;
@@ -52,6 +54,21 @@ body {
   font-style: normal;
   font-weight: 600;
   line-height: 24px;
+}
+
+.navbarItemHome {
+  cursor: pointer;
+  display: flex;
+  padding: 8px 12px;
+  align-items: center;
+  gap: 8px;
+  border-radius: 6px;
+  color: var(--Error-500, var(--color-error-Error-500, #f04438));
+  font-family: Inter;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px; /* 150% */
 }
 
 .navbarCTA {
@@ -89,4 +106,157 @@ body {
   gap: 8px;
   border-radius: 8px;
   border: 1px solid var(--Gray-300, #d0d5dd);
+}
+
+/* layout classes */
+.mainLayout {
+  display: flex;
+  padding: var(--20px, 20px);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  flex: 1 0 0;
+  align-self: stretch;
+  border-radius: 12px;
+  border: 1px solid var(--Gray-300, #d0d5dd);
+  background: url('../../assets/G7LandingPageBG.png') lightgray 50% / cover no-repeat;
+}
+
+.titleContainer {
+  display: flex;
+  padding: 0px 280px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  align-self: stretch;
+}
+
+.titleText {
+  align-self: stretch;
+  color: var(--Gray-900, #101828);
+  text-align: center;
+  font-family: Inter;
+  font-size: 120px;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 100%;
+  letter-spacing: -4px;
+  text-transform: uppercase;
+}
+
+.subtitleText {
+  color: var(--Gray-600, #475467);
+  text-align: center;
+  font-family: Inter;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 32px;
+}
+
+.ctaContainer {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.learnMoreCTA {
+  cursor: pointer;
+  display: flex;
+  padding: 10px 18px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--Gray-300, #d0d5dd);
+  background: var(--Base-White, #fff);
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  color: var(--Gray-700, var(--color-gray-Gray-700, #344054));
+  font-family: Inter;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.learnMoreCTA:hover {
+  display: inline-flex;
+  padding: 10px 18px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  border: 1px solid #f04438;
+  background: var(--Base-White, #fff);
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  font-family: Inter;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px;
+  background: linear-gradient(147deg, #f04438 11.16%, #fff 142.48%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.startBuildingCTA {
+  cursor: pointer;
+  display: flex;
+  padding: 10px 18px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--color-error-Error-500, #f04438);
+  background: var(--color-error-Error-500, #f04438);
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  color: var(--Base-White, #fff);
+  font-family: Inter;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.startBuildingCTA:hover {
+  display: inline-flex;
+  padding: 10px 18px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  background: linear-gradient(147deg, #f04438 11.16%, #fff 142.48%);
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  color: var(--Base-White, #fff);
+  font-family: Inter;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.scrollbarContainer {
+  display: flex;
+  width: 816px;
+  height: 18px;
+  max-width: 940px;
+  transform: rotate(90deg);
+  padding: 6px 8px;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  border-radius: 100px;
+  background: #fff;
+}
+
+.scrollBar {
+  flex: 1 0 0;
+  fill: var(--Gray-200, #eaecf0);
 }
