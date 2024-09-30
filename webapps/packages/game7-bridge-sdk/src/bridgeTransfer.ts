@@ -2,15 +2,14 @@ import { ethers, BigNumber } from 'ethers';
 import { networks } from './networks';
 import { UnsupportedNetworkError } from './errors';
 import { TransactionReceipt } from '@ethersproject/abstract-provider/src.ts';
+
+import { Provider } from '@ethersproject/abstract-provider';
+import { getBlockTimeDifference } from './utils/web3Utils';
 import {
-  ChildToParentMessageReader,
   ChildToParentMessageStatus,
   ChildToParentMessageWriter,
   ChildTransactionReceipt,
 } from '@arbitrum/sdk';
-import { ChildToParentMessageReaderNitro } from '@arbitrum/sdk/dist/lib/message/ChildToParentMessageNitro';
-import { Provider } from '@ethersproject/abstract-provider';
-import { getBlockTimeDifference } from './utils/web3Utils';
 
 export type SignerOrProviderOrRpc = ethers.Signer | ethers.providers.Provider | string;
 
