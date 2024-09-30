@@ -114,25 +114,27 @@ const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selected
               </Combobox.Option>
             ))}
         </Combobox.Options>
-        <div className={styles.tokenAdderContainer}>
-          <div className={styles.tokenAdder}>
-            <input
-              className={`${styles.tokenAddressInput} ${error && error.length > 0 ? styles.error : ''}`}
-              value={tokenAddress}
-              placeholder='Import token address'
-              onChange={(e) => {
-                handleTokenInput(e.target.value)
-              }}
-            />
-            <div className={styles.importButton} onClick={() => addToken(tokenAddress)}>
-              <div className={styles.importText}>Import</div>
+        <div className={styles.tokenAdderLayout}>
+          <div className={styles.tokenAdderContainer}>
+            <div className={styles.tokenAdder}>
+              <input
+                className={`${styles.tokenAddressInput} ${error && error.length > 0 ? styles.error : ''}`}
+                value={tokenAddress}
+                placeholder='Import token address'
+                onChange={(e) => {
+                  handleTokenInput(e.target.value)
+                }}
+              />
+              <div className={styles.importButton} onClick={() => addToken(tokenAddress)}>
+                <div className={styles.importText}>Import</div>
+              </div>
             </div>
+            {error && error.length > 0 && (
+              <div className={styles.tokenAdderError}>
+                <div className={styles.tokenErrorText}>{error}</div>
+              </div>
+            )}
           </div>
-          {error && error.length > 0 && (
-            <div className={styles.tokenAdderError}>
-              <div className={styles.tokenErrorText}>{error}</div>
-            </div>
-          )}
         </div>
       </Combobox.Dropdown>
     </Combobox>
