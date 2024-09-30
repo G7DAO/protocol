@@ -8,9 +8,17 @@
     "build": "tsc",
     "watch": "tsc --watch",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "format": "prettier --write 'src/**/*.ts'"
+    "format": "prettier --write 'src/**/*.ts'",
+    "postinstall": "patch-package"
   },
-  "keywords": ["sdk", "bridge", "blockchain", "arbitrum", "ethereum", "game7"],
+  "keywords": [
+    "sdk",
+    "bridge",
+    "blockchain",
+    "arbitrum",
+    "ethereum",
+    "game7"
+  ],
   "author": "mumintrl",
   "license": "MIT",
   "dependencies": {
@@ -19,6 +27,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.5.3",
+    "patch-package": "^8.0.0",
     "prettier": "^3.3.3",
     "typescript": "^5.5.4"
   }
