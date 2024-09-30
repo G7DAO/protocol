@@ -28,7 +28,6 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const [networkError, setNetworkError] = useState('')
   const { faucetTargetChainId } = useUISettings()
   const { refetchNewNotifications } = useBridgeNotificationsContext()
-  const [requesting, setRequesting] = useState<boolean>(false)
 
   const values = [
     {
@@ -67,8 +66,6 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const queryClient = useQueryClient()
   const claim = useMutation(
     async ({ address }: { isL2Target: boolean; address: string | undefined }) => {
-      setRequesting(true)
-
       const res = await fetch(`https://api.game7.build/faucet/request/${address}`, {
         method: 'POST',
         headers: {
@@ -124,12 +121,10 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
         queryClient.refetchQueries(['notifications'])
         queryClient.refetchQueries(['nativeBalance'])
         queryClient.refetchQueries(['ERC20balance'])
-        setRequesting(false)
         refetchNewNotifications(connectedAccount ?? '')
       },
       onError: (e: Error) => {
         setNetworkError('Something went wrong')
-        setRequesting(false)
         console.error('Request failed:', e)
         console.log(e)
       }
@@ -238,7 +233,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
           claim.mutate({ isL2Target: chainId === 13746, address })
         }}>
           <div className={styles.requestTokensButtonText}>
-            {requesting ? `Requesting...` : `Request Tokens`}
+            {claim.isLoading ? `Requesting...` : `Request Tokens`}
           </div>
         </div>
       </div>
