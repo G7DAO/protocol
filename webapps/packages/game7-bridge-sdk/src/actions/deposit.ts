@@ -11,7 +11,6 @@ import { EthDepositParams } from '@arbitrum/sdk/dist/lib/assetBridger/ethBridger
 export const depositERC20 = async (
   amount: BigNumber,
   destinationNetworkChainId: number,
-  destinationAddress: string,
   originTokenAddress: string,
   signer: ethers.Signer,
   childProvider: ethers.providers.Provider,
