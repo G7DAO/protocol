@@ -1072,7 +1072,7 @@ describe('Staker', function () {
         expect(user0BalanceAfter).to.equal(0n);
     });
 
-    it('`STAKER-137`: As an admin pool unstake should works even if the position holder were transferred', async function () {
+    it('`STAKER-138`: As an admin pool unstake should works even if the position holder were transferred', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 0;
