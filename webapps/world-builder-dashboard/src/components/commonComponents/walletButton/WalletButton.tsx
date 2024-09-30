@@ -45,9 +45,7 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
           <IconWallet04 />
           <div className={styles.balance}>
             {nativeBalance
-              ? Number(nativeBalance).toFixed(4) +
-              ' ' +
-              ALL_NETWORKS.find((network) => network.chainId === chainId)?.nativeCurrency?.symbol
+              ? `${Number(nativeBalance).toFixed(4)} ${ALL_NETWORKS.find((network) => network.chainId === chainId)?.nativeCurrency?.symbol}`
               : 'Fetching...'}
           </div>
         </div>
