@@ -36,20 +36,21 @@ export const depositETH = async (
 
 const BridgerView = ({ bridger, amount }: { bridger: Bridger; amount?: ethers.BigNumber }) => {
   const { account, getSigner } = useWallet()
-  const rpc = useMemo(() => getRPC(bridger.originNetwork.chainId), [bridger.originNetwork.chainId])
+  const originRpc = useMemo(() => getRPC(bridger.originNetwork.chainId), [bridger.originNetwork.chainId])
+  const destinationRpc = useMemo(() => getRPC(bridger.destinationNetwork.chainId), [bridger.destinationNetwork.chainId])
+
   const [text, setText] = useState(
     `${bridger.isDeposit ? 'Deposit ' : 'Withdraw '}to ${bridger.destinationNetwork.name}`
   )
   const [hoverText, setHoverText] = useState('')
 
   const originalText = `${bridger.isDeposit ? 'Deposit ' : 'Withdraw '}to ${bridger.destinationNetwork.name}`
-  // const hoverText = 'You are hovering!'
 
   const fee = useQuery(
     ['fee', bridger, account],
     async () => {
       try {
-        const fee = await bridger.getGasAndFeeEstimation(amount ?? ethers.utils.parseEther('0'), rpc, account)
+        const fee = await bridger.getGasAndFeeEstimation(amount ?? ethers.utils.parseEther('0'), originRpc, account)
         const feeFormatted = ethers.utils.formatEther(fee.estimatedFee)
         setHoverText(
           `Estimated fee: ${feeFormatted ?? "can't fetch"}${feeFormatted ? ` ${bridger.originNetwork.nativeCurrency?.symbol ?? ''} ` : ''}`
@@ -60,7 +61,7 @@ const BridgerView = ({ bridger, amount }: { bridger: Bridger; amount?: ethers.Bi
       }
     },
     {
-      enabled: !!account && !!rpc
+      enabled: !!account && !!originRpc
     }
   )
   // const allowance = useQuery(
