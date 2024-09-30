@@ -1162,7 +1162,17 @@ describe('Staker', function () {
         const positionTokenID = (await staker.TotalPositions()) - 1n;
         const stake1Block = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
         await time.setNextBlockTimestamp(stake1Block!.timestamp + lockupSeconds);
-        await stakerWithAdmin0.unstake(positionTokenID);
+        const unstakeTx = await stakerWithAdmin0.unstake(positionTokenID);
+
+        await expect(unstakeTx)
+            .to.emit(staker, 'Unstaked')
+            .withArgs(
+                positionTokenID,
+                await user0.getAddress(),
+                nativePoolID,
+                stakeAmount
+            );
+
         const user0BalanceAfter = await stakerWithAdmin0.balanceOf(await user0.getAddress());
 
         expect(user0BalanceAfter).to.equal(0n);
@@ -1188,7 +1198,16 @@ describe('Staker', function () {
         const positionTokenID = (await staker.TotalPositions()) - 1n;
         const stake1Block = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
         await time.setNextBlockTimestamp(stake1Block!.timestamp + lockupSeconds);
-        await stakerWithAdmin0.unstake(positionTokenID);
+        const unstakeTx = await stakerWithAdmin0.unstake(positionTokenID);
+
+        await expect(unstakeTx)
+            .to.emit(staker, 'Unstaked')
+            .withArgs(
+                positionTokenID,
+                await user0.getAddress(),
+                nativePoolID,
+                stakeAmount
+            );
         const user0BalanceAfter = await stakerWithAdmin0.balanceOf(await user0.getAddress());
 
         expect(user0BalanceAfter).to.equal(0n);
@@ -1222,10 +1241,28 @@ describe('Staker', function () {
         const user0BalanceAfter = await stakerWithAdmin0.balanceOf(await user0.getAddress());
         expect(user0BalanceAfter).to.equal(0n);
 
+        const initiateUnstakeTx = await stakerWithAdmin0.initiateUnstake(positionTokenID);
+        await expect(initiateUnstakeTx)
+            .to.emit(staker, 'UnstakeInitiated')
+            .withArgs(
+                positionTokenID,
+                await user1.getAddress(),
+            );
 
+        await initiateUnstakeTx.wait();
+
+        // the event will have the user1 address because the position was transferred
         const tx = await stakerWithAdmin0.unstake(positionTokenID);
-        await tx.wait();
+        await expect(tx)
+            .to.emit(staker, 'Unstaked')
+            .withArgs(
+                positionTokenID,
+                await user1.getAddress(),
+                nativePoolID,
+                stakeAmount
+            );
 
+        await tx.wait();
         const user1Balance = await stakerWithAdmin0.balanceOf(await user1.getAddress());
         expect(user1Balance).to.equal(0n);
     });
