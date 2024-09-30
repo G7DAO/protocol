@@ -405,7 +405,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
 
         if (position.unstakeInitiatedAt == 0) {
             position.unstakeInitiatedAt = block.timestamp;
-            emit UnstakeInitiated(positionTokenID, msg.sender);
+            emit UnstakeInitiated(positionTokenID, positionOwner);
         }
     }
 
@@ -451,7 +451,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
 
         // Delete position data and burn the position token
         uint256 amountOrTokenID = position.amountOrTokenID;
-        emit Unstaked(positionTokenID, msg.sender, position.poolID, amountOrTokenID);
+        emit Unstaked(positionTokenID, positionOwner, position.poolID, amountOrTokenID);
         delete Positions[positionTokenID];
         _burn(positionTokenID);
 
