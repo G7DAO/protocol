@@ -243,8 +243,8 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
     /**
      * @notice Allows anyone to open a position under a staking pool for native tokens.
      */
-    function stakeNative(address user, uint256 poolID) external payable nonReentrant returns (uint256 positionTokenID) {
-        if(user == address(0)) {
+    function stakeNative(address positionHolder, uint256 poolID) external payable nonReentrant returns (uint256 positionTokenID) {
+        if(positionHolder == address(0)) {
             revert NonZeroAddress();
         }
 
@@ -253,7 +253,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
             revert IncorrectTokenType(poolID, pool.tokenType, NATIVE_TOKEN_TYPE);
         }
 
-        if(pool.transferable && msg.sender != user) {
+        if(pool.transferable && msg.sender != positionHolder) {
             revert PositionMustBeTransferable();
         }
 
@@ -262,7 +262,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         }
 
         positionTokenID = TotalPositions++;
-        _mint(user, positionTokenID);
+        _mint(positionHolder, positionTokenID);
 
         Positions[positionTokenID] = Position({
             poolID: poolID,
@@ -275,7 +275,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         CurrentAmountInPool[poolID] += msg.value;
         CurrentPositionsInPool[poolID]++;
 
-        emit Staked(positionTokenID, user, poolID, msg.value);
+        emit Staked(positionTokenID, positionHolder, poolID, msg.value);
     }
 
     /**
@@ -288,8 +288,8 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
      * `amount` tokens from their account. This can typically be done by calling the `approve` method on the
      * ERC20 contract.
      */
-    function stakeERC20(address user, uint256 poolID, uint256 amount) external nonReentrant returns (uint256 positionTokenID) {
-        if(user == address(0)) {
+    function stakeERC20(address positionHolder, uint256 poolID, uint256 amount) external nonReentrant returns (uint256 positionTokenID) {
+        if(positionHolder == address(0)) {
             revert NonZeroAddress();
         }
         StakingPool storage pool = Pools[poolID];
@@ -297,7 +297,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
             revert IncorrectTokenType(poolID, pool.tokenType, ERC20_TOKEN_TYPE);
         }
 
-        if(pool.transferable && msg.sender != user) {
+        if(pool.transferable && msg.sender != positionHolder) {
             revert PositionMustBeTransferable();
         }
 
@@ -305,10 +305,10 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
             revert NothingToStake();
         }
 
-        IERC20(pool.tokenAddress).safeTransferFrom(user, address(this), amount);
+        IERC20(pool.tokenAddress).safeTransferFrom(positionHolder, address(this), amount);
 
         positionTokenID = TotalPositions++;
-        _mint(user, positionTokenID);
+        _mint(positionHolder, positionTokenID);
 
         Positions[positionTokenID] = Position({
             poolID: poolID,
@@ -321,7 +321,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         CurrentAmountInPool[poolID] += amount;
         CurrentPositionsInPool[poolID]++;
 
-        emit Staked(positionTokenID, user, poolID, amount);
+        emit Staked(positionTokenID, positionHolder, poolID, amount);
     }
 
     /**
@@ -333,8 +333,8 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
      * the token with the given `tokenID` from their account. This can typically be done by calling the `approve`
      * or `setApprovalForAll` methods on the ERC721 contract.
      */
-    function stakeERC721(address user, uint256 poolID, uint256 tokenID) external nonReentrant returns (uint256 positionTokenID) {
-        if(user == address(0)) {
+    function stakeERC721(address positionHolder, uint256 poolID, uint256 tokenID) external nonReentrant returns (uint256 positionTokenID) {
+        if(positionHolder == address(0)) {
             revert NonZeroAddress();
         }
         StakingPool storage pool = Pools[poolID];
@@ -342,14 +342,14 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
             revert IncorrectTokenType(poolID, pool.tokenType, ERC721_TOKEN_TYPE);
         }
 
-        if(pool.transferable && msg.sender != user) {
+        if(pool.transferable && msg.sender != positionHolder) {
             revert PositionMustBeTransferable();
         }
 
-        IERC721(pool.tokenAddress).safeTransferFrom(user, address(this), tokenID);
+        IERC721(pool.tokenAddress).safeTransferFrom(positionHolder, address(this), tokenID);
 
         positionTokenID = TotalPositions++;
-        _mint(user, positionTokenID);
+        _mint(positionHolder, positionTokenID);
 
         Positions[positionTokenID] = Position({
             poolID: poolID,
@@ -362,7 +362,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         CurrentAmountInPool[poolID]++;
         CurrentPositionsInPool[poolID]++;
 
-        emit Staked(positionTokenID, user, poolID, tokenID);
+        emit Staked(positionTokenID, positionHolder, poolID, tokenID);
     }
 
     /**
@@ -372,8 +372,8 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
      * `amount` tokens with the given `tokenId` from their account. This can typically be done by calling
      * the `setApprovalForAll` method on the ERC1155 contract.
      */
-    function stakeERC1155(address user, uint256 poolID, uint256 amount) external nonReentrant returns (uint256 positionTokenID) {
-        if(user == address(0)) {
+    function stakeERC1155(address positionHolder, uint256 poolID, uint256 amount) external nonReentrant returns (uint256 positionTokenID) {
+        if(positionHolder == address(0)) {
             revert NonZeroAddress();
         }
         StakingPool storage pool = Pools[poolID];
@@ -381,7 +381,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
             revert IncorrectTokenType(poolID, pool.tokenType, ERC1155_TOKEN_TYPE);
         }
 
-        if(pool.transferable && msg.sender != user) {
+        if(pool.transferable && msg.sender != positionHolder) {
             revert PositionMustBeTransferable();
         }
 
@@ -389,10 +389,10 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
             revert NothingToStake();
         }
 
-        IERC1155(pool.tokenAddress).safeTransferFrom(user, address(this), pool.tokenID, amount, "");
+        IERC1155(pool.tokenAddress).safeTransferFrom(msg.sender, address(this), pool.tokenID, amount, "");
 
         positionTokenID = TotalPositions++;
-        _mint(user, positionTokenID);
+        _mint(positionHolder, positionTokenID);
 
         Positions[positionTokenID] = Position({
             poolID: poolID,
@@ -405,7 +405,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         CurrentAmountInPool[poolID] += amount;
         CurrentPositionsInPool[poolID]++;
 
-        emit Staked(positionTokenID, user, poolID, amount);
+        emit Staked(positionTokenID, positionHolder, poolID, amount);
     }
 
     /**
