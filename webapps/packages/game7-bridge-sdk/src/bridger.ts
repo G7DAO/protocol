@@ -423,7 +423,6 @@ export default class Bridger {
         return depositERC20(
           amount,
           this.destinationNetwork.chainId,
-          destination,
           originToken,
           signer,
           destinationProvider,
