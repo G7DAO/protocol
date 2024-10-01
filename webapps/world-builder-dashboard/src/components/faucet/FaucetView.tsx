@@ -53,6 +53,10 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
     else { setAddress(connectedAccount) }
   }, [faucetTargetChainId, selectedAccountType, connectedAccount])
 
+  useEffect(() => {
+    setNetworkError('')
+  }, [connectedAccount])
+
   const handleConnect = async () => {
     if (!connectedAccount) connectWallet()
   }
@@ -61,6 +65,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
     if (selectedAccountType.valueId === 0 && !connectedAccount) setAddress('')
     else setAddress(selectedAccountType.value)
     setSelectedAccountType(selectedAccountType)
+    setNetworkError('')
   }
 
   const queryClient = useQueryClient()
@@ -204,7 +209,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
               placeholder={ZERO_ADDRESS}
               className={styles.address}
               value={address}
-              disabled={!!connectedAccount}
+              disabled={selectedAccountType.valueId === 1 || (!!connectedAccount && selectedAccountType.valueId === 1)}
               onChange={(e) => {
                 setAddress(e.target.value)
               }}
@@ -244,7 +249,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
       )}
       {selectedNetwork.chainId === L3_NETWORK.chainId &&
         nextClaimAvailable.data &&
-        !nextClaimAvailable.data.L3.isAvailable 
+        !nextClaimAvailable.data.L3.isAvailable
         && nextClaimTimestamp && (
           <div className={styles.errorContainer}>
             {`You requested funds recently. Come back in `}{' '}

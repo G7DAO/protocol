@@ -252,6 +252,11 @@
   color: var(--Gray-700, #344054);
 }
 
+.address:focus {
+  outline: none;
+  box-shadow: none;
+}
+
 .hintBadge {
   display: flex;
   padding: 2px 8px;
