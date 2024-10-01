@@ -11,7 +11,6 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 24px;
-  position: relative
 }
 
 .navbarContainer {
@@ -112,7 +111,7 @@ body {
 /* layout classes */
 .mainLayout {
   display: flex;
-  padding: var(--20px, 20px);
+  padding: 40px;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -122,6 +121,7 @@ body {
   border-radius: 12px;
   border: 1px solid var(--Gray-300, #d0d5dd);
   background: url('../../assets/G7LandingPageBG.png') lightgray 50% / cover no-repeat;
+  position: relative;
 }
 
 .titleContainer {
@@ -258,5 +258,7 @@ body {
 }
 
 .scrollBar {
-  fill: var(--Gray-200, #eaecf0);
+  height: 6px;
+  flex: 1 0 0;
+  fill: var(--Gray-200, #EAECF0);
 }

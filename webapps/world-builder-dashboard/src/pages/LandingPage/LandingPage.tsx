@@ -54,6 +54,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                     </div>
                 </div>
                 <div className={styles.scrollbarContainer}>
+                    <IconScrollBar className={styles.scrollBar} />
                 </div>
             </div>
         </>
