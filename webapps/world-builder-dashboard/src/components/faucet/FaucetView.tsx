@@ -27,7 +27,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const [nextClaimTimestamp, setNextClaimTimestamp] = useState(0)
   const [networkError, setNetworkError] = useState('')
   const { faucetTargetChainId } = useUISettings()
-  const { refetchNewNotifications } = useBridgeNotificationsContext()
+  const { refetchNewNotifications } = useBridgeNotificationsContext()  
 
   const values = [
     {
