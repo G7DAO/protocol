@@ -36,8 +36,6 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
       <div className={styles.footer}>
         {connectedAccount ? (
           <>
-            {/* If network not found, hide */}
-            {ALL_NETWORKS.find((network) => network.chainId === chainId) ? <WalletButton /> : <></>}
             <div className={styles.web3AddressContainer}>
               <div className={styles.web3address}>
                 {`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}
