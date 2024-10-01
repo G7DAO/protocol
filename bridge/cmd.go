@@ -265,7 +265,7 @@ func CreateBridgeERC20Command() *cobra.Command {
 }
 
 func CreateBridgeERC20L1ToL2Command() *cobra.Command {
-	var keyFile, password, l1Rpc, routerRaw, tokenAddressRaw, toRaw, amountRaw, safeAddressRaw, safeApi string
+	var keyFile, password, l1Rpc, l2Rpc, routerRaw, tokenAddressRaw, toRaw, amountRaw, safeAddressRaw, safeApi string
 	var routerAddress, tokenAddress, to, safeAddress common.Address
 	var amount *big.Int
 	var safeOperation uint8
@@ -330,6 +330,14 @@ func CreateBridgeERC20L1ToL2Command() *cobra.Command {
 				if OperationType(safeOperation).String() == "Unknown" {
 					return fmt.Errorf("--safe-operation must be 0 (Call) or 1 (DelegateCall)")
 				}
+
+				if l1Rpc == "" {
+					return errors.New("l1-rpc is required")
+				}
+
+				if l2Rpc == "" {
+					return errors.New("l2-rpc is required")
+				}
 			}
 
 			return nil
@@ -337,14 +345,14 @@ func CreateBridgeERC20L1ToL2Command() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Println("Bridging", tokenAddress.Hex(), "to", to.Hex())
 			if safeAddressRaw == "" {
-				transaction, transactionErr := ERC20BridgeCall(routerAddress, keyFile, password, l1Rpc, tokenAddress, to, amount)
+				transaction, transactionErr := ERC20BridgeCall(routerAddress, keyFile, password, l1Rpc, l2Rpc, tokenAddress, to, amount)
 				if transactionErr != nil {
 					fmt.Fprintln(cmd.ErrOrStderr(), transactionErr.Error())
 					return transactionErr
 				}
 				fmt.Println("Transaction sent:", transaction.Hash().Hex())
 			} else {
-				proposeErr := ERC20BridgePropose(routerAddress, keyFile, password, l1Rpc, tokenAddress, to, amount, safeAddress, safeApi, safeOperation)
+				proposeErr := ERC20BridgePropose(routerAddress, keyFile, password, l1Rpc, l2Rpc, tokenAddress, to, amount, safeAddress, safeApi, safeOperation)
 				if proposeErr != nil {
 					fmt.Fprintln(cmd.ErrOrStderr(), proposeErr.Error())
 					return proposeErr
@@ -358,6 +366,7 @@ func CreateBridgeERC20L1ToL2Command() *cobra.Command {
 	createCmd.Flags().StringVar(&password, "password", "", "Password to encrypt accounts with")
 	createCmd.Flags().StringVar(&keyFile, "keyfile", "", "Keyfile to sign transaction with")
 	createCmd.Flags().StringVar(&l1Rpc, "l1-rpc", "", "L1 RPC URL")
+	createCmd.Flags().StringVar(&l2Rpc, "l2-rpc", "", "L2 RPC URL")
 	createCmd.Flags().StringVar(&routerRaw, "router", "", "Router address")
 	createCmd.Flags().StringVar(&toRaw, "to", "", "Recipient address")
 	createCmd.Flags().StringVar(&tokenAddressRaw, "token", "", "Token address")
