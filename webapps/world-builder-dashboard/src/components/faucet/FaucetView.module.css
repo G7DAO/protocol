@@ -205,6 +205,22 @@
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
 }
 
+.requestTokensButtonDisabled {
+  display: flex;
+  height: 36px;
+  padding: 8px var(--14px, 14px);
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  cursor: not-allowed;
+  border-radius: 8px;
+  background: var(--Gray-600, #475467);
+
+  /* Shadow/xs */
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  border: none;
+}
+
 .requestTokensButtonText {
   color: var(--Base-White, #fff);
 

@@ -48,9 +48,8 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
       setSelectedNetwork(targetNetwork)
     }
 
-    if (selectedAccountType.valueId === 0) setAddress('')
-    else if (!connectedAccount) setAddress('')
-    else { setAddress(connectedAccount) }
+    if (selectedAccountType.valueId === 0 || !connectedAccount) setAddress('')
+    else setAddress(connectedAccount)
   }, [faucetTargetChainId, selectedAccountType, connectedAccount])
 
   useEffect(() => {
@@ -80,61 +79,41 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
       if (!res.ok) {
         throw new Error(`Error: ${res.statusText}`);
       }
-
-      setNetworkError('')
-      const type: 'CLAIM' | 'DEPOSIT' | 'WITHDRAWAL' = 'CLAIM'
-      return {
-        type,
-        amount: '1',
-        highNetworkChainId: selectedNetwork.chainId,
-        lowNetworkChainId: FAUCET_CHAIN.chainId,
-        lowNetworkTimestamp: Date.now() / 1000,
-        completionTimestamp: Date.now() / 1000,
-        newTransaction: true
-      }
+      return { success: true };
     },
     {
-      onSuccess: (data: TransactionRecord | undefined, variables) => {
-        try {
-          const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
-
-          let transactions = []
-          if (transactionsString) {
-            transactions = JSON.parse(transactionsString)
+      onSuccess: (_, { address }) => {
+        const lastClaimTimestamp = Date.now() / 1000;
+        const faucetInterval = faucetIntervalQuery.data ? Number(faucetIntervalQuery.data) : 0;
+        const nextClaimL3Timestamp = lastClaimTimestamp + faucetInterval;
+  
+        const intervalL3 = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimL3Timestamp);
+        const isAvailableL3 = compareTimestampWithCurrentMoment(nextClaimL3Timestamp);
+  
+        const updatedL3 = {
+          interval: intervalL3,
+          nextClaimTimestamp: nextClaimL3Timestamp,
+          isAvailable: isAvailableL3,
+        };
+  
+        // Manually update the query data for nextClaimAvailable
+        queryClient.setQueryData(['nextFaucetClaimTimestamp', address], (oldData: any) => {
+          if (oldData) {
+            return {
+              ...oldData,
+              L3: updatedL3, // Update the L3 data
+            };
           }
-          transactions.push({ ...data })
-          localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(transactions))
-        } catch (e) {
-          console.log(e)
-        }
-        queryClient.setQueryData(['nextFaucetClaimTimestamp', connectedAccount], (oldData: any) => {
-          const lastClaimTimestamp = Date.now() / 1000
-          if (!oldData) {
-            queryClient.refetchQueries(['nextFaucetClaimTimestamp'])
-            return oldData
-          }
-
-          const nextClaimTimestamp = lastClaimTimestamp + oldData.faucetTimeInterval
-          const interval = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimTimestamp)
-          const isAvailable = false
-          const L2 = variables.isL2Target ? { nextClaimTimestamp, interval, isAvailable } : oldData.L2
-          const L3 = !variables.isL2Target ? { nextClaimTimestamp, interval, isAvailable } : oldData.L3
-
-          return { faucetTimeInterval: oldData.faucetTimeInterval, L2, L3 }
-        })
-        queryClient.refetchQueries('pendingTransactions')
-        queryClient.refetchQueries(['notifications'])
-        queryClient.refetchQueries(['nativeBalance'])
-        queryClient.refetchQueries(['ERC20balance'])
-        refetchNewNotifications(connectedAccount ?? '')
+          return { faucetTimeInterval: faucetInterval, L3: updatedL3 };
+        });
+  
+        queryClient.invalidateQueries(['nextFaucetClaimTimestamp', address]); // Optionally invalidate to ensure fresh data
       },
-      onError: (e: Error) => {
-        setNetworkError('Something went wrong')
-        console.error('Request failed:', e)
-        console.log(e)
-      }
+      onError: (error) => {
+        console.error("Error requesting tokens:", error);
+      },
     }
-  )
+  );
 
   function compareTimestampWithCurrentMoment(unixTimestamp: number): boolean {
     const timestampInMillis = unixTimestamp * 1000 // Unix timestamp in milliseconds
@@ -149,9 +128,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const nextClaimAvailable = useQuery(
     ['nextFaucetClaimTimestamp', address],
     async () => {
-
       const lastClaimedL3Timestamp = Number(lastClaimedTimestampQuery.data)
-
       const faucetTimeInterval = Number(faucetIntervalQuery.data)
       const nextClaimL3Timestamp = lastClaimedL3Timestamp + faucetTimeInterval
 
@@ -169,9 +146,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   )
 
   useEffect(() => {
-    if (!nextClaimAvailable.data) {
-      return
-    }
+    if (!nextClaimAvailable.data) return
     const intervalInfo = nextClaimAvailable.data.L3
     if (!intervalInfo.isAvailable) {
       setNextClaimTimestamp(intervalInfo.nextClaimTimestamp)
@@ -231,17 +206,27 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
               <div className={styles.label}>Account</div>
               <ValueSelector values={values} selectedValue={selectedAccountType} onChange={handleSelectAccountType} />
             </div>
-          )
-          }
-
+          )}
         </div>
-        <div className={styles.requestTokensButton} onClick={() => {
-          claim.mutate({ isL2Target: chainId === 13746, address })
-        }}>
+        <button
+          className={
+            selectedNetwork.chainId === L3_NETWORK.chainId &&
+              nextClaimAvailable.data &&
+              !nextClaimAvailable.data.L3.isAvailable
+              ? styles.requestTokensButtonDisabled
+              : styles.requestTokensButton
+          }
+          onClick={() => {
+            claim.mutate({ isL2Target: chainId === 13746, address })
+          }}
+          disabled={selectedNetwork.chainId === L3_NETWORK.chainId &&
+            nextClaimAvailable.data &&
+            !nextClaimAvailable.data.L3.isAvailable}
+        >
           <div className={styles.requestTokensButtonText}>
             {claim.isLoading ? `Requesting...` : `Request Tokens`}
           </div>
-        </div>
+        </button>
       </div>
       {!!networkError && <div className={styles.errorContainer}>{networkError}.</div>}
       {!networkError && nextClaimAvailable.isLoading && (
@@ -249,8 +234,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
       )}
       {selectedNetwork.chainId === L3_NETWORK.chainId &&
         nextClaimAvailable.data &&
-        !nextClaimAvailable.data.L3.isAvailable
-        && nextClaimTimestamp && (
+        !nextClaimAvailable.data.L3.isAvailable && (
           <div className={styles.errorContainer}>
             {`You requested funds recently. Come back in `}{' '}
             <span className={styles.time}>{` ${animatedInterval}`}</span>
