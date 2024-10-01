@@ -7,7 +7,6 @@ import {
   L3_NETWORK
 } from '../../../constants'
 import styles from './FaucetView.module.css'
-import { ethers } from 'ethers'
 import { NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 import { useUISettings } from '@/contexts/UISettingsContext'
@@ -92,6 +91,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
       if (!res.ok) {
         throw new Error(`Error: ${res.statusText}`)
       }
+      const data = await res.json()
       setNetworkError('')
       const type: 'CLAIM' | 'DEPOSIT' | 'WITHDRAWAL' = 'CLAIM'
       return {
@@ -101,6 +101,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
         lowNetworkChainId: FAUCET_CHAIN.chainId,
         lowNetworkTimestamp: Date.now() / 1000,
         completionTimestamp: Date.now() / 1000,
+        lowNetworkHash: data.result,
         newTransaction: true
       }
     },

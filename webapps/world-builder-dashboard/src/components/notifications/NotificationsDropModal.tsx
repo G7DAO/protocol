@@ -32,7 +32,17 @@ const copy = (notification: BridgeNotification) => {
       return `${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL} deposited to ${targetNetwork}`
     }
     if (notification.type === 'CLAIM') {
-      return `You requested ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL}` //L3 claim takes a couple of minutes, but checking status isn't implemented yet
+      return (
+        <>
+          <a
+            href={`https://testnet.game7.io/tx/${notification.tx.lowNetworkHash}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            You requested {notification.amount} {L3_NATIVE_TOKEN_SYMBOL}
+          </a>
+        </>
+      )
     }
     return `Your ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL} withdrawal is complete`
   }
