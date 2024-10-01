@@ -15,6 +15,7 @@ import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { timeDifferenceInHoursAndMinutes, timeDifferenceInHoursMinutesAndSeconds } from '@/utils/timeFormat'
 import { ZERO_ADDRESS } from '@/utils/web3utils'
 import ValueSelector, { ValueSelect } from '../commonComponents/valueSelector/ValueSelector'
+import { useMediaQuery } from 'summon-ui/mantine'
 
 interface FaucetViewProps { }
 const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
@@ -29,6 +30,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
 
   const { faucetTargetChainId } = useUISettings()
   const { refetchNewNotifications } = useBridgeNotificationsContext()
+  const smallView = useMediaQuery('(max-width: 1199px)')
 
   const values = [
     {
@@ -234,7 +236,13 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
           {!connectedAccount ? (
             <>
               <div className={styles.textSeparator}>
-                Or
+                {smallView ? (
+                  <>
+                    <div className={styles.bar} />
+                      Or
+                    <div className={styles.bar} />
+                  </>
+                ) : 'Or'}
               </div>
               <div className={styles.connectWalletButton} onClick={() => { handleConnect() }}>
                 <div className={styles.connectWalletText}>
