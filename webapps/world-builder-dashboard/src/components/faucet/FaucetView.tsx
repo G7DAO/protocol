@@ -25,7 +25,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const [animatedInterval, setAnimatedInterval] = useState('')
   const [nextClaimTimestamp, setNextClaimTimestamp] = useState(0)
   const [networkError, setNetworkError] = useState('')
-  const [selectedAccountType, setSelectedAccountType] = useState<ValueSelect>({ valueId: 0, displayName: 'External Address', value: '' })
+  const [selectedAccountType, setSelectedAccountType] = useState<ValueSelect>({ valueId: 1, displayName: 'Connected Account', value: connectedAccount })
 
   const { faucetTargetChainId } = useUISettings()
   const { refetchNewNotifications } = useBridgeNotificationsContext()
@@ -49,11 +49,20 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
       setSelectedNetwork(targetNetwork)
     }
 
-    if (selectedAccountType.valueId === 0 || !connectedAccount) setAddress('')
-    else setAddress(connectedAccount)
-
-    if (connectedAccount) setSelectedAccountType({ valueId: 1, displayName: 'Connected Wallet', value: connectedAccount })
-  }, [faucetTargetChainId, selectedAccountType, connectedAccount])
+    if (connectedAccount) {
+      if (selectedAccountType.valueId !== 1 || selectedAccountType.value !== connectedAccount) {
+        setSelectedAccountType({ valueId: 1, displayName: 'Connected Account', value: connectedAccount });
+      }
+  
+      if (address !== connectedAccount) {
+        setAddress(connectedAccount);
+      }
+    } else if (selectedAccountType.valueId === 0 || !connectedAccount) {
+      if (address !== '') {
+        setAddress('');
+      }
+    }
+  }, [faucetTargetChainId, connectedAccount])
 
   useEffect(() => {
     setNetworkError('')
