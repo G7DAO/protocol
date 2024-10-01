@@ -204,6 +204,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
               placeholder={ZERO_ADDRESS}
               className={styles.address}
               value={address}
+              disabled={!!connectedAccount}
               onChange={(e) => {
                 setAddress(e.target.value)
               }}
