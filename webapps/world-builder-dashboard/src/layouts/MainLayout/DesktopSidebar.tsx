@@ -1,7 +1,9 @@
 import React, { ReactNode } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { ALL_NETWORKS } from '../../../constants'
 import styles from './MainLayout.module.css'
 import IconLogout from '@/assets/IconLogout'
+import WalletButton from '@/components/commonComponents/walletButton/WalletButton'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
 
@@ -11,7 +13,8 @@ interface DesktopSidebarProps {
 const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { connectedAccount, isMetaMask, disconnectWallet } = useBlockchainContext()
+  const { connectedAccount, isMetaMask, connectWallet, disconnectWallet, chainId, isConnecting } =
+    useBlockchainContext()
 
   return (
     <div className={styles.sideBar}>
@@ -31,12 +34,24 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
         </div>
       </div>
       <div className={styles.footer}>
-        {connectedAccount && (
-          <div className={styles.web3AddressContainer}>
-            <div
-              className={styles.web3address}
-            >{`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}</div>
-            {isMetaMask && <IconLogout onClick={disconnectWallet} className={styles.iconButton} />}
+        {connectedAccount ? (
+          <>
+            {/* If network not found, hide */}
+            {ALL_NETWORKS.find((network) => network.chainId === chainId) ? <WalletButton /> : <></>}
+            <div className={styles.web3AddressContainer}>
+              <div className={styles.web3address}>
+                {`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}
+              </div>
+              {isMetaMask && <IconLogout onClick={disconnectWallet} className={styles.iconButton} />}
+            </div>
+          </>
+        ) : (
+          <div className={styles.connectWalletButton} onClick={connectWallet}>
+            {isConnecting ? (
+              <div className={styles.connectingWalletText}>{'Connecting Wallet...'}</div>
+            ) : (
+              <div className={styles.connectWalletText}>{'Connect Wallet'}</div>
+            )}
           </div>
         )}
       </div>

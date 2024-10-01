@@ -52,6 +52,8 @@ export const L3_NETWORK: HighNetworkInterface = {
   staker: '0xa6B0461b7E54Fa342Be6320D4938295A81f82Cd3'
 }
 
+export const ALL_NETWORKS = [L1_NETWORK, L2_NETWORK, L3_NETWORK]
+
 export const L3_NATIVE_TOKEN_SYMBOL = 'TG7T'
 export const DEFAULT_LOW_NETWORK = L1_NETWORK
 export const DEFAULT_HIGH_NETWORK = L2_NETWORK
