@@ -262,7 +262,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
       {selectedNetwork.chainId === L3_NETWORK.chainId &&
         nextClaimAvailable.data &&
         !nextClaimAvailable.data.L3.isAvailable && (
-          <div className={styles.errorContainer}>
+          <div className={styles.availableFundsContainer}>
             {`You requested funds recently. Come back in `}{' '}
             <span className={styles.time}>{` ${animatedInterval}`}</span>
           </div>

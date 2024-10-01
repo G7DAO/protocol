@@ -352,6 +352,22 @@
   color: var(--Error-700, #b42318);
 }
 
+.availableFundsContainer {
+  text-align: center;
+  width: 100%;
+  justify-content: center;
+  padding: 2px 8px;
+  align-items: center;
+  gap: 4px;
+  border-radius: 16px;
+  color: var(--Success-700, #027a48);
+  background: var(--Success-50, #ecfdf3);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 18px;
+}
+
 .time {
   display: inline-block;
   min-width: 11ch;
@@ -410,6 +426,6 @@
     padding: 8px 12px;
     align-items: center;
     gap: 8px;
-  align-self: stretch;
+    align-self: stretch;
   }
 }

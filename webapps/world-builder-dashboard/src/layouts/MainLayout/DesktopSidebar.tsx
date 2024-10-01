@@ -1,9 +1,7 @@
 import React, { ReactNode } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { ALL_NETWORKS } from '../../../constants'
 import styles from './MainLayout.module.css'
 import IconLogout from '@/assets/IconLogout'
-import WalletButton from '@/components/commonComponents/walletButton/WalletButton'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
 
