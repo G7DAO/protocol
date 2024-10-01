@@ -60,7 +60,7 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
         padding={'24px'}
         size={'678px'}
         title={'Wallet Balance'}
-        classNames={{ title: styles.modalTitle, header: styles.modalHeader }}
+        classNames={{ title: styles.modalTitle, header: styles.modalHeader, close: styles.modalClose }}
         shadow='box-shadow: 0px 20px 24px -4px rgba(16, 24, 40, 0.08), 0px 8px 8px -4px rgba(16, 24, 40, 0.03);'
       >
         <div className={styles.modalContent}>
