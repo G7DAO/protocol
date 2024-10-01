@@ -7,6 +7,7 @@ import {
   L3_NETWORK
 } from '../../../constants'
 import styles from './FaucetView.module.css'
+import { ethers } from 'ethers'
 import { NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 import { useUISettings } from '@/contexts/UISettingsContext'
@@ -53,7 +54,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
       if (selectedAccountType.valueId !== 1 || selectedAccountType.value !== connectedAccount) {
         setSelectedAccountType({ valueId: 1, displayName: 'Connected Account', value: connectedAccount });
       }
-  
+
       if (address !== connectedAccount) {
         setAddress(connectedAccount);
       }
