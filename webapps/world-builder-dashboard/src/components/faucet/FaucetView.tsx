@@ -83,41 +83,41 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
     },
     {
       onSuccess: (_, { address }) => {
-        const lastClaimTimestamp = Date.now() / 1000;
-        const faucetInterval = faucetIntervalQuery.data ? Number(faucetIntervalQuery.data) : 0;
-        const nextClaimL3Timestamp = lastClaimTimestamp + faucetInterval;
+        const lastClaimTimestamp = Date.now() / 1000
+        const faucetInterval = faucetIntervalQuery.data ? Number(faucetIntervalQuery.data) : 0
+        const nextClaimL3Timestamp = lastClaimTimestamp + faucetInterval
   
-        const intervalL3 = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimL3Timestamp);
-        const isAvailableL3 = compareTimestampWithCurrentMoment(nextClaimL3Timestamp);
+        const intervalL3 = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimL3Timestamp)
+        const isAvailableL3 = compareTimestampWithCurrentMoment(nextClaimL3Timestamp)
   
         const updatedL3 = {
           interval: intervalL3,
           nextClaimTimestamp: nextClaimL3Timestamp,
           isAvailable: isAvailableL3,
-        };
-  
-        // Manually update the query data for nextClaimAvailable
+        }
         queryClient.setQueryData(['nextFaucetClaimTimestamp', address], (oldData: any) => {
           if (oldData) {
             return {
               ...oldData,
               L3: updatedL3, // Update the L3 data
-            };
+            }
           }
-          return { faucetTimeInterval: faucetInterval, L3: updatedL3 };
-        });
+          return { faucetTimeInterval: faucetInterval, L3: updatedL3 }
+        })
   
-        queryClient.invalidateQueries(['nextFaucetClaimTimestamp', address]); // Optionally invalidate to ensure fresh data
+        queryClient.invalidateQueries(['nextFaucetClaimTimestamp', address])
       },
       onError: (error) => {
-        console.error("Error requesting tokens:", error);
+        setNetworkError('Something went wrong')
+        console.log(error)
+        console.error("Error requesting tokens:", error)
       },
     }
   );
 
   function compareTimestampWithCurrentMoment(unixTimestamp: number): boolean {
-    const timestampInMillis = unixTimestamp * 1000 // Unix timestamp in milliseconds
-    const currentInMillis = Date.now() // Current time in milliseconds
+    const timestampInMillis = unixTimestamp * 1000
+    const currentInMillis = Date.now()
 
     return timestampInMillis <= currentInMillis
   }
