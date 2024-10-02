@@ -119,14 +119,6 @@ const BridgerView = ({ bridger, amount }: { bridger: Bridger; amount?: ethers.Bi
           >{`${bridger.isDeposit ? '>' : '<'}`}</div>
         ))}
       </div>
-      {/*{allowance.data !== null && (*/}
-      {/*  <div className={styles.bridgerAllowance}>*/}
-      {/*    <div*/}
-      {/*      className={styles.bridgerAllowanceText}*/}
-      {/*    >{`Approved allowance: ${allowance.data ?? (allowance.data === null ? 'not needed' : "can't fetch")}`}</div>*/}
-      {/*    <IconEdit02 id={'editAllowanceButton'} className={styles.editIcon} />*/}
-      {/*  </div>*/}
-      {/*)}*/}
       {transfer.isLoading ? (
         <div className={styles.spinner} />
       ) : (
@@ -247,20 +239,6 @@ const Network = ({ network, hoveredItem }: { network: BridgeNetwork; hoveredItem
     return found
   }, [network.chainId])
 
-  // const balance = useQuery(
-  //   ['gasBalance', network.chainId, account],
-  //   async () => {
-  //     if (!account || !rpc) {
-  //       return
-  //     }
-  //     const provider = new ethers.providers.JsonRpcProvider(rpc) as ethers.providers.Provider
-  //     const balance = await network.getGasBalance(provider, account)
-  //     return ethers.utils.formatEther(balance)
-  //   },
-  //   {
-  //     enabled: !!account && !!rpc
-  //   }
-  // )
   return (
     <div className={styles.networkContainer}>
       <div
@@ -278,17 +256,7 @@ const Network = ({ network, hoveredItem }: { network: BridgeNetwork; hoveredItem
 const BridgeView = () => {
   const networks = [L1_NETWORK, L2_NETWORK, L3_NETWORK].map((n) => new BridgeNetwork(n.chainId, [TG7T, ETH]))
   const { account } = useWallet()
-  // const status = useQuery(['messageStatus'], async () => {
-  //   const parentRPC = getRPC(11155111)
-  //   const childRPC = getRPC(421614)
-  //   const parentProvider = new ethers.providers.JsonRpcProvider(parentRPC) as ethers.providers.Provider
-  //   const childProvider = new ethers.providers.JsonRpcProvider(childRPC) as ethers.providers.Provider
-  //   const res = await getWithdrawalStatus(
-  //     '0xb2b271b7e7d613f97ee496f61acc9620b197cd4dc0eae5d18a2812bd2dc512a7',
-  //     parentProvider,
-  //     childProvider
-  //   )
-  // })
+
   const [hoveredItem, setHoveredItem] = useState('')
   useEffect(() => {
     console.log(hoveredItem)
