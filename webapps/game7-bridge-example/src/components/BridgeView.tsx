@@ -194,7 +194,7 @@ const Token = ({ token, hoveredItem }: { token: BridgeToken; hoveredItem: string
       return token.getSymbol(rpc)
     },
     {
-      enabled: !!rpc,
+      enabled: !!rpc && !!token.tokenAddresses[token.chainId],
       onError: (error) => {
         console.error('Failed to fetch token balance:', error)
       },
@@ -207,7 +207,7 @@ const Token = ({ token, hoveredItem }: { token: BridgeToken; hoveredItem: string
       return token.getBalance(rpc, account)
     },
     {
-      enabled: !!rpc && !!account,
+      enabled: !!rpc && !!account && !!token.tokenAddresses[token.chainId],
       refetchInterval: 60000,
       onError: (error) => {
         console.error('Failed to fetch token symbol:', error)
