@@ -50,7 +50,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
 
   useEffect(() => {
     getTokens()
-  }, [selectedChainId])
+  }, [selectedChainId, connectedAccount])
 
   useEffect(() => {
     const num = Number(value)
