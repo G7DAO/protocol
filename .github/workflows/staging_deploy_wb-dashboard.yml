@@ -1,26 +1,27 @@
 on:
     push:
       branches:
-        - main
+        - staging
       paths:
+        - '.github/workflows/staging_deploy_wb-dashboard.yml'
         - 'webapps/world-builder-dashboard/**'
 
 jobs:
-    deploy:
+    staging_deploy_wb-dashboard:
         runs-on: ubuntu-latest
 
         steps:
             - name: Checkout repository and main branch
               uses: actions/checkout@v2
               with:
-                  ref: main
+                  ref: staging
 
             - name: Set up node.js
               uses: actions/setup-node@v3
               with:
                   node-version: "20.14.0"
 
-            - name: Install and bild production app
+            - name: Install and build staging app
               working-directory: ./webapps/world-builder-dashboard
               run: |
                   npm install
@@ -29,8 +30,8 @@ jobs:
             - name: Publish to CloudFlare Page
               uses: cloudflare/pages-action@v1
               with:
-                    apiToken: ${{ secrets.CF_API_TOKEN_BETA_DEV }}
-                    accountId: ${{ secrets.CF_ACCOUNT_ID_BETA_DEV }}
-                    projectName: ${{ secrets.CF_PROJECT_NAME_WB_DASHBOARD_BETA_DEV }}
+                    apiToken: ${{ secrets.CF_API_TOKEN_STAGE }}
+                    accountId: ${{ secrets.CF_ACCOUNT_ID_STAGE }}
+                    projectName: ${{ secrets.CF_PROJECT_NAME_WB_DASHBOARD_STAGE }}
                     directory: ./webapps/world-builder-dashboard/dist
                     gitHubToken: ${{ secrets.GITHUB_TOKEN }}

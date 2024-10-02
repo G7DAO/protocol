@@ -25,7 +25,7 @@ Deployment transaction: [`0x036c8cb7d159f7e3d747d2fb6031360818273a1e27d540539c2d
 ### Set up environment variables
 
 ```bash
-export RPC="https://rpc-game7-testnet-0ilneybprf.t.conduit.xyz"
+export RPC="https://testnet-rpc.game7.io"
 export SENDER="<path to keyfile>"
 export SENDER_ADDRESS="$(jq -r .address $SENDER)"
 # The following lines were added in the course of this script
