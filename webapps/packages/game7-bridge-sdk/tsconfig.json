@@ -14,6 +14,9 @@
     "removeComments": true,
     "strictPropertyInitialization": false
   },
-  "include": ["src"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts"
+  ],
   "exclude": ["node_modules", "dist"]
 }

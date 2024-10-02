@@ -14,6 +14,11 @@ import { BridgeNetworkConfig, networks } from './networks';
 import { BridgerError, UnsupportedNetworkError } from './errors';
 
 /**
+ * Represents a type that can be either a Signer, a Provider, or an RPC URL string.
+ */
+export type SignerOrProvider = ethers.Signer | ethers.providers.Provider | string;
+
+/**
  * Represents a blockchain network within the bridge.
  */
 export class BridgeNetwork {

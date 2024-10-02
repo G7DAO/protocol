@@ -5,7 +5,7 @@ import { BigNumber, ethers } from 'ethers';
 import { ERC20_ABI } from './abi/ERC20_ABI';
 
 // Internal Modules - Classes
-import Bridger from './bridger';
+import { Bridger } from './bridger';
 import { BridgeNetwork } from './bridgeNetwork';
 
 // Internal Modules - Types

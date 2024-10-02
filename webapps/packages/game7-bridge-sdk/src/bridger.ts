@@ -1,5 +1,5 @@
 // Third-Party Modules
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber, ethers, Overrides } from 'ethers';
 
 // Internal Modules - ABIs
 import { arbSysABI } from './abi/ArbSysABI';
@@ -20,12 +20,80 @@ import { BridgerError, GasEstimationError, UnsupportedNetworkError } from './err
 
 // Internal Modules - Networks and Types
 import { BridgeNetworkConfig, networks } from './networks';
-import { GasAndFeeEstimation, SignerOrProvider, TokenAddressMap, TransferParams } from './types';
+import { TokenAddressMap } from './types';
+import { SignerOrProvider } from './bridgeNetwork';
+
+/**
+ * Represents the estimated gas and fees.
+ */
+export interface GasAndFeeEstimation {
+  /**
+   * The estimated amount of gas required to execute the transaction.
+   */
+  estimatedGas: BigNumber;
+
+  /**
+   * The estimated gas price for the transaction.
+   */
+  gasPrice: BigNumber;
+
+  /**
+   * The total estimated fee for the transaction.
+   * This is calculated as the product of `estimatedGas` and `gasPrice`.
+   */
+  estimatedFee: BigNumber;
+}
+
+
+/**
+ * Parameters required for a fund transfer operation.
+ */
+export interface TransferParams {
+  /**
+   * The amount of ETH or tokens to be transferred.
+   */
+  amount: BigNumber;
+
+  /**
+   * The signer instance for signing the transaction.
+   */
+  signer: ethers.Signer;
+
+  destinationProvider: ethers.providers.Provider;
+
+  /**
+   * The network address of the entity receiving the funds. Defaults to the signer address.
+   */
+  destinationAddress?: string;
+
+  /**
+   * The maximum cost to be paid for submitting the transaction.
+   */
+  maxSubmissionCost?: BigNumber;
+
+  /**
+   * The address to return any gas that was not spent on fees.
+   */
+  excessFeeRefundAddress?: string;
+
+  /**
+   * The address to refund the call value to in the event the retryable is cancelled or expires.
+   */
+  callValueRefundAddress?: string;
+
+  /**
+   * Transaction overrides.
+   */
+  overrides?: Overrides;
+
+  // TODO: Add `retryableGasOverrides` parameter for additional control over retryable tickets.
+  // retryableGasOverrides?: GasOverrides;
+}
 
 /**
  * A class representing a Bridger that manages cross-network token transfers.
  */
-export default class Bridger {
+export class Bridger {
   /**
    * The configuration of the origin network.
    * @type {BridgeNetworkConfig}

@@ -5,8 +5,8 @@ import { ERC20_INBOX_ABI } from '../abi/erc20_inbox_abi';
 import { BridgeNetworkConfig } from '../networks';
 import { Erc20DepositParams } from '@arbitrum/sdk/dist/lib/assetBridger/erc20Bridger';
 import { L2GatewayRouterABI } from '../abi/L2GatewayRouterABI';
-import { GasAndFeeEstimation } from '../types';
 import { EthDepositParams } from '@arbitrum/sdk/dist/lib/assetBridger/ethBridger';
+import { GasAndFeeEstimation } from '../bridger';
 
 export const depositERC20 = async (
   amount: BigNumber,

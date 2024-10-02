@@ -1,9 +1,9 @@
 {
   "name": "game7-bridge-sdk",
-  "version": "0.0.1",
+  "version": "0.0.15",
   "description": "A SDK for bridging tokens across different networks with Game7 infrastructure.",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
