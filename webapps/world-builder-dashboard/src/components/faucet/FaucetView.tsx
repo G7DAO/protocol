@@ -239,7 +239,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
                 {smallView ? (
                   <>
                     <div className={styles.bar} />
-                      Or
+                      <span>Or</span>
                     <div className={styles.bar} />
                   </>
                 ) : 'Or'}

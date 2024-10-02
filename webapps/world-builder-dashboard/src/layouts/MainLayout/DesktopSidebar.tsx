@@ -11,7 +11,7 @@ interface DesktopSidebarProps {
 const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { connectedAccount, isMetaMask, connectWallet, disconnectWallet, chainId, isConnecting } =
+  const { connectedAccount, isMetaMask, connectWallet, disconnectWallet, isConnecting } =
     useBlockchainContext()
 
   return (
