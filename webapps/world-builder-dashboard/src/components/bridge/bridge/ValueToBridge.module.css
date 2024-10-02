@@ -30,7 +30,7 @@
 }
 
 .errorMessage {
-  color: var(--Error-600, #D92D20);
+  color: var(--Error-600, #d92d20);
   text-align: right;
 
   /* Text xs/Medium */
@@ -67,7 +67,8 @@
   line-height: 18px; /* 150% */
 }
 
-.inputGroup, .inputWithError {
+.inputGroup,
+.inputWithError {
   display: flex;
   padding-left: 12px;
   align-items: center;
@@ -101,7 +102,7 @@
 }
 
 .inputWithError {
-  border: 1px solid var(--Error-500, #F04438);
+  border: 1px solid var(--Error-500, #f04438);
 }
 
 .maxButton {
@@ -130,14 +131,15 @@
 }
 
 .tokenGroup {
+  cursor: pointer;
   display: flex;
-  padding: 19px 16px;
+  padding: var(--20px, 20px) 16px;
   justify-content: center;
   align-items: center;
   gap: 8px;
-
-  border-radius: 0 8px 8px 0;
-  border-left: 1px solid var(--Gray-100, #f2f4f7);
+  border-radius: 0px 8px 8px 0px;
+  border-left: 1px solid var(--Gray-100, #F2F4F7);
+  background: #fff;
 }
 
 .tokenSymbol {
@@ -149,7 +151,6 @@
   font-weight: 600;
   line-height: 20px; /* 142.857% */
 }
-
 
 @media (max-width: 1199px) {
   .input {

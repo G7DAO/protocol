@@ -1,11 +1,10 @@
 import React, { ReactNode } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { ALL_NETWORKS } from '../../../constants'
 import styles from './MainLayout.module.css'
 import IconLogout from '@/assets/IconLogout'
-import WalletButton from '@/components/commonComponents/walletButton/WalletButton'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
+import IconExternalLink from '@/assets/IconExternalLink'
 
 interface DesktopSidebarProps {
   navigationItems: { name: string; navigateTo: string; icon: ReactNode }[]
@@ -13,7 +12,7 @@ interface DesktopSidebarProps {
 const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { connectedAccount, isMetaMask, connectWallet, disconnectWallet, chainId, isConnecting } =
+  const { connectedAccount, isMetaMask, connectWallet, disconnectWallet, isConnecting } =
     useBlockchainContext()
 
   return (
@@ -24,11 +23,22 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
           {navigationItems.map((item) => (
             <div
               className={location.pathname.startsWith(item.navigateTo) ? styles.selectedNavButton : styles.navButton}
-              onClick={() => navigate(item.navigateTo)}
+              onClick={() => {
+                if (item.name === 'documentation' || item.name === 'explorer') {
+                  window.open(item.navigateTo, '_blank'); // For external links
+                } else {
+                  navigate(item.navigateTo); // For internal navigation
+                }
+            }}  
               key={item.name}
             >
-              {item.icon}
-              {item.name}
+              <div className={styles.navBeginning}>
+                {item.icon}
+                {item.name}
+              </div>
+              <div style={{ display: 'flex' }}>
+                {item.name === 'documentation' || item.name === 'explorer' ? (<IconExternalLink />) : ('')}
+              </div>
             </div>
           ))}
         </div>
@@ -36,8 +46,6 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
       <div className={styles.footer}>
         {connectedAccount ? (
           <>
-            {/* If network not found, hide */}
-            {ALL_NETWORKS.find((network) => network.chainId === chainId) ? <WalletButton /> : <></>}
             <div className={styles.web3AddressContainer}>
               <div className={styles.web3address}>
                 {`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}

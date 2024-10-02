@@ -212,6 +212,7 @@ export const useMessages = (connectedAccount: string | undefined): UseQueryResul
     }
     const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
     if (transactionsString) {
+      console.log(JSON.parse(transactionsString))
       return JSON.parse(transactionsString).sort(sortTransactions)
     } else {
       return []
