@@ -1,39 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { BigNumber, ethers, PayableOverrides } from 'ethers'
+import { ethers } from 'ethers'
 import { useQuery, useMutation } from 'react-query'
 
 import styles from './BridgeView.module.css'
 import { useWallet } from '../contexts/WalletContext'
 import { ETH, getRPC, L1_NETWORK, L2_NETWORK, L3_NETWORK, NETWORKS, TG7T } from '../networks'
 import WalletConnection from './WalletConnection'
-import { BridgeNetwork } from 'game7-bridge-sdk/dist/bridgeNetwork'
-import { BridgeToken } from 'game7-bridge-sdk/dist/bridgeToken'
-import Bridger from 'game7-bridge-sdk/dist/bridger'
 import IconEdit02 from '../assets/IconEdit02.tsx'
-import { getWithdrawalStatus } from 'game7-bridge-sdk/dist/utils/transactionStatus'
-import { EthBridger, getArbitrumNetwork } from '@arbitrum/sdk'
-// import { UnsupportedNetworkError } from 'game7-bridge-sdk/dist/errors.ts'
-import { EthDepositParams } from '@arbitrum/sdk/dist/lib/assetBridger/ethBridger'
 import Documentation from './Documentation.tsx'
 import TransferStatus from './TransferStatus.tsx'
+import {BridgeNetwork, BridgeToken, Bridger} from "game7-bridge-sdk";
 
-export const depositETH = async (
-  amount: BigNumber,
-  destinationNetworkChainId: number,
-  signer: ethers.Signer,
-  overrides?: PayableOverrides
-): Promise<ethers.ContractTransaction> => {
-  const destinationNetwork = getArbitrumNetwork(destinationNetworkChainId)
-  if (!destinationNetwork) {
-    throw new Error(String(destinationNetworkChainId))
-  }
-  const ethBridger = new EthBridger(destinationNetwork)
-  const params: EthDepositParams = {
-    amount,
-    l1Signer: signer
-  }
-  return await ethBridger.deposit(params)
-}
 
 const BridgerView = ({ bridger, amount }: { bridger: Bridger; amount?: ethers.BigNumber }) => {
   const { account, getSigner } = useWallet()
@@ -65,19 +42,6 @@ const BridgerView = ({ bridger, amount }: { bridger: Bridger; amount?: ethers.Bi
       enabled: !!account && !!originRpc
     }
   )
-  // const allowance = useQuery(
-  //   ['allowance', bridger, account],
-  //   async () => {
-  //     const allowance = await bridger.getAllowance(rpc, account)
-  //     if (allowance) {
-  //       return ethers.utils.formatEther(allowance)
-  //     }
-  //     return allowance
-  //   },
-  //   {
-  //     enabled: !!rpc && !!account
-  //   }
-  // )
 
   const approveAllowance = useMutation({
     mutationFn: async (amount: string) => {
@@ -119,7 +83,8 @@ const BridgerView = ({ bridger, amount }: { bridger: Bridger; amount?: ethers.Bi
   })
 
   const handleTransferClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target.id === 'editAllowanceButton') {
+    const target = e.target as HTMLElement; // Cast e.target to HTMLElement
+    if (target.id === 'editAllowanceButton') {
       handleApproveClick()
       e.stopPropagation()
       return
@@ -224,7 +189,6 @@ const Token = ({ token, hoveredItem }: { token: BridgeToken; hoveredItem: string
         return 'not needed'
       }
       const allowance = await bridger.getAllowance(rpc, account)
-      console.log(allowance)
       if (allowance === null) {
         return 'not needed'
       }
