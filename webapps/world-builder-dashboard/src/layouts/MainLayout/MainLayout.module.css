@@ -162,3 +162,14 @@
   font-weight: 600;
   line-height: 20px; /* 142.857% */
 }
+
+
+.connectingWalletText {
+  color: var(--Base-White, #fff);
+  opacity: 0.7;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px; /* 142.857% */
+}

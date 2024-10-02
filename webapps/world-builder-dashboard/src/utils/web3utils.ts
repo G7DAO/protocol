@@ -48,8 +48,3 @@ export const formatBigNumber = (bigNumber: ethers.BigNumber, lengthLimit = 25, u
 
   return `${firstDigit}.${remainingDigits}e+${exponent}`
 }
-
-export const roundToDecimalPlaces = (num: number, decimalPlaces: number) => {
-  const factor = Math.pow(10, decimalPlaces);
-  return Math.round(num * factor) / factor;
-}

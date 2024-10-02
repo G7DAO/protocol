@@ -1,11 +1,11 @@
 .container {
   display: flex;
-  width: 759px;
-  max-width: 759px;
-  padding: 20px;
+  width: 660px;
+  max-width: 660px;
+  padding: var(--20px, 20px);
   flex-direction: column;
   align-items: flex-start;
-  gap: 20px;
+  gap: var(--20px, 20px);
 
   border-radius: 8px;
   border: 1px solid var(--Gray-200, #eaecf0);
@@ -205,6 +205,22 @@
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
 }
 
+.requestTokensButtonDisabled {
+  display: flex;
+  height: 36px;
+  padding: 8px var(--14px, 14px);
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  cursor: not-allowed;
+  border-radius: 8px;
+  background: var(--Gray-600, #475467);
+
+  /* Shadow/xs */
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  border: none;
+}
+
 .requestTokensButtonText {
   color: var(--Base-White, #fff);
 
@@ -250,6 +266,11 @@
 
 .address {
   color: var(--Gray-700, #344054);
+}
+
+.address:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 .hintBadge {
@@ -355,14 +376,40 @@
 
 @media (max-width: 1199px) {
   .container {
-    width: 100vw;
-    max-width: 100vw;
-    border: none;
-    border-top: 1px solid var(--Gray-200, #eaecf0);
-    border-bottom: 1px solid var(--Gray-200, #eaecf0);
+    display: flex;
+    padding: 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--20px, 20px);
+    align-self: stretch;
     border-radius: 8px;
     border: 1px solid var(--Gray-200, #eaecf0);
-    background: var(--Base-White, #fff);
-    border-radius: 8px;
+    background: var(--Gray-50, #f9fafb);
+    width: 100%;
+  }
+
+  .contentContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    align-self: stretch;
+  }
+
+  .addressSelectorContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    gap: 12px;
+    align-self: stretch;
+  }
+
+  .address {
+    display: flex;
+    padding: 8px 12px;
+    align-items: center;
+    gap: 8px;
+  align-self: stretch;
   }
 }

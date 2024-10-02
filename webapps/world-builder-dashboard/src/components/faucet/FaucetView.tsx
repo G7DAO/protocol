@@ -27,21 +27,20 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const [nextClaimTimestamp, setNextClaimTimestamp] = useState(0)
   const [networkError, setNetworkError] = useState('')
   const { faucetTargetChainId } = useUISettings()
-  const { refetchNewNotifications } = useBridgeNotificationsContext()
-  const [requesting, setRequesting] = useState<boolean>(false)
+  const { refetchNewNotifications } = useBridgeNotificationsContext()  
 
   const values = [
     {
       valueId: 0,
-      displayName: `External\u00A0Address`,
+      displayName: `External Address`,
       value: ''
     },
     {
       valueId: 1,
-      displayName: `Connected\u00A0Account`,
+      displayName: `Connected Account`,
       value: connectedAccount
     }
-  ];
+  ]
 
   useEffect(() => {
     const targetNetwork = ALL_NETWORKS.find((n) => n.chainId === faucetTargetChainId)
@@ -49,8 +48,13 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
       setSelectedNetwork(targetNetwork)
     }
 
-    if (selectedAccountType.valueId === 0) setAddress('')
-  }, [faucetTargetChainId, selectedAccountType])
+    if (selectedAccountType.valueId === 0 || !connectedAccount) setAddress('')
+    else setAddress(connectedAccount)
+  }, [faucetTargetChainId, selectedAccountType, connectedAccount])
+
+  useEffect(() => {
+    setNetworkError('')
+  }, [connectedAccount])
 
   const handleConnect = async () => {
     if (!connectedAccount) connectWallet()
@@ -60,23 +64,21 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
     if (selectedAccountType.valueId === 0 && !connectedAccount) setAddress('')
     else setAddress(selectedAccountType.value)
     setSelectedAccountType(selectedAccountType)
+    setNetworkError('')
   }
 
   const queryClient = useQueryClient()
   const claim = useMutation(
     async ({ address }: { isL2Target: boolean; address: string | undefined }) => {
-      setRequesting(true)
-
-      const res = await fetch(`https://api.game7.build/api/faucet/request/${address}`, {
+      const res = await fetch(`https://api.game7.build/faucet/request/${address}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-      });
+      })
       if (!res.ok) {
-        throw new Error(`Error: ${res.statusText}`);
+        throw new Error(`Error: ${res.statusText}`)
       }
-
       setNetworkError('')
       const type: 'CLAIM' | 'DEPOSIT' | 'WITHDRAWAL' = 'CLAIM'
       return {
@@ -90,7 +92,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
       }
     },
     {
-      onSuccess: (data: TransactionRecord | undefined, variables) => {
+      onSuccess: (data: TransactionRecord | undefined, { address }) => {
         try {
           const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
 
@@ -103,53 +105,57 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
         } catch (e) {
           console.log(e)
         }
-        queryClient.setQueryData(['nextFaucetClaimTimestamp', connectedAccount], (oldData: any) => {
-          const lastClaimTimestamp = Date.now() / 1000
-          if (!oldData) {
-            queryClient.refetchQueries(['nextFaucetClaimTimestamp'])
-            return oldData
+        const lastClaimTimestamp = Date.now() / 1000
+        const faucetInterval = faucetIntervalQuery.data ? Number(faucetIntervalQuery.data) : 0
+        const nextClaimL3Timestamp = lastClaimTimestamp + faucetInterval
+
+        const intervalL3 = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimL3Timestamp)
+        const isAvailableL3 = compareTimestampWithCurrentMoment(nextClaimL3Timestamp)
+
+        const updatedL3 = {
+          interval: intervalL3,
+          nextClaimTimestamp: nextClaimL3Timestamp,
+          isAvailable: isAvailableL3,
+        }
+        queryClient.setQueryData(['nextFaucetClaimTimestamp', address], (oldData: any) => {
+          if (oldData) {
+            return {
+              ...oldData,
+              L3: updatedL3, // Update the L3 data
+            }
           }
-
-          const nextClaimTimestamp = lastClaimTimestamp + oldData.faucetTimeInterval
-          const interval = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimTimestamp)
-          const isAvailable = false
-          const L2 = variables.isL2Target ? { nextClaimTimestamp, interval, isAvailable } : oldData.L2
-          const L3 = !variables.isL2Target ? { nextClaimTimestamp, interval, isAvailable } : oldData.L3
-
-          return { faucetTimeInterval: oldData.faucetTimeInterval, L2, L3 }
+          return { faucetTimeInterval: faucetInterval, L3: updatedL3 }
         })
+
+        queryClient.invalidateQueries(['nextFaucetClaimTimestamp', address])
         queryClient.refetchQueries('pendingTransactions')
         queryClient.refetchQueries(['notifications'])
         queryClient.refetchQueries(['nativeBalance'])
         queryClient.refetchQueries(['ERC20balance'])
-        setRequesting(false)
-        refetchNewNotifications(connectedAccount ?? '')
+        refetchNewNotifications(address ?? '')
       },
-      onError: (e: Error) => {
+      onError: (error) => {
         setNetworkError('Something went wrong')
-        setRequesting(false)
-        console.error('Request failed:', e)
-        console.log(e)
-      }
+        console.log(error)
+        console.error("Error requesting tokens:", error)
+      },
     }
   )
 
   function compareTimestampWithCurrentMoment(unixTimestamp: number): boolean {
-    const timestampInMillis = unixTimestamp * 1000 // Unix timestamp in milliseconds
-    const currentInMillis = Date.now() // Current time in milliseconds
+    const timestampInMillis = unixTimestamp * 1000
+    const currentInMillis = Date.now()
 
     return timestampInMillis <= currentInMillis
   }
 
-  const lastClaimedTimestampQuery = useFaucetTimestamp(address);
-  const faucetIntervalQuery = useFaucetInterval();
+  const lastClaimedTimestampQuery = useFaucetTimestamp(address)
+  const faucetIntervalQuery = useFaucetInterval()
 
   const nextClaimAvailable = useQuery(
     ['nextFaucetClaimTimestamp', address],
     async () => {
-
       const lastClaimedL3Timestamp = Number(lastClaimedTimestampQuery.data)
-
       const faucetTimeInterval = Number(faucetIntervalQuery.data)
       const nextClaimL3Timestamp = lastClaimedL3Timestamp + faucetTimeInterval
 
@@ -161,17 +167,13 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
     },
     {
       enabled: !!address &&
-        !lastClaimedTimestampQuery.isLoading &&
-        !faucetIntervalQuery.isLoading &&
-        !lastClaimedTimestampQuery.isError &&
-        !faucetIntervalQuery.isError
+        !!lastClaimedTimestampQuery.data &&
+        !!faucetIntervalQuery.data
     }
   )
 
   useEffect(() => {
-    if (!nextClaimAvailable.data) {
-      return
-    }
+    if (!nextClaimAvailable.data) return
     const intervalInfo = nextClaimAvailable.data.L3
     if (!intervalInfo.isAvailable) {
       setNextClaimTimestamp(intervalInfo.nextClaimTimestamp)
@@ -198,7 +200,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
       <div className={styles.header}>
         <div className={styles.title}>Testnet Faucet</div>
         <div className={styles.supportingText}>
-          Request and get <strong> 1{L3_NATIVE_TOKEN_SYMBOL} testnet token </strong> per day to your connected wallet or a another wallet address on G7 network.
+          Request and get <strong> 1{L3_NATIVE_TOKEN_SYMBOL} testnet token </strong> to your connected wallet or an external address on G7 network.
         </div>
       </div>
       <div className={styles.contentContainer}>
@@ -208,7 +210,8 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
             <input
               placeholder={ZERO_ADDRESS}
               className={styles.address}
-              value={selectedAccountType.valueId === 0 ? address : selectedAccountType.value}
+              value={address}
+              disabled={selectedAccountType.valueId === 1 || (!!connectedAccount && selectedAccountType.valueId === 1)}
               onChange={(e) => {
                 setAddress(e.target.value)
               }}
@@ -230,17 +233,27 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
               <div className={styles.label}>Account</div>
               <ValueSelector values={values} selectedValue={selectedAccountType} onChange={handleSelectAccountType} />
             </div>
-          )
+          )}
+        </div>
+        <button
+          className={
+            selectedNetwork.chainId === L3_NETWORK.chainId &&
+              nextClaimAvailable.data &&
+              !nextClaimAvailable.data.L3.isAvailable
+              ? styles.requestTokensButtonDisabled
+              : styles.requestTokensButton
           }
-
-        </div>
-        <div className={styles.requestTokensButton} onClick={() => {
-          claim.mutate({ isL2Target: chainId === 13746, address })
-        }}>
+          onClick={() => {
+            claim.mutate({ isL2Target: chainId === 13746, address })
+          }}
+          disabled={selectedNetwork.chainId === L3_NETWORK.chainId &&
+            nextClaimAvailable.data &&
+            !nextClaimAvailable.data.L3.isAvailable}
+        >
           <div className={styles.requestTokensButtonText}>
-            {requesting ? `Requesting...` : `Request Tokens`}
+            {claim.isLoading ? `Requesting...` : `Request Tokens`}
           </div>
-        </div>
+        </button>
       </div>
       {!!networkError && <div className={styles.errorContainer}>{networkError}.</div>}
       {!networkError && nextClaimAvailable.isLoading && (
