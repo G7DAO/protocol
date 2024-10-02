@@ -22,12 +22,12 @@
   "author": "mumintrl",
   "license": "MIT",
   "dependencies": {
-    "@arbitrum/sdk": "^4.0.1",
+    "patch-package": "^8.0.0",
+    "@arbitrum/sdk": "4.0.1",
     "ethers": "^5.7.2"
   },
   "devDependencies": {
     "@types/node": "^22.5.3",
-    "patch-package": "^8.0.0",
     "prettier": "^3.3.3",
     "typescript": "^5.5.4"
   }
