@@ -53,15 +53,15 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
 
     if (connectedAccount) {
       if (selectedAccountType.valueId !== 1 || selectedAccountType.value !== connectedAccount) {
-        setSelectedAccountType({ valueId: 1, displayName: 'Connected Account', value: connectedAccount });
+        setSelectedAccountType({ valueId: 1, displayName: 'Connected Account', value: connectedAccount })
       }
 
       if (address !== connectedAccount) {
-        setAddress(connectedAccount);
+        setAddress(connectedAccount)
       }
     } else if (selectedAccountType.valueId === 0 || !connectedAccount) {
       if (address !== '') {
-        setAddress('');
+        setAddress('')
       }
     }
   }, [faucetTargetChainId, connectedAccount])
@@ -140,7 +140,6 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
               L3: updatedL3, // Update the L3 data
             }
           }
-          console.log("New data", {faucetInterval, updatedL3})
           return { faucetTimeInterval: faucetInterval, L3: updatedL3 }
         })
 

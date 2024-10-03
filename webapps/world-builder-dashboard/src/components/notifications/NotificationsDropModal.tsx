@@ -33,15 +33,7 @@ const copy = (notification: BridgeNotification) => {
     }
     if (notification.type === 'CLAIM') {
       return (
-        <>
-          <a
-            href={`https://testnet.game7.io/tx/${notification.tx.lowNetworkHash}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            You requested {notification.amount} {L3_NATIVE_TOKEN_SYMBOL}
-          </a>
-        </>
+        `You requested ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL}`
       )
     }
     return `Your ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL} withdrawal is complete`
@@ -130,7 +122,11 @@ const iconCloseClassName = (status: string) => {
 
 export const FloatingNotification = ({ notifications }: { notifications: BridgeNotification[] }) => {
   const { setIsDropdownOpened } = useBridgeNotificationsContext()
-  const handleClick = () => {
+  const handleClick = (notification?: BridgeNotification) => {
+    if (notification?.type === 'CLAIM' && notification?.tx?.lowNetworkHash) {
+      const url = `https://testnet.game7.io/tx/${notification?.tx?.lowNetworkHash}`
+      window.open(url, '_blank')
+    }
     setIsDropdownOpened(true)
   }
   if (!notifications || notifications.length === 0) {
@@ -139,7 +135,7 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
 
   if (notifications.length > 1) {
     return (
-      <div onClick={handleClick} className={styles.toastMultiple}>
+      <div onClick={() => handleClick} className={styles.toastMultiple}>
         {`You have ${notifications.length} new notifications. Click here to view`}
         <IconCloseSmall className={styles.closeIconMultiple} />
       </div>
@@ -147,7 +143,7 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
   }
 
   return (
-    <div onClick={handleClick} className={toastClassName(notifications[0].status)}>
+    <div onClick={() => handleClick(notifications[0])} className={toastClassName(notifications[0].status)}>
       {copy(notifications[0])}
       <IconCloseSmall className={iconCloseClassName(notifications[0].status)} />
     </div>
