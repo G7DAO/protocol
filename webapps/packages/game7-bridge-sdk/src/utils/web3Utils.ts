@@ -27,3 +27,13 @@ export const getBlockTimeDifference = async (
   const blockDifference = targetBlockNumber - currentBlock;
   return blockDifference * blockTimeInterval * 1000;
 };
+
+
+export const getBlockETA = async (
+  blockNumber: ethers.BigNumber,
+  provider: ethers.providers.Provider,
+): Promise<number> => {
+  return Date.now() + await getBlockTimeDifference(blockNumber, provider);
+};
+
+
