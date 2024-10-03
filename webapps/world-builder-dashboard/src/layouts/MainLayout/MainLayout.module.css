@@ -52,12 +52,19 @@
   background: var(--Base-White, #fff);
 }
 
+.navBeginning {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1 0 0;
+}
+
 .navButton,
 .selectedNavButton {
   display: flex;
   padding: 8px 12px;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   align-self: stretch;
 
   border-radius: 6px;
