@@ -1,15 +1,14 @@
-import { ethers, BigNumber } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { networks } from './networks';
 import { UnsupportedNetworkError } from './errors';
 import { TransactionReceipt } from '@ethersproject/abstract-provider/src.ts';
 
 import { Provider } from '@ethersproject/abstract-provider';
-import { getBlockTimeDifference } from './utils/web3Utils';
-import {
-  ChildToParentMessageStatus,
-  ChildToParentMessageWriter,
-  ChildTransactionReceipt,
-} from '@arbitrum/sdk';
+import { getBlockETA, getBlockTimeDifference } from './utils/web3Utils';
+import { ChildToParentMessageStatus, ChildToParentMessageWriter, ChildTransactionReceipt } from '@arbitrum/sdk';
+import { L2GatewayRouterABI } from './abi/L2GatewayRouterABI';
+import { arbSysABI } from './abi/ArbSysABI';
+import { ERC20_ABI } from './abi/ERC20_ABI';
 
 export type SignerOrProviderOrRpc = ethers.Signer | ethers.providers.Provider | string;
 
@@ -41,6 +40,11 @@ export interface CreateBridgeTransferParams {
   txHash: string;
   originSignerOrProviderOrRpc: SignerOrProviderOrRpc;
   destinationSignerOrProviderOrRpc: SignerOrProviderOrRpc;
+}
+
+export interface BridgeTransferStatus {
+  status: ChildToParentMessageStatus;
+  ETA: number | undefined;
 }
 
 export class BridgeTransfer {
@@ -102,48 +106,20 @@ export class BridgeTransfer {
     this.explorerLink = `${originNetwork.explorerUrl}/tx/${txHash}`
   }
 
-  static async create(params: CreateBridgeTransferParams) {
-    const originProvider = getProvider(params.originSignerOrProviderOrRpc);
-    const destinationProvider = getProvider(params.destinationSignerOrProviderOrRpc);
+  public async getStatus(): Promise<BridgeTransferStatus> {
+    const originReceipt = await this.originProvider.getTransactionReceipt(this.txHash);
+    const childTransactionReceipt = new ChildTransactionReceipt(originReceipt);
 
-    const originNetworkChainId = (await originProvider.getNetwork()).chainId;
-    const destinationNetworkChainId = (await destinationProvider.getNetwork()).chainId;
-    const originReceipt = await originProvider.getTransactionReceipt(params.txHash);
-
-    const childReceipt = new ChildTransactionReceipt(originReceipt);
-
-    const messages: any = await childReceipt.getChildToParentMessages(destinationProvider);
+    const messages: any = await childTransactionReceipt.getChildToParentMessages(this.destinationProvider);
     const msg: any = messages[0];
-    const status: ChildToParentMessageStatus = await msg.status(originProvider);
+    const status: ChildToParentMessageStatus = await msg.status(this.originProvider);
+    const firstExecutableBlock = await msg.getFirstExecutableBlock(this.originProvider);
 
-    console.log(msg, status, childReceipt);
-    const msgTimestamp = new Date(msg.nitroReader.event.timestamp.toNumber() * 1000); // multiply by 1000 to convert seconds to milliseconds
-
-    const initReceipt = await originProvider.getTransactionReceipt(params.txHash);
-    const block = await originProvider.getBlock(initReceipt.blockNumber);
-    const ETAblock = await msg.getFirstExecutableBlock(originProvider);
-    if (ETAblock) {
-      const interval = await getBlockTimeDifference(ETAblock, destinationProvider);
-      console.log(interval);
-    }
-    console.log({ ETAblock });
-
-    const initTimestamp = new Date(block.timestamp * 1000);
-    console.log({ initTimestamp, msgTimestamp });
-    const receipts: BridgeReceipt[] = [
-      {
-        description: 'initiation',
-        receipt: initReceipt,
-      },
-    ];
-
-    return new BridgeTransfer({
-      originNetworkChainId,
-      destinationNetworkChainId,
-      receipts,
-      childReceipt,
-      childProvider: originProvider,
-    });
+    const ETA = await getBlockETA(firstExecutableBlock, this.destinationProvider);
+    return {
+      ETA,
+      status,
+    };
   }
 
   public async getTransactionInputs() {
