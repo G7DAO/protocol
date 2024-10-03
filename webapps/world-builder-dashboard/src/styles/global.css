@@ -96,7 +96,7 @@ button {
   --Error-700: #fbeae8;  /* Adjusted from #FEF3F2 */
   --Error-800: #aa2714;  /* New: Darker error shade */
 
-  --Gray-50: #101214;
+  --Gray-50: #0B0B0B;
   --Gray-100: #1a1c20;
   --Gray-200: #25282d;
   --Gray-300: #3b3f44;
@@ -109,7 +109,7 @@ button {
   --Primary-600: #ff5b72;
   --Primary-700: #ff4455;
 
-  --Base-White: #1a1a1a;  /* Black equivalent */
+  --Base-White: #0B0B0B;  /* Black equivalent */
 
   --Gray-blue-700: #232946;
   --Gray-blue-500: #394469;
@@ -132,7 +132,7 @@ button {
   --Indigo-50: #20264b;
   --Indigo-700: #bdc3ff;
 
-  --Gray-25: #181a1d;
+  --Gray-25: #171717;
   --Gray-900: #f1f1f1;
 
   --Switch-thumb-bg: #667085;
