@@ -135,7 +135,7 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
 
   if (notifications.length > 1) {
     return (
-      <div onClick={() => handleClick} className={styles.toastMultiple}>
+      <div onClick={() => handleClick()} className={styles.toastMultiple}>
         {`You have ${notifications.length} new notifications. Click here to view`}
         <IconCloseSmall className={styles.closeIconMultiple} />
       </div>

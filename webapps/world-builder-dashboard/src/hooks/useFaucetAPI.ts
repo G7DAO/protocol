@@ -20,7 +20,7 @@ export const useFaucetAPI = () => {
         return data.result;
       },
       {
-        enabled: isValidAddress,
+        enabled: !!address && isValidAddress,
         retry: false,
       }
     );
