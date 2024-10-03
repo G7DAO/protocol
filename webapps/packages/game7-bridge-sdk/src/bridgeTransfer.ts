@@ -46,14 +46,18 @@ export interface CreateBridgeTransferParams {
 export class BridgeTransfer {
   public readonly originNetworkChainId: number;
   public readonly destinationNetworkChainId: number;
-  // public readonly txHash: string;
+  public readonly txHash: string;
   public readonly isDeposit: boolean;
   public readonly receipts: BridgeReceipt[] = [];
   public readonly isCompleted: boolean = false;
   public readonly tokenSymbol: string = '';
+  public readonly originName: string;
+  public readonly destinationName: string;
   public readonly value: BigNumber = BigNumber.from(0);
-  private childReceipt: ChildTransactionReceipt | undefined;
-  private childProvider: Provider;
+  public readonly explorerLink: string;
+  private childTransactionReceipt: ChildTransactionReceipt | undefined;
+  private readonly originProvider: Provider;
+  private readonly destinationProvider: Provider;
 
   /**
    * Creates an instance of the `BridgeTransfer` class.
@@ -61,35 +65,41 @@ export class BridgeTransfer {
    * @param originNetworkChainId - The chain ID of the network where the transaction originates.
    * @param destinationNetworkChainId - The chain ID of the network where the transaction is heading.
    * @param txHash - The transaction hash of the bridge transaction.
+   * @param originSignerOrProviderOrRpc
+   * @param destinationSignerOrProviderOrRpc
    */
-  private constructor({
+  constructor({
+    txHash,
     destinationNetworkChainId,
     originNetworkChainId,
-    receipts,
-    childReceipt,
-    childProvider,
+                        originSignerOrProviderOrRpc,
+                        destinationSignerOrProviderOrRpc,
   }: {
+    txHash: string;
     destinationNetworkChainId: number;
     originNetworkChainId: number;
-    receipts: BridgeReceipt[];
-    childReceipt?: ChildTransactionReceipt;
-    childProvider: Provider;
+    originSignerOrProviderOrRpc?: SignerOrProviderOrRpc;
+    destinationSignerOrProviderOrRpc?: SignerOrProviderOrRpc;
   }) {
     this.originNetworkChainId = originNetworkChainId;
     this.destinationNetworkChainId = destinationNetworkChainId;
     const originNetwork = networks[originNetworkChainId];
     const destinationNetwork = networks[destinationNetworkChainId];
+    const originProvider = getProvider(originSignerOrProviderOrRpc ?? originNetwork.rpcs[0]);
+    const destinationProvider = getProvider(destinationSignerOrProviderOrRpc ?? destinationNetwork.rpcs[0]);
     if (!originNetwork) {
       throw new UnsupportedNetworkError(originNetworkChainId);
     }
     if (!destinationNetwork) {
       throw new UnsupportedNetworkError(destinationNetworkChainId);
     }
-
+    this.originName = originNetwork.name;
+    this.destinationName = destinationNetwork.name;
     this.isDeposit = originNetwork.chainId === destinationNetwork.parentChainId;
-    this.receipts = receipts;
-    this.childReceipt = childReceipt;
-    this.childProvider = childProvider;
+    this.originProvider = originProvider;
+    this.destinationProvider = destinationProvider;
+    this.txHash = txHash;
+    this.explorerLink = `${originNetwork.explorerUrl}/tx/${txHash}`
   }
 
   static async create(params: CreateBridgeTransferParams) {
@@ -137,14 +147,14 @@ export class BridgeTransfer {
   }
 
   public async execute(signer: ethers.Signer) {
-    if (!this.childReceipt) {
-      throw new Error('Child receipt not found');
+    if (!this.childTransactionReceipt) {
+      const originReceipt = await this.originProvider.getTransactionReceipt(this.txHash);
+      this.childTransactionReceipt = new ChildTransactionReceipt(originReceipt);
     }
     const messages: ChildToParentMessageWriter[] =
-      (await this.childReceipt.getChildToParentMessages(signer)) as ChildToParentMessageWriter[];
+      (await this.childTransactionReceipt.getChildToParentMessages(signer)) as ChildToParentMessageWriter[];
     const message = messages[0];
-    console.log('to execute');
-    const res = await message.execute(this.childProvider);
+    const res = await message.execute(this.originProvider);
     return await res.wait();
   }
 }
