@@ -44,6 +44,7 @@ export interface BridgeNetworkConfig {
   name: string;
   parentChainId?: number;
   explorerUrl?: string;
+  rpcs: string[];
   blockTime?: number;
   retryableLifetimeSeconds?: number;
   nitroGenesisBlock?: number;
@@ -67,9 +68,12 @@ export const networks: { [chainId: number]: BridgeNetworkConfig } = {
       rollup: '0xd80810638dbDF9081b72C1B33c65375e807281C8',
       sequencerInbox: '0x6c97864CE4bEf387dE0b3310A44230f7E3F1be0D',
     },
+    arbSys: '0x0000000000000000000000000000000000000064',
     isCustom: false,
     isTestnet: true,
     name: 'Arbitrum Rollup Sepolia Testnet',
+    explorerUrl: 'https://sepolia.arbiscan.io',
+    rpcs: ['https://sepolia-rollup.arbitrum.io/rpc'],
     nativeCurrency: {
       decimals: 18,
       name: 'ETH',
@@ -101,6 +105,7 @@ export const networks: { [chainId: number]: BridgeNetworkConfig } = {
     chainId: 11155111,
     name: 'Sepolia',
     explorerUrl: 'https://sepolia.etherscan.io',
+    rpcs: ['https://ethereum-sepolia-rpc.publicnode.com'],
     blockTime: 12,
     isCustom: false,
     isArbitrum: false,
@@ -121,10 +126,11 @@ export const networks: { [chainId: number]: BridgeNetworkConfig } = {
       sequencerInbox: '0xAe2caC32b0eF386Ab683459648eDFC78F7FF8F1e',
     },
     arbSys: '0x0000000000000000000000000000000000000064',
-    explorerUrl: 'https://explorer-game7-testnet-0ilneybprf.t.conduit.xyz',
+    explorerUrl: 'https://testnet.game7.io',
+    rpcs: ['https://testnet-rpc.game7.io'],
     isArbitrum: true,
     isCustom: true,
-    name: 'conduit-orbit-deployer',
+    name: 'Game7 Testnet',
     nativeCurrency: {
       decimals: 18,
       name: 'Testnet Game7 Token',
