@@ -126,7 +126,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
         const nextClaimL3Timestamp = lastClaimTimestamp + faucetInterval
 
         const intervalL3 = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimL3Timestamp)
-        const isAvailableL3 = compareTimestampWithCurrentMoment(nextClaimL3Timestamp)
+        const isAvailableL3 = false
 
         const updatedL3 = {
           interval: intervalL3,
@@ -140,10 +140,11 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
               L3: updatedL3, // Update the L3 data
             }
           }
+          console.log("New data", {faucetInterval, updatedL3})
           return { faucetTimeInterval: faucetInterval, L3: updatedL3 }
         })
 
-        queryClient.invalidateQueries(['nextFaucetClaimTimestamp', address])
+        queryClient.invalidateQueries(['faucetTimestamp', address])
         queryClient.refetchQueries('pendingTransactions')
         queryClient.refetchQueries(['notifications'])
         queryClient.refetchQueries(['nativeBalance'])
@@ -177,7 +178,6 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
 
       const intervalL3 = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimL3Timestamp)
       const isAvailableL3 = compareTimestampWithCurrentMoment(nextClaimL3Timestamp)
-
       const L3 = { interval: intervalL3, nextClaimTimestamp: nextClaimL3Timestamp, isAvailable: isAvailableL3 }
       return { faucetTimeInterval, L3 }
     },
