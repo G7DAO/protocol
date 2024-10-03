@@ -146,6 +146,41 @@ export class BridgeTransfer {
     });
   }
 
+  public async getTransactionInputs() {
+    const tx = await this.originProvider.getTransaction(this.txHash);
+    if (!tx) {
+      throw new Error('Transaction not found');
+    }
+
+    const isGasToken = tx.to === networks[this.originNetworkChainId]?.arbSys;
+    if (!isGasToken && tx.to !== networks[this.originNetworkChainId]?.tokenBridge?.childGatewayRouter) {
+      throw new Error("Can't decode inputs - unknown contract")
+    }
+    const contractInterface = new ethers.utils.Interface(isGasToken ? arbSysABI : L2GatewayRouterABI);
+
+    const decodedInputs =  contractInterface.parseTransaction({
+        data: tx.data,
+        value: tx.value,
+    });
+    const txDateTime = new Date(tx.timestamp * 1000);
+
+    let tokenSymbol = isGasToken ? networks[this.destinationNetworkChainId]?.nativeCurrency?.symbol : undefined;
+    if (!tokenSymbol) {
+      const tokenContract = new ethers.Contract(decodedInputs.args._l1Token, ERC20_ABI, this.destinationProvider);
+      tokenSymbol = await tokenContract.symbol();
+    }
+    const amount = isGasToken ? decodedInputs.value : decodedInputs.args._amount;
+
+    return {
+      txDateTime,
+      to: isGasToken ? decodedInputs.args.destination : decodedInputs.args._to,
+      amount,
+      tokenAddress: isGasToken ? ethers.constants.AddressZero : decodedInputs.args._l1Token,
+      tokenSymbol,
+      amountFormatted: ethers.utils.formatEther(amount)
+    }
+  }
+
   public async execute(signer: ethers.Signer) {
     if (!this.childTransactionReceipt) {
       const originReceipt = await this.originProvider.getTransactionReceipt(this.txHash);
