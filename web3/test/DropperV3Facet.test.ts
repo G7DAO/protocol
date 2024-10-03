@@ -5,7 +5,7 @@ import { loadFixture, time } from '@nomicfoundation/hardhat-network-helpers';
 import { deployDropperV3Contracts } from './fixture/dropperV3.fixture';
 import { dropperClaimMessageHash } from './helpers/utils/dropperV3Signer';
 import { TerminusFacet, DropperV3Facet, MockERC1155, MockERC20, MockERC721 } from '../typechain-types';
-import { ONE_DAY } from '../constants/time';
+
 
 
 
@@ -664,6 +664,7 @@ describe("DropperV3Facet", async function () {
             const requestID = 7;
             const blockDeadline = Math.floor(Date.now() / 1000) + 3600;
             const amount = 1;
+            const erc20Address = await mockERC20.getAddress();
 
             const { domain, types, message } = await dropperClaimMessageHash(
                 chainId,
@@ -675,10 +676,6 @@ describe("DropperV3Facet", async function () {
                 amount.toString()
             );
             const signature = await admin0.signTypedData(domain, types, message);
-
-            const erc20Address = await mockERC20.getAddress();
-
-            await dropperV3Facet.withdrawERC20(erc20Address, InitialTokenBalance);
 
             await expect(dropperV3Facet.connect(user1).claim(
                 dropId,

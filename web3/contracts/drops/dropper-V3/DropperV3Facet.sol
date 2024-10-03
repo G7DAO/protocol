@@ -48,13 +48,6 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
     event DropMaxTokensChanged(uint256 indexed dropId, uint256 maxNumberOfTokens);
     event DropURIChanged(uint256 indexed dropId, string uri);
     event DropAuthorizationChanged(uint256 indexed dropId, address terminusAddress, uint256 poolId);
-    event Withdrawal(
-        address recipient,
-        uint256 indexed tokenType,
-        address indexed tokenAddress,
-        uint256 indexed tokenId,
-        uint256 amount
-    );
 
     modifier onlyTerminusAdmin() {
         LibDropper.DropperStorage storage ds = LibDropper.dropperStorage();
@@ -187,6 +180,31 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         return LibDropper.dropperStorage().DropAuthorizations[dropId];
     }
 
+    function claimDataMessageHash(
+        uint256 dropId,
+        uint256 requestID,
+        address claimant,
+        uint256 blockDeadline,
+        uint256 amount,
+        bytes memory data
+    ) public view virtual returns (bytes32) {
+        bytes32 structHash = keccak256(
+            abi.encode(
+                keccak256(
+                    "ClaimPayload(uint256 dropId,uint256 requestID,address claimant,uint256 blockDeadline,uint256 amount, bytes data)"
+                ),
+                dropId,
+                requestID,
+                claimant,
+                blockDeadline,
+                amount,
+                data
+            )
+        );
+        bytes32 digest = LibSignatures._hashTypedDataV4(structHash);
+        return digest;
+    }
+
     function claimMessageHash(
         uint256 dropId,
         uint256 requestID,
@@ -210,18 +228,10 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         return digest;
     }
 
-    function _claim(
-        uint256 dropId,
-        uint256 requestID,
-        uint256 blockDeadline,
-        uint256 amount,
-        address recipient,
-        address signer,
-        bytes memory signature
-    ) internal virtual {
+    function _internalChecks(uint256 dropId, uint256 requestID, uint256 deadline, address signer) internal view {
         require(block.timestamp <= blockDeadline, "Dropper: _claim -- Block deadline exceeded.");
 
-        LibDropper.DropperStorage storage ds = LibDropper.dropperStorage();
+        LibDropper.DropperStorage memory ds = LibDropper.dropperStorage();
 
         ITerminus authorizationTerminus = ITerminus(ds.DropAuthorizations[dropId].terminusAddress);
         require(
@@ -235,13 +245,34 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
             !ds.DropRequestClaimed[dropId][requestID],
             "Dropper: _claim -- That (dropID, requestID) pair has already been claimed"
         );
+    }
 
-        bytes32 hash = claimMessageHash(dropId, requestID, recipient, blockDeadline, amount);
-        require(
-            SignatureChecker.isValidSignatureNow(signer, hash, signature),
-            "Dropper: _claim -- Invalid signature for claim."
-        );
+    function _claim(
+        uint256 dropId,
+        uint256 requestID,
+        uint256 blockDeadline,
+        uint256 amount,
+        address recipient,
+        address signer,
+        bytes memory data,
+        bytes memory signature
+    ) internal virtual {
+        _internalChecks(dropId, requestID, blockDeadline, signer);
+        if (data == "") {
+            bytes32 hash = claimMessageHash(dropId, requestID, recipient, blockDeadline, amount);
+            require(
+                SignatureChecker.isValidSignatureNow(signer, hash, signature),
+                "Dropper: _claim -- Invalid signature for claim."
+            );
+        } else {
+            bytes32 hash = claimDataMessageHash(dropId, requestID, recipient, blockDeadline, amount, data);
+            require(
+                SignatureChecker.isValidSignatureNow(signer, hash, signature),
+                "Dropper: _claim -- Invalid signature for claim."
+            );
+        }
 
+        LibDropper.DropperStorage storage ds = LibDropper.dropperStorage();
         DroppableToken memory claimToken = ds.DropToken[dropId];
 
         // ERC721 drop type passes the token id as the amount. There should be no default token id.
@@ -356,30 +387,6 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
 
     function claimStatus(uint256 dropId, uint256 requestId) external view returns (bool) {
         return LibDropper.dropperStorage().DropRequestClaimed[dropId][requestId];
-    }
-
-    function withdrawERC20(address tokenAddress, uint256 amount) public onlyTerminusAdmin {
-        IERC20 erc20Contract = IERC20(tokenAddress);
-        erc20Contract.transfer(msg.sender, amount);
-        emit Withdrawal(msg.sender, TokenType.erc20_type(), tokenAddress, 0, amount);
-    }
-
-    function withdrawERC721(address tokenAddress, uint256 tokenId) public onlyTerminusAdmin {
-        IERC721 erc721Contract = IERC721(tokenAddress);
-        erc721Contract.safeTransferFrom(address(this), msg.sender, tokenId, "");
-        emit Withdrawal(msg.sender, TokenType.erc721_type(), tokenAddress, tokenId, 1);
-    }
-
-    function withdrawNativeToken(uint256 amount) public onlyTerminusAdmin {
-        (bool sent, ) = payable(msg.sender).call{ value: amount }("");
-        require(sent, "Failed to send Native Token");
-        emit Withdrawal(msg.sender, TokenType.native_token_type(), address(0), 0, amount);
-    }
-
-    function withdrawERC1155(address tokenAddress, uint256 tokenId, uint256 amount) public onlyTerminusAdmin {
-        IERC1155 erc1155Contract = IERC1155(tokenAddress);
-        erc1155Contract.safeTransferFrom(address(this), msg.sender, tokenId, amount, "");
-        emit Withdrawal(msg.sender, TokenType.erc1155_type(), tokenAddress, tokenId, amount);
     }
 
     function surrenderPoolControl(
