@@ -18,6 +18,7 @@ import { useMediaQuery } from 'summon-ui/mantine'
 import { ethers } from 'ethers'
 
 interface FaucetViewProps { }
+export type AccountType = 'External Address' | 'Connected Account'
 const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const [address, setAddress] = useState<string | undefined>('')
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false)
@@ -27,22 +28,20 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const [animatedInterval, setAnimatedInterval] = useState('')
   const [nextClaimTimestamp, setNextClaimTimestamp] = useState(0)
   const [networkError, setNetworkError] = useState('')
-  const [selectedAccountType, setSelectedAccountType] = useState<ValueSelect>({ valueId: 1, displayName: 'Connected Account', value: connectedAccount })
+  const [selectedAccountType, setSelectedAccountType] = useState<AccountType>('Connected Account')
 
   const { faucetTargetChainId } = useUISettings()
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
-  
-  const values = [
+
+  const values: ValueSelect[] = [
     {
       valueId: 0,
       displayName: `External Address`,
-      value: ''
     },
     {
       valueId: 1,
       displayName: `Connected Account`,
-      value: connectedAccount
     }
   ]
 
@@ -53,14 +52,14 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
     }
 
     if (connectedAccount) {
-      if (selectedAccountType.valueId !== 1 || selectedAccountType.value !== connectedAccount) {
-        setSelectedAccountType({ valueId: 1, displayName: 'Connected Account', value: connectedAccount })
+      if (selectedAccountType === "External Address") {
+        setSelectedAccountType('Connected Account')
       }
 
       if (address !== connectedAccount) {
         setAddress(connectedAccount)
       }
-    } else if (selectedAccountType.valueId === 0 || !connectedAccount) {
+    } else if (selectedAccountType === "External Address" || !connectedAccount) {
       if (address !== '') {
         setAddress('')
       }
@@ -75,9 +74,9 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
     if (!connectedAccount) connectWallet()
   }
 
-  const handleSelectAccountType = (selectedAccountType: ValueSelect) => {
-    if (selectedAccountType.valueId === 0 && !connectedAccount) setAddress('')
-    else setAddress(selectedAccountType.value)
+  const handleSelectAccountType = (selectedAccountType: AccountType) => {
+    if (selectedAccountType === "External Address") setAddress('')
+    else setAddress(connectedAccount)
     setSelectedAccountType(selectedAccountType)
     setNetworkError('')
   }
@@ -104,7 +103,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
         lowNetworkChainId: FAUCET_CHAIN.chainId,
         lowNetworkTimestamp: Date.now() / 1000,
         completionTimestamp: Date.now() / 1000,
-        lowNetworkHash: data.result,
+        highNetworkHash: data.result,
         newTransaction: true
       }
     },
@@ -227,7 +226,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
               placeholder='Wallet address'
               className={styles.address}
               value={address}
-              disabled={!!connectedAccount && selectedAccountType.valueId === 1}
+              disabled={!!connectedAccount && selectedAccountType === "Connected Account"}
               onChange={(e) => {
                 setAddress(e.target.value)
                 if (ethers.utils.isAddress(e.target.value)) setIsValidAddress(true)
@@ -255,7 +254,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
           ) : (
             <div className={styles.selectorContainer}>
               <div className={styles.label}>Account</div>
-              <ValueSelector values={values} selectedValue={selectedAccountType} onChange={handleSelectAccountType} />
+              <ValueSelector values={values} selectedValue={values.find(value => selectedAccountType === value.displayName)!} onChange={handleSelectAccountType} />
             </div>
           )}
         </div>
@@ -263,7 +262,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
           className={
             (selectedNetwork.chainId === L3_NETWORK.chainId &&
               nextClaimAvailable.data &&
-              !nextClaimAvailable.data.L3.isAvailable) || (!isValidAddress && selectedAccountType.valueId === 0)
+              !nextClaimAvailable.data.L3.isAvailable) || (!isValidAddress && selectedAccountType === "External Address")
               ? styles.requestTokensButtonDisabled
               : styles.requestTokensButton
           }
@@ -272,7 +271,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
           }}
           disabled={(selectedNetwork.chainId === L3_NETWORK.chainId &&
             nextClaimAvailable.data &&
-            !nextClaimAvailable.data.L3.isAvailable) || !isValidAddress}
+            !nextClaimAvailable.data.L3.isAvailable) || (!isValidAddress && selectedAccountType === "External Address")}
         >
           <div className={styles.requestTokensButtonText}>
             {claim.isLoading ? `Requesting...` : `Request Tokens`}

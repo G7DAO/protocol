@@ -123,8 +123,8 @@ const iconCloseClassName = (status: string) => {
 export const FloatingNotification = ({ notifications }: { notifications: BridgeNotification[] }) => {
   const { setIsDropdownOpened } = useBridgeNotificationsContext()
   const handleClick = (notification?: BridgeNotification) => {
-    if (notification?.type === 'CLAIM' && notification?.tx?.lowNetworkHash) {
-      const url = `https://testnet.game7.io/tx/${notification?.tx?.lowNetworkHash}`
+    if (notification?.type === 'CLAIM') {
+      const url = getTransactionUrl(notification)
       window.open(url, '_blank')
     }
     setIsDropdownOpened(true)
@@ -163,8 +163,8 @@ const getTransactionUrl = (notification: BridgeNotification): string | undefined
       txHash = status === 'COMPLETED' ? tx.lowNetworkHash : tx.highNetworkHash
       break
     case 'CLAIM':
-      chainId = tx.lowNetworkChainId
-      txHash = tx.lowNetworkHash
+      chainId = tx.highNetworkChainId
+      txHash = tx.highNetworkHash
       break
     default:
   }

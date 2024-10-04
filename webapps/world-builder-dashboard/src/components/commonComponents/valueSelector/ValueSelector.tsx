@@ -2,17 +2,17 @@ import styles from './ValueSelector.module.css'
 import { Combobox, Group, InputBase, InputBaseProps, useCombobox } from 'summon-ui/mantine'
 import IconCheck from '@/assets/IconCheck'
 import IconChevronDownSelector from '@/assets/IconChevronDownSelector'
+import { AccountType } from '@/components/faucet/FaucetView'
 
 export interface ValueSelect {
   valueId: number,
-  displayName: string,
-  value: string | undefined
+  displayName: AccountType
 }
 
 type ValueSelectorProps = {
   values: ValueSelect[]
-  selectedValue: ValueSelect
-  onChange: (value: ValueSelect) => void
+  selectedValue: ValueSelect 
+  onChange: (value: AccountType) => void
 } & InputBaseProps
 
 const ValueSelector = ({ values, onChange, selectedValue }: ValueSelectorProps) => {
@@ -25,7 +25,7 @@ const ValueSelector = ({ values, onChange, selectedValue }: ValueSelectorProps) 
       store={combobox}
       variant='unstyled'
       onOptionSubmit={(val: string) => {
-        const newSelection = values.find((n) => String(n.valueId) === val)
+        const newSelection = values.find((n) => String(n.valueId) === val)?.displayName
         if (newSelection) {
           onChange(newSelection)
         }
