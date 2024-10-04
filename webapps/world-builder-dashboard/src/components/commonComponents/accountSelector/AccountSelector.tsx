@@ -1,21 +1,17 @@
-import styles from './ValueSelector.module.css'
+import styles from './AccountSelector.module.css'
 import { Combobox, Group, InputBase, InputBaseProps, useCombobox } from 'summon-ui/mantine'
 import IconCheck from '@/assets/IconCheck'
 import IconChevronDownSelector from '@/assets/IconChevronDownSelector'
 
-export interface ValueSelect {
-  valueId: number,
-  displayName: string,
-  value: string | undefined
-}
+export type AccountType = 'External Address' | 'Connected Account'
 
-type ValueSelectorProps = {
-  values: ValueSelect[]
-  selectedValue: ValueSelect
-  onChange: (value: ValueSelect) => void
+type AccountSelectorProps = {
+  values: AccountType[]
+  selectedValue: AccountType 
+  onChange: (value: AccountType) => void
 } & InputBaseProps
 
-const ValueSelector = ({ values, onChange, selectedValue }: ValueSelectorProps) => {
+const AccountSelector = ({ values, onChange, selectedValue }: AccountSelectorProps) => {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption()
   })
@@ -25,7 +21,7 @@ const ValueSelector = ({ values, onChange, selectedValue }: ValueSelectorProps) 
       store={combobox}
       variant='unstyled'
       onOptionSubmit={(val: string) => {
-        const newSelection = values.find((n) => String(n.valueId) === val)
+        const newSelection = values.find((n) => String(n) === val)
         if (newSelection) {
           onChange(newSelection)
         }
@@ -43,29 +39,29 @@ const ValueSelector = ({ values, onChange, selectedValue }: ValueSelectorProps) 
           rightSectionPointerEvents='none'
           onClick={() => combobox.toggleDropdown()}
         >
-          <span className={styles.inputBaseNetworkName}>{selectedValue.displayName}</span>
+          <span className={styles.inputBaseNetworkName}>{selectedValue}</span>
         </InputBase>
       </Combobox.Target>
       <Combobox.Dropdown className='!bg-dark-900 !rounded-md !border-dark-700'>
         <Combobox.Options>
           {values
             .sort((a, b) => {
-              if (a.valueId === selectedValue.valueId) return 1
-              if (b.valueId === selectedValue.valueId) return -1
+              if (a === selectedValue) return 1
+              if (b === selectedValue) return -1
               return 0
             })
             .map((n) => (
-              <Combobox.Option value={String(n.valueId)} key={n.valueId}>
+              <Combobox.Option value={n} key={n}>
                 <Group>
                   <div
                     className={
-                      n.valueId === selectedValue.valueId ? styles.optionContainerSelected : styles.optionContainer
+                      n === selectedValue ? styles.optionContainerSelected : styles.optionContainer
                     }
                   >
                     <div className={styles.optionLeftSection}>
-                      {n.displayName}
+                      {n}
                     </div>
-                    {n.valueId === selectedValue.valueId && <IconCheck />}
+                    {n === selectedValue && <IconCheck />}
                   </div>
                 </Group>
               </Combobox.Option>
@@ -75,4 +71,4 @@ const ValueSelector = ({ values, onChange, selectedValue }: ValueSelectorProps) 
     </Combobox>
   )
 }
-export default ValueSelector
+export default AccountSelector
