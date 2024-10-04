@@ -13,13 +13,14 @@ import { useUISettings } from '@/contexts/UISettingsContext'
 import { useFaucetAPI } from '@/hooks/useFaucetAPI'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { timeDifferenceInHoursAndMinutes, timeDifferenceInHoursMinutesAndSeconds } from '@/utils/timeFormat'
-import { ZERO_ADDRESS } from '@/utils/web3utils'
 import ValueSelector, { ValueSelect } from '../commonComponents/valueSelector/ValueSelector'
 import { useMediaQuery } from 'summon-ui/mantine'
+import { ethers } from 'ethers'
 
 interface FaucetViewProps { }
 const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const [address, setAddress] = useState<string | undefined>('')
+  const [isValidAddress, setIsValidAddress] = useState<boolean>(false)
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L3_NETWORK)
   const { useFaucetInterval, useFaucetTimestamp } = useFaucetAPI()
   const { connectedAccount, connectWallet, chainId } = useBlockchainContext()
@@ -31,7 +32,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const { faucetTargetChainId } = useUISettings()
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
-
+  
   const values = [
     {
       valueId: 0,
@@ -223,12 +224,14 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
           <div className={styles.addressContainer}>
             <div className={styles.label}>Recipient Address</div>
             <input
-              placeholder={ZERO_ADDRESS}
+              placeholder='Wallet address'
               className={styles.address}
               value={address}
               disabled={!!connectedAccount && selectedAccountType.valueId === 1}
               onChange={(e) => {
                 setAddress(e.target.value)
+                if (ethers.utils.isAddress(e.target.value)) setIsValidAddress(true)
+                else setIsValidAddress(false)
               }}
             />
           </div>
@@ -238,7 +241,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
                 {smallView ? (
                   <>
                     <div className={styles.bar} />
-                      <span>Or</span>
+                    <span>Or</span>
                     <div className={styles.bar} />
                   </>
                 ) : 'Or'}
@@ -258,18 +261,18 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
         </div>
         <button
           className={
-            selectedNetwork.chainId === L3_NETWORK.chainId &&
+            (selectedNetwork.chainId === L3_NETWORK.chainId &&
               nextClaimAvailable.data &&
-              !nextClaimAvailable.data.L3.isAvailable
+              !nextClaimAvailable.data.L3.isAvailable) || (!isValidAddress && selectedAccountType.valueId === 0)
               ? styles.requestTokensButtonDisabled
               : styles.requestTokensButton
           }
           onClick={() => {
             claim.mutate({ isL2Target: chainId === 13746, address })
           }}
-          disabled={selectedNetwork.chainId === L3_NETWORK.chainId &&
+          disabled={(selectedNetwork.chainId === L3_NETWORK.chainId &&
             nextClaimAvailable.data &&
-            !nextClaimAvailable.data.L3.isAvailable}
+            !nextClaimAvailable.data.L3.isAvailable) || !isValidAddress}
         >
           <div className={styles.requestTokensButtonText}>
             {claim.isLoading ? `Requesting...` : `Request Tokens`}
