@@ -122,11 +122,7 @@ const iconCloseClassName = (status: string) => {
 
 export const FloatingNotification = ({ notifications }: { notifications: BridgeNotification[] }) => {
   const { setIsDropdownOpened } = useBridgeNotificationsContext()
-  const handleClick = (notification?: BridgeNotification) => {
-    if (notification?.type === 'CLAIM') {
-      const url = getTransactionUrl(notification)
-      window.open(url, '_blank')
-    }
+  const handleClick = () => {
     setIsDropdownOpened(true)
   }
   if (!notifications || notifications.length === 0) {
@@ -135,7 +131,7 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
 
   if (notifications.length > 1) {
     return (
-      <div onClick={() => handleClick()} className={styles.toastMultiple}>
+      <div onClick={handleClick} className={styles.toastMultiple}>
         {`You have ${notifications.length} new notifications. Click here to view`}
         <IconCloseSmall className={styles.closeIconMultiple} />
       </div>
@@ -143,7 +139,7 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
   }
 
   return (
-    <div onClick={() => handleClick(notifications[0])} className={toastClassName(notifications[0].status)}>
+    <div onClick={handleClick} className={toastClassName(notifications[0].status)}>
       {copy(notifications[0])}
       <IconCloseSmall className={iconCloseClassName(notifications[0].status)} />
     </div>

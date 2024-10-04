@@ -13,12 +13,12 @@ import { useUISettings } from '@/contexts/UISettingsContext'
 import { useFaucetAPI } from '@/hooks/useFaucetAPI'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { timeDifferenceInHoursAndMinutes, timeDifferenceInHoursMinutesAndSeconds } from '@/utils/timeFormat'
-import ValueSelector, { ValueSelect } from '../commonComponents/valueSelector/ValueSelector'
+import  { AccountType } from '../commonComponents/accountSelector/AccountSelector'
 import { useMediaQuery } from 'summon-ui/mantine'
 import { ethers } from 'ethers'
+import AccountSelector from '../commonComponents/accountSelector/AccountSelector'
 
 interface FaucetViewProps { }
-export type AccountType = 'External Address' | 'Connected Account'
 const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const [address, setAddress] = useState<string | undefined>('')
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false)
@@ -34,15 +34,9 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
 
-  const values: ValueSelect[] = [
-    {
-      valueId: 0,
-      displayName: `External Address`,
-    },
-    {
-      valueId: 1,
-      displayName: `Connected Account`,
-    }
+  const values: AccountType[] = [
+    `External Address`,
+    `Connected Account`,
   ]
 
   useEffect(() => {
@@ -254,7 +248,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
           ) : (
             <div className={styles.selectorContainer}>
               <div className={styles.label}>Account</div>
-              <ValueSelector values={values} selectedValue={values.find(value => selectedAccountType === value.displayName)!} onChange={handleSelectAccountType} />
+              <AccountSelector values={values} selectedValue={values.find(value => selectedAccountType === value)!} onChange={handleSelectAccountType} />
             </div>
           )}
         </div>
