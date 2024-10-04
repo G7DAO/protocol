@@ -5,7 +5,12 @@ import { TransactionReceipt } from '@ethersproject/abstract-provider/src.ts';
 
 import { Provider } from '@ethersproject/abstract-provider';
 import { getBlockETA, getBlockTimeDifference } from './utils/web3Utils';
-import { ChildToParentMessageStatus, ChildToParentMessageWriter, ChildTransactionReceipt } from '@arbitrum/sdk';
+import {
+  ChildToParentMessageStatus,
+  ChildToParentMessageWriter,
+  ChildTransactionReceipt, ParentContractCallTransactionReceipt,
+  ParentTransactionReceipt,
+} from '@arbitrum/sdk';
 import { L2GatewayRouterABI } from './abi/L2GatewayRouterABI';
 import { arbSysABI } from './abi/ArbSysABI';
 import { ERC20_ABI } from './abi/ERC20_ABI';
@@ -73,12 +78,12 @@ export class BridgeTransfer {
    * @param destinationSignerOrProviderOrRpc
    */
   constructor({
-    txHash,
-    destinationNetworkChainId,
-    originNetworkChainId,
-                        originSignerOrProviderOrRpc,
-                        destinationSignerOrProviderOrRpc,
-  }: {
+                txHash,
+                destinationNetworkChainId,
+                originNetworkChainId,
+                originSignerOrProviderOrRpc,
+                destinationSignerOrProviderOrRpc,
+              }: {
     txHash: string;
     destinationNetworkChainId: number;
     originNetworkChainId: number;
@@ -134,11 +139,12 @@ export class BridgeTransfer {
     }
     const contractInterface = new ethers.utils.Interface(isGasToken ? arbSysABI : L2GatewayRouterABI);
 
-    const decodedInputs =  contractInterface.parseTransaction({
-        data: tx.data,
-        value: tx.value,
+    const decodedInputs = contractInterface.parseTransaction({
+      data: tx.data,
+      value: tx.value,
     });
-    const txDateTime = new Date(tx.timestamp * 1000);
+    const timestamp = tx.timestamp ?? 0;
+    const txDateTime = new Date(timestamp * 1000);
 
     let tokenSymbol = isGasToken ? networks[this.destinationNetworkChainId]?.nativeCurrency?.symbol : undefined;
     if (!tokenSymbol) {
@@ -168,4 +174,43 @@ export class BridgeTransfer {
     const res = await message.execute(this.originProvider);
     return await res.wait();
   }
+
+
+  public async getDepositStatus() {
+    console.log(this.txHash)
+    let receipt
+    try {
+      receipt = await this.originProvider.getTransactionReceipt(this.txHash)
+    } catch (e) {
+      console.log(e)
+    }
+
+    if (!receipt) {
+      return
+    }
+    console.log('!!receipt')
+    const parentTransactionReceipt = new ParentTransactionReceipt(receipt)
+    const parentContractCallReceipt = new ParentContractCallTransactionReceipt(parentTransactionReceipt)
+
+    let childResult
+    try {
+      childResult = await parentContractCallReceipt.waitForChildTransactionReceipt(this.destinationProvider, 3, 1000)
+    } catch (e) {
+      console.log(e)
+    }
+    console.log("!!childResult")
+    if (!childResult) {
+      return
+    }
+    const retryableCreationReceipt = await childResult.message.getRetryableCreationReceipt()
+    let highNetworkTimestamp
+    if (retryableCreationReceipt) {
+      const block = await this.destinationProvider.getBlock(retryableCreationReceipt.blockNumber)
+      highNetworkTimestamp = block.timestamp
+    }
+    return {
+      childResult, retryableCreationReceipt
+    }
+  }
+
 }
