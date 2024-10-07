@@ -66,7 +66,8 @@ button {
   --Switch-thumb-bg: #fff;
   --Switch-off-track-bg: #f2f4f7;
   --Selected-Tab: #ef233b;
-  --Selected-Tab-Text: #FFF; 
+  --Selected-Tab-Text: #FFF;
+  --Grid-Node: #dbe1e9;
 }
 
 [data-theme='dark'] {
@@ -146,4 +147,5 @@ button {
 
   --Selected-Tab: #FEF3F2;
   --Selected-Tab-Text: #F04438;
+  --Grid-Node: #727272;
 }
