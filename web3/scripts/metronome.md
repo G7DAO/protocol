@@ -7,7 +7,7 @@
 - [ ] `export BOUNTY=1`
 - [ ] `export REMAINDER=0`
 - [ ] `export DIVISOR=1`
-- [ ] `export VALUE=10000`
+- [ ] `export VALUE=100000000`
 
 ## Deployment
 
@@ -41,16 +41,4 @@ bin/game7 metronome schedules-balances \
     --rpc $RPC \
     --arg-0 $ARG \
     --block $LASTBLOCK
-```
-
-```bash
-
-cd web3
-
-while true; do
-    echo "Running the bot..."
-    node bot/metronomeBotTestNet.js
-    echo "Waiting for 10 seconds..."
-    sleep 10
-done
 ```
