@@ -48,7 +48,7 @@ button {
   --Gray-blue-50: #f8f9fc;
   --Base-Brand: #ef233c;
   --Gray-500: #667085;
-  --Primary-25: #2a1e20;
+  --Primary-25: #fff;
   --Primary-50: #ffebef;
   --Primary-100: #ffccd5;
   --Primary-200: #fff;
@@ -70,6 +70,12 @@ button {
   --Selected-Tab-Text: #FFF;
   --Grid-Node: #dbe1e9;
   --Arrow-Up: #026AA2;
+  --Selected-Theme: #F9FAFB;
+  --Theme-Container: #fff;
+  --Selected-Theme-Icon: #667085;
+  --Theme-Icon: #667085;
+  --Selected-Theme-Text: #101828;
+  --Theme-Text: #475467;
 }
 
 [data-theme='dark'] {
@@ -152,4 +158,10 @@ button {
   --Selected-Tab-Text: #F04438;
   --Grid-Node: #727272;
   --Arrow-Up: #F0F9FF;
+  --Theme-Container: #171717;
+  --Selected-Theme: #393939;
+  --Theme-Text: #D5D5D5;
+  --Selected-Theme-Text: #FFFFFF;
+  --Theme-Icon: #B9B9B9;
+  --Selected-Theme-Icon: #FFFFFF;
 }

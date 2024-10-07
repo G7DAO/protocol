@@ -185,7 +185,7 @@
   gap: 4px;
   align-self: stretch;
   border-radius: 8px;
-  background: #171717;
+  background: var(--Theme-Container, #fff);
 }
 
 .themeButton {
@@ -197,14 +197,12 @@
   gap: 8px;
   flex: 1 0 0;
   border-radius: 6px;
-  color: #d5d5d5;
-
-  /* Text sm/Semibold */
+  color: var(--Theme-Text, #fff);
   font-family: Inter;
   font-size: 14px;
   font-style: normal;
   font-weight: 600;
-  line-height: 20px; /* 142.857% */
+  line-height: 20px;
 }
 
 .selectedThemeButton {
@@ -216,17 +214,23 @@
   gap: 8px;
   flex: 1 0 0;
   border-radius: 6px;
-  background: #393939;
-  color: #fff;
+  background: var(--Selected-Theme, #fff);
+  color: var(--Selected-Theme-Text, #fff);
   font-family: Inter;
   font-size: 14px;
   font-style: normal;
   font-weight: 600;
-  line-height: 20px; /* 142.857% */
+  line-height: 20px;
 }
 
 .themeIcon {
   width: var(--20px, 20px);
   height: var(--20px, 20px);
-  stroke: #fff;
+  stroke: var(--Theme-Icon, #fff);
+}
+
+.selectedThemeIcon {
+  width: var(--20px, 20px);
+  height: var(--20px, 20px);
+  stroke: var(--Selected-Theme-Icon, #fff);
 }
