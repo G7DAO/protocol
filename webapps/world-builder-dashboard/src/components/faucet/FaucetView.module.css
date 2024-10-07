@@ -174,12 +174,12 @@
   align-items: center;
   gap: 8px;
   border-radius: 8px;
-  border: 1px solid var(--Primary-50, #ffebef);
-  background: var(--Error-300, #ffebef);
+  border: 1px solid var(--Connect-Wallet-Button-Faucet, #ffebef);
+  background: var(--Connect-Wallet-Button-Faucet, #ffebef);
 }
 
 .connectWalletText {
-  color: var(--Error-800, #dd1534);
+  color: var( --Connect-Wallet-Text-Faucet, #dd1534);
 
   /* Text sm/Semibold */
   font-family: Inter;
