@@ -222,7 +222,7 @@
 }
 
 .requestTokensButtonText {
-  color: var(--Base-White, #fff);
+  color: var(--Primary-200, #fff);
 
   /* Text sm/Semibold */
   font-family: Inter;

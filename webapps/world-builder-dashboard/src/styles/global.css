@@ -40,6 +40,7 @@ button {
   --Primary-600: #ef233b;
   --Primary-700: #dd1534;
   --Base-White: #fff;
+  --Base-Container: #fff;
   --Gray-blue-700: #363f72;
   --Gray-blue-500: #4e5ba6;
   --Gray-blue-300: #b3b8db;
@@ -49,7 +50,8 @@ button {
   --Primary-25: #fffafb;
   --Primary-50: #ffebef;
   --Primary-100: #ffccd5;
-  --Primary-200: #fff --Purple-50: #f4f3ff;
+  --Primary-200: #fff;
+  --Purple-50: #f4f3ff;
   --Purple-100: #ebe9fe;
   --Purple-200: #d9d6fe;
   --Purple-700: #5925dc;
@@ -110,7 +112,8 @@ button {
   --Primary-600: #ef233b;
   --Primary-700: #ff4455;
 
-  --Base-White: #0b0b0b; /* Black equivalent */
+  --Base-White: #0b0b0b;
+  --Base-Container: #171717;
   --Primary-200: #fff;
   --Gray-blue-700: #232946;
   --Gray-blue-500: #394469;
