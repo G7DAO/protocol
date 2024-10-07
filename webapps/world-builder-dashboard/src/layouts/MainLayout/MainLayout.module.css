@@ -68,7 +68,7 @@
   align-self: stretch;
 
   border-radius: 6px;
-  background: var(--Gray-50, #f9fafb);
+  background: var(--Gray-60, #f9fafb);
   color: var(--Gray-900, #101828);
 
   /* Text md/Semibold */
@@ -155,7 +155,7 @@
 }
 
 .connectWalletText {
-  color: var(--Base-White, #fff);
+  color: var(--Primary-200, #fff);
   font-family: Inter;
   font-size: 14px;
   font-style: normal;
@@ -172,4 +172,8 @@
   font-style: normal;
   font-weight: 600;
   line-height: 20px; /* 142.857% */
+}
+
+.icon {
+  stroke: var(--Gray-500, #fff);
 }

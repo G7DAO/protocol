@@ -19,7 +19,7 @@
 }
 
 .buttonLabel, .buttonLabelLoading {
-  color: var(--Base-White, #ffffff);
+  color: var(--Primary-200, #ffffff);
 
   /* Text sm/Semibold */
 

@@ -179,7 +179,7 @@
 }
 
 .connectWalletText {
-  color: var(--Primary-700, #dd1534);
+  color: var(--Primary-200, #dd1534);
 
   /* Text sm/Semibold */
   font-family: Inter;
