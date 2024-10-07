@@ -21,7 +21,7 @@
 .divider {
   height: 1px;
   place-self: stretch;
-  background: var(--Gray-100, #f2f4f7);
+  background: var(--Gray-200, #f2f4f7);
 }
 
 .dataRow {
