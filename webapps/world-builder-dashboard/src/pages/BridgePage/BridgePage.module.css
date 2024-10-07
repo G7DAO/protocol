@@ -59,8 +59,8 @@
   gap: 8px;
 
   border-radius: 6px;
-  background: var(--Primary-600, #ef233b);
-  color: var(--Primary-200, #fff);
+  background: var(--Selected-Tab, #ef233b);
+  color: var(--Selected-Tab-Text, #fff);
 
   /* Text md/Semibold */
   font-size: 16px;

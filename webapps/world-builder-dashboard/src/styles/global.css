@@ -65,6 +65,8 @@ button {
   --mix-blend: multiply;
   --Switch-thumb-bg: #fff;
   --Switch-off-track-bg: #f2f4f7;
+  --Selected-Tab: #ef233b;
+  --Selected-Tab-Text: #FFF; 
 }
 
 [data-theme='dark'] {
@@ -141,4 +143,7 @@ button {
 
   --Switch-thumb-bg: #667085;
   --Switch-off-track-bg: #98a2b3;
+
+  --Selected-Tab: #FEF3F2;
+  --Selected-Tab-Text: #F04438;
 }
