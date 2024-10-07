@@ -76,7 +76,7 @@
 
   border-radius: 8px;
   border: 1px solid var(--Gray-100, #f2f4f7);
-  background: var(--Base-White, #fff);
+  background: var(--Base-Container, #fff);
 }
 
 .input {
@@ -92,7 +92,7 @@
   border: none;
   outline: none;
   padding: 0;
-  background: var(--Base-White, #fff);
+  background: var(--Base-Container, #fff);
 }
 
 .input:disabled {
