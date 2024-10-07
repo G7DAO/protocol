@@ -47,7 +47,7 @@ button {
   --Gray-blue-50: #f8f9fc;
   --Base-Brand: #ef233c;
   --Gray-500: #667085;
-  --Primary-25: #fffafb;
+  --Primary-25: #2a1e20;
   --Primary-50: #ffebef;
   --Primary-100: #ffccd5;
   --Primary-200: #fff;
@@ -107,8 +107,8 @@ button {
   --Gray-300: #3b3f44;
   --Gray-600: #8a8e94;
   --Gray-700: #b9b9b9;
-
-  --Primary-25: #2a1e20;
+  
+  --Primary-25: #fffafb;
   --Primary-50: #3d2b2f;
   --Primary-100: #5a3d43;
   --Primary-600: #ef233b;
