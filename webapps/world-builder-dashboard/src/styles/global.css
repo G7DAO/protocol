@@ -68,6 +68,7 @@ button {
   --Selected-Tab: #ef233b;
   --Selected-Tab-Text: #FFF;
   --Grid-Node: #dbe1e9;
+  --Arrow-Up: #026AA2;
 }
 
 [data-theme='dark'] {
@@ -107,7 +108,7 @@ button {
   --Gray-200: #25282d;
   --Gray-300: #3b3f44;
   --Gray-600: #8a8e94;
-  --Gray-700: #b9b9b9;
+  --Gray-700: #F9FAFB;
   
   --Primary-25: #fffafb;
   --Primary-50: #3d2b2f;
@@ -133,11 +134,11 @@ button {
   --Purple-700: #c7c1f9;
   --Purple-800: #4d3c8e; /* New: Darker purple shade */
 
-  --Blue-light-700: #024d75;
-  --Blue-light-50: #0a1a2f;
+  --Blue-light-700: #F0F9FF;
+  --Blue-light-50: #0B4A6F;
 
-  --Indigo-50: #20264b;
-  --Indigo-700: #bdc3ff;
+  --Indigo-50: #2D3282;
+  --Indigo-700: #F0F9FF;
 
   --Gray-25: #171717;
   --Gray-900: #f1f1f1;
@@ -148,4 +149,5 @@ button {
   --Selected-Tab: #FEF3F2;
   --Selected-Tab-Text: #F04438;
   --Grid-Node: #727272;
+  --Arrow-Up: #F0F9FF;
 }

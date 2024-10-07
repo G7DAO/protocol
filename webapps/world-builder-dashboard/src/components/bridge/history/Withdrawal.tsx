@@ -162,7 +162,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                   <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
                     <IconWithdrawalNodeCompleted className={styles.gridNodeCompleted} />
                     <div className={styles.typeWithdrawal}>
-                      <IconArrowNarrowUp stroke={'#026AA2'} />
+                      <IconArrowNarrowUp className={styles.arrowUp} />
                       Withdraw
                     </div>
                   </div>
@@ -235,7 +235,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                 <>
                   <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
                     <div className={styles.typeWithdrawal}>
-                      <IconArrowNarrowUp stroke={'#026AA2'} />
+                      <IconArrowNarrowUp className={styles.arrowUp} />
                       Withdraw
                     </div>
                   </div>
