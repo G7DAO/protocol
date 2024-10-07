@@ -9,8 +9,8 @@
   /* border-radius: 8px; */
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
-  border-left: 1px solid var(--Gray-100, #f2f4f7);
-  background: var(--Base-White, #fff);
+  border-left: 1px solid var(--Gray-200, #f2f4f7);
+  background: var(--Base-Container, #fff);
   width: 117px !important;
   height: 60px;
 }

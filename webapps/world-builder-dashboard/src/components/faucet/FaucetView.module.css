@@ -174,12 +174,12 @@
   align-items: center;
   gap: 8px;
   border-radius: 8px;
-  border: 1px solid var(--Primary-50, #ffebef);
-  background: var(--Primary-50, #ffebef);
+  border: 1px solid var(--Connect-Wallet-Button-Faucet, #ffebef);
+  background: var(--Connect-Wallet-Button-Faucet, #ffebef);
 }
 
 .connectWalletText {
-  color: var(--Primary-700, #dd1534);
+  color: var( --Connect-Wallet-Text-Faucet, #dd1534);
 
   /* Text sm/Semibold */
   font-family: Inter;
@@ -218,7 +218,7 @@
 }
 
 .requestTokensButtonText {
-  color: var(--Base-White, #fff);
+  color: var(--Primary-200, #fff);
 
   /* Text sm/Semibold */
   font-family: Inter;
