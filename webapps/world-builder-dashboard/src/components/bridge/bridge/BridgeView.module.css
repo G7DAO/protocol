@@ -42,7 +42,7 @@
   gap: 8px;
   border-radius: 8px;
   display: flex;
-  background: var(--Base-White, #ffffff);
+  background: var(--Base-Container, #ffffff);
   border: 1px solid var(--Gray-100, #f2f4f7);
   width: 100%;
 }
@@ -67,7 +67,7 @@
 
 .directionButton {
   background: transparent;
-  color: var(--Gray-600, #475467);
+  color: var(--Gray-600, #fff);
 }
 
 .networksContainer {

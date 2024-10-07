@@ -112,7 +112,7 @@
   gap: 8px;
 
   border-radius: 8px;
-  background: var(--Base-Brand, #ef233c);
+  background: var(--Primary-600, #ef233c);
   border: none;
   color: var(--Primary-25, #fffafb);
 
