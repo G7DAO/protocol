@@ -278,7 +278,7 @@
   font-style: normal;
   font-weight: 500;
   line-height: 18px; /* 150% */
-  mix-blend-mode: var(--mix-blend, multiply);
+  /* mix-blend-mode: var(--mix-blend, multiply); */
   cursor: pointer;
 }
 
@@ -323,7 +323,7 @@
 
   /* Shadow/xs */
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-  color: var(--Base-White, #fff);
+  color: #fff;
 
   /* Text sm/Semibold */
   font-family: Inter, sans-serif;

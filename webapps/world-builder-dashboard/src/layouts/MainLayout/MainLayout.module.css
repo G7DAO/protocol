@@ -87,7 +87,7 @@
 
 .footer {
   display: flex;
-  padding: 0 15px 32px 16px;
+  padding: 0 16px 32px 16px;
   flex-direction: column;
   align-items: flex-start;
   gap: 24px;
@@ -163,7 +163,6 @@
   line-height: 20px; /* 142.857% */
 }
 
-
 .connectingWalletText {
   color: var(--Base-White, #fff);
   opacity: 0.7;
@@ -176,4 +175,58 @@
 
 .icon {
   stroke: var(--Gray-500, #fff);
+}
+
+.themesContainer {
+  display: flex;
+  padding: 4px;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  align-self: stretch;
+  border-radius: 8px;
+  background: #171717;
+}
+
+.themeButton {
+  cursor: pointer;
+  display: flex;
+  padding: 8px 12px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  flex: 1 0 0;
+  border-radius: 6px;
+  color: #d5d5d5;
+
+  /* Text sm/Semibold */
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px; /* 142.857% */
+}
+
+.selectedThemeButton {
+  cursor: pointer;
+  display: flex;
+  padding: 8px 12px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  flex: 1 0 0;
+  border-radius: 6px;
+  background: #393939;
+  color: #fff;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px; /* 142.857% */
+}
+
+.themeIcon {
+  width: var(--20px, 20px);
+  height: var(--20px, 20px);
+  stroke: #fff;
 }

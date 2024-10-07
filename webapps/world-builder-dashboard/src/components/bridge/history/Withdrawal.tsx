@@ -178,7 +178,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     >
                       <div className={styles.settled}>
                         Completed
-                        <IconLinkExternal02 stroke={'#027A48'} />
+                        <IconLinkExternal02 className={styles.arrowUp} />
                       </div>
                     </a>
                   </div>
@@ -200,7 +200,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     >
                       <div className={styles.settled}>
                         Completed
-                        <IconLinkExternal02 stroke={'#027A48'} />
+                        <IconLinkExternal02 className={styles.arrowUp} />
                       </div>
                     </a>
                   </div>
@@ -222,7 +222,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     >
                       <div className={styles.settled}>
                         Completed
-                        <IconLinkExternal02 stroke={'#027A48'} />
+                        <IconLinkExternal02 className={styles.arrowUp} />
                       </div>
                     </a>
                   </div>
@@ -253,7 +253,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         >
                           <div className={styles.claimable}>
                             Claimable
-                            <IconLinkExternal02 stroke={'#B54708'} />
+                            <IconLinkExternal02 className={styles.arrowUp} />
                           </div>
                         </a>
                       </div>
@@ -262,7 +262,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           className={styles.claimButton}
                           onClick={() => execute.mutate(status.data.highNetworkHash)}
                         >
-                          {execute.isLoading ? 'Claiming...' : 'Claim now'}
+                          {execute.isLoading ? 'Claiming...' : 'Claim Now'}
                         </button>
                       </div>
                     </>
@@ -277,7 +277,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         >
                           <div className={styles.pending}>
                             Pending
-                            <IconLinkExternal02 stroke={'#175CD3'} />
+                            <IconLinkExternal02 className={styles.arrowUp} />
                           </div>
                         </a>
                       </div>

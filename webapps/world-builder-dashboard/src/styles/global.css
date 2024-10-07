@@ -26,6 +26,7 @@ button {
   --Error-50: #fef3f2;
   --Error-100: #fee4e2;
   --Error-200: #fecdca;
+  --Error-300: #912018;
   --Error-500: #f04438;
   --Error-600: #d92d20;
   --Error-700: #b42318;
@@ -80,23 +81,24 @@ button {
   --Blue-700: #164bbf; /* Adjusted from #175cd3 */
   --Blue-800: #12399f; /* New: Darker blue shade */
 
-  --Warning-50: #ffe4a1; /* Adjusted from #fffaeb */
+  --Warning-50: #7A2E0E; /* Adjusted from #fffaeb */
   --Warning-100: #fdd67a; /* Adjusted from #FEF0C7 */
   --Warning-200: #f8bb4a; /* Adjusted from #FEDF89 */
   --Warning-300: #e8a229; /* Adjusted from #fec84b */
   --Warning-600: #c06503; /* Adjusted from #DC6803 */
-  --Warning-700: #924206; /* Adjusted from #b54708 */
+  --Warning-700: #FFFAEB; /* Adjusted from #b54708 */
   --Warning-800: #703205; /* New: Darker warning shade */
 
-  --Success-50: #fff; /* Adjusted from #ecfdf3 */
+  --Success-50: #054F31; /* Adjusted from #ecfdf3 */
   --Success-100: #9deac7; /* Adjusted from #D1FADF */
   --Success-200: #79ddab; /* Adjusted from #A6F4C5 */
-  --Success-700: #026637; /* Adjusted from #027a48 */
+  --Success-700: #ECFDF3; /* Adjusted from #027a48 */
   --Success-800: #024e2b; /* New: Darker success shade */
 
   --Error-50: #d11d14; /* Adjusted from #B42318 */
   --Error-100: #f8c8c6; /* Adjusted from #FEE4E2 */
   --Error-200: #f8a49f; /* Adjusted from #FECDCA */
+  --Error-300: #FDA29B;
   --Error-500: #e53b29; /* Adjusted from #F04438 */
   --Error-600: #c62c1a; /* Adjusted from #d92d20 */
   --Error-700: #fbeae8; /* Adjusted from #FEF3F2 */
@@ -107,7 +109,7 @@ button {
   --Gray-100: #1a1c20;
   --Gray-200: #25282d;
   --Gray-300: #3b3f44;
-  --Gray-600: #8a8e94;
+  --Gray-600: #D5D5D5;
   --Gray-700: #F9FAFB;
   
   --Primary-25: #fffafb;
