@@ -19,6 +19,10 @@ bin/graffiti:
 	go mod tidy
 	go build -o bin/graffiti ./cmd/graffiti
 
+bindings/IMulticall3/IMulticall3.go: abis/IMulticall3.json
+	mkdir -p bindings/IMulticall3
+	seer evm generate --package IMulticall3 --output bindings/IMulticall3/IMulticall3.go --abi abis/IMulticall3.json --struct IMulticall3
+
 bindings/ERC20/ERC20.go: hardhat
 	mkdir -p bindings/ERC20
 	seer evm generate --package ERC20 --output bindings/ERC20/ERC20.go --hardhat web3/artifacts/contracts/token/ERC20.sol/ERC20.json --cli --struct ERC20
