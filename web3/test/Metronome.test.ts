@@ -37,7 +37,6 @@ describe('Metronome', function () {
         expect(actualSchedule.remainder).to.equal(remainder);
         expect(actualSchedule.divisor).to.equal(divisor);
         expect(actualSchedule.bounty).to.equal(bounty);
-        expect(await metronome.LastTick(expectedScheduleID)).to.equal(0n);
     });
 
     it('Anyone should be able to create a schedule with a positive balance on a Metronome contract.', async function() {
@@ -59,7 +58,6 @@ describe('Metronome', function () {
         expect(actualSchedule.remainder).to.equal(remainder);
         expect(actualSchedule.divisor).to.equal(divisor);
         expect(actualSchedule.bounty).to.equal(bounty);
-        expect(await metronome.LastTick(expectedScheduleID)).to.equal(0n);
     });
 
     it('Anyone should be able to increase the balance on any schedule, even one they did not create.', async function() {
@@ -106,8 +104,7 @@ describe('Metronome', function () {
         const claimantBalance1 = await ethers.provider.getBalance(user1.address);
 
         expect(claimantBalance1).to.equal(claimantBalance0 + bounty - claimBountyTxReceipt!.fee);
-
-        expect(await metronome.LastTick(scheduleID)).to.equal(claimBountyTxReceipt!.blockNumber);
+        expect(await metronome.ClaimedBounties(scheduleID, claimBountyTxReceipt!.blockNumber)).to.be.true;
     });
 
     it('Anyone should be able to submit an off-schedule claim against a given schedule, resulting in a noop on the Metronome.', async function() {
@@ -140,8 +137,7 @@ describe('Metronome', function () {
         const claimantBalance1 = await ethers.provider.getBalance(user1.address);
 
         expect(claimantBalance1).to.equal(claimantBalance0 - claimBountyTxReceipt!.fee);
-
-        expect(await metronome.LastTick(scheduleID)).to.not.equal(claimBountyTxReceipt!.blockNumber);
+        expect(await metronome.ClaimedBounties(scheduleID, claimBountyTxReceipt!.blockNumber)).to.be.false;
     });
 
     it('If two users submit a claim against the same schedule in the same block, the first one receives the bounty and the second transaction is a Metronome noop.', async function() {
@@ -187,6 +183,8 @@ describe('Metronome', function () {
         expect(user0Balance1).to.equal(user0Balance0 + bounty - claimBountyTxReceipt0!.fee);
         expect(user1Balance1).to.equal(user1Balance0 - claimBountyTxReceipt1!.fee);
 
+        expect(await metronome.ClaimedBounties(scheduleID, claimBountyTxReceipt0!.blockNumber)).to.be.true;
+
         await ethers.provider.send("evm_setAutomine", [true]);
     });
 
@@ -213,7 +211,6 @@ describe('Metronome', function () {
         const claimantBalance1 = await ethers.provider.getBalance(user1.address);
 
         expect(claimantBalance1).to.equal(claimantBalance0 + bounty - claimBountyTxReceipt!.fee);
-
-        expect(await metronome.LastTick(scheduleID)).to.equal(claimBountyTxReceipt!.blockNumber);
+        expect(await metronome.ClaimedBounties(scheduleID, claimBountyTxReceipt!.blockNumber)).to.be.true;
     });
 });
