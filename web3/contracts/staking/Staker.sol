@@ -136,7 +136,8 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         uint256 tokenID,
         bool transferable,
         uint256 lockupSeconds,
-        uint256 cooldownSeconds
+        uint256 cooldownSeconds,
+        address administrator
     ) external {
         if (tokenType == NATIVE_TOKEN_TYPE) {
             if (tokenAddress != address(0) || tokenID != 0) {
@@ -159,7 +160,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         }
 
         Pools[TotalPools] = StakingPool({
-            administrator: msg.sender,
+            administrator: administrator,
             tokenType: tokenType,
             tokenAddress: tokenAddress,
             tokenID: tokenID,
@@ -169,7 +170,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         });
 
         emit StakingPoolCreated(TotalPools, tokenType, tokenAddress, tokenID);
-        emit StakingPoolConfigured(TotalPools, msg.sender, transferable, lockupSeconds, cooldownSeconds);
+        emit StakingPoolConfigured(TotalPools, administrator, transferable, lockupSeconds, cooldownSeconds);
 
         TotalPools++;
     }
@@ -181,7 +182,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
      *
      * @param poolID The ID of the staking pool to update configuration of.
      * @param changeTransferability Specifies whether the current call is updating the transferability of the pool or not. If this is false, then the value of the `transferable` argument will be ignored.
-     * @param transferable Whether or not the pool should be transferable. This argument is only applied if `changeTransferabiliy` is `true`.
+     * @param transferable Whether or not the pool should be transferable. This argument is only applied if `changeTransferability` is `true`.
      * @param changeLockup Specifies whether the current call is updating the `lockupSeconds` configuration of the pool or not. If this is false, then the value of the `lockupSeconds` argument will be ignored.
      * @param lockupSeconds The new value for the `lockupSeconds` member of the pool.  This argument is only applied if `changeLockup` is `true`.
      * @param changeCooldown Specifies whether the current call is updating the `cooldownSeconds` configuration of the pool or not. If this is false, then the value of the `cooldownSeconds` argument will be ignored.
@@ -457,13 +458,13 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
 
         // Return the staked tokens.
         if (pool.tokenType == NATIVE_TOKEN_TYPE) {
-            payable(msg.sender).transfer(amountOrTokenID);
+            payable(positionOwner).transfer(amountOrTokenID);
         } else if (pool.tokenType == ERC20_TOKEN_TYPE) {
-            IERC20(pool.tokenAddress).safeTransfer(msg.sender, amountOrTokenID);
+            IERC20(pool.tokenAddress).safeTransfer(positionOwner, amountOrTokenID);
         } else if (pool.tokenType == ERC721_TOKEN_TYPE) {
-            IERC721(pool.tokenAddress).safeTransferFrom(address(this), msg.sender, amountOrTokenID);
+            IERC721(pool.tokenAddress).safeTransferFrom(address(this), positionOwner, amountOrTokenID);
         } else if (pool.tokenType == ERC1155_TOKEN_TYPE) {
-            IERC1155(pool.tokenAddress).safeTransferFrom(address(this), msg.sender, pool.tokenID, amountOrTokenID, "");
+            IERC1155(pool.tokenAddress).safeTransferFrom(address(this), positionOwner, pool.tokenID, amountOrTokenID, "");
         }
     }
 
