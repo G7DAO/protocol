@@ -55,8 +55,9 @@ contract Metronome is ReentrancyGuard {
             if (payment > Schedules[scheduleID].bounty) {
                 payment = Schedules[scheduleID].bounty;
             }
-            ClaimedBounties[scheduleID][block.number] = true;
+            LastTick[scheduleID] = block.number;
             if (payment > 0) {
+                ClaimedBounties[scheduleID][block.number] = true;
                 ScheduleBalances[scheduleID] -= payment;
                 payable(forAddress).transfer(payment);
                 emit BountyClaimed(scheduleID, forAddress, payment);
