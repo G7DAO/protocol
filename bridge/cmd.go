@@ -43,11 +43,12 @@ func CreateBridgeNativeTokenCommand() *cobra.Command {
 }
 
 func CreateBridgeNativeTokenL1ToL2Command() *cobra.Command {
-	var keyFile, password, l1Rpc, l2Rpc, inboxRaw, toRaw, l2CallValueRaw, l2CalldataRaw, safeAddressRaw, safeApi string
+	var keyFile, password, l1Rpc, l2Rpc, inboxRaw, toRaw, l2CallValueRaw, l2CalldataRaw, safeAddressRaw, safeApi, safeNonceRaw string
 	var inboxAddress, to, safeAddress common.Address
 	var l2CallValue *big.Int
 	var l2Calldata []byte
 	var safeOperation uint8
+	var safeNonce *big.Int
 
 	createCmd := &cobra.Command{
 		Use:   "l1-to-l2",
@@ -112,6 +113,17 @@ func CreateBridgeNativeTokenL1ToL2Command() *cobra.Command {
 				if OperationType(safeOperation).String() == "Unknown" {
 					return fmt.Errorf("--safe-operation must be 0 (Call) or 1 (DelegateCall)")
 				}
+
+				if safeNonceRaw != "" {
+					safeNonce = new(big.Int)
+					_, ok := safeNonce.SetString(safeNonceRaw, 10)
+					if !ok {
+						return fmt.Errorf("--safe-nonce is not a valid big integer")
+					}
+				} else {
+					fmt.Println("--safe-nonce not specified, using default (0)")
+					safeNonce = big.NewInt(0)
+				}
 			}
 
 			return nil
@@ -119,7 +131,7 @@ func CreateBridgeNativeTokenL1ToL2Command() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Println("Bridging to", to.Hex())
 			if safeAddressRaw != "" {
-				err := NativeTokenBridgePropose(inboxAddress, keyFile, password, l1Rpc, l2Rpc, to, l2CallValue, l2Calldata, safeAddress, safeApi, safeOperation)
+				err := NativeTokenBridgePropose(inboxAddress, keyFile, password, l1Rpc, l2Rpc, to, l2CallValue, l2Calldata, safeAddress, safeApi, safeOperation, safeNonce)
 				if err != nil {
 					fmt.Fprintln(cmd.ErrOrStderr(), err.Error())
 					return err
@@ -149,6 +161,7 @@ func CreateBridgeNativeTokenL1ToL2Command() *cobra.Command {
 	createCmd.Flags().StringVar(&safeAddressRaw, "safe", "", "Address of the Safe contract")
 	createCmd.Flags().StringVar(&safeApi, "safe-api", "", "Safe API for the Safe Transaction Service (optional)")
 	createCmd.Flags().Uint8Var(&safeOperation, "safe-operation", 0, "Safe operation type: 0 (Call) or 1 (DelegateCall)")
+	createCmd.Flags().StringVar(&safeNonceRaw, "safe-nonce", "", "Safe nonce")
 
 	return createCmd
 }
@@ -265,10 +278,11 @@ func CreateBridgeERC20Command() *cobra.Command {
 }
 
 func CreateBridgeERC20L1ToL2Command() *cobra.Command {
-	var keyFile, password, l1Rpc, l2Rpc, routerRaw, tokenAddressRaw, toRaw, amountRaw, safeAddressRaw, safeApi string
+	var keyFile, password, l1Rpc, l2Rpc, routerRaw, tokenAddressRaw, toRaw, amountRaw, safeAddressRaw, safeApi, safeNonceRaw string
 	var routerAddress, tokenAddress, to, safeAddress common.Address
 	var amount *big.Int
 	var safeOperation uint8
+	var safeNonce *big.Int
 
 	createCmd := &cobra.Command{
 		Use:   "l1-to-l2",
@@ -331,6 +345,17 @@ func CreateBridgeERC20L1ToL2Command() *cobra.Command {
 					return fmt.Errorf("--safe-operation must be 0 (Call) or 1 (DelegateCall)")
 				}
 
+				if safeNonceRaw != "" {
+					safeNonce = new(big.Int)
+					_, ok := safeNonce.SetString(safeNonceRaw, 10)
+					if !ok {
+						return fmt.Errorf("--safe-nonce is not a valid big integer")
+					}
+				} else {
+					fmt.Println("--safe-nonce not specified, using default (0)")
+					safeNonce = big.NewInt(0)
+				}
+
 				if l1Rpc == "" {
 					return errors.New("l1-rpc is required")
 				}
@@ -352,7 +377,7 @@ func CreateBridgeERC20L1ToL2Command() *cobra.Command {
 				}
 				fmt.Println("Transaction sent:", transaction.Hash().Hex())
 			} else {
-				proposeErr := ERC20BridgePropose(routerAddress, keyFile, password, l1Rpc, l2Rpc, tokenAddress, to, amount, safeAddress, safeApi, safeOperation)
+				proposeErr := ERC20BridgePropose(routerAddress, keyFile, password, l1Rpc, l2Rpc, tokenAddress, to, amount, safeAddress, safeApi, safeOperation, safeNonce)
 				if proposeErr != nil {
 					fmt.Fprintln(cmd.ErrOrStderr(), proposeErr.Error())
 					return proposeErr
@@ -374,6 +399,7 @@ func CreateBridgeERC20L1ToL2Command() *cobra.Command {
 	createCmd.Flags().StringVar(&safeAddressRaw, "safe", "", "Address of the Safe contract")
 	createCmd.Flags().StringVar(&safeApi, "safe-api", "", "Safe API for the Safe Transaction Service (optional)")
 	createCmd.Flags().Uint8Var(&safeOperation, "safe-operation", 0, "Safe operation type: 0 (Call) or 1 (DelegateCall)")
+	createCmd.Flags().StringVar(&safeNonceRaw, "safe-nonce", "", "Safe nonce")
 
 	return createCmd
 }
