@@ -6,10 +6,12 @@ rebuild: clean generate build
 
 bin/game7:
 	mkdir -p bin
+	go mod tidy
 	go build -o bin/game7 ./cmd/game7
 
 bin/graffiti:
 	mkdir -p bin
+	go mod tidy
 	go build -o bin/graffiti ./cmd/graffiti
 
 bindings/ERC20/ERC20.go: hardhat
