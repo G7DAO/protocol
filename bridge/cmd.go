@@ -116,7 +116,7 @@ func CreateBridgeNativeTokenL1ToL2Command() *cobra.Command {
 
 				if safeNonceRaw != "" {
 					safeNonce = new(big.Int)
-					_, ok := safeNonce.SetString(safeNonceRaw, 10)
+					_, ok := safeNonce.SetString(safeNonceRaw, 0)
 					if !ok {
 						return fmt.Errorf("--safe-nonce is not a valid big integer")
 					}
@@ -347,7 +347,7 @@ func CreateBridgeERC20L1ToL2Command() *cobra.Command {
 
 				if safeNonceRaw != "" {
 					safeNonce = new(big.Int)
-					_, ok := safeNonce.SetString(safeNonceRaw, 10)
+					_, ok := safeNonce.SetString(safeNonceRaw, 0)
 					if !ok {
 						return fmt.Errorf("--safe-nonce is not a valid big integer")
 					}
