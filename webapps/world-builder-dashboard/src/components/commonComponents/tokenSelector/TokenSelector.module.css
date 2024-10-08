@@ -40,7 +40,6 @@
   background: var(--Base-White, #fff) !important;
   border-radius: 8px !important;
   border: 1px solid var(--Gray-200, #eaecf0) !important;
-  background: var(--Base-White, #fff) !important;
   box-shadow:
     0 12px 16px -4px rgba(16, 24, 40, 0.08),
     0 4px 6px -2px rgba(16, 24, 40, 0.03) !important;
@@ -74,7 +73,7 @@
 }
 
 .option:hover {
-  background-color: transparent !important;
+  background-color: var(--Gray-60, #393939) !important;
 }
 
 .optionContainer,
@@ -88,9 +87,6 @@
   flex: 1 0 0;
 
   border-radius: 6px;
-}
-.optionContainerSelected {
-  background: var(--Gray-50, #f9fafb);
 }
 
 .optionLeftSection {
@@ -109,7 +105,7 @@
   padding: 2px 6px;
   align-items: center;
   align-self: stretch;
-  border-top: 1px solid #eaecf0;
+  border-top: 1px solid var(--Gray-60, #fff);
   background: var(--Base-White, #fff);
 }
 
@@ -137,6 +133,7 @@
   align-items: center;
   border: 1px solid var(--Gray-100, #f2f4f7);
   border-radius: 8px;
+  background: var(--Base-White, #fff);
   color: var(--Gray-500, #667085);
   font-family: Inter;
   font-size: 14px;
@@ -169,7 +166,7 @@
 }
 
 .importText {
-  color: var(--Base-White, #fff);
+  color: #fff;
   font-family: Inter;
   font-size: 14px;
   font-style: normal;
@@ -184,8 +181,7 @@
   align-items: center;
   align-self: stretch;
   border-radius: 16px;
-  background: var(--Error-50, #fef3f2);
-  mix-blend-mode: multiply;
+  background: var(--Error-900, #B42318);
 }
 
 .tokenErrorText {
