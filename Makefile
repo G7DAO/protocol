@@ -9,6 +9,11 @@ bin/game7:
 	go mod tidy
 	go build -o bin/game7 ./cmd/game7
 
+bin/robognome:
+	mkdir -p bin
+	go mod tidy
+	go build -o bin/robognome ./cmd/robognome
+
 bin/graffiti:
 	mkdir -p bin
 	go mod tidy
