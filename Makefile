@@ -1,6 +1,6 @@
 .PHONY: clean generate regenerate test docs redocs hardhat bindings test-graffiti test-web3 clean-web3 deepclean
 
-build: hardhat bindings bin/game7 bin/graffiti
+build: hardhat bindings bin/game7 bin/graffiti bin/robognome
 
 rebuild: clean generate build
 
