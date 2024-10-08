@@ -112,6 +112,7 @@ button {
   --Error-600: #c62c1a; /* Adjusted from #d92d20 */
   --Error-700: #fbeae8; /* Adjusted from #FEF3F2 */
   --Error-800: #aa2714; /* New: Darker error shade */
+  --Error-900: #B42318;
 
   --Gray-50: #0b0b0b;
   --Gray-60: #393939;

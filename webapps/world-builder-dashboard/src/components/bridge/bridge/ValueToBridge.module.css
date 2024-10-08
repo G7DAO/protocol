@@ -126,7 +126,7 @@
 }
 
 .maxButton:disabled {
-  background: var(--Gray-600, #475467);
+  background: var(--Disabled-Button, #475467);
   cursor: not-allowed;
 }
 

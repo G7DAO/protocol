@@ -88,9 +88,6 @@
 
   border-radius: 6px;
 }
-.optionContainerSelected {
-  background: var(--Gray-50, #f9fafb);
-}
 
 .optionLeftSection {
   display: flex;
@@ -184,8 +181,7 @@
   align-items: center;
   align-self: stretch;
   border-radius: 16px;
-  background: var(--Error-50, #fef3f2);
-  mix-blend-mode: multiply;
+  background: var(--Error-900, #B42318);
 }
 
 .tokenErrorText {

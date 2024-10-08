@@ -1,13 +1,10 @@
 import React, { ReactNode } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import styles from './MainLayout.module.css'
-import IconDark from '@/assets/IconDark'
 import IconExternalLink from '@/assets/IconExternalLink'
-import IconLight from '@/assets/IconLight'
 import IconLogout from '@/assets/IconLogout'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
-import { useUISettings } from '@/contexts/UISettingsContext'
 
 interface DesktopSidebarProps {
   navigationItems: { name: string; navigateTo: string; icon: ReactNode }[]
@@ -16,7 +13,6 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
   const location = useLocation()
   const navigate = useNavigate()
   const { connectedAccount, isMetaMask, connectWallet, disconnectWallet, isConnecting } = useBlockchainContext()
-  const {theme, toggleTheme} = useUISettings()
 
   return (
     <div className={styles.sideBar}>
@@ -51,14 +47,15 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
         </div>
       </div>
       <div className={styles.footer}>
-        <div className={styles.themesContainer}>
+        {/* May uncomment later. */}
+        {/* <div className={styles.themesContainer}>
           <div className={theme === 'dark' ? styles.selectedThemeButton : styles.themeButton} onClick={toggleTheme}>
             <IconDark className={theme === 'dark' ? styles.selectedThemeIcon : styles.themeIcon} /> Dark
           </div>
           <div className={theme === 'light' ? styles.selectedThemeButton : styles.themeButton} onClick={toggleTheme}>
             <IconLight className={theme === 'light' ? styles.selectedThemeIcon : styles.themeIcon} /> Light
           </div>
-        </div>
+        </div> */}
         {connectedAccount ? (
           <div className={styles.web3AddressContainer}>
             <div className={styles.web3address}>
