@@ -75,7 +75,7 @@
 
 .container:disabled {
   border-radius: 8px;
-  background: var(--Gray-600, #475467);
+  background: var(--Disabled-Button, #393939);
   cursor: not-allowed;
   border: none;
 }
