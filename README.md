@@ -56,6 +56,15 @@ their staked tokens.
 Pool administrators can change any of these parameters at any time. To make a pool immutable, we recommend
 transferring administration of that pool to the zero address.
 
+### Metronome
+
+The `Metronome` contract allows anyone to set incentivize for Game7 chain users to submit transactions at regular intervals.
+
+These incentives can have different purposes for different applications. For example, they can be used to improve the fairness of blockhash-based
+on-chain entropy sources. We also use the `Metronome` to incentivize steady block production on Game7 testnet.
+
+- [The `Metronome` smart contract](./web3/contracts/metronome/Metronome.sol)
+- [`robognome`, a bot that claims `Metronome` bounties](./cmd/robognome/README.md)
 
 ## Development
 
