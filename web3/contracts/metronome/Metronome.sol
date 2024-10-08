@@ -37,8 +37,11 @@ contract Metronome is ReentrancyGuard {
         scheduleID = NumSchedules;
         NumSchedules++;
         Schedules[scheduleID] = Schedule(remainder, divisor, bounty);
-        ScheduleBalances[scheduleID] = msg.value;
         emit ScheduleCreated(scheduleID, remainder, divisor, bounty);
+        if (msg.value > 0) {
+            ScheduleBalances[scheduleID] = msg.value;
+            emit BalanceIncreased(scheduleID, msg.value);
+        }
     }
 
     function increaseBalance(uint256 scheduleID) external payable {
@@ -52,11 +55,12 @@ contract Metronome is ReentrancyGuard {
             if (payment > Schedules[scheduleID].bounty) {
                 payment = Schedules[scheduleID].bounty;
             }
-            ScheduleBalances[scheduleID] -= payment;
             ClaimedBounties[scheduleID][block.number] = true;
-
-            payable(forAddress).transfer(payment);
-            emit BountyClaimed(scheduleID, forAddress, payment);
+            if (payment > 0) {
+                ScheduleBalances[scheduleID] -= payment;
+                payable(forAddress).transfer(payment);
+                emit BountyClaimed(scheduleID, forAddress, payment);
+            }
         }
     }
 
