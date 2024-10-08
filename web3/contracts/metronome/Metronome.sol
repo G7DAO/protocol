@@ -23,8 +23,6 @@ contract Metronome is ReentrancyGuard {
     event BountyClaimed(uint256 indexed scheduleID, address indexed forAddress, uint256 payment);
 
     error InvalidSchedule();
-    error BountyAlreadyClaimedForSchedule(uint256 scheduleID);
-    error OffSchedule(uint256 scheduleID);
 
     function createSchedule(uint256 remainder, uint256 divisor, uint256 bounty) external payable returns (uint256 scheduleID) {
         if (divisor == 0) {
@@ -49,21 +47,17 @@ contract Metronome is ReentrancyGuard {
     }
 
     function _claim(uint256 scheduleID, address forAddress) internal {
-        if (ClaimedBounties[scheduleID][block.number]) {
-            revert BountyAlreadyClaimedForSchedule(scheduleID);
-        }
-        if (block.number % Schedules[scheduleID].divisor != Schedules[scheduleID].remainder) {
-            revert OffSchedule(scheduleID);
-        }
-        uint256 payment = ScheduleBalances[scheduleID];
-        if (payment > Schedules[scheduleID].bounty) {
-            payment = Schedules[scheduleID].bounty;
-        }
-        ScheduleBalances[scheduleID] -= payment;
-        ClaimedBounties[scheduleID][block.number] = true;
+        if (!ClaimedBounties[scheduleID][block.number] && (block.number % Schedules[scheduleID].divisor == Schedules[scheduleID].remainder)) {
+            uint256 payment = ScheduleBalances[scheduleID];
+            if (payment > Schedules[scheduleID].bounty) {
+                payment = Schedules[scheduleID].bounty;
+            }
+            ScheduleBalances[scheduleID] -= payment;
+            ClaimedBounties[scheduleID][block.number] = true;
 
-        payable(forAddress).transfer(payment);
-        emit BountyClaimed(scheduleID, forAddress, payment);
+            payable(forAddress).transfer(payment);
+            emit BountyClaimed(scheduleID, forAddress, payment);
+        }
     }
 
     function claim(uint256 scheduleID, address forAddress) external nonReentrant {
