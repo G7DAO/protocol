@@ -164,7 +164,7 @@
 }
 
 .connectingWalletText {
-  color: var(--Base-White, #fff);
+  color: #fff;
   opacity: 0.7;
   font-family: Inter;
   font-size: 14px;
