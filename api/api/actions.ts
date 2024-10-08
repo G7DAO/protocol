@@ -64,7 +64,7 @@ export async function getTransactionHistory(address: string): Promise<object | s
                 label_data->'args'->>'tokenAddress' as token_address,
                 '0x' || encode(origin_address,'hex') as origin_address
             from game7_testnet_labels
-            where lower(encode(address,'hex')) = lower('a6B0461b7E54Fa342Be6320D4938295A81f82Cd3')
+            where address = e'\\xa6B0461b7E54Fa342Be6320D4938295A81f82Cd3'
             and label_name = 'StakingPoolCreated'
         ),
         staking as (	
@@ -76,7 +76,7 @@ export async function getTransactionHistory(address: string): Promise<object | s
                 label_data->'args'->>'positionTokenID' as position_token_id,
                 'stake' as label
             from game7_testnet_labels
-            where lower(encode(address,'hex')) = lower('a6B0461b7E54Fa342Be6320D4938295A81f82Cd3')
+            where address = e'\\xa6B0461b7E54Fa342Be6320D4938295A81f82Cd3'
             and label_name = 'Staked'
 
             union all	
@@ -89,7 +89,7 @@ export async function getTransactionHistory(address: string): Promise<object | s
                 label_data->'args'->>'positionTokenID' as position_token_id,
                 'unstake' as label
             from game7_testnet_labels
-            where lower(encode(address,'hex')) = lower('a6B0461b7E54Fa342Be6320D4938295A81f82Cd3')
+            where address = e'\\xa6B0461b7E54Fa342Be6320D4938295A81f82Cd3'
             and label_name = 'Unstaked' 
         ),
         active_positions AS (
@@ -156,7 +156,7 @@ export async function getAllPoolPositions(poolId: string): Promise<object | stri
             label_data->'args'->>'tokenAddress' as token_address,
             '0x' || encode(origin_address,'hex') as origin_address
         from game7_testnet_labels
-        where lower(encode(address,'hex')) = lower('a6B0461b7E54Fa342Be6320D4938295A81f82Cd3')
+        where address = e'\\xa6B0461b7E54Fa342Be6320D4938295A81f82Cd3'
         and label_name = 'StakingPoolCreated'
         ),
         pool_tx as (
@@ -166,7 +166,7 @@ export async function getAllPoolPositions(poolId: string): Promise<object | stri
             label_data->'args'->>'lockupSeconds' as lockup_seconds,
             label_data->'args'->>'cooldownSeconds' as cooldown_seconds
         from game7_testnet_labels
-        where lower(encode(address,'hex')) = lower('a6B0461b7E54Fa342Be6320D4938295A81f82Cd3')
+        where address = e'\\xa6B0461b7E54Fa342Be6320D4938295A81f82Cd3'
         and label_name = 'createPool'
         ),
         pool_full_info as (
@@ -191,7 +191,7 @@ export async function getAllPoolPositions(poolId: string): Promise<object | stri
             label_data->'args'->>'positionTokenID' as position_token_id,
             'stake' as label
             from game7_testnet_labels
-            where lower(encode(address,'hex')) = lower('a6B0461b7E54Fa342Be6320D4938295A81f82Cd3')
+            where address = e'\\xa6B0461b7E54Fa342Be6320D4938295A81f82Cd3'
             and label_name = 'Staked'
 
             union all	
@@ -204,7 +204,7 @@ export async function getAllPoolPositions(poolId: string): Promise<object | stri
             label_data->'args'->>'positionTokenID' as position_token_id,
             'unstake' as label
             from game7_testnet_labels
-            where lower(encode(address,'hex')) = lower('a6B0461b7E54Fa342Be6320D4938295A81f82Cd3')
+            where address = e'\\xa6B0461b7E54Fa342Be6320D4938295A81f82Cd3'
             and label_name = 'Unstaked' 
             
             union all
@@ -217,7 +217,7 @@ export async function getAllPoolPositions(poolId: string): Promise<object | stri
                 label_data->'args'->>'positionTokenID' AS position_token_id,
                 'unstaking' AS label
             FROM game7_testnet_labels
-            WHERE lower(encode(address, 'hex')) = lower('a6B0461b7E54Fa342Be6320D4938295A81f82Cd3')
+            WHERE address = e'\\xa6B0461b7E54Fa342Be6320D4938295A81f82Cd3'
             AND label_name = 'initiateUnstake' 
         ),
         nft_tokenids as (
@@ -226,7 +226,7 @@ export async function getAllPoolPositions(poolId: string): Promise<object | stri
             label_data->'args'->>'to' as to_add,
             to_timestamp(block_timestamp) as time
             from game7_testnet_labels
-            where lower(encode(address,'hex')) = lower('a6B0461b7E54Fa342Be6320D4938295A81f82Cd3')
+            where address = e'\\xa6B0461b7E54Fa342Be6320D4938295A81f82Cd3'
             and label_name = 'Transfer'
         ),
         nft_token_latest as (
@@ -234,7 +234,7 @@ export async function getAllPoolPositions(poolId: string): Promise<object | stri
             label_data->'args'->>'tokenId' as tokenid,
             max(to_timestamp(block_timestamp)) as latest_time
             from game7_testnet_labels
-            where lower(encode(address,'hex')) = lower('a6B0461b7E54Fa342Be6320D4938295A81f82Cd3')
+            where address = e'\\xa6B0461b7E54Fa342Be6320D4938295A81f82Cd3'
             and label_name = 'Transfer'
             group by 1
         ),
