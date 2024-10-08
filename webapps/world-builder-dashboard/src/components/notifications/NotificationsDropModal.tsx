@@ -32,7 +32,9 @@ const copy = (notification: BridgeNotification) => {
       return `${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL} deposited to ${targetNetwork}`
     }
     if (notification.type === 'CLAIM') {
-      return `You requested ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL}` //L3 claim takes a couple of minutes, but checking status isn't implemented yet
+      return (
+        `You requested ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL}`
+      )
     }
     return `Your ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL} withdrawal is complete`
   }
@@ -157,8 +159,8 @@ const getTransactionUrl = (notification: BridgeNotification): string | undefined
       txHash = status === 'COMPLETED' ? tx.lowNetworkHash : tx.highNetworkHash
       break
     case 'CLAIM':
-      chainId = tx.lowNetworkChainId
-      txHash = tx.lowNetworkHash
+      chainId = tx.highNetworkChainId
+      txHash = tx.highNetworkHash
       break
     default:
   }

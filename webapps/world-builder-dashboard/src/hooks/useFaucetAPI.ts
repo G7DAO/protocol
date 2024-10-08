@@ -1,9 +1,11 @@
 import { useQuery } from 'react-query'
+import { ethers } from 'ethers';
 
 const BASE_URL = 'https://api.game7.build'
 
 export const useFaucetAPI = () => {
   const useFaucetTimestamp = (address: string | undefined) => {
+    const isValidAddress = ethers.utils.isAddress(address ?? "");
     return useQuery(
       ['faucetTimestamp', address],
       async () => {
@@ -17,8 +19,8 @@ export const useFaucetAPI = () => {
         return data.result
       },
       {
-        enabled: !!address,
-        retry: false
+        enabled: !!address && isValidAddress,
+        retry: false,
       }
     )
   }
