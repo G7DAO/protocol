@@ -107,4 +107,37 @@ describe('Metronome', function () {
 
         expect(claimantBalance1).to.equal(claimantBalance0 + bounty - claimBountyTxReceipt!.fee);
     });
+
+    it('Anyone should be able to submit an off-schedule claim against a given schedule, resulting in a noop on the Metronome', async function() {
+        const { metronome, user0, user1 } = await setupFixture();
+
+        const scheduleID = await metronome.NumSchedules();
+
+        const metronomeWithUser0 = metronome.connect(user0);
+        const remainder = 0;
+        const divisor = 2;
+        const bounty = 845845n;
+        const initialScheduleBalance = bounty*1000n;
+        await metronomeWithUser0.createSchedule(remainder, divisor, bounty, {value: initialScheduleBalance});
+
+        let currentBlock = await ethers.provider.getBlock('latest');
+        expect(currentBlock).to.not.be.null;
+        if ((currentBlock!.number - 1) % divisor === remainder) {
+            // Move to a block such that the next mined block will be off-schedule.
+            ethers.provider.send('evm_mine');
+        }
+
+        const claimantBalance0 = await ethers.provider.getBalance(user1.address);
+
+        const metronomeWithUser1 = metronome.connect(user1);
+        const claimBountyTx = await metronomeWithUser1.claim(scheduleID, user1.address);
+        const claimBountyTxReceipt = await claimBountyTx.wait();
+        expect(claimBountyTxReceipt).to.not.be.null;
+        await expect(claimBountyTx).to.not.emit(metronome, 'BountyClaimed');
+
+        const claimantBalance1 = await ethers.provider.getBalance(user1.address);
+
+        expect(claimantBalance1).to.equal(claimantBalance0 - claimBountyTxReceipt!.fee);
+
+    });
 });
