@@ -1016,11 +1016,6 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "positionHolder",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
         "name": "poolID",
         "type": "uint256"
@@ -1044,11 +1039,6 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "positionHolder",
-        "type": "address"
-      },
       {
         "internalType": "uint256",
         "name": "poolID",
@@ -1074,11 +1064,6 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "positionHolder",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
         "name": "poolID",
         "type": "uint256"
@@ -1102,11 +1087,6 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "positionHolder",
-        "type": "address"
-      },
       {
         "internalType": "uint256",
         "name": "poolID",
