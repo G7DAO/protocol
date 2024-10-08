@@ -11,11 +11,7 @@ dotenv.config();
 const yes = ['true', 't', 'yes', 'y', '1'];
 const GAS_PROFILER = yes.includes((process.env.GAS_PROFILER || '').toLowerCase());
 
-const { ETHSCAN_API_KEY, ARB_SCAN_API_KEY, DEPLOYER_PRIVATE_KEY } = process.env;
-
-if(!DEPLOYER_PRIVATE_KEY) {
-    throw new Error('The deployer private key is required');
-}
+const { ETHSCAN_API_KEY, ARB_SCAN_API_KEY } = process.env;
 
 const config: HardhatUserConfig = {
     solidity: {
@@ -64,22 +60,18 @@ const config: HardhatUserConfig = {
         [NetworkName.Ethereum]: {
             chainId: ChainId.Ethereum,
             url: rpcUrls[ChainId.Ethereum],
-            accounts: [DEPLOYER_PRIVATE_KEY],
         },
         [NetworkName.ArbitrumOne]: {
             chainId: ChainId.ArbitrumOne,
             url: rpcUrls[ChainId.ArbitrumOne],
-            accounts: [DEPLOYER_PRIVATE_KEY],
         },
         [NetworkName.Game7Testnet]: {
             url: rpcUrls[ChainId.Game7Testnet],
             chainId: ChainId.Game7Testnet,
-            accounts: [DEPLOYER_PRIVATE_KEY],
         },
         [NetworkName.ArbitrumSepolia]: {
             url: rpcUrls[ChainId.ArbitrumSepolia],
             chainId: ChainId.ArbitrumSepolia,
-            accounts: [DEPLOYER_PRIVATE_KEY],
         },
     },
 };
