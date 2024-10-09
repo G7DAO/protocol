@@ -72,7 +72,16 @@ const NotificationsDropModal: React.FC<NotificationsDropModalProps> = ({ notific
             <div className={styles.itemHeader}>
               <div className={styles.itemHeaderLeft}>
                 <div className={styles.itemHeaderTitle}>{n.type.toLowerCase()}</div>
-                <div className={badgeClassName(n.status)}>{n.status.toLowerCase()}</div>
+                {getTransactionUrl(n) ? (
+                  <a href={getTransactionUrl(n)} target={'_blank'} className={modalStyles.explorerLink}>
+                    <div className={badgeClassName(n.status)}>
+                      {n.status.toLowerCase()}
+                      <IconLinkExternal02 stroke={n.status === 'CLAIMABLE' ? '#B54708' : '#027A48'} />
+                    </div>
+                  </a>
+                ) : (
+                  <div className={badgeClassName(n.status)}>{n.status.toLowerCase()}</div>
+                )}
               </div>
               <div className={styles.headerTime}>{timeAgo(n.timestamp, true)}</div>
             </div>
