@@ -10,7 +10,7 @@ import { L2GatewayRouterABI } from './abi/L2GatewayRouterABI';
 import {
   depositERC20,
   depositETH,
-  depositNative,
+  depositNative, estimateDepositErc20, estimateDepositERC20ToEth, estimateDepositEth,
   estimateOutboundTransferGas,
 } from './actions/deposit';
 import { withdrawERC20, withdrawEth, withdrawNative } from './actions/withdraw';
@@ -22,6 +22,7 @@ import { BridgerError, GasEstimationError, UnsupportedNetworkError } from './err
 import { BridgeNetworkConfig, networks } from './networks';
 import { TokenAddressMap } from './types';
 import { SignerOrProvider } from './bridgeNetwork';
+import { getProvider } from './bridgeTransfer';
 
 /**
  * Represents the estimated gas and fees.
@@ -202,7 +203,7 @@ export class Bridger {
    *
    * @param {BigNumber} amount - The amount of the token to be transferred.
    * @param {SignerOrProvider} provider - A signer or provider for connecting to the Ethereum network. Can be an RPC URL string.
-   * @param {string} from - The address initiating the transfer.
+   * @param {string} _from - The address initiating the transfer.
    * @returns {Promise<GasAndFeeEstimation>} A promise that resolves to the estimated gas and fee details.
    *
    * @throws {GasEstimationError} If the gas estimation fails for any reason.
@@ -210,10 +211,12 @@ export class Bridger {
   public getGasAndFeeEstimation(
     amount: BigNumber,
     provider: SignerOrProvider,
-    from: string,
+    _from: string,
   ): Promise<GasAndFeeEstimation> {
     const originToken = this.token[this.originNetwork.chainId];
     const destinationToken = this.token[this.destinationNetwork.chainId];
+    const DEFAULT_ADDRESS = '0x5F9261B04033C294B22397A1e3F057E1a28D5fC8';
+    const from = _from ?? DEFAULT_ADDRESS;
     if (typeof provider === 'string') {
       provider = new ethers.providers.JsonRpcProvider(provider);
     }
@@ -225,7 +228,10 @@ export class Bridger {
       }
     } else {
       if (destinationToken === ethers.constants.AddressZero) {
-        return this.estimateDepositNative(amount, provider, from);
+        if (originToken === ethers.constants.AddressZero) {
+          return this.estimateDepositEth(amount, provider, from)
+        }
+        return this.estimateDepositERC20ToEth(amount, provider, from);
       } else {
         return this.estimateDepositERC20(amount, provider, from);
       }
@@ -326,38 +332,44 @@ export class Bridger {
     }
   }
 
-  // Stub methods for deposit estimations
-  private async estimateDepositNative(
+  private async estimateDepositEth(
     amount: BigNumber,
-    provider: SignerOrProvider,
-    from?: string,
+    _provider: SignerOrProvider,
+    from: string,
   ): Promise<GasAndFeeEstimation> {
-    // TODO: Implement depositNative logic
-    throw new BridgerError('Deposit estimation for native tokens is not implemented.');
+    const provider = getProvider(_provider)
+    const contractAddress = this.destinationNetwork.ethBridge?.inbox
+    if (!contractAddress) {
+      throw new GasEstimationError("inbox contract isn't set")
+    }
+    return estimateDepositEth(amount, provider, contractAddress, from)
+  }
+
+  private async estimateDepositERC20ToEth(
+    amount: BigNumber,
+    _provider: SignerOrProvider,
+    from: string,
+  ): Promise<GasAndFeeEstimation> {
+    const provider = getProvider(_provider)
+    const contractAddress = this.destinationNetwork.ethBridge?.inbox
+    if (!contractAddress) {
+      throw new GasEstimationError("inbox contract isn't set")
+    }
+    return estimateDepositERC20ToEth(amount, provider, contractAddress)
   }
 
   private async estimateDepositERC20(
     amount: BigNumber,
-    provider: SignerOrProvider,
-    from?: string,
+    _provider: SignerOrProvider,
+    from: string,
   ): Promise<GasAndFeeEstimation> {
-    // TODO: Implement depositERC20 logic
     const contractAddress = this.destinationNetwork.tokenBridge?.parentGatewayRouter;
-    const tokenAddress = this.token[this.originNetwork.chainId];
-    const to = from;
-    const data = '0x';
-    if (typeof provider === 'string') {
-      provider = new ethers.providers.JsonRpcProvider(provider);
+    if (!contractAddress) {
+      throw new GasEstimationError("parentGatewayRouter contract isn't set")
     }
-
-    return await estimateOutboundTransferGas(
-      contractAddress ?? '',
-      tokenAddress,
-      to ?? '',
-      amount,
-      data,
-      provider as ethers.providers.Provider,
-    );
+    const tokenAddress = this.token[this.originNetwork.chainId];
+    const provider = getProvider(_provider)
+    return estimateDepositErc20(amount, provider as ethers.providers.Provider, contractAddress, from, tokenAddress)
   }
 
   /**
