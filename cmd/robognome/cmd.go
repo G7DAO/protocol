@@ -28,7 +28,9 @@ func CreateRootCommand() *cobra.Command {
 	metronomeCmd := Metronome.CreateMetronomeCommand()
 	metronomeCmd.Use = "metronome"
 
-	rootCmd.AddCommand(completionCmd, versionCmd, metronomeCmd)
+	runCmd := CreateRunCommand()
+
+	rootCmd.AddCommand(completionCmd, versionCmd, metronomeCmd, runCmd)
 
 	// By default, cobra Command objects write to stderr. We have to forcibly set them to output to
 	// stdout.
