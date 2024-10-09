@@ -5,7 +5,7 @@ import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.s
 
 struct Schedule {
     uint256 remainder;
-    uint256 divisor;    
+    uint256 divisor;
     uint256 bounty;
 }
 
@@ -16,13 +16,22 @@ contract Metronome is ReentrancyGuard {
     mapping(uint256 => mapping(uint256 => bool)) public ClaimedBounties;
     uint256 public NumSchedules;
 
-    event ScheduleCreated(uint256 indexed scheduleID, uint256 indexed remainder, uint256 indexed divisor, uint256 bounty);
+    event ScheduleCreated(
+        uint256 indexed scheduleID,
+        uint256 indexed remainder,
+        uint256 indexed divisor,
+        uint256 bounty
+    );
     event BalanceIncreased(uint256 indexed scheduleID, uint256 amount);
     event BountyClaimed(uint256 indexed scheduleID, address indexed forAddress, uint256 payment);
 
     error InvalidSchedule();
 
-    function createSchedule(uint256 remainder, uint256 divisor, uint256 bounty) external payable returns (uint256 scheduleID) {
+    function createSchedule(
+        uint256 remainder,
+        uint256 divisor,
+        uint256 bounty
+    ) external payable returns (uint256 scheduleID) {
         if (divisor == 0) {
             revert InvalidSchedule();
         }
@@ -48,7 +57,10 @@ contract Metronome is ReentrancyGuard {
     }
 
     function _claim(uint256 scheduleID, address forAddress) internal {
-        if (!ClaimedBounties[scheduleID][block.number] && (block.number % Schedules[scheduleID].divisor == Schedules[scheduleID].remainder)) {
+        if (
+            !ClaimedBounties[scheduleID][block.number] &&
+            (block.number % Schedules[scheduleID].divisor == Schedules[scheduleID].remainder)
+        ) {
             uint256 payment = ScheduleBalances[scheduleID];
             if (payment > Schedules[scheduleID].bounty) {
                 payment = Schedules[scheduleID].bounty;
