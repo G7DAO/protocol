@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { ethers, Transaction } from 'ethers';
 
 export const getBlockTimeDifference = async (
   blockNumber: ethers.BigNumber,
@@ -36,4 +36,12 @@ export const getBlockETA = async (
   return Date.now() + await getBlockTimeDifference(blockNumber, provider);
 };
 
+
+export const getDecodedInputs = (tx: Transaction, ABI:  any) => { //ABI:  ReadonlyArray<Fragment | JsonFragment | string> gives TS building error
+  const contractInterface = new ethers.utils.Interface(ABI);
+  return contractInterface.parseTransaction({
+    data: tx.data,
+    value: tx.value,
+  });
+}
 
