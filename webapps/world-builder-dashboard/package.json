@@ -22,6 +22,7 @@
     "prettier-plugin-tailwindcss": "^0.6.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-helmet-async": "^2.0.5",
     "react-query": "^3.39.3",
     "react-router-dom": "^6.11.2",
     "summon-ui": "^0.21.0"

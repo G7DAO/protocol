@@ -1,3 +1,4 @@
+import { HelmetProvider } from 'react-helmet-async'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { RouterProvider } from 'react-router-dom'
 import { FIVE_MINUTES } from '../constants'
@@ -50,30 +51,32 @@ const { name, lang, uiTheme } = TENANT_CONFIG
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <BlockchainProvider>
-        <UISettingsProvider>
-          <AssetsProvider tenant={name as Tenant}>
-            <IntlProvider
-              intlConf={{
-                currentLang: lang as LangKey,
-                messagesConf: {
-                  ...enMessages
-                }
-              }}
-            >
-              <ThemeProvider uiTheme={uiTheme}>
-                <BridgeNotificationsProvider>
-                  <Notifications position='top-right' zIndex={1000} styles={NOTIFICATIONS_STYLES} />
-                  <AuthProvider>
-                    <RouterProvider router={router} />
-                  </AuthProvider>
-                </BridgeNotificationsProvider>
-              </ThemeProvider>
-            </IntlProvider>
-          </AssetsProvider>
-        </UISettingsProvider>
-      </BlockchainProvider>
-    </QueryClientProvider>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <BlockchainProvider>
+          <UISettingsProvider>
+            <AssetsProvider tenant={name as Tenant}>
+              <IntlProvider
+                intlConf={{
+                  currentLang: lang as LangKey,
+                  messagesConf: {
+                    ...enMessages
+                  }
+                }}
+              >
+                <ThemeProvider uiTheme={uiTheme}>
+                  <BridgeNotificationsProvider>
+                    <Notifications position='top-right' zIndex={1000} styles={NOTIFICATIONS_STYLES} />
+                    <AuthProvider>
+                      <RouterProvider router={router} />
+                    </AuthProvider>
+                  </BridgeNotificationsProvider>
+                </ThemeProvider>
+              </IntlProvider>
+            </AssetsProvider>
+          </UISettingsProvider>
+        </BlockchainProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
   )
 }
