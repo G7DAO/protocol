@@ -62,29 +62,23 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork }: NetworkSelecto
 
       <Combobox.Dropdown className='!bg-dark-900 !rounded-md !border-dark-700'>
         <Combobox.Options>
-          {networks
-            .sort((a, b) => {
-              if (a.chainId === selectedNetwork.chainId) return 1
-              if (b.chainId === selectedNetwork.chainId) return -1
-              return 0
-            })
-            .map((n) => (
-              <Combobox.Option value={String(n.chainId)} key={n.chainId}>
-                <Group>
-                  <div
-                    className={
-                      n.chainId === selectedNetwork.chainId ? styles.optionContainerSelected : styles.optionContainer
-                    }
-                  >
-                    <div className={styles.optionLeftSection}>
-                      {networkLogo(n.chainId)}
-                      {n.displayName}
-                    </div>
-                    {n.chainId === selectedNetwork.chainId && <IconCheck />}
+          {networks.map((n) => (
+            <Combobox.Option value={String(n.chainId)} key={n.chainId}>
+              <Group>
+                <div
+                  className={
+                    n.chainId === selectedNetwork.chainId ? styles.optionContainerSelected : styles.optionContainer
+                  }
+                >
+                  <div className={styles.optionLeftSection}>
+                    {networkLogo(n.chainId)}
+                    {n.displayName}
                   </div>
-                </Group>
-              </Combobox.Option>
-            ))}
+                  {n.chainId === selectedNetwork.chainId && <IconCheck />}
+                </div>
+              </Group>
+            </Combobox.Option>
+          ))}
         </Combobox.Options>
       </Combobox.Dropdown>
     </Combobox>

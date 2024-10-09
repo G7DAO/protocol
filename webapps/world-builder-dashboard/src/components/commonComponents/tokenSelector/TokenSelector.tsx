@@ -41,7 +41,7 @@ const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selected
 
   const addToken = (tokenAddress: string) => {
     try {
-      if (error !== '') return;
+      if (error !== '') return
       const storageKey = `${connectedAccount}-${selectedChainId}`
       const existingTokens = JSON.parse(localStorage.getItem(storageKey) || '[]')
       const rpc = ALL_NETWORKS.find((network) => network.chainId === selectedChainId)?.rpcs[0]
@@ -91,29 +91,23 @@ const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selected
 
       <Combobox.Dropdown className='!bg-dark-900 !rounded-md !border-dark-700'>
         <Combobox.Options>
-          {tokens
-            .sort((a, b) => {
-              if (a.address === selectedToken.address) return 1
-              if (b.address === selectedToken.address) return -1
-              return 0
-            })
-            .map((n) => (
-              <Combobox.Option value={String(n.address)} key={n.address}>
-                <Group>
-                  <div
-                    className={
-                      n.address === selectedToken.address ? styles.optionContainerSelected : styles.optionContainer
-                    }
-                  >
-                    <div className={styles.optionLeftSection}>
-                      {<n.Icon />}
-                      {n.symbol}
-                    </div>
-                    {n.address === selectedToken.address && <IconCheck />}
+          {tokens.map((n) => (
+            <Combobox.Option value={String(n.address)} key={n.address}>
+              <Group>
+                <div
+                  className={
+                    n.address === selectedToken.address ? styles.optionContainerSelected : styles.optionContainer
+                  }
+                >
+                  <div className={styles.optionLeftSection}>
+                    {<n.Icon />}
+                    {n.symbol}
                   </div>
-                </Group>
-              </Combobox.Option>
-            ))}
+                  {n.address === selectedToken.address && <IconCheck />}
+                </div>
+              </Group>
+            </Combobox.Option>
+          ))}
         </Combobox.Options>
         <div className={styles.tokenAdderLayout}>
           <div className={styles.tokenAdderContainer}>
