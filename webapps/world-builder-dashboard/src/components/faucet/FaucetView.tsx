@@ -258,7 +258,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
             (selectedNetwork.chainId === L3_NETWORK.chainId &&
               nextClaimAvailable.data &&
               !nextClaimAvailable.data.L3.isAvailable) ||
-            ((!isValidAddress || address === '') && selectedAccountType === 'External Address')
+            ((!isValidAddress || address === '') && selectedAccountType === 'External Address' || claim.isLoading)
               ? styles.requestTokensButtonDisabled
               : styles.requestTokensButton
           }
@@ -269,7 +269,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
             (selectedNetwork.chainId === L3_NETWORK.chainId &&
               nextClaimAvailable.data &&
               !nextClaimAvailable.data.L3.isAvailable) ||
-            ((!isValidAddress || address === '') && selectedAccountType === 'External Address')
+            ((!isValidAddress || address === '') && selectedAccountType === 'External Address' || claim.isLoading)
           }
         >
           <div className={styles.requestTokensButtonText}>{claim.isLoading ? `Requesting...` : `Request Tokens`}</div>
