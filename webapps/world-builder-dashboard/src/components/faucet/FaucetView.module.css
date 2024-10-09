@@ -174,12 +174,12 @@
   align-items: center;
   gap: 8px;
   border-radius: 8px;
-  border: 1px solid var(--Primary-50, #ffebef);
-  background: var(--Primary-50, #ffebef);
+  border: 1px solid var(--Connect-Wallet-Button-Faucet, #ffebef);
+  background: var(--Connect-Wallet-Button-Faucet, #ffebef);
 }
 
 .connectWalletText {
-  color: var(--Primary-700, #dd1534);
+  color: var( --Connect-Wallet-Text-Faucet, #dd1534);
 
   /* Text sm/Semibold */
   font-family: Inter;
@@ -200,29 +200,25 @@
   border-radius: 8px;
   border: 1px solid var(--Primary-600, #ef233b);
   background: var(--Primary-600, #ef233b);
-
-  /* Shadow/xs */
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
 }
 
 .requestTokensButtonDisabled {
+  cursor: not-allowed;
   display: flex;
   height: 36px;
   padding: 8px var(--14px, 14px);
   justify-content: center;
   align-items: center;
   gap: 8px;
-  cursor: not-allowed;
   border-radius: 8px;
-  background: var(--Gray-600, #475467);
-
-  /* Shadow/xs */
+  border: 1px solid var(--Disabled-Button, #475467);
+  background: var(--Disabled-Button, #475467);
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-  border: none;
 }
 
 .requestTokensButtonText {
-  color: var(--Base-White, #fff);
+  color: var(--Primary-200, #fff);
 
   /* Text sm/Semibold */
   font-family: Inter;
@@ -352,6 +348,22 @@
   color: var(--Error-700, #b42318);
 }
 
+.availableFundsContainer {
+  text-align: center;
+  width: 100%;
+  justify-content: center;
+  padding: 2px 8px;
+  align-items: center;
+  gap: 4px;
+  border-radius: 16px;
+  color: var(--Success-700, #027a48);
+  background: var(--Success-50, #ecfdf3);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 18px;
+}
+
 .time {
   display: inline-block;
   min-width: 11ch;
@@ -405,11 +417,53 @@
     align-self: stretch;
   }
 
+  .selectorContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    align-self: stretch;
+  }
+
+  .addressContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    align-self: stretch;
+  }
+
   .address {
     display: flex;
     padding: 8px 12px;
     align-items: center;
     gap: 8px;
-  align-self: stretch;
+    align-self: stretch;
+  }
+
+  .connectWalletButton {
+    display: flex;
+    height: 36px;
+    padding: 8px var(--14px, 14px);
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    align-self: stretch;
+  }
+
+  .textSeparator {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    align-self: stretch;
+    width: 100%;
+  }
+
+  .bar {
+    width: 137px;
+    height: 1px;
+    background: #d0d5dd;
   }
 }

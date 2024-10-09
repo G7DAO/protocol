@@ -4,15 +4,15 @@ import { Outlet } from 'react-router-dom'
 
 // Styles
 import styles from './MainLayout.module.css'
+import IconDocumentation from '@/assets/IconDocumentation'
 import IconDroplets02 from '@/assets/IconDroplets02'
+import IconExplorer from '@/assets/IconExplorer'
 import IconWallet04 from '@/assets/IconWallet04'
 
 // Local components and assets
 import DesktopSidebar from '@/layouts/MainLayout/DesktopSidebar'
 import MobileSidebar from '@/layouts/MainLayout/MobileSidebar'
 import { useMediaQuery } from '@mantine/hooks'
-import IconExplorer from '@/assets/IconExplorer'
-import IconDocumentation from '@/assets/IconDocumentation'
 
 interface MainLayoutProps {}
 
