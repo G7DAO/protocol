@@ -67,7 +67,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
 
   useEffect(() => {
     if (!connectedAccount) {
-      setValue('0')
+      setValue('')
     }
   }, [connectedAccount])
 
@@ -92,6 +92,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           disabled={!connectedAccount}
+          placeholder={'0'}
         />
         <button className={styles.maxButton} onClick={() => setValue(String(balance))} disabled={!connectedAccount}>
           MAX
