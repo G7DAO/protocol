@@ -38,17 +38,6 @@ const SettingsView: React.FC<SettingsViewProps> = ({}) => {
             Request
           </button>
         </div>
-        <div className={styles.divider} />
-        <div className={styles.faucetLinkContainer}>
-          <IconArbitrumLarge />
-          <div className={styles.textContainer}>
-            <div className={styles.linkTitle}>Arbitrum Sepolia</div>
-            <div className={styles.supportingText}>Request $G7 testnet tokens on Arbitrum Sepolia</div>
-          </div>
-          <button className={styles.button} onClick={() => handleClick(L2_NETWORK)}>
-            Request
-          </button>
-        </div>
       </div>
     </div>
   )
