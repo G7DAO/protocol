@@ -30,7 +30,7 @@
 }
 
 .errorMessage {
-  color: var(--Error-600, #D92D20);
+  color: var(--Error-600, #d92d20);
   text-align: right;
 
   /* Text xs/Medium */
@@ -67,7 +67,8 @@
   line-height: 18px; /* 150% */
 }
 
-.inputGroup, .inputWithError {
+.inputGroup,
+.inputWithError {
   display: flex;
   padding-left: 12px;
   align-items: center;
@@ -76,7 +77,7 @@
 
   border-radius: 8px;
   border: 1px solid var(--Gray-100, #f2f4f7);
-  background: var(--Base-White, #fff);
+  background: var(--Base-Container, #fff);
 }
 
 .input {
@@ -92,7 +93,7 @@
   border: none;
   outline: none;
   padding: 0;
-  background: var(--Base-White, #fff);
+  background: var(--Base-Container, #fff);
 }
 
 .input:disabled {
@@ -101,7 +102,7 @@
 }
 
 .inputWithError {
-  border: 1px solid var(--Error-500, #F04438);
+  border: 1px solid var(--Error-500, #f04438);
 }
 
 .maxButton {
@@ -112,7 +113,7 @@
   gap: 8px;
 
   border-radius: 8px;
-  background: var(--Base-Brand, #ef233c);
+  background: var(--Primary-600, #ef233c);
   border: none;
   color: var(--Primary-25, #fffafb);
 
@@ -125,19 +126,20 @@
 }
 
 .maxButton:disabled {
-  background: var(--Gray-600, #475467);
+  background: var(--Disabled-Button, #475467);
   cursor: not-allowed;
 }
 
 .tokenGroup {
+  cursor: pointer;
   display: flex;
-  padding: 19px 16px;
+  padding: var(--20px, 20px) 16px;
   justify-content: center;
   align-items: center;
   gap: 8px;
-
-  border-radius: 0 8px 8px 0;
-  border-left: 1px solid var(--Gray-100, #f2f4f7);
+  border-radius: 0px 8px 8px 0px;
+  border-left: 1px solid var(--Gray-100, #F2F4F7);
+  background: #fff;
 }
 
 .tokenSymbol {
@@ -149,7 +151,6 @@
   font-weight: 600;
   line-height: 20px; /* 142.857% */
 }
-
 
 @media (max-width: 1199px) {
   .input {

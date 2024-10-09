@@ -51,6 +51,7 @@
   border: none;
   cursor: pointer;
 }
+
 .selectedNavigationButton {
   display: flex;
   padding: 8px 12px;
@@ -58,8 +59,8 @@
   gap: 8px;
 
   border-radius: 6px;
-  background: var(--Primary-600, #ef233b);
-  color: var(--Base-White, #fff);
+  background: var(--Selected-Tab, #ef233b);
+  color: var(--Selected-Tab-Text, #fff);
 
   /* Text md/Semibold */
   font-size: 16px;
@@ -106,7 +107,6 @@
   }
   .top {
     padding: 0 16px 16px 16px;
-
   }
   .viewContainer {
     padding: 0 16px;

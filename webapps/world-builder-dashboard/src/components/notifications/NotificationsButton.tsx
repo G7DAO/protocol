@@ -58,7 +58,7 @@ const NotificationsButton: React.FC<NotificationsButtonProps> = ({ notifications
             setIsDropdownOpened(!isDropdownOpened)
           }}
         >
-          <IconBell />
+          <IconBell className={styles.icon}/>
           {!smallView && <div className={styles.label}>Notifications</div>}
           {newNotifications.length > 0 && <div className={styles.badge}>{newNotifications.length}</div>}
         </button>

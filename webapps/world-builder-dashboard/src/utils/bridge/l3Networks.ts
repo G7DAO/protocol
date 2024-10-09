@@ -68,7 +68,7 @@ export const L3_NETWORKS = [
       utils: '0xDaE6924DAFBefb0eb7Ae2B398958920dE61173F2',
       validatorWalletCreator: '0x85Feb8fE05794c2384b848235942490a6610C64B',
       upgradeExecutor: '0xaf0B28462B18df0D7e3b2Ee64684d625f8C3Cb8C',
-      upgradeExecutorL2: '0xee2439C4C47b84aA718a8f899AECf274Cd759eF6',
+      upgradeExecutorL2: '0xee2439C4C47b84aA718a8f899AECf274Cd759eF6'
     },
     tokenBridgeContracts: {
       l2Contracts: {
@@ -149,7 +149,7 @@ export const L3_NETWORKS = [
       chainId: 13746,
       parentChainId: 421614,
       nativeToken: '0x10adBf84548F923577Be12146eAc104C899D1E75',
-      rpcs: ['https://rpc-game7-testnet-0ilneybprf.t.conduit.xyz']
+      rpcs: ['https://testnet-rpc.game7.io/']
     },
     coreContracts: {
       rollup: '0x6cf5bFffc54cDd13B4747e8DF2C72ce8A95043c0',
