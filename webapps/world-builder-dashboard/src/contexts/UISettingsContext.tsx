@@ -18,7 +18,7 @@ interface UISettingsProviderProps {
 export const UISettingsProvider: React.FC<UISettingsProviderProps> = ({ children }) => {
   const [isMessagingEnabled, setIsMessagingEnabled] = useState<boolean | undefined>(undefined)
   const [faucetTargetChainId, setFaucetTargetChainId] = useState<number>(1)
-  const [theme, setTheme] = useState<'light' | 'dark' | undefined>('dark')
+  const [theme, setTheme] = useState<'light' | 'dark' | undefined>(undefined)
 
   useEffect(() => {
     const storedIsMessagingEnabled = localStorage.getItem('isMessagingEnabled')
@@ -55,7 +55,7 @@ export const UISettingsProvider: React.FC<UISettingsProviderProps> = ({ children
         isMessagingEnabled: isMessagingEnabled ?? true,
         setIsMessagingEnabled,
         setFaucetTargetChainId,
-        theme: theme ?? 'dark',
+        theme: theme ?? 'light',
         toggleTheme
       }}
     >

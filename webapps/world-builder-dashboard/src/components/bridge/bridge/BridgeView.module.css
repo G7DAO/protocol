@@ -42,7 +42,7 @@
   gap: 8px;
   border-radius: 8px;
   display: flex;
-  background: var(--Base-Container, #ffffff);
+  background: var(--Base-White, #ffffff);
   border: 1px solid var(--Gray-100, #f2f4f7);
   width: 100%;
 }
@@ -62,12 +62,12 @@
 
 .selectedDirectionButton {
   background: var(--Primary-600, #EF233B);
-  color: var(--Primary-200, #ffffff);
+  color: var(--Base-White, #ffffff);
 }
 
 .directionButton {
   background: transparent;
-  color: var(--Gray-600, #fff);
+  color: var(--Gray-600, #475467);
 }
 
 .networksContainer {
@@ -80,7 +80,7 @@
 
   border-radius: 8px;
   border: 1px solid var(--Gray-100, #f2f4f7);
-  background: var(--Base-Container, #ffffff);
+  background: var(--Base-White, #ffffff);
 }
 
 .networkSelect {

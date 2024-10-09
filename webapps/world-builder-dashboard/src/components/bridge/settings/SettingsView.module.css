@@ -96,7 +96,7 @@
 
     /* Shadow/xs */
     box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-    color: var(--Primary-200, #FFF);
+    color: var(--Base-White, #FFF);
 
     /* Text sm/Semibold */
     font-size: 14px;

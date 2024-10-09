@@ -19,7 +19,7 @@
 }
 
 .buttonLabel, .buttonLabelLoading {
-  color: var(--Primary-200, #ffffff);
+  color: var(--Base-White, #ffffff);
 
   /* Text sm/Semibold */
 
@@ -75,7 +75,7 @@
 
 .container:disabled {
   border-radius: 8px;
-  background: var(--Disabled-Button, #393939);
+  background: var(--Gray-600, #475467);
   cursor: not-allowed;
   border: none;
 }

@@ -51,7 +51,6 @@
   border: none;
   cursor: pointer;
 }
-
 .selectedNavigationButton {
   display: flex;
   padding: 8px 12px;
@@ -59,8 +58,8 @@
   gap: 8px;
 
   border-radius: 6px;
-  background: var(--Selected-Tab, #ef233b);
-  color: var(--Selected-Tab-Text, #fff);
+  background: var(--Primary-600, #ef233b);
+  color: var(--Base-White, #fff);
 
   /* Text md/Semibold */
   font-size: 16px;

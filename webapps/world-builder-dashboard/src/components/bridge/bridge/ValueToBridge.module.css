@@ -77,7 +77,7 @@
 
   border-radius: 8px;
   border: 1px solid var(--Gray-100, #f2f4f7);
-  background: var(--Base-Container, #fff);
+  background: var(--Base-White, #fff);
 }
 
 .input {
@@ -93,7 +93,7 @@
   border: none;
   outline: none;
   padding: 0;
-  background: var(--Base-Container, #fff);
+  background: var(--Base-White, #fff);
 }
 
 .input:disabled {
@@ -113,7 +113,7 @@
   gap: 8px;
 
   border-radius: 8px;
-  background: var(--Primary-600, #ef233c);
+  background: var(--Base-Brand, #ef233c);
   border: none;
   color: var(--Primary-25, #fffafb);
 
@@ -126,7 +126,7 @@
 }
 
 .maxButton:disabled {
-  background: var(--Disabled-Button, #475467);
+  background: var(--Gray-600, #475467);
   cursor: not-allowed;
 }
 
