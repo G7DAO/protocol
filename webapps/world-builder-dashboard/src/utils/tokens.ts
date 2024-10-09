@@ -2,7 +2,6 @@ import { L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../constants'
 import { ZERO_ADDRESS } from './web3utils'
 import IconEthereum from '@/assets/IconEthereum'
 import IconG7T from '@/assets/IconG7T'
-import IconTokenNoSynbol from '@/assets/IconTokenNoSymbol'
 import IconUSDC from '@/assets/IconUSDC'
 
 export interface Token {
@@ -13,13 +12,7 @@ export interface Token {
   rpc: string
 }
 
-export const getTokensForNetwork = (chainId: number | undefined, userAddress: string | undefined): Token[] => {
-  const storageKey = `${userAddress}-${chainId}`
-  const storedTokens = JSON.parse(localStorage.getItem(storageKey) || '[]')
-  const storedTokensWithItems = storedTokens.map((token: any) => ({
-    ...token,
-    Icon: IconTokenNoSynbol
-  }))
+export const getTokensForNetwork = (chainId: number | undefined): Token[] => {
   switch (chainId) {
     case L1_NETWORK.chainId:
       return [
@@ -33,7 +26,7 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
         {
           name: 'USDC',
           symbol: 'USDC',
-          address: '0xf08A50178dfcDe18524640EA6618a1f965821715',
+          address: '0xf08A50178dfcDe18524640EA6618a1f965821715', // USDC example
           Icon: IconUSDC,
           rpc: L1_NETWORK.rpcs[0]
         },
@@ -43,8 +36,7 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           address: ZERO_ADDRESS,
           Icon: IconEthereum,
           rpc: L1_NETWORK.rpcs[0]
-        },
-        ...storedTokensWithItems
+        }
       ]
     case L2_NETWORK.chainId:
       return [
@@ -61,8 +53,7 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           address: ZERO_ADDRESS,
           Icon: IconEthereum,
           rpc: L2_NETWORK.rpcs[0]
-        },
-        ...storedTokensWithItems
+        }
       ]
     case L3_NETWORK.chainId:
       return [
@@ -72,8 +63,7 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           address: L3_NETWORK.g7TokenAddress,
           Icon: IconG7T,
           rpc: L3_NETWORK.rpcs[0]
-        },
-        ...storedTokensWithItems
+        }
       ]
     default:
       return [] // Return an empty array or handle unsupported networks

@@ -5,6 +5,7 @@ import {
   DEFAULT_STAKE_NATIVE_POOL_ID,
   L1_NETWORK,
   L2_NETWORK,
+  L3_NATIVE_TOKEN_SYMBOL,
   L3_NETWORK,
   MAX_ALLOWANCE_ACCOUNT
 } from '../../../../constants'
@@ -24,14 +25,12 @@ import { useUISettings } from '@/contexts/UISettingsContext'
 import useERC20Balance from '@/hooks/useERC20Balance'
 import useEthUsdRate from '@/hooks/useEthUsdRate'
 import useNativeBalance from '@/hooks/useNativeBalance'
-import useTokenBalance from '@/hooks/useTokenBalance'
 import { DepositDirection } from '@/pages/BridgePage/BridgePage'
 import { estimateOutboundTransferGas } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { estimateDepositERC20ToNativeFee } from '@/utils/bridge/depositERC20ToNative'
 import { getStakeNativeTxData } from '@/utils/bridge/stakeContractInfo'
 import { estimateWithdrawGasAndFee } from '@/utils/bridge/withdrawERC20'
 import { estimateWithdrawFee } from '@/utils/bridge/withdrawNativeToken'
-import { Token } from '@/utils/tokens'
 
 const BridgeView = ({
   direction,
@@ -40,8 +39,6 @@ const BridgeView = ({
   direction: DepositDirection
   setDirection: (arg0: DepositDirection) => void
 }) => {
-  const [token, setToken] = useState<Token | undefined>()
-  const [balance, setBalance] = useState<number | null>(null)
   const [value, setValue] = useState('0')
   const [message, setMessage] = useState<{ destination: string; data: string }>({ destination: '', data: '' })
   const [isMessageExpanded, setIsMessageExpanded] = useState(false)
@@ -52,18 +49,17 @@ const BridgeView = ({
   const { data: ethUsdRate } = useEthUsdRate()
   const { connectedAccount, selectedLowNetwork, setSelectedLowNetwork, selectedHighNetwork, setSelectedHighNetwork } =
     useBlockchainContext()
-
-  const { isFetching: isFetchingLowNetworkBalance } = useERC20Balance({
+  const { data: lowNetworkBalance, isFetching: isFetchingLowNetworkBalance } = useERC20Balance({
     tokenAddress: selectedLowNetwork.g7TokenAddress,
     account: connectedAccount,
     rpc: selectedLowNetwork.rpcs[0]
   })
-  const { isFetching: isFetchingHighNetworkBalance } = useERC20Balance({
+  const { data: highNetworkBalance, isFetching: isFetchingHighNetworkBalance } = useERC20Balance({
     tokenAddress: selectedHighNetwork.g7TokenAddress,
     account: connectedAccount,
     rpc: selectedHighNetwork.rpcs[0]
   })
-  const { isFetching: isFetchingL3NativeBalance } = useNativeBalance({
+  const { data: l3NativeBalance, isFetching: isFetchingL3NativeBalance } = useNativeBalance({
     account: connectedAccount,
     rpc: L3_NETWORK.rpcs[0]
   })
@@ -76,12 +72,6 @@ const BridgeView = ({
     account: connectedAccount,
     rpc: selectedHighNetwork.rpcs[0]
   })
-
-  const { balance: tokenBalance } = useTokenBalance(token?.address || '', token?.rpc || '', connectedAccount)
-
-  const handleTokenChange = (token: Token) => {
-    setToken(token)
-  }
 
   const estimatedFee = useQuery(['estimatedFee', value, direction, selectedHighNetwork], async () => {
     if (!connectedAccount) {
@@ -121,13 +111,6 @@ const BridgeView = ({
     }
     return est
   })
-
-  useEffect(() => {
-    if (token && connectedAccount) {
-      setBalance(Number(tokenBalance)) // Update the balance when the hook returns it
-    }
-  }, [token, balance, connectedAccount])
-
   useEffect(() => {
     setNetworkErrorMessage('')
   }, [selectedHighNetwork, selectedLowNetwork, value])
@@ -205,11 +188,15 @@ const BridgeView = ({
         </div>
       </div>
       <ValueToBridge
-        symbol={token?.symbol ?? ''}
+        symbol={L3_NATIVE_TOKEN_SYMBOL}
         value={value}
         setValue={setValue}
-        onTokenChange={handleTokenChange}
-        balance={tokenBalance}
+        balance={
+          direction === 'DEPOSIT'
+            ? (lowNetworkBalance?.formatted ?? '0')
+            : ((selectedHighNetwork.chainId === L3_NETWORK.chainId ? l3NativeBalance : highNetworkBalance?.formatted) ??
+              '0')
+        }
         rate={g7tUsdRate.data ?? 0}
         isFetchingBalance={
           direction === 'DEPOSIT'
@@ -220,7 +207,6 @@ const BridgeView = ({
         }
         errorMessage={inputErrorMessages.value}
         setErrorMessage={(msg) => setInputErrorMessages((prev) => ({ ...prev, value: msg }))}
-        selectedChainId={direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId}
       />
       {direction === 'DEPOSIT' && selectedLowNetwork.chainId === L2_NETWORK.chainId && isMessagingEnabled && (
         <BridgeMessage
@@ -249,7 +235,7 @@ const BridgeView = ({
         isEstimatingFee={estimatedFee.isFetching}
         value={Number(value)}
         ethRate={ethUsdRate ?? 0}
-        tokenSymbol={token?.symbol || ''}
+        tokenSymbol={L3_NATIVE_TOKEN_SYMBOL}
         tokenRate={g7tUsdRate.data ?? 0}
         gasTokenSymbol={
           direction === 'DEPOSIT'

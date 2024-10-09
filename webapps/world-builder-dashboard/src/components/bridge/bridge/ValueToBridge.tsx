@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
+import { L3_NATIVE_TOKEN_SYMBOL } from '../../../../constants'
 import styles from './ValueToBridge.module.css'
-import TokenSelector from '@/components/commonComponents/tokenSelector/TokenSelector'
+import IconG7TSmall from '@/assets/IconG7TSmall'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
-import { getTokensForNetwork, Token } from '@/utils/tokens'
 
 const formatCurrency = (value: number) => {
   const formatter = new Intl.NumberFormat('en-US', {
@@ -23,8 +23,6 @@ interface ValueToBridgeProps {
   isFetchingBalance?: boolean
   errorMessage: string
   setErrorMessage: (arg0: string) => void
-  onTokenChange: (token: Token) => void
-  selectedChainId: number
 }
 const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   setValue,
@@ -34,24 +32,8 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   rate,
   isFetchingBalance,
   errorMessage,
-  setErrorMessage,
-  onTokenChange,
-  selectedChainId
+  setErrorMessage
 }) => {
-  const [tokens, setTokens] = useState<Token[]>([])
-  const [token, setToken] = useState<Token>()
-  const { connectedAccount } = useBlockchainContext()
-
-  const getTokens = async () => {
-    const _tokens = getTokensForNetwork(selectedChainId, connectedAccount)
-    handleTokenChange(_tokens[0])
-    setTokens(_tokens)
-  }
-
-  useEffect(() => {
-    getTokens()
-  }, [selectedChainId, connectedAccount])
-
   useEffect(() => {
     const num = Number(value)
     if (isNaN(num) || num < 0) {
@@ -65,20 +47,13 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
     setErrorMessage('')
   }, [value, balance])
 
+  const { connectedAccount } = useBlockchainContext()
+
   useEffect(() => {
     if (!connectedAccount) {
       setValue('0')
     }
   }, [connectedAccount])
-
-  const handleTokenAdded = () => {
-    getTokens()
-  }
-
-  const handleTokenChange = (token: Token) => {
-    setToken(token)
-    onTokenChange(token)
-  }
 
   return (
     <div className={styles.container}>
@@ -96,20 +71,10 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
         <button className={styles.maxButton} onClick={() => setValue(String(balance))} disabled={!connectedAccount}>
           MAX
         </button>
-        {tokens.length > 0 && token && (
-          <TokenSelector
-            tokens={tokens}
-            selectedToken={token}
-            onChange={(token: Token) => handleTokenChange(token)}
-            onTokenAdded={handleTokenAdded}
-            selectedChainId={selectedChainId}
-          />
-        )}
-        {/* <div className={styles.tokenGroup}>
+        <div className={styles.tokenGroup}>
           <IconG7TSmall />
           <div className={styles.tokenSymbol}>{L3_NATIVE_TOKEN_SYMBOL}</div>
-          <IconChevronDownSelector />
-        </div> */}
+        </div>
       </div>
       <div className={styles.header}>
         <div className={styles.label}>{rate > 0 ? formatCurrency(Number(value) * rate) : ' '}</div>
