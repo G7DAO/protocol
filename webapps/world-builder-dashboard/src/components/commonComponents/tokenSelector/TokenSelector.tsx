@@ -41,6 +41,7 @@ const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selected
 
   const addToken = (tokenAddress: string) => {
     try {
+      if (error !== '') return;
       const storageKey = `${connectedAccount}-${selectedChainId}`
       const existingTokens = JSON.parse(localStorage.getItem(storageKey) || '[]')
       const rpc = ALL_NETWORKS.find((network) => network.chainId === selectedChainId)?.rpcs[0]

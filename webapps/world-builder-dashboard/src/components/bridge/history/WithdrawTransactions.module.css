@@ -15,7 +15,7 @@
 
   border-radius: 12px;
   border: 1px solid var(--Gray-200, #eaecf0);
-  background: var(--Base-White, #ffffff);
+  background: var(--Gray-25, #ffffff);
 
   /* Shadow/sm */
   box-shadow:
@@ -129,7 +129,7 @@
   font-style: normal;
   font-weight: 400;
   line-height: 20px; /* 142.857% */
-  border-bottom: 1px solid var(--Gray-200, #eaecf0);
+  border-bottom: 1px solid var(--Gray-60, #eaecf0);
 }
 
 .gridItemImportant {
@@ -150,14 +150,14 @@
   align-items: center;
   align-self: stretch;
   color: var(--Gray-700, #344054);
-  background: #fcfcfd;
+  background: var(--Base-White, #eaecf0);
 
   /* Text sm/Regular */
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
   line-height: 20px; /* 142.857% */
-  border-bottom: 1px solid var(--Gray-200, #eaecf0);
+  border-bottom: 1px solid var(--Gray-60, #eaecf0);
 }
 
 .gridItemInitiate {
@@ -172,8 +172,8 @@
   font-style: normal;
   font-weight: 400;
   line-height: 20px;
-  border-bottom: 1px solid var(--Gray-200, #eaecf0);
-  background: #fcfcfd;
+  border-bottom: 1px solid var(--Gray-60, #eaecf0);
+  background: var(--Base-White, #eaecf0);
 }
 
 .gridNodeCompleted {
@@ -181,7 +181,7 @@
   left: 14px;
   top: 36px;
   stroke-width: 1px;
-  stroke: #dbe1e9;
+  stroke: var(--Grid-Node, #eaecf0);
 }
 
 .transactionsHeader {
@@ -196,7 +196,7 @@
   align-self: stretch;
   border-bottom: 1px solid var(--Gray-200, #eaecf0);
 
-  background: var(--Gray-50, #f9fafb);
+  background: var(--Gray-60, #f9fafb);
   color: var(--Gray-600, #475467);
 
   /* Text xs/Medium */
@@ -232,12 +232,9 @@
   padding: 2px 8px;
   align-items: center;
   border-radius: 16px;
-  background: var(--Gray-100, #f2f4f7);
-  mix-blend-mode: multiply;
-  color: var(--Gray-700, var(--color-gray-Gray-700, #344054));
+  background: var(--Gray-60, #393939);
+  color: var(--Gray-700, #344054);
   text-align: center;
-
-  /* Text xs/Medium */
   font-family: Inter;
   font-size: 12px;
   font-style: normal;
@@ -281,7 +278,7 @@
   font-style: normal;
   font-weight: 500;
   line-height: 18px; /* 150% */
-  mix-blend-mode: var(--mix-blend, multiply);
+  /* mix-blend-mode: var(--mix-blend, multiply); */
   cursor: pointer;
 }
 
@@ -326,7 +323,7 @@
 
   /* Shadow/xs */
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-  color: var(--Base-White, #fff);
+  color: #fff;
 
   /* Text sm/Semibold */
   font-family: Inter, sans-serif;
@@ -368,4 +365,8 @@
   animation-fill-mode: forwards;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
+}
+
+.arrowUp {
+  stroke: var(--Arrow-Up, #fff);
 }
