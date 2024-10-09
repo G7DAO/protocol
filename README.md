@@ -63,8 +63,8 @@ The `Metronome` contract allows anyone to set incentivize for Game7 chain users 
 These incentives can have different purposes for different applications. For example, they can be used to improve the fairness of blockhash-based
 on-chain entropy sources. We also use the `Metronome` to incentivize steady block production on Game7 testnet.
 
-- [The `Metronome` smart contract](./web3/contracts/metronome/Metronome.sol)
-- [`robognome`, a bot that claims `Metronome` bounties](./cmd/robognome/README.md)
+- The [`Metronome` smart contract](./web3/contracts/metronome/Metronome.sol).
+- [`robognome`](./cmd/robognome/README.md) - A reference bot which claims `Metronome` bounties.
 
 ## Development
 
