@@ -32,7 +32,7 @@ func Run(metronomeAddress common.Address, claimant *keystore.Key, client *ethcli
 
 	metronome, metronomeErr := Metronome.NewMetronome(metronomeAddress, client)
 	if metronomeErr != nil {
-		return fmt.Errorf("Failed to create Metronome contract binding: %s", metronomeErr.Error())
+		return fmt.Errorf("failed to create Metronome contract binding: %s", metronomeErr.Error())
 	}
 
 	chainID, chainIDErr := client.ChainID(ctx)
