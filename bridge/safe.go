@@ -49,7 +49,7 @@ type SafeTransactionData struct {
 	GasPrice       string        `json:"gasPrice"`
 	GasToken       string        `json:"gasToken"`
 	RefundReceiver string        `json:"refundReceiver"`
-	Nonce          uint64        `json:"nonce"`
+	Nonce          *big.Int      `json:"nonce"`
 	SafeTxHash     string        `json:"safeTxHash"`
 	Sender         string        `json:"sender"`
 	Signature      string        `json:"signature"`
@@ -60,7 +60,7 @@ const (
 	NativeTokenAddress = "0x0000000000000000000000000000000000000000"
 )
 
-func CreateSafeProposal(client *ethclient.Client, key *keystore.Key, safeAddress common.Address, to common.Address, data []byte, value *big.Int, safeApi string, safeOperation OperationType) error {
+func CreateSafeProposal(client *ethclient.Client, key *keystore.Key, safeAddress common.Address, to common.Address, data []byte, value *big.Int, safeApi string, safeOperation OperationType, safeNonce *big.Int) error {
 	chainID, err := client.ChainID(context.Background())
 	if err != nil {
 		return fmt.Errorf("failed to get chain ID: %v", err)
@@ -72,10 +72,16 @@ func CreateSafeProposal(client *ethclient.Client, key *keystore.Key, safeAddress
 		return fmt.Errorf("failed to create GnosisSafe instance: %v", err)
 	}
 
-	// Fetch the current nonce from the Safe contract
-	nonce, err := safeInstance.Nonce(&bind.CallOpts{})
-	if err != nil {
-		return fmt.Errorf("failed to fetch nonce from Safe contract: %v", err)
+	nonce := big.NewInt(0)
+	if safeNonce == nil {
+		// Fetch the current nonce from the Safe contract
+		fetchNonce, err := safeInstance.Nonce(&bind.CallOpts{})
+		if err != nil {
+			return fmt.Errorf("failed to fetch nonce from Safe contract: %v", err)
+		}
+		nonce = fetchNonce
+	} else {
+		nonce = safeNonce
 	}
 
 	safeTransactionData := SafeTransactionData{
@@ -88,7 +94,7 @@ func CreateSafeProposal(client *ethclient.Client, key *keystore.Key, safeAddress
 		GasPrice:       "0",
 		GasToken:       NativeTokenAddress,
 		RefundReceiver: NativeTokenAddress,
-		Nonce:          nonce.Uint64(),
+		Nonce:          nonce,
 	}
 
 	// Calculate SafeTxHash

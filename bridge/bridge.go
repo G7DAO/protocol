@@ -100,7 +100,7 @@ func NativeTokenBridgeCall(inboxAddress common.Address, keyFile string, password
 	return transaction, nil
 }
 
-func NativeTokenBridgePropose(inboxAddress common.Address, keyFile string, password string, l1Rpc string, l2Rpc string, to common.Address, l2CallValue *big.Int, l2Calldata []byte, safeAddress common.Address, safeApi string, safeOperation uint8) error {
+func NativeTokenBridgePropose(inboxAddress common.Address, keyFile string, password string, l1Rpc string, l2Rpc string, to common.Address, l2CallValue *big.Int, l2Calldata []byte, safeAddress common.Address, safeApi string, safeOperation uint8, safeNonce *big.Int) error {
 	l1Client, l1ClientErr := ethclient.DialContext(context.Background(), l1Rpc)
 	if l1ClientErr != nil {
 		return l1ClientErr
@@ -121,7 +121,7 @@ func NativeTokenBridgePropose(inboxAddress common.Address, keyFile string, passw
 		return createRetryableTicketDataErr
 	}
 
-	return CreateSafeProposal(l1Client, key, safeAddress, inboxAddress, createRetryableTicketData, big.NewInt(0), safeApi, OperationType(safeOperation))
+	return CreateSafeProposal(l1Client, key, safeAddress, inboxAddress, createRetryableTicketData, big.NewInt(0), safeApi, OperationType(safeOperation), safeNonce)
 }
 
 func GetERC20BridgeCalldataAndValue(routerAddress common.Address, keyFile string, password string, l1Rpc string, l2Rpc string, tokenAddress common.Address, to common.Address, amount *big.Int) ([]byte, *big.Int, error) {
@@ -260,7 +260,7 @@ func ERC20BridgeCall(routerAddress common.Address, keyFile string, password stri
 	return transaction, nil
 }
 
-func ERC20BridgePropose(routerAddress common.Address, keyFile string, password string, l1Rpc string, l2Rpc string, tokenAddress common.Address, to common.Address, amount *big.Int, safeAddress common.Address, safeApi string, safeOperation uint8) error {
+func ERC20BridgePropose(routerAddress common.Address, keyFile string, password string, l1Rpc string, l2Rpc string, tokenAddress common.Address, to common.Address, amount *big.Int, safeAddress common.Address, safeApi string, safeOperation uint8, safeNonce *big.Int) error {
 	callData, tokenTotalFeeAmount, callDataErr := GetERC20BridgeCalldataAndValue(routerAddress, keyFile, password, l1Rpc, l2Rpc, tokenAddress, to, amount)
 	if callDataErr != nil {
 		fmt.Fprintln(os.Stderr, "callDataErr", callDataErr.Error())
@@ -279,5 +279,5 @@ func ERC20BridgePropose(routerAddress common.Address, keyFile string, password s
 		return keyErr
 	}
 
-	return CreateSafeProposal(l1Client, key, safeAddress, routerAddress, callData, tokenTotalFeeAmount, safeApi, OperationType(safeOperation))
+	return CreateSafeProposal(l1Client, key, safeAddress, routerAddress, callData, tokenTotalFeeAmount, safeApi, OperationType(safeOperation), safeNonce)
 }
