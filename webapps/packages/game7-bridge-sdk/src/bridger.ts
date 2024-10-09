@@ -304,7 +304,7 @@ export class Bridger {
         L2GatewayRouterABI,
         signerOrProvider,
       );
-      const estimatedGas = await routerContract.estimateGas.outboundTransfer(
+      const estimatedGas = await routerContract.estimateGas['outboundTransfer(address,address,uint256,bytes)'](
         this.token[this.destinationNetwork.chainId],
         from,
         amount,
