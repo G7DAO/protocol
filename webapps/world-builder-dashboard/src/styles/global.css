@@ -84,8 +84,8 @@ button {
 [data-theme='dark'] {
   --mix-blend: normal;
 
-  --Blue-50: #cce4ff; /* Adjusted from #eff8ff */
-  --Blue-100: #aad1ff; /* Adjusted from #d1e9ff */
+  --Blue-50: #175CD3; /* Adjusted from #eff8ff */
+  --Blue-100: #1849A9; /* Adjusted from #d1e9ff */
   --Blue-200: #8abfff; /* Adjusted from #b3d8ff */
   --Blue-700: #164bbf; /* Adjusted from #175cd3 */
   --Blue-800: #12399f; /* New: Darker blue shade */

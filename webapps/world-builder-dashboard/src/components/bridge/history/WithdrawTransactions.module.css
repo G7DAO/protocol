@@ -277,14 +277,13 @@
   font-size: 12px;
   font-style: normal;
   font-weight: 500;
-  line-height: 18px; /* 150% */
-  /* mix-blend-mode: var(--mix-blend, multiply); */
+  line-height: 18px;
   cursor: pointer;
 }
 
 .pending {
   background: var(--Blue-50, #eff8ff);
-  color: var(--Blue-700, #175cd3);
+  color: var(--Primary-200, #175cd3);
 }
 
 .claimable {
