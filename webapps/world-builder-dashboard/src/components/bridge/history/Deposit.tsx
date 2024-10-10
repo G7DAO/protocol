@@ -33,7 +33,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
           <div className={styles.gridItem}>
             <div className={styles.typeDeposit}>
               Deposit
-              <IconArrowNarrowDown stroke={'#3538CD'} />
+              <IconArrowNarrowDown className={styles.arrowUp} />
             </div>
           </div>
           <div className={styles.gridItem}>{timeAgo(deposit.lowNetworkTimestamp)}</div>
@@ -50,12 +50,12 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                 {status.data && status.data.l2Result?.complete ? (
                   <div className={styles.settled}>
                     Completed
-                    <IconLinkExternal02 stroke={'#027A48'} />
+                    <IconLinkExternal02 className={styles.arrowUp} />
                   </div>
                 ) : (
                   <div className={styles.pending}>
                     Pending
-                    <IconLinkExternal02 stroke={'#175CD3'} />
+                    <IconLinkExternal02 className={styles.arrowUp} />
                   </div>
                 )}
               </div>
