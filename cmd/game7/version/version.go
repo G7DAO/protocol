@@ -1,3 +1,3 @@
 package version
 
-var Game7Version string = "0.0.3"
+var Game7Version string = "0.1.0"

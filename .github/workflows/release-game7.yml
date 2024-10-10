@@ -65,6 +65,24 @@ jobs:
             - name: Build WrappedNativeToken interface with seer
               run: seer evm generate --package WrappedNativeToken --output bindings/WrappedNativeToken/WrappedNativeToken.go --hardhat web3/artifacts/contracts/token/WrappedNativeToken.sol/WrappedNativeToken.json --cli --struct WrappedNativeToken
 
+            - name: Build Staker interface with seer
+              run: seer evm generate --package Staker --output bindings/Staker/Staker.go --hardhat web3/artifacts/contracts/staking/Staker.sol/Staker.json --cli --struct Staker
+
+            - name: Build PositionMetadata interface with seer
+              run: seer evm generate --package PositionMetadata --output bindings/PositionMetadata/PositionMetadata.go --hardhat web3/artifacts/contracts/staking/PositionMetadata.sol/PositionMetadata.json --cli --struct PositionMetadata
+
+            - name: Build MockERC20 interface with seer
+              run: seer evm generate --package MockERC20 --output bindings/MockERC20/MockERC20.go --hardhat web3/artifacts/contracts/mock/tokens.sol/MockERC20.json --cli --struct MockERC20
+
+            - name: Build MockERC721 interface with seer
+              run: seer evm generate --package MockERC721 --output bindings/MockERC721/MockERC721.go --hardhat web3/artifacts/contracts/mock/tokens.sol/MockERC721.json --cli --struct MockERC721
+
+            - name: Build MockERC1155 interface with seer
+              run: seer evm generate --package MockERC1155 --output bindings/MockERC1155/MockERC1155.go --hardhat web3/artifacts/contracts/mock/tokens.sol/MockERC1155.json --cli --struct MockERC1155
+
+            - name: Build TokenSender interface with seer
+              run: seer evm generate --package TokenSender --output bindings/TokenSender/TokenSender.go --hardhat web3/artifacts/contracts/faucet/TokenSender.sol/TokenSender.json --cli --struct TokenSender
+
             - name: Build binary for each valid (GOOS, GOARCH) pair
               env:
                   GOOS: ${{ matrix.os }}
