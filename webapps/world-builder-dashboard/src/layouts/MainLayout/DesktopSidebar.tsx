@@ -28,7 +28,6 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
               {item.icon}
               {item.name}
             </div>
-            </div>
           ))}
         </div>
       </div>
