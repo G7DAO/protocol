@@ -36,7 +36,8 @@ export function setupStakingPoolsFixture(transferable: boolean, lockupSeconds: n
             0,
             transferable,
             lockupSeconds,
-            cooldownSeconds
+            cooldownSeconds,
+            admin0
         );
         const nativePoolID = (await staker.TotalPools()) - BigInt(1);
 
@@ -46,7 +47,8 @@ export function setupStakingPoolsFixture(transferable: boolean, lockupSeconds: n
             0,
             transferable,
             lockupSeconds,
-            cooldownSeconds
+            cooldownSeconds,
+            admin0
         );
         const erc20PoolID = (await staker.TotalPools()) - BigInt(1);
 
@@ -56,7 +58,8 @@ export function setupStakingPoolsFixture(transferable: boolean, lockupSeconds: n
             0,
             transferable,
             lockupSeconds,
-            cooldownSeconds
+            cooldownSeconds,
+            admin0
         );
         const erc721PoolID = (await staker.TotalPools()) - BigInt(1);
 
@@ -67,7 +70,8 @@ export function setupStakingPoolsFixture(transferable: boolean, lockupSeconds: n
             erc1155TokenID,
             transferable,
             lockupSeconds,
-            cooldownSeconds
+            cooldownSeconds,
+            admin0
         );
         const erc1155PoolID = (await staker.TotalPools()) - BigInt(1);
 
@@ -129,7 +133,8 @@ describe('Staker', function () {
             0,
             true,
             0,
-            0
+            0,
+            stakerWithAnyone
         );
 
         await expect(tx)
@@ -161,7 +166,8 @@ describe('Staker', function () {
             0,
             true,
             0,
-            0
+            0,
+            stakerWithAnyone
         );
 
         await expect(tx)
@@ -193,7 +199,8 @@ describe('Staker', function () {
             0,
             true,
             0,
-            0
+            0,
+            stakerWithAnyone
         );
 
         await expect(tx)
@@ -221,7 +228,8 @@ describe('Staker', function () {
             erc1155TokenID,
             true,
             0,
-            0
+            0,
+            stakerWithAnyone
         );
 
         await expect(tx)
@@ -248,7 +256,8 @@ describe('Staker', function () {
             0,
             true,
             0,
-            0
+            0,
+            stakerWithAnyone
         );
         let poolID = (await staker.TotalPools()) - 1n;
         expect(poolID).to.equal(0n);
@@ -261,7 +270,8 @@ describe('Staker', function () {
             0,
             true,
             0,
-            0
+            0,
+            stakerWithAnyone
         );
         poolID = (await staker.TotalPools()) - 1n;
         expect(poolID).to.equal(1n);
@@ -274,7 +284,8 @@ describe('Staker', function () {
             0,
             true,
             0,
-            0
+            0,
+            stakerWithAnyone
         );
         poolID = (await staker.TotalPools()) - 1n;
         expect(poolID).to.equal(2n);
@@ -287,7 +298,8 @@ describe('Staker', function () {
             1,
             true,
             0,
-            0
+            0,
+            stakerWithAnyone
         );
         poolID = (await staker.TotalPools()) - 1n;
         expect(poolID).to.equal(3n);
@@ -308,7 +320,7 @@ describe('Staker', function () {
             1n;
 
         await expect(
-            stakerWithAnyone.createPool(invalidTokenType, ethers.ZeroAddress, 0, true, 0, 0)
+            stakerWithAnyone.createPool(invalidTokenType, ethers.ZeroAddress, 0, true, 0, 0, stakerWithAnyone)
         ).to.be.revertedWithCustomError(staker, 'InvalidTokenType');
     });
 
@@ -319,7 +331,7 @@ describe('Staker', function () {
 
         // Non-zero token ID
         await expect(
-            stakerWithAnyone.createPool(await stakerWithAnyone.NATIVE_TOKEN_TYPE(), ethers.ZeroAddress, 1, true, 0, 0)
+            stakerWithAnyone.createPool(await stakerWithAnyone.NATIVE_TOKEN_TYPE(), ethers.ZeroAddress, 1, true, 0, 0, stakerWithAnyone)
         ).to.be.revertedWithCustomError(staker, 'InvalidConfiguration');
 
         // Non-zero token address
@@ -330,7 +342,8 @@ describe('Staker', function () {
                 0,
                 true,
                 0,
-                0
+                0,
+                stakerWithAnyone
             )
         ).to.be.revertedWithCustomError(staker, 'InvalidConfiguration');
     });
@@ -342,7 +355,7 @@ describe('Staker', function () {
 
         // Zero token address
         await expect(
-            stakerWithAnyone.createPool(await stakerWithAnyone.ERC20_TOKEN_TYPE(), ethers.ZeroAddress, 0, true, 0, 0)
+            stakerWithAnyone.createPool(await stakerWithAnyone.ERC20_TOKEN_TYPE(), ethers.ZeroAddress, 0, true, 0, 0, stakerWithAnyone)
         ).to.be.revertedWithCustomError(staker, 'InvalidConfiguration');
 
         // Non-zero token ID
@@ -353,7 +366,8 @@ describe('Staker', function () {
                 1,
                 true,
                 0,
-                0
+                0,
+                stakerWithAnyone
             )
         ).to.be.revertedWithCustomError(staker, 'InvalidConfiguration');
     });
@@ -365,7 +379,7 @@ describe('Staker', function () {
 
         // Zero token address
         await expect(
-            stakerWithAnyone.createPool(await stakerWithAnyone.ERC721_TOKEN_TYPE(), ethers.ZeroAddress, 0, true, 0, 0)
+            stakerWithAnyone.createPool(await stakerWithAnyone.ERC721_TOKEN_TYPE(), ethers.ZeroAddress, 0, true, 0, 0, stakerWithAnyone)
         ).to.be.revertedWithCustomError(staker, 'InvalidConfiguration');
 
         // Non-zero token ID
@@ -376,7 +390,8 @@ describe('Staker', function () {
                 1,
                 true,
                 0,
-                0
+                0,
+                stakerWithAnyone
             )
         ).to.be.revertedWithCustomError(staker, 'InvalidConfiguration');
     });
@@ -387,7 +402,7 @@ describe('Staker', function () {
         const stakerWithAnyone = staker.connect(anyone);
 
         await expect(
-            stakerWithAnyone.createPool(await stakerWithAnyone.ERC1155_TOKEN_TYPE(), ethers.ZeroAddress, 1, true, 0, 0)
+            stakerWithAnyone.createPool(await stakerWithAnyone.ERC1155_TOKEN_TYPE(), ethers.ZeroAddress, 1, true, 0, 0, stakerWithAnyone)
         ).to.be.revertedWithCustomError(staker, 'InvalidConfiguration');
     });
 
@@ -402,7 +417,8 @@ describe('Staker', function () {
             0, // Token ID is zero
             true,
             0,
-            0
+            0,
+            stakerWithAnyone
         );
 
         await expect(tx)
