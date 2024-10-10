@@ -11,7 +11,7 @@ const faucetRoutes = (): Router => {
   /**
    * @swagger
    * /faucet/request/{recipientAddress}:
-   *   get:
+   *   post:
    *     summary: Request tokens from the faucet.
    *     description: Request tokens from the faucet.
    *     parameters:
