@@ -191,6 +191,7 @@
     border-radius: 8px;
     transform: translateY(calc(100vh - 32px - 32px - 40.8px));
     cursor: pointer;
+    font-weight: 600;
 }
 
 .toastClaimable {
