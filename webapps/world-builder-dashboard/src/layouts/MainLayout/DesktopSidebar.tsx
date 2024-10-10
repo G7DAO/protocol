@@ -11,8 +11,7 @@ interface DesktopSidebarProps {
 const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { connectedAccount, isMetaMask, connectWallet, disconnectWallet, isConnecting } =
-    useBlockchainContext()
+  const { connectedAccount, isMetaMask, connectWallet, disconnectWallet, isConnecting } = useBlockchainContext()
 
   return (
     <div className={styles.sideBar}>
@@ -32,15 +31,22 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
         </div>
       </div>
       <div className={styles.footer}>
+        {/* May uncomment later. */}
+        {/* <div className={styles.themesContainer}>
+          <div className={theme === 'dark' ? styles.selectedThemeButton : styles.themeButton} onClick={toggleTheme}>
+            <IconDark className={theme === 'dark' ? styles.selectedThemeIcon : styles.themeIcon} /> Dark
+          </div>
+          <div className={theme === 'light' ? styles.selectedThemeButton : styles.themeButton} onClick={toggleTheme}>
+            <IconLight className={theme === 'light' ? styles.selectedThemeIcon : styles.themeIcon} /> Light
+          </div>
+        </div> */}
         {connectedAccount ? (
-          <>
-            <div className={styles.web3AddressContainer}>
-              <div className={styles.web3address}>
-                {`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}
-              </div>
-              {isMetaMask && <IconLogout onClick={disconnectWallet} className={styles.iconButton} />}
+          <div className={styles.web3AddressContainer}>
+            <div className={styles.web3address}>
+              {`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}
             </div>
-          </>
+            {isMetaMask && <IconLogout onClick={disconnectWallet} className={styles.iconButton} />}
+          </div>
         ) : (
           <div className={styles.connectWalletButton} onClick={connectWallet}>
             {isConnecting ? (

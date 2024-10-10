@@ -146,7 +146,7 @@
 }
 
 .approveButtonLabel, .approveButtonLabelLoading {
-    color: var(--Base-White, #ffffff);
+    color: #fff;
 
     /* Text sm/Semibold */
 

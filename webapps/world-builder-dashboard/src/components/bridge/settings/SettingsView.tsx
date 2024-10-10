@@ -19,6 +19,11 @@ const SettingsView: React.FC<SettingsViewProps> = ({}) => {
 
   return (
     <div className={styles.container}>
+      <div className={styles.titleContainer}>
+        <div className={styles.title}>Testnet Options</div>
+        <div className={styles.supportingText}>{`Enable a Testnet to test bridge functionality.`}</div>
+      </div>
+      <div className={styles.divider} />
       <MessagingSettings />
       <div className={styles.titleContainer}>
         <div className={styles.title}>Testnet funds</div>

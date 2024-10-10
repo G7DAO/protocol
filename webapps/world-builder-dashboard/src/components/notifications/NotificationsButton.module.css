@@ -1,55 +1,58 @@
 .container {
-    position: relative;
-    display: inline-flex;
-    padding: 9px 15px;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
+  position: relative;
+  display: inline-flex;
+  padding: 9px 15px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
 
-    border-radius: 8px;
-    border: 1px solid var(--Gray-300, #D0D5DD);
-    background: var(--Base-White, #FFF);
+  border-radius: 8px;
+  border: 1px solid var(--Gray-300, #d0d5dd);
+  background: var(--Base-White, #fff);
 
-    /* Shadow/xs */
-    box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
+  /* Shadow/xs */
+  box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
 }
 
 .label {
-    color: var(--Gray-700, #344054);
+  color: var(--Gray-700, #344054);
 
-    /* Text sm/Semibold */
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 600;
-    line-height: 20px; /* 142.857% */
+  /* Text sm/Semibold */
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px; /* 142.857% */
 }
 
 .badge {
+  display: inline-flex;
+  padding: 2px 10px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 
-    display: inline-flex;
-    padding: 2px 10px;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
+  border-radius: 12px;
+  background: var(--Base-Brand, #ef233c);
+  color: var(--Base-White, #fff);
 
-    border-radius: 12px;
-    background: var(--Base-Brand, #EF233C);
-    color: var(--Base-White, #FFF);
+  /* Text sm/Medium */
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px; /* 142.857% */
 
-    /* Text sm/Medium */
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 20px; /* 142.857% */
-
-    position: absolute;
-    right: 0;
-    top: 0;
-    transform: translateX(12px) translateY(-50%);
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform: translateX(12px) translateY(-50%);
 }
 
 /* Mantine classes */
 .dropdown {
-    background: var(--Base-White, #ffffff) !important;
+  background: var(--Base-White, #ffffff) !important;
+}
+
+.icon {
+  stroke: var(--Gray-700, #344054);
 }
