@@ -45,6 +45,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   const getTokens = async () => {
     const _tokens = getTokensForNetwork(selectedChainId, connectedAccount)
     handleTokenChange(_tokens[0])
+    console.log(_tokens)
     setTokens(_tokens)
   }
 
@@ -71,13 +72,11 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
     }
   }, [connectedAccount])
 
-  const handleTokenAdded = () => {
-    getTokens()
-  }
-
   const handleTokenChange = (token: Token) => {
     setToken(token)
     onTokenChange(token)
+    const _tokens = getTokensForNetwork(selectedChainId, connectedAccount)
+    setTokens(_tokens)
   }
 
   return (
@@ -102,7 +101,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
             tokens={tokens}
             selectedToken={token}
             onChange={(token: Token) => handleTokenChange(token)}
-            onTokenAdded={handleTokenAdded}
+            onTokenAdded={getTokens}
             selectedChainId={selectedChainId}
           />
         )}

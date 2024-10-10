@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ALL_NETWORKS } from '../../../../constants'
 import styles from './TokenSelector.module.css'
 import { ethers } from 'ethers'
@@ -26,6 +26,10 @@ const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selected
   const [error, setError] = useState<string>('')
   const { connectedAccount } = useBlockchainContext()
 
+  useEffect(() => {
+    console.log(tokens)
+  }, [tokens])
+
   const handleTokenInput = (address: string) => {
     setTokenAddress(address)
 
@@ -52,6 +56,12 @@ const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selected
         rpc: rpc
       }
 
+      console.log(tokens)
+      if (tokens.find((token: Token) => token.address === tokenAddress)) {
+        console.log("found token!")
+        setError("Can't add the same token!")
+        return;
+      }
       const updatedTokens = [...existingTokens, token]
       localStorage.setItem(storageKey, JSON.stringify(updatedTokens))
       onTokenAdded()
