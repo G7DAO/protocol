@@ -194,7 +194,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                   <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
                   <div className={styles.gridItemInitiate}>
                     <a
-                      href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
+                      href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
                       target={'_blank'}
                       className={styles.explorerLink}
                     >
