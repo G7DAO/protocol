@@ -205,7 +205,9 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     </a>
                   </div>
                   <div className={styles.gridItemInitiate}>
-                    <div>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
+                    <div className={styles.timeCenter}>
+                      {timeAgo(status.data.lowNetworkTimeStamp)}
+                    </div>
                   </div>
                   <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
                     <div className={styles.typeCompleted}>Finalize</div>
@@ -227,7 +229,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     </a>
                   </div>
                   <div className={styles.gridItemInitiate}>
-                    <div>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
+                    <div className={styles.timeCenter}>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
                   </div>
                 </>
               )}

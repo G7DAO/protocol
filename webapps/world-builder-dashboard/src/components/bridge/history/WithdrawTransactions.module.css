@@ -184,6 +184,10 @@
   stroke: var(--Grid-Node, #eaecf0);
 }
 
+.timeCenter {
+  text-align: center;
+}
+
 .transactionsHeader {
   position: sticky;
   top: 0;

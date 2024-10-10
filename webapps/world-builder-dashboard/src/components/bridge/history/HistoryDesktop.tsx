@@ -32,7 +32,7 @@ const HistoryDesktop: React.FC<WithdrawTransactionsProps> = () => {
                 .filter((tx) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL')
                 .map((tx: TransactionRecord, idx: number) =>
                   tx.type === 'WITHDRAWAL' ? (
-                    <Withdrawal withdrawal={tx} key={idx} />
+                    <Withdrawal withdrawal={tx} key={idx}/>
                   ) : (
                     <Fragment key={idx}>{tx.lowNetworkHash && <Deposit deposit={tx} />}</Fragment>
                   )
