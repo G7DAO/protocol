@@ -176,6 +176,10 @@
   background: var(--Base-White, #eaecf0);
 }
 
+.gridItem:last-child, .gridItemChild:last-child, .gridItemImportant:last-child, .gridItemInitiate:last-child {
+  border-bottom: none;
+}
+
 .gridNodeCompleted {
   position: absolute;
   left: 14px;

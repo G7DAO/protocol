@@ -15,7 +15,6 @@
     padding: 12px;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid var(--Gray-100, #F2F4F7);
     cursor: pointer;
     border-top-right-radius: 8px;
     border-top-left-radius: 8px;

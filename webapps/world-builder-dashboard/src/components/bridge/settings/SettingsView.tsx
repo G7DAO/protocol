@@ -35,7 +35,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({}) => {
         <div className={styles.faucetLinkContainer}>
           <IconG7tLarge />
           <div className={styles.textContainer}>
-            <div className={styles.linkTitle}>Game7 Testnet</div>
+            <div className={styles.linkTitle}>Game7 Sepolia</div>
             <div className={styles.supportingText}>Request $G7 testnet tokens</div>
           </div>
           <button className={styles.button} onClick={() => handleClick(L3_NETWORK)}>
