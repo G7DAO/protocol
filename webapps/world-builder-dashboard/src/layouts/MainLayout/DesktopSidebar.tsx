@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import styles from './MainLayout.module.css'
 import IconDark from '@/assets/IconDark'
 import IconExternalLink from '@/assets/IconExternalLink'
-import IconLight from '@/assets/IconLight.tsx'
+import IconLight from '@/assets/IconLight'
 import IconLogout from '@/assets/IconLogout'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
@@ -38,10 +38,10 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
       <div className={styles.footer}>
         <div className={styles.themesContainer}>
           <div className={theme === 'dark' ? styles.selectedThemeButton : styles.themeButton} onClick={toggleTheme}>
-            <IconDark className={styles.themeIcon} /> Dark
+            <IconDark className={theme === 'dark' ? styles.selectedThemeIcon : styles.themeIcon} /> Dark
           </div>
           <div className={theme === 'light' ? styles.selectedThemeButton : styles.themeButton} onClick={toggleTheme}>
-            <IconLight className={styles.themeIcon} /> Light
+            <IconLight className={theme === 'light' ? styles.selectedThemeIcon : styles.themeIcon} /> Light
           </div>
         </div>
         {connectedAccount ? (
