@@ -4,7 +4,9 @@ import { Outlet } from 'react-router-dom'
 
 // Styles
 import styles from './MainLayout.module.css'
+import IconDocumentation from '@/assets/IconDocumentation'
 import IconDroplets02 from '@/assets/IconDroplets02'
+import IconExplorer from '@/assets/IconExplorer'
 import IconWallet04 from '@/assets/IconWallet04'
 
 // Local components and assets

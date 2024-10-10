@@ -62,7 +62,7 @@
 
 .selectedDirectionButton {
   background: var(--Primary-600, #EF233B);
-  color: var(--Base-White, #ffffff);
+  color: var(--Primary-200, #ffffff);
 }
 
 .directionButton {
