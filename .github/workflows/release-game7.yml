@@ -58,7 +58,7 @@ jobs:
               working-directory: ./web3
               run: npx hardhat compile
             - name: Install seer
-              run: go install github.com/moonstream-to/seer@latest
+              run: go install github.com/G7DAO/seer@latest
 
             - name: Build ERC20 interface with seer
               run: seer evm generate --package ERC20 --output bindings/ERC20/ERC20.go --hardhat web3/artifacts/contracts/token/ERC20.sol/ERC20.json --cli --struct ERC20
