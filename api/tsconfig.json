@@ -10,7 +10,14 @@
       "noImplicitAny": true,
       "esModuleInterop": true,
       "resolveJsonModule": true,
+      "skipLibCheck": true,
       "types": ["node"],
       "typeRoots": ["./node_modules/@types"]
-    }
+    },
+    "exclude": [
+      "dist",
+      "node_modules",
+      "**/*.test.ts", // Exclude test files
+      "**/*.spec.ts" // Exclude spec files
+    ]
   }
