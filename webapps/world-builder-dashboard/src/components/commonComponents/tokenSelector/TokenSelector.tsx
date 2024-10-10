@@ -30,16 +30,16 @@ const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selected
     console.log(tokens)
   }, [tokens])
 
-  const handleTokenInput = (address: string) => {
-    setTokenAddress(address)
+  const handleTokenInput = (tokenAddress: string) => {
+    setTokenAddress(tokenAddress)
 
     let web3Provider
     if (window.ethereum) web3Provider = new ethers.providers.Web3Provider(window.ethereum)
     else throw new Error('Wallet is not installed')
 
-    if (!ethers.utils.isAddress(address)) setError('Not an address!')
-    else if (!doesContractExist(address, web3Provider)) setError(`Contract doesn't exist!`)
-    else if (tokens.find((token) => token.address === address)) setError('Token already exists')
+    if (!ethers.utils.isAddress(tokenAddress)) setError('Not an address!')
+    else if (!doesContractExist(tokenAddress, web3Provider)) setError(`Contract doesn't exist!`)
+    else if (tokens.find((token) => token.address === tokenAddress)) setError('Token already exists')
     else setError('')
   }
 
@@ -56,9 +56,7 @@ const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selected
         rpc: rpc
       }
 
-      console.log(tokens)
       if (tokens.find((token: Token) => token.address === tokenAddress)) {
-        console.log("found token!")
         setError("Can't add the same token!")
         return;
       }

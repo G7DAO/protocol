@@ -285,7 +285,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       </div>
 
                       <div className={styles.gridItemImportant}>
-                        <div>{ETA(status.data?.timestamp, withdrawal.challengePeriod)}</div>
+                        <div>{ETA(status.data?.timestamp, withdrawal.challengePeriod)} left</div>
                       </div>
                     </>
                   )}
