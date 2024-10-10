@@ -175,11 +175,11 @@
   gap: 8px;
   border-radius: 8px;
   border: 1px solid var(--Primary-50, #ffebef);
-  background: var(--Primary-50, #ffebef);
+  background: var(--Error-300, #ffebef);
 }
 
 .connectWalletText {
-  color: var(--Primary-200, #dd1534);
+  color: var(--Error-800, #dd1534);
 
   /* Text sm/Semibold */
   font-family: Inter;

@@ -56,7 +56,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                   <div className={styles.pending}>
                     Pending
                     <IconLinkExternal02 className={styles.arrowUp} />
-                  </div>
+                  </div>    
                 )}
               </div>
             </a>
