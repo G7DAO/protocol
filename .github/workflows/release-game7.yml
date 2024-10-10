@@ -50,6 +50,10 @@ jobs:
             - name: Install dependencies
               working-directory: ./web3
               run: npm install
+            - name: Install Foundry
+              uses: foundry-rs/foundry-toolchain@v1
+              with:
+                version: nightly
             - name: Run Hardhat compile
               working-directory: ./web3
               run: npx hardhat compile
