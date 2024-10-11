@@ -31,15 +31,6 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
         </div>
       </div>
       <div className={styles.footer}>
-        {/* May uncomment later. */}
-        {/* <div className={styles.themesContainer}>
-          <div className={theme === 'dark' ? styles.selectedThemeButton : styles.themeButton} onClick={toggleTheme}>
-            <IconDark className={theme === 'dark' ? styles.selectedThemeIcon : styles.themeIcon} /> Dark
-          </div>
-          <div className={theme === 'light' ? styles.selectedThemeButton : styles.themeButton} onClick={toggleTheme}>
-            <IconLight className={theme === 'light' ? styles.selectedThemeIcon : styles.themeIcon} /> Light
-          </div>
-        </div> */}
         {connectedAccount ? (
           <div className={styles.web3AddressContainer}>
             <div className={styles.web3address}>
