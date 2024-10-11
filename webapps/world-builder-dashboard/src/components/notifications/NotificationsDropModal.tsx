@@ -76,7 +76,7 @@ const NotificationsDropModal: React.FC<NotificationsDropModalProps> = ({ notific
                   <a href={getTransactionUrl(n)} target={'_blank'} className={modalStyles.explorerLink}>
                     <div className={badgeClassName(n.status)}>
                       {n.status.toLowerCase()}
-                      <IconLinkExternal02 stroke={n.status === 'CLAIMABLE' ? '#B54708' : '#027A48'} />
+                      <IconLinkExternal02 stroke={n.status === 'CLAIMABLE' ? '#fff' : '#fff'} />
                     </div>
                   </a>
                 ) : (
@@ -223,7 +223,7 @@ export const NotificationsModal: React.FC<NotificationsDropModalProps> = ({ noti
                     <a href={getTransactionUrl(n)} target={'_blank'} className={modalStyles.explorerLink}>
                       <div className={badgeClassName(n.status)}>
                         {n.status.toLowerCase()}
-                        <IconLinkExternal02 stroke={n.status === 'CLAIMABLE' ? '#B54708' : '#027A48'} />
+                        <IconLinkExternal02 stroke={n.status === 'CLAIMABLE' ? '#fff' : '#fff'} />
                       </div>
                     </a>
                   ) : (

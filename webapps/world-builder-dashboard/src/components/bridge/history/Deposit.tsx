@@ -50,12 +50,12 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                 {status.data && status.data.l2Result?.complete ? (
                   <div className={styles.settled}>
                     Completed
-                    <IconLinkExternal02 className={styles.arrowUp} />
+                    <IconLinkExternal02 stroke="#fff" />
                   </div>
                 ) : (
                   <div className={styles.pending}>
                     Pending
-                    <IconLinkExternal02 className={styles.arrowUp} />
+                    <IconLinkExternal02 stroke="#fff" />
                   </div>    
                 )}
               </div>
