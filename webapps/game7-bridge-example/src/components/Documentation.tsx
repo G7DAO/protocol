@@ -38,8 +38,8 @@ const Bridger: React.FC<ContentProps> = ({ setHoveredItem }) => {
     <>
       <div className={styles.contentLine}>
         <span
-          className={styles.reservedWord}
-          onMouseEnter={() => setHoveredItem('networkConstructor')}
+          className={`${styles.reservedWord} ${styles.highlight}`}
+          onMouseEnter={() => setHoveredItem('bridger')}
           onMouseLeave={() => setHoveredItem('')}
         >
           constructor
@@ -51,7 +51,10 @@ const Bridger: React.FC<ContentProps> = ({ setHoveredItem }) => {
         <span className={styles.interface}>&nbsp;TokenAddressMap</span>)
       </div>
       <div className={styles.contentLine}>
-        <span className={styles.methodName}>getAllowance</span>(<span className={styles.parameter}>provider</span>:
+        <span className={`${styles.methodName} ${styles.highlight}`}
+              onMouseEnter={() => setHoveredItem('allowance')}
+              onMouseLeave={() => setHoveredItem('')}
+        >getAllowance</span>(<span className={styles.parameter} >provider</span>:
         <span className={styles.interface}>&nbsp;SignerOrProviderOrRpc</span>,
         <span className={styles.parameter}>&nbsp;account</span>:
         <span className={styles.reservedWord}>&nbsp;string</span>):
