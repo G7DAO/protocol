@@ -39,13 +39,22 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    /*gap: 4px;*/
     text-align: start;
+    min-height: 74px;
+    justify-content: start;
+}
+
+.tokenHeader {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .networkName {
     border-radius: 12px;
-    border: 1px solid #833939;
+    border: 1px solid #efc3c3;
     /*background-color: #000;*/
     font-weight: 700;
     font-size: 18px;
@@ -70,11 +79,17 @@
     display: flex; flex-direction: column; gap: 15px;
     justify-content: start;
     min-width: 270px;
-    min-height: 260px;
+    min-height: 276px;
 }
 
 
 .tokenSymbol {text-align: start; width: 100%; font-weight: 700}
+.bookIcon {
+    stroke: #d5bebe;
+    margin-left: auto;
+    height: 20px;
+    cursor: pointer;
+}
 
 .tokenBalanceNumber {text-align: start; width: 100%; font-size: 12px}
 
@@ -90,15 +105,19 @@
     flex-direction: column;
     justify-content: center;
     gap: 16px;
-    min-height: 124px;
+    min-height: 166px;
 }
 
-.bridgerContainerWithdrawal, .bridgerContainerDeposit {gap: 4px; opacity: 1; position: relative; cursor: pointer; padding: 0; display: flex; flex-direction: column; justify-content: start;}
+.bridgerContainerWithdrawal, .bridgerContainerDeposit {gap: 0; opacity: 0.9; position: relative; cursor: pointer; padding: 0; display: flex; flex-direction: column; justify-content: start; margin-bottom: auto}
 .bridgerContainerWithdrawal {
 align-items: center;
+    margin-top: auto;
+    margin-bottom: 0;
 }
 .bridgerContainerWithdrawal:hover, .bridgerContainerDeposit:hover {
     opacity: 1;
+    color: #b25656;
+    font-weight: 700;
     /*transform: scaleY(1.2);*/
 }
 
@@ -126,6 +145,7 @@ animation: moveLights 1s linear infinite;
 .bridgerAllowanceText {font-size: 12px; }
 
 .editIcon {
+    cursor: pointer;
     padding: 8px;
 }
 
@@ -147,7 +167,7 @@ animation: moveLights 1s linear infinite;
 
 .bridgerTransferData {font-size: 12px;}
 
-.bridgerFee {font-size: 12px; text-align: center; opacity: 1}
+.bridgerFee {font-size: 10px; text-align: center; opacity: 1}
 
 .bridgerAmount {font-size: 12px;}
 
