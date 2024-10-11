@@ -1,19 +1,24 @@
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber, ethers, Transaction } from 'ethers';
 import { networks } from './networks';
 import { UnsupportedNetworkError } from './errors';
 import { TransactionReceipt } from '@ethersproject/abstract-provider/src.ts';
 
 import { Provider } from '@ethersproject/abstract-provider';
-import { getBlockETA, getBlockTimeDifference } from './utils/web3Utils';
+import { getBlockETA, getDecodedInputs } from './utils/web3Utils';
 import {
   ChildToParentMessageStatus,
   ChildToParentMessageWriter,
-  ChildTransactionReceipt, ParentContractCallTransactionReceipt,
+  ChildTransactionReceipt,
+  ParentContractCallTransactionReceipt,
+  ParentEthDepositTransactionReceipt,
   ParentTransactionReceipt,
 } from '@arbitrum/sdk';
 import { L2GatewayRouterABI } from './abi/L2GatewayRouterABI';
 import { arbSysABI } from './abi/ArbSysABI';
 import { ERC20_ABI } from './abi/ERC20_ABI';
+import { ERC20_INBOX_ABI } from './abi/erc20_inbox_abi';
+import { L1GatewayRouterABI } from './abi/L1GatewayRouterABI';
+import { INBOX_ABI } from './abi/inbox_abi';
 
 export type SignerOrProviderOrRpc = ethers.Signer | ethers.providers.Provider | string;
 
@@ -47,9 +52,34 @@ export interface CreateBridgeTransferParams {
   destinationSignerOrProviderOrRpc: SignerOrProviderOrRpc;
 }
 
-export interface BridgeTransferStatus {
-  status: ChildToParentMessageStatus;
-  ETA: number | undefined;
+export interface BridgeTransferInfo {
+  transferType: BridgeTransferType,
+  timestamp?: number,
+  to?: string,
+  amount?: BigNumber,
+  tokenAddress?: string,
+  tokenSymbol?: string,
+}
+
+export enum BridgeTransferType {
+  WITHDRAW_ERC20,
+  WITHDRAW_GAS,
+  DEPOSIT_ERC20,
+  DEPOSIT_GAS,
+  DEPOSIT_ERC20_TO_GAS,
+}
+
+export declare enum BridgeTransferStatus {
+  WITHDRAW_UNCONFIRMED,
+  WITHDRAW_CONFIRMED,
+  WITHDRAW_EXECUTED,
+  DEPOSIT_ERC20_NOT_YET_CREATED,
+  DEPOSIT_ERC20_CREATION_FAILED,
+  DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD,
+  DEPOSIT_ERC20_REDEEMED,
+  DEPOSIT_ERC20_EXPIRED,
+  DEPOSIT_GAS_PENDING,
+  DEPOSIT_GAS_DEPOSITED
 }
 
 export class BridgeTransfer {
@@ -111,21 +141,113 @@ export class BridgeTransfer {
     this.explorerLink = `${originNetwork.explorerUrl}/tx/${txHash}`
   }
 
-  public async getStatus(): Promise<BridgeTransferStatus> {
-    const originReceipt = await this.originProvider.getTransactionReceipt(this.txHash);
-    const childTransactionReceipt = new ChildTransactionReceipt(originReceipt);
+  public async getStatus() {
+    if (!this.isDeposit) {
+      const originReceipt = await this.originProvider.getTransactionReceipt(this.txHash);
+      const childTransactionReceipt = new ChildTransactionReceipt(originReceipt);
 
-    const messages: any = await childTransactionReceipt.getChildToParentMessages(this.destinationProvider);
-    const msg: any = messages[0];
-    const status: ChildToParentMessageStatus = await msg.status(this.originProvider);
-    const firstExecutableBlock = await msg.getFirstExecutableBlock(this.originProvider);
+      const messages: any = await childTransactionReceipt.getChildToParentMessages(this.destinationProvider);
+      const msg: any = messages[0];
+      const status: ChildToParentMessageStatus = await msg.status(this.originProvider);
+      const firstExecutableBlock = await msg.getFirstExecutableBlock(this.originProvider);
 
-    const ETA = await getBlockETA(firstExecutableBlock, this.destinationProvider);
-    return {
-      ETA,
-      status,
-    };
+      const ETA = await getBlockETA(firstExecutableBlock, this.destinationProvider);
+      return {
+        ETA,
+        status: status === ChildToParentMessageStatus.EXECUTED ? BridgeTransferStatus.WITHDRAW_EXECUTED :
+          status === ChildToParentMessageStatus.CONFIRMED ? BridgeTransferStatus.WITHDRAW_CONFIRMED :
+            BridgeTransferStatus.WITHDRAW_UNCONFIRMED,
+      };
+    } else {
+      return this.getDepositStatus()
+    }
   }
+
+  public getTransferTypeAndInputs(tx: Transaction) {
+    if (this.isDeposit) {
+      if (tx.to === networks[this.destinationNetworkChainId]?.ethBridge?.inbox) {
+        try {
+          const decodedInputs = getDecodedInputs(tx, INBOX_ABI);
+          return {transferType: BridgeTransferType.DEPOSIT_GAS, decodedInputs};
+        } catch (_) {
+          try {
+            const decodedInputs = getDecodedInputs(tx, ERC20_INBOX_ABI);
+            return { transferType: BridgeTransferType.DEPOSIT_ERC20_TO_GAS, decodedInputs }
+          } catch (_) {
+            throw new Error (`Unable to decode inputs - unknown method of inbox contract ${tx.to}`);
+          }
+        }
+      } else if (tx.to === networks[this.destinationNetworkChainId]?.tokenBridge?.parentGatewayRouter) {
+        const decodedInputs = getDecodedInputs(tx, L1GatewayRouterABI);
+        return {transferType: BridgeTransferType.DEPOSIT_ERC20, decodedInputs}
+      }
+    } else {
+      if (tx.to === networks[this.originNetworkChainId]?.arbSys) {
+        const decodedInputs = getDecodedInputs(tx, arbSysABI);
+        return {transferType: BridgeTransferType.WITHDRAW_GAS, decodedInputs}
+      } else if (tx.to === networks[this.originNetworkChainId]?.tokenBridge?.childGatewayRouter) {
+        const decodedInputs = getDecodedInputs(tx, L2GatewayRouterABI);
+        return {transferType: BridgeTransferType.WITHDRAW_ERC20, decodedInputs}
+      }
+    }
+    throw new Error(`Unable to decode inputs - ${tx.to} is unknown contract`)
+  }
+
+
+  public async getInfo(): Promise<BridgeTransferInfo>{
+    const tx = await this.originProvider.getTransaction(this.txHash);
+    if (!tx) {
+      throw new Error('Transaction not found');
+    }
+    const { transferType,  decodedInputs } = this.getTransferTypeAndInputs(tx);
+    let info: BridgeTransferInfo = {
+      transferType,
+    }
+    if (tx.blockNumber) {
+      const block = await this.originProvider.getBlock(tx.blockNumber);
+      info.timestamp = block?.timestamp;
+    }
+    info.transferType = transferType
+    if (transferType === BridgeTransferType.WITHDRAW_GAS) {
+      info.amount = decodedInputs.value;
+      info.tokenSymbol = networks[this.originNetworkChainId]?.nativeCurrency?.symbol
+      info.to = decodedInputs.args.destination
+      info.tokenAddress = ethers.constants.AddressZero
+      return info
+    } else
+    if (transferType === BridgeTransferType.WITHDRAW_ERC20) {
+      const tokenContract = new ethers.Contract(decodedInputs.args._l1Token, ERC20_ABI, this.destinationProvider);
+      info.amount = decodedInputs.args._amount;
+      info.tokenSymbol = await tokenContract.symbol();
+      info.to = decodedInputs.args._to;
+      info.tokenAddress = decodedInputs.args._l1token;
+      return info
+    } else
+    if (transferType === BridgeTransferType.DEPOSIT_ERC20) {
+      const tokenContract = new ethers.Contract(decodedInputs.args._token, ERC20_ABI, this.destinationProvider);
+      info.tokenSymbol = await tokenContract.symbol();
+      info.amount = decodedInputs.args._amount;
+      info.to = decodedInputs.args._to;
+      info.tokenAddress = decodedInputs.args._token;
+      return info
+    } else
+    if (transferType === BridgeTransferType.DEPOSIT_GAS) {
+      info.amount = decodedInputs.value
+      info.tokenSymbol = networks[this.destinationNetworkChainId]?.nativeCurrency?.symbol
+      info.to = tx.from
+      info.tokenAddress = ethers.constants.AddressZero
+      return info
+    } else
+    if (transferType === BridgeTransferType.DEPOSIT_ERC20_TO_GAS) {
+      info.amount = decodedInputs.args.amount
+      info.tokenSymbol = networks[this.destinationNetworkChainId]?.nativeCurrency?.symbol
+      info.to = tx.from
+      return info;
+    }
+    throw new Error('Unknown type of transfer')
+  }
+
+
 
   public async getTransactionInputs() {
     const tx = await this.originProvider.getTransaction(this.txHash);
@@ -176,41 +298,89 @@ export class BridgeTransfer {
   }
 
 
+
   public async getDepositStatus() {
-    console.log(this.txHash)
     let receipt
     try {
       receipt = await this.originProvider.getTransactionReceipt(this.txHash)
     } catch (e) {
       console.log(e)
     }
-
     if (!receipt) {
-      return
+      throw new Error("Can't get transaction receipt");
     }
-    console.log('!!receipt')
     const parentTransactionReceipt = new ParentTransactionReceipt(receipt)
-    const parentContractCallReceipt = new ParentContractCallTransactionReceipt(parentTransactionReceipt)
+    let res
+    const tx = await this.originProvider.getTransaction(this.txHash)
+    const {transferType} = this.getTransferTypeAndInputs(tx)
+    if (transferType === BridgeTransferType.DEPOSIT_ERC20_TO_GAS || transferType === BridgeTransferType.DEPOSIT_GAS) {
+      const parentEthDepositReceipt = new ParentEthDepositTransactionReceipt(parentTransactionReceipt)
+      res = await parentEthDepositReceipt.waitForChildTransactionReceipt(this.destinationProvider, 3 ,1000);
+      const r = await res.message.status()
+      // const status = await parentEthDepositReceipt.status;
+      console.log({r, res})
+    } else {
+      // const msgs = await parentTransactionReceipt.getParentToChildMessages(this.destinationProvider)
+      // const r = await msgs[0].status()
+      // console.log(r)
+      const parentContractCallReceipt = new ParentContractCallTransactionReceipt(parentTransactionReceipt)
+      res = await parentContractCallReceipt.waitForChildTransactionReceipt(this.destinationProvider, 3, 1000)
+      // const status = await
+      console.log(res.status)
+    }
+    // const isEthDeposit = tx.to === networks[this.destinationNetworkChainId]?.ethBridge?.inbox;
+    // if (!isEthDeposit && tx.to !== networks[this.destinationNetworkChainId]?.tokenBridge?.parentGatewayRouter) {
+    //   throw new Error("Can't fetch status - unknown contract")
+    // }
+    // let res
+    // let status
+    // if (isEthDeposit) {
+    //   const parentEthDepositReceipt = new ParentEthDepositTransactionReceipt(parentTransactionReceipt)
+    //   res = await parentEthDepositReceipt.waitForChildTransactionReceipt(this.destinationProvider, 3 ,1000);
+    //   console.log(res)
+    // } else {
+    //   const parentContractCallReceipt = new ParentContractCallTransactionReceipt(parentTransactionReceipt)
+    //   res = await parentContractCallReceipt.waitForChildTransactionReceipt(this.destinationProvider, 3, 1000)
+    //   console.log(res)
+    // }
 
-    let childResult
-    try {
-      childResult = await parentContractCallReceipt.waitForChildTransactionReceipt(this.destinationProvider, 3, 1000)
-    } catch (e) {
-      console.log(e)
-    }
-    console.log("!!childResult")
-    if (!childResult) {
-      return
-    }
-    const retryableCreationReceipt = await childResult.message.getRetryableCreationReceipt()
-    let highNetworkTimestamp
-    if (retryableCreationReceipt) {
-      const block = await this.destinationProvider.getBlock(retryableCreationReceipt.blockNumber)
-      highNetworkTimestamp = block.timestamp
-    }
-    return {
-      childResult, retryableCreationReceipt
-    }
+    // let childTxReceipt
+    // let childTxHash
+    // let childTx
+    // if ('childTxReceipt' in res) {   //tsc doesn't understand that childTxReceipt is there (can be null though).
+    //   childTxReceipt = (res as EthDepositMessageWaitForStatusResult).childTxReceipt;
+    //   childTxHash = childTxReceipt?.transactionHash
+    //   if (childTxHash) {
+    //     childTx = await this.destinationProvider.getTransaction(childTxHash)
+    //   }
+    // }
+    // return {
+    //   status,
+    //   isComplete: res.complete,
+    //   completionHash: childTxHash,
+    //   completionTimestamp: childTx?.timestamp,
+    //   childTxReceipt,
+    // }
+
+    // let childResult
+    // try {
+    //   childResult = await childResultRetriever(this.destinationProvider, 3, 1000)
+    // } catch (e) {
+    //   console.log(e)
+    // }
+    // console.log(childResult)
+    // if (!childResult) {
+    //   return
+    // }
+    // const retryableCreationReceipt = await childResult.message.getRetryableCreationReceipt()
+    // let highNetworkTimestamp
+    // if (retryableCreationReceipt) {
+    //   const block = await this.destinationProvider.getBlock(retryableCreationReceipt.blockNumber)
+    //   highNetworkTimestamp = block.timestamp
+    // }
+    // return {
+    //   childResult, retryableCreationReceipt
+    // }
   }
 
 }
