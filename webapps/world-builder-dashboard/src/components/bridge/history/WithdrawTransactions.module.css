@@ -283,7 +283,7 @@
 
 .pending {
   background: var(--Blue-50, #eff8ff);
-  color: var(--Blue-700, #175cd3);
+  color: var(--Primary-200, #175cd3);
 }
 
 .claimable {
