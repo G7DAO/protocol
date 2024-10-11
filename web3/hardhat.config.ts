@@ -1,6 +1,5 @@
 import { HardhatUserConfig } from 'hardhat/config';
 import '@nomicfoundation/hardhat-toolbox';
-import "@nomicfoundation/hardhat-ignition-ethers";
 import '@nomicfoundation/hardhat-foundry';
 import * as dotenv from 'dotenv';
 import { ChainId, NetworkExplorer, NetworkName, rpcUrls } from './constants/network';
