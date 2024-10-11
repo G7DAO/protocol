@@ -197,6 +197,13 @@ const Token = ({ token, hoveredItem }: { token: BridgeToken; hoveredItem: string
     return <></>
   }
 
+  const getFaucet = (token: BridgeToken) => {
+    const faucetToken = faucets[token.address]
+    if (faucetToken) {
+      return faucetToken[token.chainId]
+    }
+  }
+
   return (
     <div className={styles.tokenContainer}>
       <div className={styles.tokenBalance}>
@@ -207,7 +214,7 @@ const Token = ({ token, hoveredItem }: { token: BridgeToken; hoveredItem: string
           <div
             className={styles.tokenBalanceNumber}
           >{`Balance: ${balance.data ? ethers.utils.formatEther(balance.data) : ''}`}</div>
-          <div style={{ marginRight: '8px' }}>{'+'}</div>
+          {getFaucet(token) && <a style={{ marginRight: '8px', color: '#dcc9d4'}} href={getFaucet(token)} target={'_blank'}>{'+'}</a>}
         </div>
         <div className={styles.allowance}>
           <div className={styles.tokenBalanceNumber}>{`Deposit allowance: ${allowance.data ?? ''}`}</div>

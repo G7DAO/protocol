@@ -1,5 +1,5 @@
 import { NetworkInterface } from './types'
-import { TokenAddressMap } from 'game7-bridge-sdk/src'
+import {TokenAddressMap} from "game7-bridge-sdk";
 
 export const L1_NETWORK: NetworkInterface = {
   chainId: 11155111,
@@ -62,6 +62,19 @@ export const TG7T: TokenAddressMap = {
 export const ETH: TokenAddressMap = {
   421614: '0x0000000000000000000000000000000000000000',
   11155111: '0x0000000000000000000000000000000000000000'
+}
+
+export const F5: TokenAddressMap = {
+  11155111: '0x8A0e3350fFAEb5DCcAca6045B3c07646FE9b46e7',
+  421614: '0xE48e26A902565f15E9F3a63caf55d339c1b3d49E'
+}
+
+export const faucets = {
+  '0x0000000000000000000000000000000000000000': {
+    13746: 'https://build.game7.io/faucet',
+    421614: 'https://www.alchemy.com/faucets/arbitrum-sepolia',
+    11155111: 'https://www.infura.io/faucet/sepolia',
+  },
 }
 
 export const NETWORKS = [L1_NETWORK, L2_NETWORK, L3_NETWORK]
