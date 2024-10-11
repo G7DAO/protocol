@@ -103,15 +103,15 @@ const Documentation: React.FC<DocumentationProps> = ({ setHoveredItem }) => {
   const [content, setContent] = useState<ReactNode | undefined>()
 
   const topics: { name: string; content: ReactNode }[] = [
+    { name: 'Bridger', content: <Bridger setHoveredItem={setHoveredItem} /> },
     { name: 'Game7BridgeNetwork', content: <Network setHoveredItem={setHoveredItem} /> },
     { name: 'BridgeToken', content: <Token setHoveredItem={setHoveredItem} /> },
-    { name: 'Bridger', content: <Bridger setHoveredItem={setHoveredItem} /> }
   ]
-  const [topic, setTopic] = useState(topics[2])
+  const [topic, setTopic] = useState(topics[0])
 
   useEffect(() => {
-    setTopic(topics[2])
-    setContent(topics[2].content)
+    setTopic(topics[0])
+    setContent(topics[0].content)
   }, [])
   return (
     <div className={styles.container}>
