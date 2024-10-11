@@ -43,20 +43,6 @@ const BridgerView = ({ bridger, amount }: { bridger: Bridger; amount?: ethers.Bi
     }
   )
 
-  const approveAllowance = useMutation({
-    mutationFn: async (amount: string) => {
-      const network = NETWORKS.find((n) => n.chainId === bridger.originNetwork.chainId)
-      const signer = await getSigner(network)
-      return bridger.approve(ethers.utils.parseUnits(amount), signer)
-    }
-  })
-  const handleApproveClick = () => {
-    const amount = prompt('New allowance')
-    if (amount) {
-      approveAllowance.mutate(amount)
-    }
-  }
-
   const transfer = useMutation({
     mutationFn: async (amount: string) => {
       const network = NETWORKS.find((n) => n.chainId === bridger.originNetwork.chainId)
@@ -84,11 +70,6 @@ const BridgerView = ({ bridger, amount }: { bridger: Bridger; amount?: ethers.Bi
 
   const handleTransferClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement; // Cast e.target to HTMLElement
-    if (target.id === 'editAllowanceButton') {
-      handleApproveClick()
-      e.stopPropagation()
-      return
-    }
     const amount = prompt('Amount')
     if (amount) {
       transfer.mutate(amount)
@@ -193,6 +174,24 @@ const Token = ({ token, hoveredItem }: { token: BridgeToken; hoveredItem: string
       enabled: !!rpc && !!account
     }
   )
+
+  const approveAllowance = useMutation({
+    mutationFn: async (amount: string) => {
+      if (!bridger) {
+        throw new Error('no bridger')
+      }
+      const network = NETWORKS.find((n) => n.chainId === bridger.originNetwork.chainId)
+      const signer = await getSigner(network)
+      return bridger.approve(ethers.utils.parseUnits(amount), signer)
+    }
+  })
+
+  const handleApproveClick = () => {
+    const amount = prompt('New allowance')
+    if (amount) {
+      approveAllowance.mutate(amount)
+    }
+  }
 
   if (!token.tokenAddresses[token.chainId]) {
     return <></>
