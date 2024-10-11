@@ -61,7 +61,7 @@
   align-self: stretch;
 
   border-radius: 6px;
-  background: var(--Gray-50, #f9fafb);
+  background: var(--Gray-60, #f9fafb);
   color: var(--Gray-900, #101828);
 
   /* Text md/Semibold */
@@ -80,7 +80,7 @@
 
 .footer {
   display: flex;
-  padding: 0 15px 32px 16px;
+  padding: 0 16px 32px 16px;
   flex-direction: column;
   align-items: flex-start;
   gap: 24px;
@@ -111,7 +111,7 @@
 
 .iconButton {
   cursor: pointer;
-  stroke: #667085;
+  stroke: var(--Gray-600, #475467);
   margin-right: 8px;
 }
 
@@ -148,7 +148,7 @@
 }
 
 .connectWalletText {
-  color: var(--Base-White, #fff);
+  color: var(--Primary-200, #fff);
   font-family: Inter;
   font-size: 14px;
   font-style: normal;
@@ -156,13 +156,74 @@
   line-height: 20px; /* 142.857% */
 }
 
-
 .connectingWalletText {
-  color: var(--Base-White, #fff);
+  color: #fff;
   opacity: 0.7;
   font-family: Inter;
   font-size: 14px;
   font-style: normal;
   font-weight: 600;
   line-height: 20px; /* 142.857% */
+}
+
+.icon {
+  stroke: var(--Gray-500, #fff);
+}
+
+.themesContainer {
+  display: flex;
+  padding: 4px;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  align-self: stretch;
+  border-radius: 8px;
+  background: var(--Theme-Container, #fff);
+}
+
+.themeButton {
+  cursor: pointer;
+  display: flex;
+  padding: 8px 12px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  flex: 1 0 0;
+  border-radius: 6px;
+  color: var(--Theme-Text, #fff);
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.selectedThemeButton {
+  cursor: pointer;
+  display: flex;
+  padding: 8px 12px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  flex: 1 0 0;
+  border-radius: 6px;
+  background: var(--Selected-Theme, #fff);
+  color: var(--Selected-Theme-Text, #fff);
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.themeIcon {
+  width: var(--20px, 20px);
+  height: var(--20px, 20px);
+  stroke: var(--Theme-Icon, #fff);
+}
+
+.selectedThemeIcon {
+  width: var(--20px, 20px);
+  height: var(--20px, 20px);
+  stroke: var(--Selected-Theme-Icon, #fff);
 }
