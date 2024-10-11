@@ -13,7 +13,7 @@ import { useUISettings } from '@/contexts/UISettingsContext'
 import { useFaucetAPI } from '@/hooks/useFaucetAPI'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { timeDifferenceInHoursAndMinutes, timeDifferenceInHoursMinutesAndSeconds } from '@/utils/timeFormat'
-import  { AccountType } from '../commonComponents/accountSelector/AccountSelector'
+import { AccountType } from '../commonComponents/accountSelector/AccountSelector'
 import { useMediaQuery } from 'summon-ui/mantine'
 import { ethers } from 'ethers'
 import AccountSelector from '../commonComponents/accountSelector/AccountSelector'
@@ -252,6 +252,18 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
             </div>
           )}
         </div>
+        {!!networkError && <div className={styles.errorContainer}>{networkError}.</div>}
+        {!networkError && nextClaimAvailable.isLoading && (
+          <div className={styles.warningContainer}>Checking faucet permissions...</div>
+        )}
+        {selectedNetwork.chainId === L3_NETWORK.chainId &&
+          nextClaimAvailable.data &&
+          !nextClaimAvailable.data.L3.isAvailable && (
+            <div className={styles.availableFundsContainer}>
+              {`You requested funds recently. Come back in `}{' '}
+              <span className={styles.time}>{` ${animatedInterval}`}</span>
+            </div>
+          )}
         <button
           className={
             (selectedNetwork.chainId === L3_NETWORK.chainId &&
@@ -272,18 +284,6 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
           </div>
         </button>
       </div>
-      {!!networkError && <div className={styles.errorContainer}>{networkError}.</div>}
-      {!networkError && nextClaimAvailable.isLoading && (
-        <div className={styles.warningContainer}>Checking faucet permissions...</div>
-      )}
-      {selectedNetwork.chainId === L3_NETWORK.chainId &&
-        nextClaimAvailable.data &&
-        !nextClaimAvailable.data.L3.isAvailable && (
-          <div className={styles.availableFundsContainer}>
-            {`You requested funds recently. Come back in `}{' '}
-            <span className={styles.time}>{` ${animatedInterval}`}</span>
-          </div>
-        )}
     </div>
   )
 }

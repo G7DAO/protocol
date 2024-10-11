@@ -26,10 +26,6 @@ const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selected
   const [error, setError] = useState<string>('')
   const { connectedAccount } = useBlockchainContext()
 
-  useEffect(() => {
-    console.log(tokens)
-  }, [tokens])
-
   const handleTokenInput = (tokenAddress: string) => {
     setTokenAddress(tokenAddress)
 
@@ -119,6 +115,11 @@ const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selected
         </Combobox.Options>
         <div className={styles.tokenAdderLayout}>
           <div className={styles.tokenAdderContainer}>
+            {error && error.length > 0 && (
+              <div className={styles.tokenAdderError}>
+                <div className={styles.tokenErrorText}>{error}</div>
+              </div>
+            )}
             <div className={styles.tokenAdder}>
               <input
                 className={`${styles.tokenAddressInput} ${error && error.length > 0 ? styles.error : ''}`}
@@ -132,11 +133,6 @@ const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selected
                 <div className={styles.importText}>Import</div>
               </div>
             </div>
-            {error && error.length > 0 && (
-              <div className={styles.tokenAdderError}>
-                <div className={styles.tokenErrorText}>{error}</div>
-              </div>
-            )}
           </div>
         </div>
       </Combobox.Dropdown>
