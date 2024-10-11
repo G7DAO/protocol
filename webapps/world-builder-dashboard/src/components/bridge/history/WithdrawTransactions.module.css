@@ -23,7 +23,6 @@
     0 1px 2px 0 rgba(16, 24, 40, 0.06);
   overflow-y: auto;
   flex-grow: 0;
-
 }
 
 .filtersContainer {
@@ -49,7 +48,7 @@
   align-items: center;
   gap: 8px;
   border: 1px solid #d0d5dd;
-  color:  var(--Gray-700, #344054);
+  color: var(--Gray-700, #344054);
 
   /* Text sm/Semibold */
   font-family: Inter, sans-serif;
@@ -115,7 +114,8 @@
   grid-column: span 7;
 }
 
-.gridItem, .gridItemImportant {
+.gridItem,
+.gridItemImportant {
   display: flex;
   height: 72px;
   padding: 16px 24px;
@@ -193,7 +193,7 @@
   align-items: center;
   gap: 12px;
   align-self: stretch;
-  border-bottom:  1px solid var(--Gray-200, #eaecf0);
+  border-bottom: 1px solid var(--Gray-200, #eaecf0);
 
   background: var(--Gray-60, #f9fafb);
   color: var(--Gray-600, #475467);
@@ -292,7 +292,7 @@
 }
 
 .settled {
-  background: var(--Success-50, #ecfdf3);
+  background: var(--Success-100, #ecfdf3);
   color: var(--Success-700, #027a48);
 }
 
@@ -305,7 +305,7 @@
 }
 
 .settled:hover {
-  background: var(--Success-100, #ecfdf3);
+  background: var(--Success-50, #ecfdf3);
 }
 
 .claimButton {
