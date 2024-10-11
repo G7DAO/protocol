@@ -111,7 +111,7 @@
 
 .iconButton {
   cursor: pointer;
-  stroke: #667085;
+  stroke: var(--Gray-600, #475467);
   margin-right: 8px;
 }
 
