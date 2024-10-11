@@ -1,7 +1,7 @@
 import { ethers } from 'hardhat';
 import { expect } from 'chai';
 import { loadFixture, time } from '@nomicfoundation/hardhat-network-helpers';
-import { setupStakingPoolsFixture } from './Staker.test.1';
+import { setupFixture, setupStakingPoolsFixture } from './Staker.test.1';
 
 describe('Staker', function () {
     it('STAKER-113: The ERC721 representing an ERC721 staking position have as its metadata URI a data URI representing an appropriate JSON object', async function () {
@@ -1388,5 +1388,67 @@ describe('Staker', function () {
 
         const user0BalanceOfErc1155AfterUnstake = await erc1155.balanceOf(await user0.getAddress(), erc1155TokenID);
         expect(user0BalanceOfErc1155AfterUnstake).to.equal(stakeAmount);
+    });
+
+    it('STAKER-148: Any account should be able to create a staking pool for native tokens using 0 address', async function () {
+        const { staker, anyone, user0 } = await loadFixture(setupFixture);
+        const stakerWithAnyone = staker.connect(anyone);
+
+
+        const tx = await stakerWithAnyone.createPool(
+            await stakerWithAnyone.NATIVE_TOKEN_TYPE(),
+            ethers.ZeroAddress,
+            0,
+            true,
+            0,
+            0,
+            ethers.ZeroAddress
+        );
+
+        await expect(tx)
+            .to.emit(staker, 'StakingPoolCreated')
+            .withArgs(
+                0, // poolID should be 0 for the first pool
+                await stakerWithAnyone.NATIVE_TOKEN_TYPE(),
+                ethers.ZeroAddress,
+                0
+            );
+
+        await expect(tx)
+            .to.emit(staker, 'StakingPoolConfigured')
+            .withArgs(0, ethers.ZeroAddress, true, 0, 0);
+
+        const pool = await staker.Pools(0);
+        expect(pool.tokenType).to.equal(await stakerWithAnyone.NATIVE_TOKEN_TYPE());
+        expect(pool.tokenAddress).to.equal(ethers.ZeroAddress);
+        expect(pool.tokenID).to.equal(0);
+        expect(pool.transferable).to.equal(true);
+        expect(pool.lockupSeconds).to.equal(0);
+        expect(pool.cooldownSeconds).to.equal(0);
+        expect(pool.administrator).to.equal(ethers.ZeroAddress);
+
+        const stakeAmount = 17n;
+        const positionPoolID = (await staker.TotalPools()) - 1n;
+
+
+        const stakeTrx = await stakerWithAnyone.stakeNative(user0, positionPoolID, { value: stakeAmount });
+
+        await expect(stakeTrx)
+            .to.emit(stakerWithAnyone, 'Staked')
+            .withArgs(0, await user0.getAddress(), positionPoolID, stakeAmount);
+
+        await stakeTrx.wait();
+
+        const user0Balance = await staker.balanceOf(await user0.getAddress());
+        expect(user0Balance).to.equal(1n);
+
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+        const position = await staker.Positions(positionTokenID);
+        expect(position.poolID).to.equal(0);
+
+        // as pool with address 0 administrator, anyone can stake or unstake for you as final user - must be reverted
+        await (expect(stakerWithAnyone.unstake(positionTokenID)).to.be.revertedWithCustomError(stakerWithAnyone, 'UnauthorizedForPosition')
+            .withArgs(await user0.getAddress(), await anyone.getAddress()));
+
     });
 });
