@@ -134,7 +134,7 @@ describe('Staker', function () {
             true,
             0,
             0,
-            stakerWithAnyone
+            anyone
         );
 
         await expect(tx)
@@ -145,6 +145,10 @@ describe('Staker', function () {
                 ethers.ZeroAddress,
                 0
             );
+
+        await expect(tx)
+            .to.emit(staker, 'StakingPoolConfigured')
+            .withArgs(0, await anyone.getAddress(), true, 0, 0);
 
         const pool = await staker.Pools(0);
         expect(pool.tokenType).to.equal(await stakerWithAnyone.NATIVE_TOKEN_TYPE());
@@ -167,7 +171,7 @@ describe('Staker', function () {
             true,
             0,
             0,
-            stakerWithAnyone
+            anyone
         );
 
         await expect(tx)
@@ -178,6 +182,10 @@ describe('Staker', function () {
                 await erc20.getAddress(),
                 0
             );
+
+        await expect(tx)
+            .to.emit(staker, 'StakingPoolConfigured')
+            .withArgs(0, await anyone.getAddress(), true, 0, 0);
 
         const pool = await staker.Pools(0);
         expect(pool.tokenType).to.equal(await stakerWithAnyone.ERC20_TOKEN_TYPE());
@@ -200,12 +208,16 @@ describe('Staker', function () {
             true,
             0,
             0,
-            stakerWithAnyone
+            anyone
         );
 
         await expect(tx)
             .to.emit(staker, 'StakingPoolCreated')
             .withArgs(0, await stakerWithAnyone.ERC721_TOKEN_TYPE(), await erc721.getAddress(), 0);
+
+        await expect(tx)
+            .to.emit(staker, 'StakingPoolConfigured')
+            .withArgs(0, await anyone.getAddress(), true, 0, 0);
 
         const pool = await staker.Pools(0);
         expect(pool.tokenType).to.equal(await stakerWithAnyone.ERC721_TOKEN_TYPE());
@@ -229,12 +241,16 @@ describe('Staker', function () {
             true,
             0,
             0,
-            stakerWithAnyone
+            anyone
         );
 
         await expect(tx)
             .to.emit(staker, 'StakingPoolCreated')
             .withArgs(0, await stakerWithAnyone.ERC1155_TOKEN_TYPE(), await erc1155.getAddress(), erc1155TokenID);
+
+        await expect(tx)
+            .to.emit(staker, 'StakingPoolConfigured')
+            .withArgs(0, await anyone.getAddress(), true, 0, 0);
 
         const pool = await staker.Pools(0);
         expect(pool.tokenType).to.equal(await stakerWithAnyone.ERC1155_TOKEN_TYPE());
@@ -257,7 +273,7 @@ describe('Staker', function () {
             true,
             0,
             0,
-            stakerWithAnyone
+            anyone
         );
         let poolID = (await staker.TotalPools()) - 1n;
         expect(poolID).to.equal(0n);
@@ -271,7 +287,7 @@ describe('Staker', function () {
             true,
             0,
             0,
-            stakerWithAnyone
+            anyone
         );
         poolID = (await staker.TotalPools()) - 1n;
         expect(poolID).to.equal(1n);
@@ -285,7 +301,7 @@ describe('Staker', function () {
             true,
             0,
             0,
-            stakerWithAnyone
+            anyone
         );
         poolID = (await staker.TotalPools()) - 1n;
         expect(poolID).to.equal(2n);
@@ -299,7 +315,7 @@ describe('Staker', function () {
             true,
             0,
             0,
-            stakerWithAnyone
+            anyone
         );
         poolID = (await staker.TotalPools()) - 1n;
         expect(poolID).to.equal(3n);
@@ -418,7 +434,7 @@ describe('Staker', function () {
             true,
             0,
             0,
-            stakerWithAnyone
+            anyone
         );
 
         await expect(tx)
