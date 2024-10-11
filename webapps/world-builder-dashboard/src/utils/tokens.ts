@@ -62,6 +62,13 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           Icon: IconEthereum,
           rpc: L2_NETWORK.rpcs[0]
         },
+        {
+          name: 'USDC',
+          symbol: 'USDC',
+          address: '0xf3C3351D6Bd0098EEb33ca8f830FAf2a141Ea2E1',
+          Icon: IconUSDC,
+          rpc: L2_NETWORK.rpcs[0]
+        },
         ...storedTokensWithItems
       ]
     case L3_NETWORK.chainId:
