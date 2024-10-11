@@ -90,6 +90,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
     async (amount: string) => {
       const provider = await getProvider(selectedLowNetwork)
       if (!provider || !connectedAccount) {
+        setErrorMessage("Wallet isn't connected")
         throw new Error("Wallet isn't connected")
       }
       const allowance = await fetchERC20Allowance({
@@ -115,6 +116,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
             messageExecutionCost = estimate.maxFeePerGas.mul(estimate.gasLimit)
           }
         } catch (e) {
+          setErrorMessage('Estimation message execution fee error')
           console.log(`Estimation message execution fee error:  ${e}`)
         }
       }
