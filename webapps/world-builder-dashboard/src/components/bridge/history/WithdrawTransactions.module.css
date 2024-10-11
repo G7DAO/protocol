@@ -14,7 +14,9 @@
   align-self: stretch;
 
   border-radius: 12px;
-  border: 1px solid var(--Gray-200, #eaecf0);
+  border-top: 1px solid var(--Gray-200, #eaecf0);
+  border-left: 1px solid var(--Gray-200, #eaecf0);
+  border-right: 1px solid var(--Gray-200, #eaecf0);
   background: var(--Gray-25, #ffffff);
 
   /* Shadow/sm */
@@ -129,7 +131,7 @@
   font-style: normal;
   font-weight: 400;
   line-height: 20px; /* 142.857% */
-  border-bottom: 1px solid var(--Gray-60, #eaecf0);
+  border-bottom: 1px solid var(--Gray-200, #eaecf0);
 }
 
 .gridItemImportant {
@@ -157,7 +159,7 @@
   font-style: normal;
   font-weight: 400;
   line-height: 20px; /* 142.857% */
-  border-bottom: 1px solid var(--Gray-60, #eaecf0);
+  border-bottom: 1px solid var(--Gray-200, #eaecf0);
 }
 
 .gridItemInitiate {
@@ -172,12 +174,8 @@
   font-style: normal;
   font-weight: 400;
   line-height: 20px;
-  border-bottom: 1px solid var(--Gray-60, #eaecf0);
+  border-bottom: 1px solid var(--Gray-200, #eaecf0);
   background: var(--Base-White, #eaecf0);
-}
-
-.gridItem:last-child, .gridItemChild:last-child, .gridItemImportant:last-child, .gridItemInitiate:last-child {
-  border-bottom: none;
 }
 
 .gridNodeCompleted {
@@ -203,11 +201,8 @@
   gap: 12px;
   align-self: stretch;
   border-bottom: 1px solid var(--Gray-200, #eaecf0);
-
   background: var(--Gray-60, #f9fafb);
   color: var(--Gray-600, #475467);
-
-  /* Text xs/Medium */
   font-family: Inter, sans-serif;
   font-size: 12px;
   font-style: normal;

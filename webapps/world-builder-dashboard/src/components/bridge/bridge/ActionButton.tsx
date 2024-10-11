@@ -19,6 +19,7 @@ import { sendDepositERC20ToNativeTransaction } from '@/utils/bridge/depositERC20
 import { sendWithdrawERC20Transaction } from '@/utils/bridge/withdrawERC20'
 import { sendWithdrawTransaction } from '@/utils/bridge/withdrawNativeToken'
 import { L2ToL1MessageStatus } from '@arbitrum/sdk'
+import { parseUntilDelimiter } from '@/utils/web3utils'
 
 interface ActionButtonProps {
   direction: 'DEPOSIT' | 'WITHDRAW'
@@ -166,7 +167,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
         refetchNewNotifications(connectedAccount ?? '')
         queryClient.invalidateQueries(['ERC20Balance'])
         queryClient.invalidateQueries(['pendingTransactions'])
-
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
         queryClient.refetchQueries(['incomingMessages'])
@@ -174,7 +174,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
         navigate('/bridge/transactions')
       },
       onError: (e: Error) => {
-        console.log(e)
+        const error = parseUntilDelimiter(e)
+        console.log(error)
         setErrorMessage('Something went wrong. Try again, please')
       }
     }

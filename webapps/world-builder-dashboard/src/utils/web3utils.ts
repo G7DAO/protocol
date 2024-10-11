@@ -48,3 +48,8 @@ export const formatBigNumber = (bigNumber: ethers.BigNumber, lengthLimit = 25, u
 
   return `${firstDigit}.${remainingDigits}e+${exponent}`
 }
+
+export const parseUntilDelimiter = (input: any) => {
+  const match = input.match(/^[^\(\[]+/);
+  return match ? match[0] : input;
+}
