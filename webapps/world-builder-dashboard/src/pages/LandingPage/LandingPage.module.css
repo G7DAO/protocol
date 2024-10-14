@@ -1,5 +1,5 @@
 body {
-  overflow: hidden;
+  /* overflow: hidden; */
   /* height: 200vh; */
 }
 
@@ -115,7 +115,7 @@ body {
 
 /* layout classes */
 .mainLayout {
-  height: 100vh;
+  /* height: 100vh; */
   display: flex;
   padding: 40px;
   flex-direction: column;
