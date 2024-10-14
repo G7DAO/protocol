@@ -16,6 +16,9 @@ interface BlockchainContextType {
   setSelectedHighNetwork: (network: NetworkInterface) => void
   isMetaMask: boolean
   getProvider: (network: NetworkInterface) => Promise<ethers.providers.Web3Provider>
+  accounts: string[]
+  setAccounts: (accounts: string[]) => void
+  chainId: number | undefined
   isConnecting: boolean
 }
 
@@ -57,8 +60,9 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   const [selectedHighNetwork, _setSelectedHighNetwork] = useState<NetworkInterface>(DEFAULT_HIGH_NETWORK)
   const [isMetaMask, setIsMetaMask] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
-
+  const [chainId, setChainId] = useState<number | undefined>(undefined)
   const [connectedAccount, setConnectedAccount] = useState<string>()
+  const [accounts, setAccounts] = useState<string[]>([''])
   const tokenAddress = '0x5f88d811246222F6CB54266C42cc1310510b9feA'
 
   const setSelectedLowNetwork = (network: NetworkInterface) => {
@@ -93,6 +97,23 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     }
   }, [window.ethereum])
 
+  const fetchChainId = async () => {
+    const _chainId = (await walletProvider?.getNetwork())?.chainId
+    setChainId(_chainId)
+  }
+
+  const handleChainChanged = (hexedChainId: string) => {
+    const newChainId = parseInt(hexedChainId, 16) // Convert hex chainId to decimal
+    setChainId(newChainId)
+  }
+
+  useEffect(() => {
+    fetchChainId()
+    if (window.ethereum?.on) {
+      window.ethereum.on('chainChanged', handleChainChanged)
+    }
+  }, [walletProvider])
+
   const handleAccountsChanged = async () => {
     const ethereum = window.ethereum
     if (ethereum) {
@@ -100,6 +121,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
       // @ts-ignore
       setIsMetaMask(window.ethereum?.isMetaMask && !window.ethereum?.overrideIsMetaMask)
       const accounts = await provider.listAccounts()
+      setAccounts(accounts)
       if (accounts.length > 0) {
         setConnectedAccount(accounts[0])
       } else {
@@ -228,9 +250,12 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
         selectedHighNetwork,
         setSelectedHighNetwork,
         isMetaMask,
+        chainId,
         disconnectWallet,
         getProvider,
-        isConnecting
+        isConnecting,
+        accounts,
+        setAccounts
       }}
     >
       {children}

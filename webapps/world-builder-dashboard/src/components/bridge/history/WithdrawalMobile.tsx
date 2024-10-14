@@ -34,7 +34,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, execute
               >
                 <div className={parentStyles.settled}>
                   Completed
-                  <IconLinkExternal02 stroke={'#027A48'} />
+                  <IconLinkExternal02 stroke={'#fff'} />
                 </div>
               </a>
             )}
@@ -46,7 +46,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, execute
               >
                 <div className={parentStyles.claimable}>
                   Claimable
-                  <IconLinkExternal02 stroke={'#B54708'} />
+                  <IconLinkExternal02 stroke={'#fff'} />
                 </div>
               </a>
             )}
@@ -58,7 +58,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, execute
               >
                 <div className={parentStyles.pending}>
                   Pending
-                  <IconLinkExternal02 stroke={'#175CD3'} />
+                  <IconLinkExternal02 stroke={'#fff'} />
                 </div>
               </a>
             )}
