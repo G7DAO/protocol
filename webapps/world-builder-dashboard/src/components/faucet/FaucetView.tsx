@@ -254,6 +254,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
         </div>
         <button
           className={
+            !nextClaimAvailable.data ||
             (selectedNetwork.chainId === L3_NETWORK.chainId &&
               nextClaimAvailable.data &&
               !nextClaimAvailable.data.L3.isAvailable) ||
@@ -265,6 +266,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
             claim.mutate({ isL2Target: chainId === 13746, address })
           }}
           disabled={
+            !nextClaimAvailable.data ||
             (selectedNetwork.chainId === L3_NETWORK.chainId &&
               nextClaimAvailable.data &&
               !nextClaimAvailable.data.L3.isAvailable) ||

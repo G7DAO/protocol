@@ -1,6 +1,3 @@
-* {
-  cursor: url('../../assets/cursor.svg'), auto;
-}
 
 /* navbar classes */
 .layout {
@@ -12,6 +9,7 @@
   align-items: center;
   gap: 24px;
   background: #171717;
+  cursor: url('../../assets/cursor.svg'), auto;
 }
 
 .navbarContainer {
