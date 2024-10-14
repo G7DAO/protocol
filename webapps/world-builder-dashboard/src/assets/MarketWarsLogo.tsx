@@ -1,6 +1,6 @@
 import React from 'react'
 
-const MarketWarsLogo: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+const MarketWarsLogo: React.FC<React.SVGProps<SVGSVGElement>> = () => (
 <svg xmlns="http://www.w3.org/2000/svg" width="220" height="120" viewBox="0 0 220 120" fill="none">
   <g filter="url(#filter0_b_15592_4327)">
     <rect width="220" height="120" rx="12" fill="#171717"/>
