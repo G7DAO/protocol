@@ -13,11 +13,13 @@ import MarketWarsLogo from '@/assets/MarketWarsLogo'
 interface LandingPageProps { }
 
 const LandingPage: React.FC<LandingPageProps> = () => {
-  const NAVBAR_ITEMS = [{ name: 'Home', link: '/' },
-  { name: 'Faucet', link: 'faucet' },
-  { name: 'Bridge', link: 'bridge' },
-  { name: 'Community', link: '' },
-  { name: 'Docs', link: 'https://app.gitbook.com/sites/site_Fj9xC/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network' }]
+  const NAVBAR_ITEMS = [
+    { name: 'Home', link: '/' },
+    { name: 'Faucet', link: 'faucet' },
+    { name: 'Bridge', link: 'bridge' },
+    { name: 'Community', link: 'https://discord.com/invite/g7dao' },
+    { name: 'Docs', link: 'https://app.gitbook.com/sites/site_Fj9xC/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network' }
+  ]
   const navigate = useNavigate()
 
   const [currentSectionIndex, setCurrentSectionIndex] = useState<number>(0)
@@ -28,8 +30,6 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const handleScroll = (event: WheelEvent) => {
     const deltaY = event.deltaY
     scrollThreshold += deltaY
-    console.log(scrollThreshold)
-
     if ((currentSectionIndex === 0 && scrollThreshold < 0) || (currentSectionIndex === totalSections - 1 && scrollThreshold > 0)) {
       scrollThreshold = 0
       return
@@ -58,6 +58,10 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     navigate('/bridge')
   }
 
+  const navigateLink = (item: any) => {
+    item.name !== 'Docs' && item.name !== 'Community' ? navigate(`/${item.link}`) : window.open(item.link, '_blank')
+  }
+
   return (
     <>
       <div className={styles.layout}>
@@ -71,7 +75,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
             <div className={styles.navbarItemsContainer}>
               <div className={styles.navbarItems}>
                 {NAVBAR_ITEMS.map((item) => (
-                  <div className={item.name === 'Home' ? styles.navbarItemHome : styles.navbarItem} onClick={() => item.name !== 'Docs' ? navigate(`/${item.link}`) : window.open(item.link, '_blank')}>{item.name}</div>
+                  <div className={item.name === 'Home' ? styles.navbarItemHome : styles.navbarItem} onClick={() => navigateLink(item)}>{item.name}</div>
                 ))}
                 <div className={styles.navbarCTA} onClick={startBuilding}>Start building</div>
               </div>
@@ -80,7 +84,6 @@ const LandingPage: React.FC<LandingPageProps> = () => {
         </div>
         {/* MAIN LAYOUT */}
         <div className={styles.mainLayout}>
-
           {/* Main */}
           {currentSectionIndex === 0 && (
             <div className={styles.contentContainer}>
@@ -162,7 +165,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
             <div className={styles.contentContainer}>
               <div className={styles.sectionTitle}>Start building with the network essentials</div>
               <div className={styles.networkEssentialCards}>
-                <div className={styles.networkEssentialCard}>
+                <div className={styles.networkEssentialCard} onClick={() => navigate('/faucet')}>
                   <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialFaucet}`} />
                   <div className={styles.networkEssentialCardText}>
                     <div className={styles.networkEssentialCardTitle}>Faucet</div>
@@ -171,7 +174,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                     </div>
                   </div>
                 </div>
-                <div className={styles.networkEssentialCard}>
+                <div className={styles.networkEssentialCard} onClick={() => navigate('/bridge')}>
                   <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialBridge}`} />
                   <div className={styles.networkEssentialCardText}>
                     <div className={styles.networkEssentialCardTitle}>Bridge</div>
@@ -180,7 +183,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                     </div>
                   </div>
                 </div>
-                <div className={styles.networkEssentialCard}>
+                <div className={styles.networkEssentialCard} onClick={() => window.open('https://discord.com/invite/g7dao', '_blank')}>
                   <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialExplorer}`} />
                   <div className={styles.networkEssentialCardText}>
                     <div className={styles.networkEssentialCardTitle}>Explorer</div>
@@ -190,7 +193,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                     </div>
                   </div>
                 </div>
-                <div className={styles.networkEssentialCard}>
+                <div className={styles.networkEssentialCard} onClick={() => window.open('https://app.gitbook.com/sites/site_Fj9xC/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network', '_blank')}>
                   <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialDocs}`} />
                   <div className={styles.networkEssentialCardText}>
                     <div className={styles.networkEssentialCardTitle}>Docs</div>
@@ -203,6 +206,12 @@ const LandingPage: React.FC<LandingPageProps> = () => {
               <div className={styles.startBuildingCTA} onClick={startBuilding}>Start building</div>
             </div>
           )}
+          {/* <div className={styles.scrollbarContainer}>
+            <IconScrollBar className={styles.scrollBar} />
+            <IconScrollBar className={styles.scrollBar} />
+            <IconScrollBar className={styles.scrollBar} />
+            <IconScrollBar className={styles.scrollBar} />
+          </div> */}
         </div>
       </div>
     </>
