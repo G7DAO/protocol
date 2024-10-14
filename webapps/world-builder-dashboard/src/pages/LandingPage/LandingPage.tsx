@@ -20,20 +20,28 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   { name: 'Docs', link: 'https://app.gitbook.com/sites/site_Fj9xC/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network' }]
   const navigate = useNavigate()
 
-  const [scrollPosition, setScrollPosition] = useState<number>(0)
   const [currentSectionIndex, setCurrentSectionIndex] = useState<number>(0)
   const totalSections = 4
+  let scrollThreshold = 0;
 
 
   const handleScroll = (event: WheelEvent) => {
     const deltaY = event.deltaY
-    console.log('deltaY:', deltaY)
-    console.log(currentSectionIndex)
-    if (deltaY > 0 && currentSectionIndex < totalSections - 1) {
+    scrollThreshold += deltaY
+    console.log(scrollThreshold)
+
+    if ((currentSectionIndex === 0 && scrollThreshold < 0) || (currentSectionIndex === totalSections - 1 && scrollThreshold > 0)) {
+      scrollThreshold = 0
+      return
+    }
+
+    if (scrollThreshold > 700 && currentSectionIndex < totalSections - 1) {
+      scrollThreshold = 0
       setCurrentSectionIndex((prevIndex) => prevIndex + 1)
     }
 
-    else if (deltaY < 0 && currentSectionIndex > 0) {
+    else if (scrollThreshold < -700 && currentSectionIndex > 0) {
+      scrollThreshold = 0
       setCurrentSectionIndex((prevIndex) => prevIndex - 1)
     }
   }
