@@ -405,7 +405,15 @@ body {
   justify-content: center;
   align-items: center;
   gap: 4.313px;
-  background: url('../../assets/Summon.png');
+}
+
+.summonLogoContainer {
+  display: flex;
+  height: 28px;
+  padding: 0px 5.637px 0px 0.734px;
+  align-items: flex-start;
+  gap: 14.826px;
+  flex-shrink: 0;
 }
 
 .networkEssentialCards {
@@ -425,10 +433,11 @@ body {
   gap: 16px;
   border-radius: 24px;
   background: #0b0b0b;
+  border: 1px solid #727272;
 }
 
 .networkEssentialCard:hover {
-  border: 2px solid #f04438;
+  border: 1px solid #f04438;
 }
 
 .networkEssentialCardImage {

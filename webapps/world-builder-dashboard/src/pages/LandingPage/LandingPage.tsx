@@ -3,6 +3,12 @@ import styles from './LandingPage.module.css'
 import IconGame7 from '@/assets/IconGame7'
 import IconGame7Logo from '@/assets/IconGame7Logo'
 import { useNavigate } from 'react-router-dom'
+import HyperPlayLogo from '@/assets/HyperPlayLogo'
+import SummonLogo from '@/assets/SummonLogo'
+import SummonTextLogo from '@/assets/SummonTextLogo'
+import ArbitrumLogo from '@/assets/ArbitrumLogo'
+import ConduitLogo from '@/assets/ConduitLogo'
+import MarketWarsLogo from '@/assets/MarketWarsLogo'
 
 interface LandingPageProps { }
 
@@ -115,12 +121,29 @@ const LandingPage: React.FC<LandingPageProps> = () => {
               <div className={styles.sectionTitle}> G7 Nation allies </div>
               <div className={styles.sponsorCards}>
                 <div className={styles.sponsorCard}>
-                  <div className={styles.sponsorCardImage} />
+                  <div className={styles.sponsorCardImage}>
+                    <HyperPlayLogo />
+                  </div>
                 </div>
-                <div className={styles.sponsorCard} />
-                <div className={styles.sponsorCard} />
-                <div className={styles.sponsorCard} />
-                <div className={styles.sponsorCard} />
+                <div className={styles.sponsorCard}>
+                  <div className={styles.sponsorCardImage}>
+                    <div className={styles.summonLogoContainer}>
+                      <SummonLogo />
+                      <SummonTextLogo />
+                    </div>
+                  </div>
+                </div>
+                <div className={styles.sponsorCard}>
+                  <div className={styles.sponsorCardImage}>
+                    <ArbitrumLogo />
+                  </div>
+                </div>
+                <div className={styles.sponsorCard}>
+                  <div className={styles.sponsorCardImage}>
+                    <ConduitLogo />
+                  </div>
+                </div>
+                <MarketWarsLogo />
               </div>
               <div className={styles.startBuildingCTA} onClick={startBuilding}>Start building</div>
             </div>
