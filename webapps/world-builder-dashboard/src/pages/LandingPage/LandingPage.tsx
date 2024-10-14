@@ -2,11 +2,18 @@ import React, { useEffect, useState } from 'react'
 import styles from './LandingPage.module.css'
 import IconGame7 from '@/assets/IconGame7'
 import IconGame7Logo from '@/assets/IconGame7Logo'
+import { useNavigate } from 'react-router-dom'
 
 interface LandingPageProps { }
 
 const LandingPage: React.FC<LandingPageProps> = () => {
-  const NAVBAR_ITEMS = ['Home', 'Faucet', 'Bridge', 'Community', 'Docs']
+  const NAVBAR_ITEMS = [{ name: 'Home', link: '/' },
+  { name: 'Faucet', link: 'faucet' },
+  { name: 'Bridge', link: 'bridge' },
+  { name: 'Community', link: '' },
+  { name: 'Docs', link: 'https://app.gitbook.com/sites/site_Fj9xC/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network' }]
+  const navigate = useNavigate()
+
   const [scrollPosition, setScrollPosition] = useState<number>(0)
   const [currentSectionIndex, setCurrentSectionIndex] = useState<number>(0)
   const totalSections = 4
@@ -33,6 +40,10 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     }
   }, [currentSectionIndex])
 
+  const startBuilding = () => {
+    navigate('/bridge')
+  }
+
   return (
     <>
       <div className={styles.layout}>
@@ -46,9 +57,9 @@ const LandingPage: React.FC<LandingPageProps> = () => {
             <div className={styles.navbarItemsContainer}>
               <div className={styles.navbarItems}>
                 {NAVBAR_ITEMS.map((item) => (
-                  <div className={item === 'Home' ? styles.navbarItemHome : styles.navbarItem}>{item}</div>
+                  <div className={item.name === 'Home' ? styles.navbarItemHome : styles.navbarItem} onClick={() => item.name !== 'Docs' ? navigate(`/${item.link}`) : window.open(item.link, '_blank')}>{item.name}</div>
                 ))}
-                <div className={styles.navbarCTA}>Start building</div>
+                <div className={styles.navbarCTA} onClick={startBuilding}>Start building</div>
               </div>
             </div>
           </div>
@@ -66,7 +77,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
               </div>
               <div className={styles.ctaContainer}>
                 <div className={styles.learnMoreCTA}>Learn more</div>
-                <div className={styles.startBuildingCTA}>Start building</div>
+                <div className={styles.startBuildingCTA} onClick={startBuilding}>Start building</div>
               </div>
             </div>)}
 
@@ -93,7 +104,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   <div className={styles.cardDescription}>Gain free access to powerful tools as they are released</div>
                 </div>
               </div>
-              <div className={styles.startBuildingCTA}>Start building</div>
+              <div className={styles.startBuildingCTA} onClick={startBuilding}>Start building</div>
             </div>
           )}
 
@@ -111,7 +122,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                 <div className={styles.sponsorCard} />
                 <div className={styles.sponsorCard} />
               </div>
-              <div className={styles.startBuildingCTA}>Start building</div>
+              <div className={styles.startBuildingCTA} onClick={startBuilding}>Start building</div>
             </div>
           )}
 
@@ -121,7 +132,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
               <div className={styles.sectionTitle}>Start building with the network essentials</div>
               <div className={styles.networkEssentialCards}>
                 <div className={styles.networkEssentialCard}>
-                  <div className={styles.networkEssentialCardImage} />
+                  <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialFaucet}`} />
                   <div className={styles.networkEssentialCardText}>
                     <div className={styles.networkEssentialCardTitle}>Faucet</div>
                     <div className={styles.networkEssentialCardDescription}>
@@ -130,7 +141,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   </div>
                 </div>
                 <div className={styles.networkEssentialCard}>
-                  <div className={styles.networkEssentialCardImage} />
+                  <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialBridge}`} />
                   <div className={styles.networkEssentialCardText}>
                     <div className={styles.networkEssentialCardTitle}>Bridge</div>
                     <div className={styles.networkEssentialCardDescription}>
@@ -139,7 +150,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   </div>
                 </div>
                 <div className={styles.networkEssentialCard}>
-                  <div className={styles.networkEssentialCardImage} />
+                  <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialExplorer}`} />
                   <div className={styles.networkEssentialCardText}>
                     <div className={styles.networkEssentialCardTitle}>Explorer</div>
                     <div className={styles.networkEssentialCardDescription}>
@@ -149,7 +160,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   </div>
                 </div>
                 <div className={styles.networkEssentialCard}>
-                  <div className={styles.networkEssentialCardImage} />
+                  <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialDocs}`} />
                   <div className={styles.networkEssentialCardText}>
                     <div className={styles.networkEssentialCardTitle}>Docs</div>
                     <div className={styles.networkEssentialCardDescription}>
@@ -158,7 +169,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   </div>
                 </div>
               </div>
-              <div className={styles.startBuildingCTA}>Start building</div>
+              <div className={styles.startBuildingCTA} onClick={startBuilding}>Start building</div>
             </div>
           )}
         </div>

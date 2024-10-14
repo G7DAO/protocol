@@ -434,7 +434,25 @@ body {
 .networkEssentialCardImage {
   width: 292px;
   height: 178px;
+}
+
+.networkEssentialFaucet {
   background: url('../../assets/G7FaucetCardDark.jpg') no-repeat center center;
+  background-size: contain;
+}
+
+.networkEssentialBridge {
+  background: url('../../assets/G7BridgeCardDark.jpg') no-repeat center center;
+  background-size: contain;
+}
+
+.networkEssentialExplorer {
+  background: url('../../assets/G7ExplorerCardDark.jpg') no-repeat center center;
+  background-size: contain;
+}
+
+.networkEssentialDocs {
+  background: url('../../assets/G7DocsCardDark.jpg') no-repeat center center;
   background-size: contain;
 }
 
