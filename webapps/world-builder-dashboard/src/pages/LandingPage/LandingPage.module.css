@@ -1,6 +1,6 @@
 body {
   overflow: hidden;
-  height: 200vh;
+  /* height: 200vh; */
 }
 
 /* navbar classes */
@@ -13,6 +13,9 @@ body {
   align-items: center;
   gap: 24px;
   background: #171717;
+  /* overflow-y: auto;
+  scroll-behavior: smooth; */
+  /* scroll-behavior: none; */
 }
 
 .navbarContainer {
@@ -122,7 +125,7 @@ body {
   flex: 1 0 0;
   align-self: stretch;
   border-radius: 12px;
-  border: 1px solid var(--Gray-300, #727272);
+  border: 1px solid #727272;
   /* background: url('../../assets/G7LandingPageBG.png') lightgray 50% / cover no-repeat; */
   background: #171717;
   position: relative;
@@ -288,7 +291,7 @@ body {
   line-height: 20px; /* 142.857% */
 }
 
-.benefitsLayout {
+.contentContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -296,7 +299,19 @@ body {
   align-self: stretch;
 }
 
-.cardsContainer {
+.sectionTitle {
+  align-self: stretch;
+  color: var(--Gray-50, #f9fafb);
+  text-align: center;
+  font-family: Inter;
+  font-size: 48px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 60px; /* 125% */
+  letter-spacing: -0.96px;
+}
+
+.cards {
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -345,6 +360,88 @@ body {
   align-self: stretch;
   color: #b9b9b9;
   text-align: center;
+  font-family: Inter;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 28px; /* 155.556% */
+}
+
+.sponsorCards {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.sponsorCard {
+  display: flex;
+  height: 120px;
+  width: 220px;
+  padding: 31.231px 37.218px 31.257px 37.75px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  border: 1px solid #727272;
+  background: #171717;
+  backdrop-filter: blur(0.6990200281143188px);
+}
+
+.networkEssentialCards {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  align-self: stretch;
+}
+
+.networkEssentialCard {
+  display: flex;
+  width: 340px;
+  height: 422px;
+  padding: 24px;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  border-radius: 24px;
+  background: #0b0b0b;
+}
+
+.networkEssentialCard:hover {
+  border: 2px solid #f04438;
+}
+
+.networkEssentialCardImage {
+  width: 292px;
+  height: 178px;
+  flex-shrink: 0;
+  background: radial-gradient(210.13% 53.02% at 50.15% 8.62%, rgba(27, 27, 27, 0) 39.5%, #1b1b1b 100%);
+}
+
+.networkEssentialCardText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  align-self: stretch;
+}
+
+.networkEssentialCardTitle {
+  color: var(--Gray-50, #f9fafb);
+
+  /* Display xs Medium */
+  font-family: Inter;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 32px; /* 133.333% */
+}
+
+.networkEssentialCardDescription {
+  color: #b9b9b9;
+
+  /* Text lg Regular */
   font-family: Inter;
   font-size: 18px;
   font-style: normal;
