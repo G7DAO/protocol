@@ -25,6 +25,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const [currentSectionIndex, setCurrentSectionIndex] = useState<number>(0)
   const totalSections = 4
   let scrollThreshold = 0;
+  const maxThreshold = 300;
 
 
   const handleScroll = (event: WheelEvent) => {
@@ -35,12 +36,12 @@ const LandingPage: React.FC<LandingPageProps> = () => {
       return
     }
 
-    if (scrollThreshold > 700 && currentSectionIndex < totalSections - 1) {
+    if (scrollThreshold > maxThreshold && currentSectionIndex < totalSections - 1) {
       scrollThreshold = 0
       setCurrentSectionIndex((prevIndex) => prevIndex + 1)
     }
 
-    else if (scrollThreshold < -700 && currentSectionIndex > 0) {
+    else if (scrollThreshold < -maxThreshold && currentSectionIndex > 0) {
       scrollThreshold = 0
       setCurrentSectionIndex((prevIndex) => prevIndex - 1)
     }
