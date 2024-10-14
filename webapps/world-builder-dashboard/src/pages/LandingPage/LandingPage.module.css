@@ -1,16 +1,18 @@
 body {
   overflow: hidden;
+  height: 200vh;
 }
 
 /* navbar classes */
 .layout {
   display: flex;
   width: 100vw;
-  height: 960px;
+  height: 100vh;
   padding: 24px;
   flex-direction: column;
   align-items: center;
   gap: 24px;
+  background: #171717;
 }
 
 .navbarContainer {
@@ -48,7 +50,7 @@ body {
   align-items: center;
   gap: 8px;
   border-radius: 6px;
-  color: var(--Gray-700, var(--color-gray-Gray-700, #344054));
+  color: #d5d5d5;
   font-family: Inter;
   font-size: 16px;
   font-style: normal;
@@ -63,7 +65,7 @@ body {
   align-items: center;
   gap: 8px;
   border-radius: 6px;
-  color: var(--Error-500, var(--color-error-Error-500, #f04438));
+  color: #fff;
   font-family: Inter;
   font-size: 16px;
   font-style: normal;
@@ -110,6 +112,7 @@ body {
 
 /* layout classes */
 .mainLayout {
+  height: 100vh;
   display: flex;
   padding: 40px;
   flex-direction: column;
@@ -119,8 +122,9 @@ body {
   flex: 1 0 0;
   align-self: stretch;
   border-radius: 12px;
-  border: 1px solid var(--Gray-300, #d0d5dd);
-  background: url('../../assets/G7LandingPageBG.png') lightgray 50% / cover no-repeat;
+  border: 1px solid var(--Gray-300, #727272);
+  /* background: url('../../assets/G7LandingPageBG.png') lightgray 50% / cover no-repeat; */
+  background: #171717;
   position: relative;
 }
 
@@ -136,7 +140,7 @@ body {
 
 .titleText {
   align-self: stretch;
-  color: var(--Gray-900, #101828);
+  color: #f9fafb;
   text-align: center;
   font-family: Inter;
   font-size: 120px;
@@ -148,7 +152,7 @@ body {
 }
 
 .subtitleText {
-  color: var(--Gray-600, #475467);
+  color: #b9b9b9;
   text-align: center;
   font-family: Inter;
   font-size: 24px;
@@ -172,10 +176,10 @@ body {
   align-items: center;
   gap: 8px;
   border-radius: 8px;
-  border: 1px solid var(--Gray-300, #d0d5dd);
-  background: var(--Base-White, #fff);
+  border: 1px solid #393939;
+  background: rgba(11, 11, 11, 0.7);
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-  color: var(--Gray-700, var(--color-gray-Gray-700, #344054));
+  color: #b9b9b9;
   font-family: Inter;
   font-size: 16px;
   font-style: normal;
@@ -260,5 +264,90 @@ body {
 .scrollBar {
   height: 6px;
   flex: 1 0 0;
-  fill: var(--Gray-200, #EAECF0);
+  fill: var(--Gray-200, #eaecf0);
+}
+
+.pill {
+  display: flex;
+  height: 28px;
+  padding: var(--4px, 4px) var(--8px, 8px);
+  justify-content: center;
+  align-items: center;
+  gap: var(--4px, 4px);
+  border-radius: 16px;
+  border: 1px solid var(--Gray-true-200, #b9b9b9);
+  background: rgba(23, 23, 23, 0.8);
+  color: var(--Gray-true-200, #b9b9b9);
+  text-align: center;
+
+  /* Body 2/Medium */
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px; /* 142.857% */
+}
+
+.benefitsLayout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  align-self: stretch;
+}
+
+.cardsContainer {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  align-content: flex-start;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.card {
+  display: flex;
+  width: 413px;
+  padding: 24px;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  border-radius: 24px;
+  border: 1px solid #727272;
+  background: #171717;
+}
+
+.cardTitle {
+  color: var(--Gray-50, #f9fafb);
+
+  /* Display xs Medium */
+  font-family: Inter;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 32px; /* 133.333% */
+}
+
+.cardImage {
+  height: 178px;
+  align-self: stretch;
+  border-radius: 12px;
+  border: 1px solid #393939;
+  background: url(<path-to-image>) lightgray 50% / cover no-repeat;
+}
+
+.cardDescription {
+  display: flex;
+  padding: 24px;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--20px, 20px);
+  align-self: stretch;
+  color: #b9b9b9;
+  text-align: center;
+  font-family: Inter;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 28px; /* 155.556% */
 }
