@@ -13,9 +13,6 @@ body {
   align-items: center;
   gap: 24px;
   background: #171717;
-  /* overflow-y: auto;
-  scroll-behavior: smooth; */
-  /* scroll-behavior: none; */
 }
 
 .navbarContainer {
@@ -126,8 +123,7 @@ body {
   align-self: stretch;
   border-radius: 12px;
   border: 1px solid #727272;
-  /* background: url('../../assets/G7LandingPageBG.png') lightgray 50% / cover no-repeat; */
-  background: #171717;
+  background: url('../../assets/G7LandingPageBGDark.jpg') lightgray 50% / cover no-repeat;
   position: relative;
 }
 
@@ -348,7 +344,18 @@ body {
   align-self: stretch;
   border-radius: 12px;
   border: 1px solid #393939;
-  background: url(<path-to-image>) lightgray 50% / cover no-repeat;
+}
+
+.cardImageGamers {
+  background: url('../../assets/G7ReachGamersDark.jpg') lightgray 50% / cover no-repeat;
+}
+
+.cardImageLightningQuick {
+  background: url('../../assets/G7LightningQuickDark.jpg') lightgray 50% / cover no-repeat;
+}
+
+.cardImageSpecialEcon {
+  background: url('../../assets/G7SpecialEconZoneDark.jpg') lightgray 50% / cover no-repeat;
 }
 
 .cardDescription {
@@ -365,6 +372,8 @@ body {
   font-style: normal;
   font-weight: 400;
   line-height: 28px; /* 155.556% */
+  border-radius: 12px;
+  border: 1px solid #727272;
 }
 
 .sponsorCards {
@@ -387,6 +396,16 @@ body {
   border: 1px solid #727272;
   background: #171717;
   backdrop-filter: blur(0.6990200281143188px);
+}
+
+.sponsorCardImage {
+  display: flex;
+  padding: 8.627px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4.313px;
+  background: url('../../assets/Summon.png');
 }
 
 .networkEssentialCards {
@@ -415,8 +434,8 @@ body {
 .networkEssentialCardImage {
   width: 292px;
   height: 178px;
-  flex-shrink: 0;
-  background: radial-gradient(210.13% 53.02% at 50.15% 8.62%, rgba(27, 27, 27, 0) 39.5%, #1b1b1b 100%);
+  background: url('../../assets/G7FaucetCardDark.jpg') no-repeat center center;
+  background-size: contain;
 }
 
 .networkEssentialCardText {
@@ -440,11 +459,9 @@ body {
 
 .networkEssentialCardDescription {
   color: #b9b9b9;
-
-  /* Text lg Regular */
   font-family: Inter;
   font-size: 18px;
   font-style: normal;
   font-weight: 400;
-  line-height: 28px; /* 155.556% */
+  line-height: 28px;
 }

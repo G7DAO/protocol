@@ -77,19 +77,19 @@ const LandingPage: React.FC<LandingPageProps> = () => {
               <div className={styles.cards}>
                 <div className={styles.card}>
                   <div className={styles.cardTitle}>Build for Gamers</div>
-                  <div className={styles.cardImage} />
+                  <div className={`${styles.cardImage} ${styles.cardImageGamers}`} />
                   <div className={styles.cardDescription}>
                     Bootstrap your game with access to 250k+ citizens and counting
                   </div>
                 </div>
                 <div className={styles.card}>
                   <div className={styles.cardTitle}>Fast and efficient</div>
-                  <div className={styles.cardImage} />
+                  <div className={`${styles.cardImage} ${styles.cardImageLightningQuick}`} />
                   <div className={styles.cardDescription}>Lighting-quick transactions and low cost fees</div>
                 </div>
                 <div className={styles.card}>
                   <div className={styles.cardTitle}>Special economic zone</div>
-                  <div className={styles.cardImage} />
+                  <div className={`${styles.cardImage} ${styles.cardImageSpecialEcon}`} />
                   <div className={styles.cardDescription}>Gain free access to powerful tools as they are released</div>
                 </div>
               </div>
@@ -103,7 +103,9 @@ const LandingPage: React.FC<LandingPageProps> = () => {
             <div className={styles.contentContainer}>
               <div className={styles.sectionTitle}> G7 Nation allies </div>
               <div className={styles.sponsorCards}>
-                <div className={styles.sponsorCard} />
+                <div className={styles.sponsorCard}>
+                  <div className={styles.sponsorCardImage} />
+                </div>
                 <div className={styles.sponsorCard} />
                 <div className={styles.sponsorCard} />
                 <div className={styles.sponsorCard} />
@@ -156,6 +158,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   </div>
                 </div>
               </div>
+              <div className={styles.startBuildingCTA}>Start building</div>
             </div>
           )}
         </div>
