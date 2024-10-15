@@ -6,7 +6,7 @@ import IconLogoutLarge from '@/assets/IconLogoutLarge'
 import IconMenu02 from '@/assets/IconMenu02'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
-import IconLinkExternal02 from '@/assets/IconLinkExternal02'
+import IconExternalLink from '@/assets/IconExternalLink'
 
 interface MobileSidebarProps {
   navigationItems: { name: string; navigateTo: string; icon: ReactNode }[]
@@ -53,7 +53,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
                 </div>
                 <div style={{ display: 'flex' }}>
                   {item.name === 'documentation' || item.name === 'explorer' ? (
-                    <IconLinkExternal02 className={parentStyles.icon} />
+                    <IconExternalLink className={parentStyles.icon} />
                   ) : (
                     ''
                   )}

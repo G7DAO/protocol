@@ -4,7 +4,7 @@ import styles from './MainLayout.module.css'
 import IconLogout from '@/assets/IconLogout'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
-import IconLinkExternal02 from '@/assets/IconLinkExternal02'
+import IconExternalLink from '@/assets/IconExternalLink'
 
 interface DesktopSidebarProps {
   navigationItems: { name: string; navigateTo: string; icon: ReactNode }[]
@@ -37,7 +37,7 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
               </div>
               <div style={{ display: 'flex' }}>
                 {item.name === 'documentation' || item.name === 'explorer' ? (
-                  <IconLinkExternal02 className={styles.icon} />
+                  <IconExternalLink className={styles.icon} />
                 ) : (
                   ''
                 )}
