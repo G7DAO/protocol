@@ -30,6 +30,7 @@
 }
 
 .logoContainer {
+  cursor: pointer;
   display: flex;
   padding: 0 20px 0 24px;
   align-items: center;

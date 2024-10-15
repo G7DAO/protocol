@@ -89,6 +89,7 @@
 }
 
 .logoWrapper {
+  cursor: url('../../assets/hand.svg'), pointer;
   display: flex;
   align-items: center;
   gap: 12px;

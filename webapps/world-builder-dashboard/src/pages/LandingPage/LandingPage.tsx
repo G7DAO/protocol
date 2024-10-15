@@ -12,7 +12,7 @@ import MarketWarsLogo from '@/assets/MarketWarsLogo'
 import SummonLogo from '@/assets/SummonLogo'
 import SummonTextLogo from '@/assets/SummonTextLogo'
 
-interface LandingPageProps { }
+interface LandingPageProps {}
 
 const LandingPage: React.FC<LandingPageProps> = () => {
   const NAVBAR_ITEMS = [
@@ -128,7 +128,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
         {/* NAVBAR */}
         <div className={styles.navbarContainer}>
           <div className={styles.navbar}>
-            <div className={styles.logoWrapper}>
+            <div className={styles.logoWrapper} onClick={() => navigate('/')}>
               <IconGame7Logo />
               <IconGame7 />
             </div>
@@ -336,7 +336,9 @@ const LandingPage: React.FC<LandingPageProps> = () => {
           <div className={styles.startBuildingCTA} onClick={startBuilding}>
             Start building
           </div>
-        ) : (<></>)}
+        ) : (
+          <></>
+        )}
       </div>
     </>
   )
