@@ -4,6 +4,7 @@ import styles from './MainLayout.module.css'
 import IconLogout from '@/assets/IconLogout'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
+import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 
 interface DesktopSidebarProps {
   navigationItems: { name: string; navigateTo: string; icon: ReactNode }[]
@@ -21,11 +22,26 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
           {navigationItems.map((item) => (
             <div
               className={location.pathname.startsWith(item.navigateTo) ? styles.selectedNavButton : styles.navButton}
-              onClick={() => navigate(item.navigateTo)}
+              onClick={() => {
+                if (item.name === 'documentation' || item.name === 'explorer') {
+                  window.open(item.navigateTo, '_blank')
+                } else {
+                  navigate(item.navigateTo)
+                }
+              }}
               key={item.name}
             >
-              {item.icon}
-              {item.name}
+              <div className={styles.navBeginning}>
+                {item.icon}
+                {item.name}
+              </div>
+              <div style={{ display: 'flex' }}>
+                {item.name === 'documentation' || item.name === 'explorer' ? (
+                  <IconLinkExternal02 className={styles.icon} />
+                ) : (
+                  ''
+                )}
+              </div>
             </div>
           ))}
         </div>

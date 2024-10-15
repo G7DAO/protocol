@@ -42,6 +42,13 @@
   gap: 12px;
 }
 
+.navBeginning {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1 0 0;
+}
+
 .navigation {
   display: flex;
   padding: 0 16px;
@@ -61,8 +68,7 @@
   align-self: stretch;
 
   border-radius: 6px;
-  background: var(--Gray-60, #f9fafb);
-  color: var(--Gray-900, #101828);
+  color: #9c9c9c;
 
   /* Text md/Semibold */
   font-size: 16px;
@@ -71,6 +77,11 @@
   line-height: 24px; /* 150% */
 
   text-transform: capitalize;
+}
+
+.selectedNavButton {
+  background: #393939;
+  color: var(--Gray-900, #101828);
 }
 
 .navButton {
