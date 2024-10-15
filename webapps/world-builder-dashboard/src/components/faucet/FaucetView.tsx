@@ -273,7 +273,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
             ((!isValidAddress || address === '') && selectedAccountType === 'External Address' || claim.isLoading)
           }
         >
-          <div className={styles.requestTokensButtonText}>{!nextClaimAvailable.data ? "Checking..." : claim.isLoading ? `Requesting...` : `Request Tokens`}</div>
+          <div className={styles.requestTokensButtonText}>{claim.isLoading ? `Requesting...` : `Request Tokens`}</div>
         </button>
       </div>
       {!!networkError && <div className={styles.errorContainer}>{networkError}.</div>}
