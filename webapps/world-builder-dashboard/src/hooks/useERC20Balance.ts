@@ -31,31 +31,6 @@ const useERC20Balance = ({ tokenAddress, account, rpc }: UseERC20BalanceProps) =
   )
 }
 
-interface UseERC20SymbolProps {
-  tokenAddress: string
-  rpc: string | undefined
-}
-
-export const useERC20Symbol = ({ tokenAddress, rpc }: UseERC20SymbolProps) => {
-  return useQuery(
-    ['ERC20Symbol', tokenAddress, rpc],
-    async () => {
-      if (!tokenAddress || !rpc) {
-        return { symbol: '' }
-      }
-      const provider = new ethers.providers.JsonRpcProvider(rpc)
-      const ERC20Contract = new ethers.Contract(tokenAddress, ERC20_ABI, provider)
-
-      const symbol = await ERC20Contract.symbol()
-      return {
-        symbol: symbol
-      }
-    },
-    { enabled: !!tokenAddress }
-  )
-}
-
-
 interface UseERC20AllowanceProps {
   tokenAddress: string
   owner: string | undefined

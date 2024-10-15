@@ -9,7 +9,7 @@ This checklist describes how to bridge tokens
 ```bash
 export L1_RPC=https://sepolia.infura.io/v3/25531dd362e441289ebba71d0b134a6a
 export L2_RPC=https://sepolia-rollup.arbitrum.io/rpc
-export L3_RPC=https://rpc-game7-testnet-2g3y2k9azw.t.conduit.xyz
+export L3_RPC=https://testnet-rpc.game7.io
 export L1_TOKEN=0xac4d9E47765358f8cbD10D3C14246509E39B6251
 export L1L2_ROUTER=0xce18836b233c83325cc8848ca4487e94c6288264
 export L2L3_ROUTER=0xb43F7D804Ec38B74f9230128D12e1F29590cc65e

@@ -38,11 +38,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
                 }
                 onClick={() => {
                   setIsExpanded(false)
-                  if (item.name === 'documentation' || item.name === 'explorer') {
-                    window.open(item.navigateTo, '_blank')
-                  } else {
-                    navigate(item.navigateTo)
-                  }
+                  navigate(item.navigateTo)
                 }}
                 key={item.name}
               >

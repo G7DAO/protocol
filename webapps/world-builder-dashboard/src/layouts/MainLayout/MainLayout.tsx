@@ -4,9 +4,7 @@ import { Outlet } from 'react-router-dom'
 
 // Styles
 import styles from './MainLayout.module.css'
-import IconDocumentation from '@/assets/IconDocumentation'
 import IconDroplets02 from '@/assets/IconDroplets02'
-import IconExplorer from '@/assets/IconExplorer'
 import IconWallet04 from '@/assets/IconWallet04'
 
 // Local components and assets
@@ -17,15 +15,8 @@ import { useMediaQuery } from '@mantine/hooks'
 interface MainLayoutProps {}
 
 const NAVIGATION_ITEMS = [
-  { name: 'bridge', navigateTo: '/bridge', icon: <IconWallet04 className={styles.icon} /> },
-  { name: 'faucet', navigateTo: '/faucet', icon: <IconDroplets02 className={styles.icon} /> },
-  { name: 'explorer', navigateTo: 'https://testnet.game7.io/', icon: <IconExplorer className={styles.icon} /> },
-  {
-    name: 'documentation',
-    navigateTo:
-      'https://wiki.game7.io/developer-documents-external/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network/world-builder',
-    icon: <IconDocumentation className={styles.icon} />
-  }
+  { name: 'bridge', navigateTo: '/bridge', icon: <IconWallet04 /> },
+  { name: 'faucet', navigateTo: '/faucet', icon: <IconDroplets02 /> }
 ]
 
 const MainLayout: React.FC<MainLayoutProps> = ({}) => {

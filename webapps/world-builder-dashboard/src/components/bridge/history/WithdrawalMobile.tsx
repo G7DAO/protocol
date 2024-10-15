@@ -7,7 +7,6 @@ import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 import { L2ToL1MessageStatus } from '@arbitrum/sdk'
-import IconWithdrawalNodeCompletedMobile from '@/assets/IconWithdrawalNodeCompletedMobile'
 
 interface WithdrawalMobileProps {
   withdrawal: TransactionRecord
@@ -26,7 +25,6 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, execute
       {!isCollapsed && (
         <>
           <div className={styles.dataRow}>
-            <IconWithdrawalNodeCompletedMobile className={styles.nodeCompleted}/>
             <div className={styles.dataText}>Transaction</div>
             {status.data?.status === L2ToL1MessageStatus.EXECUTED && (
               <a
@@ -36,7 +34,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, execute
               >
                 <div className={parentStyles.settled}>
                   Completed
-                  <IconLinkExternal02 stroke={'#027A48'} />
+                  <IconLinkExternal02 stroke={'#fff'} />
                 </div>
               </a>
             )}
@@ -48,7 +46,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, execute
               >
                 <div className={parentStyles.claimable}>
                   Claimable
-                  <IconLinkExternal02 stroke={'#B54708'} />
+                  <IconLinkExternal02 stroke={'#fff'} />
                 </div>
               </a>
             )}
@@ -60,41 +58,11 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, execute
               >
                 <div className={parentStyles.pending}>
                   Pending
-                  <IconLinkExternal02 stroke={'#175CD3'} />
+                  <IconLinkExternal02 stroke={'#fff'} />
                 </div>
               </a>
             )}
           </div>
-          {status.data?.status === L2ToL1MessageStatus.EXECUTED && (
-            <>
-              <div className={styles.dataRowCompleted}>
-                <div className={styles.dataText}>Initiate</div>
-                <a
-                  href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
-                  target={'_blank'}
-                  className={parentStyles.explorerLink}
-                >
-                  <div className={parentStyles.settled}>
-                    Completed
-                    <IconLinkExternal02 stroke={'#027A48'} />
-                  </div>
-                </a>
-              </div>
-              <div className={styles.dataRowCompleted}>
-                <div className={styles.dataText}>Finalize</div>
-                <a
-                  href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
-                  target={'_blank'}
-                  className={parentStyles.explorerLink}
-                >
-                  <div className={parentStyles.settled}>
-                    Completed
-                    <IconLinkExternal02 stroke={'#027A48'} />
-                  </div>
-                </a>
-              </div>
-            </>
-          )}
           <div className={styles.dataRow}>
             <div className={styles.dataText}>From</div>
             <div className={styles.dataText}>{status.data?.from ?? ''}</div>

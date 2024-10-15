@@ -25,7 +25,7 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
   })
 
   const getTokens = async () => {
-    const _tokens = getTokensForNetwork(chainId, connectedAccount)
+    const _tokens = getTokensForNetwork(chainId)
     setTokens(_tokens)
   }
 

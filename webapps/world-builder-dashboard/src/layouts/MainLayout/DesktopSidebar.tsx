@@ -1,7 +1,6 @@
 import React, { ReactNode } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import styles from './MainLayout.module.css'
-import IconExternalLink from '@/assets/IconExternalLink'
 import IconLogout from '@/assets/IconLogout'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
@@ -22,40 +21,16 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
           {navigationItems.map((item) => (
             <div
               className={location.pathname.startsWith(item.navigateTo) ? styles.selectedNavButton : styles.navButton}
-              onClick={() => {
-                if (item.name === 'documentation' || item.name === 'explorer') {
-                  window.open(item.navigateTo, '_blank')
-                } else {
-                  navigate(item.navigateTo)
-                }
-              }}
+              onClick={() => navigate(item.navigateTo)}
               key={item.name}
             >
-              <div className={styles.navBeginning}>
-                {item.icon}
-                {item.name}
-              </div>
-              <div style={{ display: 'flex' }}>
-                {item.name === 'documentation' || item.name === 'explorer' ? (
-                  <IconExternalLink className={styles.icon} />
-                ) : (
-                  ''
-                )}
-              </div>
+              {item.icon}
+              {item.name}
             </div>
           ))}
         </div>
       </div>
       <div className={styles.footer}>
-        {/* May uncomment later. */}
-        {/* <div className={styles.themesContainer}>
-          <div className={theme === 'dark' ? styles.selectedThemeButton : styles.themeButton} onClick={toggleTheme}>
-            <IconDark className={theme === 'dark' ? styles.selectedThemeIcon : styles.themeIcon} /> Dark
-          </div>
-          <div className={theme === 'light' ? styles.selectedThemeButton : styles.themeButton} onClick={toggleTheme}>
-            <IconLight className={theme === 'light' ? styles.selectedThemeIcon : styles.themeIcon} /> Light
-          </div>
-        </div> */}
         {connectedAccount ? (
           <div className={styles.web3AddressContainer}>
             <div className={styles.web3address}>
