@@ -13,8 +13,8 @@ import { useFaucetAPI } from '@/hooks/useFaucetAPI'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { timeDifferenceInHoursAndMinutes, timeDifferenceInHoursMinutesAndSeconds } from '@/utils/timeFormat'
 
-interface FaucetViewProps {}
-const FaucetView: React.FC<FaucetViewProps> = ({}) => {
+interface FaucetViewProps { }
+const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const [address, setAddress] = useState<string | undefined>('')
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false)
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L3_NETWORK)
@@ -255,10 +255,10 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
         <button
           className={
             !nextClaimAvailable.data ||
-            (selectedNetwork.chainId === L3_NETWORK.chainId &&
-              nextClaimAvailable.data &&
-              !nextClaimAvailable.data.L3.isAvailable) ||
-            ((!isValidAddress || address === '') && selectedAccountType === 'External Address' || claim.isLoading)
+              (selectedNetwork.chainId === L3_NETWORK.chainId &&
+                nextClaimAvailable.data &&
+                !nextClaimAvailable.data.L3.isAvailable) ||
+              ((!isValidAddress || address === '') && selectedAccountType === 'External Address' || claim.isLoading)
               ? styles.requestTokensButtonDisabled
               : styles.requestTokensButton
           }
@@ -273,7 +273,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
             ((!isValidAddress || address === '') && selectedAccountType === 'External Address' || claim.isLoading)
           }
         >
-          <div className={styles.requestTokensButtonText}>{claim.isLoading ? `Requesting...` : `Request Tokens`}</div>
+          <div className={styles.requestTokensButtonText}>{!nextClaimAvailable.data ? "Checking..." : claim.isLoading ? `Requesting...` : `Request Tokens`}</div>
         </button>
       </div>
       {!!networkError && <div className={styles.errorContainer}>{networkError}.</div>}

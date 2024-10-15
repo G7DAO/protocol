@@ -9,6 +9,7 @@ import SummonTextLogo from '@/assets/SummonTextLogo'
 import ArbitrumLogo from '@/assets/ArbitrumLogo'
 import ConduitLogo from '@/assets/ConduitLogo'
 import MarketWarsLogo from '@/assets/MarketWarsLogo'
+import IconScrollBar from '@/assets/IconScrollBar'
 
 interface LandingPageProps { }
 
@@ -23,37 +24,51 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const navigate = useNavigate()
 
   const [currentSectionIndex, setCurrentSectionIndex] = useState<number>(0)
+  const [fills, setFills] = useState<string[]>(['#393939', '#393939', '#393939', '#393939'])
   const totalSections = 4
-  let scrollThreshold = 0;
-  const maxThreshold = 300;
+  const [scrollThreshold, setScrollThreshold] = useState(0)
+  const maxThreshold = 300
 
+
+  const updateFills = () => {
+    const newFills = Array(totalSections).fill('#393939')
+    for (let i = 0; i < currentSectionIndex; i++) {
+      newFills[i] = 'red';
+    }
+
+    const fillPercentage = Math.min(Math.abs(scrollThreshold / maxThreshold), 1)
+    newFills[currentSectionIndex] = `rgb(${Math.round(fillPercentage * 255)}, 0, 0)`
+    setFills(newFills)
+  };
 
   const handleScroll = (event: WheelEvent) => {
     const deltaY = event.deltaY
-    scrollThreshold += deltaY
+    setScrollThreshold((prev) => prev + deltaY)
+
     if ((currentSectionIndex === 0 && scrollThreshold < 0) || (currentSectionIndex === totalSections - 1 && scrollThreshold > 0)) {
-      scrollThreshold = 0
+      setScrollThreshold(0)
       return
     }
 
     if (scrollThreshold > maxThreshold && currentSectionIndex < totalSections - 1) {
-      scrollThreshold = 0
+      setScrollThreshold(0)
       setCurrentSectionIndex((prevIndex) => prevIndex + 1)
     }
 
     else if (scrollThreshold < -maxThreshold && currentSectionIndex > 0) {
-      scrollThreshold = 0
+      setScrollThreshold(0)
       setCurrentSectionIndex((prevIndex) => prevIndex - 1)
     }
   }
 
   useEffect(() => {
     window.addEventListener('wheel', handleScroll)
+    updateFills()
 
     return () => {
       window.removeEventListener('wheel', handleScroll)
     }
-  }, [currentSectionIndex])
+  }, [scrollThreshold, currentSectionIndex])
 
   const startBuilding = () => {
     navigate('/bridge')
@@ -207,12 +222,12 @@ const LandingPage: React.FC<LandingPageProps> = () => {
               <div className={styles.startBuildingCTA} onClick={startBuilding}>Start building</div>
             </div>
           )}
-          {/* <div className={styles.scrollbarContainer}>
-            <IconScrollBar className={styles.scrollBar} />
-            <IconScrollBar className={styles.scrollBar} />
-            <IconScrollBar className={styles.scrollBar} />
-            <IconScrollBar className={styles.scrollBar} />
-          </div> */}
+          <div className={styles.scrollbarContainer}>
+            <IconScrollBar className={styles.scrollBar} fill={fills[0]} />
+            <IconScrollBar className={styles.scrollBar} fill={fills[1]} />
+            <IconScrollBar className={styles.scrollBar} fill={fills[2]} />
+            <IconScrollBar className={styles.scrollBar} fill={fills[3]} />
+          </div>
         </div>
       </div>
     </>
