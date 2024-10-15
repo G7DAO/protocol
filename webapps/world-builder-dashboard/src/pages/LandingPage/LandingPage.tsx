@@ -18,7 +18,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     { name: 'Faucet', link: 'faucet' },
     { name: 'Bridge', link: 'bridge' },
     { name: 'Community', link: 'https://discord.com/invite/g7dao' },
-    { name: 'Docs', link: 'https://app.gitbook.com/sites/site_Fj9xC/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network' }
+    { name: 'Docs', link: 'https://wiki.game7.io/g7-developer-resource/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network/world-builder' }
   ]
   const navigate = useNavigate()
 
@@ -238,7 +238,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                     </div>
                   </div>
                 </div>
-                <div className={styles.networkEssentialCard} onClick={() => window.open('https://discord.com/invite/g7dao', '_blank')}>
+                <div className={styles.networkEssentialCard} onClick={() => window.open('https://testnet.game7.io/', '_blank')}>
                   <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialExplorer}`} />
                   <div className={styles.networkEssentialCardText}>
                     <div className={styles.networkEssentialCardTitle}>Explorer</div>
@@ -248,7 +248,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                     </div>
                   </div>
                 </div>
-                <div className={styles.networkEssentialCard} onClick={() => window.open('https://app.gitbook.com/sites/site_Fj9xC/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network', '_blank')}>
+                <div className={styles.networkEssentialCard} onClick={() => window.open('https://wiki.game7.io/g7-developer-resource/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network/world-builder', '_blank')}>
                   <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialDocs}`} />
                   <div className={styles.networkEssentialCardText}>
                     <div className={styles.networkEssentialCardTitle}>Docs</div>
