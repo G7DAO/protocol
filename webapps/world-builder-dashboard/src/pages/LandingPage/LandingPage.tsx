@@ -24,46 +24,61 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const navigate = useNavigate()
 
   const [currentSectionIndex, setCurrentSectionIndex] = useState<number>(0)
-  const [fills, setFills] = useState<string[]>(['#393939', '#393939', '#393939', '#393939'])
   const totalSections = 4
   const [scrollThreshold, setScrollThreshold] = useState(0)
-  const maxThreshold = 300
+  const maxThreshold = 500
 
-
-  const updateFills = () => {
-    const newFills = Array(totalSections).fill('#393939')
-    for (let i = 0; i < currentSectionIndex; i++) {
-      newFills[i] = 'red';
+  const getScrollBarClass = (index: number): string => {
+    if (index < currentSectionIndex) {
+      return `${styles.scrollBar} ${styles.scrollBarFilled}`
     }
 
-    const fillPercentage = Math.min(Math.abs(scrollThreshold / maxThreshold), 1)
-    newFills[currentSectionIndex] = `rgb(${Math.round(fillPercentage * 255)}, 0, 0)`
-    setFills(newFills)
+    return `${styles.scrollBar}`
   };
 
   const handleScroll = (event: WheelEvent) => {
     const deltaY = event.deltaY
-    setScrollThreshold((prev) => prev + deltaY)
+    let newScrollThreshold = scrollThreshold + deltaY
+    console.log(newScrollThreshold)
 
-    if ((currentSectionIndex === 0 && scrollThreshold < 0) || (currentSectionIndex === totalSections - 1 && scrollThreshold > 0)) {
-      setScrollThreshold(0)
-      return
+    if (currentSectionIndex === 0 && newScrollThreshold < 0) {
+      newScrollThreshold = 0
     }
 
-    if (scrollThreshold > maxThreshold && currentSectionIndex < totalSections - 1) {
+    if (currentSectionIndex === totalSections - 1 && newScrollThreshold >= maxThreshold) {
+      newScrollThreshold = maxThreshold
+    }
+
+    setScrollThreshold(newScrollThreshold)
+
+    if (newScrollThreshold > maxThreshold && currentSectionIndex < totalSections - 1) {
       setScrollThreshold(0)
       setCurrentSectionIndex((prevIndex) => prevIndex + 1)
     }
 
-    else if (scrollThreshold < -maxThreshold && currentSectionIndex > 0) {
+    else if (newScrollThreshold < 0 && currentSectionIndex > 0) {
       setScrollThreshold(0)
       setCurrentSectionIndex((prevIndex) => prevIndex - 1)
     }
-  }
+  };
+
+  // Fill styles for each bar based on index and scrollThreshold
+  const getScrollBarStyle = (index: number) => {
+    if (index < currentSectionIndex) {
+      return { background: `linear-gradient(to bottom, red 100%, #393939 0%)` }
+    }
+    if (index === currentSectionIndex) {
+      const fillPercentage = Math.min(Math.abs(scrollThreshold / maxThreshold), 1) * 100
+      return {
+        background: `linear-gradient(to bottom, red ${fillPercentage}%, #393939 ${fillPercentage}%)`,
+        transition: 'background 0.5s ease-out', // Smooth transition for filling
+      }
+    }
+    return { background: `#393939` }
+  };
 
   useEffect(() => {
     window.addEventListener('wheel', handleScroll)
-    updateFills()
 
     return () => {
       window.removeEventListener('wheel', handleScroll)
@@ -223,10 +238,9 @@ const LandingPage: React.FC<LandingPageProps> = () => {
             </div>
           )}
           <div className={styles.scrollbarContainer}>
-            <IconScrollBar className={styles.scrollBar} fill={fills[0]} />
-            <IconScrollBar className={styles.scrollBar} fill={fills[1]} />
-            <IconScrollBar className={styles.scrollBar} fill={fills[2]} />
-            <IconScrollBar className={styles.scrollBar} fill={fills[3]} />
+            {[...Array(totalSections)].map((_, index) => (
+              <IconScrollBar key={index} className={getScrollBarClass(index)} style={getScrollBarStyle(index)} />
+            ))}
           </div>
         </div>
       </div>
