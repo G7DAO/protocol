@@ -253,15 +253,22 @@
 }
 
 .scrollBar {
-  height: 6px;
-  flex: 1 0 0;
+  height: 100px;
+  width: 6px;
   background-color: #393939;
-  border-radius: 6px;
-  transition: background 0.5s ease-out;
+  border-radius: 100px;
+  position: relative;
+  overflow: hidden;
+  flex: 1 0 0;
 }
 
-.scrollBarFilled {
-  background-color: red;
+.scrollBarFill {
+  width: 100%; /* Full width */
+  height: 0%; /* Start at 0% height */
+  background-color: #F04438;
+  border-radius: 100px;
+  transition: height 0.25s ease-in-out;
+  flex: 1 0 0;
 }
 
 .scrollBarsContainer {

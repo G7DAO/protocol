@@ -34,48 +34,51 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     }
 
     return `${styles.scrollBar}`
-  };
+  }
 
   const handleScroll = (event: WheelEvent) => {
     const deltaY = event.deltaY
     let newScrollThreshold = scrollThreshold + deltaY
-    console.log(newScrollThreshold)
-
+  
     if (currentSectionIndex === 0 && newScrollThreshold < 0) {
       newScrollThreshold = 0
     }
-
+  
     if (currentSectionIndex === totalSections - 1 && newScrollThreshold >= maxThreshold) {
       newScrollThreshold = maxThreshold
     }
-
+  
     setScrollThreshold(newScrollThreshold)
-
-    if (newScrollThreshold > maxThreshold && currentSectionIndex < totalSections - 1) {
+  
+    if (newScrollThreshold > maxThreshold + 200 && currentSectionIndex < totalSections - 1) {
       setScrollThreshold(0)
       setCurrentSectionIndex((prevIndex) => prevIndex + 1)
     }
 
-    else if (newScrollThreshold < 0 && currentSectionIndex > 0) {
-      setScrollThreshold(0)
-      setCurrentSectionIndex((prevIndex) => prevIndex - 1)
+    else if (newScrollThreshold < 0) {
+      if (scrollThreshold > 0) {
+        setScrollThreshold(0)
+      } else if (currentSectionIndex > 0) {
+        setScrollThreshold(maxThreshold)
+        setCurrentSectionIndex((prevIndex) => prevIndex - 1)
+      }
     }
-  };
-
-  // Fill styles for each bar based on index and scrollThreshold
+  }
+  
   const getScrollBarStyle = (index: number) => {
     if (index < currentSectionIndex) {
-      return { background: `linear-gradient(to bottom, red 100%, #393939 0%)` }
+      return { background: `linear-gradient(to bottom, #F04438 100%, #393939 0%)` }
     }
     if (index === currentSectionIndex) {
       const fillPercentage = Math.min(Math.abs(scrollThreshold / maxThreshold), 1) * 100
       return {
-        background: `linear-gradient(to bottom, red ${fillPercentage}%, #393939 ${fillPercentage}%)`,
-        transition: 'background 0.5s ease-out', // Smooth transition for filling
+        background: `linear-gradient(to bottom, #F04438 ${fillPercentage}%, #393939 ${fillPercentage}%)`,
+        transition: 'background 0.25s ease-in-out',
+        borderRadius: '100px'
       }
     }
     return { background: `#393939` }
-  };
+  }
 
   useEffect(() => {
     window.addEventListener('wheel', handleScroll)
