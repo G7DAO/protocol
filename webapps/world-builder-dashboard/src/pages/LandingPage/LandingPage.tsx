@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import styles from './LandingPage.module.css'
-import IconGame7 from '@/assets/IconGame7'
-import IconGame7Logo from '@/assets/IconGame7Logo'
 import { useNavigate } from 'react-router-dom'
-import HyperPlayLogo from '@/assets/HyperPlayLogo'
-import SummonLogo from '@/assets/SummonLogo'
-import SummonTextLogo from '@/assets/SummonTextLogo'
+import styles from './LandingPage.module.css'
+import { useMediaQuery } from 'summon-ui/mantine'
 import ArbitrumLogo from '@/assets/ArbitrumLogo'
 import ConduitLogo from '@/assets/ConduitLogo'
+import HyperPlayLogo from '@/assets/HyperPlayLogo'
+import IconGame7 from '@/assets/IconGame7'
+import IconGame7Logo from '@/assets/IconGame7Logo'
+import IconHamburgerLanding from '@/assets/IconHamburgerLanding'
 import MarketWarsLogo from '@/assets/MarketWarsLogo'
+import SummonLogo from '@/assets/SummonLogo'
+import SummonTextLogo from '@/assets/SummonTextLogo'
 
-interface LandingPageProps { }
+interface LandingPageProps {}
 
 const LandingPage: React.FC<LandingPageProps> = () => {
   const NAVBAR_ITEMS = [
@@ -18,29 +20,33 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     { name: 'Faucet', link: 'faucet' },
     { name: 'Bridge', link: 'bridge' },
     { name: 'Community', link: 'https://discord.com/invite/g7dao' },
-    { name: 'Docs', link: 'https://wiki.game7.io/g7-developer-resource/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network/world-builder' }
+    {
+      name: 'Docs',
+      link: 'https://wiki.game7.io/g7-developer-resource/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network/world-builder'
+    }
   ]
   const navigate = useNavigate()
 
+  const smallView = useMediaQuery('(max-width: 600px)')
   const [currentSectionIndex, setCurrentSectionIndex] = useState<number>(0)
   const totalSections = 4
   const [scrollThreshold, setScrollThreshold] = useState(0)
   const maxThreshold = 1000
-  
+
   const handleScroll = (event: { deltaY: number }) => {
     const deltaY = event.deltaY
     let newScrollThreshold = scrollThreshold + deltaY
-  
+
     if (currentSectionIndex === 0 && newScrollThreshold < 0) {
       newScrollThreshold = 0
     }
-  
+
     if (currentSectionIndex === totalSections - 1 && newScrollThreshold >= maxThreshold) {
       newScrollThreshold = maxThreshold
     }
-  
+
     setScrollThreshold(newScrollThreshold)
-  
+
     if (newScrollThreshold > maxThreshold + 400 && currentSectionIndex < totalSections - 1) {
       setScrollThreshold(0)
       setCurrentSectionIndex((prevIndex) => prevIndex + 1)
@@ -57,14 +63,14 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const getScrollBarFillStyle = (index: number) => {
     if (index < currentSectionIndex) {
       return {
-        height: '100%', 
-        backgroundColor: '#F04438', 
+        height: '100%',
+        backgroundColor: '#F04438',
         borderRadius: '100px',
         transition: 'height 0.4s ease-in-out'
       }
     }
     if (index === currentSectionIndex) {
-      const fillPercentage = Math.min(Math.abs(scrollThreshold / maxThreshold), 1) * 100;
+      const fillPercentage = Math.min(Math.abs(scrollThreshold / maxThreshold), 1) * 100
       return {
         height: `${fillPercentage}%`,
         backgroundColor: '#F04438',
@@ -79,7 +85,6 @@ const LandingPage: React.FC<LandingPageProps> = () => {
       transition: 'height 0.25s ease-in-out'
     }
   }
-
 
   useEffect(() => {
     const handleScrollEvents = (event: WheelEvent | KeyboardEvent) => {
@@ -96,13 +101,13 @@ const LandingPage: React.FC<LandingPageProps> = () => {
           deltaY = 100
         }
       }
-  
+
       handleScroll({ deltaY })
     }
-  
+
     window.addEventListener('wheel', handleScrollEvents)
     window.addEventListener('keydown', handleScrollEvents)
-  
+
     return () => {
       window.removeEventListener('wheel', handleScrollEvents)
       window.removeEventListener('keydown', handleScrollEvents)
@@ -128,12 +133,25 @@ const LandingPage: React.FC<LandingPageProps> = () => {
               <IconGame7 />
             </div>
             <div className={styles.navbarItemsContainer}>
-              <div className={styles.navbarItems}>
-                {NAVBAR_ITEMS.map((item) => (
-                  <div className={item.name === 'Home' ? styles.navbarItemHome : styles.navbarItem} onClick={() => navigateLink(item)}>{item.name}</div>
-                ))}
-                <div className={styles.navbarCTA} onClick={startBuilding}>Start building</div>
-              </div>
+              {!smallView ? (
+                <div className={styles.navbarItems}>
+                  {NAVBAR_ITEMS.map((item) => (
+                    <div
+                      className={item.name === 'Home' ? styles.navbarItemHome : styles.navbarItem}
+                      onClick={() => navigateLink(item)}
+                    >
+                      {item.name}
+                    </div>
+                  ))}
+                  <div className={styles.navbarCTA} onClick={startBuilding}>
+                    Start building
+                  </div>
+                </div>
+              ) : (
+                <div className={styles.navbarItem}>
+                  <IconHamburgerLanding />
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -147,11 +165,18 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                 <div className={styles.titleText}>COME BUILD YOUR GAME</div>
                 <div className={styles.subtitleText}>Be a part of the future of gaming</div>
               </div>
-              <div className={styles.ctaContainer}>
-                <div className={styles.learnMoreCTA}>Learn more</div>
-                <div className={styles.startBuildingCTA} onClick={startBuilding}>Start building</div>
-              </div>
-            </div>)}
+              {!smallView ? (
+                <div className={styles.ctaContainer}>
+                  <div className={styles.learnMoreCTA}>Learn more</div>
+                  <div className={styles.startBuildingCTA} onClick={startBuilding}>
+                    Start building
+                  </div>
+                </div>
+              ) : (
+                <div></div>
+              )}
+            </div>
+          )}
 
           {/* G7 Benefits */}
           {currentSectionIndex === 1 && (
@@ -176,10 +201,11 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   <div className={styles.cardDescription}>Gain free access to powerful tools as they are released</div>
                 </div>
               </div>
-              <div className={styles.startBuildingCTA} onClick={startBuilding}>Start building</div>
+              <div className={styles.startBuildingCTA} onClick={startBuilding}>
+                Start building
+              </div>
             </div>
           )}
-
 
           {/* Nation Allies */}
           {currentSectionIndex === 2 && (
@@ -211,7 +237,9 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                 </div>
                 <MarketWarsLogo />
               </div>
-              <div className={styles.startBuildingCTA} onClick={startBuilding}>Start building</div>
+              <div className={styles.startBuildingCTA} onClick={startBuilding}>
+                Start building
+              </div>
             </div>
           )}
 
@@ -238,7 +266,10 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                     </div>
                   </div>
                 </div>
-                <div className={styles.networkEssentialCard} onClick={() => window.open('https://testnet.game7.io/', '_blank')}>
+                <div
+                  className={styles.networkEssentialCard}
+                  onClick={() => window.open('https://testnet.game7.io/', '_blank')}
+                >
                   <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialExplorer}`} />
                   <div className={styles.networkEssentialCardText}>
                     <div className={styles.networkEssentialCardTitle}>Explorer</div>
@@ -248,7 +279,15 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                     </div>
                   </div>
                 </div>
-                <div className={styles.networkEssentialCard} onClick={() => window.open('https://wiki.game7.io/g7-developer-resource/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network/world-builder', '_blank')}>
+                <div
+                  className={styles.networkEssentialCard}
+                  onClick={() =>
+                    window.open(
+                      'https://wiki.game7.io/g7-developer-resource/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network/world-builder',
+                      '_blank'
+                    )
+                  }
+                >
                   <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialDocs}`} />
                   <div className={styles.networkEssentialCardText}>
                     <div className={styles.networkEssentialCardTitle}>Docs</div>
@@ -258,7 +297,9 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   </div>
                 </div>
               </div>
-              <div className={styles.startBuildingCTA} onClick={startBuilding}>Start building</div>
+              <div className={styles.startBuildingCTA} onClick={startBuilding}>
+                Start building
+              </div>
             </div>
           )}
           <div className={styles.scrollbarContainer}>
