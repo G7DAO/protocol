@@ -9,7 +9,6 @@ import SummonTextLogo from '@/assets/SummonTextLogo'
 import ArbitrumLogo from '@/assets/ArbitrumLogo'
 import ConduitLogo from '@/assets/ConduitLogo'
 import MarketWarsLogo from '@/assets/MarketWarsLogo'
-import IconScrollBar from '@/assets/IconScrollBar'
 
 interface LandingPageProps { }
 
@@ -27,16 +26,8 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const totalSections = 4
   const [scrollThreshold, setScrollThreshold] = useState(0)
   const maxThreshold = 500
-
-  const getScrollBarClass = (index: number): string => {
-    if (index < currentSectionIndex) {
-      return `${styles.scrollBar} ${styles.scrollBarFilled}`
-    }
-
-    return `${styles.scrollBar}`
-  }
-
-  const handleScroll = (event: WheelEvent) => {
+  
+  const handleScroll = (event: { deltaY: number }) => {
     const deltaY = event.deltaY
     let newScrollThreshold = scrollThreshold + deltaY
   
@@ -53,9 +44,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     if (newScrollThreshold > maxThreshold + 200 && currentSectionIndex < totalSections - 1) {
       setScrollThreshold(0)
       setCurrentSectionIndex((prevIndex) => prevIndex + 1)
-    }
-
-    else if (newScrollThreshold < 0) {
+    } else if (newScrollThreshold < 0) {
       if (scrollThreshold > 0) {
         setScrollThreshold(0)
       } else if (currentSectionIndex > 0) {
@@ -64,27 +53,60 @@ const LandingPage: React.FC<LandingPageProps> = () => {
       }
     }
   }
-  
-  const getScrollBarStyle = (index: number) => {
+
+  const getScrollBarFillStyle = (index: number) => {
     if (index < currentSectionIndex) {
-      return { background: `linear-gradient(to bottom, #F04438 100%, #393939 0%)` }
-    }
-    if (index === currentSectionIndex) {
-      const fillPercentage = Math.min(Math.abs(scrollThreshold / maxThreshold), 1) * 100
       return {
-        background: `linear-gradient(to bottom, #F04438 ${fillPercentage}%, #393939 ${fillPercentage}%)`,
-        transition: 'background 0.25s ease-in-out',
-        borderRadius: '100px'
+        height: '100%', 
+        backgroundColor: '#F04438', 
+        borderRadius: '100px',
+        transition: 'height 0.25s ease-in-out'
       }
     }
-    return { background: `#393939` }
+    if (index === currentSectionIndex) {
+      const fillPercentage = Math.min(Math.abs(scrollThreshold / maxThreshold), 1) * 100;
+      console.log(fillPercentage)
+      return {
+        height: `${fillPercentage}%`,
+        backgroundColor: '#F04438',
+        borderRadius: '100px',
+        transition: 'height 0.25s ease-in-out'
+      }
+    }
+    return {
+      height: '0%',
+      backgroundColor: '#F04438',
+      borderRadius: '100px',
+      transition: 'height 0.25s ease-in-out'
+    }
   }
 
-  useEffect(() => {
-    window.addEventListener('wheel', handleScroll)
 
+  useEffect(() => {
+    const handleScrollEvents = (event: WheelEvent | KeyboardEvent) => {
+      let deltaY = 0
+
+      if ('deltaY' in event) {
+        deltaY = event.deltaY
+      }
+
+      if ('key' in event) {
+        if (event.key === 'ArrowUp') {
+          deltaY = -100
+        } else if (event.key === 'ArrowDown') {
+          deltaY = 100
+        }
+      }
+  
+      handleScroll({ deltaY })
+    }
+  
+    window.addEventListener('wheel', handleScrollEvents)
+    window.addEventListener('keydown', handleScrollEvents)
+  
     return () => {
-      window.removeEventListener('wheel', handleScroll)
+      window.removeEventListener('wheel', handleScrollEvents)
+      window.removeEventListener('keydown', handleScrollEvents)
     }
   }, [scrollThreshold, currentSectionIndex])
 
@@ -242,7 +264,9 @@ const LandingPage: React.FC<LandingPageProps> = () => {
           )}
           <div className={styles.scrollbarContainer}>
             {[...Array(totalSections)].map((_, index) => (
-              <IconScrollBar key={index} className={getScrollBarClass(index)} style={getScrollBarStyle(index)} />
+              <div key={index} className={styles.scrollBar}>
+                <div style={getScrollBarFillStyle(index)} className={styles.scrollBarFill} />
+              </div>
             ))}
           </div>
         </div>
