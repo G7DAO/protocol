@@ -41,7 +41,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   
     setScrollThreshold(newScrollThreshold)
   
-    if (newScrollThreshold > maxThreshold + 200 && currentSectionIndex < totalSections - 1) {
+    if (newScrollThreshold > maxThreshold + 400 && currentSectionIndex < totalSections - 1) {
       setScrollThreshold(0)
       setCurrentSectionIndex((prevIndex) => prevIndex + 1)
     } else if (newScrollThreshold < 0) {
@@ -60,7 +60,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
         height: '100%', 
         backgroundColor: '#F04438', 
         borderRadius: '100px',
-        transition: 'height 0.25s ease-in-out'
+        transition: 'height 0.4s ease-in-out'
       }
     }
     if (index === currentSectionIndex) {
@@ -111,7 +111,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   }, [scrollThreshold, currentSectionIndex])
 
   const startBuilding = () => {
-    navigate('/bridge')
+    navigate('/faucet')
   }
 
   const navigateLink = (item: any) => {
