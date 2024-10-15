@@ -12,7 +12,7 @@ import MarketWarsLogo from '@/assets/MarketWarsLogo'
 import SummonLogo from '@/assets/SummonLogo'
 import SummonTextLogo from '@/assets/SummonTextLogo'
 
-interface LandingPageProps {}
+interface LandingPageProps { }
 
 const LandingPage: React.FC<LandingPageProps> = () => {
   const NAVBAR_ITEMS = [
@@ -27,7 +27,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   ]
   const navigate = useNavigate()
 
-  const smallView = useMediaQuery('(max-width: 600px)')
+  const smallView = useMediaQuery('(max-width: 750px)')
   const [currentSectionIndex, setCurrentSectionIndex] = useState<number>(0)
   const totalSections = 4
   const [scrollThreshold, setScrollThreshold] = useState(0)
@@ -135,8 +135,9 @@ const LandingPage: React.FC<LandingPageProps> = () => {
             <div className={styles.navbarItemsContainer}>
               {!smallView ? (
                 <div className={styles.navbarItems}>
-                  {NAVBAR_ITEMS.map((item) => (
+                  {NAVBAR_ITEMS.map((item, index) => (
                     <div
+                      key={index}
                       className={item.name === 'Home' ? styles.navbarItemHome : styles.navbarItem}
                       onClick={() => navigateLink(item)}
                     >
@@ -173,7 +174,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   </div>
                 </div>
               ) : (
-                <div></div>
+                <></>
               )}
             </div>
           )}
@@ -201,9 +202,16 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   <div className={styles.cardDescription}>Gain free access to powerful tools as they are released</div>
                 </div>
               </div>
-              <div className={styles.startBuildingCTA} onClick={startBuilding}>
-                Start building
-              </div>
+              {!smallView ? (
+                <div className={styles.ctaContainer}>
+                  <div className={styles.learnMoreCTA}>Learn more</div>
+                  <div className={styles.startBuildingCTA} onClick={startBuilding}>
+                    Start building
+                  </div>
+                </div>
+              ) : (
+                <></>
+              )}
             </div>
           )}
 
@@ -237,9 +245,16 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                 </div>
                 <MarketWarsLogo />
               </div>
-              <div className={styles.startBuildingCTA} onClick={startBuilding}>
-                Start building
-              </div>
+              {!smallView ? (
+                <div className={styles.ctaContainer}>
+                  <div className={styles.learnMoreCTA}>Learn more</div>
+                  <div className={styles.startBuildingCTA} onClick={startBuilding}>
+                    Start building
+                  </div>
+                </div>
+              ) : (
+                <></>
+              )}
             </div>
           )}
 
@@ -297,9 +312,16 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   </div>
                 </div>
               </div>
-              <div className={styles.startBuildingCTA} onClick={startBuilding}>
-                Start building
-              </div>
+              {!smallView ? (
+                <div className={styles.ctaContainer}>
+                  <div className={styles.learnMoreCTA}>Learn more</div>
+                  <div className={styles.startBuildingCTA} onClick={startBuilding}>
+                    Start building
+                  </div>
+                </div>
+              ) : (
+                <></>
+              )}
             </div>
           )}
           <div className={styles.scrollbarContainer}>
@@ -310,6 +332,11 @@ const LandingPage: React.FC<LandingPageProps> = () => {
             ))}
           </div>
         </div>
+        {smallView ? (
+          <div className={styles.startBuildingCTA} onClick={startBuilding}>
+            Start building
+          </div>
+        ) : (<></>)}
       </div>
     </>
   )
