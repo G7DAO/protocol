@@ -25,7 +25,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const [currentSectionIndex, setCurrentSectionIndex] = useState<number>(0)
   const totalSections = 4
   const [scrollThreshold, setScrollThreshold] = useState(0)
-  const maxThreshold = 500
+  const maxThreshold = 1000
   
   const handleScroll = (event: { deltaY: number }) => {
     const deltaY = event.deltaY
@@ -65,7 +65,6 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     }
     if (index === currentSectionIndex) {
       const fillPercentage = Math.min(Math.abs(scrollThreshold / maxThreshold), 1) * 100;
-      console.log(fillPercentage)
       return {
         height: `${fillPercentage}%`,
         backgroundColor: '#F04438',
