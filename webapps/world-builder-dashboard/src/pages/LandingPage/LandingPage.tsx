@@ -32,20 +32,20 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const smallView = useMediaQuery('(max-width: 750px)')
   const mediumView = useMediaQuery('(max-width: 1416px)')
   const totalSections = 4
-  const maxThreshold = 500
-  const mainLayoutRef = useRef<HTMLDivElement>(null);
+  const maxThreshold = 200
+  const mainLayoutRef = useRef<HTMLDivElement>(null)
 
   const scrollToTop = () => {
     if (mainLayoutRef.current) {
-      mainLayoutRef.current.scrollTop = 0;
+      mainLayoutRef.current.scrollTop = 0
     }
-  };
+  }
 
   const scrollToBottom = () => {
     if (mainLayoutRef.current) {
-      mainLayoutRef.current.scrollTop = mainLayoutRef.current.scrollHeight;
+      mainLayoutRef.current.scrollTop = mainLayoutRef.current.scrollHeight
     }
-  };
+  }
 
   const handleScroll = (event: { deltaY: number }) => {
     const deltaY = event.deltaY
@@ -80,12 +80,11 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   useEffect(() => {
     let startY = 0
     let accumulatedDeltaY = 0
-
-    let isTouching = false // New flag to track touch activity
+    let isTouching = false
+    let isScrollingSection = false
 
     const handleScrollEvents = (event: WheelEvent | KeyboardEvent | TouchEvent) => {
-      if (navbarOpen) return;
-
+      if (navbarOpen) return
       let deltaY = 0
 
       if ('deltaY' in event) {
@@ -106,28 +105,33 @@ const LandingPage: React.FC<LandingPageProps> = () => {
         isTouching = true
         startY = event.touches[0].clientY
         accumulatedDeltaY = 0
+        isScrollingSection = false
       }
 
       if (event.type === 'touchmove' && 'touches' in event) {
-        if (!isTouching) return
-        const touchY = event.touches[0].clientY
-        deltaY = (startY - touchY)
-        accumulatedDeltaY += deltaY
-        startY = touchY
-      }
+        const touchY = event.touches[0].clientY;
+        deltaY = (startY - touchY);
+        accumulatedDeltaY += deltaY;
+        startY = touchY;
 
-      if (event.type === 'touchend') {
-        if (!isTouching) return
-        isTouching = false
+        const scrollableElement = document.querySelector(`.${styles.contentContainer}`);
+        if (scrollableElement) {
+          const atBottom = scrollableElement.scrollHeight - scrollableElement.scrollTop === scrollableElement.clientHeight;
+          const atTop = scrollableElement.scrollTop === 0;
 
-        if (accumulatedDeltaY > 50) {
-          handleScroll({ deltaY: maxThreshold / 2 })
-        } else if (accumulatedDeltaY < -50) {
-          handleScroll({ deltaY: -maxThreshold / 2 })
+          // Handle section transitions during touchmove
+          if (deltaY > 0 && atBottom) {
+            // If user is swiping up at the bottom of the section, move to next
+            isScrollingSection = true;
+            handleScroll({ deltaY: maxThreshold });
+          } else if (deltaY < 0 && atTop) {
+            // If user is swiping down at the top of the section, move to previous
+            isScrollingSection = true;
+            handleScroll({ deltaY: -maxThreshold });
+          }
         }
-
-        accumulatedDeltaY = 0 // Reset after touch end
       }
+
     }
 
     window.addEventListener('wheel', handleScrollEvents)
@@ -141,7 +145,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
       window.removeEventListener('keydown', handleScrollEvents)
       window.removeEventListener('touchstart', handleScrollEvents)
       window.removeEventListener('touchmove', handleScrollEvents)
-      window.addEventListener('touchend', handleScrollEvents)
+      window.removeEventListener('touchend', handleScrollEvents)
     }
   }, [scrollThreshold, currentSectionIndex, navbarOpen])
 
@@ -441,7 +445,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   <div className={styles.networkEssentialCardText}>
                     <div className={styles.networkEssentialCardTitle}>Discord</div>
                     <div className={styles.networkEssentialCardDescription}>
-                    Join other builders on Discord
+                      Join other builders on Discord
                     </div>
                   </div>
                 </div>
