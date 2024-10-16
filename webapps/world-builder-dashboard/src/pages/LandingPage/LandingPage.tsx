@@ -429,6 +429,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
             ))}
           </div>
         </div>
+
         {smallView ? (
           <div className={styles.startBuildingCTA} onClick={startBuilding}>
             Start building
