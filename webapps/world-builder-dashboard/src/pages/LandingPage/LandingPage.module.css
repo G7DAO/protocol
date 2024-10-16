@@ -131,6 +131,7 @@ body {
   border-radius: 12px;
   border: 1px solid #727272;
   background: url('../../assets/G7LandingPageBGDark.jpg') lightgray 50% / cover no-repeat;
+  height: fit-content;
 }
 
 .titleContainer {
@@ -520,13 +521,10 @@ body {
 @media (max-width: 1199px) {
   .layout {
     display: flex;
-    padding: 16px;
+    padding: 24px;
     flex-direction: column;
     align-items: center;
     gap: 16px;
-  }
-
-  .layoutDarkened {
   }
 
   .mainLayout {
@@ -571,6 +569,25 @@ body {
 }
 
 @media (max-width: 750px) {
+  .contentContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    align-self: stretch;
+  }
+
+
+  .card {
+    display: flex;
+    max-width: 340px;
+    padding: 16px;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    align-self: stretch;
+  }
+
   .navbarItem {
     display: flex;
     padding: 8px;
@@ -663,7 +680,7 @@ body {
   }
 
   .layoutBlur::before {
-    content: "";
+    content: '';
     position: fixed;
     top: 0;
     left: 0;
@@ -671,5 +688,9 @@ body {
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.75);
     z-index: 999;
+  }
+
+  .layout {
+    padding: 16px;
   }
 }

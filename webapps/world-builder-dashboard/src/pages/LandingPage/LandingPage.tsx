@@ -36,15 +36,16 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const handleScroll = (event: { deltaY: number }) => {
     const deltaY = event.deltaY
     let newScrollThreshold = scrollThreshold + deltaY
+    const scrollAmount = Math.min(Math.abs(deltaY), maxThreshold / 2) * Math.sign(deltaY)
+
 
     if (currentSectionIndex === 0 && newScrollThreshold < 0) {
       newScrollThreshold = 0
-    }
-
-    if (currentSectionIndex === totalSections - 1 && newScrollThreshold >= maxThreshold) {
+    } else if (currentSectionIndex === totalSections - 1 && newScrollThreshold >= maxThreshold) {
       newScrollThreshold = maxThreshold
+    } else {
+      newScrollThreshold = scrollThreshold + scrollAmount
     }
-
     setScrollThreshold(newScrollThreshold)
 
     if (newScrollThreshold > maxThreshold && currentSectionIndex < totalSections - 1) {
@@ -64,8 +65,9 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     let startY = 0
     let accumulatedDeltaY = 0
 
-    const handleScrollEvents = (event: WheelEvent | KeyboardEvent | TouchEvent) => {
+    let isTouching = false // New flag to track touch activity
 
+    const handleScrollEvents = (event: WheelEvent | KeyboardEvent | TouchEvent) => {
       if (navbarOpen) return;
 
       let deltaY = 0
@@ -81,16 +83,17 @@ const LandingPage: React.FC<LandingPageProps> = () => {
         } else if (event.key === 'ArrowDown') {
           deltaY = 100
         }
-
         handleScroll({ deltaY })
       }
 
       if (event.type === 'touchstart' && 'touches' in event) {
+        isTouching = true
         startY = event.touches[0].clientY
         accumulatedDeltaY = 0
       }
 
       if (event.type === 'touchmove' && 'touches' in event) {
+        if (!isTouching) return
         const touchY = event.touches[0].clientY
         deltaY = (startY - touchY)
         accumulatedDeltaY += deltaY
@@ -98,11 +101,16 @@ const LandingPage: React.FC<LandingPageProps> = () => {
       }
 
       if (event.type === 'touchend') {
-        if (accumulatedDeltaY > 0) {
-          handleScroll({ deltaY: maxThreshold }) // Handle scroll down
-        } else if (accumulatedDeltaY < 0) {
-          handleScroll({ deltaY: -maxThreshold }) // Handle scroll up
+        if (!isTouching) return
+        isTouching = false
+
+        if (accumulatedDeltaY > 50) {
+          handleScroll({ deltaY: maxThreshold / 2 })
+        } else if (accumulatedDeltaY < -50) {
+          handleScroll({ deltaY: -maxThreshold / 2 })
         }
+
+        accumulatedDeltaY = 0 // Reset after touch end
       }
     }
 
@@ -110,12 +118,14 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     window.addEventListener('keydown', handleScrollEvents)
     window.addEventListener('touchstart', handleScrollEvents)
     window.addEventListener('touchmove', handleScrollEvents)
+    window.addEventListener('touchend', handleScrollEvents)
 
     return () => {
       window.removeEventListener('wheel', handleScrollEvents)
       window.removeEventListener('keydown', handleScrollEvents)
       window.removeEventListener('touchstart', handleScrollEvents)
       window.removeEventListener('touchmove', handleScrollEvents)
+      window.addEventListener('touchend', handleScrollEvents)
     }
   }, [scrollThreshold, currentSectionIndex, navbarOpen])
 
