@@ -180,31 +180,6 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         return LibDropper.dropperStorage().DropAuthorizations[dropId];
     }
 
-    function claimDataMessageHash(
-        uint256 dropId,
-        uint256 requestID,
-        address claimant,
-        uint256 blockDeadline,
-        uint256 amount,
-        bytes memory data
-    ) public view virtual returns (bytes32) {
-        bytes32 structHash = keccak256(
-            abi.encode(
-                keccak256(
-                    "ClaimPayload(uint256 dropId,uint256 requestID,address claimant,uint256 blockDeadline,uint256 amount, bytes data)"
-                ),
-                dropId,
-                requestID,
-                claimant,
-                blockDeadline,
-                amount,
-                data
-            )
-        );
-        bytes32 digest = LibSignatures._hashTypedDataV4(structHash);
-        return digest;
-    }
-
     function claimMessageHash(
         uint256 dropId,
         uint256 requestID,
@@ -229,9 +204,9 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
     }
 
     function _internalChecks(uint256 dropId, uint256 requestID, uint256 deadline, address signer) internal view {
-        require(block.timestamp <= blockDeadline, "Dropper: _claim -- Block deadline exceeded.");
+        require(block.timestamp <= deadline, "Dropper: _claim -- Block deadline exceeded.");
 
-        LibDropper.DropperStorage memory ds = LibDropper.dropperStorage();
+        LibDropper.DropperStorage storage ds = LibDropper.dropperStorage();
 
         ITerminus authorizationTerminus = ITerminus(ds.DropAuthorizations[dropId].terminusAddress);
         require(
@@ -254,23 +229,15 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         uint256 amount,
         address recipient,
         address signer,
-        bytes memory data,
         bytes memory signature
     ) internal virtual {
         _internalChecks(dropId, requestID, blockDeadline, signer);
-        if (data == "") {
-            bytes32 hash = claimMessageHash(dropId, requestID, recipient, blockDeadline, amount);
-            require(
-                SignatureChecker.isValidSignatureNow(signer, hash, signature),
-                "Dropper: _claim -- Invalid signature for claim."
-            );
-        } else {
-            bytes32 hash = claimDataMessageHash(dropId, requestID, recipient, blockDeadline, amount, data);
-            require(
-                SignatureChecker.isValidSignatureNow(signer, hash, signature),
-                "Dropper: _claim -- Invalid signature for claim."
-            );
-        }
+
+        bytes32 hash = claimMessageHash(dropId, requestID, recipient, blockDeadline, amount);
+        require(
+            SignatureChecker.isValidSignatureNow(signer, hash, signature),
+            "Dropper: _claim -- Invalid signature for claim."
+        );
 
         LibDropper.DropperStorage storage ds = LibDropper.dropperStorage();
         DroppableToken memory claimToken = ds.DropToken[dropId];
@@ -309,7 +276,6 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         ds.DropToken[dropId].claimCount += amount;
 
         ds.DropRequestClaimed[dropId][requestID] = true;
-
         emit Claimed(dropId, recipient, signer, requestID, amount);
     }
 
@@ -368,7 +334,7 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
         );
         require(
             recipientList.length == signatureList.length,
-            "Dropper: batachClaim -- recipientList and signatureList length mismatch"
+            "Dropper: batchClaim -- recipientList and signatureList length mismatch"
         );
 
         uint256 i = 0;

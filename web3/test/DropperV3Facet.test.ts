@@ -663,8 +663,9 @@ describe("DropperV3Facet", async function () {
             const dropId = 2;
             const requestID = 7;
             const blockDeadline = Math.floor(Date.now() / 1000) + 3600;
-            const amount = 1;
-            const erc20Address = await mockERC20.getAddress();
+            const amount = InitialTokenBalance * BigInt(2);
+
+            await dropperV3Facet.connect(admin0).setMaxNumberOfTokens(dropId, InitialTokenBalance * BigInt(3));
 
             const { domain, types, message } = await dropperClaimMessageHash(
                 chainId,
@@ -717,7 +718,7 @@ describe("DropperV3Facet", async function () {
             )).to.be.reverted;
         });
 
-        it('DropperV3-20: Revert on not enough to claim', async function () {
+        it('DropperV3-21: Revert on not enough to claim', async function () {
 
             const dropId = 4;
             const requestID = 7;
@@ -746,7 +747,7 @@ describe("DropperV3Facet", async function () {
             )).to.be.revertedWith('DF: Claims exceed Tokens to distribute');
         });
 
-        it('DropperV3-21: Revert on Native Transfer Failure', async function () {
+        it('DropperV3-22: Revert on Native Transfer Failure', async function () {
 
             const dropId = 1;
             const requestID = 7;
@@ -775,7 +776,40 @@ describe("DropperV3Facet", async function () {
             )).to.be.revertedWith('Failed to send Native Token');
         });
 
-        it('DropperV3-22: Revert on Unknown Type', async function () {
+        it('DropperV3-23: Revert on Unknown Type', async function () {
+
+            const dropId = 5;
+            const requestID = 7;
+            const blockDeadline = Math.floor(Date.now() / 1000) + 3600;
+            const amount = 0;
+
+            const { domain, types, message } = await dropperClaimMessageHash(
+                chainId,
+                dropperV3Address,
+                dropId.toString(),
+                requestID.toString(),
+                user1.address,
+                blockDeadline.toString(),
+                amount.toString()
+            );
+            const signature = await admin0.signTypedData(domain, types, message);
+
+            //activate a non-initalized dropId to give tokenType 0 during claims.
+            await dropperV3Facet.setDropStatus(dropId, true);
+            const terminusAddress = await terminusFacet.getAddress();
+            await dropperV3Facet.setDropAuthorization(dropId, terminusAddress, 1);
+
+            await expect(dropperV3Facet.connect(user1).claim(
+                dropId,
+                requestID,
+                blockDeadline,
+                amount,
+                user1.address,
+                admin0.address,
+                signature
+            )).to.be.revertedWith('Dropper: _claim -- Unknown token type in claim');
+        });
+        it('DropperV3-23: Revert on Unknown Type', async function () {
 
             const dropId = 5;
             const requestID = 7;
