@@ -158,7 +158,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
             <>
               <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
                 <div className={styles.typeWithdrawal}>
-                  <IconArrowNarrowUp stroke={'#026AA2'} />
+                  <IconArrowNarrowUp stroke={'#fff'} />
                   Withdraw
                 </div>
               </div>
@@ -176,7 +176,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     >
                       <div className={styles.settled}>
                         Settled
-                        <IconLinkExternal02 stroke={'#027A48'} />
+                        <IconLinkExternal02 stroke={'#fff'} />
                       </div>
                     </a>
                   </div>
@@ -195,7 +195,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     >
                       <div className={styles.claimable}>
                         Claimable
-                        <IconLinkExternal02 stroke={'#B54708'} />
+                        <IconLinkExternal02 stroke={'#fff'} />
                       </div>
                     </a>
                   </div>
@@ -216,7 +216,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     >
                       <div className={styles.pending}>
                         Pending
-                        <IconLinkExternal02 stroke={'#175CD3'} />
+                        <IconLinkExternal02 stroke={'#fff'} />
                       </div>
                     </a>
                   </div>

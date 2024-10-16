@@ -174,11 +174,6 @@
     background: var(--Error-100, #FEE4E2);
 }
 
-.toastMultiple {
-
-}
-
-
 .headerTime {
     color: var(--Gray-500, #667085);
 

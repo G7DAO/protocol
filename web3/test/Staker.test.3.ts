@@ -1,7 +1,7 @@
 import { ethers } from 'hardhat';
 import { expect } from 'chai';
 import { loadFixture, time } from '@nomicfoundation/hardhat-network-helpers';
-import { setupStakingPoolsFixture } from './Staker.test.1';
+import { setupFixture, setupStakingPoolsFixture } from './Staker.test.1';
 
 describe('Staker', function () {
     it('STAKER-113: The ERC721 representing an ERC721 staking position have as its metadata URI a data URI representing an appropriate JSON object', async function () {
@@ -742,7 +742,8 @@ describe('Staker', function () {
             0,
             transferable,
             lockupSeconds,
-            cooldownSeconds
+            cooldownSeconds,
+            stakerWithAdmin0
         );
         const stakerPositionPoolID = (await staker.TotalPools()) - 1n;
         const stakerPositionPool = await staker.Pools(stakerPositionPoolID);
@@ -1158,6 +1159,8 @@ describe('Staker', function () {
         const user0Balance = await stakerWithAdmin0.balanceOf(await user0.getAddress());
         expect(user0Balance).to.equal(1n);
 
+        const user0BalanceOfNativeTokenBefore = await ethers.provider.getBalance(await user0.getAddress());
+
         const positionTokenID = (await staker.TotalPositions()) - 1n;
         const stake1Block = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
         await time.setNextBlockTimestamp(stake1Block!.timestamp + lockupSeconds);
@@ -1167,9 +1170,16 @@ describe('Staker', function () {
             .to.emit(staker, 'Unstaked')
             .withArgs(positionTokenID, await user0.getAddress(), nativePoolID, stakeAmount);
 
-        const user0BalanceAfter = await stakerWithAdmin0.balanceOf(await user0.getAddress());
+        await unstakeTx.wait();
 
-        expect(user0BalanceAfter).to.equal(0n);
+        const user0BalanceOfPositionTokenAfter = await stakerWithAdmin0.balanceOf(await user0.getAddress());
+
+
+        expect(user0BalanceOfPositionTokenAfter).to.equal(0n);
+
+        const user0BalanceOfNativeTokensAfter = await ethers.provider.getBalance(await user0.getAddress());
+
+        expect(user0BalanceOfNativeTokensAfter).to.equal(stakeAmount + user0BalanceOfNativeTokenBefore);
     });
 
     it('`STAKER-142`: As an admin pool I can unstake any position in the pool that still active even if the pool - non transferable', async function () {
@@ -1250,5 +1260,195 @@ describe('Staker', function () {
         await tx.wait();
         const user1Balance = await stakerWithAdmin0.balanceOf(await user1.getAddress());
         expect(user1Balance).to.equal(0n);
+    });
+
+    it('`STAKER-144`: As an admin pool I can unstake any position the owner of the position should recieve back the native tokens', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, user0, nativePoolID, admin0 } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+        const stakerWithAdmin0 = staker.connect(admin0);
+
+        const stakeAmount = ethers.parseEther('1');
+        const stakeTx = await stakerWithAdmin0.stakeNative(user0, nativePoolID, { value: stakeAmount });
+        const stakeTxReceipt = await stakeTx.wait();
+
+        const user0BalanceOfNativeTokenBefore = await ethers.provider.getBalance(await user0.getAddress());
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+        const stake1Block = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        await time.setNextBlockTimestamp(stake1Block!.timestamp + lockupSeconds);
+        const unstakeTx = await stakerWithAdmin0.unstake(positionTokenID);
+        await unstakeTx.wait();
+
+        const user0BalanceOfNativeTokensAfter = await ethers.provider.getBalance(await user0.getAddress());
+        expect(user0BalanceOfNativeTokensAfter).to.equal(stakeAmount + user0BalanceOfNativeTokenBefore);
+    });
+
+    it('`STAKER-145`: As an admin pool I can unstake any position the owner of the position should recieve back the erc20 tokens', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, erc20, user0, admin0, erc20PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithAdmin0 = staker.connect(admin0);
+        const stakeAmount = 17n;
+        const extraAmount = 15n;
+
+        // Mint ERC20 token to admin0
+        await erc20.mint(await admin0.getAddress(), stakeAmount);
+
+        // Approve staker contract to transfer ERC721 token
+        await erc20.connect(admin0).approve(await staker.getAddress(), stakeAmount);
+        const stakeTx = await stakerWithAdmin0.stakeERC20(user0, erc20PoolID, stakeAmount);
+
+        const stakeTxReceipt = await stakeTx.wait();
+        expect(stakeTxReceipt).to.not.be.null;
+
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+        const stake1Block = await ethers.provider.getBlock(stakeTxReceipt!.blockNumber);
+        await time.setNextBlockTimestamp(stake1Block!.timestamp + lockupSeconds);
+        const unstakeTx = await stakerWithAdmin0.unstake(positionTokenID);
+        await unstakeTx.wait();
+
+        const user0BalanceOfErc20After = await erc20.balanceOf(await user0.getAddress());
+        expect(user0BalanceOfErc20After).to.equal(stakeAmount);
+    });
+
+    it('`STAKER-146`: As an admin pool I can unstake any position the owner of the position should recieve back the erc721 tokens', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, erc721, user0, admin0, erc721PoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const tokenId = 1n;
+
+        // Mint ERC721 token to user0
+        await erc721.mint(await admin0.getAddress(), tokenId);
+
+        // Approve staker contract to transfer ERC721 token
+        await erc721.connect(admin0).approve(await staker.getAddress(), tokenId);
+
+        const stakerWithAdmin0 = staker.connect(admin0);
+        const tx = await stakerWithAdmin0.stakeERC721(user0, erc721PoolID, tokenId);
+        const txReceipt = await tx.wait();
+        expect(txReceipt).to.not.be.null;
+
+        const user0BalanceOfErc721AfterStake = await erc721.balanceOf(await user0.getAddress());
+        expect(user0BalanceOfErc721AfterStake).to.equal(0n);
+
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+        const stake1Block = await ethers.provider.getBlock(txReceipt!.blockNumber);
+        await time.setNextBlockTimestamp(stake1Block!.timestamp + lockupSeconds);
+
+        const unstakeTx = await stakerWithAdmin0.unstake(positionTokenID);
+        await unstakeTx.wait();
+
+        const user0BalanceOfErc721AfterUnstake = await erc721.balanceOf(await user0.getAddress());
+        expect(user0BalanceOfErc721AfterUnstake).to.equal(1n);
+    });
+
+    it('`STAKER-147`: As an admin pool I can unstake any position the owner of the position should recieve back the native erc1155 tokens', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, erc1155, user0, admin0, erc1155PoolID, erc1155TokenID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+
+        const stakerWithAdmin0 = staker.connect(admin0);
+        const stakeAmount = 17n;
+
+        await erc1155.mint(await admin0.getAddress(), erc1155TokenID, stakeAmount);
+        await erc1155.connect(admin0).setApprovalForAll(await staker.getAddress(), true);
+
+        const tx = await stakerWithAdmin0.stakeERC1155(user0, erc1155PoolID, stakeAmount);
+        const txReceipt = await tx.wait();
+        expect(txReceipt).to.not.be.null;
+
+        const user0BalanceOfErc1155AfterStake = await erc1155.balanceOf(await user0.getAddress(), erc1155TokenID);
+        expect(user0BalanceOfErc1155AfterStake).to.equal(0n);
+
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+        const stake1Block = await ethers.provider.getBlock(txReceipt!.blockNumber);
+        await time.setNextBlockTimestamp(stake1Block!.timestamp + lockupSeconds);
+
+        const unstakeTx = await stakerWithAdmin0.unstake(positionTokenID);
+        await unstakeTx.wait();
+
+        const user0BalanceOfErc1155AfterUnstake = await erc1155.balanceOf(await user0.getAddress(), erc1155TokenID);
+        expect(user0BalanceOfErc1155AfterUnstake).to.equal(stakeAmount);
+    });
+
+    it('STAKER-148: Any account should be able to create a staking pool for native tokens using 0 address', async function () {
+        const { staker, anyone, user0 } = await loadFixture(setupFixture);
+        const stakerWithAnyone = staker.connect(anyone);
+
+
+        const tx = await stakerWithAnyone.createPool(
+            await stakerWithAnyone.NATIVE_TOKEN_TYPE(),
+            ethers.ZeroAddress,
+            0,
+            true,
+            0,
+            0,
+            ethers.ZeroAddress
+        );
+
+        await expect(tx)
+            .to.emit(staker, 'StakingPoolCreated')
+            .withArgs(
+                0, // poolID should be 0 for the first pool
+                await stakerWithAnyone.NATIVE_TOKEN_TYPE(),
+                ethers.ZeroAddress,
+                0
+            );
+
+        await expect(tx)
+            .to.emit(staker, 'StakingPoolConfigured')
+            .withArgs(0, ethers.ZeroAddress, true, 0, 0);
+
+        const pool = await staker.Pools(0);
+        expect(pool.tokenType).to.equal(await stakerWithAnyone.NATIVE_TOKEN_TYPE());
+        expect(pool.tokenAddress).to.equal(ethers.ZeroAddress);
+        expect(pool.tokenID).to.equal(0);
+        expect(pool.transferable).to.equal(true);
+        expect(pool.lockupSeconds).to.equal(0);
+        expect(pool.cooldownSeconds).to.equal(0);
+        expect(pool.administrator).to.equal(ethers.ZeroAddress);
+
+        const stakeAmount = 17n;
+        const positionPoolID = (await staker.TotalPools()) - 1n;
+
+
+        const stakeTrx = await stakerWithAnyone.stakeNative(user0, positionPoolID, { value: stakeAmount });
+
+        await expect(stakeTrx)
+            .to.emit(stakerWithAnyone, 'Staked')
+            .withArgs(0, await user0.getAddress(), positionPoolID, stakeAmount);
+
+        await stakeTrx.wait();
+
+        const user0Balance = await staker.balanceOf(await user0.getAddress());
+        expect(user0Balance).to.equal(1n);
+
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+        const position = await staker.Positions(positionTokenID);
+        expect(position.poolID).to.equal(0);
+
+        // as pool with address 0 administrator, anyone can stake or unstake for you as final user - must be reverted
+        await (expect(stakerWithAnyone.unstake(positionTokenID)).to.be.revertedWithCustomError(stakerWithAnyone, 'UnauthorizedForPosition')
+            .withArgs(await user0.getAddress(), await anyone.getAddress()));
+
     });
 });
