@@ -201,158 +201,177 @@ contract PositionMetadata {
         );
     }
 
-    function generateTokenIdSection(
-        string memory tokenTypeString,
-        string memory amountOrTokenIdString,
-        uint256 yPoolPad
-    ) internal pure returns (string memory) {
-        if (keccak256(abi.encodePacked(tokenTypeString)) != keccak256(abi.encodePacked("ERC1155"))) {
-            return "";
-        }
-
-        return
-            string(
-                abi.encodePacked(
-                    '<rect x="221" y="',
-                    (1195 + yPoolPad).toString(),
-                    '" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                    '<rect x="221" y="',
-                    (1195 + yPoolPad).toString(),
-                    '" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
-                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="bold" letter-spacing="0em"><tspan x="221" y="',
-                    (1166 + yPoolPad).toString(),
-                    '">Token ID</tspan></text>',
-                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="',
-                    (1250 + yPoolPad).toString(),
-                    '">',
-                    amountOrTokenIdString,
-                    "</tspan></text>"
-                )
-            );
-    }
-
-    function generateTokenTypeSection(
-        string memory tokenTypeString,
-        string memory tokenAddressString,
-        uint256 rectWidth
-    ) internal pure returns (string memory) {
-        return
-            string(
-                abi.encodePacked(
-                    '<rect x="221" y="1195" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                    '<rect x="221" y="1195" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
-                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="bold" letter-spacing="0em"><tspan x="221" y="1166">Token</tspan></text>',
-                    '<rect x="241" y="1215" width="',
-                    rectWidth.toString(),
-                    '" height="48" rx="21" stroke="#FFEFB8" stroke-width="0.4"/>',
-                    '<text x="260" y="1250" fill="#FFEFB8" font-family="Courier New" font-size="32" font-weight="bold">',
-                    tokenTypeString,
-                    "</text>",
-                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="',
-                    (241 + rectWidth + 30).toString(),
-                    '" y="1250">',
-                    tokenAddressString,
-                    "</tspan></text>"
-                )
-            );
-    }
-
-    function generatePoolIdSection(string memory poolIdString, uint256 yPoolPad) internal pure returns (string memory) {
-        return
-            string(
-                abi.encodePacked(
-                    '<rect x="221" y="',
-                    (1389 + yPoolPad).toString(),
-                    '" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                    '<rect x="221" y="',
-                    (1389 + yPoolPad).toString(),
-                    '" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
-                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="bold" letter-spacing="0em"><tspan x="221" y="',
-                    (1360 + yPoolPad).toString(),
-                    '">Pool ID</tspan></text>',
-                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="',
-                    (1444 + yPoolPad).toString(),
-                    '">',
-                    poolIdString,
-                    "</tspan></text>"
-                )
-            );
-    }
-
     function generateTokenTypeElement(
         string memory tokenTypeString,
         string memory tokenAddressString,
         string memory amountOrTokenIdString,
         string memory poolIdString
     ) public pure returns (string memory) {
-        uint256 yPoolPad = (keccak256(abi.encodePacked(tokenTypeString)) == keccak256(abi.encodePacked("ERC1155")))
-            ? 194
-            : 0;
-
-        // calculate correct rect width from text width and find center of text
-        uint256 textWidth = bytes(tokenTypeString).length * 18;
-        uint256 rectWidth = textWidth + 40;
-
-        // Token sections
-        string memory tokenIdSection = generateTokenIdSection(tokenTypeString, amountOrTokenIdString, yPoolPad);
-        string memory tokenTypeSection = generateTokenTypeSection(tokenTypeString, tokenAddressString, rectWidth);
-        string memory poolIdSection = generatePoolIdSection(poolIdString, yPoolPad);
-
-        return string(abi.encodePacked(tokenTypeSection, tokenIdSection, poolIdSection));
-    }
-
-    function generateTextElement(
-        string memory xPos,
-        string memory yPos,
-        string memory textContent,
-        bool isBold
-    ) internal pure returns (string memory) {
-        string memory fontWeight = isBold ? "bold" : "normal";
-        return
-            string(
+        // All branches of this if-else statement return.
+        // In each branch the following parameters differ:
+        // - Token ID only present for ERC1155
+        // - Rectangle width and span for token type and address.
+        if (keccak256(abi.encodePacked(tokenTypeString)) == keccak256(abi.encodePacked("Native"))) {
+            return string(abi.encodePacked(
                 abi.encodePacked(
-                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="',
-                    fontWeight,
-                    '" letter-spacing="0em"><tspan x="',
-                    xPos,
-                    '" y="',
-                    yPos,
+                    '<rect x="221" y="1195" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                    '<rect x="221" y="1195" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="bold" letter-spacing="0em"><tspan x="221" y="1166">Token</tspan></text>',
+                    '<rect x="241" y="1215" width="',
+                    "148",
+                    '" height="48" rx="21" stroke="#FFEFB8" stroke-width="0.4"/>',
+                    '<text x="260" y="1250" fill="#FFEFB8" font-family="Courier New" font-size="32" font-weight="bold">',
+                    tokenTypeString,
+                    "</text>",
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="',
+                    "389",
+                    '" y="1250">',
+                    tokenAddressString,
+                    "</tspan></text>"
+
+                ),
+                abi.encodePacked(
+                    '<rect x="221" y="',
+                    "1389",
+                    '" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                    '<rect x="221" y="',
+                    "1389",
+                    '" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="bold" letter-spacing="0em"><tspan x="221" y="',
+                    "1360",
+                    '">Pool ID</tspan></text>',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="',
+                    "1444",
                     '">',
-                    textContent,
+                    poolIdString,
                     "</tspan></text>"
                 )
-            );
-    }
-
-    function generateRectElement(
-        string memory xPos,
-        string memory yPos,
-        string memory width,
-        string memory height
-    ) internal pure returns (string memory) {
-        return
-            string(
+            ));
+        } else if (keccak256(abi.encodePacked(tokenTypeString)) == keccak256(abi.encodePacked("ERC20"))) {
+            return string(abi.encodePacked(
                 abi.encodePacked(
-                    '<rect x="',
-                    xPos,
-                    '" y="',
-                    yPos,
-                    '" width="',
-                    width,
-                    '" height="',
-                    height,
-                    '" rx="19" fill="#18181B" fill-opacity="0.8"/>',
-                    '<rect x="',
-                    xPos,
-                    '" y="',
-                    yPos,
-                    '" width="',
-                    width,
-                    '" height="',
-                    height,
-                    '" rx="19" stroke="#737373" stroke-width="2"/>'
+                    '<rect x="221" y="1195" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                    '<rect x="221" y="1195" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="bold" letter-spacing="0em"><tspan x="221" y="1166">Token</tspan></text>',
+                    '<rect x="241" y="1215" width="',
+                    "130",
+                    '" height="48" rx="21" stroke="#FFEFB8" stroke-width="0.4"/>',
+                    '<text x="260" y="1250" fill="#FFEFB8" font-family="Courier New" font-size="32" font-weight="bold">',
+                    tokenTypeString,
+                    "</text>",
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="',
+                    "371",
+                    '" y="1250">',
+                    tokenAddressString,
+                    "</tspan></text>"
+
+                ),
+                abi.encodePacked(
+                    '<rect x="221" y="',
+                    "1389",
+                    '" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                    '<rect x="221" y="',
+                    "1389",
+                    '" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="bold" letter-spacing="0em"><tspan x="221" y="',
+                    "1360",
+                    '">Pool ID</tspan></text>',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="',
+                    "1444",
+                    '">',
+                    poolIdString,
+                    "</tspan></text>"
                 )
-            );
+            ));
+        } else if (keccak256(abi.encodePacked(tokenTypeString)) == keccak256(abi.encodePacked("ERC721"))) {
+            return string(abi.encodePacked(
+                abi.encodePacked(
+                    '<rect x="221" y="1195" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                    '<rect x="221" y="1195" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="bold" letter-spacing="0em"><tspan x="221" y="1166">Token</tspan></text>',
+                    '<rect x="241" y="1215" width="',
+                    "148",
+                    '" height="48" rx="21" stroke="#FFEFB8" stroke-width="0.4"/>',
+                    '<text x="260" y="1250" fill="#FFEFB8" font-family="Courier New" font-size="32" font-weight="bold">',
+                    tokenTypeString,
+                    "</text>",
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="',
+                    "389",
+                    '" y="1250">',
+                    tokenAddressString,
+                    "</tspan></text>"
+
+                ),
+                abi.encodePacked(
+                    '<rect x="221" y="',
+                    "1389",
+                    '" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                    '<rect x="221" y="',
+                    "1389",
+                    '" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="bold" letter-spacing="0em"><tspan x="221" y="',
+                    "1360",
+                    '">Pool ID</tspan></text>',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="',
+                    "1444",
+                    '">',
+                    poolIdString,
+                    "</tspan></text>"
+                )
+            ));
+        } else {
+            return string(abi.encodePacked(
+                abi.encodePacked(
+                    '<rect x="221" y="',
+                    "1389",
+                    '" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                    '<rect x="221" y="',
+                    "1389",
+                    '" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="bold" letter-spacing="0em"><tspan x="221" y="',
+                    "1360",
+                    '">Token ID</tspan></text>',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="',
+                    "1444",
+                    '">',
+                    amountOrTokenIdString,
+                    "</tspan></text>"
+                ),
+                abi.encodePacked(
+                    '<rect x="221" y="1195" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                    '<rect x="221" y="1195" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="bold" letter-spacing="0em"><tspan x="221" y="1166">Token</tspan></text>',
+                    '<rect x="241" y="1215" width="',
+                    "166",
+                    '" height="48" rx="21" stroke="#FFEFB8" stroke-width="0.4"/>',
+                    '<text x="260" y="1250" fill="#FFEFB8" font-family="Courier New" font-size="32" font-weight="bold">',
+                    tokenTypeString,
+                    "</text>",
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="',
+                    "407",
+                    '" y="1250">',
+                    tokenAddressString,
+                    "</tspan></text>"
+
+                ),
+                abi.encodePacked(
+                    '<rect x="221" y="',
+                    "1583",
+                    '" width="1558" height="90" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                    '<rect x="221" y="',
+                    "1583",
+                    '" width="1558" height="90" rx="19" stroke="#737373" stroke-width="2"/>',
+                    '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="bold" letter-spacing="0em"><tspan x="221" y="',
+                    "1554",
+                    '">Pool ID</tspan></text>',
+                    '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="260" y="',
+                    "1638",
+                    '">',
+                    poolIdString,
+                    "</tspan></text>"
+                )
+            ));
+        }
     }
 
     function generateValueElement(
@@ -381,34 +400,129 @@ contract PositionMetadata {
         string memory unlockTimestampStr,
         string memory cooldownStr
     ) public pure returns (string memory) {
-        string memory stakeText = generateTextElement("220", titleYPos, "Staked at", true);
-        string memory stakeRect = generateRectElement("221", yPos, "522", "86");
-        string memory stakeValue = generateValueElement("260", "1051", stakeTimestampStr);
-
-        string memory unlockText = generateTextElement("768", titleYPos, "Unlocks at", true);
-        string memory unlockRect = generateRectElement("769", yPos, "522", "86");
-        string memory unlockValue = generateValueElement("808", "1051", unlockTimestampStr);
-
-        string memory cooldownText = generateTextElement("1316", titleYPos, "Cooldown", true);
-        string memory cooldownRect = generateRectElement("1317", yPos, "462", "86");
-        string memory cooldownValue = generateValueElement(
-            "1356",
-            "1051",
-            string(abi.encodePacked(cooldownStr, " seconds"))
-        );
-
         return
             string(
                 abi.encodePacked(
-                    stakeText,
-                    stakeRect,
-                    stakeValue,
-                    unlockText,
-                    unlockRect,
-                    unlockValue,
-                    cooldownText,
-                    cooldownRect,
-                    cooldownValue
+                    abi.encodePacked(
+                        '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="',
+                        "bold",
+                        '" letter-spacing="0em"><tspan x="',
+                        "220",
+                        '" y="',
+                        titleYPos,
+                        '">',
+                        "Staked at",
+                        "</tspan></text>"
+                    ),
+                    abi.encodePacked(
+                        '<rect x="',
+                        "221",
+                        '" y="',
+                        yPos,
+                        '" width="',
+                        "522",
+                        '" height="',
+                        "86",
+                        '" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                        '<rect x="',
+                        "221",
+                        '" y="',
+                        yPos,
+                        '" width="',
+                        "522",
+                        '" height="',
+                        "86",
+                        '" rx="19" stroke="#737373" stroke-width="2"/>'
+                    ),
+                    abi.encodePacked(
+                        '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="',
+                        "260",
+                        '" y="',
+                        "1051",
+                        '">',
+                        stakeTimestampStr,
+                        "</tspan></text>"
+                    ),
+                    abi.encodePacked(
+                        '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="',
+                        "bold",
+                        '" letter-spacing="0em"><tspan x="',
+                        "768",
+                        '" y="',
+                        titleYPos,
+                        '">',
+                        "Unlocks at",
+                        "</tspan></text>"
+                    ),
+                    abi.encodePacked(
+                        '<rect x="',
+                        "769",
+                        '" y="',
+                        yPos,
+                        '" width="',
+                        "522",
+                        '" height="',
+                        "86",
+                        '" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                        '<rect x="',
+                        "769",
+                        '" y="',
+                        yPos,
+                        '" width="',
+                        "522",
+                        '" height="',
+                        "86",
+                        '" rx="19" stroke="#737373" stroke-width="2"/>'
+                    ),
+                    abi.encodePacked(
+                        '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="',
+                        "808",
+                        '" y="',
+                        "1051",
+                        '">',
+                        unlockTimestampStr,
+                        "</tspan></text>"
+                    ),
+                    abi.encodePacked(
+                        '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="',
+                        "bold",
+                        '" letter-spacing="0em"><tspan x="',
+                        "1316",
+                        '" y="',
+                        titleYPos,
+                        '">',
+                        "Cooldown",
+                        "</tspan></text>"
+                    ),
+                    abi.encodePacked(
+                        '<rect x="',
+                        "1317",
+                        '" y="',
+                        yPos,
+                        '" width="',
+                        "462"
+                        '" height="',
+                        "86",
+                        '" rx="19" fill="#18181B" fill-opacity="0.8"/>',
+                        '<rect x="',
+                        "1317",
+                        '" y="',
+                        yPos,
+                        '" width="',
+                        "462",
+                        '" height="',
+                        "86",
+                        '" rx="19" stroke="#737373" stroke-width="2"/>'
+                    ),
+                    abi.encodePacked(
+                        '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="',
+                        "1356",
+                        '" y="',
+                        "1051",
+                        '">',
+                        cooldownStr,
+                        " seconds</tspan></text>"
+                    )
                 )
             );
     }
