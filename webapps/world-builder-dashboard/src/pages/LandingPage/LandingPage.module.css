@@ -138,6 +138,10 @@ body {
   -ms-overflow-style: none;
 }
 
+.mainLayoutStart {
+  justify-content: start;
+}
+
 .titleContainer {
   display: flex;
   padding: 0px 280px;
@@ -344,7 +348,7 @@ body {
 
 .card {
   display: flex;
-  width: 413px;
+  max-width: 413px;
   padding: 24px;
   flex-direction: column;
   align-items: center;
@@ -573,7 +577,7 @@ body {
 
 @media (max-width: 750px) {
   .card {
-    max-width: 340px;
+    width: 340px;
     display: flex;
     padding: 16px;
     flex-direction: column;
@@ -694,6 +698,11 @@ body {
     align-items: center;
     gap: 16px;
     align-self: stretch;
+  }
+
+  
+  .networkEssentialCard {
+    max-width: 340px;
   }
 
   .contentContainer {

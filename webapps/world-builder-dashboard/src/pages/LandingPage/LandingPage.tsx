@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './LandingPage.module.css'
 import { useMediaQuery } from 'summon-ui/mantine'
@@ -30,6 +30,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const [scrollThreshold, setScrollThreshold] = useState(0)
   const [navbarOpen, setNavBarOpen] = useState<boolean>(false)
   const smallView = useMediaQuery('(max-width: 750px)')
+  const mediumView = useMediaQuery('(max-width: 1199px)')
   const totalSections = 4
   const maxThreshold = 1000
 
@@ -74,14 +75,15 @@ const LandingPage: React.FC<LandingPageProps> = () => {
 
       if ('deltaY' in event) {
         deltaY = event.deltaY
-        handleScroll({ deltaY })
+        const height = event.pageY;
+        handleScroll({ deltaY: deltaY })
       }
 
       if ('key' in event) {
         if (event.key === 'ArrowUp') {
-          deltaY = -100
+          deltaY = -maxThreshold
         } else if (event.key === 'ArrowDown') {
-          deltaY = 100
+          deltaY = maxThreshold
         }
         handleScroll({ deltaY })
       }
@@ -254,7 +256,9 @@ const LandingPage: React.FC<LandingPageProps> = () => {
           </>
         )}
         {/* MAIN LAYOUT */}
-        <div className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}`}>
+        <div className={
+          `${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}
+           ${(currentSectionIndex === 1 || currentSectionIndex === 2 || currentSectionIndex === 3) && smallView ? styles.mainLayoutStart : ""}`}>
           {/* Main */}
           {currentSectionIndex === 0 && (
             <div className={styles.contentContainer}>
@@ -265,7 +269,12 @@ const LandingPage: React.FC<LandingPageProps> = () => {
               </div>
               {!smallView ? (
                 <div className={styles.ctaContainer}>
-                  <div className={styles.learnMoreCTA}>Learn more</div>
+                  <div className={styles.learnMoreCTA} onClick={() =>
+                    window.open(
+                      'https://wiki.game7.io/g7-developer-resource/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network/world-builder',
+                      '_blank'
+                    )
+                  }>Learn more</div>
                   <div className={styles.startBuildingCTA} onClick={startBuilding}>
                     Start building
                   </div>
@@ -301,7 +310,6 @@ const LandingPage: React.FC<LandingPageProps> = () => {
               </div>
               {!smallView ? (
                 <div className={styles.ctaContainer}>
-                  <div className={styles.learnMoreCTA}>Learn more</div>
                   <div className={styles.startBuildingCTA} onClick={startBuilding}>
                     Start building
                   </div>
@@ -344,7 +352,6 @@ const LandingPage: React.FC<LandingPageProps> = () => {
               </div>
               {!smallView ? (
                 <div className={styles.ctaContainer}>
-                  <div className={styles.learnMoreCTA}>Learn more</div>
                   <div className={styles.startBuildingCTA} onClick={startBuilding}>
                     Start building
                   </div>
@@ -411,7 +418,6 @@ const LandingPage: React.FC<LandingPageProps> = () => {
               </div>
               {!smallView ? (
                 <div className={styles.ctaContainer}>
-                  <div className={styles.learnMoreCTA}>Learn more</div>
                   <div className={styles.startBuildingCTA} onClick={startBuilding}>
                     Start building
                   </div>
@@ -421,7 +427,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
               )}
             </div>
           )}
-          {!smallView && (<div className={styles.scrollbarContainer}>
+          {!smallView && !mediumView && (<div className={styles.scrollbarContainer}>
             {[...Array(totalSections)].map((_, index) => (
               <div key={index} className={styles.scrollBar}>
                 <div style={getScrollBarFillStyle(index)} className={styles.scrollBarFill} />
