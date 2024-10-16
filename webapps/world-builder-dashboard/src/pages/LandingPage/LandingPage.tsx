@@ -12,7 +12,7 @@ import MarketWarsLogo from '@/assets/MarketWarsLogo'
 import SummonLogo from '@/assets/SummonLogo'
 import SummonTextLogo from '@/assets/SummonTextLogo'
 
-interface LandingPageProps {}
+interface LandingPageProps { }
 
 const LandingPage: React.FC<LandingPageProps> = () => {
   const NAVBAR_ITEMS = [
@@ -26,11 +26,11 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     }
   ]
   const navigate = useNavigate()
-
-  const smallView = useMediaQuery('(max-width: 750px)')
   const [currentSectionIndex, setCurrentSectionIndex] = useState<number>(0)
-  const totalSections = 4
   const [scrollThreshold, setScrollThreshold] = useState(0)
+  const [navbarOpen, setNavBarOpen] = useState<boolean>(false)
+  const smallView = useMediaQuery('(max-width: 750px)')
+  const totalSections = 4
   const maxThreshold = 1000
 
   const handleScroll = (event: { deltaY: number }) => {
@@ -47,7 +47,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
 
     setScrollThreshold(newScrollThreshold)
 
-    if (newScrollThreshold > maxThreshold + 400 && currentSectionIndex < totalSections - 1) {
+    if (newScrollThreshold > maxThreshold && currentSectionIndex < totalSections - 1) {
       setScrollThreshold(0)
       setCurrentSectionIndex((prevIndex) => prevIndex + 1)
     } else if (newScrollThreshold < 0) {
@@ -59,6 +59,62 @@ const LandingPage: React.FC<LandingPageProps> = () => {
       }
     }
   }
+
+  useEffect(() => {
+    let startY = 0
+    let accumulatedDeltaY = 0
+
+    const handleScrollEvents = (event: WheelEvent | KeyboardEvent | TouchEvent) => {
+      let deltaY = 0
+
+      if ('deltaY' in event) {
+        deltaY = event.deltaY
+        handleScroll({ deltaY })
+      }
+
+      if ('key' in event) {
+        if (event.key === 'ArrowUp') {
+          deltaY = -100
+        } else if (event.key === 'ArrowDown') {
+          deltaY = 100
+        }
+
+        handleScroll({ deltaY })
+      }
+
+      if (event.type === 'touchstart' && 'touches' in event) {
+        startY = event.touches[0].clientY
+        accumulatedDeltaY = 0
+      }
+
+      if (event.type === 'touchmove' && 'touches' in event) {
+        const touchY = event.touches[0].clientY
+        deltaY = (startY - touchY)
+        accumulatedDeltaY += deltaY
+        startY = touchY
+      }
+
+      if (event.type === 'touchend') {
+        if (accumulatedDeltaY > 0) {
+          handleScroll({ deltaY: maxThreshold }) // Handle scroll down
+        } else if (accumulatedDeltaY < 0) {
+          handleScroll({ deltaY: -maxThreshold }) // Handle scroll up
+        }
+      }
+    }
+
+    window.addEventListener('wheel', handleScrollEvents)
+    window.addEventListener('keydown', handleScrollEvents)
+    window.addEventListener('touchstart', handleScrollEvents)
+    window.addEventListener('touchmove', handleScrollEvents)
+
+    return () => {
+      window.removeEventListener('wheel', handleScrollEvents)
+      window.removeEventListener('keydown', handleScrollEvents)
+      window.removeEventListener('touchstart', handleScrollEvents)
+      window.removeEventListener('touchmove', handleScrollEvents)
+    }
+  }, [scrollThreshold, currentSectionIndex])
 
   const getScrollBarFillStyle = (index: number) => {
     if (index < currentSectionIndex) {
@@ -85,34 +141,6 @@ const LandingPage: React.FC<LandingPageProps> = () => {
       transition: 'height 0.25s ease-in-out'
     }
   }
-
-  useEffect(() => {
-    const handleScrollEvents = (event: WheelEvent | KeyboardEvent) => {
-      let deltaY = 0
-
-      if ('deltaY' in event) {
-        deltaY = event.deltaY
-      }
-
-      if ('key' in event) {
-        if (event.key === 'ArrowUp') {
-          deltaY = -100
-        } else if (event.key === 'ArrowDown') {
-          deltaY = 100
-        }
-      }
-
-      handleScroll({ deltaY })
-    }
-
-    window.addEventListener('wheel', handleScrollEvents)
-    window.addEventListener('keydown', handleScrollEvents)
-
-    return () => {
-      window.removeEventListener('wheel', handleScrollEvents)
-      window.removeEventListener('keydown', handleScrollEvents)
-    }
-  }, [scrollThreshold, currentSectionIndex])
 
   const startBuilding = () => {
     navigate('/faucet')
@@ -149,15 +177,35 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   </div>
                 </div>
               ) : (
-                <div className={styles.navbarItem}>
-                  <IconHamburgerLanding />
-                </div>
+                <>
+                  <div className={styles.navbarItem}>
+                    <IconHamburgerLanding onClick={() => setNavBarOpen(!navbarOpen)} />
+                  </div>
+                </>
               )}
             </div>
           </div>
+          {navbarOpen && (
+            <div className={styles.navContainer}>
+              {NAVBAR_ITEMS.map((item, index) => (
+                <div
+                  key={index}
+                  className={item.name === 'Home' ? styles.navItemHome : styles.navItem}
+                  onClick={() => navigateLink(item)}
+                >
+                  {item.name}
+                </div>
+              ))}
+              <div className={styles.ctaContainer}>
+                <div className={styles.startBuildingCTA} onClick={startBuilding}>
+                  Start building
+                </div>
+              </div>
+            </div>
+          )}
         </div>
         {/* MAIN LAYOUT */}
-        <div className={styles.mainLayout}>
+        <div className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}`}>
           {/* Main */}
           {currentSectionIndex === 0 && (
             <div className={styles.contentContainer}>

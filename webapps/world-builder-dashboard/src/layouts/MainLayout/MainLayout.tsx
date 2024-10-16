@@ -21,12 +21,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({}) => {
     {
       name: 'faucet',
       navigateTo: '/faucet',
-      icon: <IconDroplets02 stroke={location.pathname === '/faucet' ? '#fff' : '#B9B9B9'} />
+      icon: <IconDroplets02 stroke={location.pathname.startsWith('/faucet') ? '#fff' : '#B9B9B9'} />
     },
     {
       name: 'bridge',
       navigateTo: '/bridge',
-      icon: <IconWallet04 stroke={location.pathname === '/bridge' ? '#fff' : '#B9B9B9'} />
+      icon: <IconWallet04 stroke={location.pathname.startsWith('/bridge') ? '#fff' : '#B9B9B9'} />
     },
     {
       name: 'explorer',
