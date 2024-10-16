@@ -65,6 +65,9 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     let accumulatedDeltaY = 0
 
     const handleScrollEvents = (event: WheelEvent | KeyboardEvent | TouchEvent) => {
+
+      if (navbarOpen) return;
+
       let deltaY = 0
 
       if ('deltaY' in event) {
@@ -114,7 +117,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
       window.removeEventListener('touchstart', handleScrollEvents)
       window.removeEventListener('touchmove', handleScrollEvents)
     }
-  }, [scrollThreshold, currentSectionIndex])
+  }, [scrollThreshold, currentSectionIndex, navbarOpen])
 
   const getScrollBarFillStyle = (index: number) => {
     if (index < currentSectionIndex) {
