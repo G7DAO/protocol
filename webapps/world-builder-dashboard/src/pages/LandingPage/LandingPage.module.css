@@ -131,11 +131,15 @@ body {
   border-radius: 12px;
   border: 1px solid #727272;
   background: url('../../assets/G7LandingPageBGDark.jpg') lightgray 50% / cover no-repeat;
-  overflow-y: auto;
   overflow-y: scroll;
   padding: 40px;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  transition: justify-content 0.3s ease;
+}
+
+.mainLayoutStart {
+  justify-content: start;
 }
 
 .titleContainer {
@@ -577,10 +581,6 @@ body {
 }
 
 @media (max-width: 750px) {
-  .mainLayoutStart {
-    justify-content: start;
-  }
-
   .card {
     width: 340px;
     display: flex;
