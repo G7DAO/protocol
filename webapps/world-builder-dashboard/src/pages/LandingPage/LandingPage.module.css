@@ -527,9 +527,6 @@ body {
     gap: 16px;
   }
 
-  .layoutDarkened {
-  }
-
   .mainLayout {
     display: flex;
     padding: 30px 24px;
@@ -572,6 +569,25 @@ body {
 }
 
 @media (max-width: 750px) {
+  .contentContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    align-self: stretch;
+  }
+
+
+  .card {
+    display: flex;
+    max-width: 340px;
+    padding: 16px;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    align-self: stretch;
+  }
+
   .navbarItem {
     display: flex;
     padding: 8px;
@@ -664,7 +680,7 @@ body {
   }
 
   .layoutBlur::before {
-    content: "";
+    content: '';
     position: fixed;
     top: 0;
     left: 0;
