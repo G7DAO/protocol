@@ -154,38 +154,74 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     <>
       <div className={styles.layout}>
         {/* NAVBAR */}
-        <div className={styles.navbarContainer}>
-          <div className={styles.navbar}>
-            <div className={styles.logoWrapper} onClick={() => navigate('/')}>
-              <IconGame7Logo />
-              <IconGame7 />
-            </div>
-            <div className={styles.navbarItemsContainer}>
-              {!smallView ? (
-                <div className={styles.navbarItems}>
-                  {NAVBAR_ITEMS.map((item, index) => (
-                    <div
-                      key={index}
-                      className={item.name === 'Home' ? styles.navbarItemHome : styles.navbarItem}
-                      onClick={() => navigateLink(item)}
-                    >
-                      {item.name}
+        {!navbarOpen && (
+          <div className={styles.navbarContainer}>
+            <div className={styles.navbar}>
+              <div className={styles.logoWrapper} onClick={() => navigate('/')}>
+                <IconGame7Logo />
+                <IconGame7 />
+              </div>
+              <div className={styles.navbarItemsContainer}>
+                {!smallView ? (
+                  <div className={styles.navbarItems}>
+                    {NAVBAR_ITEMS.map((item, index) => (
+                      <div
+                        key={index}
+                        className={item.name === 'Home' ? styles.navbarItemHome : styles.navbarItem}
+                        onClick={() => navigateLink(item)}
+                      >
+                        {item.name}
+                      </div>
+                    ))}
+                    <div className={styles.navbarCTA} onClick={startBuilding}>
+                      Start building
                     </div>
-                  ))}
-                  <div className={styles.navbarCTA} onClick={startBuilding}>
-                    Start building
                   </div>
-                </div>
-              ) : (
-                <>
-                  <div className={styles.navbarItem}>
-                    <IconHamburgerLanding onClick={() => setNavBarOpen(!navbarOpen)} />
-                  </div>
-                </>
-              )}
+                ) : (
+                  <>
+                    <div className={styles.navbarItem}>
+                      <IconHamburgerLanding onClick={() => setNavBarOpen(!navbarOpen)} />
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
-          </div>
-          {navbarOpen && (
+          </div>)}
+
+        {navbarOpen && smallView && (
+          <>
+            <div className={styles.navbarContainer}>
+              <div className={styles.navbar}>
+                <div className={styles.logoWrapper} onClick={() => navigate('/')}>
+                  <IconGame7Logo />
+                  <IconGame7 />
+                </div>
+                <div className={styles.navbarItemsContainer}>
+                  {!smallView ? (
+                    <div className={styles.navbarItems}>
+                      {NAVBAR_ITEMS.map((item, index) => (
+                        <div
+                          key={index}
+                          className={item.name === 'Home' ? styles.navbarItemHome : styles.navbarItem}
+                          onClick={() => navigateLink(item)}
+                        >
+                          {item.name}
+                        </div>
+                      ))}
+                      <div className={styles.navbarCTA} onClick={startBuilding}>
+                        Start building
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div className={styles.navbarItem}>
+                        <IconHamburgerLanding onClick={() => setNavBarOpen(!navbarOpen)} />
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
             <div className={styles.navContainer}>
               {NAVBAR_ITEMS.map((item, index) => (
                 <div
@@ -202,8 +238,8 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                 </div>
               </div>
             </div>
-          )}
-        </div>
+          </>
+        )}
         {/* MAIN LAYOUT */}
         <div className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}`}>
           {/* Main */}

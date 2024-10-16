@@ -529,6 +529,8 @@ body {
   .layoutDarkened {
   }
 
+
+
   .mainLayout {
     display: flex;
     padding: 30px 24px;
@@ -616,15 +618,20 @@ body {
   }
 
   .navContainer {
+    padding-top: 100px;
+    position: fixed; /* Make the menu overlay the entire screen */
+    top: 72px;
+    left: 0;
+    width: 100vw; /* Full width */
+    background-color: #171717;
+    z-index: 1000; /* Ensure it's on top */
+    padding: 24px 24px 24px 24px;
     display: flex;
-    padding-top: 24px;
-    padding-bottom: 16px;
     flex-direction: column;
     align-items: flex-start;
-    gap: 4px;
-    align-self: stretch;
-    z-index: 1;
+    justify-content: flex-start;
   }
+  
 
   .navItem {
     display: flex;
