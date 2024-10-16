@@ -131,11 +131,11 @@ body {
   border-radius: 12px;
   border: 1px solid #727272;
   background: url('../../assets/G7LandingPageBGDark.jpg') lightgray 50% / cover no-repeat;
-  overflow-y: auto;
   overflow-y: scroll;
   padding: 40px;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  transition: justify-content 0.3s ease;
 }
 
 .mainLayoutStart {
@@ -451,6 +451,7 @@ body {
   align-items: flex-start;
   gap: 24px;
   align-self: stretch;
+  justify-content: center;
 }
 
 .networkEssentialCard {
@@ -572,6 +573,10 @@ body {
     line-height: 80%; /* 38.4px */
     letter-spacing: -2px;
     text-transform: uppercase;
+  }
+
+  .networkEssentialCards {
+    justify-content: left;
   }
 }
 
@@ -700,7 +705,6 @@ body {
     align-self: stretch;
   }
 
-  
   .networkEssentialCard {
     max-width: 340px;
   }

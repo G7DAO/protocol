@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './LandingPage.module.css'
 import { useMediaQuery } from 'summon-ui/mantine'
@@ -30,9 +30,22 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const [scrollThreshold, setScrollThreshold] = useState(0)
   const [navbarOpen, setNavBarOpen] = useState<boolean>(false)
   const smallView = useMediaQuery('(max-width: 750px)')
-  const mediumView = useMediaQuery('(max-width: 1199px)')
+  const mediumView = useMediaQuery('(max-width: 1416px)')
   const totalSections = 4
-  const maxThreshold = 1000
+  const maxThreshold = 750
+  const mainLayoutRef = useRef<HTMLDivElement>(null);
+
+  const scrollToTop = () => {
+    if (mainLayoutRef.current) {
+      mainLayoutRef.current.scrollTop = 0;
+    }
+  };
+
+  const scrollToBottom = () => {
+    if (mainLayoutRef.current) {
+      mainLayoutRef.current.scrollTop = mainLayoutRef.current.scrollHeight;
+    }
+  };
 
   const handleScroll = (event: { deltaY: number }) => {
     const deltaY = event.deltaY
@@ -52,12 +65,14 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     if (newScrollThreshold > maxThreshold && currentSectionIndex < totalSections - 1) {
       setScrollThreshold(0)
       setCurrentSectionIndex((prevIndex) => prevIndex + 1)
+      scrollToTop()
     } else if (newScrollThreshold < 0) {
       if (scrollThreshold > 0) {
         setScrollThreshold(0)
       } else if (currentSectionIndex > 0) {
         setScrollThreshold(maxThreshold)
         setCurrentSectionIndex((prevIndex) => prevIndex - 1)
+        scrollToBottom()
       }
     }
   }
@@ -255,9 +270,8 @@ const LandingPage: React.FC<LandingPageProps> = () => {
           </>
         )}
         {/* MAIN LAYOUT */}
-        <div className={
-          `${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}
-           ${(currentSectionIndex === 1 || currentSectionIndex === 2 || currentSectionIndex === 3) && smallView ? styles.mainLayoutStart : ""}`}>
+        <div ref={mainLayoutRef} className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}
+           ${(currentSectionIndex === 1 || currentSectionIndex === 2 || currentSectionIndex === 3) && (smallView || mediumView) ? styles.mainLayoutStart : ""}`}>
           {/* Main */}
           {currentSectionIndex === 0 && (
             <div className={styles.contentContainer}>
