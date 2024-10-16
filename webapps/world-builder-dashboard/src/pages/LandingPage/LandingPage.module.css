@@ -529,8 +529,6 @@ body {
   .layoutDarkened {
   }
 
-
-
   .mainLayout {
     display: flex;
     padding: 30px 24px;
@@ -609,12 +607,7 @@ body {
   }
 
   .navbarContainer {
-    /* display: flex;
-    padding-bottom: 12px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 24px;
-    align-self: stretch; */
+    z-index: 1000;
   }
 
   .navContainer {
@@ -623,7 +616,7 @@ body {
     top: 72px;
     left: 0;
     width: 100vw; /* Full width */
-    background-color: #171717;
+    background-color: rgba(0, 0, 0, 0.75);
     z-index: 1000; /* Ensure it's on top */
     padding: 24px 24px 24px 24px;
     display: flex;
@@ -631,7 +624,6 @@ body {
     align-items: flex-start;
     justify-content: flex-start;
   }
-  
 
   .navItem {
     display: flex;
@@ -668,5 +660,16 @@ body {
     align-items: flex-start;
     gap: 4px;
     align-self: stretch;
+  }
+
+  .layoutBlur::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 999;
   }
 }

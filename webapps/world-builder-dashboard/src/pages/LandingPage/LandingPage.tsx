@@ -152,7 +152,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
 
   return (
     <>
-      <div className={styles.layout}>
+      <div className={`${styles.layout} ${navbarOpen && styles.layoutBlur}`}>
         {/* NAVBAR */}
         {!navbarOpen && (
           <div className={styles.navbarContainer}>
