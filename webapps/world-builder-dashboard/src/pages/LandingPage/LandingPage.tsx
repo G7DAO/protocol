@@ -186,21 +186,26 @@ const LandingPage: React.FC<LandingPageProps> = () => {
             </div>
           </div>
           {navbarOpen && (
-              <div className={styles.navContainer}>
-                {NAVBAR_ITEMS.map((item, index) => (
-                  <div
-                    key={index}
-                    className={item.name === 'Home' ? styles.navItemHome : styles.navItem}
-                    onClick={() => navigateLink(item)}
-                  >
-                    {item.name}
-                  </div>
-                ))}
+            <div className={styles.navContainer}>
+              {NAVBAR_ITEMS.map((item, index) => (
+                <div
+                  key={index}
+                  className={item.name === 'Home' ? styles.navItemHome : styles.navItem}
+                  onClick={() => navigateLink(item)}
+                >
+                  {item.name}
+                </div>
+              ))}
+              <div className={styles.ctaContainer}>
+                <div className={styles.startBuildingCTA} onClick={startBuilding}>
+                  Start building
+                </div>
               </div>
+            </div>
           )}
         </div>
         {/* MAIN LAYOUT */}
-        <div className={styles.mainLayout}>
+        <div className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}`}>
           {/* Main */}
           {currentSectionIndex === 0 && (
             <div className={styles.contentContainer}>
