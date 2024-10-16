@@ -32,7 +32,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const smallView = useMediaQuery('(max-width: 750px)')
   const mediumView = useMediaQuery('(max-width: 1199px)')
   const totalSections = 4
-  const maxThreshold = 1000
+  const maxThreshold = 750
 
   const handleScroll = (event: { deltaY: number }) => {
     const deltaY = event.deltaY
