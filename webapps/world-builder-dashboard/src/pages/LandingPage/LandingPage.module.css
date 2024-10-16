@@ -607,23 +607,22 @@ body {
   }
 
   .navbarContainer {
-    /* display: flex;
-    padding-bottom: 12px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 24px;
-    align-self: stretch; */
+    z-index: 1000;
   }
 
   .navContainer {
+    padding-top: 100px;
+    position: fixed; /* Make the menu overlay the entire screen */
+    top: 72px;
+    left: 0;
+    width: 100vw; /* Full width */
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 1000; /* Ensure it's on top */
+    padding: 24px 24px 24px 24px;
     display: flex;
-    padding-top: 24px;
-    padding-bottom: 16px;
     flex-direction: column;
     align-items: flex-start;
-    gap: 4px;
-    align-self: stretch;
-    z-index: 1;
+    justify-content: flex-start;
   }
 
   .navItem {
@@ -661,5 +660,16 @@ body {
     align-items: flex-start;
     gap: 4px;
     align-self: stretch;
+  }
+
+  .layoutBlur::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 999;
   }
 }
