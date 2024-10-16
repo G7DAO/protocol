@@ -32,7 +32,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const smallView = useMediaQuery('(max-width: 750px)')
   const mediumView = useMediaQuery('(max-width: 1416px)')
   const totalSections = 4
-  const maxThreshold = 200
+  const maxThreshold = 500
   const mainLayoutRef = useRef<HTMLDivElement>(null)
 
   const scrollToTop = () => {
