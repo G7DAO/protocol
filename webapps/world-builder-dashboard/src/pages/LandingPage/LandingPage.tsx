@@ -82,18 +82,17 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     let accumulatedDeltaY = 0
     let isTouching = false
     let isScrollingSection = false
-
+  
     const handleScrollEvents = (event: WheelEvent | KeyboardEvent | TouchEvent) => {
       if (navbarOpen) return
+  
       let deltaY = 0
-      console.log(isTouching)
-      console.log(isScrollingSection)
-
+  
       if ('deltaY' in event) {
         deltaY = event.deltaY
         handleScroll({ deltaY: deltaY })
       }
-
+  
       if ('key' in event) {
         if (event.key === 'ArrowUp') {
           deltaY = -maxThreshold
@@ -102,43 +101,61 @@ const LandingPage: React.FC<LandingPageProps> = () => {
         }
         handleScroll({ deltaY })
       }
-
+  
       if (event.type === 'touchstart' && 'touches' in event) {
         isTouching = true
         startY = event.touches[0].clientY
         accumulatedDeltaY = 0
         isScrollingSection = false
       }
-
+  
       if (event.type === 'touchmove' && 'touches' in event) {
-        const touchY = event.touches[0].clientY;
-        deltaY = (startY - touchY);
-        accumulatedDeltaY += deltaY;
-        startY = touchY;
-
-        const scrollableElement = document.querySelector(`.${styles.contentContainer}`);
+        if (!isTouching) return
+        const touchY = event.touches[0].clientY
+        deltaY = (startY - touchY)
+        accumulatedDeltaY += deltaY
+        startY = touchY
+  
+        const scrollableElement = document.querySelector('.contentContainer')
         if (scrollableElement) {
-          const atBottom = scrollableElement.scrollHeight - scrollableElement.scrollTop === scrollableElement.clientHeight;
-          const atTop = scrollableElement.scrollTop === 0;
-
-          if (deltaY > 0 && atBottom) {
-            isScrollingSection = true;
-            handleScroll({ deltaY: maxThreshold });
-          } else if (deltaY < 0 && atTop) {
-            isScrollingSection = true;
-            handleScroll({ deltaY: -maxThreshold });
+          const atBottom = scrollableElement.scrollHeight - scrollableElement.scrollTop === scrollableElement.clientHeight
+          const atTop = scrollableElement.scrollTop === 0
+  
+          // Check if we should lock the scroll and move to the next section
+          if (atBottom && deltaY > 0 && !isScrollingSection) {
+            // If user is swiping up at the bottom of the section, move to next
+            isScrollingSection = true
+            handleScroll({ deltaY: maxThreshold })
+          } else if (atTop && deltaY < 0 && !isScrollingSection) {
+            // If user is swiping down at the top of the section, move to previous
+            isScrollingSection = true
+            handleScroll({ deltaY: -maxThreshold })
           }
         }
       }
-
+  
+      if (event.type === 'touchend') {
+        if (!isTouching) return
+        isTouching = false
+  
+        // Handle section change when swipe ends
+        if (accumulatedDeltaY > 0) {
+          handleScroll({ deltaY: maxThreshold / 2 })
+        } else if (accumulatedDeltaY < 0) {
+          handleScroll({ deltaY: -maxThreshold / 2 })
+        }
+  
+        accumulatedDeltaY = 0
+        isScrollingSection = false // Reset section scroll lock
+      }
     }
-
+  
     window.addEventListener('wheel', handleScrollEvents)
     window.addEventListener('keydown', handleScrollEvents)
     window.addEventListener('touchstart', handleScrollEvents)
     window.addEventListener('touchmove', handleScrollEvents)
     window.addEventListener('touchend', handleScrollEvents)
-
+  
     return () => {
       window.removeEventListener('wheel', handleScrollEvents)
       window.removeEventListener('keydown', handleScrollEvents)
