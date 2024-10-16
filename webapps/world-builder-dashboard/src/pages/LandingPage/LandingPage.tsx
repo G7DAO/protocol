@@ -421,13 +421,13 @@ const LandingPage: React.FC<LandingPageProps> = () => {
               )}
             </div>
           )}
-          <div className={styles.scrollbarContainer}>
+          {!smallView && (<div className={styles.scrollbarContainer}>
             {[...Array(totalSections)].map((_, index) => (
               <div key={index} className={styles.scrollBar}>
                 <div style={getScrollBarFillStyle(index)} className={styles.scrollBarFill} />
               </div>
             ))}
-          </div>
+          </div>)}
         </div>
 
         {smallView ? (
