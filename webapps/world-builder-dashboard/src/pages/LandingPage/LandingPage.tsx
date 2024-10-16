@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './LandingPage.module.css'
 import { useMediaQuery } from 'summon-ui/mantine'
@@ -75,7 +75,6 @@ const LandingPage: React.FC<LandingPageProps> = () => {
 
       if ('deltaY' in event) {
         deltaY = event.deltaY
-        const height = event.pageY;
         handleScroll({ deltaY: deltaY })
       }
 
