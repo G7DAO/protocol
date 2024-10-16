@@ -498,6 +498,11 @@ body {
   background-size: contain;
 }
 
+.networkEssentialDiscord {
+  background: url('../../assets/G7DiscordCardDark.jpg') no-repeat center center;
+  background-size: contain;
+}
+
 .networkEssentialCardText {
   display: flex;
   flex-direction: column;
