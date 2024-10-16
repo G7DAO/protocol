@@ -86,6 +86,8 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     const handleScrollEvents = (event: WheelEvent | KeyboardEvent | TouchEvent) => {
       if (navbarOpen) return
       let deltaY = 0
+      console.log(isTouching)
+      console.log(isScrollingSection)
 
       if ('deltaY' in event) {
         deltaY = event.deltaY
@@ -119,13 +121,10 @@ const LandingPage: React.FC<LandingPageProps> = () => {
           const atBottom = scrollableElement.scrollHeight - scrollableElement.scrollTop === scrollableElement.clientHeight;
           const atTop = scrollableElement.scrollTop === 0;
 
-          // Handle section transitions during touchmove
           if (deltaY > 0 && atBottom) {
-            // If user is swiping up at the bottom of the section, move to next
             isScrollingSection = true;
             handleScroll({ deltaY: maxThreshold });
           } else if (deltaY < 0 && atTop) {
-            // If user is swiping down at the top of the section, move to previous
             isScrollingSection = true;
             handleScroll({ deltaY: -maxThreshold });
           }
