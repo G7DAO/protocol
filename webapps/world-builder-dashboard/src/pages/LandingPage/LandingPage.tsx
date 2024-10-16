@@ -32,7 +32,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const smallView = useMediaQuery('(max-width: 750px)')
   const mediumView = useMediaQuery('(max-width: 1416px)')
   const totalSections = 4
-  const maxThreshold = 750
+  const maxThreshold = 500
   const mainLayoutRef = useRef<HTMLDivElement>(null);
 
   const scrollToTop = () => {
@@ -425,6 +425,23 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                     <div className={styles.networkEssentialCardTitle}>Docs</div>
                     <div className={styles.networkEssentialCardDescription}>
                       Get more information about building in the G7 nation
+                    </div>
+                  </div>
+                </div>
+                <div
+                  className={styles.networkEssentialCard}
+                  onClick={() =>
+                    window.open(
+                      'https://discord.com/invite/g7dao',
+                      '_blank'
+                    )
+                  }
+                >
+                  <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialDiscord}`} />
+                  <div className={styles.networkEssentialCardText}>
+                    <div className={styles.networkEssentialCardTitle}>Discord</div>
+                    <div className={styles.networkEssentialCardDescription}>
+                    Join other builders on Discord
                     </div>
                   </div>
                 </div>
