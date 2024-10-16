@@ -716,7 +716,7 @@ body {
 
   .scrollbarContainer {
     position: fixed;
-    right: 22px;
+    right: 23px;
     height: calc(100% - 180px);
   }
 }
