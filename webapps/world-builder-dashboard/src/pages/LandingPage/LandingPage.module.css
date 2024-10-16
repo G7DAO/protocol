@@ -131,6 +131,7 @@ body {
   border-radius: 12px;
   border: 1px solid #727272;
   background: url('../../assets/G7LandingPageBGDark.jpg') lightgray 50% / cover no-repeat;
+  height: fit-content;
 }
 
 .titleContainer {
@@ -520,7 +521,7 @@ body {
 @media (max-width: 1199px) {
   .layout {
     display: flex;
-    padding: 16px;
+    padding: 24px;
     flex-direction: column;
     align-items: center;
     gap: 16px;
@@ -671,5 +672,9 @@ body {
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.75);
     z-index: 999;
+  }
+
+  .layout {
+    padding: 16px;
   }
 }
