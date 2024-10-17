@@ -12,7 +12,7 @@ import MarketWarsLogo from '@/assets/MarketWarsLogo'
 import SummonLogo from '@/assets/SummonLogo'
 import SummonTextLogo from '@/assets/SummonTextLogo'
 
-interface LandingPageProps { }
+interface LandingPageProps {}
 
 const LandingPage: React.FC<LandingPageProps> = () => {
   const NAVBAR_ITEMS = [
@@ -29,7 +29,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const [scrollThreshold, setScrollThreshold] = useState(0)
   const [navbarOpen, setNavBarOpen] = useState<boolean>(false)
   const smallView = useMediaQuery('(max-width: 750px)')
-  const mediumView = useMediaQuery('(max-width: 1416px)')
+  const mediumView = useMediaQuery('(max-width: 1199px)')
   const totalSections = 4
   const maxThreshold = 750
   const networkCardsRef = useRef<HTMLDivElement>(null)
@@ -51,15 +51,12 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     const networkCardsContainer = networkCardsRef.current
     if (networkCardsContainer) {
       const maxScrollLeft = networkCardsContainer.scrollWidth - networkCardsContainer.clientWidth
-  
-      const newScrollLeft = Math.min(
-        networkCardsContainer.scrollLeft + scrollAmount,
-        maxScrollLeft
-      )
+
+      const newScrollLeft = Math.min(networkCardsContainer.scrollLeft + scrollAmount, maxScrollLeft)
 
       networkCardsContainer.scrollTo({
         left: newScrollLeft,
-        behavior: 'smooth',
+        behavior: 'smooth'
       })
     }
 
@@ -96,7 +93,6 @@ const LandingPage: React.FC<LandingPageProps> = () => {
         handleScroll({ deltaY })
       }
     }
-
 
     window.addEventListener('wheel', handleScrollEvents)
     window.addEventListener('keydown', handleScrollEvents)
@@ -177,7 +173,8 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                 )}
               </div>
             </div>
-          </div>)}
+          </div>
+        )}
 
         {navbarOpen && smallView && (
           <>
@@ -232,192 +229,195 @@ const LandingPage: React.FC<LandingPageProps> = () => {
           </>
         )}
         {/* MAIN LAYOUT */}
-        {!smallView && !mediumView && (<div className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}
-           ${(currentSectionIndex === 1 || currentSectionIndex === 2 || currentSectionIndex === 3) && (smallView || mediumView) ? styles.mainLayoutStart : ""}`}>
-          {/* Main */}
-          {currentSectionIndex === 0 && (
-            <div className={styles.contentContainer}>
-              <div className={styles.pill}>DEVHUB</div>
-              <div className={styles.titleContainer}>
-                <div className={styles.titleText}>COME BUILD YOUR GAME</div>
-                <div className={styles.subtitleText}>Be a part of the future of gaming</div>
+        {!smallView && !mediumView && (
+          <div
+            className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}
+            ${(currentSectionIndex === 1 || currentSectionIndex === 2 || currentSectionIndex === 3) && (smallView || mediumView) ? styles.mainLayoutStart : ''}`}
+          >
+            {/* Main */}
+            {currentSectionIndex === 0 && (
+              <div className={styles.contentContainer}>
+                <div className={styles.pill}>DEVHUB</div>
+                <div className={styles.titleContainer}>
+                  <div className={styles.titleText}>COME BUILD YOUR GAME</div>
+                  <div className={styles.subtitleText}>Be a part of the future of gaming</div>
+                </div>
+                {!smallView ? (
+                  <div className={styles.ctaContainer}>
+                    <div
+                      className={styles.learnMoreCTA}
+                      onClick={() =>
+                        window.open(
+                          'https://wiki.game7.io/g7-developer-resource/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network/world-builder',
+                          '_blank'
+                        )
+                      }
+                    >
+                      Learn more
+                    </div>
+                    <div className={styles.startBuildingCTA} onClick={startBuilding}>
+                      Start building
+                    </div>
+                  </div>
+                ) : (
+                  <></>
+                )}
               </div>
-              {!smallView ? (
-                <div className={styles.ctaContainer}>
-                  <div className={styles.learnMoreCTA} onClick={() =>
-                    window.open(
-                      'https://wiki.game7.io/g7-developer-resource/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network/world-builder',
-                      '_blank'
-                    )
-                  }>Learn more</div>
-                  <div className={styles.startBuildingCTA} onClick={startBuilding}>
-                    Start building
+            )}
+            {/* G7 Benefits */}
+            {currentSectionIndex === 1 && (
+              <div className={styles.contentContainer}>
+                <div className={styles.sectionTitle}> Get all benefits of the G7 Nation</div>
+                <div className={styles.cards}>
+                  <div className={styles.card}>
+                    <div className={styles.cardTitle}>Build for Gamers</div>
+                    <div className={`${styles.cardImage} ${styles.cardImageGamers}`} />
+                    <div className={styles.cardDescription}>
+                      Bootstrap your game with access to 250k+ citizens and counting
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <></>
-              )}
-            </div>
-          )}
-
-          {/* G7 Benefits */}
-          {currentSectionIndex === 1 && (
-            <div className={styles.contentContainer}>
-              <div className={styles.sectionTitle}> Get all benefits of the G7 Nation</div>
-              <div className={styles.cards}>
-                <div className={styles.card}>
-                  <div className={styles.cardTitle}>Build for Gamers</div>
-                  <div className={`${styles.cardImage} ${styles.cardImageGamers}`} />
-                  <div className={styles.cardDescription}>
-                    Bootstrap your game with access to 250k+ citizens and counting
+                  <div className={styles.card}>
+                    <div className={styles.cardTitle}>Fast and efficient</div>
+                    <div className={`${styles.cardImage} ${styles.cardImageLightningQuick}`} />
+                    <div className={styles.cardDescription}>Lighting-quick transactions and low cost fees</div>
                   </div>
-                </div>
-                <div className={styles.card}>
-                  <div className={styles.cardTitle}>Fast and efficient</div>
-                  <div className={`${styles.cardImage} ${styles.cardImageLightningQuick}`} />
-                  <div className={styles.cardDescription}>Lighting-quick transactions and low cost fees</div>
-                </div>
-                <div className={styles.card}>
-                  <div className={styles.cardTitle}>Special economic zone</div>
-                  <div className={`${styles.cardImage} ${styles.cardImageSpecialEcon}`} />
-                  <div className={styles.cardDescription}>Gain free access to powerful tools as they are released</div>
-                </div>
-              </div>
-              {!smallView ? (
-                <div className={styles.ctaContainer}>
-                  <div className={styles.startBuildingCTA} onClick={startBuilding}>
-                    Start building
-                  </div>
-                </div>
-              ) : (
-                <></>
-              )}
-            </div>
-          )}
-
-          {/* Nation Allies */}
-          {currentSectionIndex === 2 && (
-            <div className={styles.contentContainer}>
-              <div className={styles.sectionTitle}> G7 Nation allies </div>
-              <div className={styles.sponsorCards}>
-                <div className={styles.sponsorCard}>
-                  <div className={styles.sponsorCardImage}>
-                    <HyperPlayLogo />
-                  </div>
-                </div>
-                <div className={styles.sponsorCard}>
-                  <div className={styles.sponsorCardImage}>
-                    <div className={styles.summonLogoContainer}>
-                      <SummonLogo />
-                      <SummonTextLogo />
+                  <div className={styles.card}>
+                    <div className={styles.cardTitle}>Special economic zone</div>
+                    <div className={`${styles.cardImage} ${styles.cardImageSpecialEcon}`} />
+                    <div className={styles.cardDescription}>
+                      Gain free access to powerful tools as they are released
                     </div>
                   </div>
                 </div>
-                <div className={styles.sponsorCard}>
-                  <div className={styles.sponsorCardImage}>
-                    <ArbitrumLogo />
+                {!smallView ? (
+                  <div className={styles.ctaContainer}>
+                    <div className={styles.startBuildingCTA} onClick={startBuilding}>
+                      Start building
+                    </div>
                   </div>
-                </div>
-                <div className={styles.sponsorCard}>
-                  <div className={styles.sponsorCardImage}>
-                    <ConduitLogo />
-                  </div>
-                </div>
-                <MarketWarsLogo />
+                ) : (
+                  <></>
+                )}
               </div>
-              {!smallView ? (
-                <div className={styles.ctaContainer}>
-                  <div className={styles.startBuildingCTA} onClick={startBuilding}>
-                    Start building
-                  </div>
-                </div>
-              ) : (
-                <></>
-              )}
-            </div>
-          )}
-
-          {/* Network Essential Cards */}
-          {currentSectionIndex === 3 && (
-            <div className={styles.contentContainer}>
-              <div className={styles.sectionTitle}>Start building with the network essentials</div>
-              <div ref={networkCardsRef} className={styles.networkEssentialCards}>
-                <div className={styles.networkEssentialCard} onClick={() => navigate('/faucet')}>
-                  <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialFaucet}`} />
-                  <div className={styles.networkEssentialCardText}>
-                    <div className={styles.networkEssentialCardTitle}>Faucet</div>
-                    <div className={styles.networkEssentialCardDescription}>
-                      Get testnet tokens to start building on G7 testnet
+            )}
+            {/* Nation Allies */}
+            {currentSectionIndex === 2 && (
+              <div className={styles.contentContainer}>
+                <div className={styles.sectionTitle}> G7 Nation allies </div>
+                <div className={styles.sponsorCards}>
+                  <div className={styles.sponsorCard}>
+                    <div className={styles.sponsorCardImage}>
+                      <HyperPlayLogo />
                     </div>
                   </div>
-                </div>
-                <div
-                  className={styles.networkEssentialCard}
-                  onClick={() => window.open('https://testnet.game7.io/', '_blank')}
-                >
-                  <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialExplorer}`} />
-                  <div className={styles.networkEssentialCardText}>
-                    <div className={styles.networkEssentialCardTitle}>Explorer</div>
-                    <div className={styles.networkEssentialCardDescription}>
-                      G7 Network block explorer powered by Blockscout. Track and interact directly with your smart
-                      contracts
+                  <div className={styles.sponsorCard}>
+                    <div className={styles.sponsorCardImage}>
+                      <div className={styles.summonLogoContainer}>
+                        <SummonLogo />
+                        <SummonTextLogo />
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div
-                  className={styles.networkEssentialCard}
-                  onClick={() =>
-                    window.open(
-                      'https://wiki.game7.io/g7-developer-resource/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network/world-builder',
-                      '_blank'
-                    )
-                  }
-                >
-                  <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialDocs}`} />
-                  <div className={styles.networkEssentialCardText}>
-                    <div className={styles.networkEssentialCardTitle}>Docs</div>
-                    <div className={styles.networkEssentialCardDescription}>
-                      Get more information about building in the G7 nation
+                  <div className={styles.sponsorCard}>
+                    <div className={styles.sponsorCardImage}>
+                      <ArbitrumLogo />
                     </div>
                   </div>
-                </div>
-                <div
-                  className={styles.networkEssentialCard}
-                  onClick={() =>
-                    window.open(
-                      'https://discord.com/invite/g7dao',
-                      '_blank'
-                    )
-                  }
-                >
-                  <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialDiscord}`} />
-                  <div className={styles.networkEssentialCardText}>
-                    <div className={styles.networkEssentialCardTitle}>Discord</div>
-                    <div className={styles.networkEssentialCardDescription}>
-                      Join other builders on Discord
+                  <div className={styles.sponsorCard}>
+                    <div className={styles.sponsorCardImage}>
+                      <ConduitLogo />
                     </div>
                   </div>
+                  <MarketWarsLogo />
                 </div>
+                {!smallView ? (
+                  <div className={styles.ctaContainer}>
+                    <div className={styles.startBuildingCTA} onClick={startBuilding}>
+                      Start building
+                    </div>
+                  </div>
+                ) : (
+                  <></>
+                )}
               </div>
-              {!smallView ? (
-                <div className={styles.ctaContainer}>
-                  <div className={styles.startBuildingCTA} onClick={startBuilding}>
-                    Start building
+            )}
+            {/* Network Essential Cards */}
+            {currentSectionIndex === 3 && (
+              <div className={styles.contentContainer}>
+                <div className={styles.sectionTitle}>Start building with the network essentials</div>
+                <div ref={networkCardsRef} className={styles.networkEssentialCards}>
+                  <div className={styles.networkEssentialCard} onClick={() => navigate('/faucet')}>
+                    <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialFaucet}`} />
+                    <div className={styles.networkEssentialCardText}>
+                      <div className={styles.networkEssentialCardTitle}>Faucet</div>
+                      <div className={styles.networkEssentialCardDescription}>
+                        Get testnet tokens to start building on G7 testnet
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    className={styles.networkEssentialCard}
+                    onClick={() => window.open('https://testnet.game7.io/', '_blank')}
+                  >
+                    <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialExplorer}`} />
+                    <div className={styles.networkEssentialCardText}>
+                      <div className={styles.networkEssentialCardTitle}>Explorer</div>
+                      <div className={styles.networkEssentialCardDescription}>
+                        G7 Network block explorer powered by Blockscout. Track and interact directly with your smart
+                        contracts
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    className={styles.networkEssentialCard}
+                    onClick={() =>
+                      window.open(
+                        'https://wiki.game7.io/g7-developer-resource/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network/world-builder',
+                        '_blank'
+                      )
+                    }
+                  >
+                    <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialDocs}`} />
+                    <div className={styles.networkEssentialCardText}>
+                      <div className={styles.networkEssentialCardTitle}>Docs</div>
+                      <div className={styles.networkEssentialCardDescription}>
+                        Get more information about building in the G7 nation
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    className={styles.networkEssentialCard}
+                    onClick={() => window.open('https://discord.com/invite/g7dao', '_blank')}
+                  >
+                    <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialDiscord}`} />
+                    <div className={styles.networkEssentialCardText}>
+                      <div className={styles.networkEssentialCardTitle}>Discord</div>
+                      <div className={styles.networkEssentialCardDescription}>Join other builders on Discord</div>
+                    </div>
                   </div>
                 </div>
-              ) : (
-                <></>
-              )}
-            </div>
-          )}
-          {!smallView && !mediumView && (<div className={styles.scrollbarContainer}>
-            {[...Array(totalSections)].map((_, index) => (
-              <div key={index} className={styles.scrollBar}>
-                <div style={getScrollBarFillStyle(index)} className={styles.scrollBarFill} />
+                {!smallView ? (
+                  <div className={styles.ctaContainer}>
+                    <div className={styles.startBuildingCTA} onClick={startBuilding}>
+                      Start building
+                    </div>
+                  </div>
+                ) : (
+                  <></>
+                )}
               </div>
-            ))}
-          </div>)}
-        </div>)}
+            )}
+            {!smallView && !mediumView && (
+              <div className={styles.scrollbarContainer}>
+                {[...Array(totalSections)].map((_, index) => (
+                  <div key={index} className={styles.scrollBar}>
+                    <div style={getScrollBarFillStyle(index)} className={styles.scrollBarFill} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {(smallView || mediumView) && (
           <div className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}`}>
@@ -453,7 +453,9 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   <div className={styles.card}>
                     <div className={styles.cardTitle}>Special economic zone</div>
                     <div className={`${styles.cardImage} ${styles.cardImageSpecialEcon}`} />
-                    <div className={styles.cardDescription}>Gain free access to powerful tools as they are released</div>
+                    <div className={styles.cardDescription}>
+                      Gain free access to powerful tools as they are released
+                    </div>
                   </div>
                 </div>
               </div>
@@ -536,31 +538,27 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                 </div>
                 <div
                   className={styles.networkEssentialCard}
-                  onClick={() =>
-                    window.open(
-                      'https://discord.com/invite/g7dao',
-                      '_blank'
-                    )
-                  }
+                  onClick={() => window.open('https://discord.com/invite/g7dao', '_blank')}
                 >
                   <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialDiscord}`} />
                   <div className={styles.networkEssentialCardText}>
                     <div className={styles.networkEssentialCardTitle}>Discord</div>
-                    <div className={styles.networkEssentialCardDescription}>
-                      Join other builders on Discord
-                    </div>
+                    <div className={styles.networkEssentialCardDescription}>Join other builders on Discord</div>
                   </div>
                 </div>
               </div>
             </div>
-            {!smallView && !mediumView && (<div className={styles.scrollbarContainer}>
-              {[...Array(totalSections)].map((_, index) => (
-                <div key={index} className={styles.scrollBar}>
-                  <div style={getScrollBarFillStyle(index)} className={styles.scrollBarFill} />
-                </div>
-              ))}
-            </div>)}
-          </div>)}
+            {!smallView && !mediumView && (
+              <div className={styles.scrollbarContainer}>
+                {[...Array(totalSections)].map((_, index) => (
+                  <div key={index} className={styles.scrollBar}>
+                    <div style={getScrollBarFillStyle(index)} className={styles.scrollBarFill} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {smallView ? (
           <div className={styles.startBuildingCTA} onClick={startBuilding}>
