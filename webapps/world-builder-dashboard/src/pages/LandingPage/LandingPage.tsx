@@ -18,7 +18,6 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const NAVBAR_ITEMS = [
     { name: 'Home', link: '/' },
     { name: 'Faucet', link: 'faucet' },
-    { name: 'Bridge', link: 'bridge' },
     { name: 'Community', link: 'https://discord.com/invite/g7dao' },
     {
       name: 'Docs',
@@ -49,11 +48,17 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     }
     setScrollThreshold(newScrollThreshold)
 
-    // Horizontal scrolling for the cards
     const networkCardsContainer = networkCardsRef.current
     if (networkCardsContainer) {
+      const maxScrollLeft = networkCardsContainer.scrollWidth - networkCardsContainer.clientWidth
+  
+      const newScrollLeft = Math.min(
+        networkCardsContainer.scrollLeft + scrollAmount,
+        maxScrollLeft
+      )
+
       networkCardsContainer.scrollTo({
-        left: networkCardsContainer.scrollLeft + deltaY,
+        left: newScrollLeft,
         behavior: 'smooth',
       })
     }
@@ -346,15 +351,6 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                     </div>
                   </div>
                 </div>
-                <div className={styles.networkEssentialCard} onClick={() => navigate('/bridge')}>
-                  <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialBridge}`} />
-                  <div className={styles.networkEssentialCardText}>
-                    <div className={styles.networkEssentialCardTitle}>Bridge</div>
-                    <div className={styles.networkEssentialCardDescription}>
-                      Bridge tokens between Ethereum, Arbitrum and the G7 network
-                    </div>
-                  </div>
-                </div>
                 <div
                   className={styles.networkEssentialCard}
                   onClick={() => window.open('https://testnet.game7.io/', '_blank')}
@@ -505,15 +501,6 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                     <div className={styles.networkEssentialCardTitle}>Faucet</div>
                     <div className={styles.networkEssentialCardDescription}>
                       Get testnet tokens to start building on G7 testnet
-                    </div>
-                  </div>
-                </div>
-                <div className={styles.networkEssentialCard} onClick={() => navigate('/bridge')}>
-                  <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialBridge}`} />
-                  <div className={styles.networkEssentialCardText}>
-                    <div className={styles.networkEssentialCardTitle}>Bridge</div>
-                    <div className={styles.networkEssentialCardDescription}>
-                      Bridge tokens between Ethereum, Arbitrum and the G7 network
                     </div>
                   </div>
                 </div>

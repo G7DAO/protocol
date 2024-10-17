@@ -24,11 +24,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({}) => {
       icon: <IconDroplets02 stroke={location.pathname.startsWith('/faucet') ? '#fff' : '#B9B9B9'} />
     },
     {
-      name: 'bridge',
-      navigateTo: '/bridge',
-      icon: <IconWallet04 stroke={location.pathname.startsWith('/bridge') ? '#fff' : '#B9B9B9'} />
-    },
-    {
       name: 'explorer',
       navigateTo: 'https://testnet.game7.io/',
       icon: <IconExplorer stroke={'#B9B9B9'} />
