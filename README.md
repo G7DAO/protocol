@@ -56,6 +56,15 @@ their staked tokens.
 Pool administrators can change any of these parameters at any time. To make a pool immutable, we recommend
 transferring administration of that pool to the zero address.
 
+### Metronome
+
+The `Metronome` contract allows anyone to set incentivize for Game7 chain users to submit transactions at regular intervals.
+
+These incentives can have different purposes for different applications. For example, they can be used to improve the fairness of blockhash-based
+on-chain entropy sources. We also use the `Metronome` to incentivize steady block production on Game7 testnet.
+
+- The [`Metronome` smart contract](./web3/contracts/metronome/Metronome.sol).
+- [`robognome`](./cmd/robognome/README.md) - A reference bot which claims `Metronome` bounties.
 
 ## Development
 
@@ -64,7 +73,7 @@ transferring administration of that pool to the zero address.
 - [Node.js](https://nodejs.org/en) (version >= 20)
 - [`hardhat`](https://github.com/NomicFoundation/hardhat), which we used to build and test our smart contracts
 - [Go](https://go.dev/) (version >= 1.21), for the `game7` CLI, and other developmental and operational tools
-- [`seer`](https://github.com/moonstream-to/seer), which we use to generate Go bindings and command-line interfaces
+- [`seer`](https://github.com/G7DAO/seer), which we use to generate Go bindings and command-line interfaces
 
 
 ### Building and testing this code

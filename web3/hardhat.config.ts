@@ -1,8 +1,8 @@
 import { HardhatUserConfig } from 'hardhat/config';
 import '@nomicfoundation/hardhat-toolbox';
+import '@nomicfoundation/hardhat-foundry';
 import * as dotenv from 'dotenv';
 import { ChainId, NetworkExplorer, NetworkName, rpcUrls } from './constants/network';
-import '@nomicfoundation/hardhat-foundry';
 import './tasks/deploy-safe';
 
 dotenv.config();
@@ -46,19 +46,11 @@ const config: HardhatUserConfig = {
     },
     customChains: [
       {
-        network: NetworkName.Game7OrbitArbSepolia,
-        chainId: ChainId.Game7OrbitArbSepolia,
+        network: NetworkName.Game7Testnet,
+        chainId: ChainId.Game7Testnet,
         urls: {
-          apiURL: `${NetworkExplorer.Game7OrbitArbSepolia}/api`,
-          browserURL: NetworkExplorer.Game7OrbitArbSepolia,
-        },
-      },
-      {
-        network: NetworkName.Game7OrbitBaseSepolia,
-        chainId: ChainId.Game7OrbitBaseSepolia,
-        urls: {
-          apiURL: `${NetworkExplorer.Game7OrbitBaseSepolia}/api`,
-          browserURL: NetworkExplorer.Game7OrbitBaseSepolia,
+          apiURL: `${NetworkExplorer.Game7Testnet}/api`,
+          browserURL: NetworkExplorer.Game7Testnet,
         },
       },
     ],
@@ -72,20 +64,15 @@ const config: HardhatUserConfig = {
       chainId: ChainId.ArbitrumOne,
       url: rpcUrls[ChainId.ArbitrumOne],
     },
-    [NetworkName.Game7OrbitArbSepolia]: {
-      url: rpcUrls[ChainId.Game7OrbitArbSepolia],
-      chainId: ChainId.Game7OrbitArbSepolia,
-    },
-    [NetworkName.Game7OrbitBaseSepolia]: {
-      url: rpcUrls[ChainId.Game7OrbitBaseSepolia],
-      chainId: ChainId.Game7OrbitBaseSepolia,
+    [NetworkName.Game7Testnet]: {
+      url: rpcUrls[ChainId.Game7Testnet],
+      chainId: ChainId.Game7Testnet,
     },
     [NetworkName.ArbitrumSepolia]: {
       url: rpcUrls[ChainId.ArbitrumSepolia],
       chainId: ChainId.ArbitrumSepolia,
     },
-  }
-}
-
+  },
+};
 
 export default config;

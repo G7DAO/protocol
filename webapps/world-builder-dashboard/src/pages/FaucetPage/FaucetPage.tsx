@@ -1,8 +1,6 @@
 // React and hooks
 import { useEffect, useState } from 'react'
 import { useQueryClient } from 'react-query'
-// Constants
-import { L3_NATIVE_TOKEN_SYMBOL } from '../../../constants'
 // Styles
 import bridgeStyles from '../BridgePage/BridgePage.module.css'
 import styles from './FaucetPage.module.css'
@@ -44,14 +42,15 @@ const BridgePage = () => {
         </div>
       </div>
       <div className={styles.viewContainer}>
-        <div className={styles.warningWrapper}>
+        {/* TODO: make into component. */}
+        {/* <div className={styles.warningWrapper}>
           <div className={styles.warningContainer}>
             <div className={styles.warningBadge}>Warning</div>
             <div
               className={styles.warningText}
             >{`This faucet only dispenses ${L3_NATIVE_TOKEN_SYMBOL} tokens. For other tokens, please visit external faucets.`}</div>
           </div>
-        </div>
+        </div> */}
 
         <FaucetView />
       </div>

@@ -1062,18 +1062,18 @@ func (_Staker *StakerTransactor) CreatePool(opts *bind.TransactOpts, tokenType *
 	return _Staker.contract.Transact(opts, "createPool", tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds)
 }
 
-// CreatePool is a paid mutator transaction binding the contract method 0x911e476c.
+// CreatePool is a paid mutator transaction binding the contract method 0xdf44bf76.
 //
-// Solidity: function createPool(uint256 tokenType, address tokenAddress, uint256 tokenID, bool transferable, uint256 lockupSeconds, uint256 cooldownSeconds) returns()
-func (_Staker *StakerSession) CreatePool(tokenType *big.Int, tokenAddress common.Address, tokenID *big.Int, transferable bool, lockupSeconds *big.Int, cooldownSeconds *big.Int) (*types.Transaction, error) {
-	return _Staker.Contract.CreatePool(&_Staker.TransactOpts, tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds)
+// Solidity: function createPool(uint256 tokenType, address tokenAddress, uint256 tokenID, bool transferable, uint256 lockupSeconds, uint256 cooldownSeconds, address administrator) returns()
+func (_Staker *StakerSession) CreatePool(tokenType *big.Int, tokenAddress common.Address, tokenID *big.Int, transferable bool, lockupSeconds *big.Int, cooldownSeconds *big.Int, administrator common.Address) (*types.Transaction, error) {
+	return _Staker.Contract.CreatePool(&_Staker.TransactOpts, tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds, administrator)
 }
 
-// CreatePool is a paid mutator transaction binding the contract method 0x911e476c.
+// CreatePool is a paid mutator transaction binding the contract method 0xdf44bf76.
 //
-// Solidity: function createPool(uint256 tokenType, address tokenAddress, uint256 tokenID, bool transferable, uint256 lockupSeconds, uint256 cooldownSeconds) returns()
-func (_Staker *StakerTransactorSession) CreatePool(tokenType *big.Int, tokenAddress common.Address, tokenID *big.Int, transferable bool, lockupSeconds *big.Int, cooldownSeconds *big.Int) (*types.Transaction, error) {
-	return _Staker.Contract.CreatePool(&_Staker.TransactOpts, tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds)
+// Solidity: function createPool(uint256 tokenType, address tokenAddress, uint256 tokenID, bool transferable, uint256 lockupSeconds, uint256 cooldownSeconds, address administrator) returns()
+func (_Staker *StakerTransactorSession) CreatePool(tokenType *big.Int, tokenAddress common.Address, tokenID *big.Int, transferable bool, lockupSeconds *big.Int, cooldownSeconds *big.Int, administrator common.Address) (*types.Transaction, error) {
+	return _Staker.Contract.CreatePool(&_Staker.TransactOpts, tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds, administrator)
 }
 
 // InitiateUnstake is a paid mutator transaction binding the contract method 0xae5ac921.
@@ -1160,88 +1160,88 @@ func (_Staker *StakerTransactorSession) SetApprovalForAll(operator common.Addres
 	return _Staker.Contract.SetApprovalForAll(&_Staker.TransactOpts, operator, approved)
 }
 
-// StakeERC1155 is a paid mutator transaction binding the contract method 0x6fafa1e9.
+// StakeERC1155 is a paid mutator transaction binding the contract method 0xb0fe4a7e.
 //
-// Solidity: function stakeERC1155(uint256 poolID, uint256 amount) returns(uint256 positionTokenID)
-func (_Staker *StakerTransactor) StakeERC1155(opts *bind.TransactOpts, poolID *big.Int, amount *big.Int) (*types.Transaction, error) {
-	return _Staker.contract.Transact(opts, "stakeERC1155", poolID, amount)
+// Solidity: function stakeERC1155(address positionHolder, uint256 poolID, uint256 amount) returns(uint256 positionTokenID)
+func (_Staker *StakerTransactor) StakeERC1155(opts *bind.TransactOpts, positionHolder common.Address, poolID *big.Int, amount *big.Int) (*types.Transaction, error) {
+	return _Staker.contract.Transact(opts, "stakeERC1155", positionHolder, poolID, amount)
 }
 
-// StakeERC1155 is a paid mutator transaction binding the contract method 0x6fafa1e9.
+// StakeERC1155 is a paid mutator transaction binding the contract method 0xb0fe4a7e.
 //
-// Solidity: function stakeERC1155(uint256 poolID, uint256 amount) returns(uint256 positionTokenID)
-func (_Staker *StakerSession) StakeERC1155(poolID *big.Int, amount *big.Int) (*types.Transaction, error) {
-	return _Staker.Contract.StakeERC1155(&_Staker.TransactOpts, poolID, amount)
+// Solidity: function stakeERC1155(address positionHolder, uint256 poolID, uint256 amount) returns(uint256 positionTokenID)
+func (_Staker *StakerSession) StakeERC1155(positionHolder common.Address, poolID *big.Int, amount *big.Int) (*types.Transaction, error) {
+	return _Staker.Contract.StakeERC1155(&_Staker.TransactOpts, positionHolder, poolID, amount)
 }
 
-// StakeERC1155 is a paid mutator transaction binding the contract method 0x6fafa1e9.
+// StakeERC1155 is a paid mutator transaction binding the contract method 0xb0fe4a7e.
 //
-// Solidity: function stakeERC1155(uint256 poolID, uint256 amount) returns(uint256 positionTokenID)
-func (_Staker *StakerTransactorSession) StakeERC1155(poolID *big.Int, amount *big.Int) (*types.Transaction, error) {
-	return _Staker.Contract.StakeERC1155(&_Staker.TransactOpts, poolID, amount)
+// Solidity: function stakeERC1155(address positionHolder, uint256 poolID, uint256 amount) returns(uint256 positionTokenID)
+func (_Staker *StakerTransactorSession) StakeERC1155(positionHolder common.Address, poolID *big.Int, amount *big.Int) (*types.Transaction, error) {
+	return _Staker.Contract.StakeERC1155(&_Staker.TransactOpts, positionHolder, poolID, amount)
 }
 
-// StakeERC20 is a paid mutator transaction binding the contract method 0x37d9e9cc.
+// StakeERC20 is a paid mutator transaction binding the contract method 0x8d4a9e85.
 //
-// Solidity: function stakeERC20(uint256 poolID, uint256 amount) returns(uint256 positionTokenID)
-func (_Staker *StakerTransactor) StakeERC20(opts *bind.TransactOpts, poolID *big.Int, amount *big.Int) (*types.Transaction, error) {
-	return _Staker.contract.Transact(opts, "stakeERC20", poolID, amount)
+// Solidity: function stakeERC20(address positionHolder, uint256 poolID, uint256 amount) returns(uint256 positionTokenID)
+func (_Staker *StakerTransactor) StakeERC20(opts *bind.TransactOpts, positionHolder common.Address, poolID *big.Int, amount *big.Int) (*types.Transaction, error) {
+	return _Staker.contract.Transact(opts, "stakeERC20", positionHolder, poolID, amount)
 }
 
-// StakeERC20 is a paid mutator transaction binding the contract method 0x37d9e9cc.
+// StakeERC20 is a paid mutator transaction binding the contract method 0x8d4a9e85.
 //
-// Solidity: function stakeERC20(uint256 poolID, uint256 amount) returns(uint256 positionTokenID)
-func (_Staker *StakerSession) StakeERC20(poolID *big.Int, amount *big.Int) (*types.Transaction, error) {
-	return _Staker.Contract.StakeERC20(&_Staker.TransactOpts, poolID, amount)
+// Solidity: function stakeERC20(address positionHolder, uint256 poolID, uint256 amount) returns(uint256 positionTokenID)
+func (_Staker *StakerSession) StakeERC20(positionHolder common.Address, poolID *big.Int, amount *big.Int) (*types.Transaction, error) {
+	return _Staker.Contract.StakeERC20(&_Staker.TransactOpts, positionHolder, poolID, amount)
 }
 
-// StakeERC20 is a paid mutator transaction binding the contract method 0x37d9e9cc.
+// StakeERC20 is a paid mutator transaction binding the contract method 0x8d4a9e85.
 //
-// Solidity: function stakeERC20(uint256 poolID, uint256 amount) returns(uint256 positionTokenID)
-func (_Staker *StakerTransactorSession) StakeERC20(poolID *big.Int, amount *big.Int) (*types.Transaction, error) {
-	return _Staker.Contract.StakeERC20(&_Staker.TransactOpts, poolID, amount)
+// Solidity: function stakeERC20(address positionHolder, uint256 poolID, uint256 amount) returns(uint256 positionTokenID)
+func (_Staker *StakerTransactorSession) StakeERC20(positionHolder common.Address, poolID *big.Int, amount *big.Int) (*types.Transaction, error) {
+	return _Staker.Contract.StakeERC20(&_Staker.TransactOpts, positionHolder, poolID, amount)
 }
 
-// StakeERC721 is a paid mutator transaction binding the contract method 0xb2db30e9.
+// StakeERC721 is a paid mutator transaction binding the contract method 0x621519c0.
 //
-// Solidity: function stakeERC721(uint256 poolID, uint256 tokenID) returns(uint256 positionTokenID)
-func (_Staker *StakerTransactor) StakeERC721(opts *bind.TransactOpts, poolID *big.Int, tokenID *big.Int) (*types.Transaction, error) {
-	return _Staker.contract.Transact(opts, "stakeERC721", poolID, tokenID)
+// Solidity: function stakeERC721(address positionHolder, uint256 poolID, uint256 tokenID) returns(uint256 positionTokenID)
+func (_Staker *StakerTransactor) StakeERC721(opts *bind.TransactOpts, positionHolder common.Address, poolID *big.Int, tokenID *big.Int) (*types.Transaction, error) {
+	return _Staker.contract.Transact(opts, "stakeERC721", positionHolder, poolID, tokenID)
 }
 
-// StakeERC721 is a paid mutator transaction binding the contract method 0xb2db30e9.
+// StakeERC721 is a paid mutator transaction binding the contract method 0x621519c0.
 //
-// Solidity: function stakeERC721(uint256 poolID, uint256 tokenID) returns(uint256 positionTokenID)
-func (_Staker *StakerSession) StakeERC721(poolID *big.Int, tokenID *big.Int) (*types.Transaction, error) {
-	return _Staker.Contract.StakeERC721(&_Staker.TransactOpts, poolID, tokenID)
+// Solidity: function stakeERC721(address positionHolder, uint256 poolID, uint256 tokenID) returns(uint256 positionTokenID)
+func (_Staker *StakerSession) StakeERC721(positionHolder common.Address, poolID *big.Int, tokenID *big.Int) (*types.Transaction, error) {
+	return _Staker.Contract.StakeERC721(&_Staker.TransactOpts, positionHolder, poolID, tokenID)
 }
 
-// StakeERC721 is a paid mutator transaction binding the contract method 0xb2db30e9.
+// StakeERC721 is a paid mutator transaction binding the contract method 0x621519c0.
 //
-// Solidity: function stakeERC721(uint256 poolID, uint256 tokenID) returns(uint256 positionTokenID)
-func (_Staker *StakerTransactorSession) StakeERC721(poolID *big.Int, tokenID *big.Int) (*types.Transaction, error) {
-	return _Staker.Contract.StakeERC721(&_Staker.TransactOpts, poolID, tokenID)
+// Solidity: function stakeERC721(address positionHolder, uint256 poolID, uint256 tokenID) returns(uint256 positionTokenID)
+func (_Staker *StakerTransactorSession) StakeERC721(positionHolder common.Address, poolID *big.Int, tokenID *big.Int) (*types.Transaction, error) {
+	return _Staker.Contract.StakeERC721(&_Staker.TransactOpts, positionHolder, poolID, tokenID)
 }
 
-// StakeNative is a paid mutator transaction binding the contract method 0xe63c6bf0.
+// StakeNative is a paid mutator transaction binding the contract method 0xa1ed8fef.
 //
-// Solidity: function stakeNative(uint256 poolID) payable returns(uint256 positionTokenID)
-func (_Staker *StakerTransactor) StakeNative(opts *bind.TransactOpts, poolID *big.Int) (*types.Transaction, error) {
-	return _Staker.contract.Transact(opts, "stakeNative", poolID)
+// Solidity: function stakeNative(address positionHolder, uint256 poolID) payable returns(uint256 positionTokenID)
+func (_Staker *StakerTransactor) StakeNative(opts *bind.TransactOpts, positionHolder common.Address, poolID *big.Int) (*types.Transaction, error) {
+	return _Staker.contract.Transact(opts, "stakeNative", positionHolder, poolID)
 }
 
-// StakeNative is a paid mutator transaction binding the contract method 0xe63c6bf0.
+// StakeNative is a paid mutator transaction binding the contract method 0xa1ed8fef.
 //
-// Solidity: function stakeNative(uint256 poolID) payable returns(uint256 positionTokenID)
-func (_Staker *StakerSession) StakeNative(poolID *big.Int) (*types.Transaction, error) {
-	return _Staker.Contract.StakeNative(&_Staker.TransactOpts, poolID)
+// Solidity: function stakeNative(address positionHolder, uint256 poolID) payable returns(uint256 positionTokenID)
+func (_Staker *StakerSession) StakeNative(positionHolder common.Address, poolID *big.Int) (*types.Transaction, error) {
+	return _Staker.Contract.StakeNative(&_Staker.TransactOpts, positionHolder, poolID)
 }
 
-// StakeNative is a paid mutator transaction binding the contract method 0xe63c6bf0.
+// StakeNative is a paid mutator transaction binding the contract method 0xa1ed8fef.
 //
-// Solidity: function stakeNative(uint256 poolID) payable returns(uint256 positionTokenID)
-func (_Staker *StakerTransactorSession) StakeNative(poolID *big.Int) (*types.Transaction, error) {
-	return _Staker.Contract.StakeNative(&_Staker.TransactOpts, poolID)
+// Solidity: function stakeNative(address positionHolder, uint256 poolID) payable returns(uint256 positionTokenID)
+func (_Staker *StakerTransactorSession) StakeNative(positionHolder common.Address, poolID *big.Int) (*types.Transaction, error) {
+	return _Staker.Contract.StakeNative(&_Staker.TransactOpts, positionHolder, poolID)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
@@ -4877,6 +4877,8 @@ func CreateCreatePoolCommand() *cobra.Command {
 	var lockupSecondsRaw string
 	var cooldownSeconds *big.Int
 	var cooldownSecondsRaw string
+	var administrator common.Address
+	var administratorRaw string
 
 	cmd := &cobra.Command{
 		Use:   "create-pool",
@@ -4971,6 +4973,13 @@ func CreateCreatePoolCommand() *cobra.Command {
 			}
 			cooldownSeconds = new(big.Int)
 			cooldownSeconds.SetString(cooldownSecondsRaw, 0)
+
+			if administratorRaw == "" {
+				return fmt.Errorf("--administrator argument not specified")
+			} else if !common.IsHexAddress(administratorRaw) {
+				return fmt.Errorf("--administrator argument is not a valid Ethereum address")
+			}
+			administrator = common.HexToAddress(administratorRaw)
 
 			return nil
 		},
@@ -5117,6 +5126,7 @@ func CreateCreatePoolCommand() *cobra.Command {
 	cmd.Flags().StringVar(&transferableRaw, "transferable", "", "transferable argument (true, t, y, yes, 1 OR false, f, n, no, 0)")
 	cmd.Flags().StringVar(&lockupSecondsRaw, "lockup-seconds", "", "lockup-seconds argument")
 	cmd.Flags().StringVar(&cooldownSecondsRaw, "cooldown-seconds", "", "cooldown-seconds argument")
+	cmd.Flags().StringVar(&administratorRaw, "administrator", "", "administrator argument (common.Address)")
 
 	return cmd
 }
@@ -6029,6 +6039,8 @@ func CreateStakeErc1155Command() *cobra.Command {
 	var safeOperationType uint8
 	var safeNonce *big.Int
 
+	var positionHolder common.Address
+	var positionHolderRaw string
 	var poolID *big.Int
 	var poolIDRaw string
 	var amount *big.Int
@@ -6230,6 +6242,7 @@ func CreateStakeErc1155Command() *cobra.Command {
 	cmd.Flags().StringVar(&safeFunction, "safe-function", "", "Safe function overrider to use for the transaction (optional)")
 	cmd.Flags().StringVar(&safeNonceRaw, "safe-nonce", "", "Safe nonce overrider for the transaction (optional)")
 
+	cmd.Flags().StringVar(&positionHolderRaw, "position-holder", "", "position-holder argument (common.Address)")
 	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
 	cmd.Flags().StringVar(&amountRaw, "amount", "", "amount argument")
 
@@ -6245,6 +6258,8 @@ func CreateStakeErc20Command() *cobra.Command {
 	var safeOperationType uint8
 	var safeNonce *big.Int
 
+	var positionHolder common.Address
+	var positionHolderRaw string
 	var poolID *big.Int
 	var poolIDRaw string
 	var amount *big.Int
@@ -6446,6 +6461,7 @@ func CreateStakeErc20Command() *cobra.Command {
 	cmd.Flags().StringVar(&safeFunction, "safe-function", "", "Safe function overrider to use for the transaction (optional)")
 	cmd.Flags().StringVar(&safeNonceRaw, "safe-nonce", "", "Safe nonce overrider for the transaction (optional)")
 
+	cmd.Flags().StringVar(&positionHolderRaw, "position-holder", "", "position-holder argument (common.Address)")
 	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
 	cmd.Flags().StringVar(&amountRaw, "amount", "", "amount argument")
 
@@ -6461,6 +6477,8 @@ func CreateStakeErc721Command() *cobra.Command {
 	var safeOperationType uint8
 	var safeNonce *big.Int
 
+	var positionHolder common.Address
+	var positionHolderRaw string
 	var poolID *big.Int
 	var poolIDRaw string
 	var tokenID *big.Int
@@ -6662,6 +6680,7 @@ func CreateStakeErc721Command() *cobra.Command {
 	cmd.Flags().StringVar(&safeFunction, "safe-function", "", "Safe function overrider to use for the transaction (optional)")
 	cmd.Flags().StringVar(&safeNonceRaw, "safe-nonce", "", "Safe nonce overrider for the transaction (optional)")
 
+	cmd.Flags().StringVar(&positionHolderRaw, "position-holder", "", "position-holder argument (common.Address)")
 	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
 	cmd.Flags().StringVar(&tokenIDRaw, "token-id", "", "token-id argument")
 
@@ -6677,6 +6696,8 @@ func CreateStakeNativeCommand() *cobra.Command {
 	var safeOperationType uint8
 	var safeNonce *big.Int
 
+	var positionHolder common.Address
+	var positionHolderRaw string
 	var poolID *big.Int
 	var poolIDRaw string
 
@@ -6868,6 +6889,7 @@ func CreateStakeNativeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&safeFunction, "safe-function", "", "Safe function overrider to use for the transaction (optional)")
 	cmd.Flags().StringVar(&safeNonceRaw, "safe-nonce", "", "Safe nonce overrider for the transaction (optional)")
 
+	cmd.Flags().StringVar(&positionHolderRaw, "position-holder", "", "position-holder argument (common.Address)")
 	cmd.Flags().StringVar(&poolIDRaw, "pool-id", "", "pool-id argument")
 
 	return cmd
