@@ -8,7 +8,6 @@ import HyperPlayLogo from '@/assets/HyperPlayLogo'
 import IconGame7 from '@/assets/IconGame7'
 import IconGame7Logo from '@/assets/IconGame7Logo'
 import IconHamburgerLanding from '@/assets/IconHamburgerLanding'
-import MarketWarsLogo from '@/assets/MarketWarsLogo'
 import SummonLogo from '@/assets/SummonLogo'
 import SummonTextLogo from '@/assets/SummonTextLogo'
 
