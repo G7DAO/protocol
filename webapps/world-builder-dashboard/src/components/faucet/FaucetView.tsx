@@ -30,6 +30,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const smallView = useMediaQuery('(max-width: 1199px)')
 
   const values: AccountType[] = [`External Address`, `Connected Account`]
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true)
 
   useEffect(() => {
     const targetNetwork = ALL_NETWORKS.find((n) => n.chainId === faucetTargetChainId)
@@ -155,10 +156,11 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
 
   const lastClaimedTimestampQuery = useFaucetTimestamp(address)
   const faucetIntervalQuery = useFaucetInterval()
-    
+
   const nextClaimAvailable = useQuery(
     ['nextFaucetClaimTimestamp', address],
     async () => {
+      console.log('...')
       const lastClaimedL3Timestamp = Number(lastClaimedTimestampQuery.data)
       const faucetTimeInterval = Number(faucetIntervalQuery.data)
       const nextClaimL3Timestamp = lastClaimedL3Timestamp + faucetTimeInterval
@@ -172,6 +174,17 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
       enabled: !!address && !!lastClaimedTimestampQuery.data && !!faucetIntervalQuery.data
     }
   )
+
+  useEffect(() => {
+    const isDisabled =
+      (selectedNetwork.chainId === L3_NETWORK.chainId &&
+        nextClaimAvailable.data &&
+        !nextClaimAvailable.data.L3.isAvailable) ||
+      ((!isValidAddress || address === '') && selectedAccountType === 'External Address') ||
+      claim.isLoading
+
+    setIsButtonDisabled(isDisabled)
+  }, [selectedNetwork.chainId, nextClaimAvailable.data, isValidAddress, address, selectedAccountType, claim.isLoading])
 
   useEffect(() => {
     if (!nextClaimAvailable.data) return
@@ -256,7 +269,6 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
         </div>
         <button
           className={
-            !nextClaimAvailable.data ||
             (selectedNetwork.chainId === L3_NETWORK.chainId &&
               nextClaimAvailable.data &&
               !nextClaimAvailable.data.L3.isAvailable) ||
@@ -269,7 +281,6 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
             claim.mutate({ isL2Target: chainId === 13746, address })
           }}
           disabled={
-            !nextClaimAvailable.data ||
             (selectedNetwork.chainId === L3_NETWORK.chainId &&
               nextClaimAvailable.data &&
               !nextClaimAvailable.data.L3.isAvailable) ||
