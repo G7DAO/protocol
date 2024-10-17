@@ -12,7 +12,7 @@ interface DesktopSidebarProps {
 const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { connectedAccount, connectWallet, disconnectWallet, isConnecting } = useBlockchainContext()
+  const { connectedAccount, isMetaMask, connectWallet, disconnectWallet, isConnecting } = useBlockchainContext()
 
   return (
     <div className={styles.sideBar}>
@@ -52,7 +52,7 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
             <div className={styles.web3address}>
               {`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}
             </div>
-            <IconLogout onClick={disconnectWallet} className={styles.iconButton} />
+            {isMetaMask && <IconLogout onClick={disconnectWallet} className={styles.iconButton} />}
           </div>
         ) : (
           <div className={styles.connectWalletButton} onClick={connectWallet}>
