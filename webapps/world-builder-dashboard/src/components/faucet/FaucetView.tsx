@@ -30,7 +30,6 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const smallView = useMediaQuery('(max-width: 1199px)')
 
   const values: AccountType[] = [`External Address`, `Connected Account`]
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true)
 
   useEffect(() => {
     const targetNetwork = ALL_NETWORKS.find((n) => n.chainId === faucetTargetChainId)
@@ -174,17 +173,6 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
       enabled: !!address && !!lastClaimedTimestampQuery.data && !!faucetIntervalQuery.data
     }
   )
-
-  useEffect(() => {
-    const isDisabled =
-      (selectedNetwork.chainId === L3_NETWORK.chainId &&
-        nextClaimAvailable.data &&
-        !nextClaimAvailable.data.L3.isAvailable) ||
-      ((!isValidAddress || address === '') && selectedAccountType === 'External Address') ||
-      claim.isLoading
-
-    setIsButtonDisabled(isDisabled)
-  }, [selectedNetwork.chainId, nextClaimAvailable.data, isValidAddress, address, selectedAccountType, claim.isLoading])
 
   useEffect(() => {
     if (!nextClaimAvailable.data) return
