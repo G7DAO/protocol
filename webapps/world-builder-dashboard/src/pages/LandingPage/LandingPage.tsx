@@ -36,18 +36,6 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const mainLayoutRef = useRef<HTMLDivElement>(null)
   const contentContainerRef = useRef<HTMLDivElement>(null)
 
-  const scrollToTop = () => {
-    if (mainLayoutRef.current) {
-      mainLayoutRef.current.scrollTop = 0
-    }
-  }
-
-  const scrollToBottom = () => {
-    if (mainLayoutRef.current) {
-      mainLayoutRef.current.scrollTop = mainLayoutRef.current.scrollHeight
-    }
-  }
-
   const handleScroll = (event: { deltaY: number }) => {
     const deltaY = event.deltaY
     let newScrollThreshold = scrollThreshold + deltaY
@@ -76,11 +64,6 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   }
 
   useEffect(() => {
-    let startY = 0
-    let accumulatedDeltaY = 0
-    let isTouching = false
-    let isScrollingSection = false
-
     const handleScrollEvents = (event: WheelEvent | KeyboardEvent | TouchEvent) => {
       if (navbarOpen) return
 
@@ -98,38 +81,6 @@ const LandingPage: React.FC<LandingPageProps> = () => {
           deltaY = maxThreshold
         }
         handleScroll({ deltaY })
-      }
-
-      if (event.type === 'touchstart' && 'touches' in event) {
-        isTouching = true
-        startY = event.touches[0].clientY
-        accumulatedDeltaY = 0
-        isScrollingSection = false
-      }
-
-      if (event.type === 'touchmove' && 'touches' in event) {
-        if (!isTouching) return
-
-        const touchY = event.touches[0].clientY
-        deltaY = (startY - touchY)
-        accumulatedDeltaY += deltaY
-        startY = touchY
-
-        const scrollableElement = contentContainerRef.current
-        if (scrollableElement) {
-          const atBottom = (scrollableElement.scrollHeight - Math.ceil(scrollableElement.scrollTop)) === scrollableElement.clientHeight;
-          const atTop = scrollableElement.scrollTop === 0
-          if (accumulatedDeltaY > 10 && atBottom) {
-            isScrollingSection = true
-            handleScroll({ deltaY: maxThreshold + 200 })
-          }
-
-          else if (accumulatedDeltaY < -10 && atTop) {
-            isScrollingSection = true
-            handleScroll({ deltaY: -maxThreshold })
-          }
-          accumulatedDeltaY = 0
-        }
       }
     }
 
@@ -268,7 +219,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
           </>
         )}
         {/* MAIN LAYOUT */}
-        {!smallView && (<div ref={mainLayoutRef} className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}
+        {!smallView && !mediumView && (<div ref={mainLayoutRef} className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}
            ${(currentSectionIndex === 1 || currentSectionIndex === 2 || currentSectionIndex === 3) && (smallView || mediumView) ? styles.mainLayoutStart : ""}`}>
           {/* Main */}
           {currentSectionIndex === 0 && (
@@ -464,7 +415,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
           </div>)}
         </div>)}
 
-        {smallView && (
+        {(smallView || mediumView) && (
           <div ref={mainLayoutRef} className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}`}>
             {/* Main */}
             <div>
