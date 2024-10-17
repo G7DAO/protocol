@@ -159,7 +159,6 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const nextClaimAvailable = useQuery(
     ['nextFaucetClaimTimestamp', address],
     async () => {
-      console.log('...')
       const lastClaimedL3Timestamp = Number(lastClaimedTimestampQuery.data)
       const faucetTimeInterval = Number(faucetIntervalQuery.data)
       const nextClaimL3Timestamp = lastClaimedL3Timestamp + faucetTimeInterval
