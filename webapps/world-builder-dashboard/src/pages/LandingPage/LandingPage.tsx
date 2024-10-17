@@ -284,9 +284,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   <div className={styles.card}>
                     <div className={styles.cardTitle}>Special economic zone</div>
                     <div className={`${styles.cardImage} ${styles.cardImageSpecialEcon}`} />
-                    <div className={styles.cardDescription}>
-                      Gain free access to powerful tools as they are released
-                    </div>
+                    <div className={styles.cardDescription}>Access World Builder’s powerful developer tools</div>
                   </div>
                 </div>
                 {!smallView ? (
@@ -453,9 +451,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   <div className={styles.card}>
                     <div className={styles.cardTitle}>Special economic zone</div>
                     <div className={`${styles.cardImage} ${styles.cardImageSpecialEcon}`} />
-                    <div className={styles.cardDescription}>
-                      Gain free access to powerful tools as they are released
-                    </div>
+                    <div className={styles.cardDescription}>Access World Builder’s powerful developer tools</div>
                   </div>
                 </div>
               </div>
