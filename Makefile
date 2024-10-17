@@ -72,7 +72,7 @@ bindings/Terminus.go: hardhat
 	mkdir -p bindings/security/Terminus/diamond/facets/TerminusDiamondCutFacet
 	seer evm generate --package TerminusDiamondCutFacet --output bindings/security/Terminus/diamond/facets/TerminusDiamondCutFacet/TerminusDiamondCutFacet.go --hardhat web3/artifacts/contracts/security/terminus/diamond/facets/TerminusDiamondCutFacet.sol/TerminusDiamondCutFacet.json --cli --struct TerminusDiamondCutFacet
 	mkdir -p bindings/security/Terminus/diamond/facets/TerminusDiamondLoupeFacet
-	seer evm generate --package TerminusDiamondLoupeFacet --output bindings/security/terminus/diamond/facets/TerminusDiamondLoupeFacet/TerminusDiamondLoupeFacet.go --hardhat web3/artifacts/contracts/security/terminus/diamond/facets/TerminusDiamondLoupeFacet.sol/TerminusDiamondLoupeFacet.json --cli --struct TerminusDiamondLoupeFacet
+	seer evm generate --package TerminusDiamondLoupeFacet --output bindings/security/Terminus/diamond/facets/TerminusDiamondLoupeFacet/TerminusDiamondLoupeFacet.go --hardhat web3/artifacts/contracts/security/terminus/diamond/facets/TerminusDiamondLoupeFacet.sol/TerminusDiamondLoupeFacet.json --cli --struct TerminusDiamondLoupeFacet
 	mkdir -p bindings/security/Terminus/diamond/facets/TerminusOwnershipFacet
 	seer evm generate --package TerminusOwnershipFacet --output bindings/security/Terminus/diamond/facets/TerminusOwnershipFacet/TerminusOwnershipFacet.go --hardhat web3/artifacts/contracts/security/terminus/diamond/facets/TerminusOwnershipFacet.sol/TerminusOwnershipFacet.json --cli --struct TerminusOwnershipFacet
 
