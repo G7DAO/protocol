@@ -326,11 +326,6 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                       <ConduitLogo />
                     </div>
                   </div>
-                  <div className={styles.sponsorCard}>
-                    <div className={styles.sponsorCardImage}>
-                      <MarketWarsLogo />
-                    </div>
-                  </div>
                 </div>
                 {!smallView ? (
                   <div className={styles.ctaContainer}>
@@ -488,7 +483,6 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                       <ConduitLogo />
                     </div>
                   </div>
-                  <MarketWarsLogo />
                 </div>
               </div>
             </div>
