@@ -455,6 +455,10 @@
   scroll-behavior: smooth;
 }
 
+.networkEssentialCards::-webkit-scrollbar {
+  display: none;
+}
+
 .networkEssentialCard {
   display: flex;
   width: 340px;
