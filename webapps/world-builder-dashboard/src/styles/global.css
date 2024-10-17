@@ -82,8 +82,9 @@ button {
 }
 
 [data-theme='dark'] {
-  --mix-blend: normal;
+  --Landing-Page-First-Section-Height: calc(100svh - 196px);
 
+  --mix-blend: normal;
   --Blue-50: #175cd3; /* Adjusted from #eff8ff */
   --Blue-100: #1849a9; /* Adjusted from #d1e9ff */
   --Blue-200: #8abfff; /* Adjusted from #b3d8ff */

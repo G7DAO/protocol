@@ -741,10 +741,13 @@ body {
   .firstSection {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     align-self: stretch;
+    height: var(--Landing-Page-First-Section-Height);
+    flex: 1 0 auto;
   }
+
   .secondSection {
     display: flex;
     flex-direction: column;

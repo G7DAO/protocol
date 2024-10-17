@@ -467,12 +467,14 @@ const LandingPage: React.FC<LandingPageProps> = () => {
         {smallView && (
           <div ref={mainLayoutRef} className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}`}>
             {/* Main */}
-            <div className={styles.firstSection}>
-              <div className={styles.contentContainer}>
-                <div className={styles.pill}>DEVHUB</div>
-                <div className={styles.titleContainer}>
-                  <div className={styles.titleText}>COME BUILD YOUR GAME</div>
-                  <div className={styles.subtitleText}>Be a part of the future of gaming</div>
+            <div>
+              <div className={styles.firstSection}>
+                <div className={styles.contentContainer}>
+                  <div className={styles.pill}>DEVHUB</div>
+                  <div className={styles.titleContainer}>
+                    <div className={styles.titleText}>COME BUILD YOUR GAME</div>
+                    <div className={styles.subtitleText}>Be a part of the future of gaming</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -503,35 +505,35 @@ const LandingPage: React.FC<LandingPageProps> = () => {
             </div>
             {/* Nation Allies */}
             <div className={styles.thirdSection}>
-            <div className={styles.contentContainer}>
-              <div className={styles.sectionTitle}> G7 Nation allies </div>
-              <div className={styles.sponsorCards}>
-                <div className={styles.sponsorCard}>
-                  <div className={styles.sponsorCardImage}>
-                    <HyperPlayLogo />
-                  </div>
-                </div>
-                <div className={styles.sponsorCard}>
-                  <div className={styles.sponsorCardImage}>
-                    <div className={styles.summonLogoContainer}>
-                      <SummonLogo />
-                      <SummonTextLogo />
+              <div className={styles.contentContainer}>
+                <div className={styles.sectionTitle}> G7 Nation allies </div>
+                <div className={styles.sponsorCards}>
+                  <div className={styles.sponsorCard}>
+                    <div className={styles.sponsorCardImage}>
+                      <HyperPlayLogo />
                     </div>
                   </div>
-                </div>
-                <div className={styles.sponsorCard}>
-                  <div className={styles.sponsorCardImage}>
-                    <ArbitrumLogo />
+                  <div className={styles.sponsorCard}>
+                    <div className={styles.sponsorCardImage}>
+                      <div className={styles.summonLogoContainer}>
+                        <SummonLogo />
+                        <SummonTextLogo />
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className={styles.sponsorCard}>
-                  <div className={styles.sponsorCardImage}>
-                    <ConduitLogo />
+                  <div className={styles.sponsorCard}>
+                    <div className={styles.sponsorCardImage}>
+                      <ArbitrumLogo />
+                    </div>
                   </div>
+                  <div className={styles.sponsorCard}>
+                    <div className={styles.sponsorCardImage}>
+                      <ConduitLogo />
+                    </div>
+                  </div>
+                  <MarketWarsLogo />
                 </div>
-                <MarketWarsLogo />
               </div>
-            </div>
             </div>
 
             {/* Network Essential Cards */}
