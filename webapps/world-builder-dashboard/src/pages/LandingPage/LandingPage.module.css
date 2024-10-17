@@ -451,7 +451,10 @@ body {
   align-items: flex-start;
   gap: 24px;
   align-self: stretch;
-  justify-content: center;
+  justify-content: left;
+  overflow-x: auto;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
 }
 
 .networkEssentialCard {
@@ -739,6 +742,7 @@ body {
     align-items: center;
     gap: 16px;
     align-self: stretch;
+    overflow-x: unset;
   }
 
   .networkEssentialCard {

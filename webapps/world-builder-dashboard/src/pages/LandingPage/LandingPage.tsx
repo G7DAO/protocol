@@ -33,8 +33,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const mediumView = useMediaQuery('(max-width: 1416px)')
   const totalSections = 4
   const maxThreshold = 750
-  const mainLayoutRef = useRef<HTMLDivElement>(null)
-  const contentContainerRef = useRef<HTMLDivElement>(null)
+  const networkCardsRef = useRef<HTMLDivElement>(null)
 
   const handleScroll = (event: { deltaY: number }) => {
     const deltaY = event.deltaY
@@ -49,6 +48,15 @@ const LandingPage: React.FC<LandingPageProps> = () => {
       newScrollThreshold = scrollThreshold + scrollAmount
     }
     setScrollThreshold(newScrollThreshold)
+
+    // Horizontal scrolling for the cards
+    const networkCardsContainer = networkCardsRef.current
+    if (networkCardsContainer) {
+      networkCardsContainer.scrollTo({
+        left: networkCardsContainer.scrollLeft + deltaY,
+        behavior: 'smooth',
+      })
+    }
 
     if (newScrollThreshold > maxThreshold + 250 && currentSectionIndex < totalSections - 1) {
       setScrollThreshold(0)
@@ -219,11 +227,11 @@ const LandingPage: React.FC<LandingPageProps> = () => {
           </>
         )}
         {/* MAIN LAYOUT */}
-        {!smallView && !mediumView && (<div ref={mainLayoutRef} className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}
+        {!smallView && !mediumView && (<div className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}
            ${(currentSectionIndex === 1 || currentSectionIndex === 2 || currentSectionIndex === 3) && (smallView || mediumView) ? styles.mainLayoutStart : ""}`}>
           {/* Main */}
           {currentSectionIndex === 0 && (
-            <div ref={contentContainerRef} className={styles.contentContainer}>
+            <div className={styles.contentContainer}>
               <div className={styles.pill}>DEVHUB</div>
               <div className={styles.titleContainer}>
                 <div className={styles.titleText}>COME BUILD YOUR GAME</div>
@@ -249,7 +257,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
 
           {/* G7 Benefits */}
           {currentSectionIndex === 1 && (
-            <div ref={contentContainerRef} className={styles.contentContainer}>
+            <div className={styles.contentContainer}>
               <div className={styles.sectionTitle}> Get all benefits of the G7 Nation</div>
               <div className={styles.cards}>
                 <div className={styles.card}>
@@ -284,7 +292,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
 
           {/* Nation Allies */}
           {currentSectionIndex === 2 && (
-            <div ref={contentContainerRef} className={styles.contentContainer}>
+            <div className={styles.contentContainer}>
               <div className={styles.sectionTitle}> G7 Nation allies </div>
               <div className={styles.sponsorCards}>
                 <div className={styles.sponsorCard}>
@@ -326,9 +334,9 @@ const LandingPage: React.FC<LandingPageProps> = () => {
 
           {/* Network Essential Cards */}
           {currentSectionIndex === 3 && (
-            <div ref={contentContainerRef} className={styles.contentContainer}>
+            <div className={styles.contentContainer}>
               <div className={styles.sectionTitle}>Start building with the network essentials</div>
-              <div className={styles.networkEssentialCards}>
+              <div ref={networkCardsRef} className={styles.networkEssentialCards}>
                 <div className={styles.networkEssentialCard} onClick={() => navigate('/faucet')}>
                   <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialFaucet}`} />
                   <div className={styles.networkEssentialCardText}>
@@ -416,7 +424,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
         </div>)}
 
         {(smallView || mediumView) && (
-          <div ref={mainLayoutRef} className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}`}>
+          <div className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}`}>
             {/* Main */}
             <div>
               <div className={styles.firstSection}>
