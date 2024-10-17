@@ -18,7 +18,6 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const NAVBAR_ITEMS = [
     { name: 'Home', link: '/' },
     { name: 'Faucet', link: 'faucet' },
-    { name: 'Bridge', link: 'bridge' },
     { name: 'Community', link: 'https://discord.com/invite/g7dao' },
     {
       name: 'Docs',
@@ -32,9 +31,8 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const smallView = useMediaQuery('(max-width: 750px)')
   const mediumView = useMediaQuery('(max-width: 1416px)')
   const totalSections = 4
-  const maxThreshold = 500
-  const mainLayoutRef = useRef<HTMLDivElement>(null)
-  const contentContainerRef = useRef<HTMLDivElement>(null)
+  const maxThreshold = 750
+  const networkCardsRef = useRef<HTMLDivElement>(null)
 
   const handleScroll = (event: { deltaY: number }) => {
     const deltaY = event.deltaY
@@ -50,7 +48,22 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     }
     setScrollThreshold(newScrollThreshold)
 
-    if (newScrollThreshold > maxThreshold + 200 && currentSectionIndex < totalSections - 1) {
+    const networkCardsContainer = networkCardsRef.current
+    if (networkCardsContainer) {
+      const maxScrollLeft = networkCardsContainer.scrollWidth - networkCardsContainer.clientWidth
+  
+      const newScrollLeft = Math.min(
+        networkCardsContainer.scrollLeft + scrollAmount,
+        maxScrollLeft
+      )
+
+      networkCardsContainer.scrollTo({
+        left: newScrollLeft,
+        behavior: 'smooth',
+      })
+    }
+
+    if (newScrollThreshold > maxThreshold + 250 && currentSectionIndex < totalSections - 1) {
       setScrollThreshold(0)
       setCurrentSectionIndex((prevIndex) => Math.min(prevIndex + 1, totalSections - 1))
     } else if (newScrollThreshold < 0) {
@@ -219,11 +232,11 @@ const LandingPage: React.FC<LandingPageProps> = () => {
           </>
         )}
         {/* MAIN LAYOUT */}
-        {!smallView && !mediumView && (<div ref={mainLayoutRef} className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}
+        {!smallView && !mediumView && (<div className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}
            ${(currentSectionIndex === 1 || currentSectionIndex === 2 || currentSectionIndex === 3) && (smallView || mediumView) ? styles.mainLayoutStart : ""}`}>
           {/* Main */}
           {currentSectionIndex === 0 && (
-            <div ref={contentContainerRef} className={styles.contentContainer}>
+            <div className={styles.contentContainer}>
               <div className={styles.pill}>DEVHUB</div>
               <div className={styles.titleContainer}>
                 <div className={styles.titleText}>COME BUILD YOUR GAME</div>
@@ -249,7 +262,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
 
           {/* G7 Benefits */}
           {currentSectionIndex === 1 && (
-            <div ref={contentContainerRef} className={styles.contentContainer}>
+            <div className={styles.contentContainer}>
               <div className={styles.sectionTitle}> Get all benefits of the G7 Nation</div>
               <div className={styles.cards}>
                 <div className={styles.card}>
@@ -284,7 +297,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
 
           {/* Nation Allies */}
           {currentSectionIndex === 2 && (
-            <div ref={contentContainerRef} className={styles.contentContainer}>
+            <div className={styles.contentContainer}>
               <div className={styles.sectionTitle}> G7 Nation allies </div>
               <div className={styles.sponsorCards}>
                 <div className={styles.sponsorCard}>
@@ -326,24 +339,15 @@ const LandingPage: React.FC<LandingPageProps> = () => {
 
           {/* Network Essential Cards */}
           {currentSectionIndex === 3 && (
-            <div ref={contentContainerRef} className={styles.contentContainer}>
+            <div className={styles.contentContainer}>
               <div className={styles.sectionTitle}>Start building with the network essentials</div>
-              <div className={styles.networkEssentialCards}>
+              <div ref={networkCardsRef} className={styles.networkEssentialCards}>
                 <div className={styles.networkEssentialCard} onClick={() => navigate('/faucet')}>
                   <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialFaucet}`} />
                   <div className={styles.networkEssentialCardText}>
                     <div className={styles.networkEssentialCardTitle}>Faucet</div>
                     <div className={styles.networkEssentialCardDescription}>
                       Get testnet tokens to start building on G7 testnet
-                    </div>
-                  </div>
-                </div>
-                <div className={styles.networkEssentialCard} onClick={() => navigate('/bridge')}>
-                  <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialBridge}`} />
-                  <div className={styles.networkEssentialCardText}>
-                    <div className={styles.networkEssentialCardTitle}>Bridge</div>
-                    <div className={styles.networkEssentialCardDescription}>
-                      Bridge tokens between Ethereum, Arbitrum and the G7 network
                     </div>
                   </div>
                 </div>
@@ -416,7 +420,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
         </div>)}
 
         {(smallView || mediumView) && (
-          <div ref={mainLayoutRef} className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}`}>
+          <div className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}`}>
             {/* Main */}
             <div>
               <div className={styles.firstSection}>
@@ -497,15 +501,6 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                     <div className={styles.networkEssentialCardTitle}>Faucet</div>
                     <div className={styles.networkEssentialCardDescription}>
                       Get testnet tokens to start building on G7 testnet
-                    </div>
-                  </div>
-                </div>
-                <div className={styles.networkEssentialCard} onClick={() => navigate('/bridge')}>
-                  <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialBridge}`} />
-                  <div className={styles.networkEssentialCardText}>
-                    <div className={styles.networkEssentialCardTitle}>Bridge</div>
-                    <div className={styles.networkEssentialCardDescription}>
-                      Bridge tokens between Ethereum, Arbitrum and the G7 network
                     </div>
                   </div>
                 </div>

@@ -6,7 +6,6 @@ import styles from './MainLayout.module.css'
 import IconDocumentation from '@/assets/IconDocumentation'
 import IconDroplets02 from '@/assets/IconDroplets02'
 import IconExplorer from '@/assets/IconExplorer'
-import IconWallet04 from '@/assets/IconWallet04'
 // Local components and assets
 import DesktopSidebar from '@/layouts/MainLayout/DesktopSidebar'
 import MobileSidebar from '@/layouts/MainLayout/MobileSidebar'
@@ -22,11 +21,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({}) => {
       name: 'faucet',
       navigateTo: '/faucet',
       icon: <IconDroplets02 stroke={location.pathname.startsWith('/faucet') ? '#fff' : '#B9B9B9'} />
-    },
-    {
-      name: 'bridge',
-      navigateTo: '/bridge',
-      icon: <IconWallet04 stroke={location.pathname.startsWith('/bridge') ? '#fff' : '#B9B9B9'} />
     },
     {
       name: 'explorer',
