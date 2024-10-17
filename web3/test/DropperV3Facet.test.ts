@@ -809,38 +809,5 @@ describe("DropperV3Facet", async function () {
                 signature
             )).to.be.revertedWith('Dropper: _claim -- Unknown token type in claim');
         });
-        it('DropperV3-23: Revert on Unknown Type', async function () {
-
-            const dropId = 5;
-            const requestID = 7;
-            const blockDeadline = Math.floor(Date.now() / 1000) + 3600;
-            const amount = 0;
-
-            const { domain, types, message } = await dropperClaimMessageHash(
-                chainId,
-                dropperV3Address,
-                dropId.toString(),
-                requestID.toString(),
-                user1.address,
-                blockDeadline.toString(),
-                amount.toString()
-            );
-            const signature = await admin0.signTypedData(domain, types, message);
-
-            //activate a non-initalized dropId to give tokenType 0 during claims.
-            await dropperV3Facet.setDropStatus(dropId, true);
-            const terminusAddress = await terminusFacet.getAddress();
-            await dropperV3Facet.setDropAuthorization(dropId, terminusAddress, 1);
-
-            await expect(dropperV3Facet.connect(user1).claim(
-                dropId,
-                requestID,
-                blockDeadline,
-                amount,
-                user1.address,
-                admin0.address,
-                signature
-            )).to.be.revertedWith('Dropper: _claim -- Unknown token type in claim');
-        });
     })
 })
