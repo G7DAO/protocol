@@ -32,7 +32,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const smallView = useMediaQuery('(max-width: 750px)')
   const mediumView = useMediaQuery('(max-width: 1416px)')
   const totalSections = 4
-  const maxThreshold = 500
+  const maxThreshold = 750
   const mainLayoutRef = useRef<HTMLDivElement>(null)
   const contentContainerRef = useRef<HTMLDivElement>(null)
 
@@ -50,7 +50,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     }
     setScrollThreshold(newScrollThreshold)
 
-    if (newScrollThreshold > maxThreshold + 200 && currentSectionIndex < totalSections - 1) {
+    if (newScrollThreshold > maxThreshold + 250 && currentSectionIndex < totalSections - 1) {
       setScrollThreshold(0)
       setCurrentSectionIndex((prevIndex) => Math.min(prevIndex + 1, totalSections - 1))
     } else if (newScrollThreshold < 0) {

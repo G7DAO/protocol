@@ -83,7 +83,7 @@ button {
 
 [data-theme='dark'] {
   --Landing-Page-First-Section-Height-Phone: calc(100svh - 196px);
-  --Landing-Page-First-Section-Height-Tablet: calc(100svh - 256px);
+  --Landing-Page-First-Section-Height-Tablet: calc(100svh - 172px);
   --mix-blend: normal;
   --Blue-50: #175cd3; /* Adjusted from #eff8ff */
   --Blue-100: #1849a9; /* Adjusted from #d1e9ff */
