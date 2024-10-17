@@ -719,7 +719,7 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 24px;
-    align-self: stretch;
+    justify-content: start;
   }
 
   .mainLayout {
@@ -729,11 +729,20 @@ body {
     align-items: center;
     flex: 1 0 0;
     align-self: stretch;
+    justify-content: start;
   }
 
   .scrollbarContainer {
     position: fixed;
     right: 23px;
     height: calc(100% - 180px);
+  }
+
+  .firstSection {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    align-self: stretch;
   }
 }
