@@ -118,7 +118,6 @@ const BridgeView = ({
   useEffect(() => {
     if (message.data === 'stake') {
       if (!L3_NETWORK.staker) {
-        console.log('staker is undefined')
         return
       }
       setDataForStake(L3_NETWORK.staker)
