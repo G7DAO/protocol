@@ -12,7 +12,7 @@ import MarketWarsLogo from '@/assets/MarketWarsLogo'
 import SummonLogo from '@/assets/SummonLogo'
 import SummonTextLogo from '@/assets/SummonTextLogo'
 
-interface LandingPageProps {}
+interface LandingPageProps { }
 
 const LandingPage: React.FC<LandingPageProps> = () => {
   const NAVBAR_ITEMS = [
@@ -326,7 +326,11 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                       <ConduitLogo />
                     </div>
                   </div>
-                  <MarketWarsLogo />
+                  <div className={styles.sponsorCard}>
+                    <div className={styles.sponsorCardImage}>
+                      <MarketWarsLogo />
+                    </div>
+                  </div>
                 </div>
                 {!smallView ? (
                   <div className={styles.ctaContainer}>
