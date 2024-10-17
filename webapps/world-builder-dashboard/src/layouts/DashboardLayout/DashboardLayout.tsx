@@ -64,7 +64,7 @@ const renderBottomMenu = ({
   isCollapsed: boolean
   closeMobileMenu: () => void
 }): ReactNode => {
-  const { connectedAccount, isMetaMask, disconnectWallet } = useBlockchainContext()
+  const { connectedAccount, disconnectWallet } = useBlockchainContext()
 
   return (
     <>
@@ -86,7 +86,7 @@ const renderBottomMenu = ({
             <div
               className={styles.web3address}
             >{`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}</div>
-            {isMetaMask && <IconLogout onClick={disconnectWallet} className={styles.disconnectButton} />}
+            {<IconLogout onClick={disconnectWallet} className={styles.disconnectButton} />}
           </div>
         )}
       </Stack>

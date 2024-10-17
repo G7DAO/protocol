@@ -13,8 +13,8 @@ import { useFaucetAPI } from '@/hooks/useFaucetAPI'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { timeDifferenceInHoursAndMinutes, timeDifferenceInHoursMinutesAndSeconds } from '@/utils/timeFormat'
 
-interface FaucetViewProps { }
-const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
+interface FaucetViewProps {}
+const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const [address, setAddress] = useState<string | undefined>('')
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false)
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L3_NETWORK)
@@ -120,6 +120,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
           nextClaimTimestamp: nextClaimL3Timestamp,
           isAvailable: isAvailableL3
         }
+
         queryClient.setQueryData(['nextFaucetClaimTimestamp', address], (oldData: any) => {
           if (oldData) {
             return {
@@ -154,7 +155,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
 
   const lastClaimedTimestampQuery = useFaucetTimestamp(address)
   const faucetIntervalQuery = useFaucetInterval()
-
+    
   const nextClaimAvailable = useQuery(
     ['nextFaucetClaimTimestamp', address],
     async () => {
@@ -200,7 +201,8 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
       <div className={styles.header}>
         <div className={styles.title}>Testnet Faucet</div>
         <div className={styles.supportingText}>
-          Request and get <strong> 1 {L3_NATIVE_TOKEN_SYMBOL} testnet token </strong> to your connected wallet or an external address on G7 network.
+          Request and get <strong> 1 {L3_NATIVE_TOKEN_SYMBOL} testnet token </strong> to your connected wallet or an
+          external address on G7 network.
         </div>
       </div>
       <div className={styles.contentContainer}>
@@ -255,10 +257,11 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
         <button
           className={
             !nextClaimAvailable.data ||
-              (selectedNetwork.chainId === L3_NETWORK.chainId &&
-                nextClaimAvailable.data &&
-                !nextClaimAvailable.data.L3.isAvailable) ||
-              ((!isValidAddress || address === '') && selectedAccountType === 'External Address' || claim.isLoading)
+            (selectedNetwork.chainId === L3_NETWORK.chainId &&
+              nextClaimAvailable.data &&
+              !nextClaimAvailable.data.L3.isAvailable) ||
+            ((!isValidAddress || address === '') && selectedAccountType === 'External Address') ||
+            claim.isLoading
               ? styles.requestTokensButtonDisabled
               : styles.requestTokensButton
           }
@@ -270,7 +273,8 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
             (selectedNetwork.chainId === L3_NETWORK.chainId &&
               nextClaimAvailable.data &&
               !nextClaimAvailable.data.L3.isAvailable) ||
-            ((!isValidAddress || address === '') && selectedAccountType === 'External Address' || claim.isLoading)
+            ((!isValidAddress || address === '') && selectedAccountType === 'External Address') ||
+            claim.isLoading
           }
         >
           <div className={styles.requestTokensButtonText}>{claim.isLoading ? `Requesting...` : `Request Tokens`}</div>

@@ -17,6 +17,7 @@ export const useFaucetAPI = () => {
           throw new Error(`Error: ${res.statusText}`);
         }
         const data = await res.json();
+        console.log(data)
         return data.result;
       },
       {
