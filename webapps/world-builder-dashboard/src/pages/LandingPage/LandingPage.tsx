@@ -34,24 +34,12 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const totalSections = 4
   const maxThreshold = 500
   const mainLayoutRef = useRef<HTMLDivElement>(null)
-
-  const scrollToTop = () => {
-    if (mainLayoutRef.current) {
-      mainLayoutRef.current.scrollTop = 0
-    }
-  }
-
-  const scrollToBottom = () => {
-    if (mainLayoutRef.current) {
-      mainLayoutRef.current.scrollTop = mainLayoutRef.current.scrollHeight
-    }
-  }
+  const contentContainerRef = useRef<HTMLDivElement>(null)
 
   const handleScroll = (event: { deltaY: number }) => {
     const deltaY = event.deltaY
     let newScrollThreshold = scrollThreshold + deltaY
-    const scrollAmount = Math.min(Math.abs(deltaY), maxThreshold / 2) * Math.sign(deltaY)
-
+    const scrollAmount = Math.min(Math.abs(deltaY), maxThreshold) * Math.sign(deltaY)
 
     if (currentSectionIndex === 0 && newScrollThreshold < 0) {
       newScrollThreshold = 0
@@ -62,37 +50,30 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     }
     setScrollThreshold(newScrollThreshold)
 
-    if (newScrollThreshold > maxThreshold && currentSectionIndex < totalSections - 1) {
+    if (newScrollThreshold > maxThreshold + 200 && currentSectionIndex < totalSections - 1) {
       setScrollThreshold(0)
-      setCurrentSectionIndex((prevIndex) => prevIndex + 1)
-      scrollToTop()
+      setCurrentSectionIndex((prevIndex) => Math.min(prevIndex + 1, totalSections - 1))
     } else if (newScrollThreshold < 0) {
       if (scrollThreshold > 0) {
         setScrollThreshold(0)
       } else if (currentSectionIndex > 0) {
         setScrollThreshold(maxThreshold)
-        setCurrentSectionIndex((prevIndex) => prevIndex - 1)
-        scrollToBottom()
+        setCurrentSectionIndex((prevIndex) => Math.max(prevIndex - 1, 0))
       }
     }
   }
 
   useEffect(() => {
-    let startY = 0
-    let accumulatedDeltaY = 0
-    let isTouching = false
-    let isScrollingSection = false
-  
     const handleScrollEvents = (event: WheelEvent | KeyboardEvent | TouchEvent) => {
       if (navbarOpen) return
-  
+
       let deltaY = 0
-  
+
       if ('deltaY' in event) {
         deltaY = event.deltaY
         handleScroll({ deltaY: deltaY })
       }
-  
+
       if ('key' in event) {
         if (event.key === 'ArrowUp') {
           deltaY = -maxThreshold
@@ -101,67 +82,15 @@ const LandingPage: React.FC<LandingPageProps> = () => {
         }
         handleScroll({ deltaY })
       }
-  
-      if (event.type === 'touchstart' && 'touches' in event) {
-        isTouching = true
-        startY = event.touches[0].clientY
-        accumulatedDeltaY = 0
-        isScrollingSection = false
-      }
-  
-      if (event.type === 'touchmove' && 'touches' in event) {
-        if (!isTouching) return
-        const touchY = event.touches[0].clientY
-        deltaY = (startY - touchY)
-        accumulatedDeltaY += deltaY
-        startY = touchY
-  
-        const scrollableElement = document.querySelector('.contentContainer')
-        if (scrollableElement) {
-          const atBottom = scrollableElement.scrollHeight - scrollableElement.scrollTop === scrollableElement.clientHeight
-          const atTop = scrollableElement.scrollTop === 0
-  
-          // Check if we should lock the scroll and move to the next section
-          if (atBottom && deltaY > 0 && !isScrollingSection) {
-            // If user is swiping up at the bottom of the section, move to next
-            isScrollingSection = true
-            handleScroll({ deltaY: maxThreshold })
-          } else if (atTop && deltaY < 0 && !isScrollingSection) {
-            // If user is swiping down at the top of the section, move to previous
-            isScrollingSection = true
-            handleScroll({ deltaY: -maxThreshold })
-          }
-        }
-      }
-  
-      if (event.type === 'touchend') {
-        if (!isTouching) return
-        isTouching = false
-  
-        // Handle section change when swipe ends
-        if (accumulatedDeltaY > 0) {
-          handleScroll({ deltaY: maxThreshold / 2 })
-        } else if (accumulatedDeltaY < 0) {
-          handleScroll({ deltaY: -maxThreshold / 2 })
-        }
-  
-        accumulatedDeltaY = 0
-        isScrollingSection = false // Reset section scroll lock
-      }
     }
-  
+
+
     window.addEventListener('wheel', handleScrollEvents)
     window.addEventListener('keydown', handleScrollEvents)
-    window.addEventListener('touchstart', handleScrollEvents)
-    window.addEventListener('touchmove', handleScrollEvents)
-    window.addEventListener('touchend', handleScrollEvents)
-  
+
     return () => {
       window.removeEventListener('wheel', handleScrollEvents)
       window.removeEventListener('keydown', handleScrollEvents)
-      window.removeEventListener('touchstart', handleScrollEvents)
-      window.removeEventListener('touchmove', handleScrollEvents)
-      window.removeEventListener('touchend', handleScrollEvents)
     }
   }, [scrollThreshold, currentSectionIndex, navbarOpen])
 
@@ -290,11 +219,11 @@ const LandingPage: React.FC<LandingPageProps> = () => {
           </>
         )}
         {/* MAIN LAYOUT */}
-        <div ref={mainLayoutRef} className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}
+        {!smallView && !mediumView && (<div ref={mainLayoutRef} className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}
            ${(currentSectionIndex === 1 || currentSectionIndex === 2 || currentSectionIndex === 3) && (smallView || mediumView) ? styles.mainLayoutStart : ""}`}>
           {/* Main */}
           {currentSectionIndex === 0 && (
-            <div className={styles.contentContainer}>
+            <div ref={contentContainerRef} className={styles.contentContainer}>
               <div className={styles.pill}>DEVHUB</div>
               <div className={styles.titleContainer}>
                 <div className={styles.titleText}>COME BUILD YOUR GAME</div>
@@ -320,7 +249,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
 
           {/* G7 Benefits */}
           {currentSectionIndex === 1 && (
-            <div className={styles.contentContainer}>
+            <div ref={contentContainerRef} className={styles.contentContainer}>
               <div className={styles.sectionTitle}> Get all benefits of the G7 Nation</div>
               <div className={styles.cards}>
                 <div className={styles.card}>
@@ -355,7 +284,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
 
           {/* Nation Allies */}
           {currentSectionIndex === 2 && (
-            <div className={styles.contentContainer}>
+            <div ref={contentContainerRef} className={styles.contentContainer}>
               <div className={styles.sectionTitle}> G7 Nation allies </div>
               <div className={styles.sponsorCards}>
                 <div className={styles.sponsorCard}>
@@ -397,7 +326,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
 
           {/* Network Essential Cards */}
           {currentSectionIndex === 3 && (
-            <div className={styles.contentContainer}>
+            <div ref={contentContainerRef} className={styles.contentContainer}>
               <div className={styles.sectionTitle}>Start building with the network essentials</div>
               <div className={styles.networkEssentialCards}>
                 <div className={styles.networkEssentialCard} onClick={() => navigate('/faucet')}>
@@ -484,7 +413,159 @@ const LandingPage: React.FC<LandingPageProps> = () => {
               </div>
             ))}
           </div>)}
-        </div>
+        </div>)}
+
+        {(smallView || mediumView) && (
+          <div ref={mainLayoutRef} className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}`}>
+            {/* Main */}
+            <div>
+              <div className={styles.firstSection}>
+                <div className={styles.contentContainer}>
+                  <div className={styles.pill}>DEVHUB</div>
+                  <div className={styles.titleContainer}>
+                    <div className={styles.titleText}>COME BUILD YOUR GAME</div>
+                    <div className={styles.subtitleText}>Be a part of the future of gaming</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* G7 Benefits */}
+            <div className={styles.secondSection}>
+              <div className={styles.contentContainer}>
+                <div className={styles.sectionTitle}> Get all benefits of the G7 Nation</div>
+                <div className={styles.cards}>
+                  <div className={styles.card}>
+                    <div className={styles.cardTitle}>Build for Gamers</div>
+                    <div className={`${styles.cardImage} ${styles.cardImageGamers}`} />
+                    <div className={styles.cardDescription}>
+                      Bootstrap your game with access to 250k+ citizens and counting
+                    </div>
+                  </div>
+                  <div className={styles.card}>
+                    <div className={styles.cardTitle}>Fast and efficient</div>
+                    <div className={`${styles.cardImage} ${styles.cardImageLightningQuick}`} />
+                    <div className={styles.cardDescription}>Lighting-quick transactions and low cost fees</div>
+                  </div>
+                  <div className={styles.card}>
+                    <div className={styles.cardTitle}>Special economic zone</div>
+                    <div className={`${styles.cardImage} ${styles.cardImageSpecialEcon}`} />
+                    <div className={styles.cardDescription}>Gain free access to powerful tools as they are released</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* Nation Allies */}
+            <div className={styles.thirdSection}>
+              <div className={styles.contentContainer}>
+                <div className={styles.sectionTitle}> G7 Nation allies </div>
+                <div className={styles.sponsorCards}>
+                  <div className={styles.sponsorCard}>
+                    <div className={styles.sponsorCardImage}>
+                      <HyperPlayLogo />
+                    </div>
+                  </div>
+                  <div className={styles.sponsorCard}>
+                    <div className={styles.sponsorCardImage}>
+                      <div className={styles.summonLogoContainer}>
+                        <SummonLogo />
+                        <SummonTextLogo />
+                      </div>
+                    </div>
+                  </div>
+                  <div className={styles.sponsorCard}>
+                    <div className={styles.sponsorCardImage}>
+                      <ArbitrumLogo />
+                    </div>
+                  </div>
+                  <div className={styles.sponsorCard}>
+                    <div className={styles.sponsorCardImage}>
+                      <ConduitLogo />
+                    </div>
+                  </div>
+                  <MarketWarsLogo />
+                </div>
+              </div>
+            </div>
+
+            {/* Network Essential Cards */}
+            <div className={styles.contentContainer}>
+              <div className={styles.sectionTitle}>Start building with the network essentials</div>
+              <div className={styles.networkEssentialCards}>
+                <div className={styles.networkEssentialCard} onClick={() => navigate('/faucet')}>
+                  <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialFaucet}`} />
+                  <div className={styles.networkEssentialCardText}>
+                    <div className={styles.networkEssentialCardTitle}>Faucet</div>
+                    <div className={styles.networkEssentialCardDescription}>
+                      Get testnet tokens to start building on G7 testnet
+                    </div>
+                  </div>
+                </div>
+                <div className={styles.networkEssentialCard} onClick={() => navigate('/bridge')}>
+                  <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialBridge}`} />
+                  <div className={styles.networkEssentialCardText}>
+                    <div className={styles.networkEssentialCardTitle}>Bridge</div>
+                    <div className={styles.networkEssentialCardDescription}>
+                      Bridge tokens between Ethereum, Arbitrum and the G7 network
+                    </div>
+                  </div>
+                </div>
+                <div
+                  className={styles.networkEssentialCard}
+                  onClick={() => window.open('https://testnet.game7.io/', '_blank')}
+                >
+                  <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialExplorer}`} />
+                  <div className={styles.networkEssentialCardText}>
+                    <div className={styles.networkEssentialCardTitle}>Explorer</div>
+                    <div className={styles.networkEssentialCardDescription}>
+                      G7 Network block explorer powered by Blockscout. Track and interact directly with your smart
+                      contracts
+                    </div>
+                  </div>
+                </div>
+                <div
+                  className={styles.networkEssentialCard}
+                  onClick={() =>
+                    window.open(
+                      'https://wiki.game7.io/g7-developer-resource/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network/world-builder',
+                      '_blank'
+                    )
+                  }
+                >
+                  <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialDocs}`} />
+                  <div className={styles.networkEssentialCardText}>
+                    <div className={styles.networkEssentialCardTitle}>Docs</div>
+                    <div className={styles.networkEssentialCardDescription}>
+                      Get more information about building in the G7 nation
+                    </div>
+                  </div>
+                </div>
+                <div
+                  className={styles.networkEssentialCard}
+                  onClick={() =>
+                    window.open(
+                      'https://discord.com/invite/g7dao',
+                      '_blank'
+                    )
+                  }
+                >
+                  <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialDiscord}`} />
+                  <div className={styles.networkEssentialCardText}>
+                    <div className={styles.networkEssentialCardTitle}>Discord</div>
+                    <div className={styles.networkEssentialCardDescription}>
+                      Join other builders on Discord
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {!smallView && !mediumView && (<div className={styles.scrollbarContainer}>
+              {[...Array(totalSections)].map((_, index) => (
+                <div key={index} className={styles.scrollBar}>
+                  <div style={getScrollBarFillStyle(index)} className={styles.scrollBarFill} />
+                </div>
+              ))}
+            </div>)}
+          </div>)}
 
         {smallView ? (
           <div className={styles.startBuildingCTA} onClick={startBuilding}>

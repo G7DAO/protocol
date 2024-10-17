@@ -548,6 +548,7 @@ body {
     flex-direction: column;
     align-items: center;
     flex: 1 0 0;
+    justify-content: start;
   }
 
   .contentContainer {
@@ -569,19 +570,49 @@ body {
 
   .titleText {
     align-self: stretch;
-    color: var(--Gray-900, #101828);
+    color: #f9fafb;
     text-align: center;
     font-family: Inter;
     font-size: 72px;
     font-style: normal;
     font-weight: 900;
-    line-height: 80%; /* 38.4px */
+    line-height: 100%;
     letter-spacing: -2px;
     text-transform: uppercase;
   }
 
   .networkEssentialCards {
     justify-content: left;
+  }
+
+  .firstSection {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-self: stretch;
+    height: var(--Landing-Page-First-Section-Height-Tablet);
+    flex: 1 0 auto;
+  }
+
+  .secondSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: stretch;
+  }
+
+  .thirdSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: stretch;
+  }
+  .fourthSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: stretch;
   }
 }
 
@@ -606,13 +637,13 @@ body {
 
   .titleText {
     align-self: stretch;
-    color: var(--Gray-900, #101828);
+    color: #f9fafb;
     text-align: center;
     font-family: Inter;
     font-size: 48px;
     font-style: normal;
     font-weight: 900;
-    line-height: 80%; /* 38.4px */
+    line-height: 100%;
     letter-spacing: -2px;
     text-transform: uppercase;
   }
@@ -719,7 +750,7 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 24px;
-    align-self: stretch;
+    justify-content: space-between;
   }
 
   .mainLayout {
@@ -729,11 +760,16 @@ body {
     align-items: center;
     flex: 1 0 0;
     align-self: stretch;
+    justify-content: start;
   }
 
   .scrollbarContainer {
     position: fixed;
     right: 23px;
     height: calc(100% - 180px);
+  }
+
+  .firstSection {
+    height: var(--Landing-Page-First-Section-Height-Phone);
   }
 }
