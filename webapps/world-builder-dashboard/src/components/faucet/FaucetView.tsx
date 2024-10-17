@@ -13,8 +13,8 @@ import { useFaucetAPI } from '@/hooks/useFaucetAPI'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { timeDifferenceInHoursAndMinutes, timeDifferenceInHoursMinutesAndSeconds } from '@/utils/timeFormat'
 
-interface FaucetViewProps { }
-const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
+interface FaucetViewProps {}
+const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const [address, setAddress] = useState<string | undefined>('')
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false)
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L3_NETWORK)
@@ -30,6 +30,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const smallView = useMediaQuery('(max-width: 1199px)')
 
   const values: AccountType[] = [`External Address`, `Connected Account`]
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true)
 
   useEffect(() => {
     const targetNetwork = ALL_NETWORKS.find((n) => n.chainId === faucetTargetChainId)
@@ -120,6 +121,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
           nextClaimTimestamp: nextClaimL3Timestamp,
           isAvailable: isAvailableL3
         }
+
         queryClient.setQueryData(['nextFaucetClaimTimestamp', address], (oldData: any) => {
           if (oldData) {
             return {
@@ -158,6 +160,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const nextClaimAvailable = useQuery(
     ['nextFaucetClaimTimestamp', address],
     async () => {
+      console.log('...')
       const lastClaimedL3Timestamp = Number(lastClaimedTimestampQuery.data)
       const faucetTimeInterval = Number(faucetIntervalQuery.data)
       const nextClaimL3Timestamp = lastClaimedL3Timestamp + faucetTimeInterval
@@ -171,6 +174,17 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
       enabled: !!address && !!lastClaimedTimestampQuery.data && !!faucetIntervalQuery.data
     }
   )
+
+  useEffect(() => {
+    const isDisabled =
+      (selectedNetwork.chainId === L3_NETWORK.chainId &&
+        nextClaimAvailable.data &&
+        !nextClaimAvailable.data.L3.isAvailable) ||
+      ((!isValidAddress || address === '') && selectedAccountType === 'External Address') ||
+      claim.isLoading
+
+    setIsButtonDisabled(isDisabled)
+  }, [selectedNetwork.chainId, nextClaimAvailable.data, isValidAddress, address, selectedAccountType, claim.isLoading])
 
   useEffect(() => {
     if (!nextClaimAvailable.data) return
@@ -200,7 +214,8 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
       <div className={styles.header}>
         <div className={styles.title}>Testnet Faucet</div>
         <div className={styles.supportingText}>
-          Request and get <strong> 1 {L3_NATIVE_TOKEN_SYMBOL} testnet token </strong> to your connected wallet or an external address on G7 network.
+          Request and get <strong> 1 {L3_NATIVE_TOKEN_SYMBOL} testnet token </strong> to your connected wallet or an
+          external address on G7 network.
         </div>
       </div>
       <div className={styles.contentContainer}>
@@ -254,11 +269,11 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
         </div>
         <button
           className={
-            !nextClaimAvailable.data ||
-              (selectedNetwork.chainId === L3_NETWORK.chainId &&
-                nextClaimAvailable.data &&
-                !nextClaimAvailable.data.L3.isAvailable) ||
-              ((!isValidAddress || address === '') && selectedAccountType === 'External Address' || claim.isLoading)
+            (selectedNetwork.chainId === L3_NETWORK.chainId &&
+              nextClaimAvailable.data &&
+              !nextClaimAvailable.data.L3.isAvailable) ||
+            ((!isValidAddress || address === '') && selectedAccountType === 'External Address') ||
+            claim.isLoading
               ? styles.requestTokensButtonDisabled
               : styles.requestTokensButton
           }
@@ -266,11 +281,11 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
             claim.mutate({ isL2Target: chainId === 13746, address })
           }}
           disabled={
-            !nextClaimAvailable.data ||
             (selectedNetwork.chainId === L3_NETWORK.chainId &&
               nextClaimAvailable.data &&
               !nextClaimAvailable.data.L3.isAvailable) ||
-            ((!isValidAddress || address === '') && selectedAccountType === 'External Address' || claim.isLoading)
+            ((!isValidAddress || address === '') && selectedAccountType === 'External Address') ||
+            claim.isLoading
           }
         >
           <div className={styles.requestTokensButtonText}>{claim.isLoading ? `Requesting...` : `Request Tokens`}</div>

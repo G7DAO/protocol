@@ -1,10 +1,10 @@
 import React, { ReactNode } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import styles from './MainLayout.module.css'
+import IconExternalLink from '@/assets/IconExternalLink'
 import IconLogout from '@/assets/IconLogout'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
-import IconExternalLink from '@/assets/IconExternalLink'
 
 interface DesktopSidebarProps {
   navigationItems: { name: string; navigateTo: string; icon: ReactNode }[]
@@ -12,7 +12,7 @@ interface DesktopSidebarProps {
 const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { connectedAccount, isMetaMask, connectWallet, disconnectWallet, isConnecting } = useBlockchainContext()
+  const { connectedAccount, connectWallet, disconnectWallet, isConnecting } = useBlockchainContext()
 
   return (
     <div className={styles.sideBar}>
@@ -52,7 +52,7 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
             <div className={styles.web3address}>
               {`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}
             </div>
-            {isMetaMask && <IconLogout onClick={disconnectWallet} className={styles.iconButton} />}
+            <IconLogout onClick={disconnectWallet} className={styles.iconButton} />
           </div>
         ) : (
           <div className={styles.connectWalletButton} onClick={connectWallet}>
