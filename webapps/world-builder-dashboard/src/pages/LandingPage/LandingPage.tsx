@@ -65,14 +65,12 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     if (newScrollThreshold > maxThreshold + 200 && currentSectionIndex < totalSections - 1) {
       setScrollThreshold(0)
       setCurrentSectionIndex((prevIndex) => Math.min(prevIndex + 1, totalSections - 1))
-      scrollToTop()
     } else if (newScrollThreshold < 0) {
       if (scrollThreshold > 0) {
         setScrollThreshold(0)
       } else if (currentSectionIndex > 0) {
         setScrollThreshold(maxThreshold)
         setCurrentSectionIndex((prevIndex) => Math.max(prevIndex - 1, 0))
-        scrollToBottom()
       }
     }
   }
@@ -84,7 +82,6 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     let isScrollingSection = false
 
     const handleScrollEvents = (event: WheelEvent | KeyboardEvent | TouchEvent) => {
-      console.log('...')
       if (navbarOpen) return
 
       let deltaY = 0
@@ -136,16 +133,13 @@ const LandingPage: React.FC<LandingPageProps> = () => {
       }
     }
 
-    
-    !smallView ? window.addEventListener('wheel', handleScrollEvents) : ""
-    !smallView? window.addEventListener('keydown', handleScrollEvents) : ""
+
+    window.addEventListener('wheel', handleScrollEvents)
+    window.addEventListener('keydown', handleScrollEvents)
 
     return () => {
       window.removeEventListener('wheel', handleScrollEvents)
       window.removeEventListener('keydown', handleScrollEvents)
-      // window.removeEventListener('touchstart', handleScrollEvents)
-      // window.removeEventListener('touchmove', handleScrollEvents)
-      // window.removeEventListener('touchend', handleScrollEvents)
     }
   }, [scrollThreshold, currentSectionIndex, navbarOpen])
 
@@ -473,46 +467,43 @@ const LandingPage: React.FC<LandingPageProps> = () => {
         {smallView && (
           <div ref={mainLayoutRef} className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}`}>
             {/* Main */}
-            <div ref={contentContainerRef} className={styles.contentContainer}>
-              <div className={styles.firstSection}>
+            <div className={styles.firstSection}>
+              <div className={styles.contentContainer}>
                 <div className={styles.pill}>DEVHUB</div>
                 <div className={styles.titleContainer}>
                   <div className={styles.titleText}>COME BUILD YOUR GAME</div>
                   <div className={styles.subtitleText}>Be a part of the future of gaming</div>
                 </div>
               </div>
-              {/* G7 Benefits */}
-              <div className={styles.sectionTitle}> Get all benefits of the G7 Nation</div>
-              <div className={styles.cards}>
-                <div className={styles.card}>
-                  <div className={styles.cardTitle}>Build for Gamers</div>
-                  <div className={`${styles.cardImage} ${styles.cardImageGamers}`} />
-                  <div className={styles.cardDescription}>
-                    Bootstrap your game with access to 250k+ citizens and counting
+            </div>
+            {/* G7 Benefits */}
+            <div className={styles.secondSection}>
+              <div className={styles.contentContainer}>
+                <div className={styles.sectionTitle}> Get all benefits of the G7 Nation</div>
+                <div className={styles.cards}>
+                  <div className={styles.card}>
+                    <div className={styles.cardTitle}>Build for Gamers</div>
+                    <div className={`${styles.cardImage} ${styles.cardImageGamers}`} />
+                    <div className={styles.cardDescription}>
+                      Bootstrap your game with access to 250k+ citizens and counting
+                    </div>
                   </div>
-                </div>
-                <div className={styles.card}>
-                  <div className={styles.cardTitle}>Fast and efficient</div>
-                  <div className={`${styles.cardImage} ${styles.cardImageLightningQuick}`} />
-                  <div className={styles.cardDescription}>Lighting-quick transactions and low cost fees</div>
-                </div>
-                <div className={styles.card}>
-                  <div className={styles.cardTitle}>Special economic zone</div>
-                  <div className={`${styles.cardImage} ${styles.cardImageSpecialEcon}`} />
-                  <div className={styles.cardDescription}>Gain free access to powerful tools as they are released</div>
+                  <div className={styles.card}>
+                    <div className={styles.cardTitle}>Fast and efficient</div>
+                    <div className={`${styles.cardImage} ${styles.cardImageLightningQuick}`} />
+                    <div className={styles.cardDescription}>Lighting-quick transactions and low cost fees</div>
+                  </div>
+                  <div className={styles.card}>
+                    <div className={styles.cardTitle}>Special economic zone</div>
+                    <div className={`${styles.cardImage} ${styles.cardImageSpecialEcon}`} />
+                    <div className={styles.cardDescription}>Gain free access to powerful tools as they are released</div>
+                  </div>
                 </div>
               </div>
-              {!smallView ? (
-                <div className={styles.ctaContainer}>
-                  <div className={styles.startBuildingCTA} onClick={startBuilding}>
-                    Start building
-                  </div>
-                </div>
-              ) : (
-                <></>
-              )}
-
-              {/* Nation Allies */}
+            </div>
+            {/* Nation Allies */}
+            <div className={styles.thirdSection}>
+            <div className={styles.contentContainer}>
               <div className={styles.sectionTitle}> G7 Nation allies </div>
               <div className={styles.sponsorCards}>
                 <div className={styles.sponsorCard}>
@@ -540,17 +531,11 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                 </div>
                 <MarketWarsLogo />
               </div>
-              {!smallView ? (
-                <div className={styles.ctaContainer}>
-                  <div className={styles.startBuildingCTA} onClick={startBuilding}>
-                    Start building
-                  </div>
-                </div>
-              ) : (
-                <></>
-              )}
+            </div>
+            </div>
 
-              {/* Network Essential Cards */}
+            {/* Network Essential Cards */}
+            <div className={styles.contentContainer}>
               <div className={styles.sectionTitle}>Start building with the network essentials</div>
               <div className={styles.networkEssentialCards}>
                 <div className={styles.networkEssentialCard} onClick={() => navigate('/faucet')}>
@@ -619,15 +604,6 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   </div>
                 </div>
               </div>
-              {!smallView ? (
-                <div className={styles.ctaContainer}>
-                  <div className={styles.startBuildingCTA} onClick={startBuilding}>
-                    Start building
-                  </div>
-                </div>
-              ) : (
-                <></>
-              )}
             </div>
             {!smallView && !mediumView && (<div className={styles.scrollbarContainer}>
               {[...Array(totalSections)].map((_, index) => (
