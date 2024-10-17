@@ -96,9 +96,7 @@ describe('Staker', function () {
         const metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
 
         // Uncomment to see the image
-        //console.log(1);
         //console.log(metadata.image);
-        //console.log(metadata.attributes);
 
         expect(metadata).to.deep.equal({
             token_id: positionTokenID.toString(),
