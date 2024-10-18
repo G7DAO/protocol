@@ -14,7 +14,7 @@ interface MobileSidebarProps {
 const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { connectedAccount, disconnectWallet, connectWallet, isConnecting } = useBlockchainContext()
+  const { connectedAccount, isMetaMask, disconnectWallet, connectWallet, isConnecting } = useBlockchainContext()
   const [isExpanded, setIsExpanded] = useState(false)
 
   return (
@@ -61,7 +61,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
               </div>
             ))}
             <div className={styles.spacer} />
-            {connectedAccount ? (
+            {isMetaMask && connectedAccount ? (
               <div className={parentStyles.navButton} onClick={disconnectWallet}>
                 <IconLogoutLarge className={parentStyles.iconButton} />
                 Disconnect
