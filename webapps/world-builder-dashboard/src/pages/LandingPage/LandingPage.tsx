@@ -12,7 +12,7 @@ import MarketWarsLogo from '@/assets/MarketWarsLogo'
 import SummonLogo from '@/assets/SummonLogo'
 import SummonTextLogo from '@/assets/SummonTextLogo'
 
-interface LandingPageProps {}
+interface LandingPageProps { }
 
 const LandingPage: React.FC<LandingPageProps> = () => {
   const NAVBAR_ITEMS = [
@@ -33,22 +33,35 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const totalSections = 4
   const maxThreshold = 750
   const touchpadMultiplier = .35 // Reduce sensitivity for touchpads
-  const mouseMultiplier = 2 // Normal sensitivity for mouse wheels
+  const mouseMultiplier = 1 // Normal sensitivity for mouse wheels
   const networkCardsRef = useRef<HTMLDivElement>(null)
 
   const handleScroll = (event: { deltaY: number; deltaMode: number }) => {
     let deltaY = event.deltaY
-    let isTouchpad = false
-
-    if (event.deltaMode === 0) {
-      isTouchpad = true
+    const now = Date.now();
+    let lastScrollTime = 0
+    let isTouchpad = false;
+    const deltaTime = now - lastScrollTime;
+    lastScrollTime = now;
+  
+    const isMouseWheel = Math.abs(deltaY) >= 120; // Typically mouse wheel has large deltas.
+    const isTouchpadScroll = deltaTime < 50 && Math.abs(deltaY) < 50; // Quick small deltas are usually touchpad.
+  
+    if (isMouseWheel) {
+      console.log('Mouse wheel detected');
+      isTouchpad = false;
+    } else if (isTouchpadScroll) {
+      console.log('Touchpad detected');
+      isTouchpad = true;
+    }
+    
+    if (isTouchpad) {
+      if (deltaY > 120) deltaY = 120
+      else if (deltaY < -120) deltaY = -120
     }
 
-    if (deltaY > 120) deltaY = 120
-    if (deltaY < -120) deltaY = -120
-
-    // Adjust scroll speed based on whether it's a touchpad or a mouse wheel
     deltaY *= isTouchpad ? touchpadMultiplier : mouseMultiplier
+    console.log("final delta",deltaY)
 
     let newScrollThreshold = scrollThreshold + deltaY
     const scrollAmount = Math.min(Math.abs(deltaY), maxThreshold) * Math.sign(deltaY)
@@ -97,7 +110,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
       let deltaY = 0
 
       if ('deltaY' in event) {
-        deltaY = event.deltaY
+        deltaY = event.deltaY > 0 ? 121 : -121
         handleScroll({ deltaY, deltaMode: event.deltaMode || 0 })
       }
 
