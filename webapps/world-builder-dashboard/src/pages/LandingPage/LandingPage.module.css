@@ -634,6 +634,7 @@ body {
     align-items: center;
     align-self: stretch;
   }
+
   .card {
     display: flex;
     width: 340px;
@@ -662,6 +663,7 @@ body {
     align-items: center;
     gap: 16px;
     align-self: stretch;
+    height: inherit;
   }
 
   .navbarItem {
