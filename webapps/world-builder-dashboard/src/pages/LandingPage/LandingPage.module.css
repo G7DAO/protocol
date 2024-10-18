@@ -14,7 +14,8 @@ html, body {
   background: #171717;
   cursor: url('../../assets/cursor.svg'), auto;
   overflow: hidden;
-  overscroll-behavior: contain;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: auto;
 }
 
 .layout.darkened {
