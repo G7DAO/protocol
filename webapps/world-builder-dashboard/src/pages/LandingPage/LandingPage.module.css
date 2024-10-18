@@ -1,4 +1,8 @@
-/* navbar classes */
+html, body {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: auto;
+}
+
 .layout {
   display: flex;
   width: 100vw;
