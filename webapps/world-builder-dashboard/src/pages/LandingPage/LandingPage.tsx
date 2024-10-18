@@ -179,7 +179,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
             {/* Nation Allies */}
             <div className={styles.thirdSection}>
               <div className={styles.contentContainer}>
-                <div className={styles.sectionTitle}> G7 Nation allies </div>
+                <div className={styles.sectionTitle}> G7 Network allies </div>
                 <div className={styles.sponsorCards}>
                   <div className={styles.sponsorCard}>
                     <div className={styles.sponsorCardImage}>
