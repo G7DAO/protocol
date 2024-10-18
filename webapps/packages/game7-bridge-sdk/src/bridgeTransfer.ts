@@ -1,5 +1,5 @@
 import { BigNumber, ethers, Transaction } from 'ethers';
-import { networks } from './networks';
+import { BridgeNetworkConfig, networks } from './networks';
 import { UnsupportedNetworkError } from './errors';
 import { TransactionReceipt } from '@ethersproject/abstract-provider/src.ts';
 
@@ -8,9 +8,9 @@ import { getBlockETA, getDecodedInputs } from './utils/web3Utils';
 import {
   ChildToParentMessageStatus,
   ChildToParentMessageWriter,
-  ChildTransactionReceipt,
+  ChildTransactionReceipt, EthDepositMessageStatus,
   ParentContractCallTransactionReceipt,
-  ParentEthDepositTransactionReceipt,
+  ParentEthDepositTransactionReceipt, ParentToChildMessageStatus,
   ParentTransactionReceipt,
 } from '@arbitrum/sdk';
 import { L2GatewayRouterABI } from './abi/L2GatewayRouterABI';
@@ -53,12 +53,19 @@ export interface CreateBridgeTransferParams {
 }
 
 export interface BridgeTransferInfo {
+  txHash: string,
   transferType: BridgeTransferType,
   timestamp?: number,
   to?: string,
   amount?: BigNumber,
   tokenAddress?: string,
   tokenSymbol?: string,
+  isDeposit: boolean,
+  originNetworkChainId: number,
+  destinationNetworkChainId: number,
+  originName: string,
+  destinationName: string,
+  initTxExplorerUrl: string,
 }
 
 export enum BridgeTransferType {
@@ -69,7 +76,7 @@ export enum BridgeTransferType {
   DEPOSIT_ERC20_TO_GAS,
 }
 
-export declare enum BridgeTransferStatus {
+export enum BridgeTransferStatus {
   WITHDRAW_UNCONFIRMED,
   WITHDRAW_CONFIRMED,
   WITHDRAW_EXECUTED,
@@ -80,6 +87,23 @@ export declare enum BridgeTransferStatus {
   DEPOSIT_ERC20_EXPIRED,
   DEPOSIT_GAS_PENDING,
   DEPOSIT_GAS_DEPOSITED
+}
+
+function mapDepositERC20Status(status: ParentToChildMessageStatus): BridgeTransferStatus {
+  switch (status) {
+    case ParentToChildMessageStatus.NOT_YET_CREATED:
+      return BridgeTransferStatus.DEPOSIT_ERC20_NOT_YET_CREATED;
+    case ParentToChildMessageStatus.CREATION_FAILED:
+      return BridgeTransferStatus.DEPOSIT_ERC20_CREATION_FAILED;
+    case ParentToChildMessageStatus.FUNDS_DEPOSITED_ON_CHILD:
+      return BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD;
+    case ParentToChildMessageStatus.REDEEMED:
+      return BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED;
+    case ParentToChildMessageStatus.EXPIRED:
+      return BridgeTransferStatus.DEPOSIT_ERC20_EXPIRED;
+    default:
+      throw new Error(`Unknown ParentToChildMessageStatus: ${status}`);
+  }
 }
 
 export class BridgeTransfer {
@@ -97,6 +121,7 @@ export class BridgeTransfer {
   private childTransactionReceipt: ChildTransactionReceipt | undefined;
   private readonly originProvider: Provider;
   private readonly destinationProvider: Provider;
+  private readonly destinationNetwork: BridgeNetworkConfig;
 
   /**
    * Creates an instance of the `BridgeTransfer` class.
@@ -139,6 +164,7 @@ export class BridgeTransfer {
     this.destinationProvider = destinationProvider;
     this.txHash = txHash;
     this.explorerLink = `${originNetwork.explorerUrl}/tx/${txHash}`
+    this.destinationNetwork = destinationNetwork;
   }
 
   public async getStatus() {
@@ -200,9 +226,18 @@ export class BridgeTransfer {
       throw new Error('Transaction not found');
     }
     const { transferType,  decodedInputs } = this.getTransferTypeAndInputs(tx);
+    const {originNetworkChainId, destinationNetworkChainId, isDeposit, originName, destinationName, txHash} = this
     let info: BridgeTransferInfo = {
+      txHash,
       transferType,
+      originNetworkChainId,
+      destinationNetworkChainId,
+      isDeposit,
+      originName,
+      destinationName,
+      initTxExplorerUrl: `${networks[this.originNetworkChainId].explorerUrl}/tx/${this.txHash}`
     }
+
     if (tx.blockNumber) {
       const block = await this.originProvider.getBlock(tx.blockNumber);
       info.timestamp = block?.timestamp;
@@ -220,11 +255,11 @@ export class BridgeTransfer {
       info.amount = decodedInputs.args._amount;
       info.tokenSymbol = await tokenContract.symbol();
       info.to = decodedInputs.args._to;
-      info.tokenAddress = decodedInputs.args._l1token;
+      info.tokenAddress = decodedInputs.args._l1Token;
       return info
     } else
     if (transferType === BridgeTransferType.DEPOSIT_ERC20) {
-      const tokenContract = new ethers.Contract(decodedInputs.args._token, ERC20_ABI, this.destinationProvider);
+      const tokenContract = new ethers.Contract(decodedInputs.args._token, ERC20_ABI, this.originProvider);
       info.tokenSymbol = await tokenContract.symbol();
       info.amount = decodedInputs.args._amount;
       info.to = decodedInputs.args._to;
@@ -242,8 +277,9 @@ export class BridgeTransfer {
       info.amount = decodedInputs.args.amount
       info.tokenSymbol = networks[this.destinationNetworkChainId]?.nativeCurrency?.symbol
       info.to = tx.from
-      return info;
+      return info
     }
+
     throw new Error('Unknown type of transfer')
   }
 
@@ -316,17 +352,26 @@ export class BridgeTransfer {
     if (transferType === BridgeTransferType.DEPOSIT_ERC20_TO_GAS || transferType === BridgeTransferType.DEPOSIT_GAS) {
       const parentEthDepositReceipt = new ParentEthDepositTransactionReceipt(parentTransactionReceipt)
       res = await parentEthDepositReceipt.waitForChildTransactionReceipt(this.destinationProvider, 3 ,1000);
-      const r = await res.message.status()
-      // const status = await parentEthDepositReceipt.status;
-      console.log({r, res})
+      const ethDepositMessageStatus = await res.message.status()
+      const status = ethDepositMessageStatus === EthDepositMessageStatus.DEPOSITED ? BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED : BridgeTransferStatus.DEPOSIT_GAS_PENDING
+      const childTxHash = res.childTxReceipt?.transactionHash
+      const ETA = this.destinationNetwork.ethBridge?.depositTimeout ? this.destinationNetwork.ethBridge.depositTimeout + Date.now() : undefined
+      return {ETA, status, completionTxHash: childTxHash, completionExplorerLink: `${this.destinationNetwork.explorerUrl}/tx/${childTxHash}`}
     } else {
       // const msgs = await parentTransactionReceipt.getParentToChildMessages(this.destinationProvider)
       // const r = await msgs[0].status()
-      // console.log(r)
+      console.log('1')
       const parentContractCallReceipt = new ParentContractCallTransactionReceipt(parentTransactionReceipt)
-      res = await parentContractCallReceipt.waitForChildTransactionReceipt(this.destinationProvider, 3, 1000)
-      // const status = await
-      console.log(res.status)
+      const ETA = this.destinationNetwork.tokenBridge?.depositTimeout ? this.destinationNetwork.tokenBridge.depositTimeout + Date.now() : undefined
+      try {
+        res = await parentContractCallReceipt.waitForChildTransactionReceipt(this.destinationProvider, 3, 1000)
+      } catch (e) {
+        console.error(e)
+        return {status: BridgeTransferStatus.DEPOSIT_ERC20_NOT_YET_CREATED, ETA}
+      }
+      const childTxHash = (res as any).childTxReceipt?.transactionHash
+      const status = mapDepositERC20Status(res.status)
+      return {ETA, status, completionTxHash: childTxHash, completionExplorerLink: `${this.destinationNetwork.explorerUrl}/tx/${childTxHash}`}
     }
     // const isEthDeposit = tx.to === networks[this.destinationNetworkChainId]?.ethBridge?.inbox;
     // if (!isEthDeposit && tx.to !== networks[this.destinationNetworkChainId]?.tokenBridge?.parentGatewayRouter) {
