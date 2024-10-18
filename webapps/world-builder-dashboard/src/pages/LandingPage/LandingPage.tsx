@@ -134,7 +134,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                 <div className={styles.contentContainer}>
                   <div className={styles.pill}>DEVHUB</div>
                   <div className={styles.titleContainer}>
-                    <div className={styles.titleText}>BUILD YOUR GAME</div>
+                    <div className={styles.titleText}>Build Your Game</div>
                     <div className={styles.subtitleText}>Be a part of the future of gaming</div>
                   </div>
                   {!smallView && (<div className={styles.ctaContainer}>
