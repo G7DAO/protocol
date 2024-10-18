@@ -119,7 +119,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                 </div>
               ))}
               <div className={styles.ctaContainer}>
-                <div className={styles.startBuildingCTA} onClick={startBuilding}>
+              <div className={styles.startBuildingCTA} onClick={startBuilding}>
                   Start building
                 </div>
               </div>
@@ -134,7 +134,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                 <div className={styles.contentContainer}>
                   <div className={styles.pill}>DEVHUB</div>
                   <div className={styles.titleContainer}>
-                    <div className={styles.titleText}>COME BUILD <br /> YOUR GAME</div>
+                    <div className={styles.titleText}>BUILD YOUR GAME</div>
                     <div className={styles.subtitleText}>Be a part of the future of gaming</div>
                   </div>
                   {!smallView && (<div className={styles.ctaContainer}>

@@ -1,236 +1,249 @@
 .container {
-    display: flex;
-    width: 268px;
-    flex-direction: column;
-    align-items: flex-start;
+  display: flex;
+  width: 268px;
+  flex-direction: column;
+  align-items: flex-start;
 
-    border-radius: 8px;
-    /*border: 1px solid var(--Gray-300, #D0D5DD);*/
-    background: var(--Base-White, #FFF);
+  border-radius: 8px;
+  /*border: 1px solid var(--Gray-300, #D0D5DD);*/
+  background: var(--Base-White, #fff);
 
-    /* Shadow/xs */
-    /*box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);*/
+  /* Shadow/xs */
+  /*box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);*/
 }
 
-.item, .itemWithoutBorder {
-    display: flex;
-    padding: 16px;
-    flex-direction: column;
-    align-items: start;
-    gap: 8px;
-    align-self: stretch;
-    width: 300px;
-    margin-left: -16px;
+.item,
+.itemWithoutBorder {
+  display: flex;
+  padding: 16px;
+  flex-direction: column;
+  align-items: start;
+  gap: 8px;
+  align-self: stretch;
+  width: 300px;
+  margin-left: -16px;
 
-    border-bottom: 1px solid var(--Gray-200, #EAECF0);
+  border-bottom: 1px solid var(--Gray-200, #eaecf0);
 }
 
 .itemWithoutBorder {
-    border: none;
+  border: none;
 }
 
-
 .itemHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    align-self: stretch;
-    text-transform: capitalize;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  align-self: stretch;
+  text-transform: capitalize;
 }
 
 .itemHeaderLeft {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .itemHeaderTitle {
-    color: var(--Gray-700, #344054);
+  color: var(--Gray-700, #344054);
 
-    /* Text md/Semibold */
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 600;
-    line-height: 24px; /* 150% */
+  /* Text md/Semibold */
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px; /* 150% */
 }
 
-.badgeCompleted, .badgeClaimable, .badgePending, .badgeFailed {
-    display: flex;
-    padding: 2px 8px;
-    align-items: center;
+.badgeCompleted,
+.badgeClaimable,
+.badgePending,
+.badgeFailed {
+  display: flex;
+  padding: 2px 8px;
+  align-items: center;
 
-    border-radius: 16px;
-    mix-blend-mode: var(--mix-blend, multiply);
-    text-align: center;
+  border-radius: 16px;
+  mix-blend-mode: var(--mix-blend, multiply);
+  text-align: center;
 
-    /* Text xs/Medium */
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 18px; /* 150% */
-    text-transform: capitalize;
-    gap: 4px;
+  /* Text xs/Medium */
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 18px; /* 150% */
+  text-transform: capitalize;
+  gap: 4px;
 }
 
-.badgeClaimable, .toastClaimable {
-    color: var(--Warning-700, #B54708);
-    background: var(--Warning-50, #FFFAEB);
+.badgeClaimable,
+.toastClaimable {
+  color: var(--Warning-700, #b54708);
+  background: var(--Warning-50, #fffaeb);
 }
-.badgeClaimable:hover, .toastClaimable:hover {
-    background: var(--Warning-100, #FEF0C7);
+.badgeClaimable:hover,
+.toastClaimable:hover {
+  background: var(--Warning-100, #fef0c7);
 }
 .iconCloseClaimable {
-    color: var(--Warning-700, #B54708);
+  color: var(--Warning-700, #b54708);
 }
 .iconCloseClaimable:hover {
-    color: var(--Warning-800, #B54708);
+  color: var(--Warning-800, #b54708);
 }
 
-.badgeCompleted, .toastCompleted {
-    color: var(--Success-700, #027a48);
-    background: var(--Success-50, #ecfdf3);
+.badgeCompleted,
+.toastCompleted {
+  color: var(--Success-700, #027a48);
+  background: var(--Success-50, #ecfdf3);
 }
-.badgeCompleted:hover, .toastCompleted:hover {
-    background: var(--Success-100, #D1FADF);
+.badgeCompleted:hover,
+.toastCompleted:hover {
+  background: var(--Success-100, #d1fadf);
 }
 .iconCloseCompleted {
-    stroke: var(--Success-700, #027a48);
+  stroke: var(--Success-700, #027a48);
 }
 .iconCloseCompleted:hover {
-    stroke: var(--Success-800, #027a48);
+  stroke: var(--Success-800, #027a48);
 }
 
 .badgePending {
-    color: var(--Blue-700, #175cd3);
-    background: var(--Blue-50, #eff8ff);
+  color: var(--Blue-700, #175cd3);
+  background: var(--Blue-50, #eff8ff);
 }
 .badgePending:hover {
-    background: var(--Blue-100, #d1e9ff);
+  background: var(--Blue-100, #d1e9ff);
 }
 .iconClosePending {
-    stroke: var(--Blue-700, #175cd3);
+  stroke: var(--Blue-700, #175cd3);
 }
 .iconClosePending:hover {
-    stroke: var(--Blue-800, #175cd3);
+  stroke: var(--Blue-800, #175cd3);
 }
 
-.badgeError, .toastError {
-    color: var(--Error-700, #FEF3F2);
-    background: var(--Error-50, #B42318);
+.badgeError,
+.toastError {
+  color: var(--Error-700, #fef3f2);
+  background: var(--Error-50, #b42318);
 }
-.badgeError:hover, .toastError:hover {
-    background: var(--Error-100, #FEE4E2);
+.badgeError:hover,
+.toastError:hover {
+  background: var(--Error-100, #fee4e2);
 }
 .iconCloseError {
-    stroke: var(--Error-700, #FEF3F2);
+  stroke: var(--Error-700, #fef3f2);
 }
 .iconCloseError {
-    stroke: var(--Error-800, #FEF3F2);
+  stroke: var(--Error-800, #fef3f2);
 }
 
 .headerTime {
-    color: var(--Gray-500, #667085);
+  color: var(--Gray-500, #667085);
 
-    /* Text sm/Regular */
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 20px; /* 142.857% */
-    text-transform: none;
+  /* Text sm/Regular */
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 142.857% */
+  text-transform: none;
 }
 
 .content {
-    color: var(--Gray-600, #475467);
+  padding: 10px 0px;
+  color: var(--Gray-600, #475467);
 
-    /* Text sm/Regular */
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 20px; /* 142.857% */
+  /* Text sm/Regular */
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 142.857% */
 }
 
 .button {
-    display: flex;
-    padding: 8px;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    align-self: stretch;
-    background: var(--Base-White, #ffffff);
-    cursor: pointer;
-    border: none;
-    width: calc(100% + 16px + 16px - 2px);
-    height: calc(100% + 30px);
-    margin-left: -16px;
-    margin-bottom: -12px;
-    border-radius: 0 0 8px 8px;
-    color: var(--Gray-700, #344054);
+  display: flex;
+  padding: 8px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  align-self: stretch;
+  background: var(--Base-White, #ffffff);
+  cursor: pointer;
+  border: none;
+  width: calc(100% + 16px + 16px - 2px);
+  height: calc(100% + 30px);
+  margin-left: -16px;
+  margin-bottom: -12px;
+  border-radius: 0 0 8px 8px;
+  color: var(--Gray-700, #344054);
 
-    /* Text md/Regular */
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 24px; /* 150% */
+  /* Text md/Regular */
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px; /* 150% */
 }
 
 .button:hover {
-    background: var(--Gray-25, #FCFCFD);
+  background: var(--Gray-25, #fcfcfd);
 }
 
-.toastCompleted, .toastMultiple, .toastClaimable, .toastError {
-    display: flex;
-    width: 100%;
-    padding: 8px 12px;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    position: absolute;
-    z-index: 3;
-    left: 0;
-    /*bottom: 10vh;*/
-    border-radius: 8px;
-    transform: translateY(calc(100vh - 32px - 32px - 40.8px));
-    cursor: pointer;
+.toastCompleted,
+.toastMultiple,
+.toastClaimable,
+.toastError {
+  display: flex;
+  width: 100%;
+  padding: 8px 12px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  /*bottom: 10vh;*/
+  border-radius: 8px;
+  transform: translateY(calc(100vh - 32px - 32px - 40.8px));
+  cursor: pointer;
 }
 
 .toastClaimable {
-    border: 1px solid var(--Warning-200, #FEDF89);
+  border: 1px solid var(--Warning-200, #fedf89);
 }
 
 .toastError {
-    border: 1px solid var(--Error-200, #FECDCA);
+  border: 1px solid var(--Error-200, #fecdca);
 }
 
 .toastCompleted {
-    border: 1px solid var(--Success-200, #A6F4C5);
+  border: 1px solid var(--Success-200, #a6f4c5);
 }
 
 .toastMultiple {
-    border: 1px solid var(--Purple-200, #D9D6FE);
-    background: var(--Purple-50, #F4F3FF);
-    color: var(--Purple-700, #5925DC);
+  border: 1px solid var(--Purple-200, #d9d6fe);
+  background: var(--Purple-50, #f4f3ff);
+  color: var(--Purple-700, #5925dc);
 }
 
 .toastMultiple:hover {
-    background: var(--Purple-100, #EBE9FE);
+  background: var(--Purple-100, #ebe9fe);
 }
 
 .closeIconMultiple {
-    stroke: var(--Purple-700, #5925DC);
+  stroke: var(--Purple-700, #5925dc);
 }
 
 .closeIconMultiple:hover {
-    stroke: var(--Purple-800, #5925DC);
+  stroke: var(--Purple-800, #5925dc);
 }
 
 @media (max-width: 1199px) {
-
-    .toastCompleted, .toastMultiple, .toastClaimable, .toastError {
-        position: fixed;
-        width: calc(100% - 16px);
-        left: 8px;
-        transform: translateY(calc(100vh - 64px - 48px - 41px - 20px));
-    }
+  .toastCompleted,
+  .toastMultiple,
+  .toastClaimable,
+  .toastError {
+    position: fixed;
+    width: calc(100% - 16px);
+    left: 8px;
+    transform: translateY(calc(100vh - 64px - 48px - 41px - 20px));
+  }
 }
-
-
