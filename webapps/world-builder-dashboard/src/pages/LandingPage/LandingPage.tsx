@@ -31,13 +31,27 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const mediumView = useMediaQuery('(max-width: 1199px)')
   const totalSections = 4
   const maxThreshold = 750
+  const touchpadMultiplier = 0.25 // Reduce sensitivity for touchpads
+  const mouseMultiplier = 1 // Normal sensitivity for mouse wheels
   const networkCardsRef = useRef<HTMLDivElement>(null)
 
-  const handleScroll = (event: { deltaY: number }) => {
-    const deltaY = event.deltaY
+  const handleScroll = (event: { deltaY: number, deltaMode: number }) => {
+    let deltaY = event.deltaY
+    let isTouchpad = false
+
+    if (event.deltaMode === 0) {
+      isTouchpad = true
+    }
+
+    if (deltaY > 120) deltaY = 120
+    if (deltaY < -120) deltaY = -120
+  
+    // Adjust scroll speed based on whether it's a touchpad or a mouse wheel
+    deltaY *= isTouchpad ? touchpadMultiplier : mouseMultiplier
+  
     let newScrollThreshold = scrollThreshold + deltaY
     const scrollAmount = Math.min(Math.abs(deltaY), maxThreshold) * Math.sign(deltaY)
-
+  
     if (currentSectionIndex === 0 && newScrollThreshold < 0) {
       newScrollThreshold = 0
     } else if (currentSectionIndex === totalSections - 1 && newScrollThreshold >= maxThreshold) {
@@ -45,20 +59,22 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     } else {
       newScrollThreshold = scrollThreshold + scrollAmount
     }
+  
     setScrollThreshold(newScrollThreshold)
-
+  
+    // Scroll inside the container
     const networkCardsContainer = networkCardsRef.current
     if (networkCardsContainer) {
       const maxScrollLeft = networkCardsContainer.scrollWidth - networkCardsContainer.clientWidth
-
       const newScrollLeft = Math.min(networkCardsContainer.scrollLeft + scrollAmount, maxScrollLeft)
-
+  
       networkCardsContainer.scrollTo({
         left: newScrollLeft,
         behavior: 'smooth'
       })
     }
-
+  
+    // Navigate between sections based on threshold
     if (newScrollThreshold > maxThreshold + 250 && currentSectionIndex < totalSections - 1) {
       setScrollThreshold(0)
       setCurrentSectionIndex((prevIndex) => Math.min(prevIndex + 1, totalSections - 1))
@@ -71,31 +87,32 @@ const LandingPage: React.FC<LandingPageProps> = () => {
       }
     }
   }
-
+  
+  // Attach the event listeners
   useEffect(() => {
     const handleScrollEvents = (event: WheelEvent | KeyboardEvent | TouchEvent) => {
       if (navbarOpen) return
-
+  
       let deltaY = 0
-
+  
       if ('deltaY' in event) {
         deltaY = event.deltaY
-        handleScroll({ deltaY: deltaY })
+        handleScroll({ deltaY, deltaMode: event.deltaMode || 0 })
       }
-
+  
       if ('key' in event) {
         if (event.key === 'ArrowUp') {
           deltaY = -maxThreshold
         } else if (event.key === 'ArrowDown') {
           deltaY = maxThreshold
         }
-        handleScroll({ deltaY })
+        handleScroll({ deltaY, deltaMode: 1 }) // treat key as mouse-like scroll
       }
     }
-
+  
     window.addEventListener('wheel', handleScrollEvents)
     window.addEventListener('keydown', handleScrollEvents)
-
+  
     return () => {
       window.removeEventListener('wheel', handleScrollEvents)
       window.removeEventListener('keydown', handleScrollEvents)
