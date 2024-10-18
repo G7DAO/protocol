@@ -10,6 +10,7 @@
   background: #171717;
   cursor: url('../../assets/cursor.svg'), auto;
   overflow: hidden;
+  overscroll-behavior: contain;
 }
 
 .layout.darkened {
