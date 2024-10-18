@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   overscroll-behavior: none;
   -webkit-overflow-scrolling: auto;
 }
@@ -138,6 +139,8 @@ html, body {
   scrollbar-width: none;
   -ms-overflow-style: none;
   transition: justify-content 0.3s ease;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: auto;
 }
 
 .mainLayoutStart {
@@ -324,6 +327,8 @@ html, body {
   align-items: center;
   gap: 40px;
   align-self: stretch;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: auto;
 }
 
 .sectionTitle {
@@ -349,16 +354,18 @@ html, body {
 
 .card {
   display: flex;
+  width: 100%;
   max-width: 400px;
   padding: 24px;
   flex-direction: column;
   align-items: center;
   gap: 16px;
-  width: 100%;
   border-radius: 24px;
   border: 1px solid #727272;
   background: #171717;
-  height: 412px;
+  height: 100%;
+  max-height: 426px;
+  flex: 1 0 0;
 }
 
 .cardTitle {
@@ -407,6 +414,8 @@ html, body {
   line-height: 28px; /* 155.556% */
   border-radius: 12px;
   border: 1px solid #727272;
+  flex-grow: 1;
+  justify-content: center;
 }
 
 .sponsorCards {
@@ -458,6 +467,7 @@ html, body {
   overflow-x: auto;
   scrollbar-width: none;
   scroll-behavior: smooth;
+  padding-inline: 40px;
 }
 
 .networkEssentialCards::-webkit-scrollbar {
@@ -624,10 +634,20 @@ html, body {
     align-items: center;
     align-self: stretch;
   }
+  .card {
+    display: flex;
+    width: 340px;
+    padding: 24px;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    align-self: stretch;
+    width: 100%;
+  }
 }
 
-@media(max-width: 1566px) {
-  .networkEssentialCards{
+@media (max-width: 1566px) {
+  .networkEssentialCards {
     justify-content: left;
   }
 }

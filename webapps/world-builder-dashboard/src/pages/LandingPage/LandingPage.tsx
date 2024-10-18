@@ -33,7 +33,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const totalSections = 4
   const maxThreshold = 750
   const touchpadMultiplier = .35 // Reduce sensitivity for touchpads
-  const mouseMultiplier = .75 // Normal sensitivity for mouse wheels
+  const mouseMultiplier = 2 // Normal sensitivity for mouse wheels
   const networkCardsRef = useRef<HTMLDivElement>(null)
 
   const handleScroll = (event: { deltaY: number; deltaMode: number }) => {
@@ -63,12 +63,12 @@ const LandingPage: React.FC<LandingPageProps> = () => {
 
     setScrollThreshold(newScrollThreshold)
 
-    // Scroll inside the container
     const networkCardsContainer = networkCardsRef.current
-    if (networkCardsContainer) {
+    if (networkCardsContainer && newScrollThreshold > 150) {
       const maxScrollLeft = networkCardsContainer.scrollWidth - networkCardsContainer.clientWidth
       const newScrollLeft = Math.min(networkCardsContainer.scrollLeft + scrollAmount, maxScrollLeft)
-
+      console.log(maxScrollLeft)
+      console.log(newScrollLeft)
       networkCardsContainer.scrollTo({
         left: newScrollLeft,
         behavior: 'smooth'
