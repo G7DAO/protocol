@@ -32,7 +32,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const mediumView = useMediaQuery('(max-width: 1199px)')
   const totalSections = 4
   const maxThreshold = 750
-  const touchpadMultiplier = .8 // Reduce sensitivity for touchpads
+  const touchpadMultiplier = .35 // Reduce sensitivity for touchpads
   const mouseMultiplier = 1 // Normal sensitivity for mouse wheels
   const networkCardsRef = useRef<HTMLDivElement>(null)
 
