@@ -269,7 +269,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                 <div className={styles.sectionTitle}> Get all benefits of the G7 Nation</div>
                 <div className={styles.cards}>
                   <div className={styles.card}>
-                    <div className={styles.cardTitle}>Build for Gamers</div>
+                    <div className={styles.cardTitle}>Build for gamers</div>
                     <div className={`${styles.cardImage} ${styles.cardImageGamers}`} />
                     <div className={styles.cardDescription}>
                       Bootstrap your game with access to 250k+ citizens and counting
@@ -347,7 +347,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                     <div className={styles.networkEssentialCardText}>
                       <div className={styles.networkEssentialCardTitle}>Faucet</div>
                       <div className={styles.networkEssentialCardDescription}>
-                        Get testnet tokens to start building on G7 testnet
+                        Get testnet tokens to start building on G7 Sepolia
                       </div>
                     </div>
                   </div>
@@ -357,10 +357,9 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   >
                     <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialExplorer}`} />
                     <div className={styles.networkEssentialCardText}>
-                      <div className={styles.networkEssentialCardTitle}>Explorer</div>
+                      <div className={styles.networkEssentialCardTitle}>Block explorer</div>
                       <div className={styles.networkEssentialCardDescription}>
-                        G7 Network block explorer powered by Blockscout. Track and interact directly with your smart
-                        contracts
+                        Track and interact directly with your smart contracts
                       </div>
                     </div>
                   </div>
@@ -377,7 +376,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                     <div className={styles.networkEssentialCardText}>
                       <div className={styles.networkEssentialCardTitle}>Docs</div>
                       <div className={styles.networkEssentialCardDescription}>
-                        Get more information about building in the G7 nation
+                        Get more information about building in the G7 Nation
                       </div>
                     </div>
                   </div>
@@ -388,7 +387,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                     <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialDiscord}`} />
                     <div className={styles.networkEssentialCardText}>
                       <div className={styles.networkEssentialCardTitle}>Discord</div>
-                      <div className={styles.networkEssentialCardDescription}>Join other builders on Discord</div>
+                      <div className={styles.networkEssentialCardDescription}>Join our community of builders on Discord</div>
                     </div>
                   </div>
                 </div>
@@ -435,7 +434,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                 <div className={styles.sectionTitle}> Get all benefits of the G7 Nation</div>
                 <div className={styles.cards}>
                   <div className={styles.card}>
-                    <div className={styles.cardTitle}>Build for Gamers</div>
+                    <div className={styles.cardTitle}>Build for gamers</div>
                     <div className={`${styles.cardImage} ${styles.cardImageGamers}`} />
                     <div className={styles.cardDescription}>
                       Bootstrap your game with access to 250k+ citizens and counting
@@ -495,7 +494,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   <div className={styles.networkEssentialCardText}>
                     <div className={styles.networkEssentialCardTitle}>Faucet</div>
                     <div className={styles.networkEssentialCardDescription}>
-                      Get testnet tokens to start building on G7 testnet
+                      Get testnet tokens to start building on G7 Sepolia
                     </div>
                   </div>
                 </div>
@@ -505,10 +504,9 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                 >
                   <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialExplorer}`} />
                   <div className={styles.networkEssentialCardText}>
-                    <div className={styles.networkEssentialCardTitle}>Explorer</div>
+                    <div className={styles.networkEssentialCardTitle}>Block explorer</div>
                     <div className={styles.networkEssentialCardDescription}>
-                      G7 Network block explorer powered by Blockscout. Track and interact directly with your smart
-                      contracts
+                      Track and interact directly with your smart contracts
                     </div>
                   </div>
                 </div>
@@ -525,7 +523,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   <div className={styles.networkEssentialCardText}>
                     <div className={styles.networkEssentialCardTitle}>Docs</div>
                     <div className={styles.networkEssentialCardDescription}>
-                      Get more information about building in the G7 nation
+                      Get more information about building in the G7 Nation
                     </div>
                   </div>
                 </div>
@@ -536,7 +534,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialDiscord}`} />
                   <div className={styles.networkEssentialCardText}>
                     <div className={styles.networkEssentialCardTitle}>Discord</div>
-                    <div className={styles.networkEssentialCardDescription}>Join other builders on Discord</div>
+                    <div className={styles.networkEssentialCardDescription}>Join our community of builders on Discord</div>
                   </div>
                 </div>
               </div>
