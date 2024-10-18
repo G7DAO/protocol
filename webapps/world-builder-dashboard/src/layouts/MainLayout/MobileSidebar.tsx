@@ -3,10 +3,10 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import parentStyles from './MainLayout.module.css'
 import styles from './MobileSidebar.module.css'
 import IconLogoutLarge from '@/assets/IconLogoutLarge'
-import IconMenu02 from '@/assets/IconMenu02'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
 import IconExternalLink from '@/assets/IconExternalLink'
+import IconHamburgerLanding from '@/assets/IconHamburgerLanding'
 
 interface MobileSidebarProps {
   navigationItems: { name: string; navigateTo: string; icon: ReactNode }[]
@@ -22,7 +22,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
       <div className={styles.container}>
         <Game7Logo />
         <div className={styles.iconContainer}>
-          <IconMenu02 className={parentStyles.iconButton} onClick={() => setIsExpanded(!isExpanded)} />
+          <IconHamburgerLanding className={parentStyles.iconButton} onClick={() => setIsExpanded(!isExpanded)} />
         </div>
       </div>
       {isExpanded && (
