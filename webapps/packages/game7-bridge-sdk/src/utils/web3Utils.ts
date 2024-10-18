@@ -3,7 +3,10 @@ import { ethers, Transaction } from 'ethers';
 export const getBlockTimeDifference = async (
   blockNumber: ethers.BigNumber,
   provider: ethers.providers.Provider,
-): Promise<number> => {
+): Promise<number | undefined> => {
+  if (!blockNumber) {
+    return
+  }
   const targetBlockNumber = blockNumber.toNumber();
 
   // Get the current block number
@@ -32,8 +35,9 @@ export const getBlockTimeDifference = async (
 export const getBlockETA = async (
   blockNumber: ethers.BigNumber,
   provider: ethers.providers.Provider,
-): Promise<number> => {
-  return Date.now() + await getBlockTimeDifference(blockNumber, provider);
+): Promise<number | undefined> => {
+  const blockTimeDifference = await getBlockTimeDifference(blockNumber, provider);
+  return blockTimeDifference ? Date.now() + blockTimeDifference : undefined
 };
 
 
