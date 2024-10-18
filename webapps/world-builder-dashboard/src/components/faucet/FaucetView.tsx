@@ -120,6 +120,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
           nextClaimTimestamp: nextClaimL3Timestamp,
           isAvailable: isAvailableL3
         }
+
         queryClient.setQueryData(['nextFaucetClaimTimestamp', address], (oldData: any) => {
           if (oldData) {
             return {
@@ -198,9 +199,10 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <div className={styles.title}>Testnet Faucet</div>
+        <div className={styles.title}>G7 Sepolia Faucet</div>
         <div className={styles.supportingText}>
-          Request and get <strong> 1 {L3_NATIVE_TOKEN_SYMBOL} testnet token </strong> to your connected wallet or an external address on G7 network.
+          Request and get <strong> 1 {L3_NATIVE_TOKEN_SYMBOL} token </strong> to your connected wallet or an
+          external address on G7 Sepolia.
         </div>
       </div>
       <div className={styles.contentContainer}>
@@ -257,7 +259,8 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
             (selectedNetwork.chainId === L3_NETWORK.chainId &&
               nextClaimAvailable.data &&
               !nextClaimAvailable.data.L3.isAvailable) ||
-            ((!isValidAddress || address === '') && selectedAccountType === 'External Address' || claim.isLoading)
+            ((!isValidAddress || address === '') && selectedAccountType === 'External Address') ||
+            claim.isLoading
               ? styles.requestTokensButtonDisabled
               : styles.requestTokensButton
           }
@@ -268,7 +271,8 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
             (selectedNetwork.chainId === L3_NETWORK.chainId &&
               nextClaimAvailable.data &&
               !nextClaimAvailable.data.L3.isAvailable) ||
-            ((!isValidAddress || address === '') && selectedAccountType === 'External Address' || claim.isLoading)
+            ((!isValidAddress || address === '') && selectedAccountType === 'External Address') ||
+            claim.isLoading
           }
         >
           <div className={styles.requestTokensButtonText}>{claim.isLoading ? `Requesting...` : `Request Tokens`}</div>
