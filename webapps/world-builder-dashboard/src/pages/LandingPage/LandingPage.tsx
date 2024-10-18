@@ -33,7 +33,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const totalSections = 4
   const maxThreshold = 750
   const touchpadMultiplier = .35 // Reduce sensitivity for touchpads
-  const mouseMultiplier = 1 // Normal sensitivity for mouse wheels
+  const mouseMultiplier = .75 // Normal sensitivity for mouse wheels
   const networkCardsRef = useRef<HTMLDivElement>(null)
 
   const handleScroll = (event: { deltaY: number; deltaMode: number }) => {
