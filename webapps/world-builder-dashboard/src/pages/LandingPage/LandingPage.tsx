@@ -8,10 +8,11 @@ import HyperPlayLogo from '@/assets/HyperPlayLogo'
 import IconGame7 from '@/assets/IconGame7'
 import IconGame7Logo from '@/assets/IconGame7Logo'
 import IconHamburgerLanding from '@/assets/IconHamburgerLanding'
+import MarketWarsLogo from '@/assets/MarketWarsLogo'
 import SummonLogo from '@/assets/SummonLogo'
 import SummonTextLogo from '@/assets/SummonTextLogo'
 
-interface LandingPageProps { }
+interface LandingPageProps {}
 
 const LandingPage: React.FC<LandingPageProps> = () => {
   const NAVBAR_ITEMS = [
@@ -35,7 +36,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const mouseMultiplier = 1 // Normal sensitivity for mouse wheels
   const networkCardsRef = useRef<HTMLDivElement>(null)
 
-  const handleScroll = (event: { deltaY: number, deltaMode: number }) => {
+  const handleScroll = (event: { deltaY: number; deltaMode: number }) => {
     let deltaY = event.deltaY
     let isTouchpad = false
 
@@ -45,13 +46,13 @@ const LandingPage: React.FC<LandingPageProps> = () => {
 
     if (deltaY > 120) deltaY = 120
     if (deltaY < -120) deltaY = -120
-  
+
     // Adjust scroll speed based on whether it's a touchpad or a mouse wheel
     deltaY *= isTouchpad ? touchpadMultiplier : mouseMultiplier
-  
+
     let newScrollThreshold = scrollThreshold + deltaY
     const scrollAmount = Math.min(Math.abs(deltaY), maxThreshold) * Math.sign(deltaY)
-  
+
     if (currentSectionIndex === 0 && newScrollThreshold < 0) {
       newScrollThreshold = 0
     } else if (currentSectionIndex === totalSections - 1 && newScrollThreshold >= maxThreshold) {
@@ -59,21 +60,21 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     } else {
       newScrollThreshold = scrollThreshold + scrollAmount
     }
-  
+
     setScrollThreshold(newScrollThreshold)
-  
+
     // Scroll inside the container
     const networkCardsContainer = networkCardsRef.current
     if (networkCardsContainer) {
       const maxScrollLeft = networkCardsContainer.scrollWidth - networkCardsContainer.clientWidth
       const newScrollLeft = Math.min(networkCardsContainer.scrollLeft + scrollAmount, maxScrollLeft)
-  
+
       networkCardsContainer.scrollTo({
         left: newScrollLeft,
         behavior: 'smooth'
       })
     }
-  
+
     // Navigate between sections based on threshold
     if (newScrollThreshold > maxThreshold + 250 && currentSectionIndex < totalSections - 1) {
       setScrollThreshold(0)
@@ -87,19 +88,19 @@ const LandingPage: React.FC<LandingPageProps> = () => {
       }
     }
   }
-  
+
   // Attach the event listeners
   useEffect(() => {
     const handleScrollEvents = (event: WheelEvent | KeyboardEvent | TouchEvent) => {
       if (navbarOpen) return
-  
+
       let deltaY = 0
-  
+
       if ('deltaY' in event) {
         deltaY = event.deltaY
         handleScroll({ deltaY, deltaMode: event.deltaMode || 0 })
       }
-  
+
       if ('key' in event) {
         if (event.key === 'ArrowUp') {
           deltaY = -maxThreshold
@@ -109,10 +110,10 @@ const LandingPage: React.FC<LandingPageProps> = () => {
         handleScroll({ deltaY, deltaMode: 1 }) // treat key as mouse-like scroll
       }
     }
-  
+
     window.addEventListener('wheel', handleScrollEvents)
     window.addEventListener('keydown', handleScrollEvents)
-  
+
     return () => {
       window.removeEventListener('wheel', handleScrollEvents)
       window.removeEventListener('keydown', handleScrollEvents)
@@ -342,6 +343,11 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                       <ConduitLogo />
                     </div>
                   </div>
+                  <div className={styles.sponsorCard}>
+                    <div className={styles.sponsorCardImage}>
+                      <MarketWarsLogo />
+                    </div>
+                  </div>
                 </div>
                 {!smallView ? (
                   <div className={styles.ctaContainer}>
@@ -404,7 +410,9 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                     <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialDiscord}`} />
                     <div className={styles.networkEssentialCardText}>
                       <div className={styles.networkEssentialCardTitle}>Discord</div>
-                      <div className={styles.networkEssentialCardDescription}>Join our community of builders on Discord</div>
+                      <div className={styles.networkEssentialCardDescription}>
+                        Join our community of builders on Discord
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -498,6 +506,11 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                       <ConduitLogo />
                     </div>
                   </div>
+                  <div className={styles.sponsorCard}>
+                    <div className={styles.sponsorCardImage}>
+                      <MarketWarsLogo />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -551,7 +564,9 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialDiscord}`} />
                   <div className={styles.networkEssentialCardText}>
                     <div className={styles.networkEssentialCardTitle}>Discord</div>
-                    <div className={styles.networkEssentialCardDescription}>Join our community of builders on Discord</div>
+                    <div className={styles.networkEssentialCardDescription}>
+                      Join our community of builders on Discord
+                    </div>
                   </div>
                 </div>
               </div>
