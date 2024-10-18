@@ -7,6 +7,7 @@ export interface EthBridge {
   outbox: string;
   rollup: string;
   sequencerInbox: string;
+  depositTimeout?: number;
 }
 
 export interface TokenBridge {
@@ -24,6 +25,7 @@ export interface TokenBridge {
   childProxyAdmin: string;
   childWeth: string;
   childWethGateway: string;
+  depositTimeout?: number;
 }
 
 export interface Teleporter {
@@ -67,11 +69,12 @@ export const networks: { [chainId: number]: BridgeNetworkConfig } = {
       outbox: '0x65f07C7D521164a4d5DaC6eB8Fac8DA067A3B78F',
       rollup: '0xd80810638dbDF9081b72C1B33c65375e807281C8',
       sequencerInbox: '0x6c97864CE4bEf387dE0b3310A44230f7E3F1be0D',
+      depositTimeout: 10 * 60,
     },
     arbSys: '0x0000000000000000000000000000000000000064',
     isCustom: false,
     isTestnet: true,
-    name: 'Arbitrum Rollup Sepolia Testnet',
+    name: 'Arbitrum Sepolia',
     explorerUrl: 'https://sepolia.arbiscan.io',
     rpcs: ['https://sepolia-rollup.arbitrum.io/rpc'],
     nativeCurrency: {
@@ -95,6 +98,7 @@ export const networks: { [chainId: number]: BridgeNetworkConfig } = {
       childProxyAdmin: '0x715D99480b77A8d9D603638e593a539E21345FdF',
       childWeth: '0x980B62Da83eFf3D4576C647993b0c1D7faf17c73',
       childWethGateway: '0xCFB1f08A4852699a979909e22c30263ca249556D',
+      depositTimeout: 10 * 60,
     },
     teleporter: {
       l1Teleporter: '0x9E86BbF020594D7FFe05bF32EEDE5b973579A968',
@@ -153,6 +157,7 @@ export const networks: { [chainId: number]: BridgeNetworkConfig } = {
       childProxyAdmin: '0x07424574dbF6508D1c79755ab8f1ba3883cc38f3',
       childWeth: '0x0000000000000000000000000000000000000000',
       childWethGateway: '0x0000000000000000000000000000000000000000',
+      depositTimeout: 2 * 60,
     },
     nitroGenesisBlock: 0,
     nitroGenesisL1Block: 0,
