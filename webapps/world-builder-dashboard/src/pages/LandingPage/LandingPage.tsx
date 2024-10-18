@@ -154,7 +154,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
             {/* G7 Benefits */}
             <div className={styles.secondSection}>
               <div className={styles.contentContainer}>
-                <div className={styles.sectionTitle}> Get all benefits of the G7 Nation</div>
+                <div className={styles.sectionTitle}> Get all benefits of the G7 Network</div>
                 <div className={styles.cards}>
                   <div className={styles.card}>
                     <div className={styles.cardTitle}>Build for gamers</div>
@@ -251,7 +251,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   <div className={styles.networkEssentialCardText}>
                     <div className={styles.networkEssentialCardTitle}>Docs</div>
                     <div className={styles.networkEssentialCardDescription}>
-                      Get more information about building in the G7 Nation
+                      Get more information about building in the G7 Network
                     </div>
                   </div>
                 </div>
