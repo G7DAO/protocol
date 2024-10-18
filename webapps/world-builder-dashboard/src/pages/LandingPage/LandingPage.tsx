@@ -34,7 +34,13 @@ const LandingPage: React.FC<LandingPageProps> = () => {
   const networkCardsRef = useRef<HTMLDivElement>(null)
 
   const handleScroll = (event: { deltaY: number }) => {
-    const deltaY = event.deltaY
+    let deltaY = event.deltaY
+
+    const isTouchpad = Math.abs(deltaY) < 50
+    if (isTouchpad) {
+      deltaY *= 0.25
+    }
+
     let newScrollThreshold = scrollThreshold + deltaY
     const scrollAmount = Math.min(Math.abs(deltaY), maxThreshold) * Math.sign(deltaY)
 
