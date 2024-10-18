@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './LandingPage.module.css'
 import { useMediaQuery } from 'summon-ui/mantine'
@@ -25,44 +25,8 @@ const LandingPage: React.FC<LandingPageProps> = () => {
     }
   ]
   const navigate = useNavigate()
-  const [currentSectionIndex, setCurrentSectionIndex] = useState<number>(0)
-  const [scrollThreshold, setScrollThreshold] = useState(0)
   const [navbarOpen, setNavBarOpen] = useState<boolean>(false)
   const smallView = useMediaQuery('(max-width: 750px)')
-  const mediumView = useMediaQuery('(max-width: 1199px)')
-  const totalSections = 4
-  const maxThreshold = 750
-  const touchpadMultiplier = .35 // Reduce sensitivity for touchpads
-  const mouseMultiplier = 1 // Normal sensitivity for mouse wheels
-  const networkCardsRef = useRef<HTMLDivElement>(null)
-
-
-  const getScrollBarFillStyle = (index: number) => {
-    if (index < currentSectionIndex) {
-      return {
-        height: '100%',
-        backgroundColor: '#F04438',
-        borderRadius: '100px',
-        transition: 'height 0.4s ease-in-out'
-      }
-    }
-    if (index === currentSectionIndex) {
-      const fillPercentage = Math.min(Math.abs(scrollThreshold / maxThreshold), 1) * 100
-      return {
-        height: `${fillPercentage}%`,
-        backgroundColor: '#F04438',
-        borderRadius: '100px',
-        transition: 'height 0.25s ease-in-out'
-      }
-    }
-    return {
-      height: '0%',
-      backgroundColor: '#F04438',
-      borderRadius: '100px',
-      transition: 'height 0.25s ease-in-out'
-    }
-  }
-
   const startBuilding = () => {
     navigate('/faucet')
   }
@@ -173,6 +137,17 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                     <div className={styles.titleText}>COME BUILD YOUR GAME</div>
                     <div className={styles.subtitleText}>Be a part of the future of gaming</div>
                   </div>
+                  {!smallView && (<div className={styles.ctaContainer}>
+                    <div className={styles.learnMoreCTA} onClick={() => window.open(
+                      'https://wiki.game7.io/g7-developer-resource/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network/world-builder',
+                      '_blank'
+                    )}>
+                      Learn more
+                    </div>
+                    <div className={styles.startBuildingCTA} onClick={startBuilding}>
+                      Start building
+                    </div>
+                  </div>)}
                 </div>
               </div>
             </div>
@@ -293,6 +268,9 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   </div>
                 </div>
               </div>
+              {!smallView && (<div className={styles.startBuildingCTA} onClick={startBuilding}>
+                Start building
+              </div>)}
             </div>
           </div>
         )}

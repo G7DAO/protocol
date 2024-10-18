@@ -464,10 +464,8 @@ body {
   gap: 24px;
   align-self: stretch;
   justify-content: center;
-  overflow-x: auto;
   scrollbar-width: none;
-  scroll-behavior: smooth;
-  padding-inline: 40px;
+  flex-wrap: wrap;
 }
 
 .networkEssentialCards::-webkit-scrollbar {
@@ -476,7 +474,8 @@ body {
 
 .networkEssentialCard {
   display: flex;
-  width: 340px;
+  width: 100%;
+  max-width: 340px;
   height: 422px;
   padding: 24px;
   flex-direction: column;
@@ -496,30 +495,35 @@ body {
   width: 292px;
   height: 178px;
   cursor: url('../../assets/hand.svg'), pointer;
+  border-radius: 12px;
+  border: 1px solid #393939;
+  height: 178px;
+  align-self: stretch;
+  width: 100%;
 }
 
 .networkEssentialFaucet {
-  background: url('../../assets/G7FaucetCardDark.jpg') no-repeat center center;
+  background: url('../../assets/G7FaucetCardDark.jpg') 50% / cover no-repeat;
   background-size: contain;
 }
 
 .networkEssentialBridge {
-  background: url('../../assets/G7BridgeCardDark.jpg') no-repeat center center;
+  background: url('../../assets/G7BridgeCardDark.jpg') 50% / cover no-repeat;;
   background-size: contain;
 }
 
 .networkEssentialExplorer {
-  background: url('../../assets/G7ExplorerCardDark.jpg') no-repeat center center;
+  background: url('../../assets/G7ExplorerCardDark.jpg') 50% / cover no-repeat;;
   background-size: contain;
 }
 
 .networkEssentialDocs {
-  background: url('../../assets/G7DocsCardDark.jpg') no-repeat center center;
+  background: url('../../assets/G7DocsCardDark.jpg') 50% / cover no-repeat;;
   background-size: contain;
 }
 
 .networkEssentialDiscord {
-  background: url('../../assets/G7DiscordCardDark.jpg') no-repeat center center;
+  background: url('../../assets/G7DiscordCardDark.jpg') 50% / cover no-repeat;
   background-size: contain;
 }
 
@@ -568,7 +572,6 @@ body {
   justify-content: center;
   align-items: center;
   align-self: stretch;
-  height: var(--Landing-Page-First-Section-Height-Tablet);
   flex: 1 0 auto;
 }
 
@@ -578,7 +581,6 @@ body {
   justify-content: center;
   align-items: center;
   align-self: stretch;
-  height: var(--Landing-Page-First-Section-Height-Tablet);
   flex: 1 0 auto;
 }
 
@@ -633,10 +635,6 @@ body {
     text-transform: uppercase;
   }
 
-  .networkEssentialCards {
-    justify-content: left;
-  }
-
   .firstSection {
     display: flex;
     flex-direction: column;
@@ -650,10 +648,10 @@ body {
   .secondSection {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    /* justify-content: center; */
     align-items: center;
     align-self: stretch;
-    height: var(--Landing-Page-First-Section-Height-Tablet);
+    /* height: var(--Landing-Page-First-Section-Height-Tablet); */
     flex: 1 0 auto;
   }
 
@@ -679,16 +677,16 @@ body {
     gap: 16px;
     align-self: stretch;
     width: 100%;
-  }
-}
-
-@media (max-width: 1566px) {
-  .networkEssentialCards {
-    justify-content: left;
+    min-width: 300px;
   }
 }
 
 @media (max-width: 750px) {
+  .sectionTitle {
+    font-size: 30px;
+    line-height: 38px;
+  }
+
   .card {
     width: 100%;
     max-width: 340px;
@@ -813,7 +811,8 @@ body {
     align-items: center;
     gap: 16px;
     align-self: stretch;
-    overflow-x: unset;
+    justify-content: center;
+    flex-wrap: wrap;
   }
 
   .networkEssentialCard {
