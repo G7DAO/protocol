@@ -23,7 +23,7 @@ interface NotificationsButtonProps {
 const NotificationsButton: React.FC<NotificationsButtonProps> = ({ notifications }) => {
   const { newNotifications, isDropdownOpened, setIsDropdownOpened, isModalOpened, setIsModalOpened } =
     useBridgeNotificationsContext()
-  const smallView = useMediaQuery('(max-width: 767px)')
+  const smallView = useMediaQuery('(max-width: 1199px)')
 
   return (
     <Popover
@@ -34,6 +34,7 @@ const NotificationsButton: React.FC<NotificationsButtonProps> = ({ notifications
       radius={'8px'}
       opened={isDropdownOpened}
       onChange={setIsDropdownOpened}
+      classNames={{ dropdown: styles.dropdown }}
     >
       <Modal
         opened={isModalOpened}
@@ -57,7 +58,7 @@ const NotificationsButton: React.FC<NotificationsButtonProps> = ({ notifications
             setIsDropdownOpened(!isDropdownOpened)
           }}
         >
-          <IconBell />
+          <IconBell className={styles.icon}/>
           {!smallView && <div className={styles.label}>Notifications</div>}
           {newNotifications.length > 0 && <div className={styles.badge}>{newNotifications.length}</div>}
         </button>

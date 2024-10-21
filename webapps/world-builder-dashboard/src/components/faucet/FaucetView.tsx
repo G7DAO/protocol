@@ -1,100 +1,101 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { FAUCET_CHAIN, G7T_FAUCET_ADDRESS, L2_NETWORK, L3_NATIVE_TOKEN_SYMBOL, L3_NETWORK } from '../../../constants'
+import { ALL_NETWORKS, FAUCET_CHAIN, L3_NATIVE_TOKEN_SYMBOL, L3_NETWORK } from '../../../constants'
+import { AccountType } from '../commonComponents/accountSelector/AccountSelector'
+import AccountSelector from '../commonComponents/accountSelector/AccountSelector'
 import styles from './FaucetView.module.css'
 import { ethers } from 'ethers'
-import { useBlockchainContext } from '@/contexts/BlockchainContext'
+import { useMediaQuery } from 'summon-ui/mantine'
+import { NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
+import { useUISettings } from '@/contexts/UISettingsContext'
+import { useFaucetAPI } from '@/hooks/useFaucetAPI'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
-import { timeDifferenceInHoursAndMinutes } from '@/utils/timeFormat'
-import { useMediaQuery } from '@mantine/hooks'
+import { timeDifferenceInHoursAndMinutes, timeDifferenceInHoursMinutesAndSeconds } from '@/utils/timeFormat'
 
 interface FaucetViewProps {}
 const FaucetView: React.FC<FaucetViewProps> = ({}) => {
-  const [selectedNetwork, setSelectedNetwork] = useState(L2_NETWORK)
-  const { connectedAccount, switchChain } = useBlockchainContext()
-  const [isConnecting, setIsConnecting] = useState(false)
-  const { refetchNewNotifications } = useBridgeNotificationsContext()
-  const smallView = useMediaQuery('(max-width: 767px)')
+  const [address, setAddress] = useState<string | undefined>('')
+  const [isValidAddress, setIsValidAddress] = useState<boolean>(false)
+  const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L3_NETWORK)
+  const { useFaucetInterval, useFaucetTimestamp } = useFaucetAPI()
+  const { connectedAccount, connectWallet, chainId } = useBlockchainContext()
+  const [animatedInterval, setAnimatedInterval] = useState('')
+  const [nextClaimTimestamp, setNextClaimTimestamp] = useState(0)
+  const [networkError, setNetworkError] = useState('')
+  const [selectedAccountType, setSelectedAccountType] = useState<AccountType>('Connected Account')
 
-  const handleClick = async () => {
-    if (window.ethereum) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-      const currentChain = await provider.getNetwork()
-      const accounts = await provider.listAccounts()
-      if (accounts.length === 0) {
-        if (typeof window.ethereum !== 'undefined') {
-          try {
-            setIsConnecting(true)
-            const provider = new ethers.providers.Web3Provider(window.ethereum)
-            await provider.send('eth_requestAccounts', [])
-          } catch (error) {
-            console.error('Error connecting to wallet:', error)
-          } finally {
-            setIsConnecting(false)
-          }
-        } else {
-          alert('Wallet is not installed. Please install it to use this feature.')
-        }
-        return
-      }
-      if (currentChain.chainId !== FAUCET_CHAIN.chainId) {
-        try {
-          await switchChain(FAUCET_CHAIN)
-          claim.mutate({ isL2Target: selectedNetwork.chainId === L2_NETWORK.chainId })
-        } catch (error) {
-          console.error('Error switching chain:', error)
-        }
-      } else {
-        claim.mutate({ isL2Target: selectedNetwork.chainId === L2_NETWORK.chainId })
-      }
-    } else {
-      console.error('Wallet is not installed!')
+  const { faucetTargetChainId } = useUISettings()
+  const { refetchNewNotifications } = useBridgeNotificationsContext()
+  const smallView = useMediaQuery('(max-width: 1199px)')
+
+  const values: AccountType[] = [`External Address`, `Connected Account`]
+
+  useEffect(() => {
+    const targetNetwork = ALL_NETWORKS.find((n) => n.chainId === faucetTargetChainId)
+    if (targetNetwork) {
+      setSelectedNetwork(targetNetwork)
     }
+
+    if (connectedAccount) {
+      if (selectedAccountType === 'External Address') {
+        setSelectedAccountType('Connected Account')
+      }
+
+      if (address !== connectedAccount) {
+        setAddress(connectedAccount)
+      }
+    } else if (selectedAccountType === 'External Address' || !connectedAccount) {
+      if (address !== '') {
+        setAddress('')
+      }
+    }
+  }, [faucetTargetChainId, connectedAccount])
+
+  useEffect(() => {
+    setNetworkError('')
+    if (!connectedAccount) setSelectedAccountType('External Address')
+  }, [connectedAccount])
+
+  const handleConnect = async () => {
+    if (!connectedAccount) connectWallet()
+  }
+
+  const handleSelectAccountType = (selectedAccountType: AccountType) => {
+    if (selectedAccountType === 'External Address') setAddress('')
+    else setAddress(connectedAccount)
+    setSelectedAccountType(selectedAccountType)
+    setNetworkError('')
   }
 
   const queryClient = useQueryClient()
   const claim = useMutation(
-    async ({ isL2Target }: { isL2Target: boolean }) => {
-      if (window.ethereum) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum)
-        const signer = provider.getSigner()
-        const contractAbi = [
-          {
-            inputs: [],
-            name: 'claim',
-            outputs: [],
-            stateMutability: 'nonpayable',
-            type: 'function'
-          },
-          {
-            inputs: [],
-            name: 'claimL3',
-            outputs: [],
-            stateMutability: 'nonpayable',
-            type: 'function'
-          }
-        ]
-
-        const contract = new ethers.Contract(G7T_FAUCET_ADDRESS, contractAbi, signer)
-        const tx = isL2Target ? await contract.claim() : await contract.claimL3()
-        const receipt = tx.wait() // Wait for the transaction to be mined
-        const type: 'CLAIM' | 'DEPOSIT' | 'WITHDRAWAL' = 'CLAIM'
-        return {
-          type,
-          amount: '1',
-          highNetworkChainId: selectedNetwork.chainId,
-          lowNetworkChainId: FAUCET_CHAIN.chainId,
-          lowNetworkHash: receipt.hash,
-          lowNetworkTimestamp: Date.now() / 1000,
-          completionTimestamp: Date.now() / 1000,
-          newTransaction: true
+    async ({ address }: { isL2Target: boolean; address: string | undefined }) => {
+      const res = await fetch(`https://api.game7.build/faucet/request/${address}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
         }
+      })
+      if (!res.ok) {
+        throw new Error(`Error: ${res.statusText}`)
       }
-      throw new Error('no window.ethereum')
+      const data = await res.json()
+      setNetworkError('')
+      const type: 'CLAIM' | 'DEPOSIT' | 'WITHDRAWAL' = 'CLAIM'
+      return {
+        type,
+        amount: '1',
+        highNetworkChainId: selectedNetwork.chainId,
+        lowNetworkChainId: FAUCET_CHAIN.chainId,
+        lowNetworkTimestamp: Date.now() / 1000,
+        completionTimestamp: Date.now() / 1000,
+        highNetworkHash: data.result,
+        newTransaction: true
+      }
     },
     {
-      onSuccess: (data: TransactionRecord | undefined) => {
+      onSuccess: (data: TransactionRecord | undefined, { address }) => {
         try {
           const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
 
@@ -107,134 +108,190 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
         } catch (e) {
           console.log(e)
         }
-        queryClient.refetchQueries(['nextFaucetClaimTimestamp'])
+        const lastClaimTimestamp = Date.now() / 1000
+        const faucetInterval = faucetIntervalQuery.data ? Number(faucetIntervalQuery.data) : 0
+        const nextClaimL3Timestamp = lastClaimTimestamp + faucetInterval
+
+        const intervalL3 = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimL3Timestamp)
+        const isAvailableL3 = false
+
+        const updatedL3 = {
+          interval: intervalL3,
+          nextClaimTimestamp: nextClaimL3Timestamp,
+          isAvailable: isAvailableL3
+        }
+
+        queryClient.setQueryData(['nextFaucetClaimTimestamp', address], (oldData: any) => {
+          if (oldData) {
+            return {
+              ...oldData,
+              L3: updatedL3 // Update the L3 data
+            }
+          }
+          return { faucetTimeInterval: faucetInterval, L3: updatedL3 }
+        })
+
+        queryClient.invalidateQueries(['faucetTimestamp', address])
         queryClient.refetchQueries('pendingTransactions')
         queryClient.refetchQueries(['notifications'])
         queryClient.refetchQueries(['nativeBalance'])
         queryClient.refetchQueries(['ERC20balance'])
-        refetchNewNotifications(connectedAccount ?? '')
+        refetchNewNotifications(address ?? '')
       },
-      onError: (e: Error) => {
-        console.error('Transaction failed:', e)
-        console.log(e)
+      onError: (error) => {
+        setNetworkError('Something went wrong')
+        console.log(error)
+        console.error('Error requesting tokens:', error)
       }
     }
   )
 
   function compareTimestampWithCurrentMoment(unixTimestamp: number): boolean {
-    const timestampInMillis = unixTimestamp * 1000 // Unix timestamp in milliseconds
-    const currentInMillis = Date.now() // Current time in milliseconds
+    const timestampInMillis = unixTimestamp * 1000
+    const currentInMillis = Date.now()
 
     return timestampInMillis <= currentInMillis
   }
 
-  const nextClaimAvailable = useQuery(['nextFaucetClaimTimestamp', connectedAccount], async () => {
-    const rpc = L2_NETWORK.rpcs[0]
-    const provider = new ethers.providers.JsonRpcProvider(rpc)
-    const faucetContract = new ethers.Contract(
-      G7T_FAUCET_ADDRESS,
-      [
-        {
-          inputs: [],
-          name: 'faucetTimeInterval',
-          outputs: [
-            {
-              internalType: 'uint256',
-              name: '',
-              type: 'uint256'
-            }
-          ],
-          stateMutability: 'view',
-          type: 'function'
-        },
-        {
-          inputs: [
-            {
-              internalType: 'address',
-              name: '',
-              type: 'address'
-            }
-          ],
-          name: 'lastClaimedTimestamp',
-          outputs: [
-            {
-              internalType: 'uint256',
-              name: '',
-              type: 'uint256'
-            }
-          ],
-          stateMutability: 'view',
-          type: 'function'
-        }
-      ],
-      provider
-    )
-    const lastClaimTimestamp = Number(await faucetContract.lastClaimedTimestamp(connectedAccount))
-    const faucetTimeInterval = Number(await faucetContract.faucetTimeInterval())
-    const nextClaimTimestamp = lastClaimTimestamp + faucetTimeInterval
-    const interval = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimTimestamp)
-    const isAvailable = compareTimestampWithCurrentMoment(nextClaimTimestamp)
-    const date = new Date(nextClaimTimestamp * 1000)
+  const lastClaimedTimestampQuery = useFaucetTimestamp(address)
+  const faucetIntervalQuery = useFaucetInterval()
 
-    const readableDate = date.toLocaleString()
+  const nextClaimAvailable = useQuery(
+    ['nextFaucetClaimTimestamp', address],
+    async () => {
+      const lastClaimedL3Timestamp = Number(lastClaimedTimestampQuery.data)
+      const faucetTimeInterval = Number(faucetIntervalQuery.data)
+      const nextClaimL3Timestamp = lastClaimedL3Timestamp + faucetTimeInterval
 
-    return { readableDate, isAvailable, interval }
-  })
+      const intervalL3 = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimL3Timestamp)
+      const isAvailableL3 = compareTimestampWithCurrentMoment(nextClaimL3Timestamp)
+      const L3 = { interval: intervalL3, nextClaimTimestamp: nextClaimL3Timestamp, isAvailable: isAvailableL3 }
+      return { faucetTimeInterval, L3 }
+    },
+    {
+      enabled: !!address && !!lastClaimedTimestampQuery.data && !!faucetIntervalQuery.data
+    }
+  )
+
+  useEffect(() => {
+    if (!nextClaimAvailable.data) return
+    const intervalInfo = nextClaimAvailable.data.L3
+    if (!intervalInfo.isAvailable) {
+      setNextClaimTimestamp(intervalInfo.nextClaimTimestamp)
+    }
+  }, [nextClaimAvailable.data, chainId])
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout
+    if (nextClaimTimestamp) {
+      setAnimatedInterval(timeDifferenceInHoursMinutesAndSeconds(Math.floor(Date.now() / 1000), nextClaimTimestamp))
+      intervalId = setInterval(() => {
+        setAnimatedInterval(timeDifferenceInHoursMinutesAndSeconds(Math.floor(Date.now() / 1000), nextClaimTimestamp))
+      }, 1000)
+    }
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId)
+      }
+    }
+  }, [nextClaimTimestamp])
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <div className={styles.title}>Testnet Faucet</div>
+        <div className={styles.title}>G7 Sepolia Faucet</div>
         <div className={styles.supportingText}>
-          {`Request 1 ${L3_NATIVE_TOKEN_SYMBOL} per day to your wallet address.`}
+          Request and get <strong> 1 {L3_NATIVE_TOKEN_SYMBOL} token </strong> to your connected wallet or an
+          external address on G7 Sepolia.
         </div>
       </div>
-      <div className={styles.networksContainer}>
-        <button
-          className={selectedNetwork === L3_NETWORK ? styles.selectedNetworkButton : styles.networkButton}
-          onClick={() => setSelectedNetwork(L3_NETWORK)}
-        >
-          {L3_NETWORK.displayName}
-        </button>
-        <button
-          className={selectedNetwork === L2_NETWORK ? styles.selectedNetworkButton : styles.networkButton}
-          onClick={() => setSelectedNetwork(L2_NETWORK)}
-        >
-          {L2_NETWORK.displayName}
-        </button>
-      </div>
-      <div className={styles.addressContainer}>
-        <div className={styles.label}>Connected Wallet Address</div>
-        {connectedAccount ? (
-          <div className={styles.address}>
-            {smallView ? `${connectedAccount.slice(0, 6)}....${connectedAccount.slice(-4)}` : connectedAccount}
+      <div className={styles.contentContainer}>
+        <div className={styles.addressSelectorContainer}>
+          <div className={styles.addressContainer}>
+            <div className={styles.label}>Recipient Address</div>
+            <input
+              placeholder='Wallet address'
+              className={styles.address}
+              value={address}
+              disabled={!!connectedAccount && selectedAccountType === 'Connected Account'}
+              onChange={(e) => {
+                setAddress(e.target.value)
+                if (ethers.utils.isAddress(e.target.value)) setIsValidAddress(true)
+                else setIsValidAddress(false)
+              }}
+            />
           </div>
-        ) : (
-          <div className={styles.addressPlaceholder}>'Please connect a wallet...</div>
-        )}
+          {!connectedAccount ? (
+            <>
+              <div className={styles.textSeparator}>
+                {smallView ? (
+                  <>
+                    <div className={styles.bar} />
+                    <span>Or</span>
+                    <div className={styles.bar} />
+                  </>
+                ) : (
+                  'Or'
+                )}
+              </div>
+              <div
+                className={styles.connectWalletButton}
+                onClick={() => {
+                  handleConnect()
+                }}
+              >
+                <div className={styles.connectWalletText}>Connect Wallet</div>
+              </div>
+            </>
+          ) : (
+            <div className={styles.selectorContainer}>
+              <div className={styles.label}>Account</div>
+              <AccountSelector
+                values={values}
+                selectedValue={values.find((value) => selectedAccountType === value)!}
+                onChange={handleSelectAccountType}
+              />
+            </div>
+          )}
+        </div>
+        <button
+          className={
+            (selectedNetwork.chainId === L3_NETWORK.chainId &&
+              nextClaimAvailable.data &&
+              !nextClaimAvailable.data.L3.isAvailable) ||
+            ((!isValidAddress || address === '') && selectedAccountType === 'External Address') ||
+            claim.isLoading
+              ? styles.requestTokensButtonDisabled
+              : styles.requestTokensButton
+          }
+          onClick={() => {
+            claim.mutate({ isL2Target: chainId === 13746, address })
+          }}
+          disabled={
+            (selectedNetwork.chainId === L3_NETWORK.chainId &&
+              nextClaimAvailable.data &&
+              !nextClaimAvailable.data.L3.isAvailable) ||
+            ((!isValidAddress || address === '') && selectedAccountType === 'External Address') ||
+            claim.isLoading
+          }
+        >
+          <div className={styles.requestTokensButtonText}>{claim.isLoading ? `Requesting...` : `Request Tokens`}</div>
+        </button>
       </div>
-      {(!nextClaimAvailable.data || nextClaimAvailable.data.isAvailable) && (
-        <div className={styles.hintBadge}>You may only request funds to a connected wallet.</div>
+      {!!networkError && <div className={styles.errorContainer}>{networkError}.</div>}
+      {!networkError && nextClaimAvailable.isLoading && (
+        <div className={styles.warningContainer}>Checking faucet permissions...</div>
       )}
-      {nextClaimAvailable.data && !nextClaimAvailable.data.isAvailable && (
-        <div
-          className={styles.warningContainer}
-        >{`Already requested today. Come back in ${nextClaimAvailable.data.interval}`}</div>
-      )}
-      <button
-        className={styles.button}
-        onClick={handleClick}
-        disabled={!!connectedAccount && (!nextClaimAvailable.data || !nextClaimAvailable.data.isAvailable)}
-      >
-        {isConnecting
-          ? 'Connecting wallet...'
-          : claim.isLoading
-            ? 'Requesting...'
-            : connectedAccount
-              ? 'Request'
-              : 'Connect wallet'}
-      </button>
+      {selectedNetwork.chainId === L3_NETWORK.chainId &&
+        nextClaimAvailable.data &&
+        !nextClaimAvailable.data.L3.isAvailable && (
+          <div className={styles.availableFundsContainer}>
+            {`You requested funds recently. Come back in `}{' '}
+            <span className={styles.time}>{` ${animatedInterval}`}</span>
+          </div>
+        )}
     </div>
   )
 }
+
 export default FaucetView

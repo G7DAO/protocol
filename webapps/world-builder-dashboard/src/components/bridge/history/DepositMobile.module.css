@@ -22,7 +22,7 @@
     gap: 12px;
     align-self: stretch;
 
-    background: #F9FBFB;
+    background: var(--Gray-50, #F9FAFB);
 }
 
 .title {
@@ -96,7 +96,7 @@
     font-weight: 600;
     line-height: 20px; /* 142.857% */
     border: none;
-    border-top: 1px solid #EAECF0;
-    background: #FFF;
+    border-top: 1px solid var(--Gray-200, #EAECF0);
+    background: var(--Base-White, #ffffff);
     border-radius: 0 0 12px 12px;
 }

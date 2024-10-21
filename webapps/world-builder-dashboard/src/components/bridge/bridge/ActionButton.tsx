@@ -12,7 +12,7 @@ import { Modal } from 'summon-ui/mantine'
 import ApproveAllowance from '@/components/bridge/allowance/ApproveAllowance'
 import { HighNetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
-import useERC20Balance, { fetchERC20Allowance, useERC20Allowance } from '@/hooks/useERC20Balance'
+import useERC20Balance, { fetchERC20Allowance } from '@/hooks/useERC20Balance'
 import { estimateCreateRetryableTicketFee, sendL2ToL3Message } from '@/utils/bridge/createRetryableTicket'
 import { depositERC20ArbitrumSDK, TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { sendDepositERC20ToNativeTransaction } from '@/utils/bridge/depositERC20ToNative'
@@ -22,7 +22,7 @@ import { L2ToL1MessageStatus } from '@arbitrum/sdk'
 
 interface ActionButtonProps {
   direction: 'DEPOSIT' | 'WITHDRAW'
-  amount: string
+  amount: number
   isDisabled: boolean
   L2L3message?: { destination: string; data: string }
   setErrorMessage: (arg0: string) => void
@@ -31,7 +31,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
   const { connectedAccount, isConnecting, selectedHighNetwork, selectedLowNetwork, connectWallet, getProvider } =
     useBlockchainContext()
   const [isAllowanceModalOpened, setIsAllowanceModalOpened] = useState(false)
-  const [additionalCost, setAdditionalCost] = useState(0)
+  const [additionalCost, setAdditionalCost] = useState(ethers.BigNumber.from(0))
   const [feeEstimate, setFeeEstimate] = useState<
     { gasLimit: ethers.BigNumber; maxFeePerGas: ethers.BigNumber } | undefined
   >(undefined)
@@ -42,13 +42,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
     setFeeEstimate(undefined)
   }, [L2L3message])
 
-  const { data: allowance } = useERC20Allowance({
-    tokenAddress: selectedLowNetwork.g7TokenAddress,
-    owner: connectedAccount,
-    spender: selectedLowNetwork.routerSpender ?? '',
-    rpc: selectedLowNetwork.rpcs[0]
-  })
-
   const { data: lowNetworkBalance } = useERC20Balance({
     tokenAddress: selectedLowNetwork.g7TokenAddress,
     account: connectedAccount,
@@ -57,7 +50,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
 
   const getLabel = (): String | undefined => {
     if (isConnecting) {
-      return 'Connecting...'
+      return 'Connecting wallet...'
     }
     if (deposit.isLoading || withdraw.isLoading) {
       return 'Submitting...'
@@ -82,11 +75,11 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
     }
     setErrorMessage('')
     if (direction === 'DEPOSIT') {
-      deposit.mutate(amount)
+      deposit.mutate(String(amount))
       return
     }
     if (direction === 'WITHDRAW') {
-      withdraw.mutate(amount)
+      withdraw.mutate(String(amount))
       return
     }
   }
@@ -108,7 +101,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
       const signer = provider.getSigner()
       let messageExecutionCost = additionalCost
       let estimate: { gasLimit: ethers.BigNumber; maxFeePerGas: ethers.BigNumber } | undefined
-      if (L2L3message?.data && L2L3message.destination && messageExecutionCost === 0) {
+      if (L2L3message?.data && L2L3message.destination && messageExecutionCost.eq(ethers.BigNumber.from(0))) {
         try {
           estimate = await estimateCreateRetryableTicketFee(
             '',
@@ -118,7 +111,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
           )
           if (estimate) {
             setFeeEstimate(estimate)
-            messageExecutionCost = Number(ethers.utils.formatEther(estimate.maxFeePerGas.mul(estimate.gasLimit)))
+            messageExecutionCost = estimate.maxFeePerGas.mul(estimate.gasLimit)
           }
         } catch (e) {
           console.log(`Estimation message execution fee error:  ${e}`)
@@ -126,7 +119,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
       }
 
       setAdditionalCost(messageExecutionCost)
-      if (allowance !== undefined && allowance < Number(amount) + messageExecutionCost) {
+      if (allowance.raw.lt(ethers.utils.parseUnits(amount, 18).add(messageExecutionCost))) {
         setIsAllowanceModalOpened(true)
         return
       }
@@ -190,13 +183,14 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
   const withdraw = useMutation(
     async (amount: string) => {
       const provider = await getProvider(selectedHighNetwork)
+      const signer = provider.getSigner()
       if (!provider || !connectedAccount) {
         throw new Error("Wallet isn't connected")
       }
       if (selectedHighNetwork.chainId !== L3_NETWORK.chainId) {
-        return sendWithdrawERC20Transaction(amount, connectedAccount)
+        return sendWithdrawERC20Transaction(amount, connectedAccount, signer)
       }
-      return sendWithdrawTransaction(amount, connectedAccount)
+      return sendWithdrawTransaction(amount, connectedAccount, signer)
     },
     {
       onSuccess: async (record: TransactionRecord) => {
@@ -241,28 +235,39 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
       <button
         className={styles.container}
         onClick={handleClick}
-        disabled={getLabel() !== 'Connect wallet' && (isDisabled || Number(amount) <= 0)}
+        disabled={
+          getLabel() === 'Submit' &&
+          (isDisabled ||
+            Number(amount) < 0 ||
+            ((!L2L3message?.destination || !L2L3message.data) && Number(amount) === 0))
+        }
       >
-        {getLabel() ?? 'Submit'}
+        <div
+          className={
+            isConnecting || deposit.isLoading || withdraw.isLoading ? styles.buttonLabelLoading : styles.buttonLabel
+          }
+        >
+          {getLabel() ?? 'Submit'}
+        </div>
       </button>
       <Modal
         opened={isAllowanceModalOpened}
         onClose={() => setIsAllowanceModalOpened(false)}
         withCloseButton={false}
-        padding={'24px'}
+        padding={'23px'}
         size={'400px'}
         radius={'12px'}
+        classNames={{ body: styles.body }}
       >
         <ApproveAllowance
-          balance={Number(lowNetworkBalance ?? '0')}
-          amount={Number(amount) + additionalCost}
+          balance={lowNetworkBalance?.raw ?? ethers.BigNumber.from('0')}
+          amount={ethers.utils.parseUnits(String(amount), 18).add(additionalCost)}
           onSuccess={() => {
             setIsAllowanceModalOpened(false)
-            deposit.mutate(amount)
+            deposit.mutate(String(amount))
           }}
           onClose={() => setIsAllowanceModalOpened(false)}
           allowanceProps={{
-            allowance: allowance ?? 0,
             tokenAddress: selectedLowNetwork.g7TokenAddress,
             network: selectedLowNetwork,
             spender: selectedLowNetwork.routerSpender

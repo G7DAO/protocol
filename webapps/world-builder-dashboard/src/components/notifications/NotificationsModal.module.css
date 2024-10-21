@@ -9,6 +9,7 @@
     background: var(--Base-White, #FFF);
     box-shadow: 0 20px 24px -4px rgba(16, 24, 40, 0.08), 0 8px 8px -4px rgba(16, 24, 40, 0.03);
     position: relative;
+    font-family: Inter, sans-serif;
 }
 
 .header {
@@ -19,11 +20,14 @@
     gap: 4px;
     align-self: stretch;
     border-bottom: 1px solid var(--Gray-200, #EAECF0);
-
     background: var(--Base-White, #FFF);
 }
 
+
 .title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     align-self: stretch;
 
     color: var(--Gray-900, #101828);
@@ -53,9 +57,9 @@
     justify-content: center;
     align-items: center;
 
-    position: absolute;
-    right: 16px;
-    top: 16px;
+    /*position: absolute;*/
+    /*right: 16px;*/
+    /*top: 16px;*/
 
     border-radius: 8px;
     cursor: pointer;
@@ -127,7 +131,7 @@
     align-items: center;
 
     border-radius: 16px;
-    mix-blend-mode: multiply;
+    mix-blend-mode: var(--mix-blend, multiply);
     text-align: center;
 
     /* Text xs/Medium */
@@ -170,11 +174,6 @@
     background: var(--Error-100, #FEE4E2);
 }
 
-.toastMultiple {
-
-}
-
-
 .headerTime {
     color: var(--Gray-500, #667085);
 
@@ -203,17 +202,24 @@
     align-items: center;
     gap: 10px;
     align-self: stretch;
-    background: #FFF;
+    background: var(--Base-White, #ffffff);
     cursor: pointer;
     border: none;
     border-top: 1px solid var(--Gray-200, #EAECF0);
+    color: var(--Gray-700, #344054);
+
+    /* Text md/Semibold */
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 24px; /* 150% */
 }
 
 .button:hover {
     background: var(--Gray-25, #FCFCFD);
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1199px) {
     .container {
         width: 100%;
     }

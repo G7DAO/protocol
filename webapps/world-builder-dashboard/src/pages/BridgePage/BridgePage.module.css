@@ -12,7 +12,7 @@
 
 .top {
   display: flex;
-  padding: 0 32px 32px 32px;
+  padding: 0 32px 31px 32px;
   flex-direction: column;
   align-items: flex-start;
   gap: 24px;
@@ -51,6 +51,7 @@
   border: none;
   cursor: pointer;
 }
+
 .selectedNavigationButton {
   display: flex;
   padding: 8px 12px;
@@ -58,8 +59,8 @@
   gap: 8px;
 
   border-radius: 6px;
-  background: var(--Primary-600, #ef233b);
-  color: var(--Base-White, #fff);
+  background: var(--Selected-Tab, #ef233b);
+  color: var(--Selected-Tab-Text, #fff);
 
   /* Text md/Semibold */
   font-size: 16px;
@@ -95,19 +96,21 @@
   overflow-y: auto;
   position: relative;
   font-family: Inter, sans-serif;
+  width: 100%;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1199px) {
   .container {
     padding: 32px 0 16px 0;
     margin-top: 64px;
+    gap: 16px;
   }
   .top {
     padding: 0 16px 16px 16px;
 
   }
   .viewContainer {
-    padding: 16px;
+    padding: 0 16px;
     width: 100%;
   }
 }

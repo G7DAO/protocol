@@ -1,0 +1,107 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    width: 100%;
+    /*place-self: stretch;*/
+}
+
+.titleContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 4px;
+    flex: 1 0 0;
+    align-self: stretch;
+}
+
+.title {
+    align-self: stretch;
+
+    color: var(--Gray-900, #101828);
+
+    /* Text lg/Semibold */
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 28px; /* 155.556% */
+}
+
+.supportingText {
+    color: var(--Gray-600, #475467);
+
+    /* Text sm/Regular */
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px; /* 142.857% */
+}
+
+.divider {
+    background: var(--Gray-200, #EAECF0);
+    height: 1px;
+    width: 100%;
+}
+
+.faucetLinks {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    align-self: stretch;
+}
+
+.faucetLinkContainer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    align-self: stretch;
+    width: 100%;
+    justify-content: space-between;
+}
+
+
+.textContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 4px;
+    flex: 1;
+}
+
+
+.linkTitle {
+    color: var(--Gray-700, #344054);
+
+    /* Text sm/Semibold */
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 20px; /* 142.857% */
+}
+
+.button {
+    display: flex;
+    padding: 8px 14px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+
+    border-radius: 8px;
+    border: 1px solid var(--Primary-600, #EF233B);
+    background: var(--Primary-600, #EF233B);
+
+    /* Shadow/xs */
+    box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+    color: var(--Primary-200, #FFF);
+
+    /* Text sm/Semibold */
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 20px; /* 142.857% */
+}
+

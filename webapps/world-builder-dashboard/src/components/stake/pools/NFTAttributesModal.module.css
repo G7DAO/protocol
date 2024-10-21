@@ -1,0 +1,42 @@
+/* Modal.module.css */
+.modal {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    width: 660px;
+    max-width: 100%;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid var(--Gray-200, #eaecf0);
+    background: var(--Gray-50, #f9fafb);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .modalHeader {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .modalTitle {
+    color: var(--Gray-900, #101828);
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 28px;
+  }
+  
+  
+  .inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+  
+  .label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #475467;
+  }
+  

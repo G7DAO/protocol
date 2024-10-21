@@ -8,6 +8,7 @@ import styles from './BridgePage.module.css'
 import BridgeView from '@/components/bridge/bridge/BridgeView'
 import HistoryDesktop from '@/components/bridge/history/HistoryDesktop'
 import HistoryMobile from '@/components/bridge/history/HistoryMobile'
+import SettingsView from '@/components/bridge/settings/SettingsView'
 import NotificationsButton from '@/components/notifications/NotificationsButton'
 import { FloatingNotification } from '@/components/notifications/NotificationsDropModal'
 // Contexts
@@ -30,8 +31,7 @@ const BridgePage = () => {
 
   const notifications = useNotifications(connectedAccount, notificationsOffset, notificationsLimit)
   const { newNotifications, refetchNewNotifications } = useBridgeNotificationsContext()
-  const smallView = useMediaQuery('(max-width: 767px)')
-
+  const smallView = useMediaQuery('(max-width: 1199px)')
   const queryClient = useQueryClient()
 
   useEffect(() => {
@@ -39,7 +39,7 @@ const BridgePage = () => {
       queryClient.refetchQueries(['incomingMessages'])
       refetchNewNotifications(connectedAccount)
     }
-  }, [pendingTransacions.data])
+  }, [pendingTransacions.data, connectedAccount])
 
   return (
     <div className={styles.container}>
@@ -68,11 +68,22 @@ const BridgePage = () => {
           >
             History
           </button>
+          <button
+            className={
+              location.pathname === '/bridge/settings'
+                ? styles.selectedNavigationButton
+                : styles.unselectedNavigationButton
+            }
+            onClick={() => navigate('/bridge/settings')}
+          >
+            Settings
+          </button>
         </div>
       </div>
       <div className={styles.viewContainer}>
         {location.pathname === '/bridge' && <BridgeView direction={direction} setDirection={setDirection} />}
         {location.pathname === '/bridge/transactions' && (!smallView ? <HistoryDesktop /> : <HistoryMobile />)}
+        {location.pathname === '/bridge/settings' && <SettingsView />}
       </div>
     </div>
   )

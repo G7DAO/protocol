@@ -7,6 +7,7 @@ import styles from './NotificationsDropModal.module.css'
 import modalStyles from './NotificationsModal.module.css'
 // Assets and Icons
 import IconClose from '@/assets/IconClose'
+import IconCloseSmall from '@/assets/IconCloseSmall'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 // Components
 import { BridgeNotification } from '@/components/notifications/NotificationsButton'
@@ -31,7 +32,9 @@ const copy = (notification: BridgeNotification) => {
       return `${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL} deposited to ${targetNetwork}`
     }
     if (notification.type === 'CLAIM') {
-      return `You received ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL}`
+      return (
+        `You requested ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL}`
+      )
     }
     return `Your ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL} withdrawal is complete`
   }
@@ -62,14 +65,26 @@ const NotificationsDropModal: React.FC<NotificationsDropModalProps> = ({ notific
 
   return (
     <div className={styles.container}>
-      {!notifications || (notifications.length === 0 && <div className={styles.content}>No notifications yet</div>)}
+      {!notifications || (notifications.length === 0 &&
+        <div className={styles.content}>
+          No notifications yet
+        </div>)}
       {notifications &&
         notifications.slice(0, 3).map((n, idx) => (
           <div className={styles.item} key={idx}>
             <div className={styles.itemHeader}>
               <div className={styles.itemHeaderLeft}>
                 <div className={styles.itemHeaderTitle}>{n.type.toLowerCase()}</div>
-                <div className={badgeClassName(n.status)}>{n.status.toLowerCase()}</div>
+                {getTransactionUrl(n) ? (
+                  <a href={getTransactionUrl(n)} target={'_blank'} className={modalStyles.explorerLink}>
+                    <div className={badgeClassName(n.status)}>
+                      {n.status.toLowerCase()}
+                      <IconLinkExternal02 stroke={n.status === 'CLAIMABLE' ? '#fff' : '#fff'} />
+                    </div>
+                  </a>
+                ) : (
+                  <div className={badgeClassName(n.status)}>{n.status.toLowerCase()}</div>
+                )}
               </div>
               <div className={styles.headerTime}>{timeAgo(n.timestamp, true)}</div>
             </div>
@@ -104,6 +119,19 @@ const toastClassName = (status: string) => {
   }
 }
 
+const iconCloseClassName = (status: string) => {
+  switch (status) {
+    case 'COMPLETED':
+      return styles.iconCloseCompleted
+    case 'CLAIMABLE':
+      return styles.iconCloseClaimable
+    case 'FAILED':
+      return styles.iconCloseError
+    default:
+      return styles.iconCloseCompleted
+  }
+}
+
 export const FloatingNotification = ({ notifications }: { notifications: BridgeNotification[] }) => {
   const { setIsDropdownOpened } = useBridgeNotificationsContext()
   const handleClick = () => {
@@ -115,16 +143,17 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
 
   if (notifications.length > 1) {
     return (
-      <div
-        onClick={handleClick}
-        className={styles.toastMultiple}
-      >{`You have ${notifications.length} new notifications. Click here to view`}</div>
+      <div onClick={handleClick} className={styles.toastMultiple}>
+        {`You have ${notifications.length} new notifications. Click here to view`}
+        <IconCloseSmall className={styles.closeIconMultiple} />
+      </div>
     )
   }
 
   return (
     <div onClick={handleClick} className={toastClassName(notifications[0].status)}>
       {copy(notifications[0])}
+      <IconCloseSmall className={iconCloseClassName(notifications[0].status)} />
     </div>
   )
 }
@@ -142,8 +171,8 @@ const getTransactionUrl = (notification: BridgeNotification): string | undefined
       txHash = status === 'COMPLETED' ? tx.lowNetworkHash : tx.highNetworkHash
       break
     case 'CLAIM':
-      chainId = tx.lowNetworkChainId
-      txHash = tx.lowNetworkHash
+      chainId = tx.highNetworkChainId
+      txHash = tx.highNetworkHash
       break
     default:
   }
@@ -171,9 +200,11 @@ export const NotificationsModal: React.FC<NotificationsDropModalProps> = ({ noti
 
   return (
     <div className={modalStyles.container}>
-      <IconClose className={modalStyles.closeButton} onClick={() => setIsModalOpened(false)} />
       <div className={modalStyles.header}>
-        <div className={modalStyles.title}>Notifications</div>
+        <div className={modalStyles.title}>
+          Notifications
+          <IconClose className={modalStyles.closeButton} onClick={() => setIsModalOpened(false)} />
+        </div>
         <div className={modalStyles.supportingText}>Review your notification center</div>
       </div>
       <div className={modalStyles.itemsContainer} ref={itemsContainerRef}>
@@ -195,7 +226,7 @@ export const NotificationsModal: React.FC<NotificationsDropModalProps> = ({ noti
                     <a href={getTransactionUrl(n)} target={'_blank'} className={modalStyles.explorerLink}>
                       <div className={badgeClassName(n.status)}>
                         {n.status.toLowerCase()}
-                        <IconLinkExternal02 stroke={n.status === 'CLAIMABLE' ? '#B54708' : '#027A48'} />
+                        <IconLinkExternal02 stroke={n.status === 'CLAIMABLE' ? '#fff' : '#fff'} />
                       </div>
                     </a>
                   ) : (

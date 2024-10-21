@@ -76,7 +76,7 @@
 
   border-radius: 8px;
   border: 1px solid var(--Gray-100, #f2f4f7);
-  background: var(--Base-White, #fff);
+  background: var(--Base-Container, #fff);
 }
 
 .input {
@@ -92,6 +92,12 @@
   border: none;
   outline: none;
   padding: 0;
+  background: var(--Base-Container, #fff);
+}
+
+.input:disabled {
+  color: var(--Gray-500, #667085);
+  cursor: not-allowed;
 }
 
 .inputWithError {
@@ -106,7 +112,7 @@
   gap: 8px;
 
   border-radius: 8px;
-  background: var(--Base-Brand, #ef233c);
+  background: var(--Primary-600, #ef233c);
   border: none;
   color: var(--Primary-25, #fffafb);
 
@@ -116,6 +122,11 @@
   font-weight: 500;
   line-height: 18px; /* 150% */
   cursor: pointer;
+}
+
+.maxButton:disabled {
+  background: var(--Disabled-Button, #475467);
+  cursor: not-allowed;
 }
 
 .tokenGroup {
@@ -140,7 +151,7 @@
 }
 
 
-@media (max-width: 767px) {
+@media (max-width: 1199px) {
   .input {
     font-size: 18px;
     font-weight: 700;

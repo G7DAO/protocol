@@ -68,7 +68,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const { switchChain, connectedAccount } = useBlockchainContext()
   const queryClient = useQueryClient()
   const { refetchNewNotifications } = useBridgeNotificationsContext()
-  const smallView = useMediaQuery('(max-width: 767px)')
+  const smallView = useMediaQuery('(max-width: 1199px)')
 
   const execute = useMutation(
     async (highNetworkHash: string | undefined) => {
@@ -158,7 +158,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
             <>
               <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
                 <div className={styles.typeWithdrawal}>
-                  <IconArrowNarrowUp stroke={'#026AA2'} />
+                  <IconArrowNarrowUp stroke={'#fff'} />
                   Withdraw
                 </div>
               </div>
@@ -176,11 +176,11 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     >
                       <div className={styles.settled}>
                         Settled
-                        <IconLinkExternal02 stroke={'#027A48'} />
+                        <IconLinkExternal02 stroke={'#fff'} />
                       </div>
                     </a>
                   </div>
-                  <div className={styles.gridItem}>
+                  <div className={styles.gridItemImportant}>
                     <div>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
                   </div>
                 </>
@@ -195,7 +195,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     >
                       <div className={styles.claimable}>
                         Claimable
-                        <IconLinkExternal02 stroke={'#B54708'} />
+                        <IconLinkExternal02 stroke={'#fff'} />
                       </div>
                     </a>
                   </div>
@@ -216,12 +216,12 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     >
                       <div className={styles.pending}>
                         Pending
-                        <IconLinkExternal02 stroke={'#175CD3'} />
+                        <IconLinkExternal02 stroke={'#fff'} />
                       </div>
                     </a>
                   </div>
 
-                  <div className={styles.gridItem}>
+                  <div className={styles.gridItemImportant}>
                     <div>{ETA(status.data?.timestamp, withdrawal.challengePeriod)}</div>
                   </div>
                 </>

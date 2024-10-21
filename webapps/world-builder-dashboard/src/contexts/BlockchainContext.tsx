@@ -16,6 +16,9 @@ interface BlockchainContextType {
   setSelectedHighNetwork: (network: NetworkInterface) => void
   isMetaMask: boolean
   getProvider: (network: NetworkInterface) => Promise<ethers.providers.Web3Provider>
+  accounts: string[]
+  setAccounts: (accounts: string[]) => void
+  chainId: number | undefined
   isConnecting: boolean
 }
 
@@ -57,8 +60,9 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   const [selectedHighNetwork, _setSelectedHighNetwork] = useState<NetworkInterface>(DEFAULT_HIGH_NETWORK)
   const [isMetaMask, setIsMetaMask] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
-
+  const [chainId, setChainId] = useState<number | undefined>(undefined)
   const [connectedAccount, setConnectedAccount] = useState<string>()
+  const [accounts, setAccounts] = useState<string[]>([''])
   const tokenAddress = '0x5f88d811246222F6CB54266C42cc1310510b9feA'
 
   const setSelectedLowNetwork = (network: NetworkInterface) => {
@@ -93,6 +97,23 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     }
   }, [window.ethereum])
 
+  const fetchChainId = async () => {
+    const _chainId = (await walletProvider?.getNetwork())?.chainId
+    setChainId(_chainId)
+  }
+
+  const handleChainChanged = (hexedChainId: string) => {
+    const newChainId = parseInt(hexedChainId, 16) // Convert hex chainId to decimal
+    setChainId(newChainId)
+  }
+
+  useEffect(() => {
+    fetchChainId()
+    if (window.ethereum?.on) {
+      window.ethereum.on('chainChanged', handleChainChanged)
+    }
+  }, [walletProvider])
+
   const handleAccountsChanged = async () => {
     const ethereum = window.ethereum
     if (ethereum) {
@@ -100,6 +121,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
       // @ts-ignore
       setIsMetaMask(window.ethereum?.isMetaMask && !window.ethereum?.overrideIsMetaMask)
       const accounts = await provider.listAccounts()
+      setAccounts(accounts)
       if (accounts.length > 0) {
         setConnectedAccount(accounts[0])
       } else {
@@ -114,11 +136,12 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
 
   const connectWallet = async () => {
     setIsConnecting(true)
-    if (window.ethereum) {
+    const ethereum = window.ethereum
+    if (ethereum) {
       try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        const provider = new ethers.providers.Web3Provider(ethereum)
         setWalletProvider(provider)
-        await provider.send('eth_requestAccounts', [])
+        await ethereum.request({ method: 'eth_requestAccounts' })
         await handleAccountsChanged()
       } catch (error) {
         console.error('Error connecting to wallet:', error)
@@ -133,7 +156,13 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     }
     if (!walletProvider) {
       await connectWallet()
+    } else {
+      const accounts = await walletProvider.listAccounts()
+      if (accounts.length === 0) {
+        await connectWallet()
+      }
     }
+
     await switchChain(network)
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     setWalletProvider(provider)
@@ -144,32 +173,36 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     if (!walletProvider) {
       throw new Error('Wallet is not connected')
     }
-    if (!window.ethereum) {
+    const ethereum = window.ethereum
+    if (!ethereum) {
       throw new Error("Wallet isn't installed")
     }
     setIsConnecting(true)
 
     try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
-
+      const provider = new ethers.providers.Web3Provider(ethereum, 'any')
       const currentChain = await provider.getNetwork()
       if (currentChain.chainId !== chain.chainId) {
         const hexChainId = ethers.utils.hexStripZeros(ethers.utils.hexlify(chain.chainId))
         try {
-          await provider.send('wallet_switchEthereumChain', [{ chainId: hexChainId }])
+          await ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: hexChainId }] })
         } catch (error: any) {
-          if (error.code === 4902) {
+          if (error.code === 4902 || error.code === -32603) {
+            //unfortunately, 'chain not found' error not always has code 4902, sometimes it's -32603 (blanket error). But we can assume that error trying to switch to a chain is caused by absence of the chain
             try {
-              // Chain not found, attempt to add it
-              await provider.send('wallet_addEthereumChain', [
-                {
-                  chainId: hexChainId,
-                  chainName: chain.displayName || chain.name,
-                  nativeCurrency: chain.nativeCurrency,
-                  rpcUrls: chain.rpcs,
-                  blockExplorerUrls: chain.blockExplorerUrls
-                }
-              ])
+              // Chain most probably not found, attempt to add it
+              await ethereum.request({
+                method: 'wallet_addEthereumChain',
+                params: [
+                  {
+                    chainId: hexChainId,
+                    chainName: chain.displayName || chain.name,
+                    nativeCurrency: chain.nativeCurrency,
+                    rpcUrls: chain.rpcs,
+                    blockExplorerUrls: chain.blockExplorerUrls
+                  }
+                ]
+              })
             } catch (addError) {
               console.error('Failed to add the Ethereum chain:', addError)
               throw addError
@@ -217,9 +250,12 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
         selectedHighNetwork,
         setSelectedHighNetwork,
         isMetaMask,
+        chainId,
         disconnectWallet,
         getProvider,
-        isConnecting
+        isConnecting,
+        accounts,
+        setAccounts
       }}
     >
       {children}

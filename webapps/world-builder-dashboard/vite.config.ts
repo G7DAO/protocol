@@ -9,5 +9,11 @@ export default defineConfig({
     alias: {
       '@': resolve(__dirname, './src')
     }
+  },
+  css: {
+    postcss: './postcss.config.js'
+  },
+  server: {
+    port: 3000
   }
 })

@@ -48,6 +48,51 @@ export interface L3NetworkConfiguration {
 export const L3_NETWORKS = [
   {
     chainInfo: {
+      batchPoster: '0x4733c8F43989256a87F415D6020Bdc8953cfb934',
+      staker: '0x4CA9B1A37881D3Cbe9a064B67aC28C0e49BFBEA2',
+      chainOwner: '0x67b948946480f88507512374cba903faaa0d4bb3',
+      chainId: 1398587,
+      chainName: 'G7 Testnet',
+      parentChainId: 421614,
+      nativeToken: '0x5f88d811246222F6CB54266C42cc1310510b9feA',
+      rpcs: ['https://game7-testnet-custom.rpc.caldera.xyz/http'],
+      blockExplorerURLs: ['https://game7-testnet-custom.explorer.caldera.xyz']
+    },
+    coreContracts: {
+      rollup: '0x90A8dc739e9986FBc4BE080680e832ee5EFEcb75',
+      inbox: '0xaACd8bE2d9ac11545a2F0817aEE35058c70b44e5',
+      outbox: '0xDDfFefce2691353b84Cd60a7651a3c0F044a4ea1',
+      adminProxy: '0xF80296627bc317A4A93801c9761B82A754882029',
+      sequencerInbox: '0xaed977F5D695eae231575560d635ECAb07283647',
+      bridge: '0x26Ea5f3EffEbb49BF3D27b756f3B99B0914a202f',
+      utils: '0xDaE6924DAFBefb0eb7Ae2B398958920dE61173F2',
+      validatorWalletCreator: '0x85Feb8fE05794c2384b848235942490a6610C64B',
+      upgradeExecutor: '0xaf0B28462B18df0D7e3b2Ee64684d625f8C3Cb8C',
+      upgradeExecutorL2: '0xee2439C4C47b84aA718a8f899AECf274Cd759eF6'
+    },
+    tokenBridgeContracts: {
+      l2Contracts: {
+        customGateway: '0xeA7f73a6fFA8d08CB8FCFE12e58CF4951CD9f818',
+        multicall: '0x3AFeb1Ea760EED35D224C531D531C30eC6aE13e5',
+        proxyAdmin: '0xF80296627bc317A4A93801c9761B82A754882029',
+        router: '0x378f8B8727F4741b9404D6fF3A9D74cb662bF58D',
+        standardGateway: '0xE763bC0e5978f264b3F3F5787D58Dc531649e641',
+        weth: '0x0000000000000000000000000000000000000000',
+        wethGateway: '0x0000000000000000000000000000000000000000'
+      },
+      l3Contracts: {
+        customGateway: '0x54C38DBDb0318653E3D1dFf698C245eD35C3bB96',
+        multicall: '0xD3e2587aDF118364EA931235BEAe4CeDFAa1d644',
+        proxyAdmin: '0xB7D8c3Bba729E12F4CDd54c4C492cFA962cFcE6E',
+        router: '0xc5966E3958E55bAD8A3D6E71753dCE2DFfcc7e15',
+        standardGateway: '0x8E57DeB813cD10c5303e97ca2fdE5C33463CaFDC',
+        weth: '0x0000000000000000000000000000000000000000',
+        wethGateway: '0x0000000000000000000000000000000000000000'
+      }
+    }
+  },
+  {
+    chainInfo: {
       minL2BaseFee: 10000000,
       networkFeeReceiver: '0x252431e84d5e22435a0c833c2220770c52f59633',
       infrastructureFeeCollector: '0x252431e84d5e22435a0c833c2220770c52f59633',
@@ -115,7 +160,8 @@ export const L3_NETWORKS = [
       bridge: '0xC7EEB897bA9bc3fA071C3871e7F4Cf1Ae7570f16',
       utils: '0xB11EB62DD2B352886A4530A9106fE427844D515f',
       validatorWalletCreator: '0xEb9885B6c0e117D339F47585cC06a2765AaE2E0b',
-      l3UpgradeExecutor: '0x8d2821B57E7B3D860E250C0bdc7Cb924B17C72b2'
+      l3UpgradeExecutor: '0x8d2821B57E7B3D860E250C0bdc7Cb924B17C72b2',
+      staking: '0xa6B0461b7E54Fa342Be6320D4938295A81f82Cd3'
     },
     tokenBridgeContracts: {
       l2Contracts: {

@@ -38,12 +38,12 @@
 }
 
 .directionContainer {
-  padding: 4px;
+  padding: 3px;
   gap: 8px;
-  border-radius: 6px;
+  border-radius: 8px;
   display: flex;
-  background: #fff;
-  border: 1px solid #f2f4f7;
+  background: var(--Base-Container, #ffffff);
+  border: 1px solid var(--Gray-100, #f2f4f7);
   width: 100%;
 }
 
@@ -61,18 +61,18 @@
 }
 
 .selectedDirectionButton {
-  background: var(--Primary-600, #f2f4f7);
-  color: #fff;
+  background: var(--Primary-600, #EF233B);
+  color: var(--Primary-200, #ffffff);
 }
 
 .directionButton {
   background: transparent;
-  color: var(--Gray-600, #475467);
+  color: var(--Gray-600, #fff);
 }
 
 .networksContainer {
   display: flex;
-  padding: 12px;
+  padding: 11px;
   justify-content: center;
   align-items: center;
   gap: 20px;
@@ -80,43 +80,22 @@
 
   border-radius: 8px;
   border: 1px solid var(--Gray-100, #f2f4f7);
-  background: #fff;
+  background: var(--Base-Container, #ffffff);
 }
 
 .networkSelect {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
   flex: 1;
 }
+
 .label {
   font-size: 12px;
   font-weight: 600;
   line-height: 18px;
-  color: #475467;
+  color: var(--Gray-500, #667085);
   min-width: 30px;
-}
-
-.networkSelectSelect {
-  padding: 1px 10px;
-  align-items: center;
-  gap: 8px;
-  align-self: stretch;
-
-  border-radius: 8px;
-  border: 1px solid #d0d5dd;
-  background: #fff;
-
-  box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
-  color: #101828;
-
-  /* Text sm/Medium */
-  font-family: Inter, sans-serif;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 20px; /* 142.857% */
-  width: 100%;
 }
 
 .network {
@@ -128,9 +107,9 @@
   align-self: stretch;
   border-radius: 8px;
   border: 1px solid #d0d5dd;
-  background: #fff;
+  background: var(--Base-White, #ffffff);
   box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
-  color: #101828;
+  color: var(--Gray-900, #101828);
 
   /* Text sm/Medium */
   font-family: Inter, sans-serif;
@@ -147,7 +126,7 @@
   justify-content: space-between;
   flex-shrink: 0;
   border-radius: 8px;
-  background-color: #fff;
+  background-color: var(--Base-White, #ffffff);
 }
 
 .valueContainer {
@@ -160,7 +139,7 @@
 
 .valueInput {
   width: 415px;
-  color: #475467;
+  color: var(--Gray-600, #475467);
   font-size: 30px;
   font-style: normal;
   font-weight: 600;
@@ -207,11 +186,11 @@
 
   border-radius: 8px;
   border: 1px solid #d0d5dd;
-  background: #fff;
+  background: var(--Base-White, #ffffff);
 
   /* Shadow/xs */
   box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
-  color: #344054;
+  color:  var(--Gray-700, #344054);
 
   /* Text sm/Semibold */
   font-size: 14px;
@@ -226,7 +205,7 @@
 }
 
 .maxButton {
-  color: #dd1534;
+  color: var(--Primary-700, #dd1534);
   padding: 0;
   /* Text xs/Medium */
   font-size: 12px;
@@ -250,7 +229,7 @@
   line-height: 18px; /* 150% */
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1199px) {
     .container {
       width: 100%;
       padding: 15px;

@@ -38,9 +38,9 @@ export const L2_NETWORK: HighNetworkInterface = {
 export const L3_NETWORK: HighNetworkInterface = {
   chainId: 13746,
   name: 'conduit-orbit-deployer',
-  displayName: 'G7 Testnet',
-  rpcs: ['https://rpc-game7-testnet-0ilneybprf.t.conduit.xyz'],
-  blockExplorerUrls: ['https://explorer-game7-testnet-0ilneybprf.t.conduit.xyz'],
+  displayName: 'Game7 Testnet', 
+  rpcs: ['https://testnet-rpc.game7.io'],
+  blockExplorerUrls: ['https://testnet.game7.io'],
   nativeCurrency: {
     decimals: 18,
     name: 'Testnet Game7 Token',
@@ -52,6 +52,8 @@ export const L3_NETWORK: HighNetworkInterface = {
   staker: '0xa6B0461b7E54Fa342Be6320D4938295A81f82Cd3'
 }
 
+export const ALL_NETWORKS = [L1_NETWORK, L2_NETWORK, L3_NETWORK]
+
 export const L3_NATIVE_TOKEN_SYMBOL = 'TG7T'
 export const DEFAULT_LOW_NETWORK = L1_NETWORK
 export const DEFAULT_HIGH_NETWORK = L2_NETWORK
@@ -59,7 +61,7 @@ export const DEFAULT_HIGH_NETWORK = L2_NETWORK
 export const LOW_NETWORKS = [L1_NETWORK, L2_NETWORK]
 export const HIGH_NETWORKS = [L2_NETWORK, L3_NETWORK]
 
-export const G7T_FAUCET_ADDRESS = '0x8C4557CeA625e4E7421A9295Be61f7E0071c016C'
+export const G7T_FAUCET_ADDRESS = '0xF587649a4C8E795E3bE44c489fc596FB06f800DE'
 export const FAUCET_CHAIN = L2_NETWORK
 
 export const ETH_USD_CONTRACT_ADDRESS = '0x694AA1769357215DE4FAC081bf1f309aDC325306'

@@ -1,0 +1,30 @@
+name: Smart Contracts Test
+
+on:
+  pull_request:
+    branches:
+      - "main"
+    paths:
+        - '.github/workflows/test_web3.yml'
+        - 'web3/**'
+
+jobs:
+  test_web3:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.13.1
+
+      - name: Install dependencies
+        run: cd web3 && npm install
+
+      - name: Run Hardhat tests
+        run: cd web3 && npx hardhat test

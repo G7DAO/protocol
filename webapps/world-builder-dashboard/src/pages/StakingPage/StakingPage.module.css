@@ -1,0 +1,113 @@
+
+.container {
+  display: flex;
+  padding: 32px 0 48px 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  flex: 1 0 0;
+  background: var(--Gray-25, #FCFCFD);
+  align-self: stretch;
+}
+
+.top {
+  display: flex;
+  padding: 0 32px 32px 32px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  align-self: stretch;
+  border-bottom: 1px solid var(--Gray-200, #EAECF0);
+}
+
+.headerContainer {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  /*margin-top: 31px;*/
+  /*margin-bottom: 24px;*/
+  position: relative;
+}
+
+.title {
+  color: var(--Gray-900, #101828);
+
+
+  /* Display sm/Semibold */
+  font-size: 30px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 38px; /* 126.667% */
+}
+
+.navigationContainer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.selectedNavigationButton,
+.unselectedNavigationButton {
+  border: none;
+  cursor: pointer;
+}
+.selectedNavigationButton {
+  display: flex;
+  padding: 8px 12px;
+  align-items: center;
+  gap: 8px;
+
+  border-radius: 6px;
+  background: var(--Primary-600, #ef233b);
+  color: var(--Base-White, #fff);
+
+  /* Text md/Semibold */
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px; /* 150% */
+}
+
+.unselectedNavigationButton {
+  display: flex;
+  padding: 8px 12px;
+  align-items: center;
+  gap: 8px;
+
+  border-radius: 6px;
+  background: var(--Gray-25, #fcfcfd);
+  color: var(--Gray-700, #344054);
+
+  /* Text md/Semibold */
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px; /* 150% */
+}
+
+.viewContainer {
+  display: flex;
+  padding: 0 32px 32px 32px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  flex-grow: 0;
+  overflow-y: auto;
+  position: relative;
+  font-family: Inter, sans-serif;
+}
+
+@media (max-width: 1199px) {
+  .container {
+    padding: 32px 0 16px 0;
+    margin-top: 64px;
+  }
+  .top {
+    padding: 0 16px 16px 16px;
+
+  }
+  .viewContainer {
+    padding: 16px;
+    width: 100%;
+  }
+}

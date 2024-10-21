@@ -67,3 +67,20 @@ export const timeDifferenceInHoursAndMinutes = (start: number, end: number): str
   // Return the formatted difference
   return `${hours}h ${minutes}m`
 }
+
+export const timeDifferenceInHoursMinutesAndSeconds = (start: number, end: number): string => {
+  // Convert Unix timestamps to Date objects
+  const startDate = new Date(start * 1000)
+  const endDate = new Date(end * 1000)
+
+  // Calculate the difference in milliseconds
+  const diff = endDate.getTime() - startDate.getTime()
+
+  // Convert the difference into hours, minutes, and seconds
+  const hours = Math.floor(diff / (1000 * 60 * 60))
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000)
+
+  // Return the formatted difference
+  return `${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`
+}

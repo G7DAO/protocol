@@ -6,7 +6,8 @@ import {
   L1_NETWORK,
   L2_NETWORK,
   L3_NATIVE_TOKEN_SYMBOL,
-  L3_NETWORK
+  L3_NETWORK,
+  MAX_ALLOWANCE_ACCOUNT
 } from '../../../../constants'
 // Styles and Icons
 import styles from './BridgeView.module.css'
@@ -19,13 +20,16 @@ import TransactionSummary from '@/components/bridge/bridge/TransactionSummary'
 import ValueToBridge from '@/components/bridge/bridge/ValueToBridge'
 // Blockchain Context and Utility Functions
 import { HighNetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
+import { useUISettings } from '@/contexts/UISettingsContext'
 // Hooks and Constants
 import useERC20Balance from '@/hooks/useERC20Balance'
 import useEthUsdRate from '@/hooks/useEthUsdRate'
 import useNativeBalance from '@/hooks/useNativeBalance'
 import { DepositDirection } from '@/pages/BridgePage/BridgePage'
+import { estimateOutboundTransferGas } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { estimateDepositERC20ToNativeFee } from '@/utils/bridge/depositERC20ToNative'
 import { getStakeNativeTxData } from '@/utils/bridge/stakeContractInfo'
+import { estimateWithdrawGasAndFee } from '@/utils/bridge/withdrawERC20'
 import { estimateWithdrawFee } from '@/utils/bridge/withdrawNativeToken'
 
 const BridgeView = ({
@@ -37,10 +41,11 @@ const BridgeView = ({
 }) => {
   const [value, setValue] = useState('0')
   const [message, setMessage] = useState<{ destination: string; data: string }>({ destination: '', data: '' })
+  const [isMessageExpanded, setIsMessageExpanded] = useState(false)
   const [inputErrorMessages, setInputErrorMessages] = useState({ value: '', data: '', destination: '' })
   const [networkErrorMessage, setNetworkErrorMessage] = useState('')
-
-  const g7tUsdRate = useQuery(['rate'], () => 0)
+  const { isMessagingEnabled } = useUISettings()
+  const g7tUsdRate = useQuery(['rate'], () => 2501.32)
   const { data: ethUsdRate } = useEthUsdRate()
   const { connectedAccount, selectedLowNetwork, setSelectedLowNetwork, selectedHighNetwork, setSelectedHighNetwork } =
     useBlockchainContext()
@@ -74,18 +79,38 @@ const BridgeView = ({
     }
     let est
     if (direction === 'DEPOSIT') {
-      est = await estimateDepositERC20ToNativeFee(
-        value,
-        connectedAccount,
-        selectedLowNetwork,
-        selectedHighNetwork as HighNetworkInterface
-      )
+      if (selectedLowNetwork.chainId === L1_NETWORK.chainId) {
+        const provider = new ethers.providers.JsonRpcProvider(L1_NETWORK.rpcs[0])
+        const estimation = await estimateOutboundTransferGas(
+          selectedHighNetwork.routerSpender ?? '',
+          selectedLowNetwork.g7TokenAddress,
+          MAX_ALLOWANCE_ACCOUNT,
+          ethers.utils.parseEther(value),
+          '0x',
+          provider
+        )
+        est = estimation.fee
+      } else {
+        est = await estimateDepositERC20ToNativeFee(
+          value,
+          MAX_ALLOWANCE_ACCOUNT,
+          selectedLowNetwork,
+          selectedHighNetwork as HighNetworkInterface
+        )
+      }
     } else {
-      est = await estimateWithdrawFee(value, connectedAccount, selectedLowNetwork)
+      if (selectedHighNetwork.chainId === L2_NETWORK.chainId) {
+        const provider = new ethers.providers.JsonRpcProvider(L2_NETWORK.rpcs[0])
+        const estimation = await estimateWithdrawGasAndFee(value, connectedAccount, connectedAccount, provider)
+        est = ethers.utils.formatEther(estimation.estimatedFee)
+      } else {
+        const provider = new ethers.providers.JsonRpcProvider(L3_NETWORK.rpcs[0])
+        const estimation = await estimateWithdrawFee(value, connectedAccount, provider)
+        est = ethers.utils.formatEther(estimation.estimatedFee)
+      }
     }
     return est
   })
-
   useEffect(() => {
     setNetworkErrorMessage('')
   }, [selectedHighNetwork, selectedLowNetwork, value])
@@ -93,7 +118,6 @@ const BridgeView = ({
   useEffect(() => {
     if (message.data === 'stake') {
       if (!L3_NETWORK.staker) {
-        console.log('staker is undefined')
         return
       }
       setDataForStake(L3_NETWORK.staker)
@@ -168,8 +192,9 @@ const BridgeView = ({
         setValue={setValue}
         balance={
           direction === 'DEPOSIT'
-            ? lowNetworkBalance ?? '0'
-            : (selectedHighNetwork.chainId === L3_NETWORK.chainId ? l3NativeBalance : highNetworkBalance) ?? '0'
+            ? (lowNetworkBalance?.formatted ?? '0')
+            : ((selectedHighNetwork.chainId === L3_NETWORK.chainId ? l3NativeBalance : highNetworkBalance?.formatted) ??
+              '0')
         }
         rate={g7tUsdRate.data ?? 0}
         isFetchingBalance={
@@ -182,8 +207,10 @@ const BridgeView = ({
         errorMessage={inputErrorMessages.value}
         setErrorMessage={(msg) => setInputErrorMessages((prev) => ({ ...prev, value: msg }))}
       />
-      {direction === 'DEPOSIT' && selectedLowNetwork.chainId === L2_NETWORK.chainId && (
+      {direction === 'DEPOSIT' && selectedLowNetwork.chainId === L2_NETWORK.chainId && isMessagingEnabled && (
         <BridgeMessage
+          isExpanded={isMessageExpanded}
+          setIsExpanded={setIsMessageExpanded}
           message={message}
           setMessage={(newMessage) => {
             setMessage((prev) => ({ ...prev, ...newMessage }))
@@ -197,7 +224,7 @@ const BridgeView = ({
       <TransactionSummary
         direction={direction}
         gasBalance={Number((direction === 'DEPOSIT' ? lowNetworkNativeBalance : highNetworkNativeBalance) ?? 0)}
-        address={connectedAccount ?? '0x'}
+        address={connectedAccount}
         transferTime={
           direction === 'DEPOSIT'
             ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
@@ -211,17 +238,17 @@ const BridgeView = ({
         tokenRate={g7tUsdRate.data ?? 0}
         gasTokenSymbol={
           direction === 'DEPOSIT'
-            ? selectedLowNetwork.nativeCurrency?.symbol ?? ''
-            : selectedHighNetwork.nativeCurrency?.symbol ?? ''
+            ? (selectedLowNetwork.nativeCurrency?.symbol ?? '')
+            : (selectedHighNetwork.nativeCurrency?.symbol ?? '')
         }
       />
       {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
       <ActionButton
         direction={direction}
-        amount={value}
+        amount={isNaN(Number(value)) ? 0 : Number(value)}
         isDisabled={!!inputErrorMessages.value || !!inputErrorMessages.destination || !!inputErrorMessages.data}
         setErrorMessage={setNetworkErrorMessage}
-        L2L3message={message}
+        L2L3message={isMessageExpanded ? message : { data: '', destination: '' }}
       />
     </div>
   )
