@@ -24,7 +24,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const [nextClaimTimestamp, setNextClaimTimestamp] = useState(0)
   const [networkError, setNetworkError] = useState('')
   const [selectedAccountType, setSelectedAccountType] = useState<AccountType>('Connected Account')
-
+  const [requestDisabled, setRequestDisabled] = useState<boolean>(true)
   const { faucetTargetChainId } = useUISettings()
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
@@ -159,19 +159,49 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const nextClaimAvailable = useQuery(
     ['nextFaucetClaimTimestamp', address],
     async () => {
-      const lastClaimedL3Timestamp = Number(lastClaimedTimestampQuery.data)
+      const lastClaimedL3Timestamp = lastClaimedTimestampQuery.data ? Number(lastClaimedTimestampQuery.data) : 0
       const faucetTimeInterval = Number(faucetIntervalQuery.data)
       const nextClaimL3Timestamp = lastClaimedL3Timestamp + faucetTimeInterval
 
       const intervalL3 = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimL3Timestamp)
-      const isAvailableL3 = compareTimestampWithCurrentMoment(nextClaimL3Timestamp)
+      const isAvailableL3 = lastClaimedL3Timestamp === 0 || compareTimestampWithCurrentMoment(nextClaimL3Timestamp)
       const L3 = { interval: intervalL3, nextClaimTimestamp: nextClaimL3Timestamp, isAvailable: isAvailableL3 }
       return { faucetTimeInterval, L3 }
     },
     {
-      enabled: !!address && !!lastClaimedTimestampQuery.data && !!faucetIntervalQuery.data
+      enabled: !!address && !!faucetIntervalQuery.data && !!lastClaimedTimestampQuery.data
     }
   )
+  useEffect(() => {
+    let isButtonDisabled = true
+
+    const isNewAccount = nextClaimAvailable.status === 'idle' && lastClaimedTimestampQuery.data === 0
+
+    if (isNewAccount) {
+      isButtonDisabled = false
+    } else {
+      if (!nextClaimAvailable.data) {
+        isButtonDisabled = true
+      } else {
+        isButtonDisabled =
+          (selectedNetwork.chainId === L3_NETWORK.chainId &&
+            nextClaimAvailable.data &&
+            !nextClaimAvailable.data.L3.isAvailable) ||
+          ((!isValidAddress || address === '') && selectedAccountType === 'External Address') ||
+          claim.isLoading
+      }
+    }
+    setRequestDisabled(isButtonDisabled)
+  }, [
+    selectedNetwork.chainId,
+    nextClaimAvailable.data,
+    nextClaimAvailable.status,
+    isValidAddress,
+    address,
+    selectedAccountType,
+    claim.isLoading,
+    lastClaimedTimestampQuery.status
+  ])
 
   useEffect(() => {
     if (!nextClaimAvailable.data) return
@@ -201,8 +231,8 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
       <div className={styles.header}>
         <div className={styles.title}>G7 Sepolia Faucet</div>
         <div className={styles.supportingText}>
-          Request and get <strong> 1 {L3_NATIVE_TOKEN_SYMBOL} token </strong> to your connected wallet or an
-          external address on G7 Sepolia.
+          Request and get <strong> 1 {L3_NATIVE_TOKEN_SYMBOL} token </strong> to your connected wallet or an external
+          address on G7 Sepolia.
         </div>
       </div>
       <div className={styles.contentContainer}>
@@ -255,25 +285,11 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
           )}
         </div>
         <button
-          className={
-            (selectedNetwork.chainId === L3_NETWORK.chainId &&
-              nextClaimAvailable.data &&
-              !nextClaimAvailable.data.L3.isAvailable) ||
-            ((!isValidAddress || address === '') && selectedAccountType === 'External Address') ||
-            claim.isLoading
-              ? styles.requestTokensButtonDisabled
-              : styles.requestTokensButton
-          }
+          className={requestDisabled ? styles.requestTokensButtonDisabled : styles.requestTokensButton}
           onClick={() => {
             claim.mutate({ isL2Target: chainId === 13746, address })
           }}
-          disabled={
-            (selectedNetwork.chainId === L3_NETWORK.chainId &&
-              nextClaimAvailable.data &&
-              !nextClaimAvailable.data.L3.isAvailable) ||
-            ((!isValidAddress || address === '') && selectedAccountType === 'External Address') ||
-            claim.isLoading
-          }
+          disabled={requestDisabled}
         >
           <div className={styles.requestTokensButtonText}>{claim.isLoading ? `Requesting...` : `Request Tokens`}</div>
         </button>
