@@ -1,0 +1,10 @@
+.container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.progress {
+    width: 16px;
+    height: 16px;
+}
