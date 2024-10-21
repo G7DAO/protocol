@@ -84,6 +84,8 @@
 
 
 .tokenSymbol {text-align: start; width: 100%; font-weight: 700}
+
+
 .bookIcon {
     stroke: #d5bebe;
     margin-left: auto;
@@ -163,6 +165,16 @@ animation: moveLights 1s linear infinite;
     border: 1px solid #777;
 }
 
+.iconPressed {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.2);
+    /*border: 1px solid white;*/
+    stroke: #d5bebe;
+    margin-left: auto;
+    height: 20px;
+    cursor: pointer;
+}
+
 .bridgerApproveButton {font-size: 12px;}
 
 .bridgerTransferData {font-size: 12px;}
@@ -230,4 +242,12 @@ animation: moveLights 1s linear infinite;
     100% {
         transform: rotate(360deg);
     }
+}
+
+.historyContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    max-height: 166px;
 }

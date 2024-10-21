@@ -9,8 +9,11 @@ import WalletConnection from './WalletConnection'
 import IconEdit02 from '../assets/IconEdit02.tsx'
 import Documentation from './Documentation.tsx'
 import TransferStatus from './TransferStatus.tsx'
-import {BridgeNetwork, BridgeToken, Bridger} from "game7-bridge-sdk";
+import {BridgeNetwork, BridgeToken, Bridger, BridgeTransferInfo, TokenAddressMap} from "game7-bridge-sdk";
 import IconBookOpen from "../assets/IconBookOpen.tsx";
+import {BridgeTransfer} from "game7-bridge-sdk/dist/bridgeTransfer";
+import BridgeTransferView from "./BridgeTransferView.tsx";
+import IconRoute from "../assets/IconRoute.tsx";
 
 
 const BridgerView = ({ bridger, amount, hoveredItem }: { bridger: Bridger; amount?: ethers.BigNumber; hoveredItem: string }) => {
@@ -43,6 +46,9 @@ const BridgerView = ({ bridger, amount, hoveredItem }: { bridger: Bridger; amoun
       enabled: !!account && !!originRpc
     }
   )
+
+
+
 
   const transfer = useMutation({
     mutationFn: async (amount: string) => {
@@ -123,7 +129,8 @@ const BridgerView = ({ bridger, amount, hoveredItem }: { bridger: Bridger; amoun
   )
 }
 
-const Token = ({ token, hoveredItem }: { token: BridgeToken; hoveredItem: string }) => {
+const Token = ({ token, hoveredItem, historyInfo }: { token: BridgeToken; hoveredItem: string; historyInfo: BridgeTransferInfo[] }) => {
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false)
   const rpc = getRPC(token.chainId)
 
   const { account, getSigner } = useWallet()
@@ -202,6 +209,10 @@ const Token = ({ token, hoveredItem }: { token: BridgeToken; hoveredItem: string
     }
   }
 
+  useEffect(() => {
+    console.log({historyInfo})
+  }, [historyInfo]);
+
   return (
     <div className={styles.tokenContainer}>
       <div className={styles.tokenBalance}>
@@ -210,7 +221,7 @@ const Token = ({ token, hoveredItem }: { token: BridgeToken; hoveredItem: string
           <div
               className={styles.tokenSymbol}
           >{`${symbol.data ? symbol.data : ''}${token.tokenAddresses[token.chainId] === ethers.constants.AddressZero ? ' (native)' : ` ${token.address.slice(0, 6)}...${token.address.slice(-4)}`}`}</div>
-          <div className={styles.bookIcon}><IconBookOpen/></div>
+          <div className={styles.bookIcon} onClick={() => setIsHistoryOpen(!isHistoryOpen)}>{isHistoryOpen ? <IconRoute /> : <IconBookOpen/>}</div>
         </div>
         <div className={styles.allowance}>
           <div
@@ -229,16 +240,23 @@ const Token = ({ token, hoveredItem }: { token: BridgeToken; hoveredItem: string
         </div>
             )}
       </div>
+
+      {isHistoryOpen ? (<div className={styles.historyContainer}>
+
+        {historyInfo.map((transfer) => <BridgeTransferView info={transfer} token={token} isIncome={transfer.destinationNetworkChainId === token.chainId} /> )}
+      </div>
+          ) :(
       <div className={styles.bridgers}>
         {token.bridgers.map((b, idx) => (
           <BridgerView bridger={b} key={idx} hoveredItem={hoveredItem}/>
         ))}
       </div>
+      )}
     </div>
   )
 }
 
-const Network = ({ network, hoveredItem }: { network: BridgeNetwork; hoveredItem: string }) => {
+const Network = ({ network, hoveredItem, historyInfo }: { network: BridgeNetwork; hoveredItem: string; historyInfo: BridgeTransferInfo[] }) => {
   const { account } = useWallet()
   const rpc = useMemo(() => {
     const found = NETWORKS.find((n) => n.chainId === network.chainId)?.rpcs[0]
@@ -248,6 +266,45 @@ const Network = ({ network, hoveredItem }: { network: BridgeNetwork; hoveredItem
     return found
   }, [network.chainId])
 
+  const isTokenTransferred = (
+      info: BridgeTransferInfo,
+      tokenMaps: TokenAddressMap[],
+      tokenAddress: string
+  ) => {
+
+    let identifiedToken: string | undefined;
+    let originTokenAddress = info.tokenOriginAddress;
+    let destinationTokenAddress = info.tokenDestinationAddress;
+
+    for (const [tokenName, tokenMap] of Object.entries(tokenMaps)) {
+      if (info.tokenOriginAddress && tokenMap[info.originNetworkChainId].toLowerCase() === info.tokenOriginAddress.toLowerCase()) {
+        identifiedToken = tokenName;
+        break;
+      }
+      if (info.tokenDestinationAddress && tokenMap[info.destinationNetworkChainId].toLowerCase() === info.tokenDestinationAddress.toLowerCase()) {
+        identifiedToken = tokenName;
+        break;
+      }
+    }
+    if (info.destinationNetworkChainId === 421614) {
+      console.log(originTokenAddress, destinationTokenAddress, identifiedToken, tokenAddress, tokenMaps)
+    }
+    if (identifiedToken) {
+      const tokenMap = tokenMaps[identifiedToken];
+      if (!originTokenAddress) {
+        originTokenAddress = tokenMap[info.originNetworkChainId];
+      }
+      if (!destinationTokenAddress) {
+        destinationTokenAddress = tokenMap[info.destinationNetworkChainId];
+      }
+    }
+    return tokenAddress.toLowerCase() === originTokenAddress?.toLowerCase() || tokenAddress.toLowerCase() === destinationTokenAddress?.toLowerCase();
+  }
+
+  useEffect(() => {
+    console.log({network: network.name, historyInfo, tokens: network.tokens})
+  }, [historyInfo]);
+
   return (
     <div className={styles.networkContainer}>
       <div
@@ -256,15 +313,44 @@ const Network = ({ network, hoveredItem }: { network: BridgeNetwork; hoveredItem
         {network.name}
       </div>
       {network.tokens.map((t, idx) => (
-        <Token hoveredItem={hoveredItem} token={t} key={idx} />
+        <Token historyInfo={historyInfo.filter((transfer) => isTokenTransferred(transfer, [TG7T, ETH], t.address))} hoveredItem={hoveredItem} token={t} key={idx} />
       ))}
     </div>
   )
 }
 
 const BridgeView = () => {
-  const networks = [L1_NETWORK, L2_NETWORK, L3_NETWORK].map((n) => new BridgeNetwork(n.chainId, [TG7T, ETH]))
+  const networks = [L1_NETWORK, L2_NETWORK].map((n) => new BridgeNetwork(n.chainId, [TG7T, ETH]))
   const { account } = useWallet()
+
+  const history = useQuery(["history", account], async () => {
+    const transactions = [
+      // {txHash: '0x2fce35c0ea706b1fa2a261453782c2adf11b1c4b6e8b230859ca6010fcb2fcd8', originNetworkChainId: 11155111, destinationNetworkChainId: 421614}, //L1->L2 ETH
+      // {txHash: '0x9957a9a1b479e2cbc9dc95e15bd737d85301b31ad45d2a007fc9b3ba1870aa23', originNetworkChainId: 11155111, destinationNetworkChainId: 421614}, //L1->L2 TG7
+      // {txHash: '0x05b4024deff28ca7b29336c49ca341f403d4a5be2e72717f3250b2a13ce11d2c', originNetworkChainId: 421614, destinationNetworkChainId: 13746 }, //L2->L3 TG7
+      // {txHash: '0xae64c39527cfa697f5e3a2b56d31b9ee7fdd852678f787e4ab0e4e020033de29', originNetworkChainId: 13746, destinationNetworkChainId: 421614 }, //L3->L2 TG7
+      // {txHash: '0xb5ba500f030e662a3bd4742c8f090b819881c508c9b748d699cf7820253afea8', originNetworkChainId: 421614, destinationNetworkChainId: 11155111}, //L2->L1 ETH
+      {txHash: '0x8f38d4631383f2effd4722b09bf071ecf00562b694a14cf3eed955bcc43870c1', originNetworkChainId: 11155111, destinationNetworkChainId: 421614}, //L1->L2 TG7
+      {txHash: '0xd6be57ecb03321ef2e50ad124e2aa887792414608976d3d5d3aea0676fff0497', originNetworkChainId: 421614, destinationNetworkChainId: 11155111}, //L2->L1 TG7
+      {txHash: '0x27b967cbad2dfdbced7bf1a850f3f913e35779f751058d2520d0aed5593d8514', originNetworkChainId: 421614, destinationNetworkChainId: 11155111}, //L2->L1 TG7
+      {txHash: '0x4704707a0f19c8303afa8dc32d901a1acc42e002c2cedfae4c438ffb6411a323', originNetworkChainId: 421614, destinationNetworkChainId: 11155111}, //L2->L1 TG7
+    ];
+    return transactions
+  })
+
+  const historyInfo = useQuery(["historyInfo", account, history.data], async () => {
+    const bridgers = history.data?.map((transfer) => new BridgeTransfer({txHash: transfer.txHash, destinationNetworkChainId: transfer.destinationNetworkChainId, originNetworkChainId: transfer.originNetworkChainId}))
+    if (!bridgers) {
+      return
+    }
+    const results =  await Promise.allSettled(bridgers.map(bridger => bridger.getInfo()));
+    return results.filter((res) => res.status === 'fulfilled').map((res: any) => res?.value)
+  }, {
+    enabled: !!history.data,
+    onSuccess: (data: any) => {
+      console.log(data)
+    }
+  })
 
   const [hoveredItem, setHoveredItem] = useState('')
   useEffect(() => {
@@ -279,7 +365,7 @@ const BridgeView = () => {
           <Documentation setHoveredItem={setHoveredItem} />
           <div className={styles.networksContainer}>
             {networks.map((network) => (
-              <Network hoveredItem={hoveredItem} network={network} key={network.chainId} />
+              <Network historyInfo={historyInfo.data?.filter((transfer) => transfer.destinationNetworkChainId === network.chainId || transfer.originNetworkChainId === network.chainId) ?? []} hoveredItem={hoveredItem} network={network} key={network.chainId} />
             ))}
           </div>
         </div>
