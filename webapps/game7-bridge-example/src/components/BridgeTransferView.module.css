@@ -1,0 +1,40 @@
+.containerIn, .containerOut {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+    text-align: start;
+    /*gap: 3px;*/
+}
+
+.containerOut {
+    place-self: end;
+}
+
+.amountIn, .amountOut {
+    color: #a3d2bd;
+}
+
+.amountOut {
+    color: #d7756e;
+}
+
+.from {
+    color: #dcc9d4;
+}
+
+.from:hover {
+    color: #d596bb;
+
+}
+
+.initiatingLink {
+
+}
+
+
+.claimButton {
+    background-color: transparent;
+    border: 1px solid #dcc9d4;
+    width: fit-content;
+}
