@@ -178,7 +178,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
     const isNewAccount = nextClaimAvailable.status === 'idle' && lastClaimedTimestampQuery.data === 0
 
     if (isNewAccount) {
-      isButtonDisabled = false // Enable button for new accounts or if claim info is still loading
+      isButtonDisabled = false
     } else {
       if (!nextClaimAvailable.data) {
         isButtonDisabled = true
@@ -191,18 +191,18 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
           claim.isLoading
       }
     }
-    console.log(isButtonDisabled)
     setRequestDisabled(isButtonDisabled)
   }, [
     selectedNetwork.chainId,
     nextClaimAvailable.data,
-    nextClaimAvailable.status, // Add status to dependencies
+    nextClaimAvailable.status,
     isValidAddress,
     address,
     selectedAccountType,
     claim.isLoading,
-    lastClaimedTimestampQuery.status // Ensure this dependency is watched
+    lastClaimedTimestampQuery.status
   ])
+
   useEffect(() => {
     if (!nextClaimAvailable.data) return
     const intervalInfo = nextClaimAvailable.data.L3
