@@ -219,7 +219,7 @@ contract PositionMetadata {
                             '<text x="260" y="1250" fill="#FFEFB8" font-family="Courier New" font-size="32" font-weight="bold">',
                             tokenTypeString,
                             "</text>",
-                            '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="389" y="1250">',
+                            '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="420" y="1250">',
                             tokenAddressString,
                             "</tspan></text>"
                         ),
@@ -245,7 +245,7 @@ contract PositionMetadata {
                             '<text x="260" y="1250" fill="#FFEFB8" font-family="Courier New" font-size="32" font-weight="bold">',
                             tokenTypeString,
                             "</text>",
-                            '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="371" y="1250">',
+                            '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="400" y="1250">',
                             tokenAddressString,
                             "</tspan></text>"
                         ),
@@ -271,7 +271,7 @@ contract PositionMetadata {
                             '<text x="260" y="1250" fill="#FFEFB8" font-family="Courier New" font-size="32" font-weight="bold">',
                             tokenTypeString,
                             "</text>",
-                            '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="389" y="1250">',
+                            '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="420" y="1250">',
                             tokenAddressString,
                             "</tspan></text>"
                         ),
@@ -305,7 +305,7 @@ contract PositionMetadata {
                             '<text x="260" y="1250" fill="#FFEFB8" font-family="Courier New" font-size="32" font-weight="bold">',
                             tokenTypeString,
                             "</text>",
-                            '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="407" y="1250">',
+                            '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="430" y="1250">',
                             tokenAddressString,
                             "</tspan></text>"
                         ),
@@ -339,7 +339,7 @@ contract PositionMetadata {
                     ),
                     abi.encodePacked(
                         '<text fill="#7E807E" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" font-weight="bold" letter-spacing="0em"><tspan x="768" y="964">Unlocks at</tspan></text>',
-                        '<rect x="769" y="993" width="522" height="86" rx="19" fill="#18181B" fill-opacity="0.8"/><rect x="769" y="933" width="522" height="86" rx="19" stroke="#737373" stroke-width="2"/>',
+                        '<rect x="769" y="993" width="522" height="86" rx="19" fill="#18181B" fill-opacity="0.8"/><rect x="769" y="993" width="522" height="86" rx="19" stroke="#737373" stroke-width="2"/>',
                         '<text fill="#CBCFCB" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="40" letter-spacing="0em"><tspan x="808" y="1051">',
                         unlockTimestampStr,
                         "</tspan></text>"
