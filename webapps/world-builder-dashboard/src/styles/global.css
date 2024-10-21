@@ -38,7 +38,7 @@ button {
   --Gray-300: #d0d5dd;
   --Gray-600: #475467;
   --Gray-700: #344054;
-  --Primary-600: #ef233b;
+  --Primary-600: #F04438;
   --Primary-700: #dd1534;
   --Base-White: #fff;
   --Base-Container: #fff;
@@ -82,8 +82,9 @@ button {
 }
 
 [data-theme='dark'] {
+  --Landing-Page-First-Section-Height-Phone: calc(100svh - 196px);
+  --Landing-Page-First-Section-Height-Tablet: calc(100svh - 186px);
   --mix-blend: normal;
-
   --Blue-50: #175cd3; /* Adjusted from #eff8ff */
   --Blue-100: #1849a9; /* Adjusted from #d1e9ff */
   --Blue-200: #8abfff; /* Adjusted from #b3d8ff */
@@ -125,7 +126,7 @@ button {
   --Primary-25: #fffafb;
   --Primary-50: #3d2b2f;
   --Primary-100: #5a3d43;
-  --Primary-600: #ef233b;
+  --Primary-600: #F04438;
   --Primary-700: #ff4455;
 
   --Base-White: #0b0b0b;

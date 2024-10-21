@@ -65,7 +65,10 @@ const NotificationsDropModal: React.FC<NotificationsDropModalProps> = ({ notific
 
   return (
     <div className={styles.container}>
-      {!notifications || (notifications.length === 0 && <div className={styles.content}>No notifications yet</div>)}
+      {!notifications || (notifications.length === 0 &&
+        <div className={styles.content}>
+          No notifications yet
+        </div>)}
       {notifications &&
         notifications.slice(0, 3).map((n, idx) => (
           <div className={styles.item} key={idx}>
