@@ -1,4 +1,5 @@
 import { NetworkInterface, HighNetworkInterface } from '@/contexts/BlockchainContext'
+import { TokenAddressMap } from 'game7-bridge-sdk'
 
 export const L1_NETWORK: NetworkInterface = {
   chainId: 11155111,
@@ -71,3 +72,19 @@ export const FIVE_MINUTES = 1000 * 60 * 5
 export const DEFAULT_STAKE_NATIVE_POOL_ID = '1'
 
 export const MAX_ALLOWANCE_ACCOUNT = '0x9ed191DB1829371F116Deb9748c26B49467a592A'
+
+export const TG7T: TokenAddressMap = {
+  13746: '0x0000000000000000000000000000000000000000',
+  421614: '0x10adbf84548f923577be12146eac104c899d1e75',
+  11155111: '0xe2ef69e4af84dbefb0a75f8491f27a52bf047b01'
+}
+
+export const ETH: TokenAddressMap = {
+  421614: '0x0000000000000000000000000000000000000000',
+  11155111: '0x0000000000000000000000000000000000000000'
+}
+
+export const F5: TokenAddressMap = {
+  11155111: '0x8A0e3350fFAEb5DCcAca6045B3c07646FE9b46e7',
+  421614: '0xE48e26A902565f15E9F3a63caf55d339c1b3d49E'
+}
