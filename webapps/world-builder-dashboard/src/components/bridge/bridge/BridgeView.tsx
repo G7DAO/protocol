@@ -87,50 +87,30 @@ const BridgeView = ({
     setToken(token)
   }
 
-  const estimatedFee = useQuery(['estimatedFee', value, direction, selectedHighNetwork], async () => {
-    if (!connectedAccount) {
-      return
-    }
-    let est
-    if (direction === 'DEPOSIT') {
-      if (selectedLowNetwork.chainId === L1_NETWORK.chainId) {
-        const provider = new ethers.providers.JsonRpcProvider(L1_NETWORK.rpcs[0])
-        const estimation = await estimateOutboundTransferGas(
-          selectedHighNetwork.routerSpender ?? '',
-          selectedLowNetwork.g7TokenAddress,
-          MAX_ALLOWANCE_ACCOUNT,
-          ethers.utils.parseEther(value),
-          '0x',
-          provider
-        )
-        est = estimation.fee
-      } else {
-        est = await estimateDepositERC20ToNativeFee(
-          value,
-          MAX_ALLOWANCE_ACCOUNT,
-          selectedLowNetwork,
-          selectedHighNetwork as HighNetworkInterface
-        )
+
+  const estimatedFee = useQuery(
+    ['estimatedFee', bridger, connectedAccount],
+    async () => {
+      try {
+        console.log('hello')
+        const fee = await bridger.getGasAndFeeEstimation(ethers.utils.parseEther(value) ?? ethers.utils.parseEther('0'), selectedLowNetwork.rpcs[0], connectedAccount!)
+        const feeFormatted = ethers.utils.formatEther(fee.estimatedFee)
+        return feeFormatted
+      } catch (e) {
+        console.error(e)
       }
-    } else {
-      if (selectedHighNetwork.chainId === L2_NETWORK.chainId) {
-        const provider = new ethers.providers.JsonRpcProvider(L2_NETWORK.rpcs[0])
-        const estimation = await estimateWithdrawGasAndFee(value, connectedAccount, connectedAccount, provider)
-        est = ethers.utils.formatEther(estimation.estimatedFee)
-      } else {
-        const provider = new ethers.providers.JsonRpcProvider(L3_NETWORK.rpcs[0])
-        const estimation = await estimateWithdrawFee(value, connectedAccount, provider)
-        est = ethers.utils.formatEther(estimation.estimatedFee)
-      }
+    },
+    {
+      enabled: !!connectedAccount && !!selectedLowNetwork && !!bridger
     }
-    return est
-  })
+  )
+
 
   useEffect(() => {
     if (token && connectedAccount && selectedHighNetwork && selectedLowNetwork) {
       setBalance(Number(tokenBalance))
       const bridger: Bridger = new Bridger(selectedLowNetwork.chainId, selectedHighNetwork.chainId, token.tokenAddressMap)
-      console.log(bridger)
+      setBridger(bridger)
     }
   }, [token, balance, connectedAccount, selectedHighNetwork, selectedLowNetwork])
 
@@ -270,6 +250,7 @@ const BridgeView = ({
         isDisabled={!!inputErrorMessages.value || !!inputErrorMessages.destination || !!inputErrorMessages.data}
         setErrorMessage={setNetworkErrorMessage}
         L2L3message={isMessageExpanded ? message : { data: '', destination: '' }}
+        bridger={bridger} 
       />
     </div>
   )

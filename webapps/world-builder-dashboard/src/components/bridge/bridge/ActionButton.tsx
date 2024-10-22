@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 // Constants
-import { L3_NETWORK } from '../../../../constants'
+import { ALL_NETWORKS, L3_NETWORK } from '../../../../constants'
 // Styles
 import styles from './ActionButton.module.css'
 import { ethers } from 'ethers'
@@ -18,8 +18,9 @@ import { depositERC20ArbitrumSDK, TransactionRecord } from '@/utils/bridge/depos
 import { sendDepositERC20ToNativeTransaction } from '@/utils/bridge/depositERC20ToNative'
 import { sendWithdrawERC20Transaction } from '@/utils/bridge/withdrawERC20'
 import { sendWithdrawTransaction } from '@/utils/bridge/withdrawNativeToken'
-import { L2ToL1MessageStatus } from '@arbitrum/sdk'
 import { parseUntilDelimiter } from '@/utils/web3utils'
+import { L2ToL1MessageStatus } from '@arbitrum/sdk'
+import { Bridger } from 'game7-bridge-sdk'
 
 interface ActionButtonProps {
   direction: 'DEPOSIT' | 'WITHDRAW'
@@ -27,8 +28,9 @@ interface ActionButtonProps {
   isDisabled: boolean
   L2L3message?: { destination: string; data: string }
   setErrorMessage: (arg0: string) => void
+  bridger?: Bridger
 }
-const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabled, setErrorMessage, L2L3message }) => {
+const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabled, setErrorMessage, L2L3message, bridger }) => {
   const { connectedAccount, isConnecting, selectedHighNetwork, selectedLowNetwork, connectWallet, getProvider } =
     useBlockchainContext()
   const [isAllowanceModalOpened, setIsAllowanceModalOpened] = useState(false)
@@ -75,6 +77,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
       return
     }
     setErrorMessage('')
+    transfer.mutate(String(amount))
+    return
     if (direction === 'DEPOSIT') {
       deposit.mutate(String(amount))
       return
@@ -233,6 +237,33 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
     }
   )
 
+  const transfer = useMutation({
+    mutationFn: async (amount: string) => {
+      console.log(bridger)
+      const network = ALL_NETWORKS.find((n) => n.chainId === bridger?.originNetwork.chainId)
+      console.log(network)
+      const provider = await getProvider(network!)
+      const signer = provider.getSigner()
+      const destinationRPC = selectedHighNetwork.rpcs[0]
+      const destinationProvider = new ethers.providers.JsonRpcProvider(destinationRPC) as ethers.providers.Provider
+      return bridger?.transfer({ amount: ethers.utils.parseUnits(amount), signer, destinationProvider })
+    },
+    onSuccess: (data) => {
+      console.log(data)
+      //0x5ce56d7cf0554bec609e995f3f3e98ad495a08fe29e66b91a9d951840fce6674
+      // 0x68bb539766ba5fcc6eba8536eaa5ac3f7e346e2eab8b6ebbaa9a976d6b8786ec
+      //0x630d46c87e1df9ab91b8f6311b711033fc11b95ef3487135af5e0726506f4135
+      // 0xc2c6cff17958df71b2507aa41393d9085ad4492b631271a590fdc7a834cb4275 L2->L3
+      // 0x9a0d867b6523f1d55bbb0d1b16779c5cb433744f646bd9209f382142bb10ec06 L2->L1
+      // 0x4f7aaf3d84d69a27123523deb85827982143c83fe6862eb1dca8c5ebef369740 L3->L2
+      // 0x4d011728e4b8002750a0dcb8f2b18d7f17a08c278acda381d26d6eb9c460157f L3->L2
+      // 0x8460187b8602c2cf2436f7821836c9097182d550a31cefaa07fb6352c013981e L2->L3
+      // 0x6db1d677bc87d64d0adf0ef89d059e0a6b9a8f765af5dc0d2977f9d87aaf8677 L2->L1 ETH
+      // 0xb5ba500f030e662a3bd4742c8f090b819881c508c9b748d699cf7820253afea8 L2->L1 ETH
+      // 0x5311d470b7956262ad3329ea75bebb9fc01d9f07dde419e4dbcddae440215415 L2->L1 TG7T
+      // 0x3b3581e5000f84ddfd22e61e6a800a01ceba6246fb2042816967a0034978e9ec L2->L1 TG7T
+    }
+  })
   return (
     <>
       <button
