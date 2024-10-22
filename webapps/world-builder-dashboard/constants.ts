@@ -1,5 +1,5 @@
-import { NetworkInterface, HighNetworkInterface } from '@/contexts/BlockchainContext'
 import { TokenAddressMap } from 'game7-bridge-sdk'
+import { NetworkInterface, HighNetworkInterface } from '@/contexts/BlockchainContext'
 
 export const L1_NETWORK: NetworkInterface = {
   chainId: 11155111,
@@ -88,3 +88,5 @@ export const F5: TokenAddressMap = {
   11155111: '0x8A0e3350fFAEb5DCcAca6045B3c07646FE9b46e7',
   421614: '0xE48e26A902565f15E9F3a63caf55d339c1b3d49E'
 }
+
+export const ALL_TOKEN_MAPPINGS = [TG7T, ETH, F5]

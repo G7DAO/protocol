@@ -129,8 +129,7 @@ const BridgeView = ({
   useEffect(() => {
     if (token && connectedAccount && selectedHighNetwork && selectedLowNetwork) {
       setBalance(Number(tokenBalance))
-      const bridger: Bridger = new Bridger(selectedLowNetwork.chainId, selectedHighNetwork.chainId, TG7T)
-      setBridger(bridger)
+      const bridger: Bridger = new Bridger(selectedLowNetwork.chainId, selectedHighNetwork.chainId, token.tokenAddressMap)
       console.log(bridger)
     }
   }, [token, balance, connectedAccount, selectedHighNetwork, selectedLowNetwork])
