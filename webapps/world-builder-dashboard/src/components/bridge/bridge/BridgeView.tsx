@@ -6,14 +6,17 @@ import {
   L1_NETWORK,
   L2_NETWORK,
   L3_NETWORK,
-  MAX_ALLOWANCE_ACCOUNT
+  MAX_ALLOWANCE_ACCOUNT,
+  TG7T
 } from '../../../../constants'
 // Styles and Icons
 import styles from './BridgeView.module.css'
 import { ethers } from 'ethers'
+// G7 SDK
+import { Bridger } from 'game7-bridge-sdk'
+// Components
 import ActionButton from '@/components/bridge/bridge/ActionButton'
 import BridgeMessage from '@/components/bridge/bridge/BridgeMessage'
-// Components
 import NetworkSelector from '@/components/bridge/bridge/NetworkSelector'
 import TransactionSummary from '@/components/bridge/bridge/TransactionSummary'
 import ValueToBridge from '@/components/bridge/bridge/ValueToBridge'
@@ -40,6 +43,7 @@ const BridgeView = ({
   direction: DepositDirection
   setDirection: (arg0: DepositDirection) => void
 }) => {
+  const [bridger, setBridger] = useState<Bridger>()
   const [token, setToken] = useState<Token | undefined>()
   const [balance, setBalance] = useState<number | null>(null)
   const [value, setValue] = useState('0')
@@ -123,10 +127,13 @@ const BridgeView = ({
   })
 
   useEffect(() => {
-    if (token && connectedAccount) {
-      setBalance(Number(tokenBalance)) // Update the balance when the hook returns it
+    if (token && connectedAccount && selectedHighNetwork && selectedLowNetwork) {
+      setBalance(Number(tokenBalance))
+      const bridger: Bridger = new Bridger(selectedLowNetwork.chainId, selectedHighNetwork.chainId, TG7T)
+      setBridger(bridger)
+      console.log(bridger)
     }
-  }, [token, balance, connectedAccount])
+  }, [token, balance, connectedAccount, selectedHighNetwork, selectedLowNetwork])
 
   useEffect(() => {
     setNetworkErrorMessage('')
