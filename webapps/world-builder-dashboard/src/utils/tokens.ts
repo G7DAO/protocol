@@ -3,7 +3,6 @@ import { ZERO_ADDRESS } from './web3utils'
 import IconEthereum from '@/assets/IconEthereum'
 import IconG7T from '@/assets/IconG7T'
 import IconTokenNoSynbol from '@/assets/IconTokenNoSymbol'
-import IconUSDC from '@/assets/IconUSDC'
 import { TokenAddressMap } from 'game7-bridge-sdk'
 
 export interface Token {
@@ -30,7 +29,8 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           symbol: 'TG7T',
           address: L1_NETWORK.g7TokenAddress,
           Icon: IconG7T,
-          tokenAddressMap: TG7T
+          tokenAddressMap: TG7T,
+          rpc: L1_NETWORK.rpcs[0]
         },
         // {
         //   name: 'USDC',
