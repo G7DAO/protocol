@@ -87,13 +87,15 @@ const BridgeView = ({
     setToken(token)
   }
 
-
   const estimatedFee = useQuery(
     ['estimatedFee', bridger, connectedAccount],
     async () => {
       try {
-        console.log('hello')
-        const fee = await bridger.getGasAndFeeEstimation(ethers.utils.parseEther(value) ?? ethers.utils.parseEther('0'), selectedLowNetwork.rpcs[0], connectedAccount!)
+        const fee = await bridger.getGasAndFeeEstimation(
+          value ? ethers.utils.parseEther(value) : ethers.utils.parseEther('0.0'),
+          selectedLowNetwork.rpcs[0],
+          connectedAccount!
+        )
         const feeFormatted = ethers.utils.formatEther(fee.estimatedFee)
         return feeFormatted
       } catch (e) {
@@ -105,11 +107,14 @@ const BridgeView = ({
     }
   )
 
-
   useEffect(() => {
     if (token && connectedAccount && selectedHighNetwork && selectedLowNetwork) {
       setBalance(Number(tokenBalance))
-      const bridger: Bridger = new Bridger(selectedLowNetwork.chainId, selectedHighNetwork.chainId, token.tokenAddressMap)
+      const bridger: Bridger = new Bridger(
+        selectedLowNetwork.chainId,
+        selectedHighNetwork.chainId,
+        token.tokenAddressMap
+      )
       setBridger(bridger)
     }
   }, [token, balance, connectedAccount, selectedHighNetwork, selectedLowNetwork])
@@ -237,11 +242,7 @@ const BridgeView = ({
         ethRate={ethUsdRate ?? 0}
         tokenSymbol={token?.symbol || ''}
         tokenRate={g7tUsdRate.data ?? 0}
-        gasTokenSymbol={
-          direction === 'DEPOSIT'
-            ? (selectedLowNetwork.nativeCurrency?.symbol ?? '')
-            : (selectedHighNetwork.nativeCurrency?.symbol ?? '')
-        }
+        gasTokenSymbol={token?.symbol ?? ''}
       />
       {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
       <ActionButton
@@ -250,7 +251,7 @@ const BridgeView = ({
         isDisabled={!!inputErrorMessages.value || !!inputErrorMessages.destination || !!inputErrorMessages.data}
         setErrorMessage={setNetworkErrorMessage}
         L2L3message={isMessageExpanded ? message : { data: '', destination: '' }}
-        bridger={bridger} 
+        bridger={bridger}
       />
     </div>
   )
