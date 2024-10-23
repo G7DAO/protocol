@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@arbitrum/nitro-contracts": "^1.2.1",
-    "@arbitrum/sdk": "3.4.1",
+    "@arbitrum/sdk": "^4.0.1",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "axios": "^1.6.8",
     "clsx": "^1.2.1",

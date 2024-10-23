@@ -17,8 +17,6 @@ import useERC20Balance, { fetchERC20Allowance } from '@/hooks/useERC20Balance'
 import { estimateCreateRetryableTicketFee, sendL2ToL3Message } from '@/utils/bridge/createRetryableTicket'
 import { depositERC20ArbitrumSDK, TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { sendDepositERC20ToNativeTransaction } from '@/utils/bridge/depositERC20ToNative'
-import { sendWithdrawERC20Transaction } from '@/utils/bridge/withdrawERC20'
-import { sendWithdrawTransaction } from '@/utils/bridge/withdrawNativeToken'
 import { parseUntilDelimiter } from '@/utils/web3utils'
 import { ChildToParentMessageStatus } from '@arbitrum/sdk'
 
@@ -30,14 +28,7 @@ interface ActionButtonProps {
   setErrorMessage: (arg0: string) => void
   bridger?: Bridger
 }
-const ActionButton: React.FC<ActionButtonProps> = ({
-  direction,
-  amount,
-  isDisabled,
-  setErrorMessage,
-  L2L3message,
-  bridger
-}) => {
+const ActionButton: React.FC<ActionButtonProps> = ({ amount, isDisabled, setErrorMessage, L2L3message, bridger }) => {
   const { connectedAccount, isConnecting, selectedHighNetwork, selectedLowNetwork, connectWallet, getProvider } =
     useBlockchainContext()
   const [isAllowanceModalOpened, setIsAllowanceModalOpened] = useState(false)
@@ -62,7 +53,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     if (isConnecting) {
       return 'Connecting wallet...'
     }
-    if (deposit.isLoading || withdraw.isLoading) {
+    if (transfer.isLoading) {
       return 'Submitting...'
     }
     if (!connectedAccount) {
@@ -72,7 +63,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   }
 
   const handleClick = async () => {
-    if (isConnecting || deposit.isLoading || withdraw.isLoading) {
+    if (isConnecting || transfer.isLoading) {
       return
     }
     if (typeof window.ethereum === 'undefined') {
@@ -86,14 +77,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     setErrorMessage('')
     transfer.mutate(String(amount))
     return
-    if (direction === 'DEPOSIT') {
-      deposit.mutate(String(amount))
-      return
-    }
-    if (direction === 'WITHDRAW') {
-      withdraw.mutate(String(amount))
-      return
-    }
   }
 
   const queryClient = useQueryClient()
@@ -194,20 +177,74 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     }
   )
 
-  const withdraw = useMutation(
+  // const withdraw = useMutation(
+  //   async (amount: string) => {
+  //     const provider = await getProvider(selectedHighNetwork)
+  //     const signer = provider.getSigner()
+  //     if (!provider || !connectedAccount) {
+  //       throw new Error("Wallet isn't connected")
+  //     }
+  //     if (selectedHighNetwork.chainId !== L3_NETWORK.chainId) {
+  //       return sendWithdrawERC20Transaction(amount, connectedAccount, signer)
+  //     }
+  //     return sendWithdrawTransaction(amount, connectedAccount, signer)
+  //   },
+  //   {
+  //     onSuccess: async (record: TransactionRecord) => {
+  //       try {
+  //         const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+  //         let transactions = []
+  //         if (transactionsString) {
+  //           transactions = JSON.parse(transactionsString)
+  //         }
+  //         transactions.push(record)
+  //         localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(transactions))
+  //       } catch (e) {
+  //         console.log(e)
+  //       }
+  //       queryClient.setQueryData(
+  //         ['withdrawalStatus', record.highNetworkHash, selectedLowNetwork.rpcs[0], selectedHighNetwork.rpcs[0]],
+  //         () => {
+  //           return {
+  //             timestamp: new Date().getTime() / 1000,
+  //             status: ChildToParentMessageStatus.UNCONFIRMED,
+  //             value: record.amount,
+  //             confirmations: 1
+  //           }
+  //         }
+  //       )
+  //       queryClient.refetchQueries(['ERC20Balance'])
+  //       queryClient.refetchQueries(['nativeBalance'])
+  //       queryClient.refetchQueries(['pendingNotifications'])
+  //       queryClient.refetchQueries(['incomingMessages'])
+
+  //       navigate('/bridge/transactions')
+  //     },
+  //     onError: (e) => {
+  //       console.log(e)
+  //       setErrorMessage('Something went wrong. Try again, please')
+  //     }
+  //   }
+  // )
+
+  const transfer = useMutation(
     async (amount: string) => {
-      const provider = await getProvider(selectedHighNetwork)
+      const network = ALL_NETWORKS.find((n) => n.chainId === bridger?.originNetwork.chainId)
+      const provider = await getProvider(network!)
       const signer = provider.getSigner()
-      if (!provider || !connectedAccount) {
-        throw new Error("Wallet isn't connected")
+      const destinationRPC = selectedHighNetwork.rpcs[0]
+      const destinationProvider = new ethers.providers.JsonRpcProvider(destinationRPC) as ethers.providers.Provider
+      if (bridger?.isDeposit) {
+        const allowance = (await bridger?.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount ?? '')) ?? ''
+        if (Number(ethers.utils.formatEther(allowance)) < Number(amount)) {
+          await bridger.approve(ethers.utils.parseEther(amount), signer)
+          transfer.mutate(String(amount))
+        }
       }
-      if (selectedHighNetwork.chainId !== L3_NETWORK.chainId) {
-        return sendWithdrawERC20Transaction(amount, connectedAccount, signer)
-      }
-      return sendWithdrawTransaction(amount, connectedAccount, signer)
+      return await bridger?.transfer({ amount: ethers.utils.parseUnits(amount), signer, destinationProvider })
     },
     {
-      onSuccess: async (record: TransactionRecord) => {
+      onSuccess: async (record: any) => {
         try {
           const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
           let transactions = []
@@ -219,17 +256,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         } catch (e) {
           console.log(e)
         }
-        queryClient.setQueryData(
-          ['withdrawalStatus', record.highNetworkHash, selectedLowNetwork.rpcs[0], selectedHighNetwork.rpcs[0]],
-          () => {
-            return {
-              timestamp: new Date().getTime() / 1000,
-              status: ChildToParentMessageStatus.UNCONFIRMED,
-              value: record.amount,
-              confirmations: 1
-            }
-          }
-        )
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
         queryClient.refetchQueries(['pendingNotifications'])
@@ -244,23 +270,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     }
   )
 
-  const transfer = useMutation({
-    mutationFn: async (amount: string) => {
-      const network = ALL_NETWORKS.find((n) => n.chainId === bridger?.originNetwork.chainId)
-      const provider = await getProvider(network!)
-      const signer = provider.getSigner()
-      const destinationRPC = selectedHighNetwork.rpcs[0]
-      const destinationProvider = new ethers.providers.JsonRpcProvider(destinationRPC) as ethers.providers.Provider
-      return bridger?.transfer({ amount: ethers.utils.parseUnits(amount), signer, destinationProvider })
-    },
-    onSuccess: (data) => {
-      console.log(data)
-    },
-    onError: (e) => {
-      console.log(e)
-    }
-  })
-
   return (
     <>
       <button
@@ -273,11 +282,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
             ((!L2L3message?.destination || !L2L3message.data) && Number(amount) === 0))
         }
       >
-        <div
-          className={
-            isConnecting || deposit.isLoading || withdraw.isLoading ? styles.buttonLabelLoading : styles.buttonLabel
-          }
-        >
+        <div className={isConnecting || transfer.isLoading ? styles.buttonLabelLoading : styles.buttonLabel}>
           {getLabel() ?? 'Submit'}
         </div>
       </button>

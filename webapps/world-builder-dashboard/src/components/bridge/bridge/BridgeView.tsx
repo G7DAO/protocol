@@ -91,12 +91,12 @@ const BridgeView = ({
     ['estimatedFee', bridger, connectedAccount],
     async () => {
       try {
-        const fee = await bridger.getGasAndFeeEstimation(
+        const fee = await bridger?.getGasAndFeeEstimation(
           value ? ethers.utils.parseEther(value) : ethers.utils.parseEther('0.0'),
           selectedLowNetwork.rpcs[0],
           connectedAccount!
         )
-        const feeFormatted = ethers.utils.formatEther(fee.estimatedFee)
+        const feeFormatted = ethers.utils.formatEther(fee?.estimatedFee || "")
         return feeFormatted
       } catch (e) {
         console.error(e)
