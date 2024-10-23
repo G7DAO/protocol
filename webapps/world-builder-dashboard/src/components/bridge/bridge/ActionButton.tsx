@@ -234,14 +234,39 @@ const ActionButton: React.FC<ActionButtonProps> = ({ amount, isDisabled, setErro
       const signer = provider.getSigner()
       const destinationRPC = selectedHighNetwork.rpcs[0]
       const destinationProvider = new ethers.providers.JsonRpcProvider(destinationRPC) as ethers.providers.Provider
+      // If deposit
       if (bridger?.isDeposit) {
         const allowance = (await bridger?.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount ?? '')) ?? ''
+        // approve first
         if (Number(ethers.utils.formatEther(allowance)) < Number(amount)) {
-          await bridger.approve(ethers.utils.parseEther(amount), signer)
-          transfer.mutate(String(amount))
+          const approveTx = await bridger?.approve(ethers.utils.parseEther(amount), signer)
+          await approveTx.wait()
+        }
+        const tx = await bridger?.transfer({ amount: ethers.utils.parseUnits(amount), signer, destinationProvider })
+        await tx.wait()
+        return {
+          type: 'DEPOSIT',
+          amount,
+          lowNetworkChainId: selectedLowNetwork.chainId,
+          highNetworkChainId: selectedHighNetwork.chainId,
+          lowNetworkHash: tx.hash,
+          lowNetworkTimestamp: Date.now() / 1000,
+          completionTimestamp: Date.now() / 1000,
+          newTransaction: true
+        }
+      } else {
+        const tx = await bridger?.transfer({ amount: ethers.utils.parseUnits(amount), signer, destinationProvider })
+        await tx?.wait()
+        return {
+          type: 'WITHDRAWAL',
+          amount: amount,
+          lowNetworkChainId: selectedLowNetwork.chainId,
+          highNetworkChainId: selectedHighNetwork.chainId,
+          highNetworkHash: tx?.hash,
+          highNetworkTimestamp: Date.now() / 1000,
+          challengePeriod: 60 * 60
         }
       }
-      return await bridger?.transfer({ amount: ethers.utils.parseUnits(amount), signer, destinationProvider })
     },
     {
       onSuccess: async (record: any) => {
@@ -260,7 +285,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({ amount, isDisabled, setErro
         queryClient.refetchQueries(['nativeBalance'])
         queryClient.refetchQueries(['pendingNotifications'])
         queryClient.refetchQueries(['incomingMessages'])
-
         navigate('/bridge/transactions')
       },
       onError: (e) => {

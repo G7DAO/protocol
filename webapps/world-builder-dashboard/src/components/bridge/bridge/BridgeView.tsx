@@ -96,7 +96,7 @@ const BridgeView = ({
           selectedLowNetwork.rpcs[0],
           connectedAccount!
         )
-        const feeFormatted = ethers.utils.formatEther(fee?.estimatedFee || "")
+        const feeFormatted = ethers.utils.formatEther(fee?.estimatedFee || '')
         return feeFormatted
       } catch (e) {
         console.error(e)
@@ -110,11 +110,9 @@ const BridgeView = ({
   useEffect(() => {
     if (token && connectedAccount && selectedHighNetwork && selectedLowNetwork) {
       setBalance(Number(tokenBalance))
-      const bridger: Bridger = new Bridger(
-        selectedLowNetwork.chainId,
-        selectedHighNetwork.chainId,
-        token.tokenAddressMap
-      )
+      const originChainId = direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId
+      const destinationChainId = direction === 'DEPOSIT' ? selectedHighNetwork.chainId : selectedLowNetwork.chainId
+      const bridger: Bridger = new Bridger(originChainId, destinationChainId, token.tokenAddressMap)
       setBridger(bridger)
     }
   }, [token, balance, connectedAccount, selectedHighNetwork, selectedLowNetwork])
@@ -126,7 +124,6 @@ const BridgeView = ({
   useEffect(() => {
     if (message.data === 'stake') {
       if (!L3_NETWORK.staker) {
-        console.log('staker is undefined')
         return
       }
       setDataForStake(L3_NETWORK.staker)
