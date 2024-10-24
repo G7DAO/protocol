@@ -14,7 +14,7 @@ import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsCon
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
-import { L2ToL1MessageStatus, L2ToL1MessageWriter, L2TransactionReceipt } from '@arbitrum/sdk'
+import { L2ToL1MessageStatus } from '@arbitrum/sdk'
 import { useMediaQuery } from '@mantine/hooks'
 
 export const networkRPC = (chainId: number | undefined) => {
