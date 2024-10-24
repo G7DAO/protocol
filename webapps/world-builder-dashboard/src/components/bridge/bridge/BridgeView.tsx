@@ -1,14 +1,7 @@
 // Libraries
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
-import {
-  DEFAULT_STAKE_NATIVE_POOL_ID,
-  L1_NETWORK,
-  L2_NETWORK,
-  L3_NETWORK,
-  MAX_ALLOWANCE_ACCOUNT,
-  TG7T
-} from '../../../../constants'
+import { DEFAULT_STAKE_NATIVE_POOL_ID, L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../../../constants'
 // Styles and Icons
 import styles from './BridgeView.module.css'
 import { ethers } from 'ethers'
@@ -21,7 +14,7 @@ import NetworkSelector from '@/components/bridge/bridge/NetworkSelector'
 import TransactionSummary from '@/components/bridge/bridge/TransactionSummary'
 import ValueToBridge from '@/components/bridge/bridge/ValueToBridge'
 // Blockchain Context and Utility Functions
-import { HighNetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useUISettings } from '@/contexts/UISettingsContext'
 // Hooks and Constants
 import useERC20Balance from '@/hooks/useERC20Balance'
@@ -29,11 +22,7 @@ import useEthUsdRate from '@/hooks/useEthUsdRate'
 import useNativeBalance from '@/hooks/useNativeBalance'
 import useTokenBalance from '@/hooks/useTokenBalance'
 import { DepositDirection } from '@/pages/BridgePage/BridgePage'
-import { estimateOutboundTransferGas } from '@/utils/bridge/depositERC20ArbitrumSDK'
-import { estimateDepositERC20ToNativeFee } from '@/utils/bridge/depositERC20ToNative'
 import { getStakeNativeTxData } from '@/utils/bridge/stakeContractInfo'
-import { estimateWithdrawGasAndFee } from '@/utils/bridge/withdrawERC20'
-import { estimateWithdrawFee } from '@/utils/bridge/withdrawNativeToken'
 import { Token } from '@/utils/tokens'
 
 const BridgeView = ({
@@ -249,6 +238,7 @@ const BridgeView = ({
         setErrorMessage={setNetworkErrorMessage}
         L2L3message={isMessageExpanded ? message : { data: '', destination: '' }}
         bridger={bridger}
+        symbol={token?.symbol}
       />
     </div>
   )

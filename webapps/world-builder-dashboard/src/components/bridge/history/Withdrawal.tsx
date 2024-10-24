@@ -4,7 +4,6 @@ import {
   HIGH_NETWORKS,
   L1_NETWORK,
   L2_NETWORK,
-  L3_NATIVE_TOKEN_SYMBOL,
   L3_NETWORK,
   LOW_NETWORKS
 } from '../../../../constants'
@@ -167,7 +166,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     </div>
                   </div>
                   <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
-                  <div className={styles.gridItem}>{`${status.data?.amount} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
+                  <div className={styles.gridItem}>{`${status.data?.amount} ${status.data}`}</div>
                   <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
                   <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
                   <div className={styles.gridItem}>
@@ -189,7 +188,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     <div className={styles.typeCompleted}>Initiate</div>
                   </div>
                   <div className={styles.gridItemInitiate}>{timeAgo(status.data?.timestamp)}</div>
-                  <div className={styles.gridItemInitiate}>{`${status.data?.amount} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
+                  <div className={styles.gridItemInitiate}>{`${status.data?.amount} ${withdrawal.symbol}`}</div>
                   <div className={styles.gridItemInitiate}>{status.data?.from ?? ''}</div>
                   <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
                   <div className={styles.gridItemInitiate}>
@@ -205,15 +204,13 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     </a>
                   </div>
                   <div className={styles.gridItemInitiate}>
-                    <div className={styles.timeCenter}>
-                      {timeAgo(status.data.lowNetworkTimeStamp)}
-                    </div>
+                    <div className={styles.timeCenter}>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
                   </div>
                   <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
                     <div className={styles.typeCompleted}>Finalize</div>
                   </div>
                   <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.completionTimestamp)}</div>
-                  <div className={styles.gridItemInitiate}>{`${status.data?.amount} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
+                  <div className={styles.gridItemInitiate}>{`${status.data?.amount} ${withdrawal.symbol}`}</div>
                   <div className={styles.gridItemInitiate}>{status.data?.from ?? ''}</div>
                   <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
                   <div className={styles.gridItemInitiate}>
@@ -242,7 +239,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     </div>
                   </div>
                   <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
-                  <div className={styles.gridItem}>{`${status.data?.amount} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
+                  <div className={styles.gridItem}>{`${status.data?.amount} ${withdrawal.symbol}`}</div>
                   <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
                   <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
                   {status.data?.status === L2ToL1MessageStatus.CONFIRMED && (

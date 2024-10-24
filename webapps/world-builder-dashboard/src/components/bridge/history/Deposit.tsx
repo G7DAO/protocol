@@ -1,5 +1,5 @@
 import React from 'react'
-import { HIGH_NETWORKS, L3_NATIVE_TOKEN_SYMBOL, LOW_NETWORKS } from '../../../../constants'
+import { HIGH_NETWORKS, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import { Skeleton } from 'summon-ui/mantine'
 import IconArrowNarrowDown from '@/assets/IconArrowNarrowDown'
@@ -37,7 +37,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
             </div>
           </div>
           <div className={styles.gridItem}>{timeAgo(deposit.lowNetworkTimestamp)}</div>
-          <div className={styles.gridItem}>{`${deposit.amount} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
+          <div className={styles.gridItem}>{`${deposit.amount} ${deposit.symbol}`}</div>
           <div className={styles.gridItem}>{depositInfo.from}</div>
           <div className={styles.gridItem}>{depositInfo.to}</div>
           <>
@@ -56,7 +56,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                   <div className={styles.pending}>
                     Pending
                     <IconLinkExternal02 className={styles.arrowUp} />
-                  </div>    
+                  </div>
                 )}
               </div>
             </a>

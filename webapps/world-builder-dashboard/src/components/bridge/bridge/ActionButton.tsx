@@ -18,7 +18,6 @@ import { estimateCreateRetryableTicketFee, sendL2ToL3Message } from '@/utils/bri
 import { depositERC20ArbitrumSDK, TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { sendDepositERC20ToNativeTransaction } from '@/utils/bridge/depositERC20ToNative'
 import { parseUntilDelimiter } from '@/utils/web3utils'
-import { ChildToParentMessageStatus } from '@arbitrum/sdk'
 
 interface ActionButtonProps {
   direction: 'DEPOSIT' | 'WITHDRAW'
@@ -27,8 +26,16 @@ interface ActionButtonProps {
   L2L3message?: { destination: string; data: string }
   setErrorMessage: (arg0: string) => void
   bridger?: Bridger
+  symbol?: string
 }
-const ActionButton: React.FC<ActionButtonProps> = ({ amount, isDisabled, setErrorMessage, L2L3message, bridger }) => {
+const ActionButton: React.FC<ActionButtonProps> = ({
+  amount,
+  isDisabled,
+  setErrorMessage,
+  L2L3message,
+  bridger,
+  symbol
+}) => {
   const { connectedAccount, isConnecting, selectedHighNetwork, selectedLowNetwork, connectWallet, getProvider } =
     useBlockchainContext()
   const [isAllowanceModalOpened, setIsAllowanceModalOpened] = useState(false)
@@ -177,56 +184,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({ amount, isDisabled, setErro
     }
   )
 
-  // const withdraw = useMutation(
-  //   async (amount: string) => {
-  //     const provider = await getProvider(selectedHighNetwork)
-  //     const signer = provider.getSigner()
-  //     if (!provider || !connectedAccount) {
-  //       throw new Error("Wallet isn't connected")
-  //     }
-  //     if (selectedHighNetwork.chainId !== L3_NETWORK.chainId) {
-  //       return sendWithdrawERC20Transaction(amount, connectedAccount, signer)
-  //     }
-  //     return sendWithdrawTransaction(amount, connectedAccount, signer)
-  //   },
-  //   {
-  //     onSuccess: async (record: TransactionRecord) => {
-  //       try {
-  //         const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
-  //         let transactions = []
-  //         if (transactionsString) {
-  //           transactions = JSON.parse(transactionsString)
-  //         }
-  //         transactions.push(record)
-  //         localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(transactions))
-  //       } catch (e) {
-  //         console.log(e)
-  //       }
-  //       queryClient.setQueryData(
-  //         ['withdrawalStatus', record.highNetworkHash, selectedLowNetwork.rpcs[0], selectedHighNetwork.rpcs[0]],
-  //         () => {
-  //           return {
-  //             timestamp: new Date().getTime() / 1000,
-  //             status: ChildToParentMessageStatus.UNCONFIRMED,
-  //             value: record.amount,
-  //             confirmations: 1
-  //           }
-  //         }
-  //       )
-  //       queryClient.refetchQueries(['ERC20Balance'])
-  //       queryClient.refetchQueries(['nativeBalance'])
-  //       queryClient.refetchQueries(['pendingNotifications'])
-  //       queryClient.refetchQueries(['incomingMessages'])
-
-  //       navigate('/bridge/transactions')
-  //     },
-  //     onError: (e) => {
-  //       console.log(e)
-  //       setErrorMessage('Something went wrong. Try again, please')
-  //     }
-  //   }
-  // )
-
   const transfer = useMutation(
     async (amount: string) => {
       const network = ALL_NETWORKS.find((n) => n.chainId === bridger?.originNetwork.chainId)
@@ -252,7 +209,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({ amount, isDisabled, setErro
           lowNetworkHash: tx.hash,
           lowNetworkTimestamp: Date.now() / 1000,
           completionTimestamp: Date.now() / 1000,
-          newTransaction: true
+          newTransaction: true,
+          symbol
         }
       } else {
         const tx = await bridger?.transfer({ amount: ethers.utils.parseUnits(amount), signer, destinationProvider })
@@ -264,7 +222,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({ amount, isDisabled, setErro
           highNetworkChainId: selectedHighNetwork.chainId,
           highNetworkHash: tx?.hash,
           highNetworkTimestamp: Date.now() / 1000,
-          challengePeriod: 60 * 60
+          challengePeriod: 60 * 60,
+          symbol
         }
       }
     },

@@ -36,6 +36,7 @@ export interface TransactionRecord {
   claimableTimestamp?: number
   newTransaction?: boolean
   isFailed?: boolean
+  symbol?: string
 }
 
 export const depositERC20ArbitrumSDK = async (
