@@ -32,14 +32,6 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           tokenAddressMap: TG7T,
           rpc: L1_NETWORK.rpcs[0]
         },
-        // {
-        //   name: 'USDC',
-        //   symbol: 'USDC',
-        //   address: '0xf08A50178dfcDe18524640EA6618a1f965821715',
-        //   Icon: IconUSDC,
-        //   rpc: L1_NETWORK.rpcs[0],
-        //   // tokenAddressMap: 
-        // },
         {
           name: 'Ethereum',
           symbol: 'ETH',
@@ -68,13 +60,6 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           rpc: L2_NETWORK.rpcs[0],
           tokenAddressMap: ETH
         },
-        // {
-        //   name: 'USDC',
-        //   symbol: 'USDC',
-        //   address: '0xf3C3351D6Bd0098EEb33ca8f830FAf2a141Ea2E1',
-        //   Icon: IconUSDC,
-        //   rpc: L2_NETWORK.rpcs[0],
-        // },
         ...storedTokensWithItems
       ]
     case L3_NETWORK.chainId:
