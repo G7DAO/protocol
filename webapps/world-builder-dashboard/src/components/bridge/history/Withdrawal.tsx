@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
 import { HIGH_NETWORKS, L1_NETWORK, L2_NETWORK, L3_NETWORK, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import { ethers } from 'ethers'
+import { BridgeTransfer } from 'game7-bridge-sdk'
 import { Skeleton } from 'summon-ui/mantine'
 import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
@@ -58,11 +59,11 @@ export const getStatus = (withdrawal: TransactionRecord) => {
 const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const targetChain = withdrawal.highNetworkChainId === L2_NETWORK.chainId ? L1_NETWORK : L2_NETWORK
   const status = getStatus(withdrawal)
-  const { switchChain, connectedAccount } = useBlockchainContext()
+  const { switchChain, connectedAccount, selectedLowNetwork, selectedHighNetwork } = useBlockchainContext()
   const queryClient = useQueryClient()
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
-  
+
   // Mutate function
   const execute = useMutation(
     async (highNetworkHash: string | undefined) => {
@@ -104,17 +105,14 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
             console.log(t)
             console.log(highNetworkHash)
             if (t.highNetworkHash === highNetworkHash) {
-              console.log('equal and pushing symbol')
               return {
                 ...t,
                 completionTimestamp: Date.now() / 1000,
                 lowNetworkTimestamp: Date.now() / 1000,
                 newTransaction: true,
-                lowNetworkHash: data.transactionHash,
-                symbol: t.symbol
+                lowNetworkHash: data.transactionHash
               }
             }
-            console.log('not equal')
             return { ...t }
           })
           localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(newTransactions))
@@ -137,6 +135,18 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
       }
     }
   )
+
+  useEffect(() => {
+    if (!withdrawal) return
+    const bridgeTransfer = new BridgeTransfer({
+      txHash: withdrawal.highNetworkHash || '',
+      destinationNetworkChainId: selectedLowNetwork.chainId,
+      originNetworkChainId: selectedLowNetwork.chainId,
+      originSignerOrProviderOrRpc: selectedHighNetwork.rpcs[0],
+      destinationSignerOrProviderOrRpc: selectedLowNetwork.rpcs[0]
+    })
+    console.log(bridgeTransfer)
+  }, [withdrawal])
 
   if (!status) {
     return <></>

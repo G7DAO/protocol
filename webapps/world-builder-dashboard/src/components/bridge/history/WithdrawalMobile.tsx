@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import styles from './DepositMobile.module.css'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
+import IconWithdrawalNodeCompletedMobile from '@/assets/IconWithdrawalNodeCompletedMobile'
 import parentStyles from '@/components/bridge/history/WithdrawTransactions.module.css'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 import { L2ToL1MessageStatus } from '@arbitrum/sdk'
-import IconWithdrawalNodeCompletedMobile from '@/assets/IconWithdrawalNodeCompletedMobile'
 
 interface WithdrawalMobileProps {
   withdrawal: TransactionRecord
@@ -15,6 +15,7 @@ interface WithdrawalMobileProps {
 }
 const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, execute, status }) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
+  console.log(execute)
 
   return (
     <div className={styles.container}>
@@ -25,7 +26,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, execute
       {!isCollapsed && (
         <>
           <div className={styles.dataRow}>
-            <IconWithdrawalNodeCompletedMobile className={styles.nodeCompleted}/>
+            <IconWithdrawalNodeCompletedMobile className={styles.nodeCompleted} />
             <div className={styles.dataText}>Transaction</div>
             {status.data?.status === L2ToL1MessageStatus.EXECUTED && (
               <a
@@ -105,7 +106,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, execute
         </>
       )}
       <div className={styles.dataRow}>
-        <div className={styles.dataText}> Status</div>
+        <div className={styles.dataText}>Status</div>
         {status.data?.status === L2ToL1MessageStatus.CONFIRMED && (
           <button className={parentStyles.claimButton} onClick={() => execute.mutate(status.data.highNetworkHash)}>
             {execute.isLoading ? 'Claiming...' : 'Claim now'}
