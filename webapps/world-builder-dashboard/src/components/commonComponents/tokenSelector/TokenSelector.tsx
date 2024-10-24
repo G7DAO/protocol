@@ -98,9 +98,8 @@ const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selected
           {tokens.map((n: Token) => {
             const highNetworkChainId = String(selectedHighNetwork.chainId)
             const lowNetworkChainId = String(selectedLowNetwork.chainId)
-            const isChainIdValid =
-              Object.keys(n.tokenAddressMap).includes(highNetworkChainId) &&
-              Object.keys(n.tokenAddressMap).includes(lowNetworkChainId)
+            const chainIds = Object.keys(n.tokenAddressMap ?? [])
+            const isChainIdValid = chainIds.includes(highNetworkChainId) && chainIds.includes(lowNetworkChainId)
             return (
               <Combobox.Option value={String(n.address)} key={n.address} disabled={!isChainIdValid}>
                 <Group>

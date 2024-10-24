@@ -39,8 +39,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   selectedChainId
 }) => {
   const [tokens, setTokens] = useState<Token[]>([])
-  const [token, setToken] = useState<Token>()
-  const { connectedAccount } = useBlockchainContext()
+  const { connectedAccount, selectedBridgeToken, setSelectedBridgeToken } = useBlockchainContext()
 
   const getTokens = async () => {
     const _tokens = getTokensForNetwork(selectedChainId, connectedAccount)
@@ -72,7 +71,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   }, [connectedAccount])
 
   const handleTokenChange = (token: Token) => {
-    setToken(token)
+    setSelectedBridgeToken(token)
     onTokenChange(token)
     const _tokens = getTokensForNetwork(selectedChainId, connectedAccount)
     setTokens(_tokens)
@@ -95,10 +94,10 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
         <button className={styles.maxButton} onClick={() => setValue(String(balance))} disabled={!connectedAccount}>
           MAX
         </button>
-        {tokens.length > 0 && token && (
+        {tokens.length > 0 && selectedBridgeToken && (
           <TokenSelector
             tokens={tokens}
-            selectedToken={token}
+            selectedToken={selectedBridgeToken}
             onChange={(token: Token) => handleTokenChange(token)}
             onTokenAdded={getTokens}
             selectedChainId={selectedChainId}

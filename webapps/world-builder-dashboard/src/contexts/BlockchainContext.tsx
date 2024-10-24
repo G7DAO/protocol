@@ -2,6 +2,7 @@
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react'
 import { DEFAULT_HIGH_NETWORK, DEFAULT_LOW_NETWORK, L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../constants'
 import { ethers } from 'ethers'
+import { getTokensForNetwork, Token } from '@/utils/tokens'
 
 interface BlockchainContextType {
   walletProvider?: ethers.providers.Web3Provider
@@ -14,6 +15,8 @@ interface BlockchainContextType {
   setSelectedLowNetwork: (network: NetworkInterface) => void
   selectedHighNetwork: NetworkInterface
   setSelectedHighNetwork: (network: NetworkInterface) => void
+  selectedBridgeToken: Token
+  setSelectedBridgeToken: (token: Token) => void
   isMetaMask: boolean
   getProvider: (network: NetworkInterface) => Promise<ethers.providers.Web3Provider>
   accounts: string[]
@@ -63,6 +66,9 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   const [chainId, setChainId] = useState<number | undefined>(undefined)
   const [connectedAccount, setConnectedAccount] = useState<string>()
   const [accounts, setAccounts] = useState<string[]>([''])
+  const [selectedBridgeToken, setSelectedBridgeToken] = useState<Token>(
+    getTokensForNetwork(DEFAULT_LOW_NETWORK.chainId, connectedAccount)[0]
+  )
   const tokenAddress = '0x5f88d811246222F6CB54266C42cc1310510b9feA'
 
   const setSelectedLowNetwork = (network: NetworkInterface) => {
@@ -255,7 +261,9 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
         getProvider,
         isConnecting,
         accounts,
-        setAccounts
+        setAccounts,
+        setSelectedBridgeToken,
+        selectedBridgeToken
       }}
     >
       {children}

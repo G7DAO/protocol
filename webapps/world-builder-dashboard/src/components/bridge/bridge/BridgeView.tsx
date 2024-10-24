@@ -33,7 +33,6 @@ const BridgeView = ({
   setDirection: (arg0: DepositDirection) => void
 }) => {
   const [bridger, setBridger] = useState<Bridger>()
-  const [token, setToken] = useState<Token | undefined>()
   const [balance, setBalance] = useState<number | null>(null)
   const [value, setValue] = useState('0')
   const [message, setMessage] = useState<{ destination: string; data: string }>({ destination: '', data: '' })
@@ -43,7 +42,7 @@ const BridgeView = ({
   const { isMessagingEnabled } = useUISettings()
   const g7tUsdRate = useQuery(['rate'], () => 2501.32)
   const { data: ethUsdRate } = useEthUsdRate()
-  const { connectedAccount, selectedLowNetwork, setSelectedLowNetwork, selectedHighNetwork, setSelectedHighNetwork } =
+  const { connectedAccount, selectedLowNetwork, setSelectedLowNetwork, selectedHighNetwork, setSelectedHighNetwork, setSelectedBridgeToken, selectedBridgeToken } =
     useBlockchainContext()
 
   const { isFetching: isFetchingLowNetworkBalance } = useERC20Balance({
@@ -70,10 +69,10 @@ const BridgeView = ({
     rpc: selectedHighNetwork.rpcs[0]
   })
 
-  const { balance: tokenBalance } = useTokenBalance(token?.address || '', token?.rpc || '', connectedAccount)
+  const { balance: tokenBalance } = useTokenBalance(selectedBridgeToken?.address || '', selectedBridgeToken?.rpc || '', connectedAccount)
 
   const handleTokenChange = (token: Token) => {
-    setToken(token)
+    setSelectedBridgeToken(token)
   }
 
   const estimatedFee = useQuery(
@@ -97,14 +96,14 @@ const BridgeView = ({
   )
 
   useEffect(() => {
-    if (token && connectedAccount && selectedHighNetwork && selectedLowNetwork) {
+    if (selectedBridgeToken && connectedAccount && selectedHighNetwork && selectedLowNetwork) {
       setBalance(Number(tokenBalance))
       const originChainId = direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId
       const destinationChainId = direction === 'DEPOSIT' ? selectedHighNetwork.chainId : selectedLowNetwork.chainId
-      const bridger: Bridger = new Bridger(originChainId, destinationChainId, token.tokenAddressMap)
+      const bridger: Bridger = new Bridger(originChainId, destinationChainId, selectedBridgeToken.tokenAddressMap)
       setBridger(bridger)
     }
-  }, [token, balance, connectedAccount, selectedHighNetwork, selectedLowNetwork])
+  }, [selectedBridgeToken, balance, connectedAccount, selectedHighNetwork, selectedLowNetwork])
 
   useEffect(() => {
     setNetworkErrorMessage('')
@@ -134,6 +133,7 @@ const BridgeView = ({
           networks={[L1_NETWORK, L2_NETWORK]}
           selectedNetwork={selectedLowNetwork}
           onChange={setSelectedLowNetwork}
+          selectedToken={selectedBridgeToken}
         />
       )
     } else {
@@ -142,6 +142,7 @@ const BridgeView = ({
           networks={[L2_NETWORK, L3_NETWORK]}
           selectedNetwork={selectedHighNetwork}
           onChange={setSelectedHighNetwork}
+          selectedToken={selectedBridgeToken}
         />
       )
     }
@@ -182,7 +183,7 @@ const BridgeView = ({
         </div>
       </div>
       <ValueToBridge
-        symbol={token?.symbol ?? ''}
+        symbol={selectedBridgeToken?.symbol ?? ''}
         value={value}
         setValue={setValue}
         onTokenChange={handleTokenChange}
@@ -226,9 +227,9 @@ const BridgeView = ({
         isEstimatingFee={estimatedFee.isFetching}
         value={Number(value)}
         ethRate={ethUsdRate ?? 0}
-        tokenSymbol={token?.symbol || ''}
+        tokenSymbol={selectedBridgeToken?.symbol || ''}
         tokenRate={g7tUsdRate.data ?? 0}
-        gasTokenSymbol={token?.symbol ?? ''}
+        gasTokenSymbol={selectedBridgeToken?.symbol ?? ''}
       />
       {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
       <ActionButton
@@ -238,7 +239,7 @@ const BridgeView = ({
         setErrorMessage={setNetworkErrorMessage}
         L2L3message={isMessageExpanded ? message : { data: '', destination: '' }}
         bridger={bridger}
-        symbol={token?.symbol}
+        symbol={selectedBridgeToken?.symbol}
       />
     </div>
   )
