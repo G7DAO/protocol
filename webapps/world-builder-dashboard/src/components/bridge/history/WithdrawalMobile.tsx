@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { L3_NATIVE_TOKEN_SYMBOL } from '../../../../constants'
 import styles from './DepositMobile.module.css'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import parentStyles from '@/components/bridge/history/WithdrawTransactions.module.css'
@@ -21,7 +20,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, execute
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.title}>Withdraw</div>
-        <div className={styles.amount}>{`${withdrawal.amount} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
+        <div className={styles.amount}>{`${withdrawal.amount} ${withdrawal.symbol}`}</div>
       </div>
       {!isCollapsed && (
         <>

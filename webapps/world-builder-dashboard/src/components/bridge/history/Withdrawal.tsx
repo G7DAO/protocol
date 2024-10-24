@@ -63,7 +63,6 @@ export const getStatus = (withdrawal: TransactionRecord) => {
 }
 const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const targetChain = withdrawal.highNetworkChainId === L2_NETWORK.chainId ? L1_NETWORK : L2_NETWORK
-
   const status = getStatus(withdrawal)
   const { switchChain, connectedAccount } = useBlockchainContext()
   const queryClient = useQueryClient()
