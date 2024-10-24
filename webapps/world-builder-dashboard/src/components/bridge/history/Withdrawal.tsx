@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
 import { HIGH_NETWORKS, L1_NETWORK, L2_NETWORK, L3_NETWORK, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
@@ -63,6 +63,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const queryClient = useQueryClient()
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
+  const [bridgeTransfer, setBridgeTransfer] = useState<BridgeTransfer>()
 
   // Mutate function
   const execute = useMutation(
@@ -70,10 +71,6 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
       if (!highNetworkHash) {
         throw new Error('transaction hash is undefined')
       }
-      const highNetworkRPC = networkRPC(withdrawal.highNetworkChainId)
-      const highNetworkProvider = new ethers.providers.JsonRpcProvider(highNetworkRPC)
-      const receipt = await highNetworkProvider.getTransactionReceipt(highNetworkHash)
-      const l2Receipt = new L2TransactionReceipt(receipt)
 
       let provider
       if (window.ethereum) {
@@ -87,10 +84,8 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
         throw new Error('Wallet is not installed!')
       }
       const signer = provider.getSigner()
-      const messages: L2ToL1MessageWriter[] = (await l2Receipt.getL2ToL1Messages(signer)) as L2ToL1MessageWriter[]
-      const message = messages[0]
-      const res = await message.execute(highNetworkProvider)
-      return await res.wait()
+      const res = await bridgeTransfer?.execute(signer)
+      return res
     },
     {
       onSuccess: (data, highNetworkHash) => {
@@ -102,15 +97,13 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
             transactions = JSON.parse(transactionsString)
           }
           const newTransactions: TransactionRecord[] = transactions.map((t: TransactionRecord) => {
-            console.log(t)
-            console.log(highNetworkHash)
             if (t.highNetworkHash === highNetworkHash) {
               return {
                 ...t,
                 completionTimestamp: Date.now() / 1000,
                 lowNetworkTimestamp: Date.now() / 1000,
                 newTransaction: true,
-                lowNetworkHash: data.transactionHash
+                lowNetworkHash: data?.transactionHash
               }
             }
             return { ...t }
@@ -138,14 +131,15 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
 
   useEffect(() => {
     if (!withdrawal) return
-    const bridgeTransfer = new BridgeTransfer({
+    const _bridgeTransfer = new BridgeTransfer({
       txHash: withdrawal.highNetworkHash || '',
       destinationNetworkChainId: selectedLowNetwork.chainId,
       originNetworkChainId: selectedLowNetwork.chainId,
       originSignerOrProviderOrRpc: selectedHighNetwork.rpcs[0],
       destinationSignerOrProviderOrRpc: selectedLowNetwork.rpcs[0]
     })
-    console.log(bridgeTransfer)
+    console.log(_bridgeTransfer)
+    setBridgeTransfer(_bridgeTransfer)
   }, [withdrawal])
 
   if (!status) {
@@ -163,7 +157,12 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
       ) : (
         <>
           {smallView ? (
-            <WithdrawalMobile withdrawal={withdrawal} execute={execute} status={status} />
+            <WithdrawalMobile
+              withdrawal={withdrawal}
+              execute={execute}
+              status={status}
+              bridgeTransfer={bridgeTransfer}
+            />
           ) : (
             <>
               {status.data?.status === L2ToL1MessageStatus.EXECUTED && (

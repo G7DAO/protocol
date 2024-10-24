@@ -7,13 +7,15 @@ import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 import { L2ToL1MessageStatus } from '@arbitrum/sdk'
+import { BridgeTransfer } from 'game7-bridge-sdk'
 
 interface WithdrawalMobileProps {
   withdrawal: TransactionRecord
   execute: any
   status: any
+  bridgeTransfer: BridgeTransfer | undefined
 }
-const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, execute, status }) => {
+const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, execute, status, bridgeTransfer }) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
   console.log(execute)
 
