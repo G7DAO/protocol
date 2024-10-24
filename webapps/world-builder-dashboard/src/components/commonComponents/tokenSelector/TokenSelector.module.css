@@ -46,7 +46,6 @@
 }
 
 .options {
-  width: fit-content !important;
   display: flex !important;
   padding: 2px 6px !important;
   padding-top: 10px !important;
@@ -57,7 +56,6 @@
 }
 
 .option {
-  display: flex;
   align-items: center !important;
   padding: 2px 6px !important;
   padding-bottom: 10px !important;

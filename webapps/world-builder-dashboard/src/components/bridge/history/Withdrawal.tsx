@@ -1,12 +1,6 @@
 import React from 'react'
 import { useMutation, useQueryClient } from 'react-query'
-import {
-  HIGH_NETWORKS,
-  L1_NETWORK,
-  L2_NETWORK,
-  L3_NETWORK,
-  LOW_NETWORKS
-} from '../../../../constants'
+import { HIGH_NETWORKS, L1_NETWORK, L2_NETWORK, L3_NETWORK, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import { ethers } from 'ethers'
 import { Skeleton } from 'summon-ui/mantine'
@@ -68,7 +62,8 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const queryClient = useQueryClient()
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
-
+  
+  // Mutate function
   const execute = useMutation(
     async (highNetworkHash: string | undefined) => {
       if (!highNetworkHash) {
@@ -105,16 +100,21 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
           if (transactionsString) {
             transactions = JSON.parse(transactionsString)
           }
-          const newTransactions: TransactionRecord[] = transactions.map((t: any) => {
+          const newTransactions: TransactionRecord[] = transactions.map((t: TransactionRecord) => {
+            console.log(t)
+            console.log(highNetworkHash)
             if (t.highNetworkHash === highNetworkHash) {
+              console.log('equal and pushing symbol')
               return {
                 ...t,
                 completionTimestamp: Date.now() / 1000,
                 lowNetworkTimestamp: Date.now() / 1000,
                 newTransaction: true,
-                lowNetworkHash: data.transactionHash
+                lowNetworkHash: data.transactionHash,
+                symbol: t.symbol
               }
             }
+            console.log('not equal')
             return { ...t }
           })
           localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(newTransactions))
@@ -137,6 +137,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
       }
     }
   )
+
   if (!status) {
     return <></>
   }
@@ -260,7 +261,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           className={styles.claimButton}
                           onClick={() => execute.mutate(status.data.highNetworkHash)}
                         >
-                          {execute.isLoading ? 'Claiming...' : 'Claim Now'}
+                          {execute.isLoading && !execute.isSuccess ? 'Claiming...' : 'Claim Now'}
                         </button>
                       </div>
                     </>

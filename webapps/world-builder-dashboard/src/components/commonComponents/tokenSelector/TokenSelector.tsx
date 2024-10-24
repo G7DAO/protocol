@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { ALL_NETWORKS } from '../../../../constants'
 import styles from './TokenSelector.module.css'
 import { ethers } from 'ethers'
@@ -54,7 +54,7 @@ const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selected
 
       if (tokens.find((token: Token) => token.address === tokenAddress)) {
         setError("Can't add the same token!")
-        return;
+        return
       }
       const updatedTokens = [...existingTokens, token]
       localStorage.setItem(storageKey, JSON.stringify(updatedTokens))
