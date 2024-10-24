@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import styles from './DepositMobile.module.css'
+import { BridgeTransfer } from 'game7-bridge-sdk'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import IconWithdrawalNodeCompletedMobile from '@/assets/IconWithdrawalNodeCompletedMobile'
 import parentStyles from '@/components/bridge/history/WithdrawTransactions.module.css'
@@ -7,7 +8,6 @@ import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 import { L2ToL1MessageStatus } from '@arbitrum/sdk'
-import { BridgeTransfer } from 'game7-bridge-sdk'
 
 interface WithdrawalMobileProps {
   withdrawal: TransactionRecord
@@ -17,7 +17,6 @@ interface WithdrawalMobileProps {
 }
 const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, execute, status, bridgeTransfer }) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
-  console.log(execute)
 
   return (
     <div className={styles.container}>
@@ -28,7 +27,6 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, execute
       {!isCollapsed && (
         <>
           <div className={styles.dataRow}>
-            <IconWithdrawalNodeCompletedMobile className={styles.nodeCompleted} />
             <div className={styles.dataText}>Transaction</div>
             {status.data?.status === L2ToL1MessageStatus.EXECUTED && (
               <a
@@ -69,6 +67,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, execute
           </div>
           {status.data?.status === L2ToL1MessageStatus.EXECUTED && (
             <>
+              <IconWithdrawalNodeCompletedMobile className={styles.nodeCompleted} />
               <div className={styles.dataRowCompleted}>
                 <div className={styles.dataText}>Initiate</div>
                 <a

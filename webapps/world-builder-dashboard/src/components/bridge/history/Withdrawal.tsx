@@ -138,7 +138,6 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
       originSignerOrProviderOrRpc: selectedHighNetwork.rpcs[0],
       destinationSignerOrProviderOrRpc: selectedLowNetwork.rpcs[0]
     })
-    console.log(_bridgeTransfer)
     setBridgeTransfer(_bridgeTransfer)
   }, [withdrawal])
 
