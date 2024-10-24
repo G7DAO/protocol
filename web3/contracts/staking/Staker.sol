@@ -253,7 +253,6 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         }
 
         positionTokenID = TotalPositions++;
-        _mint(positionHolder, positionTokenID);
 
         Positions[positionTokenID] = Position({
             poolID: poolID,
@@ -264,6 +263,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
 
         CurrentAmountInPool[poolID] += msg.value;
         CurrentPositionsInPool[poolID]++;
+        _mint(positionHolder, positionTokenID);
 
         emit Staked(positionTokenID, positionHolder, poolID, msg.value);
     }
@@ -293,7 +293,6 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         IERC20(pool.tokenAddress).safeTransferFrom(msg.sender, address(this), amount);
 
         positionTokenID = TotalPositions++;
-        _mint(positionHolder, positionTokenID);
 
         Positions[positionTokenID] = Position({
             poolID: poolID,
@@ -304,6 +303,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
 
         CurrentAmountInPool[poolID] += amount;
         CurrentPositionsInPool[poolID]++;
+        _mint(positionHolder, positionTokenID);
 
         emit Staked(positionTokenID, positionHolder, poolID, amount);
     }
@@ -327,7 +327,6 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         IERC721(pool.tokenAddress).safeTransferFrom(msg.sender, address(this), tokenID);
 
         positionTokenID = TotalPositions++;
-        _mint(positionHolder, positionTokenID);
 
         Positions[positionTokenID] = Position({
             poolID: poolID,
@@ -338,6 +337,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
 
         CurrentAmountInPool[poolID]++;
         CurrentPositionsInPool[poolID]++;
+        _mint(positionHolder, positionTokenID);
 
         emit Staked(positionTokenID, positionHolder, poolID, tokenID);
     }
@@ -362,7 +362,6 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         IERC1155(pool.tokenAddress).safeTransferFrom(msg.sender, address(this), pool.tokenID, amount, "");
 
         positionTokenID = TotalPositions++;
-        _mint(positionHolder, positionTokenID);
 
         Positions[positionTokenID] = Position({
             poolID: poolID,
@@ -374,6 +373,7 @@ contract Staker is ERC721Enumerable, ReentrancyGuard {
         CurrentAmountInPool[poolID] += amount;
         CurrentPositionsInPool[poolID]++;
 
+        _mint(positionHolder, positionTokenID);
         emit Staked(positionTokenID, positionHolder, poolID, amount);
     }
 
