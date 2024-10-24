@@ -166,7 +166,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     </div>
                   </div>
                   <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
-                  <div className={styles.gridItem}>{`${status.data?.amount} ${status.data}`}</div>
+                  <div className={styles.gridItem}>{`${status.data?.amount} ${withdrawal.symbol}`}</div>
                   <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
                   <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
                   <div className={styles.gridItem}>
