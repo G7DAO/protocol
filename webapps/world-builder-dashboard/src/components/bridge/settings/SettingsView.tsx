@@ -1,8 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { L2_NETWORK, L3_NATIVE_TOKEN_SYMBOL, L3_NETWORK } from '../../../../constants'
+import { L3_NATIVE_TOKEN_SYMBOL, L3_NETWORK } from '../../../../constants'
 import styles from './SettingsView.module.css'
-import IconArbitrumLarge from '@/assets/IconArbitrumLarge'
 import IconG7tLarge from '@/assets/IconG7tLarge'
 import MessagingSettings from '@/components/bridge/settings/MessagingSettings'
 import { NetworkInterface } from '@/contexts/BlockchainContext'
@@ -36,21 +35,10 @@ const SettingsView: React.FC<SettingsViewProps> = ({}) => {
         <div className={styles.faucetLinkContainer}>
           <IconG7tLarge />
           <div className={styles.textContainer}>
-            <div className={styles.linkTitle}>Game7 Testnet</div>
+            <div className={styles.linkTitle}>G7 Sepolia</div>
             <div className={styles.supportingText}>Request $G7 testnet tokens</div>
           </div>
           <button className={styles.button} onClick={() => handleClick(L3_NETWORK)}>
-            Request
-          </button>
-        </div>
-        <div className={styles.divider} />
-        <div className={styles.faucetLinkContainer}>
-          <IconArbitrumLarge />
-          <div className={styles.textContainer}>
-            <div className={styles.linkTitle}>Arbitrum Sepolia</div>
-            <div className={styles.supportingText}>Request $G7 testnet tokens on Arbitrum Sepolia</div>
-          </div>
-          <button className={styles.button} onClick={() => handleClick(L2_NETWORK)}>
             Request
           </button>
         </div>

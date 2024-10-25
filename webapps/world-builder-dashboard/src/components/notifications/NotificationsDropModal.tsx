@@ -25,16 +25,14 @@ interface NotificationsDropModalProps {
 const copy = (notification: BridgeNotification) => {
   const targetNetwork = getNetwork(notification.to)?.displayName ?? 'unknown chain'
   if (notification.status === 'CLAIMABLE') {
-    return `Heads Up: Your ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL} withdrawal is complete and you can now claim your assets`
+    return `Heads Up: Your ${notification.amount} ${notification.tx.symbol} withdrawal is complete and you can now claim your assets`
   }
   if (notification.status === 'COMPLETED') {
     if (notification.type === 'DEPOSIT') {
       return `${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL} deposited to ${targetNetwork}`
     }
     if (notification.type === 'CLAIM') {
-      return (
-        `You requested ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL}`
-      )
+      return `You requested ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL}`
     }
     return `Your ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL} withdrawal is complete`
   }

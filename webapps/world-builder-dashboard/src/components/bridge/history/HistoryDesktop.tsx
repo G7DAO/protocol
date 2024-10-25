@@ -1,9 +1,7 @@
 // External Libraries
 import React, { Fragment } from 'react'
-
 // Styles
 import styles from './WithdrawTransactions.module.css'
-
 // Absolute Imports
 import Deposit from '@/components/bridge/history/Deposit'
 import Withdrawal from '@/components/bridge/history/Withdrawal'
@@ -16,7 +14,6 @@ const HistoryDesktop: React.FC<WithdrawTransactionsProps> = () => {
   const { connectedAccount } = useBlockchainContext()
   const messages = useMessages(connectedAccount)
   const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status']
-
   return (
     <div className={styles.container}>
       <div className={styles.content}>

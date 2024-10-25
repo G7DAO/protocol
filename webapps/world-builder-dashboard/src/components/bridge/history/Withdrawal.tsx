@@ -1,15 +1,9 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
-import {
-  HIGH_NETWORKS,
-  L1_NETWORK,
-  L2_NETWORK,
-  L3_NATIVE_TOKEN_SYMBOL,
-  L3_NETWORK,
-  LOW_NETWORKS
-} from '../../../../constants'
+import { HIGH_NETWORKS, L1_NETWORK, L2_NETWORK, L3_NETWORK, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import { ethers } from 'ethers'
+import { BridgeTransfer } from 'game7-bridge-sdk'
 import { Skeleton } from 'summon-ui/mantine'
 import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
@@ -19,8 +13,9 @@ import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsCon
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
-import { L2ToL1MessageStatus, L2ToL1MessageWriter, L2TransactionReceipt } from '@arbitrum/sdk'
+import { ChildToParentMessageStatus } from '@arbitrum/sdk'
 import { useMediaQuery } from '@mantine/hooks'
+import IconWithdrawalNodeCompleted from '@/assets/IconWithdrawalNodeCompleted'
 
 export const networkRPC = (chainId: number | undefined) => {
   const network = [L3_NETWORK, L2_NETWORK].find((n) => n.chainId === chainId)
@@ -42,10 +37,10 @@ export const getStatus = (withdrawal: TransactionRecord) => {
     highNetworkHash
   } = withdrawal
   const status = completionTimestamp
-    ? L2ToL1MessageStatus.EXECUTED
+    ? ChildToParentMessageStatus.EXECUTED
     : claimableTimestamp
-      ? L2ToL1MessageStatus.CONFIRMED
-      : L2ToL1MessageStatus.UNCONFIRMED
+      ? ChildToParentMessageStatus.CONFIRMED
+      : ChildToParentMessageStatus.UNCONFIRMED
   const lowNetwork = LOW_NETWORKS.find((n) => n.chainId === lowNetworkChainId)
   const highNetwork = HIGH_NETWORKS.find((n) => n.chainId === highNetworkChainId)
   if (lowNetwork && highNetwork) {
@@ -63,22 +58,32 @@ export const getStatus = (withdrawal: TransactionRecord) => {
 }
 const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const targetChain = withdrawal.highNetworkChainId === L2_NETWORK.chainId ? L1_NETWORK : L2_NETWORK
-
   const status = getStatus(withdrawal)
-  const { switchChain, connectedAccount } = useBlockchainContext()
+  const { switchChain, connectedAccount, selectedLowNetwork, selectedHighNetwork } = useBlockchainContext()
   const queryClient = useQueryClient()
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
+  const [bridgeTransfer, setBridgeTransfer] = useState<BridgeTransfer>()
 
+  useEffect(() => {
+    if (!withdrawal) return
+    const _bridgeTransfer = new BridgeTransfer({
+      txHash: withdrawal.highNetworkHash || '',
+      destinationNetworkChainId: selectedLowNetwork.chainId,
+      originNetworkChainId: selectedLowNetwork.chainId,
+      originSignerOrProviderOrRpc: selectedHighNetwork.rpcs[0],
+      destinationSignerOrProviderOrRpc: selectedLowNetwork.rpcs[0]
+    })
+    setBridgeTransfer(_bridgeTransfer)
+  }, [withdrawal])
+
+
+  // Mutate function
   const execute = useMutation(
     async (highNetworkHash: string | undefined) => {
       if (!highNetworkHash) {
         throw new Error('transaction hash is undefined')
       }
-      const highNetworkRPC = networkRPC(withdrawal.highNetworkChainId)
-      const highNetworkProvider = new ethers.providers.JsonRpcProvider(highNetworkRPC)
-      const receipt = await highNetworkProvider.getTransactionReceipt(highNetworkHash)
-      const l2Receipt = new L2TransactionReceipt(receipt)
 
       let provider
       if (window.ethereum) {
@@ -92,10 +97,8 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
         throw new Error('Wallet is not installed!')
       }
       const signer = provider.getSigner()
-      const messages: L2ToL1MessageWriter[] = (await l2Receipt.getL2ToL1Messages(signer)) as L2ToL1MessageWriter[]
-      const message = messages[0]
-      const res = await message.execute(highNetworkProvider)
-      return await res.wait()
+      const res = await bridgeTransfer?.execute(signer)
+      return res
     },
     {
       onSuccess: (data, highNetworkHash) => {
@@ -106,14 +109,14 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
           if (transactionsString) {
             transactions = JSON.parse(transactionsString)
           }
-          const newTransactions: TransactionRecord[] = transactions.map((t: any) => {
+          const newTransactions: TransactionRecord[] = transactions.map((t: TransactionRecord) => {
             if (t.highNetworkHash === highNetworkHash) {
               return {
                 ...t,
                 completionTimestamp: Date.now() / 1000,
                 lowNetworkTimestamp: Date.now() / 1000,
                 newTransaction: true,
-                lowNetworkHash: data.transactionHash
+                lowNetworkHash: data?.transactionHash
               }
             }
             return { ...t }
@@ -127,7 +130,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
         queryClient.setQueryData(['withdrawalStatus', withdrawal], (oldData: any) => {
-          return { ...oldData, status: L2ToL1MessageStatus.EXECUTED }
+          return { ...oldData, status: ChildToParentMessageStatus.EXECUTED }
         })
 
         // status.refetch()
@@ -138,6 +141,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
       }
     }
   )
+
   if (!status) {
     return <></>
   }
@@ -153,21 +157,27 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
       ) : (
         <>
           {smallView ? (
-            <WithdrawalMobile withdrawal={withdrawal} execute={execute} status={status} />
+            <WithdrawalMobile
+              withdrawal={withdrawal}
+              execute={execute}
+              status={status}
+              bridgeTransfer={bridgeTransfer}
+            />
           ) : (
             <>
-              <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
-                <div className={styles.typeWithdrawal}>
-                  <IconArrowNarrowUp stroke={'#fff'} />
-                  Withdraw
-                </div>
-              </div>
-              <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
-              <div className={styles.gridItem}>{`${status.data?.amount} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
-              <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
-              <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
-              {status.data?.status === L2ToL1MessageStatus.EXECUTED && (
+              {status.data?.status === ChildToParentMessageStatus.EXECUTED && (
                 <>
+                  <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
+                    <IconWithdrawalNodeCompleted className={styles.gridNodeCompleted} />
+                    <div className={styles.typeWithdrawal}>
+                      <IconArrowNarrowUp className={styles.arrowUp} />
+                      Withdraw
+                    </div>
+                  </div>
+                  <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
+                  <div className={styles.gridItem}>{`${status.data?.amount} ${withdrawal.symbol}`}</div>
+                  <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
+                  <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
                   <div className={styles.gridItem}>
                     <a
                       href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
@@ -183,11 +193,14 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                   <div className={styles.gridItemImportant}>
                     <div>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
                   </div>
-                </>
-              )}
-              {status.data?.status === L2ToL1MessageStatus.CONFIRMED && (
-                <>
-                  <div className={styles.gridItem}>
+                  <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
+                    <div className={styles.typeCompleted}>Initiate</div>
+                  </div>
+                  <div className={styles.gridItemInitiate}>{timeAgo(status.data?.timestamp)}</div>
+                  <div className={styles.gridItemInitiate}>{`${status.data?.amount} ${withdrawal.symbol}`}</div>
+                  <div className={styles.gridItemInitiate}>{status.data?.from ?? ''}</div>
+                  <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
+                  <div className={styles.gridItemInitiate}>
                     <a
                       href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
                       target={'_blank'}
@@ -199,16 +212,17 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       </div>
                     </a>
                   </div>
-                  <div className={styles.gridItem}>
-                    <button className={styles.claimButton} onClick={() => execute.mutate(status.data.highNetworkHash)}>
-                      {execute.isLoading ? 'Claiming...' : 'Claim now'}
-                    </button>
+                  <div className={styles.gridItemInitiate}>
+                    <div className={styles.timeCenter}>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
                   </div>
-                </>
-              )}
-              {status.data?.status === L2ToL1MessageStatus.UNCONFIRMED && (
-                <>
-                  <div className={styles.gridItem}>
+                  <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
+                    <div className={styles.typeCompleted}>Finalize</div>
+                  </div>
+                  <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.completionTimestamp)}</div>
+                  <div className={styles.gridItemInitiate}>{`${status.data?.amount} ${withdrawal.symbol}`}</div>
+                  <div className={styles.gridItemInitiate}>{status.data?.from ?? ''}</div>
+                  <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
+                  <div className={styles.gridItemInitiate}>
                     <a
                       href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
                       target={'_blank'}
@@ -220,10 +234,67 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       </div>
                     </a>
                   </div>
-
-                  <div className={styles.gridItemImportant}>
-                    <div>{ETA(status.data?.timestamp, withdrawal.challengePeriod)}</div>
+                  <div className={styles.gridItemInitiate}>
+                    <div className={styles.timeCenter}>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
                   </div>
+                </>
+              )}
+              {status.data?.status != ChildToParentMessageStatus.EXECUTED && (
+                <>
+                  <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
+                    <div className={styles.typeWithdrawal}>
+                      <IconArrowNarrowUp className={styles.arrowUp} />
+                      Withdraw
+                    </div>
+                  </div>
+                  <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
+                  <div className={styles.gridItem}>{`${status.data?.amount} ${withdrawal.symbol}`}</div>
+                  <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
+                  <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
+                  {status.data?.status === ChildToParentMessageStatus.CONFIRMED && (
+                    <>
+                      <div className={styles.gridItem}>
+                        <a
+                          href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
+                          target={'_blank'}
+                          className={styles.explorerLink}
+                        >
+                          <div className={styles.claimable}>
+                            Claimable
+                            <IconLinkExternal02 className={styles.arrowUp} />
+                          </div>
+                        </a>
+                      </div>
+                      <div className={styles.gridItem}>
+                        <button
+                          className={styles.claimButton}
+                          onClick={() => execute.mutateAsync(status.data.highNetworkHash)}
+                        >
+                          {execute.isLoading && !execute.isSuccess ? 'Claiming...' : 'Claim Now'}
+                        </button>
+                      </div>
+                    </>
+                  )}
+                  {status.data?.status === ChildToParentMessageStatus.UNCONFIRMED && (
+                    <>
+                      <div className={styles.gridItem}>
+                        <a
+                          href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
+                          target={'_blank'}
+                          className={styles.explorerLink}
+                        >
+                          <div className={styles.pending}>
+                            Pending
+                            <IconLinkExternal02 className={styles.arrowUp} />
+                          </div>
+                        </a>
+                      </div>
+
+                      <div className={styles.gridItemImportant}>
+                        <div>{ETA(status.data?.timestamp, withdrawal.challengePeriod)} left</div>
+                      </div>
+                    </>
+                  )}
                 </>
               )}
             </>

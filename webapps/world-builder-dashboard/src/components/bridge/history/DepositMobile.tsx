@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { HIGH_NETWORKS, L3_NATIVE_TOKEN_SYMBOL, LOW_NETWORKS } from '../../../../constants'
+import { HIGH_NETWORKS, LOW_NETWORKS } from '../../../../constants'
 import styles from './DepositMobile.module.css'
 import parentStyles from './WithdrawTransactions.module.css'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
@@ -23,7 +23,7 @@ const DepositMobile: React.FC<DepositMobileProps> = ({ deposit }) => {
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.title}>Deposit</div>
-        <div className={styles.amount}>{`${deposit.amount} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
+        <div className={styles.amount}>{`${deposit.amount} ${deposit.symbol}`}</div>
       </div>
       {!isCollapsed && (
         <>

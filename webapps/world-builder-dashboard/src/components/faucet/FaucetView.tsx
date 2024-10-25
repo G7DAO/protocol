@@ -284,6 +284,18 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
             </div>
           )}
         </div>
+        {!!networkError && <div className={styles.errorContainer}>{networkError}.</div>}
+        {!networkError && nextClaimAvailable.isLoading && (
+          <div className={styles.warningContainer}>Checking faucet permissions...</div>
+        )}
+        {selectedNetwork.chainId === L3_NETWORK.chainId &&
+          nextClaimAvailable.data &&
+          !nextClaimAvailable.data.L3.isAvailable && (
+            <div className={styles.availableFundsContainer}>
+              {`You requested funds recently. Come back in `}{' '}
+              <span className={styles.time}>{` ${animatedInterval}`}</span>
+            </div>
+          )}
         <button
           className={requestDisabled ? styles.requestTokensButtonDisabled : styles.requestTokensButton}
           onClick={() => {
@@ -294,18 +306,6 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
           <div className={styles.requestTokensButtonText}>{claim.isLoading ? `Requesting...` : `Request Tokens`}</div>
         </button>
       </div>
-      {!!networkError && <div className={styles.errorContainer}>{networkError}.</div>}
-      {!networkError && nextClaimAvailable.isLoading && (
-        <div className={styles.warningContainer}>Checking faucet permissions...</div>
-      )}
-      {selectedNetwork.chainId === L3_NETWORK.chainId &&
-        nextClaimAvailable.data &&
-        !nextClaimAvailable.data.L3.isAvailable && (
-          <div className={styles.availableFundsContainer}>
-            {`You requested funds recently. Come back in `}{' '}
-            <span className={styles.time}>{` ${animatedInterval}`}</span>
-          </div>
-        )}
     </div>
   )
 }

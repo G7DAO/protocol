@@ -7,14 +7,16 @@ import IconChevronDown from '@/assets/IconChevronDown'
 import IconEthereum from '@/assets/IconEthereum'
 import IconG7T from '@/assets/IconG7T'
 import { HighNetworkInterface, NetworkInterface } from '@/contexts/BlockchainContext'
+import { Token } from '@/utils/tokens'
 
 type NetworkSelectorProps = {
   networks: NetworkInterface[]
   selectedNetwork: NetworkInterface
   onChange: (network: NetworkInterface | HighNetworkInterface) => void
+  selectedToken: Token
 } & InputBaseProps
 
-const NetworkSelector = ({ networks, onChange, selectedNetwork }: NetworkSelectorProps) => {
+const NetworkSelector = ({ networks, onChange, selectedNetwork, selectedToken }: NetworkSelectorProps) => {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption()
   })
@@ -62,14 +64,11 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork }: NetworkSelecto
 
       <Combobox.Dropdown className='!bg-dark-900 !rounded-md !border-dark-700'>
         <Combobox.Options>
-          {networks
-            .sort((a, b) => {
-              if (a.chainId === selectedNetwork.chainId) return 1
-              if (b.chainId === selectedNetwork.chainId) return -1
-              return 0
-            })
-            .map((n) => (
-              <Combobox.Option value={String(n.chainId)} key={n.chainId}>
+          {networks.map((n) => {
+            const chainIds = Object.keys(selectedToken.tokenAddressMap)
+            const isDisabled = chainIds.includes(String(n.chainId))
+            return (
+              <Combobox.Option value={String(n.chainId)} key={n.chainId} disabled={!isDisabled}>
                 <Group>
                   <div
                     className={
@@ -84,7 +83,8 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork }: NetworkSelecto
                   </div>
                 </Group>
               </Combobox.Option>
-            ))}
+            )
+          })}
         </Combobox.Options>
       </Combobox.Dropdown>
     </Combobox>

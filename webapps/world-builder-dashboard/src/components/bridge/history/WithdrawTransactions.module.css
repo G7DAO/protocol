@@ -14,7 +14,9 @@
   align-self: stretch;
 
   border-radius: 12px;
-  border: 1px solid var(--Gray-200, #eaecf0);
+  border-top: 1px solid var(--Gray-200, #eaecf0);
+  border-left: 1px solid var(--Gray-200, #eaecf0);
+  border-right: 1px solid var(--Gray-200, #eaecf0);
   background: var(--Gray-25, #ffffff);
 
   /* Shadow/sm */
@@ -116,6 +118,7 @@
 
 .gridItem,
 .gridItemImportant {
+  position: relative;
   display: flex;
   height: 72px;
   padding: 16px 24px;
@@ -128,7 +131,7 @@
   font-style: normal;
   font-weight: 400;
   line-height: 20px; /* 142.857% */
-  border-bottom: 1px solid var(--Gray-60, #eaecf0);
+  border-bottom: 1px solid var(--Gray-200, #eaecf0);
 }
 
 .gridItemImportant {
@@ -171,7 +174,7 @@
   font-style: normal;
   font-weight: 400;
   line-height: 20px;
-  border-bottom: 1px solid var(--Gray-60, #eaecf0);
+  border-bottom: 1px solid var(--Gray-200, #eaecf0);
   background: var(--Base-White, #eaecf0);
 }
 
@@ -180,7 +183,11 @@
   left: 14px;
   top: 36px;
   stroke-width: 1px;
-  stroke: #dbe1e9;
+  stroke: #393939;
+}
+
+.timeCenter {
+  text-align: center;
 }
 
 .transactionsHeader {
@@ -194,11 +201,8 @@
   gap: 12px;
   align-self: stretch;
   border-bottom: 1px solid var(--Gray-200, #eaecf0);
-
   background: var(--Gray-60, #f9fafb);
   color: var(--Gray-600, #475467);
-
-  /* Text xs/Medium */
   font-family: Inter, sans-serif;
   font-size: 12px;
   font-style: normal;
@@ -276,8 +280,7 @@
   font-size: 12px;
   font-style: normal;
   font-weight: 500;
-  line-height: 18px; /* 150% */
-  /* mix-blend-mode: var(--mix-blend, multiply); */
+  line-height: 18px;
   cursor: pointer;
 }
 
