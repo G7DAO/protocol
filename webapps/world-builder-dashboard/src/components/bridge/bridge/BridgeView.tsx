@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { DEFAULT_STAKE_NATIVE_POOL_ID, L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../../../constants'
-import { networks } from '../../../../constants'
 // Styles and Icons
 import styles from './BridgeView.module.css'
 import { ethers } from 'ethers'
@@ -25,7 +24,6 @@ import useTokenBalance from '@/hooks/useTokenBalance'
 import { DepositDirection } from '@/pages/BridgePage/BridgePage'
 import { getStakeNativeTxData } from '@/utils/bridge/stakeContractInfo'
 import { Token } from '@/utils/tokens'
-import { Erc20Bridger } from '@arbitrum/sdk'
 
 const BridgeView = ({
   direction,
@@ -126,7 +124,6 @@ const BridgeView = ({
       //   return childAddress
       // }
 
-      
       if (!chainIds.includes(String(destinationChainId))) {
         return
       }

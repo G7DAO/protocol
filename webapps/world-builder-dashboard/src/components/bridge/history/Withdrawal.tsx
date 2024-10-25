@@ -65,6 +65,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const smallView = useMediaQuery('(max-width: 1199px)')
   const [bridgeTransfer, setBridgeTransfer] = useState<BridgeTransfer>()
 
+
   // Mutate function
   const execute = useMutation(
     async (highNetworkHash: string | undefined) => {
@@ -128,18 +129,6 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
       }
     }
   )
-
-  useEffect(() => {
-    if (!withdrawal) return
-    const _bridgeTransfer = new BridgeTransfer({
-      txHash: withdrawal.highNetworkHash || '',
-      destinationNetworkChainId: selectedLowNetwork.chainId,
-      originNetworkChainId: selectedLowNetwork.chainId,
-      originSignerOrProviderOrRpc: selectedHighNetwork.rpcs[0],
-      destinationSignerOrProviderOrRpc: selectedLowNetwork.rpcs[0]
-    })
-    setBridgeTransfer(_bridgeTransfer)
-  }, [withdrawal])
 
   if (!status) {
     return <></>

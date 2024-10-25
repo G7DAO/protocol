@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { HIGH_NETWORKS, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
-import { BridgeTransfer } from 'game7-bridge-sdk'
 import { Skeleton } from 'summon-ui/mantine'
 import IconArrowNarrowDown from '@/assets/IconArrowNarrowDown'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
-import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
@@ -19,30 +17,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
     from: LOW_NETWORKS.find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
     to: HIGH_NETWORKS.find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
   }
-
   const status = useDepositStatus(deposit)
-  const { selectedHighNetwork, selectedLowNetwork } = useBlockchainContext()
-  const [bridgeTransfer, setBridgeTransfer] = useState<BridgeTransfer>()
-
-  useEffect(() => {
-    if (!deposit) return
-    const _bridgeTransfer = new BridgeTransfer({
-      txHash: deposit.highNetworkHash || '',
-      destinationNetworkChainId: selectedLowNetwork.chainId,
-      originNetworkChainId: selectedLowNetwork.chainId,
-      originSignerOrProviderOrRpc: selectedHighNetwork.rpcs[0],
-      destinationSignerOrProviderOrRpc: selectedLowNetwork.rpcs[0]
-    })
-    setBridgeTransfer(_bridgeTransfer)
-    // console.log(_bridgeTransfer)
-
-    const getBridgeTransferInfo = async () => {
-      const info = await _bridgeTransfer.getInfo()
-      console.log(info)
-    }
-
-    getBridgeTransferInfo()
-  }, [deposit])
 
   return (
     <>
