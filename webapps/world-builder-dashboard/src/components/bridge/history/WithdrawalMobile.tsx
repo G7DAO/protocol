@@ -15,7 +15,7 @@ interface WithdrawalMobileProps {
   status: any
   bridgeTransfer: BridgeTransfer | undefined
 }
-const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, execute, status, bridgeTransfer }) => {
+const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, execute, status }) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
 
   return (

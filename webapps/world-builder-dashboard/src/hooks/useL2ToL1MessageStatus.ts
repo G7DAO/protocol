@@ -3,8 +3,8 @@ import { HIGH_NETWORKS, L2_NETWORK, LOW_NETWORKS } from '../../constants'
 import { ethers, providers } from 'ethers'
 import { BridgeNotification } from '@/components/notifications/NotificationsButton'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
-import { L1TransactionReceipt, L2ToL1MessageReader, L2ToL1MessageStatus, L2TransactionReceipt } from '@arbitrum/sdk'
-import { L1ContractCallTransactionReceipt } from '@arbitrum/sdk/dist/lib/message/ParentTransaction'
+import { ParentTransactionReceipt, ChildToParentMessageReader, ChildToParentMessageStatus, ChildTransactionReceipt } from '@arbitrum/sdk'
+import { ParentContractCallTransactionReceipt } from '@arbitrum/sdk/dist/lib/message/ParentTransaction'
 
 const eventABI = [
   {
@@ -31,8 +31,8 @@ export interface L2ToL1MessageStatusResult {
   value?: string
   timestamp?: number
   confirmations?: number
-  status?: L2ToL1MessageStatus
-  l2Receipt?: L2TransactionReceipt
+  status?: ChildToParentMessageStatus
+  l2Receipt?: ChildTransactionReceipt
 }
 
 const fetchL2ToL1MessageStatus = async (withdrawal: TransactionRecord) => {
@@ -48,10 +48,10 @@ const fetchL2ToL1MessageStatus = async (withdrawal: TransactionRecord) => {
   const l2Provider = new providers.JsonRpcProvider(lowNetwork.rpcs[0])
 
   const receipt = await l3Provider.getTransactionReceipt(highNetworkHash)
-  const l2Receipt = new L2TransactionReceipt(receipt)
-  const messages: L2ToL1MessageReader[] = (await l2Receipt.getL2ToL1Messages(l2Provider)) as L2ToL1MessageReader[]
-  const l2ToL1Msg: L2ToL1MessageReader = messages[0]
-  const status: L2ToL1MessageStatus = await l2ToL1Msg.status(l3Provider)
+  const l2Receipt = new ChildTransactionReceipt(receipt)
+  const messages: ChildToParentMessageReader[] = (await l2Receipt.getChildToParentMessages(l2Provider)) as ChildToParentMessageReader[]
+  const l2ToL1Msg: ChildToParentMessageReader = messages[0]
+  const status: ChildToParentMessageStatus = await l2ToL1Msg.status(l3Provider)
 
   return {
     status,
@@ -99,8 +99,8 @@ const fetchDepositStatus = async (deposit: TransactionRecord) => {
     return
   }
 
-  const l1Receipt = new L1TransactionReceipt(receipt)
-  const l1ContractCallReceipt = new L1ContractCallTransactionReceipt(l1Receipt)
+  const l1Receipt = new ParentTransactionReceipt(receipt)
+  const l1ContractCallReceipt = new ParentContractCallTransactionReceipt(l1Receipt)
 
   if (!highNetwork) {
     return { l1Receipt }
@@ -109,7 +109,7 @@ const fetchDepositStatus = async (deposit: TransactionRecord) => {
   const l2Provider = new providers.JsonRpcProvider(highNetwork.rpcs[0])
   let l2Result
   try {
-    l2Result = await l1ContractCallReceipt.waitForL2(l2Provider, 3, 1000)
+    l2Result = await l1ContractCallReceipt.waitForChildTransactionReceipt(l2Provider, 3, 1000)
   } catch (e) {
     console.log(e)
   }
@@ -151,7 +151,7 @@ export const useL2ToL1MessagesStatus = (transactions: Transaction[] | undefined)
         const l3Provider = new ethers.providers.JsonRpcProvider(l3RPC)
         const l2Provider = new ethers.providers.JsonRpcProvider(l2RPC)
         const receipt = await l3Provider.getTransactionReceipt(txHash)
-        const l2Receipt = new L2TransactionReceipt(receipt)
+        const l2Receipt = new ChildTransactionReceipt(receipt)
         const log = receipt.logs.find((l) => l.data !== '0x')
         let decodedLog
 
@@ -164,9 +164,9 @@ export const useL2ToL1MessagesStatus = (transactions: Transaction[] | undefined)
           }
         }
 
-        const messages: L2ToL1MessageReader[] = (await l2Receipt.getL2ToL1Messages(l2Provider)) as L2ToL1MessageReader[]
-        const l2ToL1Msg: L2ToL1MessageReader = messages[0]
-        const status: L2ToL1MessageStatus = await l2ToL1Msg.status(l3Provider)
+        const messages: ChildToParentMessageReader[] = (await l2Receipt.getChildToParentMessages(l2Provider)) as ChildToParentMessageReader[]
+        const l2ToL1Msg: ChildToParentMessageReader = messages[0]
+        const status: ChildToParentMessageStatus = await l2ToL1Msg.status(l3Provider)
 
         return {
           from: decodedLog?.args?.caller,
@@ -307,12 +307,12 @@ export const usePendingTransactions = (connectedAccount: string | undefined): Us
           }
           if (t.type === 'WITHDRAWAL') {
             const status = await fetchL2ToL1MessageStatus(t as TransactionRecord)
-            if (status?.status === L2ToL1MessageStatus.CONFIRMED) {
+            if (status?.status === ChildToParentMessageStatus.CONFIRMED) {
               if (!t.claimableTimestamp) {
                 newCompletedTransactions.push({ ...t, claimableTimestamp: Date.now() / 1000, newTransaction: true })
               }
             }
-            if (status?.status === L2ToL1MessageStatus.EXECUTED) {
+            if (status?.status === ChildToParentMessageStatus.EXECUTED) {
               newCompletedTransactions.push({ ...t, completionTimestamp: Date.now() / 1000, newTransaction: true })
             }
           }

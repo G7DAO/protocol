@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { HIGH_NETWORKS, L3_NATIVE_TOKEN_SYMBOL, LOW_NETWORKS } from '../../../../constants'
+import { HIGH_NETWORKS, LOW_NETWORKS } from '../../../../constants'
 import styles from './DepositMobile.module.css'
 import parentStyles from './WithdrawTransactions.module.css'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'

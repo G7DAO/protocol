@@ -24,6 +24,7 @@ import useTokenBalance from '@/hooks/useTokenBalance'
 import { DepositDirection } from '@/pages/BridgePage/BridgePage'
 import { getStakeNativeTxData } from '@/utils/bridge/stakeContractInfo'
 import { Token } from '@/utils/tokens'
+import { Erc20Bridger } from '@arbitrum/sdk'
 
 const BridgeView = ({
   direction,
@@ -42,8 +43,15 @@ const BridgeView = ({
   const { isMessagingEnabled } = useUISettings()
   const g7tUsdRate = useQuery(['rate'], () => 2501.32)
   const { data: ethUsdRate } = useEthUsdRate()
-  const { connectedAccount, selectedLowNetwork, setSelectedLowNetwork, selectedHighNetwork, setSelectedHighNetwork, setSelectedBridgeToken, selectedBridgeToken } =
-    useBlockchainContext()
+  const {
+    connectedAccount,
+    selectedLowNetwork,
+    setSelectedLowNetwork,
+    selectedHighNetwork,
+    setSelectedHighNetwork,
+    setSelectedBridgeToken,
+    selectedBridgeToken
+  } = useBlockchainContext()
 
   const { isFetching: isFetchingLowNetworkBalance } = useERC20Balance({
     tokenAddress: selectedLowNetwork.g7TokenAddress,
@@ -69,7 +77,11 @@ const BridgeView = ({
     rpc: selectedHighNetwork.rpcs[0]
   })
 
-  const { balance: tokenBalance } = useTokenBalance(selectedBridgeToken?.address || '', selectedBridgeToken?.rpc || '', connectedAccount)
+  const { balance: tokenBalance } = useTokenBalance(
+    selectedBridgeToken?.address || '',
+    selectedBridgeToken?.rpc || '',
+    connectedAccount
+  )
 
   const handleTokenChange = (token: Token) => {
     setSelectedBridgeToken(token)
@@ -100,6 +112,12 @@ const BridgeView = ({
       setBalance(Number(tokenBalance))
       const originChainId = direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId
       const destinationChainId = direction === 'DEPOSIT' ? selectedHighNetwork.chainId : selectedLowNetwork.chainId
+      const chainIds = Object.keys(selectedBridgeToken.tokenAddressMap)
+      if (!chainIds.includes(String(destinationChainId))) {
+        console.log("Doesn't exist")
+        return
+      }
+      console.log('making a bridger')
       const bridger: Bridger = new Bridger(originChainId, destinationChainId, selectedBridgeToken.tokenAddressMap)
       setBridger(bridger)
     }
