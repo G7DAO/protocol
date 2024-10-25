@@ -2,11 +2,12 @@
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { DEFAULT_STAKE_NATIVE_POOL_ID, L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../../../constants'
+import { networks } from '../../../../constants'
 // Styles and Icons
 import styles from './BridgeView.module.css'
 import { ethers } from 'ethers'
 // G7 SDK
-import { Bridger } from 'game7-bridge-sdk'
+import { Bridger, getProvider } from 'game7-bridge-sdk'
 // Components
 import ActionButton from '@/components/bridge/bridge/ActionButton'
 import BridgeMessage from '@/components/bridge/bridge/BridgeMessage'
@@ -113,11 +114,22 @@ const BridgeView = ({
       const originChainId = direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId
       const destinationChainId = direction === 'DEPOSIT' ? selectedHighNetwork.chainId : selectedLowNetwork.chainId
       const chainIds = Object.keys(selectedBridgeToken.tokenAddressMap)
+
+      // TODO: get predicted address
+      // const getPredictedAddress = async () => {
+      //   const arbitrumBridger = new Erc20Bridger(networks[13746])
+      //   const childAddress = await arbitrumBridger.getChildErc20Address(
+      //     selectedBridgeToken.tokenAddressMap[selectedLowNetwork.chainId],
+      //     getProvider(selectedBridgeToken.rpc[0])
+      //   )
+      //   console.log(childAddress)
+      //   return childAddress
+      // }
+
+      
       if (!chainIds.includes(String(destinationChainId))) {
-        console.log("Doesn't exist")
         return
       }
-      console.log('making a bridger')
       const bridger: Bridger = new Bridger(originChainId, destinationChainId, selectedBridgeToken.tokenAddressMap)
       setBridger(bridger)
     }
