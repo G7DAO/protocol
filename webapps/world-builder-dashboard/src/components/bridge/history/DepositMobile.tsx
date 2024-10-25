@@ -37,12 +37,12 @@ const DepositMobile: React.FC<DepositMobileProps> = ({ deposit }) => {
               {status.data && status.data.l2Result?.complete ? (
                 <div className={parentStyles.settled}>
                   Completed
-                  <IconLinkExternal02 stroke={'#027A48'} />
+                  <IconLinkExternal02 stroke={'#fff'} />
                 </div>
               ) : (
                 <div className={parentStyles.pending}>
                   Pending
-                  <IconLinkExternal02 stroke={'#175CD3'} />
+                  <IconLinkExternal02 stroke={'#fff'} />
                 </div>
               )}
             </a>

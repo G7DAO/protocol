@@ -21,7 +21,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
 
   return (
     <>
-      {status.isLoading ? (
+      {status.isLoading && !status.data ? (
         Array.from(Array(7)).map((_, idx) => (
           <div className={styles.gridItem} key={idx}>
             <Skeleton key={idx} h='12px' w='100%' />
