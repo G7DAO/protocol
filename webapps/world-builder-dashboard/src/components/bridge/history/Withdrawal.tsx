@@ -14,7 +14,7 @@ import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsCon
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
-import { L2ToL1MessageStatus } from '@arbitrum/sdk'
+import { ChildToParentMessageStatus } from '@arbitrum/sdk'
 import { useMediaQuery } from '@mantine/hooks'
 
 export const networkRPC = (chainId: number | undefined) => {
@@ -37,10 +37,10 @@ export const getStatus = (withdrawal: TransactionRecord) => {
     highNetworkHash
   } = withdrawal
   const status = completionTimestamp
-    ? L2ToL1MessageStatus.EXECUTED
+    ? ChildToParentMessageStatus.EXECUTED
     : claimableTimestamp
-      ? L2ToL1MessageStatus.CONFIRMED
-      : L2ToL1MessageStatus.UNCONFIRMED
+      ? ChildToParentMessageStatus.CONFIRMED
+      : ChildToParentMessageStatus.UNCONFIRMED
   const lowNetwork = LOW_NETWORKS.find((n) => n.chainId === lowNetworkChainId)
   const highNetwork = HIGH_NETWORKS.find((n) => n.chainId === highNetworkChainId)
   if (lowNetwork && highNetwork) {
@@ -117,7 +117,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
         queryClient.setQueryData(['withdrawalStatus', withdrawal], (oldData: any) => {
-          return { ...oldData, status: L2ToL1MessageStatus.EXECUTED }
+          return { ...oldData, status: ChildToParentMessageStatus.EXECUTED }
         })
 
         // status.refetch()
@@ -164,7 +164,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
             />
           ) : (
             <>
-              {status.data?.status === L2ToL1MessageStatus.EXECUTED && (
+              {status.data?.status === ChildToParentMessageStatus.EXECUTED && (
                 <>
                   <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
                     <IconWithdrawalNodeCompleted className={styles.gridNodeCompleted} />
@@ -238,7 +238,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                   </div>
                 </>
               )}
-              {status.data?.status != L2ToL1MessageStatus.EXECUTED && (
+              {status.data?.status != ChildToParentMessageStatus.EXECUTED && (
                 <>
                   <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
                     <div className={styles.typeWithdrawal}>
@@ -250,7 +250,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                   <div className={styles.gridItem}>{`${status.data?.amount} ${withdrawal.symbol}`}</div>
                   <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
                   <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
-                  {status.data?.status === L2ToL1MessageStatus.CONFIRMED && (
+                  {status.data?.status === ChildToParentMessageStatus.CONFIRMED && (
                     <>
                       <div className={styles.gridItem}>
                         <a
@@ -274,7 +274,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       </div>
                     </>
                   )}
-                  {status.data?.status === L2ToL1MessageStatus.UNCONFIRMED && (
+                  {status.data?.status === ChildToParentMessageStatus.UNCONFIRMED && (
                     <>
                       <div className={styles.gridItem}>
                         <a

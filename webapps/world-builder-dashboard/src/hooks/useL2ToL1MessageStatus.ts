@@ -4,7 +4,7 @@ import { ethers, providers } from 'ethers'
 import { BridgeNotification } from '@/components/notifications/NotificationsButton'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { L1TransactionReceipt, L2ToL1MessageReader, L2ToL1MessageStatus, L2TransactionReceipt } from '@arbitrum/sdk'
-import { L1ContractCallTransactionReceipt } from '@arbitrum/sdk/dist/lib/message/L1Transaction'
+import { L1ContractCallTransactionReceipt } from '@arbitrum/sdk/dist/lib/message/ParentTransaction'
 
 const eventABI = [
   {
