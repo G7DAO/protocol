@@ -46,6 +46,7 @@
 }
 
 .options {
+  width: fit-content !important;
   display: flex !important;
   padding: 2px 6px !important;
   padding-top: 10px !important;
@@ -56,6 +57,7 @@
 }
 
 .option {
+  display: flex;
   align-items: center !important;
   padding: 2px 6px !important;
   padding-bottom: 10px !important;
@@ -105,8 +107,6 @@
   align-self: stretch;
   border-top: 1px solid var(--Gray-60, #fff);
   background: var(--Base-White, #fff);
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
 }
 
 .tokenAdderContainer {
