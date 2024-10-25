@@ -6,7 +6,7 @@ import { DEFAULT_STAKE_NATIVE_POOL_ID, L1_NETWORK, L2_NETWORK, L3_NETWORK } from
 import styles from './BridgeView.module.css'
 import { ethers } from 'ethers'
 // G7 SDK
-import { Bridger, getProvider } from 'game7-bridge-sdk'
+import { Bridger } from 'game7-bridge-sdk'
 // Components
 import ActionButton from '@/components/bridge/bridge/ActionButton'
 import BridgeMessage from '@/components/bridge/bridge/BridgeMessage'
