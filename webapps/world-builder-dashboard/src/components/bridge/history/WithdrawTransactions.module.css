@@ -183,7 +183,7 @@
   left: 14px;
   top: 36px;
   stroke-width: 1px;
-  stroke: var(--Grid-Node, #eaecf0);
+  stroke: #393939;
 }
 
 .timeCenter {

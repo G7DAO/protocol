@@ -17,7 +17,7 @@ import useERC20Balance, { fetchERC20Allowance } from '@/hooks/useERC20Balance'
 import { estimateCreateRetryableTicketFee, sendL2ToL3Message } from '@/utils/bridge/createRetryableTicket'
 import { depositERC20ArbitrumSDK, TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { sendDepositERC20ToNativeTransaction } from '@/utils/bridge/depositERC20ToNative'
-import { parseUntilDelimiter } from '@/utils/web3utils'
+import { parseUntilDelimiter, ZERO_ADDRESS } from '@/utils/web3utils'
 
 interface ActionButtonProps {
   direction: 'DEPOSIT' | 'WITHDRAW'
@@ -36,8 +36,15 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   bridger,
   symbol
 }) => {
-  const { connectedAccount, isConnecting, selectedHighNetwork, selectedLowNetwork, connectWallet, getProvider } =
-    useBlockchainContext()
+  const {
+    connectedAccount,
+    isConnecting,
+    selectedHighNetwork,
+    selectedLowNetwork,
+    connectWallet,
+    getProvider,
+    selectedBridgeToken
+  } = useBlockchainContext()
   const [isAllowanceModalOpened, setIsAllowanceModalOpened] = useState(false)
   const [additionalCost, setAdditionalCost] = useState(ethers.BigNumber.from(0))
   const [feeEstimate, setFeeEstimate] = useState<
@@ -193,11 +200,13 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       const destinationProvider = new ethers.providers.JsonRpcProvider(destinationRPC) as ethers.providers.Provider
       // If deposit
       if (bridger?.isDeposit) {
-        const allowance = (await bridger?.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount ?? '')) ?? ''
-        // approve first
-        if (Number(ethers.utils.formatEther(allowance)) < Number(amount)) {
-          const approveTx = await bridger?.approve(ethers.utils.parseEther(amount), signer)
-          await approveTx.wait()
+        if (selectedBridgeToken.address != ZERO_ADDRESS) {
+          const allowance = (await bridger?.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount ?? '')) ?? ''
+          // approve first
+          if (Number(ethers.utils.formatEther(allowance)) < Number(amount)) {
+            const approveTx = await bridger?.approve(ethers.utils.parseEther(amount), signer)
+            await approveTx.wait()
+          }
         }
         const tx = await bridger?.transfer({ amount: ethers.utils.parseUnits(amount), signer, destinationProvider })
         await tx.wait()
