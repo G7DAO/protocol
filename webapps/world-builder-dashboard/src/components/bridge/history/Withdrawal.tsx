@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
 import { HIGH_NETWORKS, L1_NETWORK, L2_NETWORK, L3_NETWORK, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
@@ -64,6 +64,18 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
   const [bridgeTransfer, setBridgeTransfer] = useState<BridgeTransfer>()
+
+  useEffect(() => {
+    if (!withdrawal) return
+    const _bridgeTransfer = new BridgeTransfer({
+      txHash: withdrawal.highNetworkHash || '',
+      destinationNetworkChainId: selectedLowNetwork.chainId,
+      originNetworkChainId: selectedLowNetwork.chainId,
+      originSignerOrProviderOrRpc: selectedHighNetwork.rpcs[0],
+      destinationSignerOrProviderOrRpc: selectedLowNetwork.rpcs[0]
+    })
+    setBridgeTransfer(_bridgeTransfer)
+  }, [withdrawal])
 
 
   // Mutate function
@@ -173,8 +185,8 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       className={styles.explorerLink}
                     >
                       <div className={styles.settled}>
-                        Completed
-                        <IconLinkExternal02 className={styles.arrowUp} />
+                        Settled
+                        <IconLinkExternal02 stroke={'#fff'} />
                       </div>
                     </a>
                   </div>
@@ -194,9 +206,9 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       target={'_blank'}
                       className={styles.explorerLink}
                     >
-                      <div className={styles.settled}>
-                        Completed
-                        <IconLinkExternal02 className={styles.arrowUp} />
+                      <div className={styles.claimable}>
+                        Claimable
+                        <IconLinkExternal02 stroke={'#fff'} />
                       </div>
                     </a>
                   </div>
@@ -212,13 +224,13 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                   <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
                   <div className={styles.gridItemInitiate}>
                     <a
-                      href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
+                      href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
                       target={'_blank'}
                       className={styles.explorerLink}
                     >
-                      <div className={styles.settled}>
-                        Completed
-                        <IconLinkExternal02 className={styles.arrowUp} />
+                      <div className={styles.pending}>
+                        Pending
+                        <IconLinkExternal02 stroke={'#fff'} />
                       </div>
                     </a>
                   </div>

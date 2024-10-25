@@ -30,6 +30,7 @@
 }
 
 .logoContainer {
+  cursor: pointer;
   display: flex;
   padding: 0 20px 0 24px;
   align-items: center;
@@ -42,6 +43,13 @@
   gap: 12px;
 }
 
+.navBeginning {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1 0 0;
+}
+
 .navigation {
   display: flex;
   padding: 0 16px;
@@ -52,24 +60,16 @@
   background: var(--Base-White, #fff);
 }
 
-.navBeginning {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex: 1 0 0;
-}
-
 .navButton,
 .selectedNavButton {
   display: flex;
   padding: 8px 12px;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   align-self: stretch;
 
   border-radius: 6px;
-  background: var(--Gray-60, #f9fafb);
-  color: var(--Gray-900, #101828);
+  color: #9c9c9c;
 
   /* Text md/Semibold */
   font-size: 16px;
@@ -78,6 +78,11 @@
   line-height: 24px; /* 150% */
 
   text-transform: capitalize;
+}
+
+.selectedNavButton {
+  background: #393939;
+  color: var(--Gray-900, #101828);
 }
 
 .navButton {
@@ -118,7 +123,7 @@
 
 .iconButton {
   cursor: pointer;
-  stroke: #fff;
+  stroke: var(--Gray-600, #475467);
   margin-right: 8px;
 }
 
@@ -146,8 +151,8 @@
   gap: 8px;
   flex: 1 0 0;
   border-radius: 8px;
-  border: 1px solid var(--Primary-600, #ef233b);
-  background: var(--Primary-600, #ef233b);
+  border: 1px solid var(--Primary-600, #F04438);
+  background: var(--Primary-600, #F04438);
 
   /* Shadow/xs */
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);

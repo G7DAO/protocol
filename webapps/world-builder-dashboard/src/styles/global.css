@@ -38,7 +38,7 @@ button {
   --Gray-300: #d0d5dd;
   --Gray-600: #475467;
   --Gray-700: #344054;
-  --Primary-600: #ef233b;
+  --Primary-600: #F04438;
   --Primary-700: #dd1534;
   --Base-White: #fff;
   --Base-Container: #fff;
@@ -77,15 +77,16 @@ button {
   --Selected-Theme-Text: #101828;
   --Theme-Text: #475467;
   --Connect-Wallet-Button-Faucet: #ffebef;
-  --Connect-Wallet-Text-Faucet: #912018; 
+  --Connect-Wallet-Text-Faucet: #912018;
   --Disabled-Button: #475467;
 }
 
 [data-theme='dark'] {
+  --Landing-Page-First-Section-Height-Phone: calc(100svh - 196px);
+  --Landing-Page-First-Section-Height-Tablet: calc(100svh - 186px);
   --mix-blend: normal;
-
-  --Blue-50: #175CD3; /* Adjusted from #eff8ff */
-  --Blue-100: #1849A9; /* Adjusted from #d1e9ff */
+  --Blue-50: #175cd3; /* Adjusted from #eff8ff */
+  --Blue-100: #1849a9; /* Adjusted from #d1e9ff */
   --Blue-200: #8abfff; /* Adjusted from #b3d8ff */
   --Blue-700: #164bbf; /* Adjusted from #175cd3 */
   --Blue-800: #12399f; /* New: Darker blue shade */
@@ -99,7 +100,7 @@ button {
   --Warning-800: #703205; /* New: Darker warning shade */
 
   --Success-50: #054f31; /* Adjusted from #ecfdf3 */
-  --Success-100: #027A48; /* Adjusted from #D1FADF */
+  --Success-100: #027a48; /* Adjusted from #D1FADF */
   --Success-200: #79ddab; /* Adjusted from #A6F4C5 */
   --Success-700: #ecfdf3; /* Adjusted from #027a48 */
   --Success-800: #024e2b; /* New: Darker success shade */
@@ -112,7 +113,7 @@ button {
   --Error-600: #c62c1a; /* Adjusted from #d92d20 */
   --Error-700: #fbeae8; /* Adjusted from #FEF3F2 */
   --Error-800: #aa2714; /* New: Darker error shade */
-  --Error-900: #B42318;
+  --Error-900: #b42318;
 
   --Gray-50: #0b0b0b;
   --Gray-60: #393939;
@@ -125,7 +126,7 @@ button {
   --Primary-25: #fffafb;
   --Primary-50: #3d2b2f;
   --Primary-100: #5a3d43;
-  --Primary-600: #ef233b;
+  --Primary-600: #F04438;
   --Primary-700: #ff4455;
 
   --Base-White: #0b0b0b;

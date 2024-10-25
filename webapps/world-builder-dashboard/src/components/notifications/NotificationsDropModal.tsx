@@ -63,14 +63,26 @@ const NotificationsDropModal: React.FC<NotificationsDropModalProps> = ({ notific
 
   return (
     <div className={styles.container}>
-      {!notifications || (notifications.length === 0 && <div className={styles.content}>No notifications yet</div>)}
+      {!notifications || (notifications.length === 0 &&
+        <div className={styles.content}>
+          No notifications yet
+        </div>)}
       {notifications &&
         notifications.slice(0, 3).map((n, idx) => (
           <div className={styles.item} key={idx}>
             <div className={styles.itemHeader}>
               <div className={styles.itemHeaderLeft}>
                 <div className={styles.itemHeaderTitle}>{n.type.toLowerCase()}</div>
-                <div className={badgeClassName(n.status)}>{n.status.toLowerCase()}</div>
+                {getTransactionUrl(n) ? (
+                  <a href={getTransactionUrl(n)} target={'_blank'} className={modalStyles.explorerLink}>
+                    <div className={badgeClassName(n.status)}>
+                      {n.status.toLowerCase()}
+                      <IconLinkExternal02 stroke={n.status === 'CLAIMABLE' ? '#fff' : '#fff'} />
+                    </div>
+                  </a>
+                ) : (
+                  <div className={badgeClassName(n.status)}>{n.status.toLowerCase()}</div>
+                )}
               </div>
               <div className={styles.headerTime}>{timeAgo(n.timestamp, true)}</div>
             </div>
@@ -212,7 +224,7 @@ export const NotificationsModal: React.FC<NotificationsDropModalProps> = ({ noti
                     <a href={getTransactionUrl(n)} target={'_blank'} className={modalStyles.explorerLink}>
                       <div className={badgeClassName(n.status)}>
                         {n.status.toLowerCase()}
-                        <IconLinkExternal02 stroke={n.status === 'CLAIMABLE' ? '#B54708' : '#027A48'} />
+                        <IconLinkExternal02 stroke={n.status === 'CLAIMABLE' ? '#fff' : '#fff'} />
                       </div>
                     </a>
                   ) : (

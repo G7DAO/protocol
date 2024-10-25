@@ -1,16 +1,27 @@
 .PHONY: clean generate regenerate test docs redocs hardhat bindings test-graffiti test-web3 clean-web3 deepclean
 
-build: hardhat bindings bin/game7 bin/graffiti
+build: hardhat bindings bin/game7 bin/graffiti bin/robognome
 
 rebuild: clean generate build
 
 bin/game7:
 	mkdir -p bin
+	go mod tidy
 	go build -o bin/game7 ./cmd/game7
+
+bin/robognome:
+	mkdir -p bin
+	go mod tidy
+	go build -o bin/robognome ./cmd/robognome
 
 bin/graffiti:
 	mkdir -p bin
+	go mod tidy
 	go build -o bin/graffiti ./cmd/graffiti
+
+bindings/IMulticall3/IMulticall3.go: abis/IMulticall3.json
+	mkdir -p bindings/IMulticall3
+	seer evm generate --package IMulticall3 --output bindings/IMulticall3/IMulticall3.go --abi abis/IMulticall3.json --struct IMulticall3
 
 bindings/ERC20/ERC20.go: hardhat
 	mkdir -p bindings/ERC20
@@ -44,11 +55,16 @@ bindings/MockERC1155/MockERC1155.go: hardhat
 	mkdir -p bindings/MockERC1155
 	seer evm generate --package MockERC1155 --output bindings/MockERC1155/MockERC1155.go --hardhat web3/artifacts/contracts/mock/tokens.sol/MockERC1155.json --cli --struct MockERC1155
 
+bindings/Metronome/Metronome.go: hardhat
+	mkdir -p bindings/Metronome
+	seer evm generate --package Metronome --output bindings/Metronome/Metronome.go --hardhat web3/artifacts/contracts/metronome/Metronome.sol/Metronome.json --cli --struct Metronome
+
+
 bindings/TokenSender/TokenSender.go: hardhat
 	mkdir -p bindings/TokenSender
 	seer evm generate --package TokenSender --output bindings/TokenSender/TokenSender.go --hardhat web3/artifacts/contracts/faucet/TokenSender.sol/TokenSender.json --cli --struct TokenSender
 
-bindings: bindings/ERC20/ERC20.go bindings/TokenFaucet/TokenFaucet.go bindings/WrappedNativeToken/WrappedNativeToken.go bindings/Staker/Staker.go bindings/MockERC20/MockERC20.go bindings/MockERC721/MockERC721.go bindings/MockERC1155/MockERC1155.go bindings/PositionMetadata/PositionMetadata.go bindings/TokenSender/TokenSender.go
+bindings: bindings/ERC20/ERC20.go bindings/TokenFaucet/TokenFaucet.go bindings/WrappedNativeToken/WrappedNativeToken.go bindings/Staker/Staker.go bindings/MockERC20/MockERC20.go bindings/MockERC721/MockERC721.go bindings/MockERC1155/MockERC1155.go bindings/PositionMetadata/PositionMetadata.go bindings/Metronome/Metronome.go bindings/TokenSender/TokenSender.go
 
 test-web3:
 	cd web3 && npx hardhat test

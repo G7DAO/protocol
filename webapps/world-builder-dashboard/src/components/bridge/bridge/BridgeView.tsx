@@ -20,10 +20,10 @@ import { useUISettings } from '@/contexts/UISettingsContext'
 import useERC20Balance from '@/hooks/useERC20Balance'
 import useEthUsdRate from '@/hooks/useEthUsdRate'
 import useNativeBalance from '@/hooks/useNativeBalance'
-import useTokenBalance from '@/hooks/useTokenBalance'
 import { DepositDirection } from '@/pages/BridgePage/BridgePage'
 import { getStakeNativeTxData } from '@/utils/bridge/stakeContractInfo'
 import { Token } from '@/utils/tokens'
+import useTokenBalance from '@/hooks/useTokenBalance'
 
 const BridgeView = ({
   direction,
@@ -57,7 +57,7 @@ const BridgeView = ({
     account: connectedAccount,
     rpc: selectedLowNetwork.rpcs[0]
   })
-  const { isFetching: isFetchingHighNetworkBalance } = useERC20Balance({
+  const {isFetching: isFetchingHighNetworkBalance } = useERC20Balance({
     tokenAddress: selectedHighNetwork.g7TokenAddress,
     account: connectedAccount,
     rpc: selectedHighNetwork.rpcs[0]

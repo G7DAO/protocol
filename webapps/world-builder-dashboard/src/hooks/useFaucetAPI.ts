@@ -4,6 +4,7 @@ import { ethers } from 'ethers';
 const BASE_URL = 'https://api.game7.build'
 
 export const useFaucetAPI = () => {
+
   const useFaucetTimestamp = (address: string | undefined) => {
     const isValidAddress = ethers.utils.isAddress(address ?? "");
     return useQuery(
@@ -13,17 +14,18 @@ export const useFaucetAPI = () => {
           method: 'GET',
         });
         if (!res.ok) {
-          throw new Error(`Error: ${res.statusText}`)
+          throw new Error(`Error: ${res.statusText}`);
         }
-        const data = await res.json()
-        return data.result
+        const data = await res.json();
+        return data.result;
       },
       {
         enabled: !!address && isValidAddress,
         retry: false,
       }
-    )
-  }
+    );
+  };
+
 
   const useFaucetInterval = () => {
     return useQuery(
@@ -33,16 +35,16 @@ export const useFaucetAPI = () => {
           method: 'GET',
         });
         if (!res.ok) {
-          throw new Error(`Error: ${res.statusText}`)
+          throw new Error(`Error: ${res.statusText}`);
         }
-        const data = await res.json()
-        return data.result
+        const data = await res.json();
+        return data.result;
       },
       {
-        retry: false
+        retry: false,
       }
-    )
-  }
+    );
+  };
 
   const useFaucetCountdown = (address: string) => {
     return useQuery(
@@ -52,21 +54,21 @@ export const useFaucetAPI = () => {
           method: 'GET',
         });
         if (!res.ok) {
-          throw new Error(`Error: ${res.statusText}`)
+          throw new Error(`Error: ${res.statusText}`);
         }
-        const data = await res.json()
-        return data.result
+        const data = await res.json();
+        return data.result;
       },
       {
         enabled: !!address,
-        retry: false
+        retry: false,
       }
-    )
-  }
+    );
+  };
 
   return {
     useFaucetTimestamp,
     useFaucetInterval,
-    useFaucetCountdown
+    useFaucetCountdown,
   }
 }

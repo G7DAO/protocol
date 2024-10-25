@@ -12,7 +12,7 @@ staking pool are transferable. This pool is owned by the zero address, and canno
 ### Set up environment variables
 
 ```bash
-export RPC="https://rpc-game7-testnet-0ilneybprf.t.conduit.xyz"
+export RPC="https://testnet-rpc.game7.io"
 export SENDER="<path to keyfile>"
 # The following lines were added in the course of this script
 export STAKER="0xA1D917972df7E88904A2aaFd92f5c0dF16ABA77e"

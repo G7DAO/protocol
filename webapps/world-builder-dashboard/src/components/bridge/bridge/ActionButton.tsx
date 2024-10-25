@@ -1,5 +1,5 @@
 // External Libraries
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useMutation, useQueryClient } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 // Constants
@@ -8,12 +8,9 @@ import { ALL_NETWORKS } from '../../../../constants'
 import styles from './ActionButton.module.css'
 import { ethers } from 'ethers'
 import { Bridger } from 'game7-bridge-sdk'
-import { Modal } from 'summon-ui/mantine'
 // Absolute Imports
-import ApproveAllowance from '@/components/bridge/allowance/ApproveAllowance'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
-import useERC20Balance from '@/hooks/useERC20Balance'
 import { ZERO_ADDRESS } from '@/utils/web3utils'
 
 interface ActionButtonProps {
@@ -42,23 +39,9 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     getProvider,
     selectedBridgeToken
   } = useBlockchainContext()
-  const [isAllowanceModalOpened, setIsAllowanceModalOpened] = useState(false)
-  const [additionalCost, setAdditionalCost] = useState(ethers.BigNumber.from(0))
-  const [feeEstimate, setFeeEstimate] = useState<
-    { gasLimit: ethers.BigNumber; maxFeePerGas: ethers.BigNumber } | undefined
-  >(undefined)
+
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const navigate = useNavigate()
-
-  useEffect(() => {
-    setFeeEstimate(undefined)
-  }, [L2L3message])
-
-  const { data: lowNetworkBalance } = useERC20Balance({
-    tokenAddress: selectedLowNetwork.g7TokenAddress,
-    account: connectedAccount,
-    rpc: selectedLowNetwork.rpcs[0]
-  })
 
   const getLabel = (): String | undefined => {
     if (isConnecting) {
@@ -104,7 +87,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           const allowance = (await bridger?.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount ?? '')) ?? ''
           // approve first
           if (Number(ethers.utils.formatEther(allowance)) < Number(amount)) {
-            setIsAllowanceModalOpened(true)
+            const txApprove = await bridger?.approve(ethers.utils.parseEther(amount), signer)
+            await txApprove.wait()
           }
         }
         const tx = await bridger?.transfer({ amount: ethers.utils.parseUnits(amount), signer, destinationProvider })
@@ -152,6 +136,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         queryClient.refetchQueries(['nativeBalance'])
         queryClient.refetchQueries(['pendingNotifications'])
         queryClient.refetchQueries(['incomingMessages'])
+        refetchNewNotifications(connectedAccount ?? '')
         navigate('/bridge/transactions')
       },
       onError: (e) => {
@@ -177,30 +162,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           {getLabel() ?? 'Submit'}
         </div>
       </button>
-      <Modal
-        opened={isAllowanceModalOpened}
-        onClose={() => setIsAllowanceModalOpened(false)}
-        withCloseButton={false}
-        padding={'23px'}
-        size={'400px'}
-        radius={'12px'}
-        classNames={{ body: styles.body }}
-      >
-        <ApproveAllowance
-          balance={lowNetworkBalance?.raw ?? ethers.BigNumber.from('0')}
-          amount={ethers.utils.parseUnits(String(amount), 18).add(additionalCost)}
-          onSuccess={() => {
-            setIsAllowanceModalOpened(false)
-            transfer.mutate(String(amount))
-          }}
-          onClose={() => setIsAllowanceModalOpened(false)}
-          allowanceProps={{
-            tokenAddress: selectedLowNetwork.g7TokenAddress,
-            network: selectedLowNetwork,
-            spender: selectedLowNetwork.routerSpender
-          }}
-        />
-      </Modal>
     </>
   )
 }
