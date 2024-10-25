@@ -299,7 +299,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
         <button
           className={requestDisabled ? styles.requestTokensButtonDisabled : styles.requestTokensButton}
           onClick={() => {
-            claim.mutate({ isL2Target: chainId === 13746, address })
+            claim.mutateAsync({ isL2Target: chainId === 13746, address })
           }}
           disabled={requestDisabled}
         >
