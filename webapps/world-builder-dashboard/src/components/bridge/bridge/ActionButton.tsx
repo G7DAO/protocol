@@ -69,7 +69,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       return
     }
     setErrorMessage('')
-    transfer.mutate(String(amount))
+    transfer.mutateAsync(String(amount))
     return
   }
 

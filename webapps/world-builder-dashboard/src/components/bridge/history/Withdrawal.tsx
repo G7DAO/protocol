@@ -268,7 +268,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       <div className={styles.gridItem}>
                         <button
                           className={styles.claimButton}
-                          onClick={() => execute.mutate(status.data.highNetworkHash)}
+                          onClick={() => execute.mutateAsync(status.data.highNetworkHash)}
                         >
                           {execute.isLoading && !execute.isSuccess ? 'Claiming...' : 'Claim Now'}
                         </button>
