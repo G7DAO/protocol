@@ -70,7 +70,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
     const _bridgeTransfer = new BridgeTransfer({
       txHash: withdrawal.highNetworkHash || '',
       destinationNetworkChainId: selectedLowNetwork.chainId,
-      originNetworkChainId: selectedLowNetwork.chainId,
+      originNetworkChainId: selectedHighNetwork.chainId,
       originSignerOrProviderOrRpc: selectedHighNetwork.rpcs[0],
       destinationSignerOrProviderOrRpc: selectedLowNetwork.rpcs[0]
     })
@@ -97,6 +97,8 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
         throw new Error('Wallet is not installed!')
       }
       const signer = provider.getSigner()
+
+      // Bridge Transfer execute
       const res = await bridgeTransfer?.execute(signer)
       return res
     },
