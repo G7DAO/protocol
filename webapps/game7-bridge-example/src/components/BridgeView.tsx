@@ -211,9 +211,6 @@ const Token = ({ token, hoveredItem, historyInfo }: { token: BridgeToken; hovere
     }
   }
 
-  useEffect(() => {
-    console.log({historyInfo})
-  }, [historyInfo]);
 
   return (
     <div className={styles.tokenContainer}>
@@ -273,11 +270,12 @@ const Network = ({ network, hoveredItem, historyInfo }: { network: BridgeNetwork
       tokenMaps: TokenAddressMap[],
       tokenAddress: string
   ) => {
-
+    if (!tokenAddress) {
+      return false
+    }
     let identifiedToken: string | undefined;
     let originTokenAddress = info.tokenOriginAddress;
     let destinationTokenAddress = info.tokenDestinationAddress;
-
     for (const [tokenName, tokenMap] of Object.entries(tokenMaps)) {
       if (info.tokenOriginAddress && tokenMap[info.originNetworkChainId].toLowerCase() === info.tokenOriginAddress.toLowerCase()) {
         identifiedToken = tokenName;
@@ -288,9 +286,6 @@ const Network = ({ network, hoveredItem, historyInfo }: { network: BridgeNetwork
         break;
       }
     }
-    if (info.destinationNetworkChainId === 421614) {
-      console.log(originTokenAddress, destinationTokenAddress, identifiedToken, tokenAddress, tokenMaps)
-    }
     if (identifiedToken) {
       const tokenMap = tokenMaps[identifiedToken];
       if (!originTokenAddress) {
@@ -300,12 +295,11 @@ const Network = ({ network, hoveredItem, historyInfo }: { network: BridgeNetwork
         destinationTokenAddress = tokenMap[info.destinationNetworkChainId];
       }
     }
-    return tokenAddress.toLowerCase() === originTokenAddress?.toLowerCase() || tokenAddress.toLowerCase() === destinationTokenAddress?.toLowerCase();
+
+    return (tokenAddress.toLowerCase() === originTokenAddress?.toLowerCase() && network.chainId === info.originNetworkChainId)
+        || (tokenAddress.toLowerCase() === destinationTokenAddress?.toLowerCase() && network.chainId === info.destinationNetworkChainId);
   }
 
-  useEffect(() => {
-    console.log({network: network.name, historyInfo, tokens: network.tokens})
-  }, [historyInfo]);
 
   return (
     <div className={styles.networkContainer}>
