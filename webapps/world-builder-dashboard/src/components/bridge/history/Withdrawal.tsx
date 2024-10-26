@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
 import { HIGH_NETWORKS, L1_NETWORK, L2_NETWORK, L3_NETWORK, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
@@ -7,6 +7,7 @@ import { BridgeTransfer } from 'game7-bridge-sdk'
 import { Skeleton } from 'summon-ui/mantine'
 import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
+import IconWithdrawalNodeCompleted from '@/assets/IconWithdrawalNodeCompleted'
 import WithdrawalMobile from '@/components/bridge/history/WithdrawalMobile'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
@@ -15,7 +16,6 @@ import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 import { ChildToParentMessageStatus } from '@arbitrum/sdk'
 import { useMediaQuery } from '@mantine/hooks'
-import IconWithdrawalNodeCompleted from '@/assets/IconWithdrawalNodeCompleted'
 
 export const networkRPC = (chainId: number | undefined) => {
   const network = [L3_NETWORK, L2_NETWORK].find((n) => n.chainId === chainId)
@@ -57,6 +57,7 @@ export const getStatus = (withdrawal: TransactionRecord) => {
   }
 }
 const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
+  const withdrawDrilled = useRef(false)
   const targetChain = withdrawal.highNetworkChainId === L2_NETWORK.chainId ? L1_NETWORK : L2_NETWORK
   const status = getStatus(withdrawal)
   const { switchChain, connectedAccount, selectedLowNetwork, selectedHighNetwork } = useBlockchainContext()
@@ -64,17 +65,17 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
   const [bridgeTransfer, setBridgeTransfer] = useState<BridgeTransfer>()
+  const [transferStatus, setTransferStatus] = useState<any>(undefined)
 
   useEffect(() => {
-    if (!withdrawal) return
+    if (!withdrawal || withdrawDrilled.current) return
     const _bridgeTransfer = new BridgeTransfer({
       txHash: withdrawal.highNetworkHash || '',
-      destinationNetworkChainId: selectedLowNetwork.chainId,
-      originNetworkChainId: selectedHighNetwork.chainId,
-      originSignerOrProviderOrRpc: selectedHighNetwork.rpcs[0],
-      destinationSignerOrProviderOrRpc: selectedLowNetwork.rpcs[0]
+      destinationNetworkChainId: withdrawal.lowNetworkChainId ?? 0,
+      originNetworkChainId: withdrawal.highNetworkChainId ?? 0
     })
     setBridgeTransfer(_bridgeTransfer)
+    withdrawDrilled.current = true; 
   }, [withdrawal])
 
 
