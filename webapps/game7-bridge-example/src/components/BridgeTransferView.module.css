@@ -1,14 +1,16 @@
 .containerIn, .containerOut {
-    width: 50%;
+    /*width: 50%;*/
     display: flex;
-    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+    /*flex-direction: column;*/
     font-size: 12px;
     text-align: start;
     /*gap: 3px;*/
 }
 
 .containerOut {
-    place-self: end;
+    /*place-self: end;*/
 }
 
 .amountIn, .amountOut {
@@ -20,13 +22,33 @@
 }
 
 .from {
+    display: flex;
+    align-items: center;
+    gap: 2px;
     color: #dcc9d4;
+    margin-right: auto;
+}
+
+.icon {
+    height: 12px;
+    width: 12px;
 }
 
 .from:hover {
     color: #d596bb;
-
 }
+
+.status{
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    color: #dcc9d4;
+}
+
+.status:hover {
+    color: #d596bb;
+}
+
 
 .initiatingLink {
 
@@ -37,4 +59,20 @@
     background-color: transparent;
     border: 1px solid #dcc9d4;
     width: fit-content;
+    padding: 4px 12px;
+}
+
+.skeleton {
+    font-size: 20px;
+    width: 50px;
+    height: 12px;
+    background-color: #555;
+    border-radius: 12px;
+    animation: blink 1.5s steps(5, start) infinite;
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
 }

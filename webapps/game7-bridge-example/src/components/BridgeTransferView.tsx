@@ -7,6 +7,7 @@ import {BridgeTransfer} from "game7-bridge-sdk/dist/bridgeTransfer";
 import {getRPC, NETWORKS} from "../networks.ts";
 import {useWallet} from "../contexts/WalletContext.tsx";
 import TransferProgress from "./TransferProgress.tsx";
+import IconLinkExternal from "../assets/IconLinkExternal.tsx";
 
 interface BridgeTransferViewProps {
     info: BridgeTransferInfo,
@@ -44,13 +45,15 @@ const BridgeTransferView: React.FC<BridgeTransferViewProps> = ({info, token, isI
 
   return (
   <div className={isIncome ? styles.containerIn : styles.containerOut}>
-      {info.amount && <div className={isIncome ? styles.amountIn : styles.amountOut}>{`${isIncome ? '+' : '-'} ${ethers.utils.formatEther(info.amount)} ${info.tokenSymbol ?? ''}`}</div>}
-      {isIncome && info.originNetworkChainId && <a href={info.initTxExplorerUrl} target={'_blank'} className={styles.from}>from {info.originName}</a> }
-      {!isIncome && info.originNetworkChainId && <a href={info.initTxExplorerUrl} target={'_blank'} className={styles.from}>to {info.destinationName}</a> }
-      {(status.data?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED || status.data?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD) && <a href={status.data.completionExplorerLink} target={'_blank'} className={styles.from}>completed</a>}
-      {status.data?.status === BridgeTransferStatus.WITHDRAW_CONFIRMED && <button className={styles.claimButton} onClick={execute.mutate}>claim</button> }
+      {info.amount && <div className={isIncome ? styles.amountIn : styles.amountOut}>{`${isIncome ? '+' : '-'}${ethers.utils.formatEther(info.amount)} ${info.tokenSymbol ?? ''}`}</div>}
+      {isIncome && info.originNetworkChainId && <a href={info.initTxExplorerUrl} target={'_blank'} className={styles.from}><div className={styles.from}>from {info.originName}<IconLinkExternal className={styles.icon}/></div></a> }
+      {!isIncome && info.originNetworkChainId && <a href={info.initTxExplorerUrl} target={'_blank'} className={styles.from}><div className={styles.from}>to {info.destinationName}
+          <IconLinkExternal className={styles.icon}/></div></a> }
+      {status.isLoading && <div className={styles.skeleton} /> }
+      {(status.data?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED || status.data?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED) && <a href={status.data.completionExplorerLink} target={'_blank'} className={styles.status}><div className={styles.status}>completed<IconLinkExternal className={styles.icon}/></div></a>}
+      {status.data?.status === BridgeTransferStatus.WITHDRAW_CONFIRMED && <button className={styles.claimButton} onClick={execute.mutate}>{execute.isLoading ? '...' : 'execute'}</button> }
       {status.data?.status === BridgeTransferStatus.WITHDRAW_EXECUTED && <div className={styles.executed}>executed</div> }
-      {status.data?.status === BridgeTransferStatus.DEPOSIT_ERC20_NOT_YET_CREATED || status.data?.status === BridgeTransferStatus.DEPOSIT_GAS_PENDING || status.data?.status === BridgeTransferStatus.WITHDRAW_UNCONFIRMED && <TransferProgress eta={status.data.ETA} start={info.timestamp * 1000} />}
+      {(status.data?.status === BridgeTransferStatus.DEPOSIT_ERC20_NOT_YET_CREATED || status.data?.status === BridgeTransferStatus.DEPOSIT_GAS_PENDING || status.data?.status === BridgeTransferStatus.WITHDRAW_UNCONFIRMED) && <TransferProgress eta={status.data.ETA} start={info.timestamp * 1000} />}
 
 
   </div>
