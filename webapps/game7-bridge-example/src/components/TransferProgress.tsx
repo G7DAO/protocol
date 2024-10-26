@@ -7,12 +7,12 @@ const TransferProgress = ({ start, eta }) => {
     const [timeRemaining, setTimeRemaining] = useState('');
     const [progress, setProgress] = useState(0);
 
+
     useEffect(() => {
         const updateProgress = () => {
             const now = new Date().getTime();
             const startTime = new Date(start).getTime();
             const etaTime = new Date(eta).getTime();
-            console.log(now, startTime, etaTime)
             const totalDuration = etaTime - startTime;
             const elapsedTime = now - startTime;
 
@@ -22,8 +22,12 @@ const TransferProgress = ({ start, eta }) => {
             const remainingTime = etaTime - now;
             const hours = Math.floor(remainingTime / (1000 * 60 * 60));
             const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
-
-            setTimeRemaining(`${hours}h ${minutes}m`);
+            if (remainingTime <= 0) {
+                setTimeRemaining('ETA error')
+                setProgress(-1)
+            } else {
+                setTimeRemaining(`${hours}h ${minutes}m`);
+            }
         };
 
         updateProgress();
@@ -34,11 +38,12 @@ const TransferProgress = ({ start, eta }) => {
 
     return (
         <div className={styles.container} >
+            {progress !== -1 && (
+
             <CircularProgressbar
                 value={progress}
-                text={`${Math.round(progress)}%`}
                 className={styles.progress}
-                strokeWidth={50}
+                strokeWidth={20}
                 styles={buildStyles({
                     pathColor: '#378641',
                     textColor: '#000',
@@ -47,6 +52,7 @@ const TransferProgress = ({ start, eta }) => {
                     strokeLinecap: 'butt',
                 })}
             />
+            )}
             {timeRemaining}
         </div>
     );
