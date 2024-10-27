@@ -34,7 +34,8 @@ export interface BridgeTransferInfo {
   timestamp?: number,
   to?: string,
   amount?: BigNumber,
-  tokenAddress?: string,
+  tokenDestinationAddress?: string,
+  tokenOriginAddress?: string,
   tokenSymbol?: string,
   isDeposit: boolean,
   originNetworkChainId: number,
@@ -223,7 +224,7 @@ export class BridgeTransfer {
       info.amount = decodedInputs.value;
       info.tokenSymbol = networks[this.originNetworkChainId]?.nativeCurrency?.symbol
       info.to = decodedInputs.args.destination
-      info.tokenAddress = ethers.constants.AddressZero
+      info.tokenOriginAddress = ethers.constants.AddressZero
       return info
     } else
     if (transferType === BridgeTransferType.WITHDRAW_ERC20) {
@@ -231,7 +232,7 @@ export class BridgeTransfer {
       info.amount = decodedInputs.args._amount;
       info.tokenSymbol = await tokenContract.symbol();
       info.to = decodedInputs.args._to;
-      info.tokenAddress = decodedInputs.args._l1Token;
+      info.tokenDestinationAddress = decodedInputs.args._l1Token;
       return info
     } else
     if (transferType === BridgeTransferType.DEPOSIT_ERC20) {
@@ -239,20 +240,22 @@ export class BridgeTransfer {
       info.tokenSymbol = await tokenContract.symbol();
       info.amount = decodedInputs.args._amount;
       info.to = decodedInputs.args._to;
-      info.tokenAddress = decodedInputs.args._token;
+      info.tokenOriginAddress = decodedInputs.args._token;
       return info
     } else
     if (transferType === BridgeTransferType.DEPOSIT_GAS) {
       info.amount = decodedInputs.value
       info.tokenSymbol = networks[this.destinationNetworkChainId]?.nativeCurrency?.symbol
       info.to = tx.from
-      info.tokenAddress = ethers.constants.AddressZero
+      info.tokenOriginAddress = ethers.constants.AddressZero
+      info.tokenDestinationAddress = ethers.constants.AddressZero
       return info
     } else
     if (transferType === BridgeTransferType.DEPOSIT_ERC20_TO_GAS) {
       info.amount = decodedInputs.args.amount
       info.tokenSymbol = networks[this.destinationNetworkChainId]?.nativeCurrency?.symbol
       info.to = tx.from
+      info.tokenDestinationAddress = ethers.constants.AddressZero
       return info
     }
 
