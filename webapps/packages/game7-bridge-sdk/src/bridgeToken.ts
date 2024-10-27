@@ -27,13 +27,13 @@ export class BridgeToken {
    * Creates an instance of the `BridgeToken` class, which represents a specific token within a blockchain network.
    *
    * @param tokenAddresses - A `TokenAddressMap` object representing the token addresses associated with different chain IDs.
-   * @param network - The `BridgeNetwork` instance to which this token belongs.
+   * @param chainId .
    */
-  constructor(tokenAddresses: TokenAddressMap, network: BridgeNetwork) {
+  constructor(tokenAddresses: TokenAddressMap, chainId: number) {
     this.tokenAddresses = tokenAddresses;
-    this.chainId = network.chainId;
+    this.chainId = chainId;
     this.bridgers = this.getBridgers();
-    this.address = tokenAddresses[network.chainId];
+    this.address = tokenAddresses[chainId];
   }
 
   /**

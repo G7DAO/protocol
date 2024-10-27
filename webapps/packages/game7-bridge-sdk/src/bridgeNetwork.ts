@@ -48,7 +48,7 @@ export class BridgeNetwork {
     }
     this.network = network;
     this.chainId = chainId;
-    this.tokens = tokens.map((tokenMap) => new BridgeToken(tokenMap, this));
+    this.tokens = tokens.map((tokenMap) => new BridgeToken(tokenMap, chainId));
     this.name = name || network.name;
     this.symbol = network.nativeCurrency?.symbol || '';
   }
