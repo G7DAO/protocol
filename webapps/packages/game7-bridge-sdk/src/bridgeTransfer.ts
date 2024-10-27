@@ -22,7 +22,6 @@ import { INBOX_ABI } from './abi/inbox_abi';
 
 export type SignerOrProviderOrRpc = ethers.Signer | ethers.providers.Provider | string;
 
-type BridgeReceiptDescription = 'initiating';
 export interface BridgeReceipt {
   description: string;
   receipt: TransactionReceipt;
@@ -337,9 +336,7 @@ export class BridgeTransfer {
       const ETA = this.destinationNetwork.ethBridge?.depositTimeout ? this.destinationNetwork.ethBridge.depositTimeout + Date.now() : undefined
       return {ETA, status, completionTxHash: childTxHash, completionExplorerLink: `${this.destinationNetwork.explorerUrl}/tx/${childTxHash}`}
     } else {
-      // const msgs = await parentTransactionReceipt.getParentToChildMessages(this.destinationProvider)
-      // const r = await msgs[0].status()
-      console.log('1')
+
       const parentContractCallReceipt = new ParentContractCallTransactionReceipt(parentTransactionReceipt)
       const ETA = this.destinationNetwork.tokenBridge?.depositTimeout ? this.destinationNetwork.tokenBridge.depositTimeout + Date.now() : undefined
       try {
@@ -352,59 +349,6 @@ export class BridgeTransfer {
       const status = mapDepositERC20Status(res.status)
       return {ETA, status, completionTxHash: childTxHash, completionExplorerLink: `${this.destinationNetwork.explorerUrl}/tx/${childTxHash}`}
     }
-    // const isEthDeposit = tx.to === networks[this.destinationNetworkChainId]?.ethBridge?.inbox;
-    // if (!isEthDeposit && tx.to !== networks[this.destinationNetworkChainId]?.tokenBridge?.parentGatewayRouter) {
-    //   throw new Error("Can't fetch status - unknown contract")
-    // }
-    // let res
-    // let status
-    // if (isEthDeposit) {
-    //   const parentEthDepositReceipt = new ParentEthDepositTransactionReceipt(parentTransactionReceipt)
-    //   res = await parentEthDepositReceipt.waitForChildTransactionReceipt(this.destinationProvider, 3 ,1000);
-    //   console.log(res)
-    // } else {
-    //   const parentContractCallReceipt = new ParentContractCallTransactionReceipt(parentTransactionReceipt)
-    //   res = await parentContractCallReceipt.waitForChildTransactionReceipt(this.destinationProvider, 3, 1000)
-    //   console.log(res)
-    // }
-
-    // let childTxReceipt
-    // let childTxHash
-    // let childTx
-    // if ('childTxReceipt' in res) {   //tsc doesn't understand that childTxReceipt is there (can be null though).
-    //   childTxReceipt = (res as EthDepositMessageWaitForStatusResult).childTxReceipt;
-    //   childTxHash = childTxReceipt?.transactionHash
-    //   if (childTxHash) {
-    //     childTx = await this.destinationProvider.getTransaction(childTxHash)
-    //   }
-    // }
-    // return {
-    //   status,
-    //   isComplete: res.complete,
-    //   completionHash: childTxHash,
-    //   completionTimestamp: childTx?.timestamp,
-    //   childTxReceipt,
-    // }
-
-    // let childResult
-    // try {
-    //   childResult = await childResultRetriever(this.destinationProvider, 3, 1000)
-    // } catch (e) {
-    //   console.log(e)
-    // }
-    // console.log(childResult)
-    // if (!childResult) {
-    //   return
-    // }
-    // const retryableCreationReceipt = await childResult.message.getRetryableCreationReceipt()
-    // let highNetworkTimestamp
-    // if (retryableCreationReceipt) {
-    //   const block = await this.destinationProvider.getBlock(retryableCreationReceipt.blockNumber)
-    //   highNetworkTimestamp = block.timestamp
-    // }
-    // return {
-    //   childResult, retryableCreationReceipt
-    // }
   }
 
 }
