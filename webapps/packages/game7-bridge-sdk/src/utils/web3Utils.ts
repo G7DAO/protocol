@@ -1,4 +1,5 @@
 import { ethers, Transaction } from 'ethers';
+import { SignerOrProviderOrRpc } from '../bridgeTransfer';
 
 export const getBlockTimeDifference = async (
   blockNumber: ethers.BigNumber,
@@ -48,4 +49,22 @@ export const getDecodedInputs = (tx: Transaction, ABI:  any) => { //ABI:  Readon
     value: tx.value,
   });
 }
+
+export const getProvider = (
+  signerOrProviderOrRpc: SignerOrProviderOrRpc,
+): ethers.providers.Provider => {
+  if (typeof signerOrProviderOrRpc === 'string') {
+    return new ethers.providers.JsonRpcProvider(signerOrProviderOrRpc);
+  }
+  const providerFromSigner = (signerOrProviderOrRpc as ethers.Signer).provider;
+  if (providerFromSigner) {
+    return providerFromSigner;
+  }
+  if (typeof signerOrProviderOrRpc.getGasPrice === 'function') {
+    return signerOrProviderOrRpc as ethers.providers.Provider;
+  }
+  throw new Error(
+    'Invalid input: expected a Signer with associated provider, Provider, or RPC URL string',
+  );
+};
 

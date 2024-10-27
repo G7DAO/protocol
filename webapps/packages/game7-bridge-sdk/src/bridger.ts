@@ -22,7 +22,7 @@ import { BridgerError, GasEstimationError, UnsupportedNetworkError } from './err
 import { BridgeNetworkConfig, networks } from './networks';
 import { TokenAddressMap } from './types';
 import { SignerOrProvider } from './bridgeNetwork';
-import { getProvider } from './bridgeTransfer';
+import { getProvider } from './utils/web3Utils';
 
 /**
  * Represents the estimated gas and fees.

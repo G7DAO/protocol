@@ -4,7 +4,7 @@ import { UnsupportedNetworkError } from './errors';
 import { TransactionReceipt } from '@ethersproject/abstract-provider/src.ts';
 
 import { Provider } from '@ethersproject/abstract-provider';
-import { getBlockETA, getDecodedInputs } from './utils/web3Utils';
+import { getBlockETA, getDecodedInputs, getProvider } from './utils/web3Utils';
 import {
   ChildToParentMessageStatus,
   ChildToParentMessageWriter,
@@ -26,30 +26,6 @@ type BridgeReceiptDescription = 'initiating';
 export interface BridgeReceipt {
   description: string;
   receipt: TransactionReceipt;
-}
-
-export const getProvider = (
-  signerOrProviderOrRpc: SignerOrProviderOrRpc,
-): ethers.providers.Provider => {
-  if (typeof signerOrProviderOrRpc === 'string') {
-    return new ethers.providers.JsonRpcProvider(signerOrProviderOrRpc);
-  }
-  const providerFromSigner = (signerOrProviderOrRpc as ethers.Signer).provider;
-  if (providerFromSigner) {
-    return providerFromSigner;
-  }
-  if (typeof signerOrProviderOrRpc.getGasPrice === 'function') {
-    return signerOrProviderOrRpc as ethers.providers.Provider;
-  }
-  throw new Error(
-    'Invalid input: expected a Signer with associated provider, Provider, or RPC URL string',
-  );
-};
-
-export interface CreateBridgeTransferParams {
-  txHash: string;
-  originSignerOrProviderOrRpc: SignerOrProviderOrRpc;
-  destinationSignerOrProviderOrRpc: SignerOrProviderOrRpc;
 }
 
 export interface BridgeTransferInfo {
