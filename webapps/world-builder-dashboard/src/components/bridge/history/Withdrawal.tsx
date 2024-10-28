@@ -60,24 +60,28 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const withdrawDrilled = useRef(false)
   const targetChain = withdrawal.highNetworkChainId === L2_NETWORK.chainId ? L1_NETWORK : L2_NETWORK
   const status = getStatus(withdrawal)
-  const { switchChain, connectedAccount, selectedLowNetwork, selectedHighNetwork } = useBlockchainContext()
+  const { switchChain, connectedAccount } = useBlockchainContext()
   const queryClient = useQueryClient()
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
   const [bridgeTransfer, setBridgeTransfer] = useState<BridgeTransfer>()
   const [transferStatus, setTransferStatus] = useState<any>(undefined)
 
-  useEffect(() => {
-    if (!withdrawal || withdrawDrilled.current) return
-    const _bridgeTransfer = new BridgeTransfer({
-      txHash: withdrawal.highNetworkHash || '',
-      destinationNetworkChainId: withdrawal.lowNetworkChainId ?? 0,
-      originNetworkChainId: withdrawal.highNetworkChainId ?? 0
-    })
-    setBridgeTransfer(_bridgeTransfer)
-    withdrawDrilled.current = true; 
-  }, [withdrawal])
-
+useEffect(() => {
+  if (!withdrawal || withdrawDrilled.current) return
+  const _bridgeTransfer = new BridgeTransfer({
+    txHash: withdrawal.highNetworkHash || '',
+    destinationNetworkChainId: withdrawal.lowNetworkChainId ?? 0,
+    originNetworkChainId: withdrawal.highNetworkChainId ?? 0
+  })
+  setBridgeTransfer(_bridgeTransfer)
+  const getStatus = async () => {
+    const _status = await _bridgeTransfer.getStatus()
+    setTransferStatus(_status.status)
+  }
+  getStatus()
+  withdrawDrilled.current = true
+}, [withdrawal])
 
   // Mutate function
   const execute = useMutation(
@@ -151,7 +155,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
 
   return (
     <>
-      {status.isLoading && !status.data ? (
+      {!transferStatus ? (
         Array.from(Array(7)).map((_, idx) => (
           <div className={styles.gridItem} key={idx}>
             <Skeleton key={idx} h='12px' w='100%' />
@@ -168,7 +172,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
             />
           ) : (
             <>
-              {status.data?.status === ChildToParentMessageStatus.EXECUTED && (
+              {transferStatus === ChildToParentMessageStatus.EXECUTED && (
                 <>
                   <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
                     <IconWithdrawalNodeCompleted className={styles.gridNodeCompleted} />
@@ -188,7 +192,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       className={styles.explorerLink}
                     >
                       <div className={styles.settled}>
-                        Settled
+                        Completed
                         <IconLinkExternal02 stroke={'#fff'} />
                       </div>
                     </a>
@@ -209,8 +213,8 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       target={'_blank'}
                       className={styles.explorerLink}
                     >
-                      <div className={styles.claimable}>
-                        Claimable
+                      <div className={styles.settled}>
+                        Completed
                         <IconLinkExternal02 stroke={'#fff'} />
                       </div>
                     </a>
@@ -231,8 +235,8 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       target={'_blank'}
                       className={styles.explorerLink}
                     >
-                      <div className={styles.pending}>
-                        Pending
+                      <div className={styles.settled}>
+                      Completed
                         <IconLinkExternal02 stroke={'#fff'} />
                       </div>
                     </a>
@@ -242,7 +246,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                   </div>
                 </>
               )}
-              {status.data?.status != ChildToParentMessageStatus.EXECUTED && (
+              {transferStatus != ChildToParentMessageStatus.EXECUTED && (
                 <>
                   <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
                     <div className={styles.typeWithdrawal}>
