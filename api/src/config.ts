@@ -51,3 +51,12 @@ export const swaggerOptions: SwaggerOptions = {
   apis: ['./src/routes/*.ts'],
   version: '1.0.0',
 };
+
+export const tableNameGame7 = 'game7_testnet_labels'; // Game7 table name
+export const tableNameEthereum = 'sepolia_labels'; // Ethereum table name
+export const tableNameArbitrum = 'arbitrum_sepolia_labels'; // Arbitrum table name
+export const addressHex = 'e6470bb72291c39073aed67a30ff93b69c1f47de'; // Arbitrum Deposit contract address
+export const addressL1ERC20Gateway = '902b3e5f8f19571859f4ab1003b960a5df693aff' // Ethereum L1ERC20Gateway address
+export const addressL2ERC20Gateway = '6e244cD02BBB8a6dbd7F626f05B2ef82151Ab502' // Ethereum L2ERC20Gateway address
+export const addressOutBox = '64105c6C3D494469D5F21323F0E917563489d9f5' // Arbitrum outbox address
+export const addressArbOSL2 = '0000000000000000000000000000000000000064' // Arbitrum ArbOS L2 address
