@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { HIGH_NETWORKS, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import { BridgeTransfer, BridgeTransferStatus } from 'game7-bridge-sdk'
-import { Skeleton } from 'summon-ui/mantine'
+import { Skeleton, useMediaQuery } from 'summon-ui/mantine'
 import IconArrowNarrowDown from '@/assets/IconArrowNarrowDown'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
@@ -20,9 +20,8 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
     to: HIGH_NETWORKS.find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
   }
   const status = useDepositStatus(deposit)
-  const [bridgeTransfer, setBridgeTransfer] = useState<BridgeTransfer>()
   const [transferStatus, setTransferStatus] = useState<any>(undefined)
-  const [transactionInputs, setTransactionInputs] = useState<any>(undefined)
+  const smallView = useMediaQuery('(max-width: 1199px)')
 
   useEffect(() => {
     if (!deposit || depositDrilled.current) return
@@ -31,14 +30,9 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
       destinationNetworkChainId: deposit.highNetworkChainId ?? 0,
       originNetworkChainId: deposit.lowNetworkChainId ?? 0
     })
-    setBridgeTransfer(_bridgeTransfer)
     const getTransferData = async () => {
       const _status = await _bridgeTransfer.getStatus()
-      // console.log(_status)
       setTransferStatus(_status)
-      const _transactionInputs = await _bridgeTransfer.getTransactionInputs()
-      console.log(_transactionInputs)
-      setTransactionInputs(_transactionInputs)
     }
     getTransferData()
     depositDrilled.current = true
@@ -47,12 +41,18 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   return (
     <>
       {!transferStatus?.status ? (
-        Array.from(Array(7)).map((_, idx) => (
-          <div className={styles.gridItem} key={idx}>
-            <Skeleton key={idx} h='12px' w='100%' />
+        !smallView ? (
+          Array.from(Array(7)).map((_, idx) => (
+            <div className={styles.gridItem} key={idx}>
+              <Skeleton key={idx} h='12px' w='100%' color='#373737' />
+            </div>
+          ))
+        ) : (
+          <div className={styles.gridItem}>
+            <Skeleton h='12px' w='100%' color='#373737' />
           </div>
-        ))
-      ) : (
+        )
+      ): (
         <>
           <div className={styles.gridItem}>
             <div className={styles.typeDeposit}>

@@ -67,22 +67,21 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const [bridgeTransfer, setBridgeTransfer] = useState<BridgeTransfer>()
   const [transferStatus, setTransferStatus] = useState<any>(undefined)
 
-useEffect(() => {
-  if (!withdrawal || withdrawDrilled.current) return
-  const _bridgeTransfer = new BridgeTransfer({
-    txHash: withdrawal.highNetworkHash || '',
-    destinationNetworkChainId: withdrawal.lowNetworkChainId ?? 0,
-    originNetworkChainId: withdrawal.highNetworkChainId ?? 0
-  })
-  setBridgeTransfer(_bridgeTransfer)
-  const getStatus = async () => {
-    const _status = await _bridgeTransfer.getStatus()
-    console.log(_status)
-    setTransferStatus(_status)
-  }
-  getStatus()
-  withdrawDrilled.current = true
-}, [withdrawal])
+  useEffect(() => {
+    if (!withdrawal || withdrawDrilled.current) return
+    const _bridgeTransfer = new BridgeTransfer({
+      txHash: withdrawal.highNetworkHash || '',
+      destinationNetworkChainId: withdrawal.lowNetworkChainId ?? 0,
+      originNetworkChainId: withdrawal.highNetworkChainId ?? 0
+    })
+    setBridgeTransfer(_bridgeTransfer)
+    const getStatus = async () => {
+      const _status = await _bridgeTransfer.getStatus()
+      setTransferStatus(_status)
+    }
+    getStatus()
+    withdrawDrilled.current = true
+  }, [withdrawal])
 
   // Mutate function
   const execute = useMutation(
@@ -156,12 +155,18 @@ useEffect(() => {
 
   return (
     <>
-      {!transferStatus ? (
-        Array.from(Array(7)).map((_, idx) => (
-          <div className={styles.gridItem} key={idx}>
-            <Skeleton key={idx} h='12px' w='100%' />
+      {!transferStatus?.status ? (
+        !smallView ? (
+          Array.from(Array(7)).map((_, idx) => (
+            <div className={styles.gridItem} key={idx}>
+              <Skeleton key={idx} h='12px' w='100%' color='#373737' />
+            </div>
+          ))
+        ) : (
+          <div className={styles.gridItem}>
+            <Skeleton h='12px' w='100%' color='#373737' />
           </div>
-        ))
+        )
       ) : (
         <>
           {smallView ? (
@@ -169,7 +174,7 @@ useEffect(() => {
               withdrawal={withdrawal}
               execute={execute}
               status={status}
-              bridgeTransfer={bridgeTransfer}
+              transferStatus={transferStatus}
             />
           ) : (
             <>
@@ -237,7 +242,7 @@ useEffect(() => {
                       className={styles.explorerLink}
                     >
                       <div className={styles.settled}>
-                      Completed
+                        Completed
                         <IconLinkExternal02 stroke={'#fff'} />
                       </div>
                     </a>
