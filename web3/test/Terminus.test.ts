@@ -545,8 +545,677 @@ describe('Terminus', async function () {
             expect(finalSenderBalance).to.equal(initialSenderBalance);
             expect(finalReceiverBalance).to.equal(initialReceiverBalance);
         });
+        it("Terminus-19: Should fail transfer as Terminus controller without approval", async function () {
+            // Create a new pool and set the pool controller
+            await terminusFacet.connect(admin0).createPoolV1(100, true, true);
+            const poolId = await terminusFacet.totalPools();
+            await terminusFacet.connect(admin0).mint(user0.address, poolId, 1, "0x");
 
+            // Remove control from the terminusController
+            await terminusFacet.connect(admin0).setPoolController(poolId, admin1.address);
+
+            // Record initial balances for sender and receiver
+            const initialSenderBalance = await terminusFacet.balanceOf(user0.address, poolId);
+            const initialReceiverBalance = await terminusFacet.balanceOf(user1.address, poolId);
+
+            // Attempt transfer by terminusController without approval, expecting it to fail
+            await expect(
+                terminusFacet.connect(admin0).safeTransferFrom(
+                    user1.address,
+                    user2.address,
+                    poolId,
+                    1,
+                    "0x"
+                )
+            ).to.be.reverted;
+
+            // Verify balances remain unchanged
+            const finalSenderBalance = await terminusFacet.balanceOf(user0.address, poolId);
+            const finalReceiverBalance = await terminusFacet.balanceOf(user1.address, poolId);
+            expect(finalSenderBalance).to.equal(initialSenderBalance);
+            expect(finalReceiverBalance).to.equal(initialReceiverBalance);
+        });
+
+        it("Terminus-20: Should fail transfer by unauthorized recipient", async function () {
+            // Create a new pool and set the pool controller
+            await terminusFacet.connect(admin0).createPoolV1(ethers.MaxUint256, true, true);
+            const poolId = await terminusFacet.totalPools();
+            await terminusFacet.connect(admin0).mint(user0.address, poolId, 1, "0x");
+
+            // Record initial balances for sender and receiver
+            const initialSenderBalance = await terminusFacet.balanceOf(user0.address, poolId);
+            const initialReceiverBalance = await terminusFacet.balanceOf(user1.address, poolId);
+
+            // Attempt transfer by unauthorized recipient, expecting it to fail
+            await expect(
+                terminusFacet.connect(user1).safeTransferFrom(
+                    user0.address,
+                    user1.address,
+                    poolId,
+                    1,
+                    "0x"
+                )
+            ).to.be.reverted;
+
+            // Verify balances remain unchanged
+            const finalSenderBalance = await terminusFacet.balanceOf(user0.address, poolId);
+            const finalReceiverBalance = await terminusFacet.balanceOf(user1.address, poolId);
+            expect(finalSenderBalance).to.equal(initialSenderBalance);
+            expect(finalReceiverBalance).to.equal(initialReceiverBalance);
+        });
+
+        it("Terminus-21: Should allow transfer by authorized recipient", async function () {
+            // Create a pool and set the pool controller
+            await terminusFacet.connect(admin0).createPoolV1(ethers.MaxUint256, true, true);
+            const poolId = await terminusFacet.totalPools();
+            await terminusFacet.connect(admin0).mint(user0.address, poolId, 1, "0x");
+
+            // Record initial balances for sender and receiver
+            const initialSenderBalance = await terminusFacet.balanceOf(user0.address, poolId);
+            const initialReceiverBalance = await terminusFacet.balanceOf(user1.address, poolId);
+
+            // Approve recipient2 for the pool
+            await terminusFacet.connect(admin0).approveForPool(poolId, user1.address);
+
+            // Perform the transfer by recipient2
+            await terminusFacet.connect(user1).safeTransferFrom(
+                user0.address,
+                user1.address,
+                poolId,
+                1,
+                "0x"
+            );
+
+            // Verify final balances after transfer
+            const finalSenderBalance = await terminusFacet.balanceOf(user0.address, poolId);
+            const finalReceiverBalance = await terminusFacet.balanceOf(user1.address, poolId);
+
+            expect(finalSenderBalance).to.equal(initialSenderBalance - BigInt(1));
+            expect(finalReceiverBalance).to.equal(initialReceiverBalance + BigInt(1));
+        });
+
+        it("Terminus-22: Should allow transfer as an approved operator", async function () {
+            // Create a pool and set the pool controller
+            await terminusFacet.connect(admin0).createPoolV1(ethers.MaxUint256, true, true);
+            const poolId = await terminusFacet.totalPools();
+
+            // Mint 1 token to user0
+            await terminusFacet.connect(admin0).mint(user0.address, poolId, 1, "0x");
+
+            // Record initial balances
+            const initialSenderBalance = await terminusFacet.balanceOf(user0.address, poolId);
+            const initialReceiverBalance = await terminusFacet.balanceOf(user1.address, poolId);
+
+            // Approve the operator for all pools for recipient1
+            await terminusFacet.connect(user0).setApprovalForAll(admin1.address, true);
+
+            // Perform the transfer by the approved operator
+            await terminusFacet.connect(admin1).safeTransferFrom(
+                user0.address,
+                user1.address,
+                poolId,
+                1,
+                "0x"
+            );
+
+            // Revoke the approval to reset state
+            await terminusFacet.connect(user0).setApprovalForAll(admin1.address, false);
+
+            // Verify final balances after transfer
+            const finalSenderBalance = await terminusFacet.balanceOf(user0.address, poolId);
+            const finalReceiverBalance = await terminusFacet.balanceOf(user1.address, poolId);
+
+            expect(finalSenderBalance).to.equal(initialSenderBalance - BigInt(1));
+            expect(finalReceiverBalance).to.equal(initialReceiverBalance + BigInt(1));
+
+            // Verify approval is revoked
+            expect(await terminusFacet.isApprovedForAll(user0.address, admin1.address)).to.be.false;
+        });
+
+        it("Terminus-23: Should fail transfer by unauthorized unrelated party", async function () {
+            // Create a pool and set the pool controller
+            await terminusFacet.connect(admin0).createPoolV1(ethers.MaxUint256, true, true);
+            const poolId = await terminusFacet.totalPools();
+
+            // Mint 1 token to user0
+            await terminusFacet.connect(admin0).mint(user0.address, poolId, 1, "0x");
+
+            // Record initial balances
+            const initialSenderBalance = await terminusFacet.balanceOf(user0.address, poolId);
+            const initialReceiverBalance = await terminusFacet.balanceOf(user1.address, poolId);
+
+            // Attempt transfer by unauthorizedUser, expecting it to fail
+            await expect(
+                terminusFacet.connect(admin1).safeTransferFrom(
+                    user0.address,
+                    user1.address,
+                    poolId,
+                    1,
+                    "0x"
+                )
+            ).to.be.reverted;
+
+            // Verify balances remain unchanged after the failed transfer
+            const finalSenderBalance = await terminusFacet.balanceOf(user0.address, poolId);
+            const finalReceiverBalance = await terminusFacet.balanceOf(user1.address, poolId);
+
+            expect(finalSenderBalance).to.equal(initialSenderBalance);
+            expect(finalReceiverBalance).to.equal(initialReceiverBalance);
+        });
+
+        it("Terminus-24: Should allow transfer by authorized unrelated party", async function () {
+            // Create a pool and set the pool controller
+            await terminusFacet.connect(admin0).createPoolV1(ethers.MaxUint256, true, true);
+            const poolId = await terminusFacet.totalPools();
+
+            // Mint 1 token to user0
+            await terminusFacet.connect(admin0).mint(user0.address, poolId, 1, "0x");
+
+            // Record initial balances
+            const initialSenderBalance = await terminusFacet.balanceOf(user0.address, poolId);
+            const initialReceiverBalance = await terminusFacet.balanceOf(user1.address, poolId);
+
+            // Approve unauthorizedUser for the pool
+            await terminusFacet.connect(admin0).approveForPool(poolId, admin1.address);
+
+            // Perform the transfer by the authorized unrelated party
+            await terminusFacet.connect(admin1).safeTransferFrom(
+                user0.address,
+                user1.address,
+                poolId,
+                1,
+                "0x"
+            );
+
+            // Verify final balances after transfer
+            const finalSenderBalance = await terminusFacet.balanceOf(user0.address, poolId);
+            const finalReceiverBalance = await terminusFacet.balanceOf(user1.address, poolId);
+
+            expect(finalSenderBalance).to.equal(initialSenderBalance - BigInt(1));
+            expect(finalReceiverBalance).to.equal(initialReceiverBalance + BigInt(1));
+        });
+
+        it("Terminus-25: Should fail burn as token owner", async function () {
+            // Create a pool and set the pool controller
+            await terminusFacet.connect(admin0).createPoolV1(ethers.MaxUint256, true, false);
+            const poolId = await terminusFacet.totalPools();
+
+            // Mint 1 token to user0
+            await terminusFacet.connect(admin0).mint(user0.address, poolId, 1, "0x");
+
+            // Record initial supply and owner balance
+            const initialPoolSupply = await terminusFacet.terminusPoolSupply(poolId);
+            const initialOwnerBalance = await terminusFacet.balanceOf(user0.address, poolId);
+
+            // Attempt to burn by token owner, expecting it to fail
+            await expect(
+                terminusFacet.connect(user0).burn(user0.address, poolId, 1)
+            ).to.be.reverted;
+
+            // Verify final supply and owner balance remain unchanged
+            const finalPoolSupply = await terminusFacet.terminusPoolSupply(poolId);
+            const finalOwnerBalance = await terminusFacet.balanceOf(user0.address, poolId);
+
+            expect(finalPoolSupply).to.equal(initialPoolSupply);
+            expect(finalOwnerBalance).to.equal(initialOwnerBalance);
+        });
+
+        it("Terminus-26: Should fail burn as pool controller", async function () {
+            // Create a pool and set the pool controller
+            await terminusFacet.connect(admin0).createPoolV1(ethers.MaxUint256, true, false);
+            const poolId = await terminusFacet.totalPools();
+
+            // Mint 1 token to user0
+            await terminusFacet.connect(admin0).mint(user0.address, poolId, 1, "0x");
+
+            // Record initial supply and owner balance
+            const initialPoolSupply = await terminusFacet.terminusPoolSupply(poolId);
+            const initialOwnerBalance = await terminusFacet.balanceOf(user0.address, poolId);
+
+            // Attempt to burn by pool controller, expecting it to fail
+            await expect(
+                terminusFacet.connect(admin0).burn(user0.address, poolId, 1)
+            ).to.be.reverted;
+
+            // Verify final supply and owner balance remain unchanged
+            const finalPoolSupply = await terminusFacet.terminusPoolSupply(poolId);
+            const finalOwnerBalance = await terminusFacet.balanceOf(user0.address, poolId);
+
+            expect(finalPoolSupply).to.equal(initialPoolSupply);
+            expect(finalOwnerBalance).to.equal(initialOwnerBalance);
+        });
+
+        it("Terminus-27: Should fail burn as an unauthorized third party", async function () {
+            // Create a pool and set the pool controller
+            await terminusFacet.connect(admin0).createPoolV1(ethers.MaxUint256, true, false);
+            const poolId = await terminusFacet.totalPools();
+
+            // Mint 1 token to user0
+            await terminusFacet.connect(admin0).mint(user0.address, poolId, 1, "0x");
+
+            // Record initial supply and owner balance
+            const initialPoolSupply = await terminusFacet.terminusPoolSupply(poolId);
+            const initialOwnerBalance = await terminusFacet.balanceOf(user0.address, poolId);
+
+            // Attempt to burn by an unauthorized user, expecting it to fail
+            await expect(
+                terminusFacet.connect(admin1).burn(user0.address, poolId, 1)
+            ).to.be.reverted;
+
+            // Verify final supply and owner balance remain unchanged
+            const finalPoolSupply = await terminusFacet.terminusPoolSupply(poolId);
+            const finalOwnerBalance = await terminusFacet.balanceOf(user0.address, poolId);
+
+            expect(finalPoolSupply).to.equal(initialPoolSupply);
+            expect(finalOwnerBalance).to.equal(initialOwnerBalance);
+        });
+
+        it("Terminus-28: Should fail burn as an authorized third party", async function () {
+            // Create a pool and set the pool controller
+            await terminusFacet.connect(admin0).createPoolV1(ethers.MaxUint256, true, false);
+            const poolId = await terminusFacet.totalPools();
+
+            // Mint 1 token to user0
+            await terminusFacet.connect(admin0).mint(user0.address, poolId, 1, "0x");
+
+            // Record initial supply and owner balance
+            const initialPoolSupply = await terminusFacet.terminusPoolSupply(poolId);
+            const initialOwnerBalance = await terminusFacet.balanceOf(user0.address, poolId);
+
+            // Approve a third party for the pool
+            await terminusFacet.connect(admin0).approveForPool(poolId, admin1.address);
+
+            // Attempt to burn by the authorized third party, expecting it to fail
+            await expect(
+                terminusFacet.connect(admin1).burn(user0.address, poolId, 1)
+            ).to.be.reverted;
+
+            // Verify final supply and owner balance remain unchanged
+            const finalPoolSupply = await terminusFacet.terminusPoolSupply(poolId);
+            const finalOwnerBalance = await terminusFacet.balanceOf(user0.address, poolId);
+
+            expect(finalPoolSupply).to.equal(initialPoolSupply);
+            expect(finalOwnerBalance).to.equal(initialOwnerBalance);
+        });
+
+        it("Terminus-29: Should test pool approval for minting and burning permissions", async function () {
+            // Create a pool and set the pool controller
+            await terminusFacet.connect(admin0).createPoolV1(ethers.MaxUint256, true, true);
+            const poolId = await terminusFacet.totalPools();
+
+            // Mint tokens to controller, operator, and user
+            await terminusFacet.connect(admin0).mint(admin0.address, poolId, 5, "0x");
+            await terminusFacet.connect(admin0).mint(admin1.address, poolId, 5, "0x");
+            await terminusFacet.connect(admin0).mint(user0.address, poolId, 5, "0x");
+
+            const initialControllerBalance = await terminusFacet.balanceOf(admin0.address, poolId);
+            const initialOperatorBalance = await terminusFacet.balanceOf(admin1.address, poolId);
+            const initialUserBalance = await terminusFacet.balanceOf(user0.address, poolId);
+
+            expect(await terminusFacet.isApprovedForPool(poolId, admin1.address)).to.be.false;
+
+            // Ensure minting fails when attempted by the operator without approval
+            await expect(
+                terminusFacet.connect(admin1).mint(admin0.address, poolId, 1, "0x")
+            ).to.be.reverted;
+            await expect(
+                terminusFacet.connect(admin1).mint(admin1.address, poolId, 1, "0x")
+            ).to.be.reverted;
+            await expect(
+                terminusFacet.connect(admin1).mint(user0.address, poolId, 1, "0x")
+            ).to.be.reverted;
+
+            // Ensure balances remain unchanged after failed minting attempts
+            expect(await terminusFacet.balanceOf(admin0.address, poolId)).to.equal(initialControllerBalance);
+            expect(await terminusFacet.balanceOf(admin1.address, poolId)).to.equal(initialOperatorBalance);
+            expect(await terminusFacet.balanceOf(user0.address, poolId)).to.equal(initialUserBalance);
+
+            // Ensure burning fails when attempted by the operator without approval
+            await expect(
+                terminusFacet.connect(admin1).burn(admin0.address, poolId, 1)
+            ).to.be.reverted;
+
+            // Burn one token from operator's balance
+            await terminusFacet.connect(admin1).burn(admin1.address, poolId, 1);
+
+            expect(await terminusFacet.balanceOf(admin1.address, poolId)).to.equal(initialOperatorBalance - BigInt(1));
+
+            // Attempt to burn user’s token by operator without approval, expecting failure
+            await expect(
+                terminusFacet.connect(admin1).burn(user0.address, poolId, 1)
+            ).to.be.reverted;
+
+            // Approve operator for pool
+            await terminusFacet.connect(admin0).approveForPool(poolId, admin1.address);
+            expect(await terminusFacet.isApprovedForPool(poolId, admin1.address)).to.be.true;
+
+            // Now operator can mint tokens on behalf of others
+            await terminusFacet.connect(admin1).mint(admin0.address, poolId, 1, "0x");
+            await terminusFacet.connect(admin1).mint(admin1.address, poolId, 1, "0x");
+            await terminusFacet.connect(admin1).mint(user0.address, poolId, 1, "0x");
+
+            // Check updated balances after successful minting
+            expect(await terminusFacet.balanceOf(admin0.address, poolId)).to.equal(initialControllerBalance + BigInt(1));
+            expect(await terminusFacet.balanceOf(admin1.address, poolId)).to.equal(initialOperatorBalance);
+            expect(await terminusFacet.balanceOf(user0.address, poolId)).to.equal(initialUserBalance + BigInt(1));
+
+            // Operator can also burn tokens from any account
+            await terminusFacet.connect(admin1).burn(admin0.address, poolId, 1);
+            await terminusFacet.connect(admin1).burn(admin1.address, poolId, 1);
+            await terminusFacet.connect(admin1).burn(user0.address, poolId, 1);
+
+            expect(await terminusFacet.balanceOf(admin0.address, poolId)).to.equal(initialControllerBalance);
+            expect(await terminusFacet.balanceOf(admin1.address, poolId)).to.equal(initialOperatorBalance - BigInt(1));
+            expect(await terminusFacet.balanceOf(user0.address, poolId)).to.equal(initialUserBalance);
+
+            // Revoke pool approval from operator
+            await terminusFacet.connect(admin0).unapproveForPool(poolId, admin1.address);
+            expect(await terminusFacet.isApprovedForPool(poolId, admin1.address)).to.be.false;
+
+            // Ensure minting and burning fail again after revoking approval
+            await expect(
+                terminusFacet.connect(admin1).mint(admin0.address, poolId, 1, "0x")
+            ).to.be.reverted;
+            await expect(
+                terminusFacet.connect(admin1).mint(admin1.address, poolId, 1, "0x")
+            ).to.be.reverted;
+            await expect(
+                terminusFacet.connect(admin1).mint(user0.address, poolId, 1, "0x")
+            ).to.be.reverted;
+
+            await expect(
+                terminusFacet.connect(admin1).burn(admin0.address, poolId, 1)
+            ).to.be.reverted;
+
+            // Operator can only burn its own tokens
+            await terminusFacet.connect(admin1).burn(admin1.address, poolId, 1);
+
+            // Verify final balances remain consistent with allowed actions
+            expect(await terminusFacet.balanceOf(admin0.address, poolId)).to.equal(initialControllerBalance);
+            expect(await terminusFacet.balanceOf(admin1.address, poolId)).to.equal(initialOperatorBalance - BigInt(2));
+            expect(await terminusFacet.balanceOf(user0.address, poolId)).to.equal(initialUserBalance);
+        });
     })
-    //Pick up on line 517 in moonstream/web3/cli/web3cli/test_terminus.py
+    describe("Pool Creation and State View Tests", async function () {
 
+        it("Termiuns-30: Should prevent transfers for a nontransferable pool", async function () {
+            // Create a nontransferable, nonburnable pool
+            await terminusFacet.connect(admin0).createPoolV1(10, false, false);
+            const poolId = await terminusFacet.totalPools();
+
+            // Mint 1 token to sender in the newly created pool
+            await terminusFacet.connect(admin0).mint(user0.address, poolId, 1, "0x");
+
+            // Record initial balances
+            const initialSenderBalance = await terminusFacet.balanceOf(user0.address, poolId);
+            const initialReceiverBalance = await terminusFacet.balanceOf(user1.address, poolId);
+
+            // Attempt to transfer from sender to receiver, expecting it to fail
+            await expect(
+                terminusFacet.connect(user0).safeTransferFrom(
+                    user0.address,
+                    user1.address,
+                    poolId,
+                    1,
+                    "0x"
+                )
+            ).to.be.reverted;
+
+            // Verify balances remain unchanged
+            const finalSenderBalance = await terminusFacet.balanceOf(user0.address, poolId);
+            const finalReceiverBalance = await terminusFacet.balanceOf(user1.address, poolId);
+
+            expect(finalSenderBalance).to.equal(initialSenderBalance);
+            expect(finalReceiverBalance).to.equal(initialReceiverBalance);
+        });
+
+        it("Terminus-31: Should check pool properties for transferability, burnability, and URI", async function () {
+            await erc20.connect(admin0).mint(admin0, 4000);
+            await erc20.connect(admin0).approve(terminusFacetAddress, 4000);
+            // Nontransferable, nonburnable pool
+            const nontransferableNonburnableUri = "https://example.com/ff.json";
+            await terminusFacet.connect(admin0).createPoolV2(10, false, false, nontransferableNonburnableUri);
+            const nontransferableNonburnablePoolId = await terminusFacet.totalPools();
+
+            expect(await terminusFacet.poolIsTransferable(nontransferableNonburnablePoolId)).to.be.false;
+            expect(await terminusFacet.poolIsBurnable(nontransferableNonburnablePoolId)).to.be.false;
+            expect(await terminusFacet.uri(nontransferableNonburnablePoolId)).to.equal(nontransferableNonburnableUri);
+
+            // Transferable, nonburnable pool
+            const transferableNonburnableUri = "https://example.com/tf.json";
+            await terminusFacet.connect(admin0).createPoolV2(10, true, false, transferableNonburnableUri);
+            const transferableNonburnablePoolId = await terminusFacet.totalPools();
+
+            expect(await terminusFacet.poolIsTransferable(transferableNonburnablePoolId)).to.be.true;
+            expect(await terminusFacet.poolIsBurnable(transferableNonburnablePoolId)).to.be.false;
+            expect(await terminusFacet.uri(transferableNonburnablePoolId)).to.equal(transferableNonburnableUri);
+
+            // Transferable, burnable pool
+            const transferableBurnableUri = "https://example.com/tt.json";
+            await terminusFacet.connect(admin0).createPoolV2(10, true, true, transferableBurnableUri);
+            const transferableBurnablePoolId = await terminusFacet.totalPools();
+
+            expect(await terminusFacet.poolIsTransferable(transferableBurnablePoolId)).to.be.true;
+            expect(await terminusFacet.poolIsBurnable(transferableBurnablePoolId)).to.be.true;
+            expect(await terminusFacet.uri(transferableBurnablePoolId)).to.equal(transferableBurnableUri);
+
+            // Nontransferable, burnable pool
+            const nontransferableBurnableUri = "https://example.com/ft.json";
+            await terminusFacet.connect(admin0).createPoolV2(10, false, true, nontransferableBurnableUri);
+            const nontransferableBurnablePoolId = await terminusFacet.totalPools();
+
+            expect(await terminusFacet.poolIsTransferable(nontransferableBurnablePoolId)).to.be.false;
+            expect(await terminusFacet.poolIsBurnable(nontransferableBurnablePoolId)).to.be.true;
+            expect(await terminusFacet.uri(nontransferableBurnablePoolId)).to.equal(nontransferableBurnableUri);
+        });
+
+        it("Terminus-32: Should allow pool state to be set by the controller only", async function () {
+            // Create a nontransferable, nonburnable pool
+            await terminusFacet.connect(admin0).createPoolV1(10, false, false);
+            const poolId = await terminusFacet.totalPools();
+
+            // Verify initial state
+            expect(await terminusFacet.terminusPoolController(poolId)).to.equal(admin0.address);
+            expect(await terminusFacet.poolIsTransferable(poolId)).to.be.false;
+            expect(await terminusFacet.poolIsBurnable(poolId)).to.be.false;
+
+            // Set pool as transferable
+            await terminusFacet.connect(admin0).setPoolTransferable(poolId, true);
+            expect(await terminusFacet.poolIsTransferable(poolId)).to.be.true;
+            expect(await terminusFacet.poolIsBurnable(poolId)).to.be.false;
+
+            // Set pool as burnable
+            await terminusFacet.connect(admin0).setPoolBurnable(poolId, true);
+            expect(await terminusFacet.poolIsTransferable(poolId)).to.be.true;
+            expect(await terminusFacet.poolIsBurnable(poolId)).to.be.true;
+
+            // Reset pool state back to nontransferable and nonburnable
+            await terminusFacet.connect(admin0).setPoolTransferable(poolId, false);
+            await terminusFacet.connect(admin0).setPoolBurnable(poolId, false);
+            expect(await terminusFacet.poolIsTransferable(poolId)).to.be.false;
+            expect(await terminusFacet.poolIsBurnable(poolId)).to.be.false;
+        });
+
+        it("Terminus-33: Should prevent non-controller from setting pool state parameters", async function () {
+            // Create a nontransferable, nonburnable pool
+            await terminusFacet.connect(admin0).createPoolV1(10, false, false);
+            const poolId = await terminusFacet.totalPools();
+
+            // Verify initial state
+            expect(await terminusFacet.terminusPoolController(poolId)).to.equal(admin0.address);
+            expect(await terminusFacet.poolIsTransferable(poolId)).to.be.false;
+            expect(await terminusFacet.poolIsBurnable(poolId)).to.be.false;
+
+            // Attempt to set state by a non-controller, expecting failures
+            await expect(
+                terminusFacet.connect(admin1).setPoolTransferable(poolId, true)
+            ).to.be.reverted;
+            await expect(
+                terminusFacet.connect(admin1).setPoolBurnable(poolId, true)
+            ).to.be.reverted;
+
+            // Verify state remains unchanged
+            expect(await terminusFacet.poolIsTransferable(poolId)).to.be.false;
+            expect(await terminusFacet.poolIsBurnable(poolId)).to.be.false;
+        });
+
+        it("Terminus-34: Should allow token owner to burn in a burnable pool", async function () {
+            // Create a transferable, burnable pool
+            await terminusFacet.connect(admin0).createPoolV1(10, true, true);
+            const poolId = await terminusFacet.totalPools();
+
+            // Mint a token to the token owner
+            await terminusFacet.connect(admin0).mint(user0.address, poolId, 1, "0x");
+
+            // Record initial pool supply and owner balance
+            const initialPoolSupply = await terminusFacet.terminusPoolSupply(poolId);
+            const initialOwnerBalance = await terminusFacet.balanceOf(user0.address, poolId);
+
+            // Token owner burns their token
+            await terminusFacet.connect(user0).burn(user0.address, poolId, 1);
+
+            // Verify final supply and owner balance after burn
+            const finalPoolSupply = await terminusFacet.terminusPoolSupply(poolId);
+            const finalOwnerBalance = await terminusFacet.balanceOf(user0.address, poolId);
+
+            expect(finalPoolSupply).to.equal(initialPoolSupply - BigInt(1));
+            expect(finalOwnerBalance).to.equal(initialOwnerBalance - BigInt(1));
+        });
+
+        it("Terminus-35: Should allow pool controller to burn tokens in a burnable pool", async function () {
+            // Create a transferable, burnable pool
+            await terminusFacet.connect(admin0).createPoolV1(10, true, true);
+            const poolId = await terminusFacet.totalPools();
+
+            // Mint a token to the token owner
+            await terminusFacet.connect(admin0).mint(user0.address, poolId, 1, "0x");
+
+            // Record initial pool supply and owner balance
+            const initialPoolSupply = await terminusFacet.terminusPoolSupply(poolId);
+            const initialOwnerBalance = await terminusFacet.balanceOf(user0.address, poolId);
+
+            // Pool controller burns the token owned by tokenOwner
+            await terminusFacet.connect(admin0).burn(user0.address, poolId, 1);
+
+            // Verify final supply and owner balance after burn
+            const finalPoolSupply = await terminusFacet.terminusPoolSupply(poolId);
+            const finalOwnerBalance = await terminusFacet.balanceOf(user0.address, poolId);
+
+            expect(finalPoolSupply).to.equal(initialPoolSupply - BigInt(1));
+            expect(finalOwnerBalance).to.equal(initialOwnerBalance - BigInt(1));
+        });
+
+        it("Termins-36: Should allow authorized third party to burn tokens in a burnable pool", async function () {
+            // Create a transferable, burnable pool
+            await terminusFacet.connect(admin0).createPoolV1(10, true, true);
+            const poolId = await terminusFacet.totalPools();
+
+            // Mint a token to the token owner
+            await terminusFacet.connect(admin0).mint(user0.address, poolId, 1, "0x");
+
+            // Record initial pool supply and owner balance
+            const initialPoolSupply = await terminusFacet.terminusPoolSupply(poolId);
+            const initialOwnerBalance = await terminusFacet.balanceOf(user0.address, poolId);
+
+            // Authorize third party for the pool
+            await terminusFacet.connect(admin0).approveForPool(poolId, admin1.address);
+
+            // Authorized third party burns the token
+            await terminusFacet.connect(admin1).burn(user0.address, poolId, 1);
+
+            // Verify final supply and owner balance after burn
+            const finalPoolSupply = await terminusFacet.terminusPoolSupply(poolId);
+            const finalOwnerBalance = await terminusFacet.balanceOf(user0.address, poolId);
+
+            expect(finalPoolSupply).to.equal(initialPoolSupply - BigInt(1));
+            expect(finalOwnerBalance).to.equal(initialOwnerBalance - BigInt(1));
+        });
+
+        it("Terminus-37: Should prevent unauthorized third party from burning tokens in a burnable pool", async function () {
+            // Create a transferable, burnable pool
+            await terminusFacet.connect(admin0).createPoolV1(10, true, true);
+            const poolId = await terminusFacet.totalPools();
+
+            // Mint a token to the token owner
+            await terminusFacet.connect(admin0).mint(user0.address, poolId, 1, "0x");
+
+            // Record initial pool supply and owner balance
+            const initialPoolSupply = await terminusFacet.terminusPoolSupply(poolId);
+            const initialOwnerBalance = await terminusFacet.balanceOf(user0.address, poolId);
+
+            // Attempt to burn by unauthorized third party, expecting failure
+            await expect(
+                terminusFacet.connect(user1).burn(user0.address, poolId, 1)
+            ).to.be.reverted;
+
+            // Verify pool supply and owner balance remain unchanged
+            const finalPoolSupply = await terminusFacet.terminusPoolSupply(poolId);
+            const finalOwnerBalance = await terminusFacet.balanceOf(user0.address, poolId);
+
+            expect(finalPoolSupply).to.equal(initialPoolSupply);
+            expect(finalOwnerBalance).to.equal(initialOwnerBalance);
+        });
+
+        it("Terminus-38: Should prevent transfers in a nontransferable pool", async function () {
+            // Create a nontransferable, nonburnable pool
+            await terminusFacet.connect(admin0).createPoolV1(10, false, false);
+            const poolId = await terminusFacet.totalPools();
+
+            // Mint a token to the token owner
+            await terminusFacet.connect(admin0).mint(user0.address, poolId, 1, "0x");
+
+            // Record initial pool supply and owner balance
+            const initialPoolSupply = await terminusFacet.terminusPoolSupply(poolId);
+            const initialOwnerBalance = await terminusFacet.balanceOf(user0.address, poolId);
+
+            // Attempt to transfer token to receiver, expecting it to fail
+            await expect(
+                terminusFacet.connect(user0).safeTransferFrom(
+                    user0.address,
+                    user1.address,
+                    poolId,
+                    1,
+                    "0x"
+                )
+            ).to.be.reverted;
+
+            // Verify pool supply and owner balance remain unchanged
+            const finalPoolSupply = await terminusFacet.terminusPoolSupply(poolId);
+            const finalOwnerBalance = await terminusFacet.balanceOf(user0.address, poolId);
+
+            expect(finalPoolSupply).to.equal(initialPoolSupply);
+            expect(finalOwnerBalance).to.equal(initialOwnerBalance);
+        });
+
+        it("Terminus-39: Should prevent batch transfers in a nontransferable pool", async function () {
+            // Create a nontransferable, nonburnable pool
+            await terminusFacet.connect(admin0).createPoolV1(10, false, false);
+            const poolId = await terminusFacet.totalPools();
+
+            // Mint a token to the token owner
+            await terminusFacet.connect(admin0).mint(user0.address, poolId, 1, "0x");
+
+            // Record initial pool supply and owner balance
+            const initialPoolSupply = await terminusFacet.terminusPoolSupply(poolId);
+            const initialOwnerBalance = await terminusFacet.balanceOf(user0.address, poolId);
+
+            // Attempt to batch transfer token to receiver, expecting it to fail
+            await expect(
+                terminusFacet.connect(user0).safeBatchTransferFrom(
+                    user0.address,
+                    user1.address,
+                    [poolId],
+                    [1],
+                    "0x"
+                )
+            ).to.be.reverted;
+
+            // Verify pool supply and owner balance remain unchanged
+            const finalPoolSupply = await terminusFacet.terminusPoolSupply(poolId);
+            const finalOwnerBalance = await terminusFacet.balanceOf(user0.address, poolId);
+
+            expect(finalPoolSupply).to.equal(initialPoolSupply);
+            expect(finalOwnerBalance).to.equal(initialOwnerBalance);
+        });
+    })
 })
