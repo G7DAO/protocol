@@ -22,48 +22,48 @@ const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selected
     onDropdownClose: () => combobox.resetSelectedOption()
   })
 
-  const [tokenAddress, setTokenAddress] = useState<string>('')
-  const [error, setError] = useState<string>('')
-  const { connectedAccount, selectedHighNetwork, selectedLowNetwork } = useBlockchainContext()
+  // const [tokenAddress, setTokenAddress] = useState<string>('')
+  // const [error, setError] = useState<string>('')
+  const { selectedHighNetwork, selectedLowNetwork } = useBlockchainContext()
 
-  const handleTokenInput = (tokenAddress: string) => {
-    setTokenAddress(tokenAddress)
+  // const handleTokenInput = (tokenAddress: string) => {
+  //   setTokenAddress(tokenAddress)
 
-    let web3Provider
-    if (window.ethereum) web3Provider = new ethers.providers.Web3Provider(window.ethereum)
-    else throw new Error('Wallet is not installed')
+  //   let web3Provider
+  //   if (window.ethereum) web3Provider = new ethers.providers.Web3Provider(window.ethereum)
+  //   else throw new Error('Wallet is not installed')
 
-    if (!ethers.utils.isAddress(tokenAddress)) setError('Not an address!')
-    else if (!doesContractExist(tokenAddress, web3Provider)) setError(`Contract doesn't exist!`)
-    else if (tokens.find((token) => token.address === tokenAddress)) setError('Token already exists')
-    else setError('')
-  }
+  //   if (!ethers.utils.isAddress(tokenAddress)) setError('Not an address!')
+  //   else if (!doesContractExist(tokenAddress, web3Provider)) setError(`Contract doesn't exist!`)
+  //   else if (tokens.find((token) => token.address === tokenAddress)) setError('Token already exists')
+  //   else setError('')
+  // }
 
-  const addToken = (tokenAddress: string) => {
-    try {
-      if (error !== '') return
-      const storageKey = `${connectedAccount}-${selectedChainId}`
-      const existingTokens = JSON.parse(localStorage.getItem(storageKey) || '[]')
-      const rpc = ALL_NETWORKS.find((network) => network.chainId === selectedChainId)?.rpcs[0]
-      const token = {
-        name: `${tokenAddress.slice(0, 6)}`,
-        symbol: `${tokenAddress.slice(0, 6)}`,
-        address: tokenAddress,
-        rpc: rpc
-      }
+  // const addToken = (tokenAddress: string) => {
+  //   try {
+  //     if (error !== '') return
+  //     const storageKey = `${connectedAccount}-${selectedChainId}`
+  //     const existingTokens = JSON.parse(localStorage.getItem(storageKey) || '[]')
+  //     const rpc = ALL_NETWORKS.find((network) => network.chainId === selectedChainId)?.rpcs[0]
+  //     const token = {
+  //       name: `${tokenAddress.slice(0, 6)}`,
+  //       symbol: `${tokenAddress.slice(0, 6)}`,
+  //       address: tokenAddress,
+  //       rpc: rpc
+  //     }
 
-      if (tokens.find((token: Token) => token.address === tokenAddress)) {
-        setError("Can't add the same token!")
-        return
-      }
-      const updatedTokens = [...existingTokens, token]
-      localStorage.setItem(storageKey, JSON.stringify(updatedTokens))
-      onTokenAdded()
-    } catch (err) {
-      console.log(err)
-      setError(`` + err)
-    }
-  }
+  //     if (tokens.find((token: Token) => token.address === tokenAddress)) {
+  //       setError("Can't add the same token!")
+  //       return
+  //     }
+  //     const updatedTokens = [...existingTokens, token]
+  //     localStorage.setItem(storageKey, JSON.stringify(updatedTokens))
+  //     onTokenAdded()
+  //   } catch (err) {
+  //     console.log(err)
+  //     setError(`` + err)
+  //   }
+  // }
 
   return (
     <Combobox
@@ -126,7 +126,7 @@ const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selected
                 <div className={styles.tokenErrorText}>{error}</div>
               </div>
             )}
-            <div className={styles.tokenAdder}>
+            {/* <div className={styles.tokenAdder}>
               <input
                 className={`${styles.tokenAddressInput} ${error && error.length > 0 ? styles.error : ''}`}
                 value={tokenAddress}
@@ -138,7 +138,7 @@ const TokenSelector = ({ tokens, onChange, selectedToken, onTokenAdded, selected
               <div className={styles.importButton} onClick={() => addToken(tokenAddress)}>
                 <div className={styles.importText}>Import</div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </Combobox.Dropdown>

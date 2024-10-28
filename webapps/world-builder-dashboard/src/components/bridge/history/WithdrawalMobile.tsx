@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
 import styles from './DepositMobile.module.css'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import IconWithdrawalNodeCompletedMobile from '@/assets/IconWithdrawalNodeCompletedMobile'
@@ -16,7 +16,6 @@ interface WithdrawalMobileProps {
 }
 const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, execute, status, transferStatus }) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
-
 
   return (
     <div className={styles.container}>
