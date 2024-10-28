@@ -35,7 +35,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
     const getTransferData = async () => {
       const _status = await _bridgeTransfer.getStatus()
       // console.log(_status)
-      setTransferStatus(_status.status)
+      setTransferStatus(_status)
       const _transactionInputs = await _bridgeTransfer.getTransactionInputs()
       console.log(_transactionInputs)
       setTransactionInputs(_transactionInputs)
@@ -46,7 +46,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
 
   return (
     <>
-      {!transferStatus ? (
+      {!transferStatus?.status ? (
         Array.from(Array(7)).map((_, idx) => (
           <div className={styles.gridItem} key={idx}>
             <Skeleton key={idx} h='12px' w='100%' />
@@ -71,8 +71,8 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
               className={styles.explorerLink}
             >
               <div className={styles.gridItem}>
-                {transferStatus === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
-                transferStatus === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ? (
+                {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
+                transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ? (
                   <div className={styles.settled}>
                     Completed
                     <IconLinkExternal02 stroke='#fff' />

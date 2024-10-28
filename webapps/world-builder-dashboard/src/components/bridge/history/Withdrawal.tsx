@@ -77,7 +77,8 @@ useEffect(() => {
   setBridgeTransfer(_bridgeTransfer)
   const getStatus = async () => {
     const _status = await _bridgeTransfer.getStatus()
-    setTransferStatus(_status.status)
+    console.log(_status)
+    setTransferStatus(_status)
   }
   getStatus()
   withdrawDrilled.current = true
@@ -172,7 +173,7 @@ useEffect(() => {
             />
           ) : (
             <>
-              {transferStatus === ChildToParentMessageStatus.EXECUTED && (
+              {transferStatus?.status === ChildToParentMessageStatus.EXECUTED && (
                 <>
                   <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
                     <IconWithdrawalNodeCompleted className={styles.gridNodeCompleted} />
@@ -231,7 +232,7 @@ useEffect(() => {
                   <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
                   <div className={styles.gridItemInitiate}>
                     <a
-                      href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
+                      href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
                       target={'_blank'}
                       className={styles.explorerLink}
                     >
@@ -246,7 +247,7 @@ useEffect(() => {
                   </div>
                 </>
               )}
-              {transferStatus != ChildToParentMessageStatus.EXECUTED && (
+              {transferStatus?.status != ChildToParentMessageStatus.EXECUTED && (
                 <>
                   <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
                     <div className={styles.typeWithdrawal}>
@@ -258,7 +259,7 @@ useEffect(() => {
                   <div className={styles.gridItem}>{`${status.data?.amount} ${withdrawal.symbol}`}</div>
                   <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
                   <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
-                  {status.data?.status === ChildToParentMessageStatus.CONFIRMED && (
+                  {transferStatus?.status === ChildToParentMessageStatus.CONFIRMED && (
                     <>
                       <div className={styles.gridItem}>
                         <a
@@ -282,7 +283,7 @@ useEffect(() => {
                       </div>
                     </>
                   )}
-                  {status.data?.status === ChildToParentMessageStatus.UNCONFIRMED && (
+                  {transferStatus?.status === ChildToParentMessageStatus.UNCONFIRMED && (
                     <>
                       <div className={styles.gridItem}>
                         <a
