@@ -57,7 +57,6 @@ export const getStatus = (withdrawal: TransactionRecord) => {
   }
 }
 const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
-  const withdrawDrilled = useRef(false)
   const targetChain = withdrawal.highNetworkChainId === L2_NETWORK.chainId ? L1_NETWORK : L2_NETWORK
   const status = getStatus(withdrawal)
   const { switchChain, connectedAccount } = useBlockchainContext()
@@ -65,23 +64,37 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
   const [bridgeTransfer, setBridgeTransfer] = useState<BridgeTransfer>()
-  const [transferStatus, setTransferStatus] = useState<any>(undefined)
+  const [transferStatus, setTransferStatus] = useState<any>(withdrawal?.status)
 
   useEffect(() => {
-    if (!withdrawal || withdrawDrilled.current) return
-    const _bridgeTransfer = new BridgeTransfer({
-      txHash: withdrawal.highNetworkHash || '',
-      destinationNetworkChainId: withdrawal.lowNetworkChainId ?? 0,
-      originNetworkChainId: withdrawal.highNetworkChainId ?? 0
-    })
-    setBridgeTransfer(_bridgeTransfer)
-    const getStatus = async () => {
-      const _status = await _bridgeTransfer.getStatus()
-      setTransferStatus(_status)
+    if (!withdrawal) return
+    const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+    let transactions: TransactionRecord[] = []
+    if (transactionsString) {
+      transactions = JSON.parse(transactionsString)
     }
-    getStatus()
-    withdrawDrilled.current = true
-  }, [withdrawal])
+    const savedTransaction = transactions.find((t) => t.highNetworkHash === withdrawal.highNetworkHash)
+    if (savedTransaction && savedTransaction.status !== undefined) {
+      setTransferStatus(savedTransaction.status)
+    } else {
+      const _bridgeTransfer = new BridgeTransfer({
+        txHash: withdrawal.highNetworkHash || '',
+        destinationNetworkChainId: withdrawal.lowNetworkChainId ?? 0,
+        originNetworkChainId: withdrawal.highNetworkChainId ?? 0
+      })
+      setBridgeTransfer(_bridgeTransfer)
+
+      const getStatus = async () => {
+        const _status = await _bridgeTransfer.getStatus()
+        setTransferStatus(_status)
+        const updatedTransactions = transactions.map((t) =>
+          t.highNetworkHash === withdrawal.highNetworkHash ? { ...t, status: _status } : t
+        )
+        localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(updatedTransactions))
+      }
+      getStatus()
+    }
+  }, [withdrawal, connectedAccount])
 
   // Mutate function
   const execute = useMutation(
@@ -155,16 +168,16 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
 
   return (
     <>
-      {!transferStatus?.status ? (
+      {!transferStatus ? (
         !smallView ? (
           Array.from(Array(7)).map((_, idx) => (
             <div className={styles.gridItem} key={idx}>
-              <Skeleton key={idx} h='12px' w='100%' color='#373737' />
+              <Skeleton key={idx} h='12px' w='100%' color='#373737' animate />
             </div>
           ))
         ) : (
           <div className={styles.gridItem}>
-            <Skeleton h='12px' w='100%' color='#373737' />
+            <Skeleton h='12px' w='100%' color='#373737' animate />
           </div>
         )
       ) : (

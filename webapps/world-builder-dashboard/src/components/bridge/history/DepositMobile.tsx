@@ -46,12 +46,12 @@ const DepositMobile: React.FC<DepositMobileProps> = ({ deposit }) => {
         !smallView ? (
           Array.from(Array(7)).map((_, idx) => (
             <div className={parentStyles.gridItem}>
-              <Skeleton key={idx} h='12px' w='100%' color='#373737' />
+              <Skeleton key={idx} h='12px' w='100%' color='#373737' animate/>
             </div>
           ))
         ) : (
           <div className={parentStyles.gridItem}>
-            <Skeleton h='12px' w='100%' color='#373737' />
+            <Skeleton h='12px' w='100%' color='#373737' animate/>
           </div>
         )
       ): (

@@ -5,6 +5,7 @@ import { BridgeTransfer, BridgeTransferStatus } from 'game7-bridge-sdk'
 import { Skeleton, useMediaQuery } from 'summon-ui/mantine'
 import IconArrowNarrowDown from '@/assets/IconArrowNarrowDown'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
@@ -14,29 +15,43 @@ interface DepositProps {
   deposit: TransactionRecord
 }
 const Deposit: React.FC<DepositProps> = ({ deposit }) => {
-  const depositDrilled = useRef(false)
   const depositInfo = {
     from: LOW_NETWORKS.find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
     to: HIGH_NETWORKS.find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
   }
   const status = useDepositStatus(deposit)
-  const [transferStatus, setTransferStatus] = useState<any>(undefined)
+  const [transferStatus, setTransferStatus] = useState<any>(deposit?.status)
   const smallView = useMediaQuery('(max-width: 1199px)')
+  const { connectedAccount } = useBlockchainContext()
 
   useEffect(() => {
-    if (!deposit || depositDrilled.current) return
-    const _bridgeTransfer = new BridgeTransfer({
-      txHash: deposit.lowNetworkHash || '',
-      destinationNetworkChainId: deposit.highNetworkChainId ?? 0,
-      originNetworkChainId: deposit.lowNetworkChainId ?? 0
-    })
-    const getTransferData = async () => {
-      const _status = await _bridgeTransfer.getStatus()
-      setTransferStatus(_status)
+    if (!deposit) return
+    const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+    let transactions: TransactionRecord[] = []
+    if (transactionsString) {
+      transactions = JSON.parse(transactionsString)
     }
-    getTransferData()
-    depositDrilled.current = true
-  }, [deposit])
+    const savedTransaction = transactions.find((t) => t.highNetworkHash === deposit.highNetworkHash)
+    if (savedTransaction && savedTransaction.status !== undefined) {
+      setTransferStatus(savedTransaction.status)
+    } else {
+      const _bridgeTransfer = new BridgeTransfer({
+        txHash: deposit.lowNetworkHash || '',
+        destinationNetworkChainId: deposit.highNetworkChainId ?? 0,
+        originNetworkChainId: deposit.lowNetworkChainId ?? 0
+      })
+
+      const getStatus = async () => {
+        const _status = await _bridgeTransfer.getStatus()
+        setTransferStatus(_status)
+        const updatedTransactions = transactions.map((t) =>
+          t.highNetworkHash === deposit.highNetworkHash ? { ...t, status: _status } : t
+        )
+        localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(updatedTransactions))
+      }
+      getStatus()
+    }
+  }, [deposit, connectedAccount])
 
   return (
     <>
@@ -44,15 +59,15 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
         !smallView ? (
           Array.from(Array(7)).map((_, idx) => (
             <div className={styles.gridItem} key={idx}>
-              <Skeleton key={idx} h='12px' w='100%' color='#373737' />
+              <Skeleton key={idx} h='12px' w='100%' color='#373737' animate />
             </div>
           ))
         ) : (
           <div className={styles.gridItem}>
-            <Skeleton h='12px' w='100%' color='#373737' />
+            <Skeleton h='12px' w='100%' color='#373737' animate />
           </div>
         )
-      ): (
+      ) : (
         <>
           <div className={styles.gridItem}>
             <div className={styles.typeDeposit}>
