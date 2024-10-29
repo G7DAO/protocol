@@ -65,6 +65,7 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork, selectedToken }:
       <Combobox.Dropdown className='!bg-dark-900 !rounded-md !border-dark-700'>
         <Combobox.Options>
           {networks.map((n) => {
+            // can create token address map here
             const chainIds = Object.keys(selectedToken.tokenAddressMap)
             const isDisabled = chainIds.includes(String(n.chainId))
             return (

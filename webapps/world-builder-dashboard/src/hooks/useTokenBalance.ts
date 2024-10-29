@@ -9,6 +9,8 @@ const useTokenBalance = (tokenAddress: string, rpc: string, connectedAccount: st
             account: connectedAccount,
             rpc,
         });
+        console.log({tokenAddress, rpc, connectedAccount})
+        console.log(balance)
         return { balance, isFetching };
     } else {
         const { data: balance, isFetching } = useERC20Balance({

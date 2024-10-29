@@ -172,6 +172,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
       enabled: !!address && !!faucetIntervalQuery.data && !!lastClaimedTimestampQuery.data
     }
   )
+  
   useEffect(() => {
     let isButtonDisabled = true
 

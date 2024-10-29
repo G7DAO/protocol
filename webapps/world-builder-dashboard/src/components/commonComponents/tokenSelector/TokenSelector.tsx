@@ -4,7 +4,6 @@ import IconCheck from '@/assets/IconCheck'
 import IconChevronDown from '@/assets/IconChevronDown'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { Token } from '@/utils/tokens'
-
 type TokenSelectorProps = {
   tokens: Token[]
   selectedToken: Token
@@ -53,6 +52,7 @@ const TokenSelector = ({ tokens, onChange, selectedToken }: TokenSelectorProps) 
           {tokens.map((n: Token) => {
             const highNetworkChainId = String(selectedHighNetwork.chainId)
             const lowNetworkChainId = String(selectedLowNetwork.chainId)
+            // can create token address map here
             const chainIds = Object.keys(n.tokenAddressMap ?? [])
             const isChainIdValid = chainIds.includes(highNetworkChainId) && chainIds.includes(lowNetworkChainId)
             return (
