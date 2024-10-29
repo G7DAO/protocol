@@ -349,8 +349,8 @@ export async function getTransactionHistory(address: string, limit: number, offs
       addressOutBox,
       addressL2ERC20Gateway,
       addressL1ERC20Gateway,
-      addressERC20Inbox,
       addressL2GatewayRouter,
+      addressERC20Inbox,
       addressL1GatewayRouter,
       address, offset, limit])
     // unpack the data from the result
