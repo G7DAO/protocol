@@ -6,7 +6,7 @@ import { DEFAULT_STAKE_NATIVE_POOL_ID, L1_NETWORK, L2_NETWORK, L3_NETWORK } from
 import styles from './BridgeView.module.css'
 import { ethers } from 'ethers'
 // G7 SDK
-import { Bridger, BridgeToken } from 'game7-bridge-sdk'
+import { BridgeNetwork, Bridger, BridgeToken } from 'game7-bridge-sdk'
 // Components
 import ActionButton from '@/components/bridge/bridge/ActionButton'
 import BridgeMessage from '@/components/bridge/bridge/BridgeMessage'
@@ -33,10 +33,11 @@ const BridgeView = ({
 }) => {
   let chainId
   let address
-  let tokenAddresses 
+  let tokenAddresses
   const [bridger, setBridger] = useState<Bridger>()
-  const [balance, setBalance] = useState<string>("")
-  const [symbol, setSymbol] = useState<string>("")
+
+  const [balance, setBalance] = useState<string>('')
+  const [symbol, setSymbol] = useState<string>('')
   const [value, setValue] = useState('0')
   const [message, setMessage] = useState<{ destination: string; data: string }>({ destination: '', data: '' })
   const [isMessageExpanded, setIsMessageExpanded] = useState(false)
@@ -54,7 +55,6 @@ const BridgeView = ({
     setSelectedBridgeToken,
     selectedBridgeToken
   } = useBlockchainContext()
-
 
   const { isFetching: isFetchingLowNetworkBalance } = useERC20Balance({
     tokenAddress: selectedLowNetwork.g7TokenAddress,
@@ -82,18 +82,12 @@ const BridgeView = ({
 
   const handleTokenChange = async (token: Token) => {
     setSelectedBridgeToken(token)
-    tokenAddresses = token.tokenAddressMap;
-    chainId = token.chainId;
-    address = token.tokenAddressMap[chainId];
-    tokenAddresses = token.tokenAddressMap
-    console.log({chainId, address, tokenAddresses})
-    const bridgeToken = new BridgeToken(tokenAddresses, chainId)
-    console.log(bridgeToken)
-    // const tokenBalance = String(await bridgeToken.getBalance(token.rpc, token.address))
-    // setBalance(tokenBalance)
-    // const symbol = await bridgeToken.getSymbol(token.rpc)
-    // setSymbol(symbol)
-    // console.log(symbol)
+    const bridgeToken: BridgeToken = new BridgeToken(token.tokenAddressMap, token.chainId)
+    const tokenBalance = String(await bridgeToken.getBalance(token.rpc, connectedAccount ?? ""))
+    console.log(token)
+    setBalance(String(ethers.utils.formatEther(tokenBalance)))
+    const symbol = await bridgeToken.getSymbol(token.rpc)
+    setSymbol(symbol)
   }
 
   const estimatedFee = useQuery(
@@ -102,7 +96,7 @@ const BridgeView = ({
       try {
         const fee = await bridger?.getGasAndFeeEstimation(
           value ? ethers.utils.parseEther(value) : ethers.utils.parseEther('0.0'),
-          selectedLowNetwork.rpcs[0],
+          direction==='DEPOSIT' ? selectedLowNetwork.rpcs[0] : selectedHighNetwork.rpcs[0],
           connectedAccount!
         )
         const feeFormatted = ethers.utils.formatEther(fee?.estimatedFee || '')

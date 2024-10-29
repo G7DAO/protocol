@@ -38,9 +38,6 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
     depositDrilled.current = true
   }, [deposit])
 
-
-
-
   return (
     <>
       {!transferStatus?.status ? (
