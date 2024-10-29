@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
+import React from 'react'
+import { useMutation, useQueryClient } from 'react-query'
 import { HIGH_NETWORKS, L1_NETWORK, L2_NETWORK, L3_NETWORK, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import { ethers } from 'ethers'
@@ -11,6 +11,7 @@ import IconWithdrawalNodeCompleted from '@/assets/IconWithdrawalNodeCompleted'
 import WithdrawalMobile from '@/components/bridge/history/WithdrawalMobile'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
+import useTransferData from '@/hooks/useTransferData'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
@@ -57,40 +58,13 @@ export const getStatus = (withdrawal: TransactionRecord) => {
   }
 }
 const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
-  const withdrawDrilled = useRef(false)
   const targetChain = withdrawal.highNetworkChainId === L2_NETWORK.chainId ? L1_NETWORK : L2_NETWORK
   const status = getStatus(withdrawal)
   const { switchChain, connectedAccount } = useBlockchainContext()
   const queryClient = useQueryClient()
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
-  const [transferStatus, setTransferStatus] = useState<any>()
-
-  const fetchStatus = async (withdrawal: TransactionRecord) => {
-    const _bridgeTransfer = new BridgeTransfer({
-      txHash: withdrawal.highNetworkHash || '',
-      destinationNetworkChainId: withdrawal.lowNetworkChainId ?? 0,
-      originNetworkChainId: withdrawal.highNetworkChainId ?? 0
-    })
-    const status = await _bridgeTransfer.getStatus()
-    setTransferStatus(status)
-    return status
-  }
-
-  useQuery(['withdrawalStatus', withdrawal], () => fetchStatus(withdrawal), {
-    enabled: !!withdrawal && !withdrawDrilled.current,
-    onSuccess: (newStatus) => {
-      queryClient.setQueryData(['withdrawalStatus', withdrawal], (oldData: any) => ({
-        ...oldData,
-        status: newStatus
-      }))
-      withdrawDrilled.current = true
-    },
-    onError: (error) => {
-      console.error('Error fetching status:', error)
-    }
-  })
-
+  const { data: transferStatus, isLoading } = useTransferData({ txRecord: withdrawal })
   // Mutate function
   const execute = useMutation(
     async (highNetworkHash: string | undefined) => {
@@ -146,12 +120,10 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
           console.log(e)
         }
         refetchNewNotifications(connectedAccount ?? '')
+        queryClient.refetchQueries(['transferData'])
         queryClient.refetchQueries(['incomingMessages'])
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
-        queryClient.setQueryData(['withdrawalStatus', withdrawal], (oldData: any) => {
-          return { ...oldData, status: ChildToParentMessageStatus.EXECUTED }
-        })
 
         // status.refetch()
         queryClient.refetchQueries(['pendingTransactions'])
@@ -168,7 +140,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
 
   return (
     <>
-      {!transferStatus ? (
+      {isLoading ? (
         !smallView ? (
           Array.from(Array(7)).map((_, idx) => (
             <div className={styles.gridItem} key={idx}>
@@ -191,7 +163,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
             />
           ) : (
             <>
-              {transferStatus?.status === ChildToParentMessageStatus.EXECUTED && (
+              {transferStatus && transferStatus?.status === ChildToParentMessageStatus.EXECUTED && (
                 <>
                   <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
                     <IconWithdrawalNodeCompleted className={styles.gridNodeCompleted} />
@@ -265,7 +237,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                   </div>
                 </>
               )}
-              {transferStatus?.status != ChildToParentMessageStatus.EXECUTED && (
+              {transferStatus && transferStatus.status != ChildToParentMessageStatus.EXECUTED && (
                 <>
                   <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
                     <div className={styles.typeWithdrawal}>
@@ -277,7 +249,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                   <div className={styles.gridItem}>{`${status.data?.amount} ${withdrawal.symbol}`}</div>
                   <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
                   <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
-                  {transferStatus?.status === ChildToParentMessageStatus.CONFIRMED && (
+                  {transferStatus && transferStatus.status === ChildToParentMessageStatus.CONFIRMED && (
                     <>
                       <div className={styles.gridItem}>
                         <a
@@ -294,14 +266,14 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       <div className={styles.gridItem}>
                         <button
                           className={styles.claimButton}
-                          onClick={() => execute.mutateAsync(status.data.highNetworkHash)}
+                          onClick={() => execute.mutate(status.data.highNetworkHash)}
                         >
                           {execute.isLoading && !execute.isSuccess ? 'Claiming...' : 'Claim Now'}
                         </button>
                       </div>
                     </>
                   )}
-                  {transferStatus?.status === ChildToParentMessageStatus.UNCONFIRMED && (
+                  {transferStatus && transferStatus.status === ChildToParentMessageStatus.UNCONFIRMED && (
                     <>
                       <div className={styles.gridItem}>
                         <a

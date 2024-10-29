@@ -1,11 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React from 'react'
 import { HIGH_NETWORKS, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
-import { BridgeTransfer, BridgeTransferStatus } from 'game7-bridge-sdk'
+import { BridgeTransferStatus } from 'game7-bridge-sdk'
 import { Skeleton, useMediaQuery } from 'summon-ui/mantine'
 import IconArrowNarrowDown from '@/assets/IconArrowNarrowDown'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
+import useTransferData from '@/hooks/useTransferData'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
@@ -14,33 +15,17 @@ interface DepositProps {
   deposit: TransactionRecord
 }
 const Deposit: React.FC<DepositProps> = ({ deposit }) => {
-  const depositDrilled = useRef(false)
   const depositInfo = {
     from: LOW_NETWORKS.find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
     to: HIGH_NETWORKS.find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
   }
   const status = useDepositStatus(deposit)
-  const [transferStatus, setTransferStatus] = useState<any>(deposit?.status)
   const smallView = useMediaQuery('(max-width: 1199px)')
-
-  useEffect(() => {
-    if (!deposit || depositDrilled.current) return
-    const _bridgeTransfer = new BridgeTransfer({
-      txHash: deposit.lowNetworkHash || '',
-      destinationNetworkChainId: deposit.highNetworkChainId ?? 0,
-      originNetworkChainId: deposit.lowNetworkChainId ?? 0
-    })
-    const getTransferData = async () => {
-      const _status = await _bridgeTransfer.getStatus()
-      setTransferStatus(_status)
-    }
-    getTransferData()
-    depositDrilled.current = true
-  }, [deposit])
+  const { data: transferStatus, isLoading } = useTransferData({ txRecord: deposit })
 
   return (
     <>
-      {!transferStatus?.status ? (
+      {isLoading ? (
         !smallView ? (
           Array.from(Array(7)).map((_, idx) => (
             <div className={styles.gridItem} key={idx}>
