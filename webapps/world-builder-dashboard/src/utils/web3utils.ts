@@ -13,6 +13,7 @@ export const getBlockExplorerUrl = (chainId: number | undefined) => {
   if (network?.blockExplorerUrls) {
     return network.blockExplorerUrls[0]
   }
+  console.log(network)
 }
 
 export const getNetwork = (chainId: number) => {

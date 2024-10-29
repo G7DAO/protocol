@@ -1,10 +1,12 @@
 import React from 'react'
 import { HIGH_NETWORKS, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
-import { Skeleton } from 'summon-ui/mantine'
+import { BridgeTransferStatus } from 'game7-bridge-sdk'
+import { Skeleton, useMediaQuery } from 'summon-ui/mantine'
 import IconArrowNarrowDown from '@/assets/IconArrowNarrowDown'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
+import useTransferData from '@/hooks/useTransferData'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
@@ -18,15 +20,23 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
     to: HIGH_NETWORKS.find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
   }
   const status = useDepositStatus(deposit)
+  const smallView = useMediaQuery('(max-width: 1199px)')
+  const { data: transferStatus, isLoading } = useTransferData({ txRecord: deposit })
 
   return (
     <>
-      {status.isLoading && !status.data ? (
-        Array.from(Array(7)).map((_, idx) => (
-          <div className={styles.gridItem} key={idx}>
-            <Skeleton key={idx} h='12px' w='100%' />
+      {isLoading ? (
+        !smallView ? (
+          Array.from(Array(7)).map((_, idx) => (
+            <div className={styles.gridItem} key={idx}>
+              <Skeleton key={idx} h='12px' w='100%' color='#373737' animate />
+            </div>
+          ))
+        ) : (
+          <div className={styles.gridItem}>
+            <Skeleton h='12px' w='100%' color='#373737' animate />
           </div>
-        ))
+        )
       ) : (
         <>
           <div className={styles.gridItem}>
@@ -46,10 +56,11 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
               className={styles.explorerLink}
             >
               <div className={styles.gridItem}>
-                {status.data && status.data.l2Result?.complete ? (
+                {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
+                transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ? (
                   <div className={styles.settled}>
                     Completed
-                    <IconLinkExternal02 stroke="#fff" />
+                    <IconLinkExternal02 stroke='#fff' />
                   </div>
                 ) : (
                   <div className={styles.pending}>

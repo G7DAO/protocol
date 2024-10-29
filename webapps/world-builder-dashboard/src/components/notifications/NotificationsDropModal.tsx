@@ -63,10 +63,7 @@ const NotificationsDropModal: React.FC<NotificationsDropModalProps> = ({ notific
 
   return (
     <div className={styles.container}>
-      {!notifications || (notifications.length === 0 &&
-        <div className={styles.content}>
-          No notifications yet
-        </div>)}
+      {!notifications || (notifications.length === 0 && <div className={styles.content}>No notifications yet</div>)}
       {notifications &&
         notifications.slice(0, 3).map((n, idx) => (
           <div className={styles.item} key={idx}>
@@ -77,7 +74,7 @@ const NotificationsDropModal: React.FC<NotificationsDropModalProps> = ({ notific
                   <a href={getTransactionUrl(n)} target={'_blank'} className={modalStyles.explorerLink}>
                     <div className={badgeClassName(n.status)}>
                       {n.status.toLowerCase()}
-                      <IconLinkExternal02 stroke={n.status === 'CLAIMABLE' ? '#fff' : '#fff'} />
+                      <IconLinkExternal02 stroke={'#fff'} />
                     </div>
                   </a>
                 ) : (
@@ -167,6 +164,13 @@ const getTransactionUrl = (notification: BridgeNotification): string | undefined
     case 'WITHDRAWAL':
       chainId = status === 'COMPLETED' ? tx.lowNetworkChainId : tx.highNetworkChainId
       txHash = status === 'COMPLETED' ? tx.lowNetworkHash : tx.highNetworkHash
+      if (status === 'COMPLETED') {
+        console.log(tx)
+        console.log(chainId)
+        console.log(txHash)
+        const explorerUrl = getBlockExplorerUrl(chainId)
+        console.log(explorerUrl)
+      }
       break
     case 'CLAIM':
       chainId = tx.highNetworkChainId

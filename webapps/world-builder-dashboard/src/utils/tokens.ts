@@ -12,6 +12,7 @@ export interface Token {
   Icon: React.FC<React.SVGProps<SVGSVGElement>>
   rpc: string
   tokenAddressMap: TokenAddressMap
+  chainId: number
 }
 
 export const getTokensForNetwork = (chainId: number | undefined, userAddress: string | undefined): Token[] => {
@@ -30,7 +31,8 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           address: L1_NETWORK.g7TokenAddress,
           Icon: IconG7T,
           tokenAddressMap: TG7T,
-          rpc: L1_NETWORK.rpcs[0]
+          rpc: L1_NETWORK.rpcs[0],
+          chainId: L1_NETWORK.chainId
         },
         {
           name: 'Ethereum',
@@ -38,7 +40,8 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           address: ZERO_ADDRESS,
           Icon: IconEthereum,
           rpc: L1_NETWORK.rpcs[0],
-          tokenAddressMap: ETH
+          tokenAddressMap: ETH,
+          chainId: L1_NETWORK.chainId
         },
         ...storedTokensWithItems
       ]
@@ -50,7 +53,8 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           address: L2_NETWORK.g7TokenAddress,
           Icon: IconG7T,
           rpc: L2_NETWORK.rpcs[0],
-          tokenAddressMap: TG7T
+          tokenAddressMap: TG7T,
+          chainId: L2_NETWORK.chainId
         },
         {
           name: 'Ethereum',
@@ -58,7 +62,8 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           address: ZERO_ADDRESS,
           Icon: IconEthereum,
           rpc: L2_NETWORK.rpcs[0],
-          tokenAddressMap: ETH
+          tokenAddressMap: ETH,
+          chainId: L2_NETWORK.chainId
         },
         ...storedTokensWithItems
       ]
@@ -70,7 +75,8 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           address: L3_NETWORK.g7TokenAddress,
           Icon: IconG7T,
           rpc: L3_NETWORK.rpcs[0],
-          tokenAddressMap: TG7T
+          tokenAddressMap: TG7T,
+          chainId: L3_NETWORK.chainId
         },
         ...storedTokensWithItems
       ]
