@@ -4,7 +4,6 @@ import { HIGH_NETWORKS, L1_NETWORK, L2_NETWORK, L3_NETWORK, LOW_NETWORKS } from 
 import styles from './WithdrawTransactions.module.css'
 import { ethers } from 'ethers'
 import { BridgeTransfer } from 'game7-bridge-sdk'
-import { Skeleton } from 'summon-ui/mantine'
 import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import IconWithdrawalNodeCompleted from '@/assets/IconWithdrawalNodeCompleted'
@@ -142,7 +141,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
     <>
       {isLoading && smallView ? (
         <div className={styles.gridItem}>
-          <Skeleton h='12px' w='100%' color='#373737' animate />
+          <div className={styles.loading}>Loading</div>
         </div>
       ) : (
         <>
@@ -168,10 +167,10 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                   <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
                   <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
                   <div className={styles.gridItem}>
-                    <Skeleton h='12px' w='100%' color='#373737' animate />
-                  </div>{' '}
+                    <div className={styles.loading}>Loading</div>
+                  </div>
                   <div className={styles.gridItem}>
-                    <Skeleton h='12px' w='100%' color='#373737' animate />
+                    <div className={styles.loading}>Loading</div>
                   </div>
                 </>
               ) : (

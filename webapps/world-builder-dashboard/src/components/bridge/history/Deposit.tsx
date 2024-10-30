@@ -3,7 +3,7 @@ import { HIGH_NETWORKS, LOW_NETWORKS } from '../../../../constants'
 import DepositMobile from './DepositMobile'
 import styles from './WithdrawTransactions.module.css'
 import { BridgeTransferStatus } from 'game7-bridge-sdk'
-import { Skeleton, useMediaQuery } from 'summon-ui/mantine'
+import { useMediaQuery } from 'summon-ui/mantine'
 import IconArrowNarrowDown from '@/assets/IconArrowNarrowDown'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
@@ -28,7 +28,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
     <>
       {isLoading && smallView ? (
         <div className={styles.gridItem}>
-          <Skeleton h='12px' w='100%' color='#373737' animate />
+          <div className={styles.loading}>Loading</div>
         </div>
       ) : (
         <>
@@ -49,10 +49,10 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
               {isLoading ? (
                 <>
                   <div className={styles.gridItem}>
-                    <Skeleton h='12px' w='100%' color='#373737' animate />
+                    <div className={styles.loading}>Loading</div>
                   </div>{' '}
                   <div className={styles.gridItem}>
-                    <Skeleton h='12px' w='100%' color='#373737' animate />
+                    <div className={styles.loading}>Loading</div>
                   </div>
                 </>
               ) : (
