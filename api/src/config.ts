@@ -62,3 +62,4 @@ export const addressL2GatewayRouter = '9fDD1C4E4AA24EEc1d913FABea925594a20d43C7'
 export const addressL1GatewayRouter = 'cE18836b233C83325Cc8848CA4487e94C6288264' // Ethereum deposit address
 export const addressOutBox = '64105c6C3D494469D5F21323F0E917563489d9f5' // Arbitrum outbox address
 export const addressArbOSL2 = '0000000000000000000000000000000000000064' // Game7 ArbOS L2 address
+export const addressL1Inbox = 'aAe29B0366299461418F5324a79Afc425BE5ae21' // Ethereum inbox address

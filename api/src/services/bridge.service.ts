@@ -1,6 +1,10 @@
 // src/services/bridge.service.ts
 import { pool } from '../utils/db'; // Adjust the import path as necessary
-import { tableNameGame7, tableNameEthereum, tableNameArbitrum, addressERC20Inbox, addressL1ERC20Gateway, addressL2ERC20Gateway, addressOutBox, addressArbOSL2, addressL1GatewayRouter, addressL2GatewayRouter } from '../config'; // Adjust the import path as necessary
+import { tableNameGame7, tableNameEthereum, tableNameArbitrum, addressERC20Inbox, addressL1ERC20Gateway, addressL2ERC20Gateway, addressOutBox, addressArbOSL2, addressL1GatewayRouter, addressL2GatewayRouter, addressL1Inbox } from '../config'; // Adjust the import path as necessary
+
+
+/// 11155111 - sepolia
+/// 13746 - game7  
 
 export async function getTransactionHistory(address: string, limit: number, offset: number): Promise<object | string> {
   try {
@@ -10,8 +14,8 @@ export async function getTransactionHistory(address: string, limit: number, offs
           'WITHDRAWAL' AS type,
           label_data->'args'->>'position' AS position,
           label_data->'args'->>'callvalue' AS amount,
-          11155111 AS parentNetworkChainId,
-          421614 AS childNetworkChainId,
+          421614 AS parentNetworkChainId,
+          13746 AS childNetworkChainId,
           transaction_hash AS childNetworkHash,
           block_timestamp AS childNetworkTimestamp,
           label_data->'args'->>'caller' AS from_address,
@@ -49,8 +53,8 @@ export async function getTransactionHistory(address: string, limit: number, offs
           'WITHDRAWAL' AS type,
           null AS position,
           NULL AS amount,
-          11155111 AS parentNetworkChainId,
-          421614 AS childNetworkChainId,
+          421614 AS parentNetworkChainId,
+          13746 AS childNetworkChainId,
           transaction_hash AS childNetworkHash,
           block_timestamp AS childNetworkTimestamp,
           label_data->'args'->>'caller' AS from_address,
@@ -100,8 +104,8 @@ export async function getTransactionHistory(address: string, limit: number, offs
               'Withdrawal' AS type,
               label_data->'args'->>'_l2ToL1Id' AS position,
               label_data->'args'->>'_amount' AS amount,
-              421614 AS parentNetworkChainId,
-              13746 AS childNetworkChainId,
+              11155111 AS parentNetworkChainId,
+              421614 AS childNetworkChainId,
               transaction_hash AS childNetworkHash,
               block_timestamp AS childNetworkTimestamp,
               label_data->'args'->>'_from' AS from_address,
@@ -137,8 +141,8 @@ export async function getTransactionHistory(address: string, limit: number, offs
           'WITHDRAWAL' AS type,
           null AS position,
           NULL AS amount,
-          421614 AS parentNetworkChainId,
-          13746 AS childNetworkChainId,
+          11155111 AS parentNetworkChainId,
+          421614 AS childNetworkChainId,
           transaction_hash AS childNetworkHash,
           block_timestamp AS childNetworkTimestamp,
           label_data->'args'->>'caller' AS from_address,
@@ -186,8 +190,8 @@ export async function getTransactionHistory(address: string, limit: number, offs
         SELECT
               'DEPOSIT' AS type,
               label_data -> 'args' ->> 'amount' AS amount,
-              11155111 AS parentNetworkChainId,
-              421614 AS childNetworkChainId,
+              421614 AS parentNetworkChainId,
+              13746 AS childNetworkChainId,
               transaction_hash AS parentNetworkHash,
               block_timestamp AS parentNetworkTimestamp,
               block_timestamp AS completionTimestamp,
@@ -204,13 +208,15 @@ export async function getTransactionHistory(address: string, limit: number, offs
         WHERE
               label = 'seer'
               AND label_type = 'tx_call'
+              AND label_name = 'depositERC20'
               AND address = DECODE($6, 'hex') -- e6470bb72291c39073aed67a30ff93b69c1f47de -- Arbitrum addressERC20Inbox
     ), l1_to_l2_deposit as (
-        SELECT
+       select * from ( 
+       SELECT
               'DEPOSIT' AS type,
               label_data -> 'args' ->> '_amount' AS amount,
-              421614 AS parentNetworkChainId,
-              13746 AS childNetworkChainId,
+              11155111 AS parentNetworkChainId,
+              421614 AS childNetworkChainId,
               transaction_hash AS parentNetworkHash,
               block_timestamp AS parentNetworkTimestamp,
               block_timestamp AS completionTimestamp,
@@ -229,6 +235,31 @@ export async function getTransactionHistory(address: string, limit: number, offs
               AND label_type = 'tx_call'
               AND label_name = 'outboundTransfer'
               AND ADDRESS = DECODE($7, 'hex') -- cE18836b233C83325Cc8848CA4487e94C6288264 -- Ethereum addressDeposit
+        UNION ALL
+        SELECT
+          'DEPOSIT' AS type,
+          NULL AS amount,
+          11155111 AS parentNetworkChainId,
+          421614 AS childNetworkChainId,
+          transaction_hash AS parentNetworkHash,
+          block_timestamp AS parentNetworkTimestamp,
+          block_timestamp AS completionTimestamp,
+          '0x' || ENCODE(origin_address, 'hex') AS from_address,
+          '0x' || ENCODE(origin_address, 'hex') AS to_address,
+          '' AS token,
+          CASE
+            WHEN label_data ->> 'status' = '1' THEN true
+            ELSE false
+          END AS isDeposit,
+          block_timestamp
+        FROM
+          ${tableNameEthereum}
+        WHERE
+          label = 'seer'
+          AND label_type = 'tx_call'
+          AND label_name = 'depositEth'
+          AND ADDRESS = DECODE($8, 'hex') -- cE18836b233C83325Cc8848CA4487e94C6288264 -- Ethereum addressDeposit
+      ) as a
     ), full_history as (
           SELECT
                   json_build_object(
@@ -324,14 +355,14 @@ export async function getTransactionHistory(address: string, limit: number, offs
     FROM
       full_history
     WHERE
-      from_address = $8
-      or from_address = '0x' || ENCODE(DECODE(SUBSTRING($8 FROM 3), 'hex'), 'hex')
-      or to_address = $8
-      or to_address = '0x' || ENCODE(DECODE(SUBSTRING($8 FROM 3), 'hex'), 'hex')
+      from_address = $9
+      or from_address = '0x' || ENCODE(DECODE(SUBSTRING($9 FROM 3), 'hex'), 'hex')
+      or to_address = $9
+      or to_address = '0x' || ENCODE(DECODE(SUBSTRING($9 FROM 3), 'hex'), 'hex')
     ORDER BY
       block_timestamp DESC
-      OFFSET $9
-      LIMIT $10
+      OFFSET $10
+      LIMIT $11
   `;
     const result = await pool.query(query, [addressArbOSL2,
       addressOutBox,
@@ -340,6 +371,7 @@ export async function getTransactionHistory(address: string, limit: number, offs
       addressL2GatewayRouter,
       addressERC20Inbox,
       addressL1GatewayRouter,
+      addressL1Inbox,
       address, offset, limit])
     // unpack the data from the result
     const data = result.rows.map((row: any) => row.data);
