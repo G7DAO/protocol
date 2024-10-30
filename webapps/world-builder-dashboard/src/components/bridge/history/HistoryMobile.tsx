@@ -1,10 +1,10 @@
 import React from 'react'
 import styles from './HistoryMobile.module.css'
-import DepositMobile from '@/components/bridge/history/DepositMobile'
 import Withdrawal from '@/components/bridge/history/Withdrawal'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useMessages } from '@/hooks/useL2ToL1MessageStatus'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
+import Deposit from './Deposit'
 
 interface HistoryMobileProps {}
 const HistoryMobile: React.FC<HistoryMobileProps> = ({}) => {
@@ -15,7 +15,7 @@ const HistoryMobile: React.FC<HistoryMobileProps> = ({}) => {
     <div className={styles.container}>
       {messages.data &&
         messages.data.map((tx: TransactionRecord, idx: number) =>
-          tx.type === 'DEPOSIT' ? <DepositMobile deposit={tx} key={idx} /> : <Withdrawal withdrawal={tx} key={idx} />
+          tx.type === 'DEPOSIT' ? <Deposit deposit={tx} key={idx} /> : <Withdrawal withdrawal={tx} key={idx} />
         )}
     </div>
   )
