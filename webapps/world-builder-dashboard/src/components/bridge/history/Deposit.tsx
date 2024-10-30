@@ -26,18 +26,10 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
 
   return (
     <>
-      {isLoading ? (
-        !smallView ? (
-          Array.from(Array(7)).map((_, idx) => (
-            <div className={styles.gridItem} key={idx}>
-              <Skeleton key={idx} h='12px' w='100%' color='#373737' animate />
-            </div>
-          ))
-        ) : (
-          <div className={styles.gridItem}>
-            <Skeleton h='12px' w='100%' color='#373737' animate />
-          </div>
-        )
+      {isLoading && smallView ? (
+        <div className={styles.gridItem}>
+          <Skeleton h='12px' w='100%' color='#373737' animate />
+        </div>
       ) : (
         <>
           {smallView ? (
@@ -54,33 +46,46 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
               <div className={styles.gridItem}>{`${deposit.amount} ${deposit.symbol}`}</div>
               <div className={styles.gridItem}>{depositInfo.from}</div>
               <div className={styles.gridItem}>{depositInfo.to}</div>
-              <a
-                href={`${getBlockExplorerUrl(deposit.lowNetworkChainId)}/tx/${deposit.lowNetworkHash}`}
-                target={'_blank'}
-                className={styles.explorerLink}
-              >
-                <div className={styles.gridItem}>
-                  {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
-                  transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ? (
-                    <div className={styles.settled}>
-                      Completed
-                      <IconLinkExternal02 stroke='#fff' />
+              {isLoading ? (
+                <>
+                  <div className={styles.gridItem}>
+                    <Skeleton h='12px' w='100%' color='#373737' animate />
+                  </div>{' '}
+                  <div className={styles.gridItem}>
+                    <Skeleton h='12px' w='100%' color='#373737' animate />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <a
+                    href={`${getBlockExplorerUrl(deposit.lowNetworkChainId)}/tx/${deposit.lowNetworkHash}`}
+                    target={'_blank'}
+                    className={styles.explorerLink}
+                  >
+                    <div className={styles.gridItem}>
+                      {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
+                      transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ? (
+                        <div className={styles.settled}>
+                          Completed
+                          <IconLinkExternal02 stroke='#fff' />
+                        </div>
+                      ) : (
+                        <div className={styles.pending}>
+                          Pending
+                          <IconLinkExternal02 className={styles.arrowUp} />
+                        </div>
+                      )}
                     </div>
-                  ) : (
-                    <div className={styles.pending}>
-                      Pending
-                      <IconLinkExternal02 className={styles.arrowUp} />
-                    </div>
-                  )}
-                </div>
-              </a>
-              <div className={styles.gridItemImportant}>
-                {status.data && status.data.highNetworkTimestamp ? (
-                  <div>{timeAgo(status.data.highNetworkTimestamp)}</div>
-                ) : (
-                  <div>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)}</div>
-                )}
-              </div>
+                  </a>
+                  <div className={styles.gridItemImportant}>
+                    {status.data && status.data.highNetworkTimestamp ? (
+                      <div>{timeAgo(status.data.highNetworkTimestamp)}</div>
+                    ) : (
+                      <div>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)}</div>
+                    )}
+                  </div>
+                </>
+              )}
             </>
           )}
         </>

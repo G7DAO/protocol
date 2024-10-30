@@ -140,18 +140,10 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
 
   return (
     <>
-      {isLoading ? (
-        !smallView ? (
-          Array.from(Array(7)).map((_, idx) => (
-            <div className={styles.gridItem} key={idx}>
-              <Skeleton key={idx} h='12px' w='100%' color='#373737' animate />
-            </div>
-          ))
-        ) : (
-          <div className={styles.gridItem}>
-            <Skeleton h='12px' w='100%' color='#373737' animate />
-          </div>
-        )
+      {isLoading && smallView ? (
+        <div className={styles.gridItem}>
+          <Skeleton h='12px' w='100%' color='#373737' animate />
+        </div>
       ) : (
         <>
           {smallView ? (
@@ -163,10 +155,9 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
             />
           ) : (
             <>
-              {transferStatus && transferStatus?.status === ChildToParentMessageStatus.EXECUTED && (
+              {isLoading ? (
                 <>
                   <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
-                    <IconWithdrawalNodeCompleted className={styles.gridNodeCompleted} />
                     <div className={styles.typeWithdrawal}>
                       <IconArrowNarrowUp className={styles.arrowUp} />
                       Withdraw
@@ -177,120 +168,145 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                   <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
                   <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
                   <div className={styles.gridItem}>
-                    <a
-                      href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
-                      target={'_blank'}
-                      className={styles.explorerLink}
-                    >
-                      <div className={styles.settled}>
-                        Completed
-                        <IconLinkExternal02 stroke={'#fff'} />
-                      </div>
-                    </a>
-                  </div>
-                  <div className={styles.gridItemImportant}>
-                    <div>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
-                  </div>
-                  <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
-                    <div className={styles.typeCompleted}>Initiate</div>
-                  </div>
-                  <div className={styles.gridItemInitiate}>{timeAgo(status.data?.timestamp)}</div>
-                  <div className={styles.gridItemInitiate}>{`${status.data?.amount} ${withdrawal.symbol}`}</div>
-                  <div className={styles.gridItemInitiate}>{status.data?.from ?? ''}</div>
-                  <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
-                  <div className={styles.gridItemInitiate}>
-                    <a
-                      href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
-                      target={'_blank'}
-                      className={styles.explorerLink}
-                    >
-                      <div className={styles.settled}>
-                        Completed
-                        <IconLinkExternal02 stroke={'#fff'} />
-                      </div>
-                    </a>
-                  </div>
-                  <div className={styles.gridItemInitiate}>
-                    <div className={styles.timeCenter}>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
-                  </div>
-                  <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
-                    <div className={styles.typeCompleted}>Finalize</div>
-                  </div>
-                  <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.completionTimestamp)}</div>
-                  <div className={styles.gridItemInitiate}>{`${status.data?.amount} ${withdrawal.symbol}`}</div>
-                  <div className={styles.gridItemInitiate}>{status.data?.from ?? ''}</div>
-                  <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
-                  <div className={styles.gridItemInitiate}>
-                    <a
-                      href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
-                      target={'_blank'}
-                      className={styles.explorerLink}
-                    >
-                      <div className={styles.settled}>
-                        Completed
-                        <IconLinkExternal02 stroke={'#fff'} />
-                      </div>
-                    </a>
-                  </div>
-                  <div className={styles.gridItemInitiate}>
-                    <div className={styles.timeCenter}>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
+                    <Skeleton h='12px' w='100%' color='#373737' animate />
+                  </div>{' '}
+                  <div className={styles.gridItem}>
+                    <Skeleton h='12px' w='100%' color='#373737' animate />
                   </div>
                 </>
-              )}
-              {transferStatus && transferStatus.status != ChildToParentMessageStatus.EXECUTED && (
+              ) : (
                 <>
-                  <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
-                    <div className={styles.typeWithdrawal}>
-                      <IconArrowNarrowUp className={styles.arrowUp} />
-                      Withdraw
-                    </div>
-                  </div>
-                  <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
-                  <div className={styles.gridItem}>{`${status.data?.amount} ${withdrawal.symbol}`}</div>
-                  <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
-                  <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
-                  {transferStatus && transferStatus.status === ChildToParentMessageStatus.CONFIRMED && (
+                  {' '}
+                  {transferStatus && transferStatus?.status === ChildToParentMessageStatus.EXECUTED && (
                     <>
+                      <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
+                        <IconWithdrawalNodeCompleted className={styles.gridNodeCompleted} />
+                        <div className={styles.typeWithdrawal}>
+                          <IconArrowNarrowUp className={styles.arrowUp} />
+                          Withdraw
+                        </div>
+                      </div>
+                      <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
+                      <div className={styles.gridItem}>{`${status.data?.amount} ${withdrawal.symbol}`}</div>
+                      <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
+                      <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
                       <div className={styles.gridItem}>
+                        <a
+                          href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
+                          target={'_blank'}
+                          className={styles.explorerLink}
+                        >
+                          <div className={styles.settled}>
+                            Completed
+                            <IconLinkExternal02 stroke={'#fff'} />
+                          </div>
+                        </a>
+                      </div>
+                      <div className={styles.gridItemImportant}>
+                        <div>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
+                      </div>
+                      <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
+                        <div className={styles.typeCompleted}>Initiate</div>
+                      </div>
+                      <div className={styles.gridItemInitiate}>{timeAgo(status.data?.timestamp)}</div>
+                      <div className={styles.gridItemInitiate}>{`${status.data?.amount} ${withdrawal.symbol}`}</div>
+                      <div className={styles.gridItemInitiate}>{status.data?.from ?? ''}</div>
+                      <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
+                      <div className={styles.gridItemInitiate}>
                         <a
                           href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
                           target={'_blank'}
                           className={styles.explorerLink}
                         >
-                          <div className={styles.claimable}>
-                            Claimable
-                            <IconLinkExternal02 className={styles.arrowUp} />
+                          <div className={styles.settled}>
+                            Completed
+                            <IconLinkExternal02 stroke={'#fff'} />
                           </div>
                         </a>
                       </div>
-                      <div className={styles.gridItem}>
-                        <button
-                          className={styles.claimButton}
-                          onClick={() => execute.mutate(status.data.highNetworkHash)}
+                      <div className={styles.gridItemInitiate}>
+                        <div className={styles.timeCenter}>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
+                      </div>
+                      <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
+                        <div className={styles.typeCompleted}>Finalize</div>
+                      </div>
+                      <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.completionTimestamp)}</div>
+                      <div className={styles.gridItemInitiate}>{`${status.data?.amount} ${withdrawal.symbol}`}</div>
+                      <div className={styles.gridItemInitiate}>{status.data?.from ?? ''}</div>
+                      <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
+                      <div className={styles.gridItemInitiate}>
+                        <a
+                          href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
+                          target={'_blank'}
+                          className={styles.explorerLink}
                         >
-                          {execute.isLoading && !execute.isSuccess ? 'Claiming...' : 'Claim Now'}
-                        </button>
+                          <div className={styles.settled}>
+                            Completed
+                            <IconLinkExternal02 stroke={'#fff'} />
+                          </div>
+                        </a>
+                      </div>
+                      <div className={styles.gridItemInitiate}>
+                        <div className={styles.timeCenter}>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
                       </div>
                     </>
                   )}
-                  {transferStatus && transferStatus.status === ChildToParentMessageStatus.UNCONFIRMED && (
+                  {transferStatus && transferStatus.status != ChildToParentMessageStatus.EXECUTED && (
                     <>
-                      <div className={styles.gridItem}>
-                        <a
-                          href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
-                          target={'_blank'}
-                          className={styles.explorerLink}
-                        >
-                          <div className={styles.pending}>
-                            Pending
-                            <IconLinkExternal02 className={styles.arrowUp} />
+                      <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
+                        <div className={styles.typeWithdrawal}>
+                          <IconArrowNarrowUp className={styles.arrowUp} />
+                          Withdraw
+                        </div>
+                      </div>
+                      <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
+                      <div className={styles.gridItem}>{`${status.data?.amount} ${withdrawal.symbol}`}</div>
+                      <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
+                      <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
+                      {transferStatus && transferStatus.status === ChildToParentMessageStatus.CONFIRMED && (
+                        <>
+                          <div className={styles.gridItem}>
+                            <a
+                              href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
+                              target={'_blank'}
+                              className={styles.explorerLink}
+                            >
+                              <div className={styles.claimable}>
+                                Claimable
+                                <IconLinkExternal02 className={styles.arrowUp} />
+                              </div>
+                            </a>
                           </div>
-                        </a>
-                      </div>
+                          <div className={styles.gridItem}>
+                            <button
+                              className={styles.claimButton}
+                              onClick={() => execute.mutate(status.data.highNetworkHash)}
+                            >
+                              {execute.isLoading && !execute.isSuccess ? 'Claiming...' : 'Claim Now'}
+                            </button>
+                          </div>
+                        </>
+                      )}
+                      {transferStatus && transferStatus.status === ChildToParentMessageStatus.UNCONFIRMED && (
+                        <>
+                          <div className={styles.gridItem}>
+                            <a
+                              href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
+                              target={'_blank'}
+                              className={styles.explorerLink}
+                            >
+                              <div className={styles.pending}>
+                                Pending
+                                <IconLinkExternal02 className={styles.arrowUp} />
+                              </div>
+                            </a>
+                          </div>
 
-                      <div className={styles.gridItemImportant}>
-                        <div>{ETA(status.data?.timestamp, withdrawal.challengePeriod)} left</div>
-                      </div>
+                          <div className={styles.gridItemImportant}>
+                            <div>{ETA(status.data?.timestamp, withdrawal.challengePeriod)} left</div>
+                          </div>
+                        </>
+                      )}
                     </>
                   )}
                 </>
