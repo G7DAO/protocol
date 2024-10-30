@@ -4,7 +4,6 @@ import { getTransactionHistory } from '../services/bridge.service';
 
 export class BridgeController {
     public async getTransactionHistory(req: Request, res: Response): Promise<Response> {
-        console.log('Received address:', req.params.address);
         try {
             const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 10; // Default limit value if not provided
             const offset = req.query.offset ? parseInt(req.query.offset as string, 10) : 0; // Default offset value if not provided

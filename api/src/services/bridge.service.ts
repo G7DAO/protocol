@@ -18,7 +18,6 @@ export async function getTransactionHistory(address: string, limit: number, offs
           label_data->'args'->>'destination' AS to_address,
           3600 AS challengePeriod,
           block_timestamp + 3600 AS claimableTimestamp,
-          NULL AS newTransaction,
           block_timestamp AS block_timestamp
       FROM ${tableNameGame7}
       WHERE
@@ -42,7 +41,7 @@ export async function getTransactionHistory(address: string, limit: number, offs
       FROM ${tableNameArbitrum}
       WHERE
           label = 'seer' AND
-          label_type = 'tx_call' AND
+          label_type = 'event' AND
           label_name = 'OutBoxTransactionExecuted' AND
           address = DECODE($2, 'hex') -- '64105c6C3D494469D5F21323F0E917563489d9f5' -- Arbitrum outbox address
     ), game7_withdrawal_failed as (
@@ -58,7 +57,6 @@ export async function getTransactionHistory(address: string, limit: number, offs
           null AS to_address,
           3600 AS challengePeriod,
           block_timestamp + 3600 AS claimableTimestamp,
-          NULL AS newTransaction,
           NULL::double precision AS completionTimestamp,
           NULL::double precision AS parentNetworkTimestamp,
           NULL AS parentNetworkHash,
@@ -84,7 +82,6 @@ export async function getTransactionHistory(address: string, limit: number, offs
           game7_withdrawal.to_address AS to_address,
           game7_withdrawal.challengePeriod AS challengePeriod,
           game7_withdrawal.claimableTimestamp AS claimableTimestamp,
-          game7_withdrawal.newTransaction AS newTransaction,
           arbirtrum_claims.block_timestamp AS completionTimestamp,
           arbirtrum_claims.block_timestamp AS parentNetworkTimestamp,
           arbirtrum_claims.transaction_hash AS parentNetworkHash,
@@ -111,7 +108,6 @@ export async function getTransactionHistory(address: string, limit: number, offs
               label_data->'args'->>'_to' AS to_address,
               3600 AS challengePeriod,
               block_timestamp + 3600 AS claimableTimestamp,
-              NULL AS newTransaction,
               block_timestamp AS block_timestamp
         FROM
             ${tableNameArbitrum}
@@ -149,7 +145,6 @@ export async function getTransactionHistory(address: string, limit: number, offs
           null AS to_address,
           3600 AS challengePeriod,
           block_timestamp + 3600 AS claimableTimestamp,
-          NULL AS newTransaction,
           NULL::double precision AS completionTimestamp,
           NULL::double precision AS parentNetworkTimestamp,
           NULL AS parentNetworkHash,
@@ -175,7 +170,6 @@ export async function getTransactionHistory(address: string, limit: number, offs
               arbitrum_withdraw.to_address AS to_address,
               arbitrum_withdraw.challengePeriod AS challengePeriod,
               arbitrum_withdraw.claimableTimestamp AS claimableTimestamp,
-              arbitrum_withdraw.newTransaction AS newTransaction,
               ethereum_claims.block_timestamp AS completionTimestamp,
               ethereum_claims.block_timestamp AS parentNetworkTimestamp,
               ethereum_claims.transaction_hash AS parentNetworkHash,
@@ -200,7 +194,6 @@ export async function getTransactionHistory(address: string, limit: number, offs
               '0x' || ENCODE(origin_address, 'hex') AS from_address,
               '0x' || ENCODE(origin_address, 'hex') AS to_address,
               '' AS token,
-              NULL AS newTransaction,
               CASE
                     WHEN label_data ->> 'status' = '1' THEN true
                     ELSE false
@@ -224,7 +217,6 @@ export async function getTransactionHistory(address: string, limit: number, offs
               '0x' || ENCODE(origin_address, 'hex') AS from_address,
               label_data ->'args'->> '_to' AS to_address,
               label_data ->'args' ->> '_token' AS token,
-              NULL AS newTransaction,
               CASE
                     WHEN label_data ->> 'status' = '1' THEN true
                     ELSE false
@@ -250,7 +242,6 @@ export async function getTransactionHistory(address: string, limit: number, offs
                           'from_address', from_address,
                           'to_address', to_address,
                           'token', token,
-                          'newTransaction', newTransaction,
                           'isDeposit', isDeposit
                   ) AS data,
                   block_timestamp,
@@ -272,7 +263,6 @@ export async function getTransactionHistory(address: string, limit: number, offs
                           'from_address', from_address,
                           'to_address', to_address,
                           'token', token,
-                          'newTransaction', newTransaction,
                           'isDeposit', isDeposit
                   ) AS data,
                   block_timestamp,
@@ -297,7 +287,6 @@ export async function getTransactionHistory(address: string, limit: number, offs
                           'to_address', to_address,
                           'challengePeriod', challengePeriod,
                           'claimableTimestamp', claimableTimestamp,
-                          'newTransaction', newTransaction,
                           'status', status
                   ) AS data,
                   block_timestamp,
@@ -322,7 +311,6 @@ export async function getTransactionHistory(address: string, limit: number, offs
                           'to_address', to_address,
                           'challengePeriod', challengePeriod,
                           'claimableTimestamp', claimableTimestamp,
-                          'newTransaction', newTransaction,
                           'status', status
                   ) AS data,
                   block_timestamp,
