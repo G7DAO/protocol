@@ -164,13 +164,6 @@ const getTransactionUrl = (notification: BridgeNotification): string | undefined
     case 'WITHDRAWAL':
       chainId = status === 'COMPLETED' ? tx.lowNetworkChainId : tx.highNetworkChainId
       txHash = status === 'COMPLETED' ? tx.lowNetworkHash : tx.highNetworkHash
-      if (status === 'COMPLETED') {
-        console.log(tx)
-        console.log(chainId)
-        console.log(txHash)
-        const explorerUrl = getBlockExplorerUrl(chainId)
-        console.log(explorerUrl)
-      }
       break
     case 'CLAIM':
       chainId = tx.highNetworkChainId
