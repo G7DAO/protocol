@@ -1,7 +1,7 @@
 // src/utils/db.ts
 import { Pool } from 'pg'; // ignore the error here
 
-const connectionString = process.env.DATABASE_URL || 'postgres://user:password@localhost:5432/dbname';
+const connectionString = process.env.PROTOCOL_API_MOONSTREAM_V3_LABELS_DATABASE_URI || 'postgres://user:password@localhost:5432/dbname';
 
 
 export const pool = new Pool({
