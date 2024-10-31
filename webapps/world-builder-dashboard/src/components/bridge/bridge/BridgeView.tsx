@@ -16,7 +16,7 @@ import ValueToBridge from '@/components/bridge/bridge/ValueToBridge'
 // Blockchain Context and Utility Functions
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useUISettings } from '@/contexts/UISettingsContext'
-import useBalance from '@/hooks/useBalance'
+import useTokenInformation from '@/hooks/useBalance'
 // Hooks and Constants
 import useEthUsdRate from '@/hooks/useEthUsdRate'
 import { DepositDirection } from '@/pages/BridgePage/BridgePage'
@@ -50,7 +50,7 @@ const BridgeView = ({
     selectedBridgeToken
   } = useBlockchainContext()
 
-  const { isFetching: isFetchingTokenInformation, data: tokenInformation } = useBalance({
+  const { isFetching: isFetchingTokenInformation, data: tokenInformation } = useTokenInformation({
     account: connectedAccount,
     token: selectedBridgeToken
   })
@@ -176,7 +176,7 @@ const BridgeView = ({
         </div>
       </div>
       <ValueToBridge
-        symbol={tokenInformation?.symbol ?? ""}
+        symbol={tokenInformation?.symbol ?? ''}
         value={value}
         setValue={setValue}
         onTokenChange={handleTokenChange}
@@ -214,9 +214,13 @@ const BridgeView = ({
         isEstimatingFee={estimatedFee.isFetching}
         value={Number(value)}
         ethRate={ethUsdRate ?? 0}
-        tokenSymbol={tokenInformation?.symbol ?? ""}
+        tokenSymbol={tokenInformation?.symbol ?? ''}
         tokenRate={g7tUsdRate.data ?? 0}
-        gasTokenSymbol={tokenInformation?.symbol ?? ""}
+        gasTokenSymbol={
+          direction === 'DEPOSIT'
+            ? selectedLowNetwork?.nativeCurrency?.symbol ?? ""
+            : selectedHighNetwork?.nativeCurrency?.symbol ?? ""
+        }
       />
       {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
       <ActionButton
@@ -226,7 +230,7 @@ const BridgeView = ({
         setErrorMessage={setNetworkErrorMessage}
         L2L3message={isMessageExpanded ? message : { data: '', destination: '' }}
         bridger={bridger}
-        symbol={tokenInformation?.symbol ?? ""}
+        symbol={tokenInformation?.symbol ?? ''}
       />
     </div>
   )
