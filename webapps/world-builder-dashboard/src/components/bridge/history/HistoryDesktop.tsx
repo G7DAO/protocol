@@ -6,6 +6,7 @@ import styles from './WithdrawTransactions.module.css'
 import Deposit from '@/components/bridge/history/Deposit'
 import Withdrawal from '@/components/bridge/history/Withdrawal'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
+import { useBridgeAPI } from '@/hooks/useBridgeAPI'
 import { useMessages } from '@/hooks/useL2ToL1MessageStatus'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 
@@ -14,6 +15,9 @@ const HistoryDesktop: React.FC<WithdrawTransactionsProps> = () => {
   const { connectedAccount } = useBlockchainContext()
   const messages = useMessages(connectedAccount)
   const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status']
+
+  const { useHistoryTransactions } = useBridgeAPI()
+
   return (
     <div className={styles.container}>
       <div className={styles.content}>
