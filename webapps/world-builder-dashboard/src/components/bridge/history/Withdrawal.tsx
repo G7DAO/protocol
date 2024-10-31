@@ -109,7 +109,8 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                 completionTimestamp: Date.now() / 1000,
                 lowNetworkTimestamp: Date.now() / 1000,
                 newTransaction: true,
-                lowNetworkHash: data?.transactionHash
+                lowNetworkHash: data?.transactionHash,
+                status: data?.status || t.status
               }
             }
             return { ...t }

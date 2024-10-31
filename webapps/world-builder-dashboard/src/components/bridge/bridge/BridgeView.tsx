@@ -60,14 +60,15 @@ const BridgeView = ({
   }
 
   const estimatedFee = useQuery(
-    ['estimatedFee', bridger, connectedAccount],
+    ['estimatedFee', bridger, connectedAccount, value],
     async () => {
       try {
         const fee = await bridger?.getGasAndFeeEstimation(
           value ? ethers.utils.parseEther(value) : ethers.utils.parseEther('0.0'),
           direction === 'DEPOSIT' ? selectedLowNetwork.rpcs[0] : selectedHighNetwork.rpcs[0],
-          connectedAccount!
+          connectedAccount ?? ''
         )
+        console.log(fee)
         const feeFormatted = ethers.utils.formatEther(fee?.estimatedFee || '')
         return feeFormatted
       } catch (e) {
@@ -75,7 +76,7 @@ const BridgeView = ({
       }
     },
     {
-      enabled: !!connectedAccount && !!selectedLowNetwork && !!bridger
+      enabled: !!connectedAccount && !!selectedLowNetwork && !!selectedHighNetwork
     }
   )
 
@@ -218,8 +219,8 @@ const BridgeView = ({
         tokenRate={g7tUsdRate.data ?? 0}
         gasTokenSymbol={
           direction === 'DEPOSIT'
-            ? selectedLowNetwork?.nativeCurrency?.symbol ?? ""
-            : selectedHighNetwork?.nativeCurrency?.symbol ?? ""
+            ? (selectedLowNetwork?.nativeCurrency?.symbol ?? '')
+            : (selectedHighNetwork?.nativeCurrency?.symbol ?? '')
         }
       />
       {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}

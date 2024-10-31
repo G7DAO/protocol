@@ -52,7 +52,9 @@ const useTransferData = ({ txRecord }: UseTransferDataProps) => {
               ? t.lowNetworkHash === txRecord.lowNetworkHash
               : t.highNetworkHash === txRecord.highNetworkHash
           )
-          return cachedTransaction?.status ? { status: cachedTransaction.status } : { ETA: 0, status: 0 }
+          if (cachedTransaction && cachedTransaction.status) {
+            return { ETA: 0, status: cachedTransaction.status }
+          }
         }
         return { ETA: 0, status: 0 }
       },
