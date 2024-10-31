@@ -88,8 +88,13 @@ const BridgeView = ({
       if (!chainIds.includes(String(destinationChainId))) {
         return
       }
-      const bridger: Bridger = new Bridger(originChainId, destinationChainId, selectedBridgeToken.tokenAddressMap)
-      setBridger(bridger)
+      try {
+        const bridger: Bridger = new Bridger(originChainId, destinationChainId, selectedBridgeToken.tokenAddressMap)
+        setBridger(bridger)
+      } catch (e) {
+        console.log(e)
+        setNetworkErrorMessage('Cannot bridge between these 2 networks')
+      }
     }
   }, [selectedBridgeToken, connectedAccount, selectedHighNetwork, selectedLowNetwork])
 

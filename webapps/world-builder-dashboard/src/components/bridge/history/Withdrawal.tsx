@@ -10,7 +10,6 @@ import IconWithdrawalNodeCompleted from '@/assets/IconWithdrawalNodeCompleted'
 import WithdrawalMobile from '@/components/bridge/history/WithdrawalMobile'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
-import { useBridgeAPI } from '@/hooks/useBridgeAPI'
 import useTransferData from '@/hooks/useTransferData'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
@@ -99,7 +98,6 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
       onSuccess: (data, highNetworkHash) => {
         try {
           const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
-
           let transactions = []
           if (transactionsString) {
             transactions = JSON.parse(transactionsString)
