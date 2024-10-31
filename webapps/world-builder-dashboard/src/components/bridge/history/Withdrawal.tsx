@@ -92,16 +92,13 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
         originNetworkChainId: withdrawal.highNetworkChainId ?? 0
       })
       const res = await _bridgeTransfer?.execute(signer)
-      return res
+      return {res, withdrawal}
     },
     {
-      onSuccess: (data, highNetworkHash) => {
+      onSuccess: ({res, withdrawal}, highNetworkHash) => {
         try {
           const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
-          let transactions = []
-          if (transactionsString) {
-            transactions = JSON.parse(transactionsString)
-          }
+          let transactions = transactionsString ? JSON.parse(transactionsString) : []
           const newTransactions: TransactionRecord[] = transactions.map((t: TransactionRecord) => {
             if (t.highNetworkHash === highNetworkHash) {
               return {
@@ -109,8 +106,8 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                 completionTimestamp: Date.now() / 1000,
                 lowNetworkTimestamp: Date.now() / 1000,
                 newTransaction: true,
-                lowNetworkHash: data?.transactionHash,
-                status: data?.status || t.status
+                lowNetworkHash: res?.transactionHash,
+                status: res?.status || t.status
               }
             }
             return { ...t }
@@ -120,7 +117,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
           console.log(e)
         }
         refetchNewNotifications(connectedAccount ?? '')
-        queryClient.refetchQueries(['transferData'])
+        queryClient.refetchQueries(['transferData', withdrawal])
         queryClient.refetchQueries(['incomingMessages'])
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])

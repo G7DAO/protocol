@@ -68,7 +68,6 @@ const BridgeView = ({
           direction === 'DEPOSIT' ? selectedLowNetwork.rpcs[0] : selectedHighNetwork.rpcs[0],
           connectedAccount ?? ''
         )
-        console.log(fee)
         const feeFormatted = ethers.utils.formatEther(fee?.estimatedFee || '')
         return feeFormatted
       } catch (e) {
