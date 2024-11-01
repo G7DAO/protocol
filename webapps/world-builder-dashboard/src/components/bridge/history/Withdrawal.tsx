@@ -1,16 +1,12 @@
 import React from 'react'
-import { useMutation, useQueryClient } from 'react-query'
-import { HIGH_NETWORKS, L1_NETWORK, L2_NETWORK, L3_NETWORK, LOW_NETWORKS } from '../../../../constants'
+import { HIGH_NETWORKS, L2_NETWORK, L3_NETWORK, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
-import { ethers } from 'ethers'
-import { BridgeTransfer, BridgeTransferStatus } from 'game7-bridge-sdk'
 import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import IconWithdrawalNodeCompleted from '@/assets/IconWithdrawalNodeCompleted'
 import WithdrawalMobile from '@/components/bridge/history/WithdrawalMobile'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
-import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
-import useTransferData from '@/hooks/useTransferData'
+import { useBridgeTransfer } from '@/hooks/useBridgeTransfer'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
@@ -57,83 +53,15 @@ export const getStatus = (withdrawal: TransactionRecord) => {
   }
 }
 const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
-  const targetChain = withdrawal.highNetworkChainId === L2_NETWORK.chainId ? L1_NETWORK : L2_NETWORK
   const status = getStatus(withdrawal)
-  const { switchChain, connectedAccount } = useBlockchainContext()
-  const queryClient = useQueryClient()
-  const { refetchNewNotifications } = useBridgeNotificationsContext()
+  const { connectedAccount } = useBlockchainContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
-  const { data: transferStatus, isLoading } = useTransferData({ txRecord: withdrawal })
-
+  const { claim, returnTransferData } = useBridgeTransfer()
+  const { data: transferStatus, isLoading } = returnTransferData({ txRecord: withdrawal })  
   const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
   let transactions = transactionsString ? JSON.parse(transactionsString) : []
   const localStorageTransaction = transactions.find(
     (t: TransactionRecord) => t.type === 'WITHDRAWAL' && t.highNetworkHash === withdrawal.highNetworkHash
-  )
-
-  // Mutate function
-  const execute = useMutation(
-    async (highNetworkHash: string | undefined) => {
-      if (!highNetworkHash) {
-        throw new Error('transaction hash is undefined')
-      }
-
-      let provider
-      if (window.ethereum) {
-        provider = new ethers.providers.Web3Provider(window.ethereum)
-        const currentChain = await provider.getNetwork()
-        if (currentChain.chainId !== targetChain.chainId) {
-          await switchChain(targetChain)
-          provider = new ethers.providers.Web3Provider(window.ethereum) //refresh provider
-        }
-      } else {
-        throw new Error('Wallet is not installed!')
-      }
-      const signer = provider.getSigner()
-
-      // Bridge Transfer execute
-      const _bridgeTransfer = new BridgeTransfer({
-        txHash: withdrawal.highNetworkHash || '',
-        destinationNetworkChainId: withdrawal.lowNetworkChainId ?? 0,
-        originNetworkChainId: withdrawal.highNetworkChainId ?? 0
-      })
-      const res = await _bridgeTransfer?.execute(signer)
-      return { res, withdrawal }
-    },
-    {
-      onSuccess: ({ res, withdrawal }, highNetworkHash) => {
-        try {
-          const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
-          let transactions = transactionsString ? JSON.parse(transactionsString) : []
-          const newTransactions: TransactionRecord[] = transactions.map((t: TransactionRecord) => {
-            if (t.highNetworkHash === highNetworkHash) {
-              return {
-                ...t,
-                completionTimestamp: Date.now() / 1000,
-                lowNetworkTimestamp: Date.now() / 1000,
-                newTransaction: true,
-                lowNetworkHash: res?.transactionHash,
-                status: BridgeTransferStatus.WITHDRAW_EXECUTED
-              }
-            }
-            return { ...t }
-          })
-          localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(newTransactions))
-        } catch (e) {
-          console.log(e)
-        }
-        refetchNewNotifications(connectedAccount ?? '')
-        console.log('refetching transfer data queries')
-        queryClient.refetchQueries(['transferData', withdrawal])
-        queryClient.refetchQueries(['incomingMessages'])
-        queryClient.refetchQueries(['ERC20Balance'])
-        queryClient.refetchQueries(['nativeBalance'])
-        queryClient.refetchQueries(['pendingTransactions'])
-      },
-      onError: (error: Error) => {
-        console.log(error)
-      }
-    }
   )
 
   if (!status) {
@@ -149,12 +77,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
       ) : (
         <>
           {smallView ? (
-            <WithdrawalMobile
-              withdrawal={withdrawal}
-              execute={execute}
-              status={status}
-              transferStatus={transferStatus}
-            />
+            <WithdrawalMobile withdrawal={withdrawal} claim={claim} status={status} transferStatus={transferStatus} />
           ) : (
             <>
               {isLoading ? (
@@ -189,7 +112,9 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         </div>
                       </div>
                       <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
-                      <div className={styles.gridItem}>{`${status.data?.amount} ${localStorageTransaction?.symbol}`}</div>
+                      <div
+                        className={styles.gridItem}
+                      >{`${status.data?.amount} ${localStorageTransaction?.symbol}`}</div>
                       <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
                       <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
                       <div className={styles.gridItem}>
@@ -211,7 +136,9 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         <div className={styles.typeCompleted}>Initiate</div>
                       </div>
                       <div className={styles.gridItemInitiate}>{timeAgo(status.data?.timestamp)}</div>
-                      <div className={styles.gridItemInitiate}>{`${status.data?.amount} ${localStorageTransaction?.symbol}`}</div>
+                      <div
+                        className={styles.gridItemInitiate}
+                      >{`${status.data?.amount} ${localStorageTransaction?.symbol}`}</div>
                       <div className={styles.gridItemInitiate}>{status.data?.from ?? ''}</div>
                       <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
                       <div className={styles.gridItemInitiate}>
@@ -233,7 +160,9 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         <div className={styles.typeCompleted}>Finalize</div>
                       </div>
                       <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.completionTimestamp)}</div>
-                      <div className={styles.gridItemInitiate}>{`${status.data?.amount} ${localStorageTransaction?.symbol}`}</div>
+                      <div
+                        className={styles.gridItemInitiate}
+                      >{`${status.data?.amount} ${localStorageTransaction?.symbol}`}</div>
                       <div className={styles.gridItemInitiate}>{status.data?.from ?? ''}</div>
                       <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
                       <div className={styles.gridItemInitiate}>
@@ -262,7 +191,9 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         </div>
                       </div>
                       <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
-                      <div className={styles.gridItem}>{`${status.data?.amount} ${localStorageTransaction?.symbol}`}</div>
+                      <div
+                        className={styles.gridItem}
+                      >{`${status.data?.amount} ${localStorageTransaction?.symbol}`}</div>
                       <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
                       <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
                       {transferStatus && transferStatus.status === ChildToParentMessageStatus.CONFIRMED && (
@@ -280,11 +211,8 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                             </a>
                           </div>
                           <div className={styles.gridItem}>
-                            <button
-                              className={styles.claimButton}
-                              onClick={() => execute.mutate(status.data.highNetworkHash)}
-                            >
-                              {execute.isLoading && !execute.isSuccess ? 'Claiming...' : 'Claim Now'}
+                            <button className={styles.claimButton} onClick={() => claim.mutate(withdrawal)}>
+                              {claim.isLoading && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}
                             </button>
                           </div>
                         </>
