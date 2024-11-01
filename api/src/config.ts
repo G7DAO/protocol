@@ -22,7 +22,7 @@ export const KMS_CREDENTIALS = {
     'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', // KMS key id (arn)
 };
 export const TOKEN_SENDER_AMOUNT =
-  process.env.TOKEN_SENDER_AMOUNT || ethers.parseEther('1');
+  process.env.PROTOCOL_API_TOKEN_SENDER_AMOUNT || ethers.parseEther('1');
 
 // CORS whitelist
 const allowedOriginsStr = process.env.PROTOCOL_API_CORS_WHITELIST || '';
