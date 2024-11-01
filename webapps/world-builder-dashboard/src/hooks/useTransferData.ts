@@ -25,7 +25,7 @@ const useTransferData = ({ txRecord }: UseTransferDataProps) => {
       })
       console.log(_bridgeTransfer)
       const status = await _bridgeTransfer.getStatus()
-      
+
       const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
       const transactions = transactionsString ? JSON.parse(transactionsString) : []
 
@@ -36,7 +36,7 @@ const useTransferData = ({ txRecord }: UseTransferDataProps) => {
             : t.highNetworkHash === txRecord.highNetworkHash
 
         if (hashComparison) {
-          return { ...t, status: status?.status }
+          return { ...t, status: status?.status}
         }
         return { ...t }
       })

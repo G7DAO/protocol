@@ -35,7 +35,6 @@ const HistoryDesktop: React.FC<WithdrawTransactionsProps> = () => {
       challengePeriod: apiData.challengePeriod
     }
   }
-
   // Transform API transactions into TransactionRecord format
   const transactions = apiTransactions?.map((apiTx: any) => mapAPIDataToTransactionRecord(apiTx)) || []
   return (
@@ -49,8 +48,8 @@ const HistoryDesktop: React.FC<WithdrawTransactionsProps> = () => {
                   {h}
                 </div>
               ))}
-              {transactions ? (
-                transactions
+              {messages.data ? (
+                messages.data
                   .filter((tx: any) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL')
                   .map((tx: TransactionRecord, idx: number) =>
                     tx.type === 'WITHDRAWAL' ? (

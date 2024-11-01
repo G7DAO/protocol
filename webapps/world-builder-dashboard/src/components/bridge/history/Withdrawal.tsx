@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from 'react-query'
 import { HIGH_NETWORKS, L1_NETWORK, L2_NETWORK, L3_NETWORK, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import { ethers } from 'ethers'
-import { BridgeTransfer } from 'game7-bridge-sdk'
+import { BridgeTransfer, BridgeTransferStatus } from 'game7-bridge-sdk'
 import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import IconWithdrawalNodeCompleted from '@/assets/IconWithdrawalNodeCompleted'
@@ -68,7 +68,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
   let transactions = transactionsString ? JSON.parse(transactionsString) : []
   const localStorageTransaction = transactions.find(
-    (t: any) => t.type === 'WITHDRAWAL' && t.highNetworkHash === withdrawal.highNetworkHash
+    (t: TransactionRecord) => t.type === 'WITHDRAWAL' && t.highNetworkHash === withdrawal.highNetworkHash
   )
 
   // Mutate function
@@ -113,7 +113,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                 lowNetworkTimestamp: Date.now() / 1000,
                 newTransaction: true,
                 lowNetworkHash: res?.transactionHash,
-                status: res?.status || t.status
+                status: BridgeTransferStatus.WITHDRAW_EXECUTED
               }
             }
             return { ...t }
@@ -123,6 +123,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
           console.log(e)
         }
         refetchNewNotifications(connectedAccount ?? '')
+        console.log('refetching transfer data queries')
         queryClient.refetchQueries(['transferData', withdrawal])
         queryClient.refetchQueries(['incomingMessages'])
         queryClient.refetchQueries(['ERC20Balance'])

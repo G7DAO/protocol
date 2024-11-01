@@ -31,7 +31,6 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   const localStorageTransaction = transactions.find(
     (t: any) => t.type === 'DEPOSIT' && t.lowNetworkHash === deposit.lowNetworkHash
   )
-  console.log(localStorageTransaction)
 
   return (
     <>

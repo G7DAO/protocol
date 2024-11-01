@@ -1,6 +1,7 @@
 import { useQueries, useQuery, UseQueryResult } from 'react-query'
 import { HIGH_NETWORKS, L2_NETWORK, LOW_NETWORKS } from '../../constants'
 import { ethers, providers } from 'ethers'
+import { Transaction } from 'ethers'
 import { BridgeNotification } from '@/components/notifications/NotificationsButton'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import {
@@ -10,7 +11,6 @@ import {
   ChildTransactionReceipt
 } from '@arbitrum/sdk'
 import { ParentContractCallTransactionReceipt } from '@arbitrum/sdk/dist/lib/message/ParentTransaction'
-import { Transaction } from 'ethers'
 
 const eventABI = [
   {
@@ -144,10 +144,12 @@ const fetchDepositStatus = async (deposit: TransactionRecord) => {
 
   const l2Provider = new providers.JsonRpcProvider(highNetwork.rpcs[0])
   let l2Result
+
   try {
-    l2Result = await l1ContractCallReceipt.waitForChildTransactionReceipt(l2Provider, 3, 1000)
+    l2Result = await l1ContractCallReceipt.waitForChildTransactionReceipt(l2Provider, 5, 3000)
+    console.log('L2 Transaction Receipt:', l2Result)
   } catch (e) {
-    console.log(e)
+    console.error('Error waiting for child transaction receipt:', e)
   }
 
   if (!l2Result) {

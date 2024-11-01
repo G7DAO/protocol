@@ -75,7 +75,7 @@ const BridgeView = ({
       }
     },
     {
-      enabled: !!connectedAccount && !!selectedLowNetwork && !!selectedHighNetwork
+      enabled: !!connectedAccount && !!selectedLowNetwork && !!selectedHighNetwork && !!value
     }
   )
 
