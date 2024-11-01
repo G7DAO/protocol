@@ -43,6 +43,10 @@ export const getStatus = (withdrawal: TransactionRecord) => {
       : ChildToParentMessageStatus.UNCONFIRMED
   const lowNetwork = LOW_NETWORKS.find((n) => n.chainId === lowNetworkChainId)
   const highNetwork = HIGH_NETWORKS.find((n) => n.chainId === highNetworkChainId)
+  console.log(lowNetworkChainId)
+  console.log(highNetworkChainId)
+  console.log(LOW_NETWORKS)
+  console.log(HIGH_NETWORKS)
   if (lowNetwork && highNetwork) {
     const data = {
       status,
@@ -121,7 +125,6 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
         queryClient.refetchQueries(['incomingMessages'])
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
-
         // status.refetch()
         queryClient.refetchQueries(['pendingTransactions'])
       },

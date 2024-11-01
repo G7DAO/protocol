@@ -23,6 +23,7 @@ const useTransferData = ({ txRecord }: UseTransferDataProps) => {
         originNetworkChainId:
           (txRecord.type === 'DEPOSIT' ? txRecord.lowNetworkChainId : txRecord.highNetworkChainId) ?? 0
       })
+      console.log(_bridgeTransfer)
       const status = await _bridgeTransfer.getStatus()
       
       const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
