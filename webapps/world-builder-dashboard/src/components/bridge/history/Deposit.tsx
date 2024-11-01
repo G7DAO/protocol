@@ -11,6 +11,7 @@ import useTransferData from '@/hooks/useTransferData'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
 
 interface DepositProps {
   deposit: TransactionRecord
@@ -23,6 +24,14 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   const status = useDepositStatus(deposit)
   const smallView = useMediaQuery('(max-width: 1199px)')
   const { data: transferStatus, isLoading } = useTransferData({ txRecord: deposit })
+  const {connectedAccount} = useBlockchainContext()
+
+  const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+  let transactions = transactionsString ? JSON.parse(transactionsString) : []
+  const localStorageTransaction = transactions.find(
+    (t: any) => t.type === 'DEPOSIT' && t.lowNetworkHash === deposit.lowNetworkHash
+  )
+  console.log(localStorageTransaction)
 
   return (
     <>
@@ -43,7 +52,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                 </div>
               </div>
               <div className={styles.gridItem}>{timeAgo(deposit.lowNetworkTimestamp)}</div>
-              <div className={styles.gridItem}>{`${deposit.amount} ${deposit.symbol}`}</div>
+              <div className={styles.gridItem}>{`${deposit.amount} ${localStorageTransaction?.symbol}`}</div>
               <div className={styles.gridItem}>{depositInfo.from}</div>
               <div className={styles.gridItem}>{depositInfo.to}</div>
               {isLoading ? (

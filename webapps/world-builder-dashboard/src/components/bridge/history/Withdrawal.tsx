@@ -43,10 +43,6 @@ export const getStatus = (withdrawal: TransactionRecord) => {
       : ChildToParentMessageStatus.UNCONFIRMED
   const lowNetwork = LOW_NETWORKS.find((n) => n.chainId === lowNetworkChainId)
   const highNetwork = HIGH_NETWORKS.find((n) => n.chainId === highNetworkChainId)
-  console.log(lowNetworkChainId)
-  console.log(highNetworkChainId)
-  console.log(LOW_NETWORKS)
-  console.log(HIGH_NETWORKS)
   if (lowNetwork && highNetwork) {
     const data = {
       status,
@@ -68,6 +64,12 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
   const { data: transferStatus, isLoading } = useTransferData({ txRecord: withdrawal })
+
+  const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+  let transactions = transactionsString ? JSON.parse(transactionsString) : []
+  const localStorageTransaction = transactions.find(
+    (t: any) => t.type === 'WITHDRAWAL' && t.highNetworkHash === withdrawal.highNetworkHash
+  )
 
   // Mutate function
   const execute = useMutation(
@@ -96,10 +98,10 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
         originNetworkChainId: withdrawal.highNetworkChainId ?? 0
       })
       const res = await _bridgeTransfer?.execute(signer)
-      return {res, withdrawal}
+      return { res, withdrawal }
     },
     {
-      onSuccess: ({res, withdrawal}, highNetworkHash) => {
+      onSuccess: ({ res, withdrawal }, highNetworkHash) => {
         try {
           const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
           let transactions = transactionsString ? JSON.parse(transactionsString) : []
@@ -125,7 +127,6 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
         queryClient.refetchQueries(['incomingMessages'])
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
-        // status.refetch()
         queryClient.refetchQueries(['pendingTransactions'])
       },
       onError: (error: Error) => {
@@ -164,7 +165,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     </div>
                   </div>
                   <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
-                  <div className={styles.gridItem}>{`${status.data?.amount} ${withdrawal.symbol}`}</div>
+                  <div className={styles.gridItem}>{`${status.data?.amount} ${localStorageTransaction?.symbol}`}</div>
                   <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
                   <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
                   <div className={styles.gridItem}>
@@ -187,7 +188,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         </div>
                       </div>
                       <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
-                      <div className={styles.gridItem}>{`${status.data?.amount} ${withdrawal.symbol}`}</div>
+                      <div className={styles.gridItem}>{`${status.data?.amount} ${localStorageTransaction?.symbol}`}</div>
                       <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
                       <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
                       <div className={styles.gridItem}>
@@ -209,7 +210,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         <div className={styles.typeCompleted}>Initiate</div>
                       </div>
                       <div className={styles.gridItemInitiate}>{timeAgo(status.data?.timestamp)}</div>
-                      <div className={styles.gridItemInitiate}>{`${status.data?.amount} ${withdrawal.symbol}`}</div>
+                      <div className={styles.gridItemInitiate}>{`${status.data?.amount} ${localStorageTransaction?.symbol}`}</div>
                       <div className={styles.gridItemInitiate}>{status.data?.from ?? ''}</div>
                       <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
                       <div className={styles.gridItemInitiate}>
@@ -231,7 +232,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         <div className={styles.typeCompleted}>Finalize</div>
                       </div>
                       <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.completionTimestamp)}</div>
-                      <div className={styles.gridItemInitiate}>{`${status.data?.amount} ${withdrawal.symbol}`}</div>
+                      <div className={styles.gridItemInitiate}>{`${status.data?.amount} ${localStorageTransaction?.symbol}`}</div>
                       <div className={styles.gridItemInitiate}>{status.data?.from ?? ''}</div>
                       <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
                       <div className={styles.gridItemInitiate}>
@@ -260,7 +261,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         </div>
                       </div>
                       <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
-                      <div className={styles.gridItem}>{`${status.data?.amount} ${withdrawal.symbol}`}</div>
+                      <div className={styles.gridItem}>{`${status.data?.amount} ${localStorageTransaction?.symbol}`}</div>
                       <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
                       <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
                       {transferStatus && transferStatus.status === ChildToParentMessageStatus.CONFIRMED && (
