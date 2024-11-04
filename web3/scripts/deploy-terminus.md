@@ -16,13 +16,15 @@ This checklist describes how to deploy the Terminus diamond contract.
 
 ## Environment variables
 
-- [x] `export RPC=https://testnet-rpc.game7.io`
-- [x] `export KEY=.secrets/dao-dev.json`
-- [x] `export OWNER=0x9ed191db1829371f116deb9748c26b49467a592a`
+- [ ] `export RPC=<rpc url of the chain>`
+- [ ] `export KEY=<path to keyfile of caller account>`
+- [ ] `export OWNER=<Owner Of Diamond>`
+- [ ] `export BADGE=<image-url>`
+- [ ] `export TERMINUS=<DiamonAddress after deployment>`
 
-## Deployment
+## Deploy Terminus contract
 
-- [x] Deploy Game7 Token contract
+- [ ] Deploy Terminus contract
 
 ```bash
 bin/game7 terminus deploy \
@@ -30,4 +32,40 @@ bin/game7 terminus deploy \
   --keyfile $KEY \
   --contract-owner $OWNER 
 
+```
+
+- [ ] Create admin pool
+
+```bash
+bin/game7 terminus terminus-facet create-pool-v-2 \
+    --rpc $RPC \
+    --keyfile $KEY \
+    --contract $TERMINUS \
+    --burnable 1 \
+    --capacity $(python3 -c "print(2**256 -1)") \
+    --transferable 0 \
+    --pool-uri $BADGE 
+```
+
+- [ ] Confirm Admin pool id
+
+```bash
+bin/game7 terminus terminus-facet total-pools \
+    --rpc $RPC \
+    --contract $TERMINUS
+```
+Output: 1
+
+
+- [ ] Mint admin badage to OWNER
+
+```bash
+bin/game7 terminus terminus-facet mint \
+    --rpc $RPC \
+    --keyfile $KEY \
+    --contract $TERMINUS \
+    --to-0 $OWNER \
+    --pool-id 1 \
+    --amount 1 \
+    --data "" 
 ```

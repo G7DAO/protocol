@@ -214,7 +214,9 @@ func CreateTerminusDeployCommand() *cobra.Command {
 	}
 
 	terminusCmd := CreateTerminusCommand()
-	cmd.AddCommand(terminusCmd)
+	TerminusFacetCmd := TerminusFacet.CreateTerminusFacetCommand()
+
+	cmd.AddCommand(terminusCmd, TerminusFacetCmd)
 
 	return cmd
 }
