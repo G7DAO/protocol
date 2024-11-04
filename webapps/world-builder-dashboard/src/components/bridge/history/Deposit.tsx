@@ -7,8 +7,8 @@ import { useMediaQuery } from 'summon-ui/mantine'
 import IconArrowNarrowDown from '@/assets/IconArrowNarrowDown'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
-import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
 import { useBridgeTransfer } from '@/hooks/useBridgeTransfer'
+import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
@@ -26,7 +26,6 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   const { returnTransferData } = useBridgeTransfer()
   const { data: transferStatus, isLoading } = returnTransferData({ txRecord: deposit })
   const { connectedAccount } = useBlockchainContext()
-
   const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
   let transactions = transactionsString ? JSON.parse(transactionsString) : []
   const localStorageTransaction = transactions.find(
@@ -87,8 +86,10 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                     </div>
                   </a>
                   <div className={styles.gridItemImportant}>
-                    {status.data && status.data.highNetworkTimestamp ? (
-                      <div>{timeAgo(status.data.highNetworkTimestamp)}</div>
+                    {transferStatus?.status &&
+                      (transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
+                      transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED) ? (
+                      <div>{timeAgo(deposit.highNetworkTimestamp ?? deposit.lowNetworkTimestamp)}</div>
                     ) : (
                       <div>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)}</div>
                     )}

@@ -34,6 +34,7 @@ export const ETA = (timestamp: number | undefined, delayInSeconds: number | unde
   if (timeDifference < 0) {
     return '~now'
   }
+  
   const units = [
     { name: 'year', inSeconds: 60 * 60 * 24 * 365 },
     { name: 'month', inSeconds: 60 * 60 * 24 * 30 },

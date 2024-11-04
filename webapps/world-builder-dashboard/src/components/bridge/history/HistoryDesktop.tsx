@@ -49,7 +49,7 @@ const HistoryDesktop: React.FC<WithdrawTransactionsProps> = () => {
                 </div>
               ))}
               {messages.data ? (
-                messages.data
+                transactions
                   .filter((tx: any) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL')
                   .map((tx: TransactionRecord, idx: number) =>
                     tx.type === 'WITHDRAWAL' ? (
