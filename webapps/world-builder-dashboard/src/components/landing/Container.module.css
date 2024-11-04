@@ -25,3 +25,22 @@
     z-index: 1001;
     height: calc(100% - 102px - 16px - 20px);
 }
+
+
+.fadeOut, .fadeIn {
+    width: 100%;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.fadeIn {
+    opacity: 1;
+    scale: 1;
+    transition: all 0.250s ease-out;
+}
+
+.fadeOut {
+    opacity: 0;
+    scale: 0.95;
+    transition: all 0.250s ease-in-out;
+}

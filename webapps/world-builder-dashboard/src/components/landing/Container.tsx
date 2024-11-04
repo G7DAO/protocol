@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import styles from "./Container.module.css";
 import parentStyles from "./Landing.module.css"
 import SegmentedProgressBar from "./SegmentedProgressBar";
@@ -19,6 +19,11 @@ const Container: React.FC<ContainerProps> = ({components, isNavbarOpen, setIsNav
     const [progress, setProgress] = useState(0);
     const [page, setPage] = useState(0)
 
+    const [pageToRender, setPageToRender] = useState(0) //delay for fadeOut animation
+    const [isFadingOut, setIsFadingOut] = useState(false)
+    const hasRunOnce = useRef(false) //to not fade out at first render
+
+
 
     useEffect(() => {
         const handleScroll = () => {
@@ -33,33 +38,53 @@ const Container: React.FC<ContainerProps> = ({components, isNavbarOpen, setIsNav
         };
   }, []);
 
-  return (
-      <div className={styles.container}>
-        <div className={styles.viewContainer}>
-            <div className={styles.sticky}>
-                <div className={`${parentStyles.layout} ${isNavbarOpen && parentStyles.layoutBlur}`}>
-                    <Navbar
-                        navbarOpen={isNavbarOpen}
-                        smallView={isSmallView}
-                        setNavBarOpen={setIsNavbarOpen}
-                        startBuilding={startBuilding}
-                        navigateLink={navigateLink}
-                    />
 
-                    <div className={`${parentStyles.mainLayout} ${isNavbarOpen ? styles.layoutDarkened : ''}`}>
-                        {components[page]}
-                    </div>
-                    {isSmallView && (
-                        <div className={parentStyles.startBuildingCTA} onClick={startBuilding}>
-                            Start building
-                        </div>
-                    )}
-                </div>
-                <div className={styles.progressBar}>
-                    <SegmentedProgressBar numberOfSegments={components.length} progress={progress}/>
-                </div>
-            </div>
-        </div>
+
+
+    useEffect(() => {
+        if (!hasRunOnce.current) {
+            hasRunOnce.current = true;
+            return
+        }
+        setIsFadingOut(true)
+        setTimeout(() => {
+            setIsFadingOut(false)
+            setPageToRender(page);
+        }, 250)
+    }, [page]);
+
+
+
+
+    return (
+      <div className={styles.container}>
+          <div className={styles.viewContainer}>
+              <div className={styles.sticky}>
+                  <div className={`${parentStyles.layout} ${isNavbarOpen && parentStyles.layoutBlur}`}>
+                      <Navbar
+                          navbarOpen={isNavbarOpen}
+                          smallView={isSmallView}
+                          setNavBarOpen={setIsNavbarOpen}
+                          startBuilding={startBuilding}
+                          navigateLink={navigateLink}
+                      />
+
+                      <div className={`${parentStyles.mainLayout} ${isNavbarOpen ? styles.layoutDarkened : ''}`}>
+                          <div className={isFadingOut ? styles.fadeOut : styles.fadeIn}>
+                            {components[pageToRender]}
+                          </div>
+                      </div>
+                      {isSmallView && (
+                          <div className={parentStyles.startBuildingCTA} onClick={startBuilding}>
+                              Start building
+                          </div>
+                      )}
+                  </div>
+                  <div className={styles.progressBar}>
+                      <SegmentedProgressBar numberOfSegments={components.length} progress={progress}/>
+                  </div>
+              </div>
+          </div>
       </div>
   );
 };
