@@ -115,7 +115,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           highNetworkChainId: selectedHighNetwork.chainId,
           highNetworkHash: tx?.hash,
           highNetworkTimestamp: Date.now() / 1000,
-          challengePeriod: 60 * 60,
+          challengePeriod: 60 * 40,
           symbol
         }
       }

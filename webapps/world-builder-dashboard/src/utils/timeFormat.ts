@@ -31,9 +31,11 @@ export const ETA = (timestamp: number | undefined, delayInSeconds: number | unde
   const now = new Date().getTime()
   const date = new Date(Number(timestamp) + delayInSeconds * 1000).getTime()
   const timeDifference = Math.floor((date - now) / 1000)
+  console.log(timeDifference)
   if (timeDifference < 0) {
     return '~now'
   }
+  
   const units = [
     { name: 'year', inSeconds: 60 * 60 * 24 * 365 },
     { name: 'month', inSeconds: 60 * 60 * 24 * 30 },
