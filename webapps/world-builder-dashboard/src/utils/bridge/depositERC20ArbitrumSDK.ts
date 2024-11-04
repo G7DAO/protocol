@@ -38,6 +38,7 @@ export interface TransactionRecord {
   isFailed?: boolean
   symbol?: string
   status?: number
+  ETA?: number
 }
 
 export const depositERC20ArbitrumSDK = async (
@@ -45,7 +46,7 @@ export const depositERC20ArbitrumSDK = async (
   highNetwork: NetworkInterface,
   amount: string,
   l1Signer: Signer
-): Promise<TransactionRecord> => {
+): Promise<TransactionRecord> => { 
   const l2Provider = new providers.JsonRpcProvider(highNetwork.rpcs[0])
 
   const l2Network = await getArbitrumNetwork(l2Provider)

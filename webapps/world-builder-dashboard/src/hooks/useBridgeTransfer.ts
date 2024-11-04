@@ -47,27 +47,27 @@ export const useBridgeTransfer = () => {
         localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(newTransactions))
         return status
       },
-      // {
-      //   initialData: () => {
-      //     const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
-      //     if (transactionsString) {
-      //       const transactions = JSON.parse(transactionsString)
-      //       const cachedTransaction = transactions.find((t: TransactionRecord) =>
-      //         txRecord.type === 'DEPOSIT'
-      //           ? t.lowNetworkHash === txRecord.lowNetworkHash
-      //           : t.highNetworkHash === txRecord.highNetworkHash
-      //       )
-      //       if (cachedTransaction && cachedTransaction.status) {
-      //         return { ETA: 0, status: cachedTransaction.status }
-      //       }
-      //     }
-      //     return { ETA: 0, status: 0 }
-      //   },
-      //   refetchInterval: 50000,
-      //   staleTime: 60 * 1000,
-      //   refetchOnWindowFocus: false,
-      //   enabled: !!txRecord
-      // }
+      {
+        initialData: () => {
+          const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+          if (transactionsString) {
+            const transactions = JSON.parse(transactionsString)
+            const cachedTransaction = transactions.find((t: TransactionRecord) =>
+              txRecord.type === 'DEPOSIT'
+                ? t.lowNetworkHash === txRecord.lowNetworkHash
+                : t.highNetworkHash === txRecord.highNetworkHash
+            )
+            if (cachedTransaction && cachedTransaction.status) {
+              return { ETA: 0, status: cachedTransaction.status }
+            }
+          }
+          return { ETA: 0, status: 0 }
+        },
+        refetchInterval: 50000,
+        staleTime: 60 * 1000,
+        refetchOnWindowFocus: false,
+        enabled: !!txRecord
+      }
     )
   }
 
@@ -120,7 +120,7 @@ export const useBridgeTransfer = () => {
                 lowNetworkTimestamp: Date.now() / 1000,
                 newTransaction: true,
                 lowNetworkHash: res?.transactionHash,
-                status: BridgeTransferStatus.WITHDRAW_EXECUTED
+                status: BridgeTransferStatus.WITHDRAW_EXECUTED,
               }
             }
             return { ...t }

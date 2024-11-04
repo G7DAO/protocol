@@ -63,9 +63,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const localStorageTransaction = transactions.find(
     (t: TransactionRecord) => t.type === 'WITHDRAWAL' && t.highNetworkHash === withdrawal.highNetworkHash
   )
-  console.log(localStorageTransaction)
   
-
   if (!status) {
     return <></>
   }
