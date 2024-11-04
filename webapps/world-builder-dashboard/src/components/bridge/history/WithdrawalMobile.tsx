@@ -10,11 +10,11 @@ import { ChildToParentMessageStatus } from '@arbitrum/sdk'
 
 interface WithdrawalMobileProps {
   withdrawal: TransactionRecord
-  execute: any
+  claim: any
   status: any
   transferStatus: any
 }
-const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, execute, status, transferStatus }) => {
+const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, claim, status, transferStatus }) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
 
   return (
@@ -65,7 +65,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, execute
             )}
           </div>
           {transferStatus?.status === ChildToParentMessageStatus.EXECUTED && (
-            <>
+          <>
               <IconWithdrawalNodeCompletedMobile className={styles.nodeCompleted} />
               <div className={styles.dataRowCompleted}>
                 <div className={styles.dataText}>Initiate</div>
@@ -108,8 +108,8 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, execute
       <div className={styles.dataRow}>
         <div className={styles.dataText}>Status</div>
         {transferStatus?.status === ChildToParentMessageStatus.CONFIRMED && (
-          <button className={parentStyles.claimButton} onClick={() => execute.mutate(status.data.highNetworkHash)}>
-            {execute.isLoading ? 'Claiming...' : 'Claim now'}
+          <button className={parentStyles.claimButton} onClick={() => claim.mutate(status.data.highNetworkHash)}>
+            {claim.isLoading && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}
           </button>
         )}
 

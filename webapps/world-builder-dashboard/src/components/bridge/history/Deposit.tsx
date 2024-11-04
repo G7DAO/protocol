@@ -6,8 +6,8 @@ import { BridgeTransferStatus } from 'game7-bridge-sdk'
 import { useMediaQuery } from 'summon-ui/mantine'
 import IconArrowNarrowDown from '@/assets/IconArrowNarrowDown'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
-import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
-import useTransferData from '@/hooks/useTransferData'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
+import { useBridgeTransfer } from '@/hooks/useBridgeTransfer'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
@@ -20,9 +20,15 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
     from: LOW_NETWORKS.find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
     to: HIGH_NETWORKS.find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
   }
-  const status = useDepositStatus(deposit)
   const smallView = useMediaQuery('(max-width: 1199px)')
-  const { data: transferStatus, isLoading } = useTransferData({ txRecord: deposit })
+  const { returnTransferData } = useBridgeTransfer()
+  const { data: transferStatus, isLoading } = returnTransferData({ txRecord: deposit })
+  const { connectedAccount } = useBlockchainContext()
+  const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+  let transactions = transactionsString ? JSON.parse(transactionsString) : []
+  const localStorageTransaction = transactions.find(
+    (t: any) => t.type === 'DEPOSIT' && t.lowNetworkHash === deposit.lowNetworkHash
+  )
 
   return (
     <>
@@ -43,7 +49,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                 </div>
               </div>
               <div className={styles.gridItem}>{timeAgo(deposit.lowNetworkTimestamp)}</div>
-              <div className={styles.gridItem}>{`${deposit.amount} ${deposit.symbol}`}</div>
+              <div className={styles.gridItem}>{`${deposit.amount} ${localStorageTransaction?.symbol}`}</div>
               <div className={styles.gridItem}>{depositInfo.from}</div>
               <div className={styles.gridItem}>{depositInfo.to}</div>
               {isLoading ? (
@@ -78,8 +84,10 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                     </div>
                   </a>
                   <div className={styles.gridItemImportant}>
-                    {status.data && status.data.highNetworkTimestamp ? (
-                      <div>{timeAgo(status.data.highNetworkTimestamp)}</div>
+                    {transferStatus?.status &&
+                      (transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
+                      transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED) ? (
+                      <div>{timeAgo(deposit.highNetworkTimestamp ?? deposit.lowNetworkTimestamp)}</div>
                     ) : (
                       <div>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)}</div>
                     )}

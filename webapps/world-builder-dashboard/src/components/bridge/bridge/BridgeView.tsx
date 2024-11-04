@@ -16,7 +16,7 @@ import ValueToBridge from '@/components/bridge/bridge/ValueToBridge'
 // Blockchain Context and Utility Functions
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useUISettings } from '@/contexts/UISettingsContext'
-import useBalance from '@/hooks/useBalance'
+import useTokenInformation from '@/hooks/useBalance'
 // Hooks and Constants
 import useEthUsdRate from '@/hooks/useEthUsdRate'
 import { DepositDirection } from '@/pages/BridgePage/BridgePage'
@@ -50,32 +50,34 @@ const BridgeView = ({
     selectedBridgeToken
   } = useBlockchainContext()
 
-  const { isFetching: isFetchingTokenInformation, data: tokenInformation } = useBalance({
+  const { isFetching: isFetchingTokenInformation, data: tokenInformation } = useTokenInformation({
     account: connectedAccount,
     token: selectedBridgeToken
   })
+
+  console.log(tokenInformation)
 
   const handleTokenChange = async (token: Token) => {
     setSelectedBridgeToken(token)
   }
 
   const estimatedFee = useQuery(
-    ['estimatedFee', bridger, connectedAccount],
+    ['estimatedFee', bridger, connectedAccount, value],
     async () => {
       try {
         const fee = await bridger?.getGasAndFeeEstimation(
           value ? ethers.utils.parseEther(value) : ethers.utils.parseEther('0.0'),
           direction === 'DEPOSIT' ? selectedLowNetwork.rpcs[0] : selectedHighNetwork.rpcs[0],
-          connectedAccount!
+          connectedAccount ?? ''
         )
-        const feeFormatted = ethers.utils.formatEther(fee?.estimatedFee || '')
+        const feeFormatted = ethers.utils.formatEther(fee?.estimatedFee || '0.0')
         return feeFormatted
       } catch (e) {
         console.error(e)
       }
     },
     {
-      enabled: !!connectedAccount && !!selectedLowNetwork && !!bridger
+      enabled: !!connectedAccount && !!selectedLowNetwork && !!selectedHighNetwork && !!value
     }
   )
 
@@ -88,8 +90,13 @@ const BridgeView = ({
       if (!chainIds.includes(String(destinationChainId))) {
         return
       }
-      const bridger: Bridger = new Bridger(originChainId, destinationChainId, selectedBridgeToken.tokenAddressMap)
-      setBridger(bridger)
+      try {
+        const bridger: Bridger = new Bridger(originChainId, destinationChainId, selectedBridgeToken.tokenAddressMap)
+        setBridger(bridger)
+      } catch (e) {
+        console.log(e)
+        setNetworkErrorMessage('Cannot bridge between these 2 networks')
+      }
     }
   }, [selectedBridgeToken, connectedAccount, selectedHighNetwork, selectedLowNetwork])
 
@@ -171,7 +178,7 @@ const BridgeView = ({
         </div>
       </div>
       <ValueToBridge
-        symbol={tokenInformation?.symbol ?? ""}
+        symbol={tokenInformation?.symbol ?? ''}
         value={value}
         setValue={setValue}
         onTokenChange={handleTokenChange}
@@ -209,19 +216,23 @@ const BridgeView = ({
         isEstimatingFee={estimatedFee.isFetching}
         value={Number(value)}
         ethRate={ethUsdRate ?? 0}
-        tokenSymbol={tokenInformation?.symbol ?? ""}
+        tokenSymbol={tokenInformation?.symbol ?? ''}
         tokenRate={g7tUsdRate.data ?? 0}
-        gasTokenSymbol={tokenInformation?.symbol ?? ""}
+        gasTokenSymbol={
+          direction === 'DEPOSIT'
+            ? (selectedLowNetwork?.nativeCurrency?.symbol ?? '')
+            : (selectedHighNetwork?.nativeCurrency?.symbol ?? '')
+        }
       />
       {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
       <ActionButton
         direction={direction}
-        amount={isNaN(Number(value)) ? 0 : Number(value)}
+        amount={value ?? "0"}
         isDisabled={!!inputErrorMessages.value || !!inputErrorMessages.destination || !!inputErrorMessages.data}
         setErrorMessage={setNetworkErrorMessage}
         L2L3message={isMessageExpanded ? message : { data: '', destination: '' }}
         bridger={bridger}
-        symbol={tokenInformation?.symbol ?? ""}
+        symbol={tokenInformation?.symbol ?? ''}
       />
     </div>
   )

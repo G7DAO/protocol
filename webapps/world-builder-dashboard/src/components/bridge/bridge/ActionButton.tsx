@@ -15,7 +15,7 @@ import { ZERO_ADDRESS } from '@/utils/web3utils'
 
 interface ActionButtonProps {
   direction: 'DEPOSIT' | 'WITHDRAW'
-  amount: number
+  amount: string
   isDisabled: boolean
   L2L3message?: { destination: string; data: string }
   setErrorMessage: (arg0: string) => void
@@ -69,7 +69,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       return
     }
     setErrorMessage('')
-    transfer.mutateAsync(String(amount))
+    transfer.mutateAsync(amount)
     return
   }
 
@@ -81,13 +81,14 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       const signer = provider.getSigner()
       const destinationRPC = selectedHighNetwork.rpcs[0]
       const destinationProvider = new ethers.providers.JsonRpcProvider(destinationRPC) as ethers.providers.Provider
+
       // If deposit
       if (bridger?.isDeposit) {
         if (selectedBridgeToken.address != ZERO_ADDRESS) {
           const allowance = (await bridger?.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount ?? '')) ?? ''
           // approve first
           if (Number(ethers.utils.formatEther(allowance)) < Number(amount)) {
-            const txApprove = await bridger?.approve(ethers.utils.parseEther(amount), signer)
+            const txApprove = await bridger?.approve(ethers.utils.parseUnits(amount), signer)
             await txApprove.wait()
           }
         }
@@ -95,13 +96,14 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         await tx.wait()
         return {
           type: 'DEPOSIT',
-          amount,
+          amount: amount,
           lowNetworkChainId: selectedLowNetwork.chainId,
           highNetworkChainId: selectedHighNetwork.chainId,
           lowNetworkHash: tx.hash,
           lowNetworkTimestamp: Date.now() / 1000,
           completionTimestamp: Date.now() / 1000,
           newTransaction: true,
+          ETA: Date.now() + 60 * 15,
           symbol
         }
       } else {
@@ -114,7 +116,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           highNetworkChainId: selectedHighNetwork.chainId,
           highNetworkHash: tx?.hash,
           highNetworkTimestamp: Date.now() / 1000,
-          challengePeriod: 60 * 60,
+          challengePeriod: 60 * 40,
+          ETA: Date.now() + 60 * 60,
           symbol
         }
       }
@@ -141,7 +144,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       },
       onError: (e) => {
         console.log(e)
-        setErrorMessage('Something went wrong. Try again, please')
+        setErrorMessage('Transaction failed. Try again, please')
       }
     }
   )

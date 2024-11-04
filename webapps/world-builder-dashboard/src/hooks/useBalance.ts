@@ -8,7 +8,7 @@ interface UseBalanceProps {
   token: Token
 }
 
-const useBalance = ({ account, token }: UseBalanceProps) => {
+const useTokenInformation = ({ account, token }: UseBalanceProps) => {
   return useQuery(
     ['balance', account, token],
     async () => {
@@ -27,4 +27,4 @@ const useBalance = ({ account, token }: UseBalanceProps) => {
   )
 }
 
-export default useBalance
+export default useTokenInformation
