@@ -12,7 +12,7 @@
 pragma solidity ^0.8.9;
 
 library LibTerminus {
-    bytes32 constant TERMINUS_STORAGE_POSITION = keccak256("moonstreamdao.eth.storage.terminus");
+    bytes32 constant TERMINUS_STORAGE_POSITION = keccak256("game7.storage.terminus");
 
     struct TerminusStorage {
         // Terminus administration
