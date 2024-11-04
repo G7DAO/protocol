@@ -204,7 +204,7 @@ func TerminusDiamondSetup(
 	return deployedConfiguration, nil
 }
 
-func CreateGogogoCommand() *cobra.Command {
+func CreateTerminusDeployCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "terminus",
 		Short: "Deploy new Termiuns diamond contract",
