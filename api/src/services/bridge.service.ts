@@ -1,6 +1,6 @@
 // src/services/bridge.service.ts
 import { pool } from '../utils/db'; // Adjust the import path as necessary
-import { tableNameGame7, tableNameEthereum, tableNameArbitrum, addressERC20Inbox, addressL1ERC20Gateway, addressL2ERC20Gateway, addressOutBox, addressArbOSL2, addressL1GatewayRouter, addressL2GatewayRouter, addressL1Inbox } from '../config'; // Adjust the import path as necessary
+import { tableNameGame7, tableNameEthereum, tableNameArbitrum, addressERC20Inbox, addressEthereumOutbox, addressL2ERC20Gateway, addressArbitrumOutBox, addressArbOSL2, addressL1GatewayRouter, addressL2GatewayRouter, addressL1Inbox } from '../config'; // Adjust the import path as necessary
 
 
 /// 11155111 - sepolia
@@ -365,9 +365,9 @@ export async function getTransactionHistory(address: string, limit: number, offs
       LIMIT $11
   `;
     const result = await pool.query(query, [addressArbOSL2,
-      addressOutBox,
+      addressArbitrumOutBox,
       addressL2ERC20Gateway,
-      addressL1ERC20Gateway,
+      addressEthereumOutbox,
       addressL2GatewayRouter,
       addressERC20Inbox,
       addressL1GatewayRouter,
