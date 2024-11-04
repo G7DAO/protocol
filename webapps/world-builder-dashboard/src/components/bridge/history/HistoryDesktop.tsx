@@ -21,6 +21,7 @@ const HistoryDesktop: React.FC<WithdrawTransactionsProps> = () => {
   const { data: apiTransactions } = useHistoryTransactions(connectedAccount)
   const mapAPIDataToTransactionRecord = (apiData: any): TransactionRecord => {
     const amountFormatted = apiData?.amount ? ethers.utils.formatEther(apiData.amount) : '0.0'
+    
     return {
       type: apiData.type,
       amount: amountFormatted,
@@ -48,7 +49,7 @@ const HistoryDesktop: React.FC<WithdrawTransactionsProps> = () => {
                   {h}
                 </div>
               ))}
-              {messages.data ? (
+              {transactions ? (
                 transactions
                   .filter((tx: any) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL')
                   .map((tx: TransactionRecord, idx: number) =>

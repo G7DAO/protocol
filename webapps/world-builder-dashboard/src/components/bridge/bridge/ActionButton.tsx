@@ -92,6 +92,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
             await txApprove.wait()
           }
         }
+        console.log(symbol)
         const tx = await bridger?.transfer({ amount: ethers.utils.parseUnits(amount), signer, destinationProvider })
         await tx.wait()
         return {

@@ -101,7 +101,8 @@ export const useBridgeTransfer = () => {
       const _bridgeTransfer = new BridgeTransfer({
         txHash: withdrawal.highNetworkHash || '',
         destinationNetworkChainId: withdrawal.lowNetworkChainId ?? 0,
-        originNetworkChainId: withdrawal.highNetworkChainId ?? 0
+        originNetworkChainId: withdrawal.highNetworkChainId ?? 0,
+        destinationSignerOrProviderOrRpc: withdrawal.lowNetworkChainId === 11155111 ? L1_NETWORK.rpcs[0] : ""
       })
       const res = await _bridgeTransfer?.execute(signer)
       return { res, withdrawal }

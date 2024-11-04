@@ -8,7 +8,6 @@ import IconArrowNarrowDown from '@/assets/IconArrowNarrowDown'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeTransfer } from '@/hooks/useBridgeTransfer'
-import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
@@ -21,7 +20,6 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
     from: LOW_NETWORKS.find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
     to: HIGH_NETWORKS.find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
   }
-  const status = useDepositStatus(deposit)
   const smallView = useMediaQuery('(max-width: 1199px)')
   const { returnTransferData } = useBridgeTransfer()
   const { data: transferStatus, isLoading } = returnTransferData({ txRecord: deposit })
