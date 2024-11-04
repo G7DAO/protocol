@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { ALL_NETWORKS } from '../../../../constants'
 // Styles
 import styles from './ActionButton.module.css'
-import { BigNumber, ethers } from 'ethers'
+import { ethers } from 'ethers'
 import { Bridger } from 'game7-bridge-sdk'
 // Absolute Imports
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
