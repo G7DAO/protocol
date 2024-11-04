@@ -6,12 +6,12 @@ import { BridgeTransferStatus } from 'game7-bridge-sdk'
 import { useMediaQuery } from 'summon-ui/mantine'
 import IconArrowNarrowDown from '@/assets/IconArrowNarrowDown'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
-import useTransferData from '@/hooks/useTransferData'
+import { useBridgeTransfer } from '@/hooks/useBridgeTransfer'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
-import { useBlockchainContext } from '@/contexts/BlockchainContext'
 
 interface DepositProps {
   deposit: TransactionRecord
@@ -23,8 +23,9 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   }
   const status = useDepositStatus(deposit)
   const smallView = useMediaQuery('(max-width: 1199px)')
-  const { data: transferStatus, isLoading } = useTransferData({ txRecord: deposit })
-  const {connectedAccount} = useBlockchainContext()
+  const { returnTransferData } = useBridgeTransfer()
+  const { data: transferStatus, isLoading } = returnTransferData({ txRecord: deposit })
+  const { connectedAccount } = useBlockchainContext()
 
   const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
   let transactions = transactionsString ? JSON.parse(transactionsString) : []

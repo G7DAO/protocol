@@ -29,8 +29,8 @@ export const ETA = (timestamp: number | undefined, delayInSeconds: number | unde
     return 'N/A'
   }
   const now = new Date().getTime()
-  const date = new Date(Number(timestamp) + (delayInSeconds * 1000)).getTime()
-  const timeDifference = Math.floor((date - now) / 1000)
+  const date = new Date(Number(timestamp) + delayInSeconds).getTime()
+  const timeDifference = date - now
   if (timeDifference < 0) {
     return '~now'
   }
