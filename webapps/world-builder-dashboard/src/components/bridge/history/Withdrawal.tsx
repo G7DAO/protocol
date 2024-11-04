@@ -54,6 +54,7 @@ export const getStatus = (withdrawal: TransactionRecord) => {
 }
 const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const status = getStatus(withdrawal)
+  console.log(status)
   const { connectedAccount } = useBlockchainContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
   const { claim, returnTransferData } = useBridgeTransfer()
@@ -88,7 +89,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       Withdraw
                     </div>
                   </div>
-                  <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
+                  <div className={styles.gridItem}>{timeAgo(withdrawal.highNetworkTimestamp)}</div>
                   <div className={styles.gridItem}>{`${status.data?.amount} ${localStorageTransaction?.symbol}`}</div>
                   <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
                   <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
@@ -111,7 +112,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           Withdraw
                         </div>
                       </div>
-                      <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
+                      <div className={styles.gridItem}>{timeAgo(withdrawal?.highNetworkTimestamp)}</div>
                       <div
                         className={styles.gridItem}
                       >{`${status.data?.amount} ${localStorageTransaction?.symbol}`}</div>
@@ -135,7 +136,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
                         <div className={styles.typeCompleted}>Initiate</div>
                       </div>
-                      <div className={styles.gridItemInitiate}>{timeAgo(status.data?.timestamp)}</div>
+                      <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.highNetworkTimestamp)}</div>
                       <div
                         className={styles.gridItemInitiate}
                       >{`${status.data?.amount} ${localStorageTransaction?.symbol}`}</div>
@@ -233,7 +234,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           </div>
 
                           <div className={styles.gridItemImportant}>
-                            <div>{ETA(status.data?.timestamp, withdrawal.challengePeriod)} left</div>
+                            <div>{ETA(transferStatus?.ETA, withdrawal.challengePeriod)} left</div>
                           </div>
                         </>
                       )}

@@ -106,7 +106,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           symbol
         }
       } else {
-        console.log(ethers.utils.parseUnits(amount))
         const tx = await bridger?.transfer({amount: ethers.utils.parseUnits(amount), signer, destinationProvider})
         await tx?.wait()
         return {
@@ -143,7 +142,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       },
       onError: (e) => {
         console.log(e)
-        setErrorMessage('Something went wrong. Try again, please')
+        setErrorMessage('Transaction failed. Try again, please')
       }
     }
   )
