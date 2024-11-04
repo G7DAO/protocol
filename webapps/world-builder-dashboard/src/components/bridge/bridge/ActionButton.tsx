@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { ALL_NETWORKS } from '../../../../constants'
 // Styles
 import styles from './ActionButton.module.css'
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import { Bridger } from 'game7-bridge-sdk'
 // Absolute Imports
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
@@ -81,6 +81,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       const signer = provider.getSigner()
       const destinationRPC = selectedHighNetwork.rpcs[0]
       const destinationProvider = new ethers.providers.JsonRpcProvider(destinationRPC) as ethers.providers.Provider
+
       // If deposit
       if (bridger?.isDeposit) {
         if (selectedBridgeToken.address != ZERO_ADDRESS) {
@@ -95,7 +96,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         await tx.wait()
         return {
           type: 'DEPOSIT',
-          amount,
+          amount: amount,
           lowNetworkChainId: selectedLowNetwork.chainId,
           highNetworkChainId: selectedHighNetwork.chainId,
           lowNetworkHash: tx.hash,
@@ -105,7 +106,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           symbol
         }
       } else {
-        const tx = await bridger?.transfer({ amount: ethers.utils.parseUnits(amount), signer, destinationProvider })
+        const tx = await bridger?.transfer({amount: ethers.utils.parseUnits(amount), signer, destinationProvider})
         await tx?.wait()
         return {
           type: 'WITHDRAWAL',

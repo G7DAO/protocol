@@ -65,7 +65,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, claim, 
             )}
           </div>
           {transferStatus?.status === ChildToParentMessageStatus.EXECUTED && (
-            <>
+          <>
               <IconWithdrawalNodeCompletedMobile className={styles.nodeCompleted} />
               <div className={styles.dataRowCompleted}>
                 <div className={styles.dataText}>Initiate</div>

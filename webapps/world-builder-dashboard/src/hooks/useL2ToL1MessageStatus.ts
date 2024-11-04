@@ -146,8 +146,7 @@ const fetchDepositStatus = async (deposit: TransactionRecord) => {
   let l2Result
 
   try {
-    l2Result = await l1ContractCallReceipt.waitForChildTransactionReceipt(l2Provider, 5, 3000)
-    console.log('L2 Transaction Receipt:', l2Result)
+    l2Result = await l1ContractCallReceipt.waitForChildTransactionReceipt(l2Provider, l1Receipt.confirmations)
   } catch (e) {
     console.error('Error waiting for child transaction receipt:', e)
   }

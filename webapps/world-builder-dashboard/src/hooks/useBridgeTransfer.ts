@@ -28,8 +28,8 @@ export const useBridgeTransfer = () => {
           originNetworkChainId:
             (txRecord.type === 'DEPOSIT' ? txRecord.lowNetworkChainId : txRecord.highNetworkChainId) ?? 0
         })
-        console.log(_bridgeTransfer)
         const status = await _bridgeTransfer.getStatus()
+        console.log(status)
 
         const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
         const transactions = transactionsString ? JSON.parse(transactionsString) : []
@@ -48,27 +48,27 @@ export const useBridgeTransfer = () => {
         localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(newTransactions))
         return status
       },
-      {
-        initialData: () => {
-          const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
-          if (transactionsString) {
-            const transactions = JSON.parse(transactionsString)
-            const cachedTransaction = transactions.find((t: TransactionRecord) =>
-              txRecord.type === 'DEPOSIT'
-                ? t.lowNetworkHash === txRecord.lowNetworkHash
-                : t.highNetworkHash === txRecord.highNetworkHash
-            )
-            if (cachedTransaction && cachedTransaction.status) {
-              return { ETA: 0, status: cachedTransaction.status }
-            }
-          }
-          return { ETA: 0, status: 0 }
-        },
-        refetchInterval: 50000,
-        staleTime: 60 * 1000,
-        refetchOnWindowFocus: false,
-        enabled: !!txRecord
-      }
+      // {
+      //   initialData: () => {
+      //     const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+      //     if (transactionsString) {
+      //       const transactions = JSON.parse(transactionsString)
+      //       const cachedTransaction = transactions.find((t: TransactionRecord) =>
+      //         txRecord.type === 'DEPOSIT'
+      //           ? t.lowNetworkHash === txRecord.lowNetworkHash
+      //           : t.highNetworkHash === txRecord.highNetworkHash
+      //       )
+      //       if (cachedTransaction && cachedTransaction.status) {
+      //         return { ETA: 0, status: cachedTransaction.status }
+      //       }
+      //     }
+      //     return { ETA: 0, status: 0 }
+      //   },
+      //   refetchInterval: 50000,
+      //   staleTime: 60 * 1000,
+      //   refetchOnWindowFocus: false,
+      //   enabled: !!txRecord
+      // }
     )
   }
 
@@ -130,7 +130,6 @@ export const useBridgeTransfer = () => {
           console.log(e)
         }
         refetchNewNotifications(connectedAccount ?? '')
-        console.log('refetching transfer data queries')
         queryClient.refetchQueries(['transferData', withdrawal])
         queryClient.refetchQueries(['incomingMessages'])
         queryClient.refetchQueries(['ERC20Balance'])
