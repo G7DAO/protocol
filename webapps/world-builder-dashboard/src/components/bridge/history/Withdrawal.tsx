@@ -54,7 +54,6 @@ export const getStatus = (withdrawal: TransactionRecord) => {
 }
 const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const status = getStatus(withdrawal)
-  console.log(status)
   const { connectedAccount } = useBlockchainContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
   const { claim, returnTransferData } = useBridgeTransfer()
@@ -64,6 +63,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const localStorageTransaction = transactions.find(
     (t: TransactionRecord) => t.type === 'WITHDRAWAL' && t.highNetworkHash === withdrawal.highNetworkHash
   )
+  console.log(transferStatus?.ETA)
 
   if (!status) {
     return <></>

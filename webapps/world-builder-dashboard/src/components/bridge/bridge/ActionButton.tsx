@@ -106,7 +106,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           symbol
         }
       } else {
-        const tx = await bridger?.transfer({amount: ethers.utils.parseUnits(amount), signer, destinationProvider})
+        const tx = await bridger?.transfer({ amount: ethers.utils.parseUnits(amount), signer, destinationProvider })
         await tx?.wait()
         return {
           type: 'WITHDRAWAL',
