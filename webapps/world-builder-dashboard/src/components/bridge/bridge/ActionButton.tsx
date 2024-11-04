@@ -15,7 +15,7 @@ import { ZERO_ADDRESS } from '@/utils/web3utils'
 
 interface ActionButtonProps {
   direction: 'DEPOSIT' | 'WITHDRAW'
-  amount: number
+  amount: string
   isDisabled: boolean
   L2L3message?: { destination: string; data: string }
   setErrorMessage: (arg0: string) => void
@@ -69,7 +69,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       return
     }
     setErrorMessage('')
-    transfer.mutateAsync(String(amount))
+    transfer.mutateAsync(amount)
     return
   }
 
@@ -88,7 +88,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           const allowance = (await bridger?.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount ?? '')) ?? ''
           // approve first
           if (Number(ethers.utils.formatEther(allowance)) < Number(amount)) {
-            const txApprove = await bridger?.approve(ethers.utils.parseEther(amount), signer)
+            const txApprove = await bridger?.approve(ethers.utils.parseUnits(amount), signer)
             await txApprove.wait()
           }
         }
@@ -106,6 +106,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           symbol
         }
       } else {
+        console.log(ethers.utils.parseUnits(amount))
         const tx = await bridger?.transfer({amount: ethers.utils.parseUnits(amount), signer, destinationProvider})
         await tx?.wait()
         return {
