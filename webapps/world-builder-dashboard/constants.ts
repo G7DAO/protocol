@@ -5,7 +5,7 @@ export const L1_NETWORK: NetworkInterface = {
   chainId: 11155111,
   name: 'sepolia',
   displayName: 'Sepolia',
-  rpcs: ['https://nb.moonstream.to/nb/sepolia/jsonrpc/36c13893-c382-405b-a73c-1af3e9e25700'],
+  rpcs: ['https://ethereum-sepolia-rpc.publicnode.com'],
   blockExplorerUrls: ['https://sepolia.etherscan.io'],
   nativeCurrency: {
     decimals: 18,
@@ -86,4 +86,3 @@ export const ETH: TokenAddressMap = {
 
 // ETH, ARBITRUM, USDC, MANTLE, USDT,
 export const ALL_TOKEN_MAPPINGS = [TG7T, ETH]
-

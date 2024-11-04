@@ -103,7 +103,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           lowNetworkTimestamp: Date.now() / 1000,
           completionTimestamp: Date.now() / 1000,
           newTransaction: true,
-          ETA: Date.now() / 1000 + 60 * 15,
+          ETA: Date.now() + 60 * 15,
           symbol
         }
       } else {
@@ -117,7 +117,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           highNetworkHash: tx?.hash,
           highNetworkTimestamp: Date.now() / 1000,
           challengePeriod: 60 * 40,
-          ETA: Date.now() / 1000 + 60 * 60,
+          ETA: Date.now() + 60 * 60,
           symbol
         }
       }
