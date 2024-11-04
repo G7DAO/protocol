@@ -41,7 +41,7 @@ contract TokenFaucet is Ownable {
         if (block.timestamp <= lastClaimedL2Timestamp[msg.sender] + faucetTimeInterval) {
             revert TokenFaucetClaimIntervalNotPassed();
         }
-        
+
         IERC20(tokenAddress).transfer(msg.sender, faucetAmount);
 
         lastClaimedL2Timestamp[msg.sender] = block.timestamp;
