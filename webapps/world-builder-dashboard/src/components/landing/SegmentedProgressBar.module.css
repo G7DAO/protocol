@@ -8,8 +8,6 @@
 }
 
 .segment {
-    /*height: 60px;*/
-    /*height: 100%;*/
     flex: 1;
     width: 100%;
     background-color: #393939;
