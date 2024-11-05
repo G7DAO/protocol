@@ -9,7 +9,10 @@ jobs:
     build:
         runs-on: ubuntu-20.04
         steps:
-            - uses: actions/checkout@v3
+            - name: Checkout
+              uses: actions/checkout@v3
+              with:
+                submodules: recursive # Ensure submodules are checked out and
             - name: Install Node.js
               uses: actions/setup-node@v3
               with:
