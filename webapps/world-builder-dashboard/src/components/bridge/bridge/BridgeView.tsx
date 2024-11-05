@@ -55,7 +55,6 @@ const BridgeView = ({
     token: selectedBridgeToken
   })
 
-  console.log(tokenInformation)
 
   const handleTokenChange = async (token: Token) => {
     setSelectedBridgeToken(token)

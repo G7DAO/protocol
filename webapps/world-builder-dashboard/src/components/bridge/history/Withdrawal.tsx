@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { HIGH_NETWORKS, L2_NETWORK, L3_NETWORK, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
@@ -57,13 +57,14 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const { connectedAccount } = useBlockchainContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
   const { claim, returnTransferData } = useBridgeTransfer()
-  const { data: transferStatus, isLoading } = returnTransferData({ txRecord: withdrawal })  
+  const [collapseExecuted, setCollapseExecuted] = useState(false)
+  const { data: transferStatus, isLoading } = returnTransferData({ txRecord: withdrawal })
   const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
   let transactions = transactionsString ? JSON.parse(transactionsString) : []
   const localStorageTransaction = transactions.find(
     (t: TransactionRecord) => t.type === 'WITHDRAWAL' && t.highNetworkHash === withdrawal.highNetworkHash
   )
-  
+
   if (!status) {
     return <></>
   }
@@ -89,7 +90,9 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     </div>
                   </div>
                   <div className={styles.gridItem}>{timeAgo(withdrawal.highNetworkTimestamp)}</div>
-                  <div className={styles.gridItem}>{`${status.data?.amount} ${localStorageTransaction?.symbol ?? ""}`}</div>
+                  <div
+                    className={styles.gridItem}
+                  >{`${status.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
                   <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
                   <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
                   <div className={styles.gridItem}>
@@ -103,82 +106,119 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                 <>
                   {transferStatus && transferStatus?.status === ChildToParentMessageStatus.EXECUTED && (
                     <>
-                      <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
-                        <IconWithdrawalNodeCompleted className={styles.gridNodeCompleted} />
-                        <div className={styles.typeWithdrawal}>
+                      <div
+                        className={styles.gridItem}
+                        title={withdrawal.highNetworkHash}
+                        onClick={() => setCollapseExecuted(!collapseExecuted)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {collapseExecuted && <IconWithdrawalNodeCompleted className={styles.gridNodeCompleted} />}
+                        <div className={styles.typeWithdrawal} onClick={() => setCollapseExecuted(!collapseExecuted)}>
                           <IconArrowNarrowUp className={styles.arrowUp} />
                           Withdraw
                         </div>
                       </div>
-                      <div className={styles.gridItem}>{timeAgo(withdrawal?.highNetworkTimestamp)}</div>
                       <div
                         className={styles.gridItem}
-                      >{`${status.data?.amount} ${localStorageTransaction?.symbol ?? ""}`}</div>
-                      <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
-                      <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
-                      <div className={styles.gridItem}>
+                        onClick={() => setCollapseExecuted(!collapseExecuted)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {timeAgo(withdrawal?.highNetworkTimestamp)}
+                      </div>
+                      <div
+                        className={styles.gridItem}
+                        onClick={() => setCollapseExecuted(!collapseExecuted)}
+                        style={{ cursor: 'pointer' }}
+                      >{`${status.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
+                      <div
+                        className={styles.gridItem}
+                        onClick={() => setCollapseExecuted(!collapseExecuted)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {status.data?.from ?? ''}
+                      </div>
+                      <div
+                        className={styles.gridItem}
+                        onClick={() => setCollapseExecuted(!collapseExecuted)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {status.data?.to ?? ''}
+                      </div>
+                      <div
+                        className={styles.gridItem}
+                        onClick={() => setCollapseExecuted(!collapseExecuted)}
+                        style={{ cursor: 'pointer' }}
+                      >
                         <a
                           href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
                           target={'_blank'}
                           className={styles.explorerLink}
                         >
-                          <div className={styles.settled}>
+                          <div className={styles.settled} onClick={() => setCollapseExecuted(!collapseExecuted)}>
                             Completed
                             <IconLinkExternal02 stroke={'#fff'} />
                           </div>
                         </a>
                       </div>
-                      <div className={styles.gridItemImportant}>
+                      <div
+                        className={styles.gridItemImportant}
+                        onClick={() => setCollapseExecuted(!collapseExecuted)}
+                        style={{ cursor: 'pointer' }}
+                      >
                         <div>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
                       </div>
-                      <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
-                        <div className={styles.typeCompleted}>Initiate</div>
-                      </div>
-                      <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.highNetworkTimestamp)}</div>
-                      <div
-                        className={styles.gridItemInitiate}
-                      >{`${status.data?.amount} ${localStorageTransaction?.symbol ?? ""}`}</div>
-                      <div className={styles.gridItemInitiate}>{status.data?.from ?? ''}</div>
-                      <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
-                      <div className={styles.gridItemInitiate}>
-                        <a
-                          href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
-                          target={'_blank'}
-                          className={styles.explorerLink}
-                        >
-                          <div className={styles.settled}>
-                            Completed
-                            <IconLinkExternal02 stroke={'#fff'} />
+                      {collapseExecuted && (
+                        <>
+                          <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
+                            <div className={styles.typeCompleted}>Initiate</div>
                           </div>
-                        </a>
-                      </div>
-                      <div className={styles.gridItemInitiate}>
-                        <div className={styles.timeCenter}>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
-                      </div>
-                      <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
-                        <div className={styles.typeCompleted}>Finalize</div>
-                      </div>
-                      <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.completionTimestamp)}</div>
-                      <div
-                        className={styles.gridItemInitiate}
-                      >{`${status.data?.amount} ${localStorageTransaction?.symbol ?? ""}`}</div>
-                      <div className={styles.gridItemInitiate}>{status.data?.from ?? ''}</div>
-                      <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
-                      <div className={styles.gridItemInitiate}>
-                        <a
-                          href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
-                          target={'_blank'}
-                          className={styles.explorerLink}
-                        >
-                          <div className={styles.settled}>
-                            Completed
-                            <IconLinkExternal02 stroke={'#fff'} />
+                          <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.highNetworkTimestamp)}</div>
+                          <div
+                            className={styles.gridItemInitiate}
+                          >{`${status.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
+                          <div className={styles.gridItemInitiate}>{status.data?.from ?? ''}</div>
+                          <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
+                          <div className={styles.gridItemInitiate}>
+                            <a
+                              href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
+                              target={'_blank'}
+                              className={styles.explorerLink}
+                            >
+                              <div className={styles.settled}>
+                                Completed
+                                <IconLinkExternal02 stroke={'#fff'} />
+                              </div>
+                            </a>
                           </div>
-                        </a>
-                      </div>
-                      <div className={styles.gridItemInitiate}>
-                        <div className={styles.timeCenter}>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
-                      </div>
+                          <div className={styles.gridItemInitiate}>
+                            <div className={styles.timeCenter}>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
+                          </div>
+                          <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
+                            <div className={styles.typeCompleted}>Finalize</div>
+                          </div>
+                          <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.completionTimestamp)}</div>
+                          <div
+                            className={styles.gridItemInitiate}
+                          >{`${status.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
+                          <div className={styles.gridItemInitiate}>{status.data?.from ?? ''}</div>
+                          <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
+                          <div className={styles.gridItemInitiate}>
+                            <a
+                              href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
+                              target={'_blank'}
+                              className={styles.explorerLink}
+                            >
+                              <div className={styles.settled}>
+                                Completed
+                                <IconLinkExternal02 stroke={'#fff'} />
+                              </div>
+                            </a>
+                          </div>
+                          <div className={styles.gridItemInitiate}>
+                            <div className={styles.timeCenter}>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
+                          </div>
+                        </>
+                      )}
                     </>
                   )}
                   {transferStatus && transferStatus.status != ChildToParentMessageStatus.EXECUTED && (
@@ -192,7 +232,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
                       <div
                         className={styles.gridItem}
-                      >{`${status.data?.amount} ${localStorageTransaction?.symbol ?? ""}`}</div>
+                      >{`${status.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
                       <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
                       <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
                       {transferStatus && transferStatus.status === ChildToParentMessageStatus.CONFIRMED && (

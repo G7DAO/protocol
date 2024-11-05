@@ -134,6 +134,10 @@
   border-bottom: 1px solid var(--Gray-200, #eaecf0);
 }
 
+.clickable {
+  cursor: pointer;
+}
+
 .gridItemImportant {
   color: var(--Gray-700, #344054);
   text-align: center;
@@ -148,7 +152,7 @@
 .gridItemChild {
   display: flex;
   height: 72px;
-  padding: 16px 40px;
+  padding-left: 40px;
   align-items: center;
   align-self: stretch;
   color: var(--Gray-700, #344054);
@@ -166,7 +170,7 @@
   position: relative;
   display: flex;
   height: 72px;
-  padding: 16px 24px;
+  padding: 16px 24px !important;
   align-items: center;
   align-self: stretch;
   color: var(--Gray-700, #344054);
