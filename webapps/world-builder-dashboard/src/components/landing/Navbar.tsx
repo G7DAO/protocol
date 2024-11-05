@@ -9,9 +9,9 @@ import IconHamburgerLanding from '@/assets/IconHamburgerLanding';
 interface NavbarProps {
     navbarOpen: boolean;
     smallView: boolean;
-    setNavBarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsNavbarOpen: React.Dispatch<React.SetStateAction<boolean>>;
     startBuilding: () => void;
-    navigateLink: (item: any) => void;
+    navigateLink: (item: {name: string, link: string}) => void;
 }
 
 const NAVBAR_ITEMS = [
@@ -25,7 +25,7 @@ const NAVBAR_ITEMS = [
     }
 ];
 
-const Navbar: React.FC<NavbarProps> = ({ navbarOpen, smallView, setNavBarOpen, startBuilding, navigateLink }) => {
+const Navbar: React.FC<NavbarProps> = ({ navbarOpen, smallView, setIsNavbarOpen, startBuilding, navigateLink }) => {
     const navigate = useNavigate();
 
     return (
@@ -55,7 +55,7 @@ const Navbar: React.FC<NavbarProps> = ({ navbarOpen, smallView, setNavBarOpen, s
                             </div>
                         ) : (
                             <div className={styles.navbarItem}>
-                                <IconHamburgerLanding onClick={() => setNavBarOpen(!navbarOpen)} />
+                                <IconHamburgerLanding onClick={() => setIsNavbarOpen(!navbarOpen)} />
                             </div>
                         )}
                     </div>

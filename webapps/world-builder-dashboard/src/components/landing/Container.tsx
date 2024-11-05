@@ -1,13 +1,13 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {ReactNode, useEffect, useRef, useState} from 'react';
 import styles from "./Container.module.css";
 import parentStyles from "./Landing.module.css"
 import SegmentedProgressBar from "./SegmentedProgressBar";
 import Navbar from "@/components/landing/Navbar";
 
 interface ContainerProps {
-    components: Element[]
+    components: ReactNode[]
     isNavbarOpen: boolean
-    setIsNavbarOpen: (arg0: boolean) => void
+    setIsNavbarOpen: React.Dispatch<React.SetStateAction<boolean>>;
     isSmallView: boolean
     navigateLink: (item: {name: string, link: string}) => void
     startBuilding: () => void
@@ -64,7 +64,7 @@ const Container: React.FC<ContainerProps> = ({components, isNavbarOpen, setIsNav
                       <Navbar
                           navbarOpen={isNavbarOpen}
                           smallView={isSmallView}
-                          setNavBarOpen={setIsNavbarOpen}
+                          setIsNavbarOpen={setIsNavbarOpen}
                           startBuilding={startBuilding}
                           navigateLink={navigateLink}
                       />

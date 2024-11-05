@@ -35,13 +35,13 @@ const LandingPage: React.FC = () => {
 
   return (
       <>
-        {isLargeView ? <Container components={slides} isNavbarOpen={navbarOpen} setIsNavbarOpen={setNavBarOpen} isSmallView={smallView} startBuilding={startBuilding} navigateLink={navigateLink}/> : (
+        {isLargeView ? <Container components={slides} isNavbarOpen={navbarOpen} setIsNavbarOpen={setNavBarOpen} isSmallView={!!smallView} startBuilding={startBuilding} navigateLink={navigateLink}/> : (
 
             <div className={`${styles.layout} ${navbarOpen && styles.layoutBlur}`}>
           <Navbar
               navbarOpen={navbarOpen}
               smallView={!!smallView}
-              setNavBarOpen={setNavBarOpen}
+              setIsNavbarOpen={setNavBarOpen}
               startBuilding={startBuilding}
               navigateLink={navigateLink}
           />
