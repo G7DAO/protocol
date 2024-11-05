@@ -1,6 +1,7 @@
 html,
 body {
   overscroll-behavior: none;
+  scrollbar-width: none;
   -webkit-overflow-scrolling: auto;
 }
 
