@@ -16,9 +16,12 @@ interface WithdrawTransactionsProps {}
 const mergeTransactions = (localData: TransactionRecord[], apiData: TransactionRecord[]): TransactionRecord[] => {
   const combinedData = new Map<string, TransactionRecord>()
 
-  localData.forEach((tx) => combinedData.set(tx.lowNetworkHash || tx.highNetworkHash || '', tx))
-  apiData.forEach((tx) => combinedData.set(tx.lowNetworkHash || tx.highNetworkHash || '', tx))
-
+  localData.forEach((tx) =>
+    combinedData.set(tx.type === 'DEPOSIT' ? (tx.lowNetworkHash ?? '') : (tx.highNetworkHash ?? ''), tx)
+  )
+  apiData.forEach((tx) =>
+    combinedData.set(tx.type === 'DEPOSIT' ? (tx.lowNetworkHash ?? '') : (tx.highNetworkHash ?? ''), tx)
+  )
   return Array.from(combinedData.values())
 }
 
@@ -47,20 +50,22 @@ const HistoryDesktop: React.FC<WithdrawTransactionsProps> = () => {
   const { data: apiTransactions } = useHistoryTransactions(connectedAccount)
   const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])
   const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status']
+  const formattedApiTransactions = apiTransactions ? apiTransactions.map(mapAPIDataToTransactionRecord) : []
 
   // Merge transactions only when API data is updated with new data
   useEffect(() => {
     const localTransactions = messages.data || []
     const formattedApiTransactions = apiTransactions ? apiTransactions.map(mapAPIDataToTransactionRecord) : []
-
-    const combinedTransactions = mergeTransactions(localTransactions, formattedApiTransactions)
+    const combinedTransactions = mergeTransactions(formattedApiTransactions, localTransactions)
+    console.log(formattedApiTransactions)
+    console.log(messages.data)
     setMergedTransactions(combinedTransactions)
   }, [messages.data, apiTransactions])
 
   return (
     <div className={styles.container}>
       <div className={styles.content}>
-        {messages.data && (
+        {mergedTransactions && (
           <div className={styles.transactions}>
             <div className={styles.withdrawsGrid}>
               {headers.map((h) => (
@@ -68,26 +73,21 @@ const HistoryDesktop: React.FC<WithdrawTransactionsProps> = () => {
                   {h}
                 </div>
               ))}
-              {mergedTransactions ? (
-                mergedTransactions
-                  .sort((x: TransactionRecord, y: TransactionRecord) => {
-                    const xTimestamp = x.type === 'DEPOSIT' ? x.lowNetworkTimestamp : x.highNetworkTimestamp
-                    const yTimestamp = y.type === 'DEPOSIT' ? y.lowNetworkTimestamp : y.highNetworkTimestamp
+              {mergedTransactions
+                .sort((x: TransactionRecord, y: TransactionRecord) => {
+                  const xTimestamp = x.type === 'DEPOSIT' ? x.lowNetworkTimestamp : x.highNetworkTimestamp
+                  const yTimestamp = y.type === 'DEPOSIT' ? y.lowNetworkTimestamp : y.highNetworkTimestamp
 
-                    return yTimestamp - xTimestamp
-                  })
-                  .filter((tx: TransactionRecord) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL')
-                  .map((tx: TransactionRecord, idx: number) =>
-                    tx.type === 'WITHDRAWAL' ? (
-                      <Withdrawal withdrawal={tx} key={idx} />
-                    ) : (
-                      <Fragment key={idx}>{tx.lowNetworkHash && <Deposit deposit={tx} />}</Fragment>
-                    )
+                  return yTimestamp - xTimestamp
+                })
+                .map((tx: TransactionRecord, idx: number) =>
+                  tx.type === 'WITHDRAWAL' ? (
+                    <Withdrawal withdrawal={tx} key={idx} />
+                  ) : (
+                    <Fragment key={idx}>{tx.lowNetworkHash && <Deposit deposit={tx} />}</Fragment>
                   )
-              ) : (
-                <></>
-              )}
-              {messages.data.filter((tx) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL').length === 0 && (
+                )}
+              {formattedApiTransactions.filter((tx) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL').length === 0 && (
                 <div className={styles.noTransactions}> No transactions yet</div>
               )}
             </div>

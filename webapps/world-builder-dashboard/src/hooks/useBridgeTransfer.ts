@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from 'react-query'
 import { useQuery } from 'react-query'
-import { L1_NETWORK, L2_NETWORK } from '../../constants'
+import { ALL_NETWORKS, L1_NETWORK, L2_NETWORK } from '../../constants'
 import { ethers } from 'ethers'
 import { BridgeTransfer, BridgeTransferStatus } from 'game7-bridge-sdk'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
@@ -27,8 +27,16 @@ export const useBridgeTransfer = () => {
             (txRecord.type === 'DEPOSIT' ? txRecord.highNetworkChainId : txRecord.lowNetworkChainId) ?? 0,
           originNetworkChainId:
             (txRecord.type === 'DEPOSIT' ? txRecord.lowNetworkChainId : txRecord.highNetworkChainId) ?? 0,
-          destinationSignerOrProviderOrRpc: txRecord.lowNetworkChainId === 11155111 ? L1_NETWORK.rpcs[0] : ''
+          destinationSignerOrProviderOrRpc:
+            txRecord.type === 'DEPOSIT'
+              ? ALL_NETWORKS.find((n) => n.chainId === txRecord.highNetworkChainId)?.rpcs[0]
+              : ALL_NETWORKS.find((n) => n.chainId === txRecord.lowNetworkChainId)?.rpcs[0],
+          originSignerOrProviderOrRpc:
+            txRecord.type === 'DEPOSIT'
+              ? ALL_NETWORKS.find((n) => n.chainId === txRecord.lowNetworkChainId)?.rpcs[0]
+              : ALL_NETWORKS.find((n) => n.chainId === txRecord.highNetworkChainId)?.rpcs[0]
         })
+
         const status = await _bridgeTransfer.getStatus()
 
         const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
@@ -59,6 +67,7 @@ export const useBridgeTransfer = () => {
                 : t.highNetworkHash === txRecord.highNetworkHash
             )
             if (cachedTransaction && cachedTransaction.status) {
+              console
               return { ETA: cachedTransaction.ETA, status: cachedTransaction.status }
             }
           }
