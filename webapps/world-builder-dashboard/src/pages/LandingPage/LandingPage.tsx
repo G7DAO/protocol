@@ -8,11 +8,13 @@ import BenefitsSection from "@/components/landing/BenefitsSection";
 import AlliesSection from "@/components/landing/AlliesSection";
 import NetworkEssentials from "@/components/landing/NetworksEssentials";
 import Navbar from "@/components/landing/Navbar";
+import Container from "@/components/landing/Container";
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const [navbarOpen, setNavBarOpen] = useState<boolean>(false);
   const smallView = useMediaQuery('(max-width: 750px)');
+  const isLargeView = useMediaQuery('(min-width: 1440px)');
 
   const startBuilding = () => {
     navigate('/faucet');
@@ -24,9 +26,18 @@ const LandingPage: React.FC = () => {
         : window.open(item.link, '_blank');
   };
 
+  const slides = [
+    <MainSection key="main" smallView={!!smallView} startBuilding={startBuilding} />,
+    <BenefitsSection key="benefits" />,
+    <AlliesSection key="allies" />,
+    <NetworkEssentials smallView={!!smallView} startBuilding={startBuilding} key="essentials" />
+  ];
+
   return (
       <>
-        <div className={`${styles.layout} ${navbarOpen && styles.layoutBlur}`}>
+        {isLargeView ? <Container components={slides} isNavbarOpen={navbarOpen} setIsNavbarOpen={setNavBarOpen} isSmallView={smallView} startBuilding={startBuilding} navigateLink={navigateLink}/> : (
+
+            <div className={`${styles.layout} ${navbarOpen && styles.layoutBlur}`}>
           <Navbar
               navbarOpen={navbarOpen}
               smallView={!!smallView}
@@ -47,7 +58,7 @@ const LandingPage: React.FC = () => {
                 Start building
               </div>
           )}
-        </div>
+        </div>)}
       </>
   );
 };

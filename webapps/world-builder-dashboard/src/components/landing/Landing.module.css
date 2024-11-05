@@ -329,6 +329,8 @@ body {
     align-self: stretch;
     overscroll-behavior: none;
     -webkit-overflow-scrolling: auto;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 .sectionTitle {
@@ -846,5 +848,28 @@ body {
 
     .firstSection {
         height: var(--Landing-Page-First-Section-Height-Phone);
+    }
+}
+
+@media (min-width: 1440px) {
+
+
+    .networkEssentialCards {
+        display: flex;
+        gap: 24px;
+        align-self: stretch;
+        justify-content: flex-start;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        margin: 0 -40px;
+        padding: 0 40px;
+    }
+
+    .firstSection {
+        height: auto;
+    }
+
+    .networkEssentialCard {
+        min-width: 340px;
     }
 }
