@@ -283,6 +283,7 @@ func CreateBridgeERC20L1ToL2Command() *cobra.Command {
 	var amount *big.Int
 	var safeOperation uint8
 	var safeNonce *big.Int
+	var isCustomNativeToken bool
 
 	createCmd := &cobra.Command{
 		Use:   "l1-to-l2",
@@ -370,14 +371,14 @@ func CreateBridgeERC20L1ToL2Command() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Println("Bridging", tokenAddress.Hex(), "to", to.Hex())
 			if safeAddressRaw == "" {
-				transaction, transactionErr := ERC20BridgeCall(routerAddress, keyFile, password, l1Rpc, l2Rpc, tokenAddress, to, amount)
+				transaction, transactionErr := ERC20BridgeCall(routerAddress, keyFile, password, l1Rpc, l2Rpc, tokenAddress, to, amount, isCustomNativeToken)
 				if transactionErr != nil {
 					fmt.Fprintln(cmd.ErrOrStderr(), transactionErr.Error())
 					return transactionErr
 				}
 				fmt.Println("Transaction sent:", transaction.Hash().Hex())
 			} else {
-				proposeErr := ERC20BridgePropose(routerAddress, keyFile, password, l1Rpc, l2Rpc, tokenAddress, to, amount, safeAddress, safeApi, safeOperation, safeNonce)
+				proposeErr := ERC20BridgePropose(routerAddress, keyFile, password, l1Rpc, l2Rpc, tokenAddress, to, amount, safeAddress, safeApi, safeOperation, safeNonce, isCustomNativeToken)
 				if proposeErr != nil {
 					fmt.Fprintln(cmd.ErrOrStderr(), proposeErr.Error())
 					return proposeErr
@@ -400,6 +401,7 @@ func CreateBridgeERC20L1ToL2Command() *cobra.Command {
 	createCmd.Flags().StringVar(&safeApi, "safe-api", "", "Safe API for the Safe Transaction Service (optional)")
 	createCmd.Flags().Uint8Var(&safeOperation, "safe-operation", 0, "Safe operation type: 0 (Call) or 1 (DelegateCall)")
 	createCmd.Flags().StringVar(&safeNonceRaw, "safe-nonce", "", "Safe nonce")
+	createCmd.Flags().BoolVar(&isCustomNativeToken, "custom-native-token", false, "Is custom native token")
 
 	return createCmd
 }
