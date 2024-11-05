@@ -78,7 +78,7 @@ const HistoryDesktop: React.FC<WithdrawTransactionsProps> = () => {
                   const xTimestamp = x.type === 'DEPOSIT' ? x.lowNetworkTimestamp : x.highNetworkTimestamp
                   const yTimestamp = y.type === 'DEPOSIT' ? y.lowNetworkTimestamp : y.highNetworkTimestamp
 
-                  return yTimestamp - xTimestamp
+                  return (yTimestamp ?? 0) - (xTimestamp ?? 0)
                 })
                 .map((tx: TransactionRecord, idx: number) =>
                   tx.type === 'WITHDRAWAL' ? (
@@ -87,9 +87,9 @@ const HistoryDesktop: React.FC<WithdrawTransactionsProps> = () => {
                     <Fragment key={idx}>{tx.lowNetworkHash && <Deposit deposit={tx} />}</Fragment>
                   )
                 )}
-              {formattedApiTransactions.filter((tx) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL').length === 0 && (
-                <div className={styles.noTransactions}> No transactions yet</div>
-              )}
+              {formattedApiTransactions.filter(
+                (tx: TransactionRecord) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL'
+              ).length === 0 && <div className={styles.noTransactions}> No transactions yet</div>}
             </div>
           </div>
         )}
