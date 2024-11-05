@@ -58,6 +58,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const smallView = useMediaQuery('(max-width: 1199px)')
   const { claim, returnTransferData } = useBridgeTransfer()
   const [collapseExecuted, setCollapseExecuted] = useState(false)
+  const [hovered, setHovered] = useState(false)
   const { data: transferStatus, isLoading } = returnTransferData({ txRecord: withdrawal })
   const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
   let transactions = transactionsString ? JSON.parse(transactionsString) : []
@@ -110,7 +111,12 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         className={styles.gridItem}
                         title={withdrawal.highNetworkHash}
                         onClick={() => setCollapseExecuted(!collapseExecuted)}
-                        style={{ cursor: 'pointer' }}
+                        style={{
+                          cursor: 'pointer',
+                          backgroundColor: hovered ? '#393939' : 'initial'
+                        }}
+                        onMouseEnter={() => setHovered(true)}
+                        onMouseLeave={() => setHovered(false)}
                       >
                         {collapseExecuted && <IconWithdrawalNodeCompleted className={styles.gridNodeCompleted} />}
                         <div className={styles.typeWithdrawal} onClick={() => setCollapseExecuted(!collapseExecuted)}>
@@ -121,33 +127,58 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       <div
                         className={styles.gridItem}
                         onClick={() => setCollapseExecuted(!collapseExecuted)}
-                        style={{ cursor: 'pointer' }}
+                        style={{
+                          cursor: 'pointer',
+                          backgroundColor: hovered ? '#393939' : 'initial'
+                        }}
+                        onMouseEnter={() => setHovered(true)}
+                        onMouseLeave={() => setHovered(false)}
                       >
                         {timeAgo(withdrawal?.highNetworkTimestamp)}
                       </div>
                       <div
                         className={styles.gridItem}
                         onClick={() => setCollapseExecuted(!collapseExecuted)}
-                        style={{ cursor: 'pointer' }}
+                        style={{
+                          cursor: 'pointer',
+                          backgroundColor: hovered ? '#393939' : 'initial'
+                        }}
+                        onMouseEnter={() => setHovered(true)}
+                        onMouseLeave={() => setHovered(false)}
                       >{`${status.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
                       <div
                         className={styles.gridItem}
                         onClick={() => setCollapseExecuted(!collapseExecuted)}
-                        style={{ cursor: 'pointer' }}
+                        style={{
+                          cursor: 'pointer',
+                          backgroundColor: hovered ? '#393939' : 'initial'
+                        }}
+                        onMouseEnter={() => setHovered(true)}
+                        onMouseLeave={() => setHovered(false)}
                       >
                         {status.data?.from ?? ''}
                       </div>
                       <div
                         className={styles.gridItem}
                         onClick={() => setCollapseExecuted(!collapseExecuted)}
-                        style={{ cursor: 'pointer' }}
+                        style={{
+                          cursor: 'pointer',
+                          backgroundColor: hovered ? '#393939' : 'initial'
+                        }}
+                        onMouseEnter={() => setHovered(true)}
+                        onMouseLeave={() => setHovered(false)}
                       >
                         {status.data?.to ?? ''}
                       </div>
                       <div
                         className={styles.gridItem}
                         onClick={() => setCollapseExecuted(!collapseExecuted)}
-                        style={{ cursor: 'pointer' }}
+                        style={{
+                          cursor: 'pointer',
+                          backgroundColor: hovered ? '#393939' : 'initial'
+                        }}
+                        onMouseEnter={() => setHovered(true)}
+                        onMouseLeave={() => setHovered(false)}
                       >
                         <a
                           href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
@@ -163,7 +194,12 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       <div
                         className={styles.gridItemImportant}
                         onClick={() => setCollapseExecuted(!collapseExecuted)}
-                        style={{ cursor: 'pointer' }}
+                        style={{
+                          cursor: 'pointer',
+                          backgroundColor: hovered ? '#393939' : 'initial'
+                        }}
+                        onMouseEnter={() => setHovered(true)}
+                        onMouseLeave={() => setHovered(false)}
                       >
                         <div>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
                       </div>
