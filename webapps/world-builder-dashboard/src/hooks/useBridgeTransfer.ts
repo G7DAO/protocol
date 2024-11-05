@@ -26,7 +26,8 @@ export const useBridgeTransfer = () => {
           destinationNetworkChainId:
             (txRecord.type === 'DEPOSIT' ? txRecord.highNetworkChainId : txRecord.lowNetworkChainId) ?? 0,
           originNetworkChainId:
-            (txRecord.type === 'DEPOSIT' ? txRecord.lowNetworkChainId : txRecord.highNetworkChainId) ?? 0
+            (txRecord.type === 'DEPOSIT' ? txRecord.lowNetworkChainId : txRecord.highNetworkChainId) ?? 0,
+          destinationSignerOrProviderOrRpc: txRecord.lowNetworkChainId === 11155111 ? L1_NETWORK.rpcs[0] : ''
         })
         const status = await _bridgeTransfer.getStatus()
 
@@ -58,10 +59,9 @@ export const useBridgeTransfer = () => {
                 : t.highNetworkHash === txRecord.highNetworkHash
             )
             if (cachedTransaction && cachedTransaction.status) {
-              return { ETA: 0, status: cachedTransaction.status }
+              return { ETA: cachedTransaction.ETA, status: cachedTransaction.status }
             }
           }
-          return { ETA: 0, status: 0 }
         },
         refetchInterval: 50000,
         staleTime: 60 * 1000,
@@ -102,7 +102,7 @@ export const useBridgeTransfer = () => {
         txHash: withdrawal.highNetworkHash || '',
         destinationNetworkChainId: withdrawal.lowNetworkChainId ?? 0,
         originNetworkChainId: withdrawal.highNetworkChainId ?? 0,
-        destinationSignerOrProviderOrRpc: withdrawal.lowNetworkChainId === 11155111 ? L1_NETWORK.rpcs[0] : ""
+        destinationSignerOrProviderOrRpc: withdrawal.lowNetworkChainId === 11155111 ? L1_NETWORK.rpcs[0] : ''
       })
       const res = await _bridgeTransfer?.execute(signer)
       return { res, withdrawal }
@@ -120,7 +120,7 @@ export const useBridgeTransfer = () => {
                 lowNetworkTimestamp: Date.now() / 1000,
                 newTransaction: true,
                 lowNetworkHash: res?.transactionHash,
-                status: BridgeTransferStatus.WITHDRAW_EXECUTED,
+                status: BridgeTransferStatus.WITHDRAW_EXECUTED
               }
             }
             return { ...t }
