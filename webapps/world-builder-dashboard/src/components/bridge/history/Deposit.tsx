@@ -85,7 +85,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                   </a>
                   <div className={styles.gridItemImportant}>
                     {transferStatus?.status &&
-                      (transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
+                    (transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
                       transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED) ? (
                       <div>{timeAgo(deposit.highNetworkTimestamp ?? deposit.lowNetworkTimestamp)}</div>
                     ) : (

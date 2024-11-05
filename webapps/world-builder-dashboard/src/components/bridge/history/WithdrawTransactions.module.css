@@ -134,6 +134,7 @@
   border-bottom: 1px solid var(--Gray-200, #eaecf0);
 }
 
+
 .clickable {
   cursor: pointer;
 }

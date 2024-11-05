@@ -93,18 +93,18 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           }
         }
         const tx = await bridger?.transfer({ amount: ethers.utils.parseUnits(amount), signer, destinationProvider })
-        await tx.wait()
+        await tx?.wait()
         return {
           type: 'DEPOSIT',
           amount: amount,
           lowNetworkChainId: selectedLowNetwork.chainId,
           highNetworkChainId: selectedHighNetwork.chainId,
-          lowNetworkHash: tx.hash,
-          lowNetworkTimestamp: Date.now() / 1000,
-          completionTimestamp: Date.now() / 1000,
+          lowNetworkHash: tx?.hash,
+          lowNetworkTimestamp: Date.now(),
+          completionTimestamp: Date.now(),
           newTransaction: true,
-          ETA: Date.now() + 60 * 15,
-          symbol
+          ETA: Date.now() + (60 * 15),
+          symbol: symbol
         }
       } else {
         const tx = await bridger?.transfer({ amount: ethers.utils.parseUnits(amount), signer, destinationProvider })
@@ -115,10 +115,10 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           lowNetworkChainId: selectedLowNetwork.chainId,
           highNetworkChainId: selectedHighNetwork.chainId,
           highNetworkHash: tx?.hash,
-          highNetworkTimestamp: Date.now() / 1000,
+          highNetworkTimestamp: Date.now(),
           challengePeriod: 60 * 40,
-          ETA: Date.now() + 60 * 60,
-          symbol
+          ETA: Date.now()  + (60 * 60),
+          symbol: symbol
         }
       }
     },
