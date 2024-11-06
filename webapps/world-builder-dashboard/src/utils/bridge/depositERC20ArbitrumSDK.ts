@@ -39,6 +39,7 @@ export interface TransactionRecord {
   symbol?: string
   status?: number
   ETA?: number
+  tokenAddress?: string
 }
 
 export const depositERC20ArbitrumSDK = async (
