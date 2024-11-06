@@ -5,7 +5,7 @@ export const L1_NETWORK: NetworkInterface = {
   chainId: 11155111,
   name: 'sepolia',
   displayName: 'Sepolia',
-  rpcs: ['https://nb.moonstream.to/nb/sepolia/jsonrpc/36c13893-c382-405b-a73c-1af3e9e25700'],
+  rpcs: ['https://eth-sepolia.g.alchemy.com/v2/C-njXZM_UTlPbC2ukOvg4ojFz2V9yCS6'],
   blockExplorerUrls: ['https://sepolia.etherscan.io'],
   nativeCurrency: {
     decimals: 18,
@@ -82,6 +82,12 @@ export const TG7T: TokenAddressMap = {
 export const ETH: TokenAddressMap = {
   421614: '0x0000000000000000000000000000000000000000',
   11155111: '0x0000000000000000000000000000000000000000'
+}
+
+export const USDC: TokenAddressMap = {
+  13746: '0x6a0D75EF95d21f1Ba5e2619fBc9D15F424d130BF',
+  421614: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+  11155111: '0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5E4C8'
 }
 
 // ETH, ARBITRUM, USDC, MANTLE, USDT,

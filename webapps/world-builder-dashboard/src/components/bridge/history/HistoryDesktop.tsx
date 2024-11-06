@@ -39,7 +39,8 @@ const mapAPIDataToTransactionRecord = (apiData: any): TransactionRecord => {
     highNetworkTimestamp: apiData.childNetworkTimestamp,
     completionTimestamp: apiData.completionTimestamp,
     claimableTimestamp: apiData.claimableTimestamp,
-    challengePeriod: apiData.challengePeriod
+    challengePeriod: apiData.challengePeriod,
+    tokenAddress: apiData.token
   }
 }
 
@@ -57,8 +58,6 @@ const HistoryDesktop: React.FC<WithdrawTransactionsProps> = () => {
     const localTransactions = messages.data || []
     const formattedApiTransactions = apiTransactions ? apiTransactions.map(mapAPIDataToTransactionRecord) : []
     const combinedTransactions = mergeTransactions(formattedApiTransactions, localTransactions)
-    console.log(formattedApiTransactions)
-    console.log(messages.data)
     setMergedTransactions(combinedTransactions)
   }, [messages.data, apiTransactions])
 
