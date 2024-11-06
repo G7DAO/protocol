@@ -100,10 +100,10 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           lowNetworkChainId: selectedLowNetwork.chainId,
           highNetworkChainId: selectedHighNetwork.chainId,
           lowNetworkHash: tx?.hash,
-          lowNetworkTimestamp: Date.now(),
-          completionTimestamp: Date.now(),
+          lowNetworkTimestamp: Date.now() / 1000,
+          completionTimestamp: Date.now() / 1000,
           newTransaction: true,
-          ETA: Date.now() + (60 * 15),
+          ETA: Date.now() / 1000 + (60 * 15),
           symbol: symbol
         }
       } else {
@@ -115,9 +115,9 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           lowNetworkChainId: selectedLowNetwork.chainId,
           highNetworkChainId: selectedHighNetwork.chainId,
           highNetworkHash: tx?.hash,
-          highNetworkTimestamp: Date.now(),
+          highNetworkTimestamp: Date.now() / 1000,
           challengePeriod: 60 * 40,
-          ETA: Date.now()  + (60 * 60),
+          ETA: Date.now() / 1000 + (60 * 60),
           symbol: symbol
         }
       }
