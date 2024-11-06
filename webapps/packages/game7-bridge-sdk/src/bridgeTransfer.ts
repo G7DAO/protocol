@@ -100,14 +100,29 @@ export class BridgeTransfer {
   private readonly destinationNetwork: BridgeNetworkConfig;
 
   /**
-   * Creates an instance of the `BridgeTransfer` class.
+   * Constructs a new instance of the BridgeTransfer class.
    *
-   * @param originNetworkChainId - The chain ID of the network where the transaction originates.
-   * @param destinationNetworkChainId - The chain ID of the network where the transaction is heading.
-   * @param txHash - The transaction hash of the bridge transaction.
-   * @param originSignerOrProviderOrRpc
-   * @param destinationSignerOrProviderOrRpc
+   * @param {Object} params - The parameters for the constructor.
+   * @param {string} params.txHash - The transaction hash for the bridge transfer.
+   * @param {number} params.destinationNetworkChainId - The chain ID of the destination network.
+   * @param {number} params.originNetworkChainId - The chain ID of the origin network.
+   * @param {SignerOrProviderOrRpc} [params.originSignerOrProviderOrRpc] - Optional signer, provider, or RPC string for the origin network.
+   * @param {SignerOrProviderOrRpc} [params.destinationSignerOrProviderOrRpc] - Optional signer, provider, or RPC string for the destination network.
+   *
+   * @throws {UnsupportedNetworkError} If the origin or destination network is unsupported.
+   *
+   * @property {number} originNetworkChainId - The chain ID of the origin network.
+   * @property {number} destinationNetworkChainId - The chain ID of the destination network.
+   * @property {string} txHash - The transaction hash being tracked for the bridge transfer.
+   * @property {boolean} isDeposit - Determines whether this transfer is a deposit (from parent to child chain).
+   * @property {Provider} originProvider - The provider for the origin network.
+   * @property {Provider} destinationProvider - The provider for the destination network.
+   * @property {string} originName - The name of the origin network.
+   * @property {string} destinationName - The name of the destination network.
+   * @property {string} explorerLink - A URL to the transaction explorer for the origin network.
+   * @property {BridgeNetworkConfig} destinationNetwork - Configuration object for the destination network.
    */
+
   constructor({
                 txHash,
                 destinationNetworkChainId,
