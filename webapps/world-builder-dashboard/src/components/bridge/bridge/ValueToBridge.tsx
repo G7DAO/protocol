@@ -103,17 +103,11 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
             selectedChainId={selectedChainId}
           />
         )}
-        {/* <div className={styles.tokenGroup}>
-          <IconG7TSmall />
-          <div className={styles.tokenSymbol}>{L3_NATIVE_TOKEN_SYMBOL}</div>
-          <IconChevronDownSelector />
-        </div> */}
       </div>
       <div className={styles.header}>
         <div className={styles.label}>{rate > 0 ? formatCurrency(Number(value) * rate) : ' '}</div>
         <div className={styles.available}>
           <div className={`${styles.label} ${isFetchingBalance ? styles.blink : ''}`}>{balance ?? '0'}</div>{' '}
-          {/*TODO how to display undefined balance */}
           <div className={styles.label}>{`${symbol} Available`}</div>
         </div>
       </div>

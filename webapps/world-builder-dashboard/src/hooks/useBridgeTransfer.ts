@@ -67,7 +67,6 @@ export const useBridgeTransfer = () => {
                 : t.highNetworkHash === txRecord.highNetworkHash
             )
             if (cachedTransaction && cachedTransaction.status) {
-              console
               return { ETA: cachedTransaction.ETA, status: cachedTransaction.status }
             }
           }

@@ -14,6 +14,7 @@ export interface Token {
   rpc: string
   tokenAddressMap: TokenAddressMap
   chainId: number
+  decimals?: number
 }
 
 export const getTokensForNetwork = (chainId: number | undefined, userAddress: string | undefined): Token[] => {
@@ -47,11 +48,12 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
         {
           name: 'USDC',
           symbol: 'USDC',
-          address: '0x746d7b1dfcD1Cc2f4b7d09F3F1B9A21764FBeB33',
+          address: '0xf2B58E3519C5b977a254993A4A6EaD581A8989A0',
           Icon: IconUSDC,
           rpc: L1_NETWORK.rpcs[0],
           tokenAddressMap: USDC,
-          chainId: L1_NETWORK.chainId
+          chainId: L1_NETWORK.chainId,
+          decimals: 6
         },
         ...storedTokensWithItems
       ]
@@ -78,11 +80,12 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
         {
           name: 'USDC',
           symbol: 'USDC',
-          address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+          address: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d',
           Icon: IconUSDC,
           rpc: L2_NETWORK.rpcs[0],
           tokenAddressMap: USDC,
-          chainId: L2_NETWORK.chainId
+          chainId: L2_NETWORK.chainId,
+          decimals: 6
         },
         ...storedTokensWithItems
       ]
@@ -104,7 +107,8 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           Icon: IconUSDC,
           rpc: L3_NETWORK.rpcs[0],
           tokenAddressMap: USDC,
-          chainId: L3_NETWORK.chainId
+          chainId: L3_NETWORK.chainId,
+          decimals: 6
         },
         ...storedTokensWithItems
       ]
