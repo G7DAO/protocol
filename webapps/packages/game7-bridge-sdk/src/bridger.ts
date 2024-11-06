@@ -355,7 +355,7 @@ export class Bridger {
     if (!contractAddress) {
       throw new GasEstimationError("inbox contract isn't set")
     }
-    return estimateDepositERC20ToEth(amount, provider, contractAddress)
+    return estimateDepositERC20ToEth(amount, provider, contractAddress, from)
   }
 
   private async estimateDepositERC20(

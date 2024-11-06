@@ -251,9 +251,9 @@ export const estimateDepositErc20 = async (amount: ethers.BigNumber, provider: e
   }
 }
 
-export const estimateDepositERC20ToEth = async (amount: ethers.BigNumber, provider: ethers.providers.Provider, contractAddress: string)=> {
+export const estimateDepositERC20ToEth = async (amount: ethers.BigNumber, provider: ethers.providers.Provider, contractAddress: string, from: string)=> {
   const ERC20InboxContract = new ethers.Contract(contractAddress, ERC20_INBOX_ABI, provider);
-  const estimatedGas = await ERC20InboxContract.estimateGas.depositERC20(amount);
+  const estimatedGas = await ERC20InboxContract.estimateGas.depositERC20(amount, { from });
   const gasPrice = await provider.getGasPrice();
   const fee = estimatedGas.mul(gasPrice);
   return {
