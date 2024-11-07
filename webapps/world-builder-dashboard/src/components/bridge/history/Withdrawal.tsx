@@ -71,8 +71,6 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
     return <></>
   }
 
-  console.log(transferStatus?.status)
-
   return (
     <>
       {isLoading && smallView ? (
