@@ -80,8 +80,9 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       const network = ALL_NETWORKS.find((n) => n.chainId === bridger?.originNetwork.chainId)!
       const provider = await getProvider(network)
       const signer = provider.getSigner()
-
       const destinationRPC = direction === 'DEPOSIT' ? selectedHighNetwork.rpcs[0] : selectedLowNetwork.rpcs[0]
+      
+      console.log(destinationRPC)
       const destinationProvider = new ethers.providers.JsonRpcProvider(destinationRPC) as ethers.providers.Provider
 
       // Amount to send variable parsed to correct decimal places depending on the token

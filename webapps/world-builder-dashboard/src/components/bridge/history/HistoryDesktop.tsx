@@ -16,10 +16,10 @@ interface HistoryDesktopProps {}
 const mergeTransactions = (localData: TransactionRecord[], apiData: TransactionRecord[]): TransactionRecord[] => {
   const combinedData = new Map<string, TransactionRecord>()
 
-  localData.forEach((tx) =>
+  apiData.forEach((tx) =>
     combinedData.set(tx.type === 'DEPOSIT' ? (tx.lowNetworkHash ?? '') : (tx.highNetworkHash ?? ''), tx)
   )
-  apiData.forEach((tx) =>
+  localData.forEach((tx) =>
     combinedData.set(tx.type === 'DEPOSIT' ? (tx.lowNetworkHash ?? '') : (tx.highNetworkHash ?? ''), tx)
   )
   return Array.from(combinedData.values())
@@ -51,6 +51,8 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   const { data: apiTransactions } = useHistoryTransactions(connectedAccount)
   const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])
   const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status']
+  const formattedApiTransactions = apiTransactions ? apiTransactions.map(mapAPIDataToTransactionRecord) : []
+    
 
   // Merge transactions only when API data is updated with new data
   useEffect(() => {
