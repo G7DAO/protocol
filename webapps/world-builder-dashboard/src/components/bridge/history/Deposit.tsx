@@ -11,6 +11,7 @@ import { useBridgeTransfer } from '@/hooks/useBridgeTransfer'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
+import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
 
 interface DepositProps {
   deposit: TransactionRecord
@@ -29,7 +30,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   const localStorageTransaction = transactions.find(
     (t: any) => t.type === 'DEPOSIT' && t.lowNetworkHash === deposit.lowNetworkHash
   )
-  
+  const status = useDepositStatus(deposit)
   return (
     <>
       {isLoading && smallView ? (
@@ -84,10 +85,9 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                     </div>
                   </a>
                   <div className={styles.gridItemImportant}>
-                    {transferStatus?.status &&
-                    (transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
-                      transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED) ? (
-                      <div>{timeAgo(deposit.highNetworkTimestamp ?? deposit.lowNetworkTimestamp)}</div>
+                    {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
+                    transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ? (
+                      <div>{timeAgo(status?.data?.highNetworkTimestamp ?? deposit.lowNetworkTimestamp)}</div>
                     ) : (
                       <div>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)}</div>
                     )}

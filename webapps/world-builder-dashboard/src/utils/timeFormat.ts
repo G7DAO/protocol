@@ -28,11 +28,14 @@ export const ETA = (timestamp: number | undefined, delayInSeconds: number | unde
   if (!timestamp || !delayInSeconds) {
     return 'N/A'
   }
-  const now = new Date().getTime()
-  const date = new Date(Number(timestamp) + delayInSeconds * 1000).getTime()
-  const timeDifference = Math.floor((date - now) / 1000)
+  const now = Math.floor(new Date().getTime() / 1000)
+  const date = Math.floor(Number(timestamp) + delayInSeconds)
+  const timeDifference = ((date - now))
+  console.log(now)
+  console.log(date)
+  console.log(timeDifference)
   if (timeDifference < 0) {
-    return '~now'
+    return '~now' 
   }
   
   const units = [

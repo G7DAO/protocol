@@ -81,8 +81,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       const provider = await getProvider(network)
       const signer = provider.getSigner()
       const destinationRPC = direction === 'DEPOSIT' ? selectedHighNetwork.rpcs[0] : selectedLowNetwork.rpcs[0]
-      
-      console.log(destinationRPC)
       const destinationProvider = new ethers.providers.JsonRpcProvider(destinationRPC) as ethers.providers.Provider
 
       // Amount to send variable parsed to correct decimal places depending on the token
@@ -120,8 +118,9 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           lowNetworkTimestamp: Date.now() / 1000,
           completionTimestamp: Date.now() / 1000,
           newTransaction: true,
-          ETA: Date.now() / 1000 + 60 * 15,
-          symbol: symbol
+          ETA: (Date.now() / 1000) + 60 * 15,
+          symbol: symbol,
+          status: BridgeTransferStatus.DEPOSIT_GAS_PENDING
         }
       } else {
         const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })
@@ -135,7 +134,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           highNetworkTimestamp: Date.now() / 1000,
           challengePeriod: 60 * 40,
           ETA: Date.now() / 1000 + 60 * 60,
-          symbol: symbol
+          symbol: symbol,
+          status: BridgeTransferStatus.WITHDRAW_UNCONFIRMED
         }
       }
     },
