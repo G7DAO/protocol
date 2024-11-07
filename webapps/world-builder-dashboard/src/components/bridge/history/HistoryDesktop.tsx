@@ -52,7 +52,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])
   const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status']
   const formattedApiTransactions = apiTransactions ? apiTransactions.map(mapAPIDataToTransactionRecord) : []
-    
+  console.log(formattedApiTransactions)
 
   // Merge transactions only when API data is updated with new data
   useEffect(() => {
@@ -65,7 +65,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   return (
     <div className={styles.container}>
       <div className={styles.content}>
-        {messages.data && (
+        {mergedTransactions && (
           <div className={styles.transactions}>
             <div className={styles.withdrawsGrid}>
               {headers.map((h) => (
@@ -73,7 +73,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
                   {h}
                 </div>
               ))}
-              {messages.data
+              {mergedTransactions
                 .sort((x: TransactionRecord, y: TransactionRecord) => {
                   const xTimestamp = x.type === 'DEPOSIT' ? x.lowNetworkTimestamp : x.highNetworkTimestamp
                   const yTimestamp = y.type === 'DEPOSIT' ? y.lowNetworkTimestamp : y.highNetworkTimestamp

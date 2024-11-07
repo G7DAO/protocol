@@ -8,10 +8,10 @@ import IconArrowNarrowDown from '@/assets/IconArrowNarrowDown'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeTransfer } from '@/hooks/useBridgeTransfer'
+import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
-import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
 
 interface DepositProps {
   deposit: TransactionRecord
@@ -31,6 +31,12 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
     (t: any) => t.type === 'DEPOSIT' && t.lowNetworkHash === deposit.lowNetworkHash
   )
   const status = useDepositStatus(deposit)
+  console.log(
+    transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
+      transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED
+      ? transferStatus?.status
+      : transferStatus?.status
+  )
   return (
     <>
       {isLoading && smallView ? (

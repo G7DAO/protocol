@@ -12,6 +12,7 @@ import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 import { ChildToParentMessageStatus } from '@arbitrum/sdk'
 import { useMediaQuery } from '@mantine/hooks'
+import { BridgeTransferStatus } from 'game7-bridge-sdk'
 
 export const networkRPC = (chainId: number | undefined) => {
   const network = [L3_NETWORK, L2_NETWORK].find((n) => n.chainId === chainId)
@@ -70,6 +71,8 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
     return <></>
   }
 
+  console.log(transferStatus?.status)
+
   return (
     <>
       {isLoading && smallView ? (
@@ -105,7 +108,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                 </>
               ) : (
                 <>
-                  {transferStatus && transferStatus?.status === ChildToParentMessageStatus.EXECUTED && (
+                  {transferStatus && transferStatus?.status === BridgeTransferStatus.WITHDRAW_EXECUTED && (
                     <>
                       <div
                         className={styles.gridItem}
@@ -227,7 +230,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                             </a>
                           </div>
                           <div className={styles.gridItemInitiate}>
-                            <div className={styles.timeCenter}>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
+                            <div className={styles.timeCenter}>{timeAgo(withdrawal?.lowNetworkTimestamp)}</div>
                           </div>
                           <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
                             <div className={styles.typeCompleted}>Finalize</div>
@@ -251,13 +254,13 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                             </a>
                           </div>
                           <div className={styles.gridItemInitiate}>
-                            <div className={styles.timeCenter}>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
+                            <div className={styles.timeCenter}>{timeAgo(withdrawal?.lowNetworkTimestamp)}</div>
                           </div>
                         </>
                       )}
                     </>
                   )}
-                  {transferStatus && transferStatus.status != ChildToParentMessageStatus.EXECUTED && (
+                  {transferStatus && transferStatus.status != BridgeTransferStatus.WITHDRAW_EXECUTED && (
                     <>
                       <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
                         <div className={styles.typeWithdrawal}>
@@ -271,7 +274,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       >{`${status.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
                       <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
                       <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
-                      {transferStatus && transferStatus.status === ChildToParentMessageStatus.CONFIRMED && (
+                      {transferStatus && transferStatus.status === BridgeTransferStatus.WITHDRAW_CONFIRMED && (
                         <>
                           <div className={styles.gridItem}>
                             <a
@@ -292,7 +295,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           </div>
                         </>
                       )}
-                      {transferStatus && transferStatus.status === ChildToParentMessageStatus.UNCONFIRMED && (
+                      {transferStatus && transferStatus.status === BridgeTransferStatus.WITHDRAW_UNCONFIRMED && (
                         <>
                           <div className={styles.gridItem}>
                             <a
@@ -308,7 +311,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           </div>
 
                           <div className={styles.gridItemImportant}>
-                            <div>{ETA(transferStatus?.ETA, withdrawal.challengePeriod)} left</div>
+                            <div>{ETA(withdrawal?.highNetworkTimestamp, withdrawal.challengePeriod)} left</div>
                           </div>
                         </>
                       )}

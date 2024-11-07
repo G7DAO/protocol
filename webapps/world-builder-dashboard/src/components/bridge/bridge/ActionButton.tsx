@@ -118,7 +118,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           lowNetworkTimestamp: Date.now() / 1000,
           completionTimestamp: Date.now() / 1000,
           newTransaction: true,
-          ETA: (Date.now() / 1000) + 60 * 15,
           symbol: symbol,
           status: BridgeTransferStatus.DEPOSIT_GAS_PENDING
         }
@@ -132,8 +131,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           highNetworkChainId: selectedHighNetwork.chainId,
           highNetworkHash: tx?.hash,
           highNetworkTimestamp: Date.now() / 1000,
-          challengePeriod: 60 * 40,
-          ETA: Date.now() / 1000 + 60 * 60,
+          challengePeriod: 60 * 60,
           symbol: symbol,
           status: BridgeTransferStatus.WITHDRAW_UNCONFIRMED
         }

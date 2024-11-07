@@ -31,9 +31,6 @@ export const ETA = (timestamp: number | undefined, delayInSeconds: number | unde
   const now = Math.floor(new Date().getTime() / 1000)
   const date = Math.floor(Number(timestamp) + delayInSeconds)
   const timeDifference = ((date - now))
-  console.log(now)
-  console.log(date)
-  console.log(timeDifference)
   if (timeDifference < 0) {
     return '~now' 
   }
