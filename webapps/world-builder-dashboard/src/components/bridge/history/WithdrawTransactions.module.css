@@ -205,7 +205,6 @@
   align-items: center;
   gap: 12px;
   align-self: stretch;
-  border-bottom: 1px solid var(--Gray-200, #eaecf0);
   background: var(--Gray-60, #f9fafb);
   color: var(--Gray-600, #475467);
   font-family: Inter, sans-serif;

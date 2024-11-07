@@ -58,6 +58,7 @@ const BridgeView = ({
 
   const handleTokenChange = async (token: Token) => {
     setSelectedBridgeToken(token)
+    console.log(token)
   }
 
   const estimatedFee = useQuery(

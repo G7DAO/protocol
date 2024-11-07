@@ -17,10 +17,6 @@ export const useBridgeTransfer = () => {
     return useQuery(
       ['transferData', txRecord],
       async () => {
-        if (!txRecord) {
-          return { ETA: 0, status: 0 }
-        }
-
         const _bridgeTransfer = new BridgeTransfer({
           txHash: (txRecord.type === 'DEPOSIT' ? txRecord.lowNetworkHash : txRecord.highNetworkHash) ?? '',
           destinationNetworkChainId:
@@ -57,25 +53,42 @@ export const useBridgeTransfer = () => {
         return status
       },
       {
-        initialData: () => {
-          const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
-          if (transactionsString) {
-            const transactions = JSON.parse(transactionsString)
-            const cachedTransaction = transactions.find((t: TransactionRecord) =>
-              txRecord.type === 'DEPOSIT'
-                ? t.lowNetworkHash === txRecord.lowNetworkHash
-                : t.highNetworkHash === txRecord.highNetworkHash
-            )
-            if (cachedTransaction && cachedTransaction.status) {
-              console
-              return { ETA: cachedTransaction.ETA, status: cachedTransaction.status }
-            }
-          }
-        },
-        refetchInterval: 50000,
+        // initialData: () => {
+        //   const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+        //   if (transactionsString) {
+        //     const transactions = JSON.parse(transactionsString)
+        //     const cachedTransaction = transactions.find((t: TransactionRecord) =>
+        //       txRecord.type === 'DEPOSIT'
+        //         ? t.lowNetworkHash === txRecord.lowNetworkHash
+        //         : t.highNetworkHash === txRecord.highNetworkHash
+        //     )
+        //     if (cachedTransaction && cachedTransaction.status) {
+        //       return { status: cachedTransaction.status }
+        //     }
+        //   }
+        // },
+        refetchInterval: 60 * 15 * 1000,
         staleTime: 60 * 1000,
         refetchOnWindowFocus: false,
-        enabled: !!txRecord
+        enabled: !!txRecord,
+        // onSuccess: (status) => {
+        //   console.log("checking...")
+        //   const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+        //   const transactions = transactionsString ? JSON.parse(transactionsString) : []
+
+        //   const newTransactions: TransactionRecord[] = transactions.map((t: TransactionRecord) => {
+        //     const hashComparison: boolean =
+        //       txRecord.type === 'DEPOSIT'
+        //         ? t.lowNetworkHash === txRecord.lowNetworkHash
+        //         : t.highNetworkHash === txRecord.highNetworkHash
+
+        //     if (hashComparison && t.status !== status?.status) {
+        //       return { ...t, status: status?.status }
+        //     }
+        //     return { ...t }
+        //   })
+        //   localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(newTransactions))
+        // }
       }
     )
   }
@@ -111,7 +124,8 @@ export const useBridgeTransfer = () => {
         txHash: withdrawal.highNetworkHash || '',
         destinationNetworkChainId: withdrawal.lowNetworkChainId ?? 0,
         originNetworkChainId: withdrawal.highNetworkChainId ?? 0,
-        destinationSignerOrProviderOrRpc: withdrawal.lowNetworkChainId === 11155111 ? L1_NETWORK.rpcs[0] : ''
+        destinationSignerOrProviderOrRpc: ALL_NETWORKS.find((n) => n.chainId === withdrawal.lowNetworkChainId)?.rpcs[0],
+        originSignerOrProviderOrRpc: ALL_NETWORKS.find((n) => n.chainId === withdrawal.highNetworkChainId)?.rpcs[0]
       })
       const res = await _bridgeTransfer?.execute(signer)
       return { res, withdrawal }

@@ -29,12 +29,12 @@ const copy = (notification: BridgeNotification) => {
   }
   if (notification.status === 'COMPLETED') {
     if (notification.type === 'DEPOSIT') {
-      return `${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL} deposited to ${targetNetwork}`
+      return `${notification.amount} ${notification.tx.symbol} deposited to ${targetNetwork}`
     }
     if (notification.type === 'CLAIM') {
       return `You requested ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL}`
     }
-    return `Your ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL} withdrawal is complete`
+    return `Your ${notification.amount} ${notification.tx.symbol} withdrawal is complete`
   }
 }
 

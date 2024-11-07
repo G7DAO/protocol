@@ -16,7 +16,14 @@ const useTokenInformation = ({ account, token }: UseBalanceProps) => {
         return { tokenBalance: '0', symbol: '' }
       }
       const bridgeToken: BridgeToken = new BridgeToken(token.tokenAddressMap, token.chainId)
-      const tokenBalance = String(ethers.utils.formatEther(await bridgeToken.getBalance(token.rpc, account ?? '')))
+      let tokenBalance
+      if (token.decimals) {
+        tokenBalance = String(
+          ethers.utils.formatUnits(await bridgeToken.getBalance(token.rpc, account ?? ''), token.decimals)
+        )
+      } else {
+        tokenBalance = String(ethers.utils.formatEther(await bridgeToken.getBalance(token.rpc, account ?? '')))
+      }
       const symbol = await bridgeToken.getSymbol(token.rpc)
       return { tokenBalance, symbol }
     },

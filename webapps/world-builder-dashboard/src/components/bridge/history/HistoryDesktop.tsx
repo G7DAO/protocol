@@ -11,15 +11,15 @@ import { useBridgeAPI } from '@/hooks/useBridgeAPI'
 import { useMessages } from '@/hooks/useL2ToL1MessageStatus'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 
-interface WithdrawTransactionsProps {}
+interface HistoryDesktopProps {}
 
 const mergeTransactions = (localData: TransactionRecord[], apiData: TransactionRecord[]): TransactionRecord[] => {
   const combinedData = new Map<string, TransactionRecord>()
 
-  localData.forEach((tx) =>
+  apiData.forEach((tx) =>
     combinedData.set(tx.type === 'DEPOSIT' ? (tx.lowNetworkHash ?? '') : (tx.highNetworkHash ?? ''), tx)
   )
-  apiData.forEach((tx) =>
+  localData.forEach((tx) =>
     combinedData.set(tx.type === 'DEPOSIT' ? (tx.lowNetworkHash ?? '') : (tx.highNetworkHash ?? ''), tx)
   )
   return Array.from(combinedData.values())
@@ -44,7 +44,7 @@ const mapAPIDataToTransactionRecord = (apiData: any): TransactionRecord => {
   }
 }
 
-const HistoryDesktop: React.FC<WithdrawTransactionsProps> = () => {
+const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   const { connectedAccount } = useBlockchainContext()
   const messages = useMessages(connectedAccount)
   const { useHistoryTransactions } = useBridgeAPI()
@@ -52,6 +52,7 @@ const HistoryDesktop: React.FC<WithdrawTransactionsProps> = () => {
   const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])
   const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status']
   const formattedApiTransactions = apiTransactions ? apiTransactions.map(mapAPIDataToTransactionRecord) : []
+  console.log(formattedApiTransactions)
 
   // Merge transactions only when API data is updated with new data
   useEffect(() => {
@@ -86,7 +87,7 @@ const HistoryDesktop: React.FC<WithdrawTransactionsProps> = () => {
                     <Fragment key={idx}>{tx.lowNetworkHash && <Deposit deposit={tx} />}</Fragment>
                   )
                 )}
-              {formattedApiTransactions.filter(
+              {mergedTransactions.filter(
                 (tx: TransactionRecord) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL'
               ).length === 0 && <div className={styles.noTransactions}> No transactions yet</div>}
             </div>
