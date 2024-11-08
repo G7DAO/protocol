@@ -14,10 +14,6 @@ import { getBlockExplorerUrl } from '@/utils/web3utils'
 import { ChildToParentMessageStatus } from '@arbitrum/sdk'
 import { useMediaQuery } from '@mantine/hooks'
 
-export const networkRPC = (chainId: number | undefined) => {
-  const network = [L3_NETWORK, L2_NETWORK].find((n) => n.chainId === chainId)
-  return network?.rpcs[0]
-}
 
 interface WithdrawalProps {
   withdrawal: TransactionRecord
