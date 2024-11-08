@@ -72,8 +72,7 @@ export const useBridgeTransfer = () => {
           }
         },
         // if status is completed, no need to refetch again. if pending, refetch every 1-2 minuites
-        refetchInterval: status?.status === 2 || 6 || 9 ? false : 60 * 1000,
-        staleTime: 60 * 1000,
+        refetchInterval: status?.status === 2 || 6 || 9 ? false : 60 * 5 * 1000,
         refetchOnWindowFocus: false,
         enabled: !!txRecord
       }

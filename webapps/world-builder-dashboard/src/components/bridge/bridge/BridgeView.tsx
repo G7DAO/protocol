@@ -22,6 +22,7 @@ import useEthUsdRate from '@/hooks/useEthUsdRate'
 import { DepositDirection } from '@/pages/BridgePage/BridgePage'
 import { getStakeNativeTxData } from '@/utils/bridge/stakeContractInfo'
 import { Token } from '@/utils/tokens'
+import { useCoinGeckoAPI } from '@/hooks/useCoinGeckoAPI'
 
 const BridgeView = ({
   direction,
@@ -38,8 +39,8 @@ const BridgeView = ({
   const [inputErrorMessages, setInputErrorMessages] = useState({ value: '', data: '', destination: '' })
   const [networkErrorMessage, setNetworkErrorMessage] = useState('')
   const { isMessagingEnabled } = useUISettings()
+  const { useUSDPriceOfToken } = useCoinGeckoAPI()
   const g7tUsdRate = useQuery(['rate'], () => 2501.32)
-  const { data: ethUsdRate } = useEthUsdRate()
   const {
     connectedAccount,
     selectedLowNetwork,
@@ -55,6 +56,7 @@ const BridgeView = ({
     token: selectedBridgeToken
   })
 
+  const {data: coinUSDRate} = useUSDPriceOfToken(selectedBridgeToken.geckoId ?? "")
 
   const handleTokenChange = async (token: Token) => {
     setSelectedBridgeToken(token)
@@ -215,7 +217,7 @@ const BridgeView = ({
         fee={Number(estimatedFee.data ?? 0)}
         isEstimatingFee={estimatedFee.isFetching}
         value={Number(value)}
-        ethRate={ethUsdRate ?? 0}
+        ethRate={coinUSDRate ?? 0}
         tokenSymbol={tokenInformation?.symbol ?? ''}
         tokenRate={g7tUsdRate.data ?? 0}
         gasTokenSymbol={

@@ -21,7 +21,6 @@ interface TransactionSummaryProps {
   isEstimatingFee: boolean
   value: number
   gasBalance: number
-  ethRate: number
   tokenSymbol: string
   gasTokenSymbol: string
   tokenRate: number
@@ -34,7 +33,6 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
   transferTime,
   fee,
   isEstimatingFee,
-  ethRate,
   tokenRate,
   tokenSymbol,
   gasTokenSymbol,
@@ -89,9 +87,9 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
               className={styles.value}
               title={`balance: ${String(gasBalance)}`}
             >{`${fee.toFixed(18).replace(/\.?0+$/, '')} ${gasTokenSymbol}`}</div>
-            {!!(fee * (direction === 'DEPOSIT' ? ethRate : tokenRate)) && (
+            {!!(fee * tokenRate) && (
               <div className={styles.valueNote}>
-                {formatCurrency(fee * (direction === 'DEPOSIT' ? ethRate : tokenRate))}
+                {formatCurrency(fee *tokenRate)}
               </div>
             )}
           </div>

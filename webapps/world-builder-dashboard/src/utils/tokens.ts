@@ -15,6 +15,7 @@ export interface Token {
   tokenAddressMap: TokenAddressMap
   chainId: number
   decimals?: number
+  geckoId?: string
 }
 
 export const getTokensForNetwork = (chainId: number | undefined, userAddress: string | undefined): Token[] => {
@@ -34,7 +35,8 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           Icon: IconG7T,
           tokenAddressMap: TG7T,
           rpc: L1_NETWORK.rpcs[0],
-          chainId: L1_NETWORK.chainId
+          chainId: L1_NETWORK.chainId,
+          geckoId: 'G7T'
         },
         {
           name: 'Ethereum',
@@ -43,7 +45,8 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           Icon: IconEthereum,
           rpc: L1_NETWORK.rpcs[0],
           tokenAddressMap: ETH,
-          chainId: L1_NETWORK.chainId
+          chainId: L1_NETWORK.chainId,
+          geckoId: 'ethereum'
         },
         {
           name: 'USDC',
@@ -53,7 +56,8 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           rpc: L1_NETWORK.rpcs[0],
           tokenAddressMap: USDC,
           chainId: L1_NETWORK.chainId,
-          decimals: 6
+          decimals: 6,
+          geckoId: 'usdc'
         },
         ...storedTokensWithItems
       ]
@@ -66,7 +70,8 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           Icon: IconG7T,
           rpc: L2_NETWORK.rpcs[0],
           tokenAddressMap: TG7T,
-          chainId: L2_NETWORK.chainId
+          chainId: L2_NETWORK.chainId,
+          geckoId: 'G7T'
         },
         {
           name: 'Ethereum',
@@ -75,7 +80,8 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           Icon: IconEthereum,
           rpc: L2_NETWORK.rpcs[0],
           tokenAddressMap: ETH,
-          chainId: L2_NETWORK.chainId
+          chainId: L2_NETWORK.chainId,
+          geckoId: 'ethereum'
         },
         {
           name: 'USDC',
@@ -85,9 +91,10 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           rpc: L2_NETWORK.rpcs[0],
           tokenAddressMap: USDC,
           chainId: L2_NETWORK.chainId,
-          decimals: 6
+          decimals: 6,
+          geckoId: 'usdc'
         },
-        ...storedTokensWithItems
+      ...storedTokensWithItems
       ]
     case L3_NETWORK.chainId:
       return [
@@ -98,7 +105,8 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           Icon: IconG7T,
           rpc: L3_NETWORK.rpcs[0],
           tokenAddressMap: TG7T,
-          chainId: L3_NETWORK.chainId
+          chainId: L3_NETWORK.chainId,
+          geckoId: 'G7T'
         },
         {
           name: 'USDC',
@@ -108,7 +116,8 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           rpc: L3_NETWORK.rpcs[0],
           tokenAddressMap: USDC,
           chainId: L3_NETWORK.chainId,
-          decimals: 6
+          decimals: 6,
+          geckoId: 'USDC'
         },
         ...storedTokensWithItems
       ]
