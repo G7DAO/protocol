@@ -69,9 +69,9 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
 
   const withdrawalCompletedData = withdrawal?.lowNetworkHash ? withdrawal : localStorageTransaction
   console.log(
-    withdrawalCompletedData?.highNetworkHash === '0x4446ccf6102cf62aa4c65198b854e30f2e8d5eb273441f0c2f860b60d63b99c4'
-      ? withdrawalCompletedData
-      : withdrawal
+    withdrawal?.highNetworkHash === '0x6604642ea8d288e5d1a3c94f5b156009eac96415ae71b1602a148293a4e0840f'
+      ? { status: transferStatus?.status, localStorageTransaction }
+      : undefined
   )
 
   if (!status) {

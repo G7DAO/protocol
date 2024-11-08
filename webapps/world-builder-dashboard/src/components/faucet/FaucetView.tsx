@@ -132,7 +132,6 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
         })
 
         queryClient.invalidateQueries(['faucetTimestamp', address])
-        queryClient.refetchQueries('pendingTransactions')
         queryClient.refetchQueries(['notifications'])
         queryClient.refetchQueries(['nativeBalance'])
         queryClient.refetchQueries(['ERC20balance'])

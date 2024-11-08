@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from 'react-query'
 import { useQuery } from 'react-query'
+import { useNavigate } from 'react-router-dom'
 import { ALL_NETWORKS, L1_NETWORK, L2_NETWORK } from '../../constants'
 import { ethers } from 'ethers'
 import { BridgeTransfer, BridgeTransferStatus } from 'game7-bridge-sdk'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
-import { useNavigate } from 'react-router-dom'
 
 interface UseTransferDataProps {
   txRecord: TransactionRecord
@@ -118,12 +118,14 @@ export const useBridgeTransfer = () => {
       return { res, withdrawal }
     },
     {
-      onSuccess: ({ res, withdrawal }, highNetworkHash) => {
+      onSuccess: ({ res, withdrawal }) => {
+        console.log('done .. ?')
         try {
           const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
           let transactions = transactionsString ? JSON.parse(transactionsString) : []
           const newTransactions: TransactionRecord[] = transactions.map((t: TransactionRecord) => {
-            if (t.highNetworkHash === highNetworkHash) {
+            if (t.highNetworkHash === withdrawal.highNetworkHash) {
+              console.log("found it, changing it, loving it")
               return {
                 ...t,
                 completionTimestamp: Date.now() / 1000,
@@ -133,6 +135,7 @@ export const useBridgeTransfer = () => {
                 status: BridgeTransferStatus.WITHDRAW_EXECUTED
               }
             }
+            console.log('no find, break heart')
             return { ...t }
           })
           localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(newTransactions))
@@ -144,7 +147,6 @@ export const useBridgeTransfer = () => {
         queryClient.refetchQueries(['incomingMessages'])
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
-        queryClient.refetchQueries(['pendingTransactions'])
         navigate('/bridge/transactions')
       },
       onError: (error: Error) => {
