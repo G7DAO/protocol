@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from 'react-query'
 import { useQuery } from 'react-query'
+import { useNavigate } from 'react-router-dom'
 import { ALL_NETWORKS, L1_NETWORK, L2_NETWORK } from '../../constants'
 import { ethers } from 'ethers'
 import { BridgeTransfer, BridgeTransferStatus } from 'game7-bridge-sdk'
@@ -14,6 +15,7 @@ interface UseTransferDataProps {
 export const useBridgeTransfer = () => {
   const returnTransferData = ({ txRecord }: UseTransferDataProps) => {
     const { connectedAccount } = useBlockchainContext()
+    let status: any
     return useQuery(
       ['transferData', txRecord],
       async () => {
@@ -33,7 +35,7 @@ export const useBridgeTransfer = () => {
               : ALL_NETWORKS.find((n) => n.chainId === txRecord.highNetworkChainId)?.rpcs[0]
         })
 
-        const status = await _bridgeTransfer.getStatus()
+        status = await _bridgeTransfer.getStatus()
 
         const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
         const transactions = transactionsString ? JSON.parse(transactionsString) : []
@@ -53,48 +55,33 @@ export const useBridgeTransfer = () => {
         return status
       },
       {
-        // initialData: () => {
-        //   const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
-        //   if (transactionsString) {
-        //     const transactions = JSON.parse(transactionsString)
-        //     const cachedTransaction = transactions.find((t: TransactionRecord) =>
-        //       txRecord.type === 'DEPOSIT'
-        //         ? t.lowNetworkHash === txRecord.lowNetworkHash
-        //         : t.highNetworkHash === txRecord.highNetworkHash
-        //     )
-        //     if (cachedTransaction && cachedTransaction.status) {
-        //       return { status: cachedTransaction.status }
-        //     }
-        //   }
-        // },
-        refetchInterval: 60 * 15 * 1000,
+        placeholderData: () => {
+          const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+          if (transactionsString) {
+            const transactions = JSON.parse(transactionsString)
+            const cachedTransaction = transactions.find((t: TransactionRecord) =>
+              txRecord.type === 'DEPOSIT'
+                ? t.lowNetworkHash === txRecord.lowNetworkHash
+                : t.highNetworkHash === txRecord.highNetworkHash
+            )
+            if (cachedTransaction && cachedTransaction.status) {
+              return { status: cachedTransaction.status }
+            } else {
+              console.log('no tx found', txRecord.highNetworkHash)
+            }
+          }
+        },
+        // if status is completed, no need to refetch again. if pending, refetch every 1-2 minuites
+        refetchInterval: status?.status === 2 || 6 || 9 ? false : 60 * 1000,
         staleTime: 60 * 1000,
         refetchOnWindowFocus: false,
-        enabled: !!txRecord,
-        // onSuccess: (status) => {
-        //   console.log("checking...")
-        //   const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
-        //   const transactions = transactionsString ? JSON.parse(transactionsString) : []
-
-        //   const newTransactions: TransactionRecord[] = transactions.map((t: TransactionRecord) => {
-        //     const hashComparison: boolean =
-        //       txRecord.type === 'DEPOSIT'
-        //         ? t.lowNetworkHash === txRecord.lowNetworkHash
-        //         : t.highNetworkHash === txRecord.highNetworkHash
-
-        //     if (hashComparison && t.status !== status?.status) {
-        //       return { ...t, status: status?.status }
-        //     }
-        //     return { ...t }
-        //   })
-        //   localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(newTransactions))
-        // }
+        enabled: !!txRecord
       }
     )
   }
 
   // Mutate function
-
+  const navigate = useNavigate()
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const queryClient = useQueryClient()
   const { switchChain, connectedAccount } = useBlockchainContext()
@@ -131,12 +118,14 @@ export const useBridgeTransfer = () => {
       return { res, withdrawal }
     },
     {
-      onSuccess: ({ res, withdrawal }, highNetworkHash) => {
+      onSuccess: ({ res, withdrawal }) => {
+        console.log('done .. ?')
         try {
           const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
           let transactions = transactionsString ? JSON.parse(transactionsString) : []
           const newTransactions: TransactionRecord[] = transactions.map((t: TransactionRecord) => {
-            if (t.highNetworkHash === highNetworkHash) {
+            if (t.highNetworkHash === withdrawal.highNetworkHash) {
+              console.log("found it, changing it, loving it")
               return {
                 ...t,
                 completionTimestamp: Date.now() / 1000,
@@ -146,6 +135,7 @@ export const useBridgeTransfer = () => {
                 status: BridgeTransferStatus.WITHDRAW_EXECUTED
               }
             }
+            console.log('no find, break heart')
             return { ...t }
           })
           localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(newTransactions))
@@ -157,7 +147,7 @@ export const useBridgeTransfer = () => {
         queryClient.refetchQueries(['incomingMessages'])
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
-        queryClient.refetchQueries(['pendingTransactions'])
+        navigate('/bridge/transactions')
       },
       onError: (error: Error) => {
         console.log(error)
