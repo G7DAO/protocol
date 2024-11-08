@@ -51,8 +51,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   const { data: apiTransactions } = useHistoryTransactions(connectedAccount)
   const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])
   const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status']
-  const formattedApiTransactions = apiTransactions ? apiTransactions.map(mapAPIDataToTransactionRecord) : []
-
+  
   // Merge transactions only when API data is updated with new data
   useEffect(() => {
     const localTransactions = messages.data || []
