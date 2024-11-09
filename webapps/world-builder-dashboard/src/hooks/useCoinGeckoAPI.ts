@@ -17,7 +17,9 @@ export const useCoinGeckoAPI = () => {
       },
       {
         enabled: !!coin,
-        retry: false
+        retry: false,
+        staleTime: Infinity,
+        cacheTime: Infinity
       }
     )
   }
