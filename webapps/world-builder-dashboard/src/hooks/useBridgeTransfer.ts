@@ -64,17 +64,23 @@ export const useBridgeTransfer = () => {
                 ? t.lowNetworkHash === txRecord.lowNetworkHash
                 : t.highNetworkHash === txRecord.highNetworkHash
             )
-            if (cachedTransaction && cachedTransaction.status) {
+            if (cachedTransaction && cachedTransaction.status !== undefined) {
               return { status: cachedTransaction.status }
-            } else {
-              console.log('no tx found', txRecord.highNetworkHash)
             }
+          } else {
+            console.log('nada')
           }
         },
-        // if status is completed, no need to refetch again. if pending, refetch every 1-2 minuites
+        // if status is completed, no need to refetch again. if pending, refetch every 1-2 minutes
         refetchInterval: status?.status === 2 || 6 || 9 ? false : 60 * 5 * 1000,
         refetchOnWindowFocus: false,
-        enabled: !!txRecord
+        enabled: !!txRecord,
+        retry: (error) => {
+          return (error as { status?: number }).status === 429
+        },
+        retryDelay: (failureCount) => {
+          return Math.min(2 ** failureCount * 1000, 30000)
+        }
       }
     )
   }
@@ -118,13 +124,11 @@ export const useBridgeTransfer = () => {
     },
     {
       onSuccess: ({ res, withdrawal }) => {
-        console.log('done .. ?')
         try {
           const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
           let transactions = transactionsString ? JSON.parse(transactionsString) : []
           const newTransactions: TransactionRecord[] = transactions.map((t: TransactionRecord) => {
             if (t.highNetworkHash === withdrawal.highNetworkHash) {
-              console.log("found it, changing it, loving it")
               return {
                 ...t,
                 completionTimestamp: Date.now() / 1000,
@@ -134,7 +138,6 @@ export const useBridgeTransfer = () => {
                 status: BridgeTransferStatus.WITHDRAW_EXECUTED
               }
             }
-            console.log('no find, break heart')
             return { ...t }
           })
           localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(newTransactions))

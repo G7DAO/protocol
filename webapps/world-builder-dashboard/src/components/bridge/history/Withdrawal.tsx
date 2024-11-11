@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { HIGH_NETWORKS, L2_NETWORK, L3_NETWORK, LOW_NETWORKS } from '../../../../constants'
+import { HIGH_NETWORKS, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import { BridgeTransferStatus } from 'game7-bridge-sdk'
 import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
@@ -13,7 +13,6 @@ import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 import { ChildToParentMessageStatus } from '@arbitrum/sdk'
 import { useMediaQuery } from '@mantine/hooks'
-
 
 interface WithdrawalProps {
   withdrawal: TransactionRecord
@@ -62,17 +61,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const localStorageTransaction = transactions.find(
     (t: TransactionRecord) => t.type === 'WITHDRAWAL' && t.highNetworkHash === withdrawal.highNetworkHash
   )
-
   const withdrawalCompletedData = withdrawal?.lowNetworkHash ? withdrawal : localStorageTransaction
-  console.log(
-    withdrawal?.highNetworkHash === '0x6604642ea8d288e5d1a3c94f5b156009eac96415ae71b1602a148293a4e0840f'
-      ? { status: transferStatus?.status, localStorageTransaction }
-      : undefined
-  )
-
-  if (!status) {
-    return <></>
-  }
 
   return (
     <>
@@ -97,9 +86,9 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                   <div className={styles.gridItem}>{timeAgo(withdrawal.highNetworkTimestamp)}</div>
                   <div
                     className={styles.gridItem}
-                  >{`${status.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
-                  <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
-                  <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
+                  >{`${status?.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
+                  <div className={styles.gridItem}>{status?.data?.from ?? ''}</div>
+                  <div className={styles.gridItem}>{status?.data?.to ?? ''}</div>
                   <div className={styles.gridItem}>
                     <div className={styles.loading}>Loading</div>
                   </div>
@@ -149,7 +138,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         }}
                         onMouseEnter={() => setHovered(true)}
                         onMouseLeave={() => setHovered(false)}
-                      >{`${status.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
+                      >{`${status?.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
                       <div
                         className={styles.gridItem}
                         onClick={() => setCollapseExecuted(!collapseExecuted)}
@@ -160,7 +149,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         onMouseEnter={() => setHovered(true)}
                         onMouseLeave={() => setHovered(false)}
                       >
-                        {status.data?.from ?? ''}
+                        {status?.data?.from ?? ''}
                       </div>
                       <div
                         className={styles.gridItem}
@@ -172,7 +161,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         onMouseEnter={() => setHovered(true)}
                         onMouseLeave={() => setHovered(false)}
                       >
-                        {status.data?.to ?? ''}
+                        {status?.data?.to ?? ''}
                       </div>
                       <div
                         className={styles.gridItem}
@@ -215,9 +204,9 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.highNetworkTimestamp)}</div>
                           <div
                             className={styles.gridItemInitiate}
-                          >{`${status.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
-                          <div className={styles.gridItemInitiate}>{status.data?.from ?? ''}</div>
-                          <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
+                          >{`${status?.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
+                          <div className={styles.gridItemInitiate}>{status?.data?.from ?? ''}</div>
+                          <div className={styles.gridItemInitiate}>{status?.data?.to ?? ''}</div>
                           <div className={styles.gridItemInitiate}>
                             <a
                               href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
@@ -243,9 +232,9 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           </div>
                           <div
                             className={styles.gridItemInitiate}
-                          >{`${status.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
-                          <div className={styles.gridItemInitiate}>{status.data?.from ?? ''}</div>
-                          <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
+                          >{`${status?.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
+                          <div className={styles.gridItemInitiate}>{status?.data?.from ?? ''}</div>
+                          <div className={styles.gridItemInitiate}>{status?.data?.to ?? ''}</div>
                           <div className={styles.gridItemInitiate}>
                             <a
                               href={`${getBlockExplorerUrl(withdrawalCompletedData.lowNetworkChainId)}/tx/${withdrawalCompletedData.lowNetworkHash}`}
@@ -275,12 +264,12 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           Withdraw
                         </div>
                       </div>
-                      <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
+                      <div className={styles.gridItem}>{timeAgo(status?.data?.timestamp)}</div>
                       <div
                         className={styles.gridItem}
-                      >{`${status.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
-                      <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
-                      <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
+                      >{`${status?.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
+                      <div className={styles.gridItem}>{status?.data?.from ?? ''}</div>
+                      <div className={styles.gridItem}>{status?.data?.to ?? ''}</div>
                       {transferStatus && transferStatus.status === BridgeTransferStatus.WITHDRAW_CONFIRMED && (
                         <>
                           <div className={styles.gridItem}>

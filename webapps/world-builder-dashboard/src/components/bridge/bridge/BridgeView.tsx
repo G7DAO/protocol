@@ -17,12 +17,11 @@ import ValueToBridge from '@/components/bridge/bridge/ValueToBridge'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useUISettings } from '@/contexts/UISettingsContext'
 import useTokenInformation from '@/hooks/useBalance'
+import { useCoinGeckoAPI } from '@/hooks/useCoinGeckoAPI'
 // Hooks and Constants
-import useEthUsdRate from '@/hooks/useEthUsdRate'
 import { DepositDirection } from '@/pages/BridgePage/BridgePage'
 import { getStakeNativeTxData } from '@/utils/bridge/stakeContractInfo'
 import { Token } from '@/utils/tokens'
-import { useCoinGeckoAPI } from '@/hooks/useCoinGeckoAPI'
 
 const BridgeView = ({
   direction,
@@ -56,11 +55,9 @@ const BridgeView = ({
     token: selectedBridgeToken
   })
 
-  const {data: coinUSDRate} = useUSDPriceOfToken(selectedBridgeToken.geckoId ?? "")
-
+  const { data: coinUSDRate, isFetching: isCoinFetching } = useUSDPriceOfToken(selectedBridgeToken.geckoId ?? '')
   const handleTokenChange = async (token: Token) => {
     setSelectedBridgeToken(token)
-    console.log(token)
   }
 
   const estimatedFee = useQuery(
@@ -185,7 +182,7 @@ const BridgeView = ({
         setValue={setValue}
         onTokenChange={handleTokenChange}
         balance={tokenInformation?.tokenBalance}
-        rate={g7tUsdRate.data ?? 0}
+        rate={selectedBridgeToken.symbol === 'TG7T' ? 1 : isCoinFetching ? 0.00 : coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd}
         isFetchingBalance={isFetchingTokenInformation}
         errorMessage={inputErrorMessages.value}
         setErrorMessage={(msg) => setInputErrorMessages((prev) => ({ ...prev, value: msg }))}
@@ -229,7 +226,7 @@ const BridgeView = ({
       {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
       <ActionButton
         direction={direction}
-        amount={value ?? "0"}
+        amount={value ?? '0'}
         isDisabled={!!inputErrorMessages.value || !!inputErrorMessages.destination || !!inputErrorMessages.data}
         setErrorMessage={setNetworkErrorMessage}
         L2L3message={isMessageExpanded ? message : { data: '', destination: '' }}

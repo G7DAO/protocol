@@ -57,7 +57,7 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           tokenAddressMap: USDC,
           chainId: L1_NETWORK.chainId,
           decimals: 6,
-          geckoId: 'usdc'
+          geckoId: 'usd-coin'
         },
         ...storedTokensWithItems
       ]
@@ -92,7 +92,7 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           tokenAddressMap: USDC,
           chainId: L2_NETWORK.chainId,
           decimals: 6,
-          geckoId: 'usdc'
+          geckoId: 'usd-coin'
         },
       ...storedTokensWithItems
       ]
@@ -117,7 +117,7 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           tokenAddressMap: USDC,
           chainId: L3_NETWORK.chainId,
           decimals: 6,
-          geckoId: 'USDC'
+          geckoId: 'usd-coin'
         },
         ...storedTokensWithItems
       ]
