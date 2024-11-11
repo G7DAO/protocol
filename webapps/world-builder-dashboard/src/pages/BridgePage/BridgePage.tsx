@@ -24,7 +24,6 @@ const BridgePage = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const { connectedAccount } = useBlockchainContext()
-  const pendingTransacions = usePendingTransactions(connectedAccount)
   const [notificationsOffset] = useState(0)
   const [notificationsLimit] = useState(10)
   const [direction, setDirection] = useState<DepositDirection>('DEPOSIT')
@@ -35,11 +34,11 @@ const BridgePage = () => {
   const queryClient = useQueryClient()
 
   useEffect(() => {
-    if (pendingTransacions.data && connectedAccount) {
+    if (connectedAccount) {
       queryClient.refetchQueries(['incomingMessages'])
       refetchNewNotifications(connectedAccount)
     }
-  }, [pendingTransacions.data, connectedAccount])
+  }, [connectedAccount])
 
   return (
     <div className={styles.container}>

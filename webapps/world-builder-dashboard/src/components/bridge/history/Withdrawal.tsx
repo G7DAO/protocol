@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { HIGH_NETWORKS, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import { BridgeTransferStatus } from 'game7-bridge-sdk'
@@ -55,14 +55,14 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const { claim, returnTransferData } = useBridgeTransfer()
   const [collapseExecuted, setCollapseExecuted] = useState(false)
   const [hovered, setHovered] = useState(false)
-  const { data: transferStatus, isLoading } = returnTransferData({ txRecord: withdrawal })
+  const transferData = useCallback(() => returnTransferData({ txRecord: withdrawal }), [withdrawal, returnTransferData])
+  const { data: transferStatus, isLoading } = transferData()
   const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
   let transactions = transactionsString ? JSON.parse(transactionsString) : []
   const localStorageTransaction = transactions.find(
     (t: TransactionRecord) => t.type === 'WITHDRAWAL' && t.highNetworkHash === withdrawal.highNetworkHash
   )
   const withdrawalCompletedData = withdrawal?.lowNetworkHash ? withdrawal : localStorageTransaction
-
   return (
     <>
       {isLoading && smallView ? (
@@ -75,7 +75,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
             <WithdrawalMobile withdrawal={withdrawal} claim={claim} status={status} transferStatus={transferStatus} />
           ) : (
             <>
-              {isLoading ? (
+              {isLoading || transferStatus?.status === undefined ? (
                 <>
                   <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
                     <div className={styles.typeWithdrawal}>
