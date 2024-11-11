@@ -1,7 +1,9 @@
 import React, { ReactNode } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import styles from './MainLayout.module.css'
+import { Tooltip } from 'summon-ui/mantine'
 import IconExternalLink from '@/assets/IconExternalLink'
+import IconInfoCircle from '@/assets/IconInfoCircle'
 import IconLogout from '@/assets/IconLogout'
 import NetworkToggle from '@/components/commonComponents/networkToggle/NetworkToggle'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
@@ -13,7 +15,8 @@ interface DesktopSidebarProps {
 const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { connectedAccount, isMetaMask, connectWallet, disconnectWallet, isConnecting } = useBlockchainContext()
+  const { connectedAccount, isMetaMask, connectWallet, disconnectWallet, isConnecting, selectedNetworkType } =
+    useBlockchainContext()
 
   return (
     <div className={styles.sideBar}>
@@ -40,8 +43,12 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
               <div style={{ display: 'flex' }}>
                 {item.name === 'documentation' || item.name === 'explorer' ? (
                   <IconExternalLink className={styles.icon} />
+                ) : item.name === 'faucet' && selectedNetworkType === 'Testnet' ? (
+                  <Tooltip arrowSize={8} radius={'8px'} label={'Only available on Testnet'} withArrow>
+                    <IconInfoCircle stroke='#fff' />
+                  </Tooltip>
                 ) : (
-                  ''
+                  <></>
                 )}
               </div>
             </div>

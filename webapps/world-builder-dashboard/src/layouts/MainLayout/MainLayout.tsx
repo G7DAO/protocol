@@ -10,13 +10,15 @@ import IconExplorer from '@/assets/IconExplorer'
 import DesktopSidebar from '@/layouts/MainLayout/DesktopSidebar'
 import MobileSidebar from '@/layouts/MainLayout/MobileSidebar'
 import { useMediaQuery } from '@mantine/hooks'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
 
 interface MainLayoutProps {}
 
 const MainLayout: React.FC<MainLayoutProps> = ({}) => {
   const location = useLocation()
+  const {selectedNetworkType} = useBlockchainContext()
 
-  const NAVIGATION_ITEMS = [
+  const TESTNET_NAVIGATION_ITEMS = [
     {
       name: 'faucet',
       navigateTo: '/faucet',
@@ -34,6 +36,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({}) => {
     }
   ]
 
+  const MAINNET_NAVIGATION_ITEMS = TESTNET_NAVIGATION_ITEMS.slice(1, TESTNET_NAVIGATION_ITEMS.length)
+  const NAVIGATION_ITEMS = selectedNetworkType === "Mainnet" ? MAINNET_NAVIGATION_ITEMS : TESTNET_NAVIGATION_ITEMS
   const smallView = useMediaQuery('(max-width: 1199px)')
   return (
     <div className={styles.container}>
