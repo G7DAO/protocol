@@ -14,7 +14,6 @@ import { getBlockExplorerUrl } from '@/utils/web3utils'
 import { ChildToParentMessageStatus } from '@arbitrum/sdk'
 import { useMediaQuery } from '@mantine/hooks'
 
-
 interface WithdrawalProps {
   withdrawal: TransactionRecord
 }
@@ -62,13 +61,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const localStorageTransaction = transactions.find(
     (t: TransactionRecord) => t.type === 'WITHDRAWAL' && t.highNetworkHash === withdrawal.highNetworkHash
   )
-
   const withdrawalCompletedData = withdrawal?.lowNetworkHash ? withdrawal : localStorageTransaction
-  console.log(
-    withdrawal?.highNetworkHash === '0x6604642ea8d288e5d1a3c94f5b156009eac96415ae71b1602a148293a4e0840f'
-      ? { status: transferStatus?.status, localStorageTransaction }
-      : undefined
-  )
 
   if (!status) {
     return <></>
