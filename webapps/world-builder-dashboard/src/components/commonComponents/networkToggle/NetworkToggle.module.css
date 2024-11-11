@@ -9,6 +9,7 @@
 }
 
 .toggle {
+  position: relative;
   display: flex;
   padding: 10px 12px;
   align-items: center;
@@ -62,16 +63,20 @@
 }
 
 .dropdownContainer {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
   display: flex;
   padding: 4px 0px;
   flex-direction: column;
   align-items: flex-start;
   flex: 1 0 0;
-  width: 100%;
   align-self: stretch;
   border-radius: 8px;
   border: 1px solid var(--Gray-true-700, #393939);
   background: #171717;
+  z-index: 1;
 }
 
 .dropdownOption {

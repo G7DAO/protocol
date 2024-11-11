@@ -6,20 +6,20 @@ import IconChevronDownToggle from '@/assets/IconAlertCircle'
 
 interface NetworkToggleOption {
   name: string
-  type: string
-  logo: React.FC
+  // type: string
+  // logo: React.FC
 }
 
 const NETWORK_OPTIONS: NetworkToggleOption[] = [
   {
-    name: 'G7 Sepolia',
-    type: 'Testnet',
-    logo: G7LogoBlue
+    name: 'Testnet'
+    // type: 'Testnet',
+    // logo: G7LogoBlue
   },
   {
-    name: 'G7 Mainnet',
-    type: 'Mainnet',
-    logo: G7LogoRed
+    name: 'Mainnet'
+    // type: 'Mainnet',
+    // logo: G7LogoRed
   }
 ]
 
@@ -37,41 +37,39 @@ const NetworkToggle: React.FC<NetworkToggleProps> = () => {
   }
   return (
     <div className={styles.container} onClick={toggleDropdown}>
-      <div className={`${styles.toggle} ${selectedNetwork.type === 'Testnet' ? styles.testnet : styles.mainnet}`}>
-        <selectedNetwork.logo />
+      <div className={`${styles.toggle} ${selectedNetwork.name === 'Testnet' ? styles.testnet : styles.mainnet}`}>
+        {/* <selectedNetwork.logo /> */}
         <div className={styles.testnetContainer}>
-          <div className={styles.testnetName}>{selectedNetwork.name}</div>
           <div
-            className={`${styles.testnetType} ${selectedNetwork.type === 'Testnet' ? styles.testnetTypeColor : styles.mainnetTypeColor}`}
+            className={`${styles.testnetType} ${selectedNetwork.name === 'Testnet' ? styles.testnetTypeColor : styles.mainnetTypeColor}`}
           >
-            {selectedNetwork.type}
+            {selectedNetwork.name}
           </div>
         </div>
         <IconChevronDownToggle color='#fff' />
-      </div>
-      {isDropdownOpen && (
-        <div className={styles.dropdownContainer}>
-          {NETWORK_OPTIONS.filter((network: NetworkToggleOption) => network.name !== selectedNetwork.name).map(
-            (network: NetworkToggleOption) => (
-              <div key={network.name} className={styles.dropdownOption} onClick={() => handleNetworkSelect(network)}>
-                <div className={styles.dropdownNetworkContainer}>
-                  <div className={styles.dropdownNetworkInformation}>
-                    <network.logo />
-                    <div className={styles.dropdownTestnetContainer}>
-                      <div className={styles.testnetName}>{network.name}</div>
-                      <div
-                        className={`${styles.testnetType} ${network.type === 'Testnet' ? styles.testnetTypeColor : styles.mainnetTypeColor}`}
-                      >
-                        {network.type}
+        {isDropdownOpen && (
+          <div className={styles.dropdownContainer}>
+            {NETWORK_OPTIONS.filter((network: NetworkToggleOption) => network.name !== selectedNetwork.name).map(
+              (network: NetworkToggleOption) => (
+                <div key={network.name} className={styles.dropdownOption} onClick={() => handleNetworkSelect(network)}>
+                  <div className={styles.dropdownNetworkContainer}>
+                    <div className={styles.dropdownNetworkInformation}>
+                      {/* <network.logo /> */}
+                      <div className={styles.dropdownTestnetContainer}>
+                        <div
+                          className={`${styles.testnetType} ${network.name === 'Testnet' ? styles.testnetTypeColor : styles.mainnetTypeColor}`}
+                        >
+                          {network.name}
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            )
-          )}
-        </div>
-      )}
+              )
+            )}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
