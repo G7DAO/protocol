@@ -27,6 +27,11 @@ jobs:
                   npm install
                   npm run build
 
+            - name: Update robots.txt, block alpha for crawlers
+              working-directory: ./webapps/world-builder-dashboard/dist
+              run: |
+                sed -i "s/Disallow:.*/Disallow: \//" robots.txt
+
             - name: Publish to CloudFlare Page
               uses: cloudflare/pages-action@v1
               with:
