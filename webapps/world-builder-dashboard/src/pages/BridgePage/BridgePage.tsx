@@ -23,7 +23,7 @@ export type DepositDirection = 'DEPOSIT' | 'WITHDRAW'
 const BridgePage = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { connectedAccount } = useBlockchainContext()
+  const { connectedAccount, selectedNetworkType } = useBlockchainContext()
   const pendingTransacions = usePendingTransactions(connectedAccount)
   const [notificationsOffset] = useState(0)
   const [notificationsLimit] = useState(10)
@@ -68,16 +68,18 @@ const BridgePage = () => {
           >
             History
           </button>
-          <button
-            className={
-              location.pathname === '/bridge/settings'
-                ? styles.selectedNavigationButton
-                : styles.unselectedNavigationButton
-            }
-            onClick={() => navigate('/bridge/settings')}
-          >
-            Settings
-          </button>
+          {selectedNetworkType === 'Testnet' && (
+            <button
+              className={
+                location.pathname === '/bridge/settings'
+                  ? styles.selectedNavigationButton
+                  : styles.unselectedNavigationButton
+              }
+              onClick={() => navigate('/bridge/settings')}
+            >
+              Settings
+            </button>
+          )}
         </div>
       </div>
       <div className={styles.viewContainer}>

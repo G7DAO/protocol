@@ -20,6 +20,8 @@ interface BlockchainContextType {
   setAccounts: (accounts: string[]) => void
   chainId: number | undefined
   isConnecting: boolean
+  selectedNetworkType: NetworkType
+  setSelectedNetworkType: (networkType: NetworkType) => void
 }
 
 export interface NetworkInterface {
@@ -44,6 +46,8 @@ export interface NetworkInterface {
   inbox?: string
 }
 
+export type NetworkType = 'Testnet' | 'Mainnet'
+
 export interface HighNetworkInterface extends NetworkInterface {
   inbox: string
 }
@@ -58,6 +62,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   const [walletProvider, setWalletProvider] = useState<ethers.providers.Web3Provider>()
   const [selectedLowNetwork, _setSelectedLowNetwork] = useState<NetworkInterface>(DEFAULT_LOW_NETWORK)
   const [selectedHighNetwork, _setSelectedHighNetwork] = useState<NetworkInterface>(DEFAULT_HIGH_NETWORK)
+  const [selectedNetworkType, setSelectedNetworkType] = useState<NetworkType>('Testnet')
   const [isMetaMask, setIsMetaMask] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
   const [chainId, setChainId] = useState<number | undefined>(undefined)
@@ -255,7 +260,9 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
         getProvider,
         isConnecting,
         accounts,
-        setAccounts
+        setAccounts,
+        selectedNetworkType,
+        setSelectedNetworkType,
       }}
     >
       {children}
