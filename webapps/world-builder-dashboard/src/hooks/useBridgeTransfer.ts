@@ -52,7 +52,6 @@ export const useBridgeTransfer = () => {
           return { ...t }
         })
         localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(newTransactions))
-        console.log(status)
         return status
       },
       {
