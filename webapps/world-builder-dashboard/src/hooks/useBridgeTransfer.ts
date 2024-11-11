@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from 'react-query'
 import { useQuery } from 'react-query'
-import { ErrorResponse, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { ALL_NETWORKS, L1_NETWORK, L2_NETWORK } from '../../constants'
 import { ethers } from 'ethers'
 import { BridgeTransfer, BridgeTransferStatus } from 'game7-bridge-sdk'
@@ -47,7 +47,7 @@ export const useBridgeTransfer = () => {
             const isSameHash = isDeposit
               ? t.lowNetworkHash === txRecord.lowNetworkHash
               : t.highNetworkHash === txRecord.highNetworkHash
-            return isSameHash ? { ...t, status: status?.status === undefined ? 0 : status?.status } : t
+            return isSameHash ? { ...t, status: status?.status } : t
           })
 
           localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(newTransactions))
@@ -82,10 +82,12 @@ export const useBridgeTransfer = () => {
         refetchOnWindowFocus: false,
         enabled: !!txRecord && ![2, 6, 9].includes(status?.status),
         retry: (error) => {
+          console.log(error)
           return (error as { status?: number }).status === 429
         },
         retryDelay: (failureCount) => {
-          return Math.min(2 ** failureCount * 2000, 30000)
+          console.log(failureCount)
+          return Math.min(2 ** failureCount * 1000, 60000)
         }
       }
     )

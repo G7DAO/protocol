@@ -31,7 +31,6 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
     (t: any) => t.type === 'DEPOSIT' && t.lowNetworkHash === deposit.lowNetworkHash
   )
   const { data: status, isLoading: isLoadingStatus } = useDepositStatus(deposit)
-  console.log(transferStatus)
   return (
     <>
       {isLoading && smallView ? (
