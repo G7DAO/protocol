@@ -51,12 +51,41 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   const { data: apiTransactions } = useHistoryTransactions(connectedAccount)
   const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])
   const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status']
-  
+
   // Merge transactions only when API data is updated with new data
   useEffect(() => {
     const localTransactions = messages.data || []
     const formattedApiTransactions = apiTransactions ? apiTransactions.map(mapAPIDataToTransactionRecord) : []
     const combinedTransactions = mergeTransactions(formattedApiTransactions, localTransactions)
+    // Retrieve existing transactions from localStorage
+    const storedTransactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+    const storedTransactions = storedTransactionsString ? JSON.parse(storedTransactionsString) : []
+
+    // Check if the combined transactions are different from those in localStorage
+    if (
+      combinedTransactions.length !== storedTransactions.length ||
+      !combinedTransactions.every((tx, index) =>
+        tx.type === 'DEPOSIT'
+          ? tx.lowNetworkHash === storedTransactions[index]?.lowNetworkHash
+          : tx.highNetworkHash === storedTransactions[index]?.highNetworkHash
+      )
+    ) {
+      // Determine new transactions that aren’t in storedTransactions
+      const newTransactions = combinedTransactions.filter(
+        (newTx) =>
+          !storedTransactions.some((storedTx: TransactionRecord) =>
+            storedTx.type === 'DEPOSIT'
+              ? storedTx.lowNetworkHash === newTx.lowNetworkHash
+              : storedTx.highNetworkHash === newTx.highNetworkHash
+          )
+      )
+
+      localStorage.setItem(
+        `bridge-${connectedAccount}-transactions`,
+        JSON.stringify([...storedTransactions, ...newTransactions])
+      )
+    }
+
     setMergedTransactions(combinedTransactions)
   }, [messages.data, apiTransactions])
 
@@ -85,9 +114,8 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
                     <Fragment key={idx}>{tx.lowNetworkHash && <Deposit deposit={tx} />}</Fragment>
                   )
                 )}
-              {mergedTransactions.filter(
-                (tx: TransactionRecord) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL'
-              ).length === 0 && <div className={styles.noTransactions}> No transactions yet</div>}
+              {mergedTransactions.filter((tx: TransactionRecord) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL')
+                .length === 0 && <div className={styles.noTransactions}> No transactions yet</div>}
             </div>
           </div>
         )}

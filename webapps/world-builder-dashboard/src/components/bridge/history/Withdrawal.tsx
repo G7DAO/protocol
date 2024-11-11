@@ -63,10 +63,6 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   )
   const withdrawalCompletedData = withdrawal?.lowNetworkHash ? withdrawal : localStorageTransaction
 
-  if (!status) {
-    return <></>
-  }
-
   return (
     <>
       {isLoading && smallView ? (
@@ -90,9 +86,9 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                   <div className={styles.gridItem}>{timeAgo(withdrawal.highNetworkTimestamp)}</div>
                   <div
                     className={styles.gridItem}
-                  >{`${status.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
-                  <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
-                  <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
+                  >{`${status?.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
+                  <div className={styles.gridItem}>{status?.data?.from ?? ''}</div>
+                  <div className={styles.gridItem}>{status?.data?.to ?? ''}</div>
                   <div className={styles.gridItem}>
                     <div className={styles.loading}>Loading</div>
                   </div>
@@ -268,12 +264,12 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           Withdraw
                         </div>
                       </div>
-                      <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
+                      <div className={styles.gridItem}>{timeAgo(status?.data?.timestamp)}</div>
                       <div
                         className={styles.gridItem}
-                      >{`${status.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
-                      <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
-                      <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
+                      >{`${status?.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
+                      <div className={styles.gridItem}>{status?.data?.from ?? ''}</div>
+                      <div className={styles.gridItem}>{status?.data?.to ?? ''}</div>
                       {transferStatus && transferStatus.status === BridgeTransferStatus.WITHDRAW_CONFIRMED && (
                         <>
                           <div className={styles.gridItem}>

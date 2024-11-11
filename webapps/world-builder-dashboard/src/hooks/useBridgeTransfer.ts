@@ -52,6 +52,7 @@ export const useBridgeTransfer = () => {
           return { ...t }
         })
         localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(newTransactions))
+        console.log(status)
         return status
       },
       {
@@ -64,27 +65,23 @@ export const useBridgeTransfer = () => {
                 ? t.lowNetworkHash === txRecord.lowNetworkHash
                 : t.highNetworkHash === txRecord.highNetworkHash
             )
-            console.log(
-              txRecord.highNetworkHash === '0x3d705cc553ebf546c6626bd26d625b6f3cad306efb72ddf03dd52c7b3dac1871'
-                ? {cachedTransaction}
-                : {}
-            )
             if (cachedTransaction && cachedTransaction.status !== undefined) {
-              console.log("existing")
               return { status: cachedTransaction.status }
             }
+          } else {
+            console.log('nada')
           }
         },
-        // if status is completed, no need to refetch again. if pending, refetch every 1-2 minuites
+        // if status is completed, no need to refetch again. if pending, refetch every 1-2 minutes
         refetchInterval: status?.status === 2 || 6 || 9 ? false : 60 * 5 * 1000,
         refetchOnWindowFocus: false,
-        enabled: !!txRecord
-        // retry: (failureCount, error) => {
-        //   if ((error as { status?: number }).status === 429) {
-        //     return Math.min(2 ** failureCount * 1000, 30000)
-        //   }
-        //   return false
-        // }
+        enabled: !!txRecord,
+        retry: (failureCount, error) => {
+          if ((error as { status?: number }).status === 429) {
+            return Math.min(2 ** failureCount * 1000, 30000)
+          }
+          return false
+        }
       }
     )
   }
