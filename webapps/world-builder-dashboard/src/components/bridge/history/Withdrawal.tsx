@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { HIGH_NETWORKS, L2_NETWORK, L3_NETWORK, LOW_NETWORKS } from '../../../../constants'
+import { HIGH_NETWORKS, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import { BridgeTransferStatus } from 'game7-bridge-sdk'
 import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
@@ -138,7 +138,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         }}
                         onMouseEnter={() => setHovered(true)}
                         onMouseLeave={() => setHovered(false)}
-                      >{`${status.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
+                      >{`${status?.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
                       <div
                         className={styles.gridItem}
                         onClick={() => setCollapseExecuted(!collapseExecuted)}
@@ -149,7 +149,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         onMouseEnter={() => setHovered(true)}
                         onMouseLeave={() => setHovered(false)}
                       >
-                        {status.data?.from ?? ''}
+                        {status?.data?.from ?? ''}
                       </div>
                       <div
                         className={styles.gridItem}
@@ -161,7 +161,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         onMouseEnter={() => setHovered(true)}
                         onMouseLeave={() => setHovered(false)}
                       >
-                        {status.data?.to ?? ''}
+                        {status?.data?.to ?? ''}
                       </div>
                       <div
                         className={styles.gridItem}
@@ -204,9 +204,9 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.highNetworkTimestamp)}</div>
                           <div
                             className={styles.gridItemInitiate}
-                          >{`${status.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
-                          <div className={styles.gridItemInitiate}>{status.data?.from ?? ''}</div>
-                          <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
+                          >{`${status?.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
+                          <div className={styles.gridItemInitiate}>{status?.data?.from ?? ''}</div>
+                          <div className={styles.gridItemInitiate}>{status?.data?.to ?? ''}</div>
                           <div className={styles.gridItemInitiate}>
                             <a
                               href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
@@ -232,9 +232,9 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           </div>
                           <div
                             className={styles.gridItemInitiate}
-                          >{`${status.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
-                          <div className={styles.gridItemInitiate}>{status.data?.from ?? ''}</div>
-                          <div className={styles.gridItemInitiate}>{status.data?.to ?? ''}</div>
+                          >{`${status?.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
+                          <div className={styles.gridItemInitiate}>{status?.data?.from ?? ''}</div>
+                          <div className={styles.gridItemInitiate}>{status?.data?.to ?? ''}</div>
                           <div className={styles.gridItemInitiate}>
                             <a
                               href={`${getBlockExplorerUrl(withdrawalCompletedData.lowNetworkChainId)}/tx/${withdrawalCompletedData.lowNetworkHash}`}

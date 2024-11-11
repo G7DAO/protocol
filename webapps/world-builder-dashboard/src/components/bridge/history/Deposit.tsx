@@ -30,7 +30,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   const localStorageTransaction = transactions.find(
     (t: any) => t.type === 'DEPOSIT' && t.lowNetworkHash === deposit.lowNetworkHash
   )
-  const { data: status } = useDepositStatus(deposit)
+  const { data: status, isLoading: isLoadingStatus } = useDepositStatus(deposit)
   return (
     <>
       {isLoading && smallView ? (
@@ -84,14 +84,24 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                       )}
                     </div>
                   </a>
-                  <div className={styles.gridItemImportant}>
-                    {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
-                    transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ? (
-                      <div>{timeAgo(status?.data?.highNetworkTimestamp ?? deposit.lowNetworkTimestamp)}</div>
-                    ) : (
-                      <div>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)}</div>
-                    )}
-                  </div>
+                  {isLoadingStatus ? (
+                    <div className={styles.gridItem}>
+                      <div className={styles.loading}>Loading</div>
+                    </div>
+                  ) : (
+                    <div className={styles.gridItemImportant}>
+                      {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
+                      transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ? (
+                        <>
+                          {status?.highNetworkTimestamp === undefined
+                            ? 'No status found'
+                            : timeAgo(status?.highNetworkTimestamp)}
+                        </>
+                      ) : (
+                        <>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)}</>
+                      )}
+                    </div>
+                  )}
                 </>
               )}
             </>
