@@ -15,71 +15,79 @@ interface UseTransferDataProps {
 export const useBridgeTransfer = () => {
   const returnTransferData = ({ txRecord }: UseTransferDataProps) => {
     const { connectedAccount } = useBlockchainContext()
+    // Pre-compute properties for cleaner instantiation
+    const isDeposit = txRecord.type === 'DEPOSIT'
+    const txHash = isDeposit ? txRecord.lowNetworkHash : txRecord.highNetworkHash
+    const destinationChainId = isDeposit ? txRecord.highNetworkChainId : txRecord.lowNetworkChainId
+    const originChainId = isDeposit ? txRecord.lowNetworkChainId : txRecord.highNetworkChainId
+    const destinationRpc = ALL_NETWORKS.find((n) => n.chainId === destinationChainId)?.rpcs[0]
+    const originRpc = ALL_NETWORKS.find((n) => n.chainId === originChainId)?.rpcs[0]
+
+    const getCachedTransactions = () => {
+      const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+      return transactionsString ? JSON.parse(transactionsString) : []
+    }
+
     let status: any
     return useQuery(
       ['transferData', txRecord],
       async () => {
         const _bridgeTransfer = new BridgeTransfer({
-          txHash: (txRecord.type === 'DEPOSIT' ? txRecord.lowNetworkHash : txRecord.highNetworkHash) ?? '',
-          destinationNetworkChainId:
-            (txRecord.type === 'DEPOSIT' ? txRecord.highNetworkChainId : txRecord.lowNetworkChainId) ?? 0,
-          originNetworkChainId:
-            (txRecord.type === 'DEPOSIT' ? txRecord.lowNetworkChainId : txRecord.highNetworkChainId) ?? 0,
-          destinationSignerOrProviderOrRpc:
-            txRecord.type === 'DEPOSIT'
-              ? ALL_NETWORKS.find((n) => n.chainId === txRecord.highNetworkChainId)?.rpcs[0]
-              : ALL_NETWORKS.find((n) => n.chainId === txRecord.lowNetworkChainId)?.rpcs[0],
-          originSignerOrProviderOrRpc:
-            txRecord.type === 'DEPOSIT'
-              ? ALL_NETWORKS.find((n) => n.chainId === txRecord.lowNetworkChainId)?.rpcs[0]
-              : ALL_NETWORKS.find((n) => n.chainId === txRecord.highNetworkChainId)?.rpcs[0]
+          txHash: txHash ?? '',
+          destinationNetworkChainId: destinationChainId ?? 0,
+          originNetworkChainId: originChainId ?? 0,
+          destinationSignerOrProviderOrRpc: destinationRpc,
+          originSignerOrProviderOrRpc: originRpc
         })
+        try {
+          status = await _bridgeTransfer.getStatus()
+          const transactions = getCachedTransactions()
 
-        status = await _bridgeTransfer.getStatus()
-
-        const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
-        const transactions = transactionsString ? JSON.parse(transactionsString) : []
-
-        const newTransactions: TransactionRecord[] = transactions.map((t: TransactionRecord) => {
-          const hashComparison: boolean =
-            txRecord.type === 'DEPOSIT'
+          const newTransactions: TransactionRecord[] = transactions.map((t: TransactionRecord) => {
+            const isSameHash = isDeposit
               ? t.lowNetworkHash === txRecord.lowNetworkHash
               : t.highNetworkHash === txRecord.highNetworkHash
+            return isSameHash ? { ...t, status: status?.status } : t
+          })
 
-          if (hashComparison) {
-            return { ...t, status: status?.status }
+          localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(newTransactions))
+
+          return status
+        } catch (error: any) {
+          const transactions = getCachedTransactions()
+          const cachedTransaction = transactions.find((t: TransactionRecord) =>
+            isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
+          )
+
+          if (cachedTransaction && cachedTransaction.status !== undefined) {
+            status = cachedTransaction.status
+            return { status }
           }
-          return { ...t }
-        })
-        localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(newTransactions))
-        return status
+        }
       },
       {
         placeholderData: () => {
-          const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
-          if (transactionsString) {
-            const transactions = JSON.parse(transactionsString)
-            const cachedTransaction = transactions.find((t: TransactionRecord) =>
-              txRecord.type === 'DEPOSIT'
-                ? t.lowNetworkHash === txRecord.lowNetworkHash
-                : t.highNetworkHash === txRecord.highNetworkHash
-            )
-            if (cachedTransaction && cachedTransaction.status !== undefined) {
-              return { status: cachedTransaction.status }
-            }
-          } else {
-            console.log('nada')
+          const transactions = getCachedTransactions()
+          const cachedTransaction = transactions.find((t: TransactionRecord) =>
+            isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
+          )
+
+          if (cachedTransaction && cachedTransaction.status !== undefined) {
+            status = cachedTransaction.status
+            return { status }
           }
         },
         // if status is completed, no need to refetch again. if pending, refetch every 1-2 minutes
-        refetchInterval: status?.status === 2 || 6 || 9 ? false : 60 * 5 * 1000,
+        refetchInterval: [2, 6, 9].includes(status?.status) ? false : 60 * 5 * 1000,
         refetchOnWindowFocus: false,
-        enabled: !!txRecord,
+        enabled: !!txRecord && ![2, 6, 9].includes(status?.status),
         retry: (error) => {
+          console.log(error)
           return (error as { status?: number }).status === 429
         },
         retryDelay: (failureCount) => {
-          return Math.min(2 ** failureCount * 1000, 30000)
+          console.log(failureCount)
+          return Math.min(2 ** failureCount * 1000, 60000)
         }
       }
     )
