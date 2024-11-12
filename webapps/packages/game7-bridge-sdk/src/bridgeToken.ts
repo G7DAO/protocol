@@ -99,6 +99,37 @@ export class BridgeToken {
     return tokenContract.symbol();
   }
 
+
+  /**
+   * Retrieves the number of decimals used by the token.
+   *
+   * @param provider - An `ethers.Signer`, `ethers.providers.Provider`, or a string representing the RPC URL.
+   *                   If a string is provided, a new `JsonRpcProvider` will be created using the RPC URL.
+   * @returns A promise that resolves to a number representing the token's decimals.
+   * @throws Error if the token address is not found for the specified network.
+   */
+  public async getDecimals(
+    provider: ethers.Signer | ethers.providers.Provider | string,
+  ): Promise<number> {
+    if (typeof provider === 'string') {
+      provider = new ethers.providers.JsonRpcProvider(provider);
+    }
+
+    const tokenAddress = this.tokenAddresses[this.chainId];
+
+    // Throw an error if the token address is not found for the specified network
+    if (!tokenAddress) {
+      throw new Error('Token address not found for the specified network');
+    }
+
+    if (tokenAddress === ethers.constants.AddressZero) {
+      return networks[this.chainId]?.nativeCurrency?.decimals ?? 18;
+    }
+
+    const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
+    return tokenContract.decimals();
+  }
+
   /**
    * Retrieves a list of `Bridger` instances that can be used to bridge the token across different networks.
    *
