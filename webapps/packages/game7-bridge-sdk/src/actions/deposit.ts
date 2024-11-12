@@ -9,6 +9,7 @@ import { EthDepositParams } from '@arbitrum/sdk/dist/lib/assetBridger/ethBridger
 import { GasAndFeeEstimation } from '../bridger';
 import { getDecodedInputs } from '../utils/web3Utils';
 import { INBOX_ABI } from '../abi/inbox_abi';
+import { ERC20_ABI } from '../abi/ERC20_ABI';
 
 export const depositERC20 = async (
   amount: BigNumber,
@@ -282,6 +283,37 @@ export const estimateDepositEth = async (amount: ethers.BigNumber, provider: eth
     estimatedFee: fee,
   }
 
+}
+
+
+export const estimateApproval = async (amount: ethers.BigNumber, provider: ethers.providers.Provider, tokenAddress: string, spenderAddress: string, from: string) => {
+
+
+  const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
+
+  const txRequest = await tokenContract.populateTransaction.approve(
+    spenderAddress,
+    amount
+  );
+
+  try {
+    const estimatedGas = await provider.estimateGas({
+      ...txRequest,
+      from,
+    });
+
+    const gasPrice = await provider.getGasPrice();
+    const estimatedFee = estimatedGas.mul(gasPrice);
+
+    return {
+      estimatedGas,
+      gasPrice,
+      estimatedFee,
+    };
+  } catch (error: any) {
+    console.error("Gas estimation failed:", error);
+    throw new Error("Gas estimation failed: " + error.message);
+  }
 }
 
 

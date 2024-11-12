@@ -10,7 +10,7 @@ import { L2GatewayRouterABI } from './abi/L2GatewayRouterABI';
 import {
   depositERC20,
   depositETH,
-  depositNative, estimateDepositErc20, estimateDepositERC20ToEth, estimateDepositEth,
+  depositNative, estimateApproval, estimateDepositErc20, estimateDepositERC20ToEth, estimateDepositEth,
   estimateOutboundTransferGas,
 } from './actions/deposit';
 import { withdrawERC20, withdrawEth, withdrawNative } from './actions/withdraw';
@@ -239,6 +239,45 @@ export class Bridger {
   }
 
   /**
+   * Estimates the gas and fee required for approving a token transfer
+   *
+   * @param {BigNumber} amount - The amount of tokens to deposit.
+   * @param {SignerOrProvider} _provider - The signer or provider or rpc.
+   * @param {string} _from - The address of the token holder initiating the approval.
+   * @returns {Promise<GasAndFeeEstimation | null>} - Returns gas and fee estimation details if approval is required, or `null` if no approval is needed.
+   *
+   * @throws {Error} If the token address for the current chain is not found.
+   */
+
+
+  public async getApprovalGasAndFeeEstimation(
+    amount: BigNumber,
+    _provider: SignerOrProvider,
+    _from: string,
+  ): Promise<GasAndFeeEstimation | null> {
+    if (!this.isDeposit) {
+      return null
+    }
+    const tokenAddress = this.token[this.originNetwork.chainId];
+
+    if (!tokenAddress) {
+      throw new Error("Token address not found for the specified network");
+    }
+
+    const provider = getProvider(_provider)
+    const allowance = await this.getAllowance(provider, _from)
+    if (!allowance) { //allowance is a BigNumber, zero is not falsy
+      return null
+    }
+    if (allowance.gte(amount)) {
+      return null
+    }
+
+    return estimateApproval(amount, provider, tokenAddress, this.getDepositSpender(), _from)
+  }
+
+
+  /**
    * Estimates the gas and fees required for withdrawing native ETH from the origin network.
    *
    * This method calculates the estimated gas usage, gas price, and total fee for withdrawing ETH
@@ -416,10 +455,13 @@ export class Bridger {
     if (!this.isDeposit) {
       return null;
     }
+    const tokenAddress = this.token[this.originNetwork.chainId];
+    if (tokenAddress === ethers.constants.AddressZero) {
+      return null;
+    }
     if (typeof provider === 'string') {
       provider = new ethers.providers.JsonRpcProvider(provider);
     }
-    const tokenAddress = this.token[this.originNetwork.chainId];
     if (!tokenAddress) {
       throw new Error('Token address not found for the specified network');
     }
