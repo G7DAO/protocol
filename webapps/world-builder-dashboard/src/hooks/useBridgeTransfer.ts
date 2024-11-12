@@ -87,7 +87,7 @@ export const useBridgeTransfer = () => {
         },
         retryDelay: (failureCount) => {
           console.log(failureCount)
-          return Math.min(2 ** failureCount * 1000, 60000)
+          return Math.min(10 ** failureCount * 1000, 60000)
         }
       }
     )

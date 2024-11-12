@@ -114,8 +114,8 @@ const BridgeView = ({
         return
       }
       try {
-        const bridger: Bridger = new Bridger(originChainId, destinationChainId, selectedBridgeToken.tokenAddressMap)
-        setBridger(bridger)
+        const _bridger: Bridger = new Bridger(originChainId, destinationChainId, selectedBridgeToken.tokenAddressMap)
+        setBridger(_bridger)
       } catch (e) {
         console.log(e)
         setNetworkErrorMessage('Cannot bridge between these 2 networks')
