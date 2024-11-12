@@ -64,19 +64,36 @@ const BridgeView = ({
     ['estimatedFee', bridger, connectedAccount, value],
     async () => {
       try {
-        const fee = await bridger?.getGasAndFeeEstimation(
-          value ? ethers.utils.parseEther(value) : ethers.utils.parseEther('0.0'),
+        const approvalFee = await bridger?.getApprovalGasAndFeeEstimation(
+          value ? ethers.utils.parseEther(value) : ethers.utils.parseEther('0'),
           direction === 'DEPOSIT' ? selectedLowNetwork.rpcs[0] : selectedHighNetwork.rpcs[0],
           connectedAccount ?? ''
         )
-        const feeFormatted = ethers.utils.formatEther(fee?.estimatedFee || '0.0')
+
+        const fee = approvalFee?.estimatedFee
+          ? { estimatedFee: ethers.utils.parseEther('0') }
+          : await bridger?.getGasAndFeeEstimation(
+              value ? ethers.utils.parseEther(value) : ethers.utils.parseEther('0'),
+              direction === 'DEPOSIT' ? selectedLowNetwork.rpcs[0] : selectedHighNetwork.rpcs[0],
+              connectedAccount ?? ''
+            )
+
+        const finalFee = fee?.estimatedFee.add(approvalFee?.estimatedFee ?? ethers.utils.parseEther('0'))
+        console.log(ethers.utils.formatEther(finalFee ?? ethers.utils.parseEther('0')))
+        console.log(ethers.utils.formatEther(fee?.estimatedFee ?? ethers.utils.parseEther('0')))
+        console.log(ethers.utils.formatEther(approvalFee?.estimatedFee ?? ethers.utils.parseEther('0')))
+        const feeFormatted = ethers.utils.formatEther(finalFee ?? ethers.utils.parseEther('0'))
         return feeFormatted
       } catch (e) {
         console.error(e)
       }
     },
     {
-      enabled: !!connectedAccount && !!selectedLowNetwork && !!selectedHighNetwork && !!value
+      enabled: !!connectedAccount && !!selectedLowNetwork && !!selectedHighNetwork && !!value,
+      onError: (error) => {
+        console.error('Error refetching fee:', error)
+        estimatedFee.refetch()
+      }
     }
   )
 
@@ -182,7 +199,13 @@ const BridgeView = ({
         setValue={setValue}
         onTokenChange={handleTokenChange}
         balance={tokenInformation?.tokenBalance}
-        rate={selectedBridgeToken.symbol === 'TG7T' ? 1 : isCoinFetching ? 0.00 : coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd}
+        rate={
+          selectedBridgeToken.symbol === 'TG7T'
+            ? 1
+            : isCoinFetching
+              ? 0.0
+              : coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd
+        }
         isFetchingBalance={isFetchingTokenInformation}
         errorMessage={inputErrorMessages.value}
         setErrorMessage={(msg) => setInputErrorMessages((prev) => ({ ...prev, value: msg }))}

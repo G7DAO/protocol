@@ -25,7 +25,8 @@ const useTokenInformation = ({ account, token }: UseBalanceProps) => {
         tokenBalance = String(ethers.utils.formatEther(await bridgeToken.getBalance(token.rpc, account ?? '')))
       }
       const symbol = await bridgeToken.getSymbol(token.rpc)
-      return { tokenBalance, symbol }
+      const decimalPlaces = await bridgeToken.getDecimals(token.rpc)
+      return { tokenBalance, symbol, decimalPlaces }
     },
     {
       refetchInterval: 50000,
