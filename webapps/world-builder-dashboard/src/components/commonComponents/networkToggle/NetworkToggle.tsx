@@ -14,7 +14,6 @@ const NetworkToggle: React.FC<NetworkToggleProps> = () => {
   const toggleDropdown = () => setDropdownOpen(!isDropdownOpen)
 
   const handleNetworkSelect = (network: NetworkType) => {
-    console.log(network)
     setSelectedNetworkType(network as NetworkType)
     setDropdownOpen(false)
   }

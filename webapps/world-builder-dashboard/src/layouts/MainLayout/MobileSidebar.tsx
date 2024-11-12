@@ -2,11 +2,14 @@ import React, { ReactNode, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import parentStyles from './MainLayout.module.css'
 import styles from './MobileSidebar.module.css'
-import IconLogoutLarge from '@/assets/IconLogoutLarge'
-import { useBlockchainContext } from '@/contexts/BlockchainContext'
-import Game7Logo from '@/layouts/MainLayout/Game7Logo'
 import IconExternalLink from '@/assets/IconExternalLink'
 import IconHamburgerLanding from '@/assets/IconHamburgerLanding'
+import IconLogoutLarge from '@/assets/IconLogoutLarge'
+import NetworkToggle from '@/components/commonComponents/networkToggle/NetworkToggle'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
+import Game7Logo from '@/layouts/MainLayout/Game7Logo'
+import { Tooltip } from 'summon-ui/mantine'
+import IconInfoCircle from '@/assets/IconInfoCircle'
 
 interface MobileSidebarProps {
   navigationItems: { name: string; navigateTo: string; icon: ReactNode }[]
@@ -14,7 +17,7 @@ interface MobileSidebarProps {
 const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { connectedAccount, isMetaMask, disconnectWallet, connectWallet, isConnecting } = useBlockchainContext()
+  const { connectedAccount, isMetaMask, disconnectWallet, connectWallet, isConnecting, selectedNetworkType } = useBlockchainContext()
   const [isExpanded, setIsExpanded] = useState(false)
 
   return (
@@ -28,7 +31,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
       {isExpanded && (
         <div className={styles.expanded}>
           <div className={styles.spacer} />
-
+          <NetworkToggle />
           <div className={styles.navigation}>
             {navigationItems.map((item) => (
               <div
@@ -54,17 +57,23 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
                 <div style={{ display: 'flex' }}>
                   {item.name === 'documentation' || item.name === 'explorer' ? (
                     <IconExternalLink className={parentStyles.icon} />
+                  ) : item.name === 'faucet' && selectedNetworkType === 'Testnet' ? (
+                    <Tooltip arrowSize={8} radius={'8px'} label={'Only available on Testnet'} withArrow>
+                      <IconInfoCircle stroke='#fff' />
+                    </Tooltip>
                   ) : (
-                    ''
+                    <></>
                   )}
                 </div>
               </div>
             ))}
             <div className={styles.spacer} />
             {isMetaMask && connectedAccount ? (
-              <div className={parentStyles.navButton} onClick={disconnectWallet}>
-                <IconLogoutLarge className={parentStyles.iconButton} />
-                Disconnect
+              <div className={parentStyles.web3AddressContainer}>
+                <div className={parentStyles.web3address}>
+                  {`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}
+                </div>
+                {isMetaMask && <IconLogoutLarge onClick={disconnectWallet} className={parentStyles.iconButton} />}
               </div>
             ) : (
               <div className={parentStyles.connectWalletButton} onClick={connectWallet}>
