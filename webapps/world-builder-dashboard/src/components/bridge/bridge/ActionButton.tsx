@@ -104,6 +104,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           if (Number(allowanceToCheck) < Number(amount)) {
             const txApprove = await bridger?.approve(amountToSend, signer)
             await txApprove.wait()
+            queryClient.refetchQueries(['estimatedFee'])
           }
         }
 

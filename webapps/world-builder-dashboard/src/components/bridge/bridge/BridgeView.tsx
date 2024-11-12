@@ -1,7 +1,7 @@
 // Libraries
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
-import { DEFAULT_STAKE_NATIVE_POOL_ID, L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../../../constants'
+import { ALL_NETWORKS, DEFAULT_STAKE_NATIVE_POOL_ID, L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../../../constants'
 // Styles and Icons
 import styles from './BridgeView.module.css'
 import { ethers } from 'ethers'
@@ -64,35 +64,42 @@ const BridgeView = ({
     ['estimatedFee', bridger, connectedAccount, value],
     async () => {
       try {
-        const approvalFee = await bridger?.getApprovalGasAndFeeEstimation(
-          value ? ethers.utils.parseEther(value) : ethers.utils.parseEther('0'),
+        const originNetwork = ALL_NETWORKS.find((n) => n.chainId === bridger?.originNetwork.chainId)
+        if (!originNetwork) throw new Error("Can't find network!")
+
+        const allowance = await bridger?.getAllowance(originNetwork.rpcs[0], connectedAccount ?? '')
+        const parsedValue = value ? ethers.utils.parseEther(value) : ethers.utils.parseEther('0')
+
+        let approvalFee = ethers.utils.parseEther('0') // Default to zero if no approval needed
+        let transferFee = ethers.utils.parseEther('0') // Default to zero
+
+        if (allowance?.lt(parsedValue)) {
+          const approvalEstimate = await bridger?.getApprovalGasAndFeeEstimation(
+            parsedValue,
+            originNetwork.rpcs[0],
+            connectedAccount ?? ''
+          )
+          approvalFee = approvalEstimate?.estimatedFee ?? ethers.utils.parseEther('0')
+        }
+
+        const transferEstimate = await bridger?.getGasAndFeeEstimation(
+          ethers.utils.parseEther('0.0'),
           direction === 'DEPOSIT' ? selectedLowNetwork.rpcs[0] : selectedHighNetwork.rpcs[0],
           connectedAccount ?? ''
         )
 
-        const fee = approvalFee?.estimatedFee
-          ? { estimatedFee: ethers.utils.parseEther('0') }
-          : await bridger?.getGasAndFeeEstimation(
-              value ? ethers.utils.parseEther(value) : ethers.utils.parseEther('0'),
-              direction === 'DEPOSIT' ? selectedLowNetwork.rpcs[0] : selectedHighNetwork.rpcs[0],
-              connectedAccount ?? ''
-            )
-
-        const finalFee = fee?.estimatedFee.add(approvalFee?.estimatedFee ?? ethers.utils.parseEther('0'))
-        console.log(ethers.utils.formatEther(finalFee ?? ethers.utils.parseEther('0')))
-        console.log(ethers.utils.formatEther(fee?.estimatedFee ?? ethers.utils.parseEther('0')))
-        console.log(ethers.utils.formatEther(approvalFee?.estimatedFee ?? ethers.utils.parseEther('0')))
-        const feeFormatted = ethers.utils.formatEther(finalFee ?? ethers.utils.parseEther('0'))
-        return feeFormatted
+        transferFee = transferEstimate?.estimatedFee ?? ethers.utils.parseEther('0')
+        const finalFee = approvalFee.add(transferFee)
+        return ethers.utils.formatEther(finalFee)
       } catch (e) {
         console.error(e)
+        throw e
       }
     },
     {
       enabled: !!connectedAccount && !!selectedLowNetwork && !!selectedHighNetwork && !!value,
       onError: (error) => {
         console.error('Error refetching fee:', error)
-        estimatedFee.refetch()
       }
     }
   )
