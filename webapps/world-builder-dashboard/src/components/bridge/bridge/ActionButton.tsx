@@ -28,7 +28,7 @@ interface ActionButtonProps {
   setErrorMessage: (arg0: string) => void
 }
 const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabled, setErrorMessage, L2L3message }) => {
-  const { connectedAccount, isConnecting, selectedHighNetwork, selectedLowNetwork, connectWallet, getProvider } =
+  const { connectedAccount, isConnecting, selectedHighNetwork, selectedLowNetwork, connectWallet, getProvider, selectedNetworkType } =
     useBlockchainContext()
   const [isAllowanceModalOpened, setIsAllowanceModalOpened] = useState(false)
   const [additionalCost, setAdditionalCost] = useState(ethers.BigNumber.from(0))
@@ -152,14 +152,14 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
           return
         }
         try {
-          const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+          const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
 
           let transactions = []
           if (transactionsString) {
             transactions = JSON.parse(transactionsString)
           }
           transactions.push({ ...deposit, isDeposit: true })
-          localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(transactions))
+          localStorage.setItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`, JSON.stringify(transactions))
         } catch (e) {
           console.log(e)
         }
@@ -195,13 +195,13 @@ const ActionButton: React.FC<ActionButtonProps> = ({ direction, amount, isDisabl
     {
       onSuccess: async (record: TransactionRecord) => {
         try {
-          const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+          const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
           let transactions = []
           if (transactionsString) {
             transactions = JSON.parse(transactionsString)
           }
           transactions.push(record)
-          localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(transactions))
+          localStorage.setItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`, JSON.stringify(transactions))
         } catch (e) {
           console.log(e)
         }

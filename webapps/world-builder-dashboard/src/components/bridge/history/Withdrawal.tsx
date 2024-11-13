@@ -65,7 +65,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const targetChain = withdrawal.highNetworkChainId === L2_NETWORK.chainId ? L1_NETWORK : L2_NETWORK
 
   const status = getStatus(withdrawal)
-  const { switchChain, connectedAccount } = useBlockchainContext()
+  const { switchChain, connectedAccount, selectedNetworkType } = useBlockchainContext()
   const queryClient = useQueryClient()
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
@@ -100,7 +100,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
     {
       onSuccess: (data, highNetworkHash) => {
         try {
-          const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+          const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
 
           let transactions = []
           if (transactionsString) {
@@ -118,7 +118,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
             }
             return { ...t }
           })
-          localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(newTransactions))
+          localStorage.setItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`, JSON.stringify(newTransactions))
         } catch (e) {
           console.log(e)
         }

@@ -44,6 +44,7 @@ export interface NetworkInterface {
   challengePeriod?: number //seconds
   staker?: string
   inbox?: string
+  wrappedG7TokenAddress?: string
 }
 
 export type NetworkType = 'Testnet' | 'Mainnet'

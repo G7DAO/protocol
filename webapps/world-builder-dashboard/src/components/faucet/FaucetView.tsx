@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { ALL_NETWORKS, FAUCET_CHAIN, L3_NATIVE_TOKEN_SYMBOL, L3_NETWORK } from '../../../constants'
+import { ALL_TESTNET_NETWORKS, FAUCET_CHAIN, L3_NATIVE_TOKEN_SYMBOL, L3_NETWORK } from '../../../constants'
 import { AccountType } from '../commonComponents/accountSelector/AccountSelector'
 import AccountSelector from '../commonComponents/accountSelector/AccountSelector'
 import styles from './FaucetView.module.css'
@@ -19,7 +19,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false)
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L3_NETWORK)
   const { useFaucetInterval, useFaucetTimestamp } = useFaucetAPI()
-  const { connectedAccount, connectWallet, chainId } = useBlockchainContext()
+  const { connectedAccount, connectWallet, chainId, selectedNetworkType } = useBlockchainContext()
   const [animatedInterval, setAnimatedInterval] = useState('')
   const [nextClaimTimestamp, setNextClaimTimestamp] = useState(0)
   const [networkError, setNetworkError] = useState('')
@@ -32,7 +32,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const values: AccountType[] = [`External Address`, `Connected Account`]
 
   useEffect(() => {
-    const targetNetwork = ALL_NETWORKS.find((n) => n.chainId === faucetTargetChainId)
+    const targetNetwork = ALL_TESTNET_NETWORKS.find((n) => n.chainId === faucetTargetChainId)
     if (targetNetwork) {
       setSelectedNetwork(targetNetwork)
     }
@@ -97,14 +97,14 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
     {
       onSuccess: (data: TransactionRecord | undefined, { address }) => {
         try {
-          const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+          const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
 
           let transactions = []
           if (transactionsString) {
             transactions = JSON.parse(transactionsString)
           }
           transactions.push({ ...data })
-          localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(transactions))
+          localStorage.setItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`, JSON.stringify(transactions))
         } catch (e) {
           console.log(e)
         }
