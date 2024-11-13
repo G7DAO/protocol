@@ -16,7 +16,6 @@ export const useBridgeTransfer = () => {
   const navigate = useNavigate()
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const queryClient = useQueryClient()
-  const { switchChain, connectedAccount, selectedNetworkType } = useBlockchainContext()
 
   const returnTransferData = ({ txRecord }: UseTransferDataProps) => {
     // Pre-compute properties for cleaner instantiation
@@ -99,6 +98,7 @@ export const useBridgeTransfer = () => {
       }
     )
   }
+  const { switchChain, connectedAccount, selectedNetworkType } = useBlockchainContext()
 
   const claim = useMutation(
     async (withdrawal: TransactionRecord | undefined) => {
@@ -154,7 +154,10 @@ export const useBridgeTransfer = () => {
             }
             return { ...t }
           })
-          localStorage.setItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`, JSON.stringify(newTransactions))
+          localStorage.setItem(
+            `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
+            JSON.stringify(newTransactions)
+          )
         } catch (e) {
           console.log(e)
         }

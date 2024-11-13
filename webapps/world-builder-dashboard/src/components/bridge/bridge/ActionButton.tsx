@@ -108,7 +108,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
             queryClient.refetchQueries(['estimatedFee'])
           }
         }
-        console.log('about to transferinoz?')
         const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })
         await tx?.wait()
         return {

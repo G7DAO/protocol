@@ -245,13 +245,12 @@ const sortTransactions = (a: TransactionRecord, b: TransactionRecord) => {
   return getTimestamp(b) - getTimestamp(a)
 }
 
-export const useMessages = (connectedAccount: string | undefined): UseQueryResult<TransactionRecord[]> => {
+export const useMessages = (connectedAccount: string | undefined, networkType: string): UseQueryResult<TransactionRecord[]> => {
   return useQuery(['incomingMessages', connectedAccount], () => {
     if (!connectedAccount) {
       return []
     }
-    const { selectedNetworkType } = useBlockchainContext()
-    const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
+    const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${networkType}`)
     if (transactionsString) {
       return JSON.parse(transactionsString).sort(sortTransactions)
     } else {
@@ -290,8 +289,8 @@ export const useNotifications = (
       if (!connectedAccount) {
         return []
       }
-      const { selectedNetworkType } = useBlockchainContext()
-      const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
+      // const { selectedNetworkType } = useBlockchainContext()
+      const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
       let transactions
       if (!transactionsString) {
         return []

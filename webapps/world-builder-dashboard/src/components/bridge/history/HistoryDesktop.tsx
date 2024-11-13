@@ -16,12 +16,22 @@ interface HistoryDesktopProps {}
 const mergeTransactions = (localData: TransactionRecord[], apiData: TransactionRecord[]): TransactionRecord[] => {
   const combinedData = new Map<string, TransactionRecord>()
 
-  apiData.forEach((tx) =>
-    combinedData.set(tx.type === 'DEPOSIT' ? (tx.lowNetworkHash ?? '') : (tx.highNetworkHash ?? ''), tx)
-  )
-  localData.forEach((tx) =>
-    combinedData.set(tx.type === 'DEPOSIT' ? (tx.lowNetworkHash ?? '') : (tx.highNetworkHash ?? ''), tx)
-  )
+  localData.forEach((localTx) => {
+    const hashKey = localTx.type === 'DEPOSIT' ? (localTx.lowNetworkHash ?? '') : (localTx.highNetworkHash ?? '')
+    combinedData.set(hashKey, localTx)
+  })
+
+  apiData.forEach((tx) => {
+    const hashKey = tx.type === 'DEPOSIT' ? (tx.lowNetworkHash ?? '') : (tx.highNetworkHash ?? '')
+    if (combinedData.has(hashKey)) {
+      const localTx = combinedData.get(hashKey)
+      if (localTx) {
+        tx.status = localTx.status
+        combinedData.set(hashKey, tx)
+      }
+    }
+  })
+
   return Array.from(combinedData.values())
 }
 
@@ -46,19 +56,21 @@ const mapAPIDataToTransactionRecord = (apiData: any): TransactionRecord => {
 
 const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   const { connectedAccount, selectedNetworkType } = useBlockchainContext()
-  const messages = useMessages(connectedAccount)
+  const messages = useMessages(connectedAccount, selectedNetworkType)
   const { useHistoryTransactions } = useBridgeAPI()
   const { data: apiTransactions } = useHistoryTransactions(connectedAccount)
   const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])
   const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status']
 
-  // Merge transactions only when API data is updated with new data
+  // Merge transations only when API data is updated with new data
   useEffect(() => {
     const localTransactions = messages.data || []
     const formattedApiTransactions = apiTransactions ? apiTransactions.map(mapAPIDataToTransactionRecord) : []
     const combinedTransactions = mergeTransactions(formattedApiTransactions, localTransactions)
     // Retrieve existing transactions from localStorage
-    const storedTransactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
+    const storedTransactionsString = localStorage.getItem(
+      `bridge-${connectedAccount}-transactions-${selectedNetworkType}`
+    )
     const storedTransactions = storedTransactionsString ? JSON.parse(storedTransactionsString) : []
 
     // Check if the combined transactions are different from those in localStorage
@@ -80,19 +92,18 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
           )
       )
 
-      localStorage.setItem(
-        `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
-        JSON.stringify([...storedTransactions, ...newTransactions])
-      )
+      // localStorage.setItem(
+      //   `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
+      //   JSON.stringify([...storedTransactions, ...newTransactions])
+      // )
     }
-
     setMergedTransactions(combinedTransactions)
   }, [messages.data, apiTransactions])
 
   return (
     <div className={styles.container}>
       <div className={styles.content}>
-        {messages.data && (
+        {mergedTransactions && (
           <div className={styles.transactions}>
             <div className={styles.withdrawsGrid}>
               {headers.map((h) => (
@@ -100,7 +111,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
                   {h}
                 </div>
               ))}
-              {messages.data
+              {mergedTransactions
                 .sort((x: TransactionRecord, y: TransactionRecord) => {
                   const xTimestamp = x.type === 'DEPOSIT' ? x.lowNetworkTimestamp : x.highNetworkTimestamp
                   const yTimestamp = y.type === 'DEPOSIT' ? y.lowNetworkTimestamp : y.highNetworkTimestamp
@@ -114,7 +125,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
                     <Fragment key={idx}>{tx.lowNetworkHash && <Deposit deposit={tx} />}</Fragment>
                   )
                 )}
-              {messages.data.filter((tx: TransactionRecord) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL')
+              {mergedTransactions.filter((tx: TransactionRecord) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL')
                 .length === 0 && <div className={styles.noTransactions}> No transactions yet</div>}
             </div>
           </div>

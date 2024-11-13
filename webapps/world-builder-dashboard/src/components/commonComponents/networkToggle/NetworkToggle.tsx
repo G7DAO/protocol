@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styles from './NetworkToggle.module.css'
-import IconChevronDownToggle from '@/assets/IconAlertCircle'
+import IconChevronDownToggle from '@/assets/IconChevronDownToggle'
 import { NetworkType, useBlockchainContext } from '@/contexts/BlockchainContext'
 
 const NETWORK_OPTIONS: NetworkType[] = ['Testnet', 'Mainnet']
