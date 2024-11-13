@@ -90,10 +90,10 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
           )
       )
 
-      // localStorage.setItem(
-      //   `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
-      //   JSON.stringify([...storedTransactions, ...newTransactions])
-      // )
+      localStorage.setItem(
+        `bridge-${connectedAccount}-transactions`,
+        JSON.stringify([...storedTransactions, ...newTransactions])
+      )
     }
     setMergedTransactions(combinedTransactions)
   }, [messages.data, apiTransactions])
