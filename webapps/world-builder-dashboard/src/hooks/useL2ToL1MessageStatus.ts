@@ -3,6 +3,7 @@ import { HIGH_NETWORKS, L2_NETWORK, LOW_NETWORKS } from '../../constants'
 import { ethers, providers } from 'ethers'
 import { Transaction } from 'ethers'
 import { BridgeNotification } from '@/components/notifications/NotificationsButton'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import {
   ParentTransactionReceipt,
@@ -249,7 +250,8 @@ export const useMessages = (connectedAccount: string | undefined): UseQueryResul
     if (!connectedAccount) {
       return []
     }
-    const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+    const { selectedNetworkType } = useBlockchainContext()
+    const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
     if (transactionsString) {
       return JSON.parse(transactionsString).sort(sortTransactions)
     } else {
@@ -288,7 +290,8 @@ export const useNotifications = (
       if (!connectedAccount) {
         return []
       }
-      const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+      const { selectedNetworkType } = useBlockchainContext()
+      const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
       let transactions
       if (!transactionsString) {
         return []
@@ -311,13 +314,14 @@ export const useNotifications = (
 }
 
 export const usePendingTransactions = (connectedAccount: string | undefined): UseQueryResult<boolean> => {
+  const { selectedNetworkType } = useBlockchainContext()
   return useQuery(
     ['pendingTransactions', connectedAccount],
     async () => {
       if (!connectedAccount) {
         return false
       }
-      const storageKey = `bridge-${connectedAccount}-transactions`
+      const storageKey = `bridge-${connectedAccount}-transactions-${selectedNetworkType}`
       const transactionsString = localStorage.getItem(storageKey)
       let transactions
       if (!transactionsString) {

@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
-import { ALL_NETWORKS, L1_NETWORK, L2_NETWORK } from '../../constants'
+import { ALL_TESTNET_NETWORKS, L1_NETWORK, L2_NETWORK } from '../../constants'
 import { ethers } from 'ethers'
 import { BridgeTransfer, BridgeTransferStatus } from 'game7-bridge-sdk'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
@@ -13,18 +13,22 @@ interface UseTransferDataProps {
 }
 
 export const useBridgeTransfer = () => {
+  const navigate = useNavigate()
+  const { refetchNewNotifications } = useBridgeNotificationsContext()
+  const queryClient = useQueryClient()
+  const { switchChain, connectedAccount, selectedNetworkType } = useBlockchainContext()
+
   const returnTransferData = ({ txRecord }: UseTransferDataProps) => {
-    const { connectedAccount } = useBlockchainContext()
     // Pre-compute properties for cleaner instantiation
     const isDeposit = txRecord.type === 'DEPOSIT'
     const txHash = isDeposit ? txRecord.lowNetworkHash : txRecord.highNetworkHash
     const destinationChainId = isDeposit ? txRecord.highNetworkChainId : txRecord.lowNetworkChainId
     const originChainId = isDeposit ? txRecord.lowNetworkChainId : txRecord.highNetworkChainId
-    const destinationRpc = ALL_NETWORKS.find((n) => n.chainId === destinationChainId)?.rpcs[0]
-    const originRpc = ALL_NETWORKS.find((n) => n.chainId === originChainId)?.rpcs[0]
+    const destinationRpc = ALL_TESTNET_NETWORKS.find((n) => n.chainId === destinationChainId)?.rpcs[0]
+    const originRpc = ALL_TESTNET_NETWORKS.find((n) => n.chainId === originChainId)?.rpcs[0]
 
     const getCachedTransactions = () => {
-      const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+      const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
       return transactionsString ? JSON.parse(transactionsString) : []
     }
 
@@ -50,7 +54,10 @@ export const useBridgeTransfer = () => {
             return isSameHash ? { ...t, status: status?.status } : t
           })
 
-          localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(newTransactions))
+          localStorage.setItem(
+            `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
+            JSON.stringify(newTransactions)
+          )
 
           return status
         } catch (error: any) {
@@ -93,17 +100,12 @@ export const useBridgeTransfer = () => {
     )
   }
 
-  // Mutate function
-  const navigate = useNavigate()
-  const { refetchNewNotifications } = useBridgeNotificationsContext()
-  const queryClient = useQueryClient()
-  const { switchChain, connectedAccount } = useBlockchainContext()
-
   const claim = useMutation(
     async (withdrawal: TransactionRecord | undefined) => {
       if (!withdrawal) {
         throw new Error('transaction hash is undefined')
       }
+
       const targetChain = withdrawal.highNetworkChainId === L2_NETWORK.chainId ? L1_NETWORK : L2_NETWORK
 
       let provider
@@ -124,8 +126,10 @@ export const useBridgeTransfer = () => {
         txHash: withdrawal.highNetworkHash || '',
         destinationNetworkChainId: withdrawal.lowNetworkChainId ?? 0,
         originNetworkChainId: withdrawal.highNetworkChainId ?? 0,
-        destinationSignerOrProviderOrRpc: ALL_NETWORKS.find((n) => n.chainId === withdrawal.lowNetworkChainId)?.rpcs[0],
-        originSignerOrProviderOrRpc: ALL_NETWORKS.find((n) => n.chainId === withdrawal.highNetworkChainId)?.rpcs[0]
+        destinationSignerOrProviderOrRpc: ALL_TESTNET_NETWORKS.find((n) => n.chainId === withdrawal.lowNetworkChainId)
+          ?.rpcs[0],
+        originSignerOrProviderOrRpc: ALL_TESTNET_NETWORKS.find((n) => n.chainId === withdrawal.highNetworkChainId)
+          ?.rpcs[0]
       })
       const res = await _bridgeTransfer?.execute(signer)
       return { res, withdrawal }
@@ -133,7 +137,9 @@ export const useBridgeTransfer = () => {
     {
       onSuccess: ({ res, withdrawal }) => {
         try {
-          const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+          const transactionsString = localStorage.getItem(
+            `bridge-${connectedAccount}-transactions-${selectedNetworkType}`
+          )
           let transactions = transactionsString ? JSON.parse(transactionsString) : []
           const newTransactions: TransactionRecord[] = transactions.map((t: TransactionRecord) => {
             if (t.highNetworkHash === withdrawal.highNetworkHash) {
@@ -148,7 +154,7 @@ export const useBridgeTransfer = () => {
             }
             return { ...t }
           })
-          localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(newTransactions))
+          localStorage.setItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`, JSON.stringify(newTransactions))
         } catch (e) {
           console.log(e)
         }

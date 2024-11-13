@@ -1,7 +1,7 @@
 // Libraries
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
-import { ALL_NETWORKS, DEFAULT_STAKE_NATIVE_POOL_ID, L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../../../constants'
+import { ALL_TESTNET_NETWORKS, DEFAULT_STAKE_NATIVE_POOL_ID, L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../../../constants'
 // Styles and Icons
 import styles from './BridgeView.module.css'
 import { ethers } from 'ethers'
@@ -64,7 +64,7 @@ const BridgeView = ({
     ['estimatedFee', bridger, connectedAccount, value],
     async () => {
       try {
-        const originNetwork = ALL_NETWORKS.find((n) => n.chainId === bridger?.originNetwork.chainId)
+        const originNetwork = ALL_TESTNET_NETWORKS.find((n) => n.chainId === bridger?.originNetwork.chainId)
         if (!originNetwork) throw new Error("Can't find network!")
 
         const allowance = await bridger?.getAllowance(originNetwork.rpcs[0], connectedAccount ?? '')

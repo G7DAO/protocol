@@ -24,8 +24,8 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   const smallView = useMediaQuery('(max-width: 1199px)')
   const { returnTransferData } = useBridgeTransfer()
   const { data: transferStatus, isLoading } = returnTransferData({ txRecord: deposit })
-  const { connectedAccount } = useBlockchainContext()
-  const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+  const { connectedAccount, selectedNetworkType } = useBlockchainContext()
+  const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
   let transactions = transactionsString ? JSON.parse(transactionsString) : []
   const localStorageTransaction = transactions.find(
     (t: any) => t.type === 'DEPOSIT' && t.lowNetworkHash === deposit.lowNetworkHash

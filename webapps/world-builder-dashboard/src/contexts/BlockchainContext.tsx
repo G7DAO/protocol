@@ -269,7 +269,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
         accounts,
         setAccounts,
         setSelectedBridgeToken,
-        selectedBridgeToken
+        selectedBridgeToken,
         selectedNetworkType,
         setSelectedNetworkType,
       }}
