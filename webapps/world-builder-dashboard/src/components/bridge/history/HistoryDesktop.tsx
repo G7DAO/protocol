@@ -16,12 +16,22 @@ interface HistoryDesktopProps {}
 const mergeTransactions = (localData: TransactionRecord[], apiData: TransactionRecord[]): TransactionRecord[] => {
   const combinedData = new Map<string, TransactionRecord>()
 
-  apiData.forEach((tx) =>
-    combinedData.set(tx.type === 'DEPOSIT' ? (tx.lowNetworkHash ?? '') : (tx.highNetworkHash ?? ''), tx)
-  )
-  localData.forEach((tx) =>
-    combinedData.set(tx.type === 'DEPOSIT' ? (tx.lowNetworkHash ?? '') : (tx.highNetworkHash ?? ''), tx)
-  )
+  localData.forEach((localTx) => {
+    const hashKey = localTx.type === 'DEPOSIT' ? (localTx.lowNetworkHash ?? '') : (localTx.highNetworkHash ?? '')
+    combinedData.set(hashKey, localTx)
+  })
+
+  apiData.forEach((tx) => {
+    const hashKey = tx.type === 'DEPOSIT' ? (tx.lowNetworkHash ?? '') : (tx.highNetworkHash ?? '')
+    if (combinedData.has(hashKey)) {
+      const localTx = combinedData.get(hashKey)
+      if (localTx) {
+        tx.status = localTx.status
+        combinedData.set(hashKey, tx)
+      }
+    }
+  })
+
   return Array.from(combinedData.values())
 }
 
@@ -52,7 +62,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])
   const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status']
 
-  // Merge transactions only when API data is updated with new data
+  // Merge transations only when API data is updated with new data
   useEffect(() => {
     const localTransactions = messages.data || []
     const formattedApiTransactions = apiTransactions ? apiTransactions.map(mapAPIDataToTransactionRecord) : []
@@ -80,12 +90,11 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
           )
       )
 
-      localStorage.setItem(
-        `bridge-${connectedAccount}-transactions`,
-        JSON.stringify([...storedTransactions, ...newTransactions])
-      )
+      // localStorage.setItem(
+      //   `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
+      //   JSON.stringify([...storedTransactions, ...newTransactions])
+      // )
     }
-
     setMergedTransactions(combinedTransactions)
   }, [messages.data, apiTransactions])
 

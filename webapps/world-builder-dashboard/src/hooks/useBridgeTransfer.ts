@@ -92,6 +92,7 @@ export const useBridgeTransfer = () => {
       }
     )
   }
+  const { switchChain, connectedAccount, selectedNetworkType } = useBlockchainContext()
 
   // Mutate function
   const navigate = useNavigate()

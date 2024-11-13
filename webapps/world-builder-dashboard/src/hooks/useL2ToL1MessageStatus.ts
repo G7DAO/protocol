@@ -244,7 +244,7 @@ const sortTransactions = (a: TransactionRecord, b: TransactionRecord) => {
   return getTimestamp(b) - getTimestamp(a)
 }
 
-export const useMessages = (connectedAccount: string | undefined): UseQueryResult<TransactionRecord[]> => {
+export const useMessages = (connectedAccount: string | undefined, networkType: string): UseQueryResult<TransactionRecord[]> => {
   return useQuery(['incomingMessages', connectedAccount], () => {
     if (!connectedAccount) {
       return []
