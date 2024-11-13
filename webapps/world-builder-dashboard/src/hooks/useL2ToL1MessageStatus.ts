@@ -245,18 +245,27 @@ const sortTransactions = (a: TransactionRecord, b: TransactionRecord) => {
   return getTimestamp(b) - getTimestamp(a)
 }
 
-export const useMessages = (connectedAccount: string | undefined, networkType: string): UseQueryResult<TransactionRecord[]> => {
-  return useQuery(['incomingMessages', connectedAccount], () => {
-    if (!connectedAccount) {
-      return []
+export const useMessages = (
+  connectedAccount: string | undefined,
+  networkType: string
+): UseQueryResult<TransactionRecord[]> => {
+  return useQuery(
+    ['incomingMessages', connectedAccount, networkType],
+    () => {
+      if (!connectedAccount) {
+        return []
+      }
+      const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${networkType}`)
+      if (transactionsString) {
+        return JSON.parse(transactionsString).sort(sortTransactions)
+      } else {
+        return []
+      }
+    },
+    {
+      enabled: !!networkType && !!connectedAccount 
     }
-    const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${networkType}`)
-    if (transactionsString) {
-      return JSON.parse(transactionsString).sort(sortTransactions)
-    } else {
-      return []
-    }
-  })
+  )
 }
 
 export const getNotifications = (transactions: TransactionRecord[]) => {
