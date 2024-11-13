@@ -75,7 +75,7 @@ interface BlockchainProviderProps {
 
 export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children }) => {
   const [walletProvider, setWalletProvider] = useState<ethers.providers.Web3Provider>()
-  const [selectedNetworkType, setSelectedNetworkType] = useState<NetworkType>('Mainnet')
+  const [selectedNetworkType, setSelectedNetworkType] = useState<NetworkType>('Testnet')
   const [selectedLowNetwork, _setSelectedLowNetwork] = useState<NetworkInterface>(
     selectedNetworkType === 'Testnet' ? DEFAULT_LOW_NETWORK : DEFAULT_LOW_MAINNET_NETWORK
   )
@@ -124,6 +124,27 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     }
   }, [window.ethereum])
 
+  useEffect(() => {
+    fetchChainId()
+    if (window.ethereum?.on) {
+      window.ethereum.on('chainChanged', handleChainChanged)
+    }
+  }, [walletProvider])
+
+  useEffect(() => {
+    handleAccountsChanged()
+  }, [walletProvider])
+
+  useEffect(() => {
+    if (selectedNetworkType === 'Testnet') {
+      setSelectedLowNetwork(DEFAULT_LOW_NETWORK)
+      setSelectedHighNetwork(DEFAULT_HIGH_NETWORK)
+    } else {
+      setSelectedLowNetwork(DEFAULT_LOW_MAINNET_NETWORK)
+      setSelectedHighNetwork(DEFAULT_HIGH_MAINNET_NETWORK)
+    }
+  }, [selectedNetworkType])
+
   const fetchChainId = async () => {
     const _chainId = (await walletProvider?.getNetwork())?.chainId
     setChainId(_chainId)
@@ -133,13 +154,6 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     const newChainId = parseInt(hexedChainId, 16) // Convert hex chainId to decimal
     setChainId(newChainId)
   }
-
-  useEffect(() => {
-    fetchChainId()
-    if (window.ethereum?.on) {
-      window.ethereum.on('chainChanged', handleChainChanged)
-    }
-  }, [walletProvider])
 
   const handleAccountsChanged = async () => {
     const ethereum = window.ethereum
@@ -156,10 +170,6 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
       }
     }
   }
-
-  useEffect(() => {
-    handleAccountsChanged()
-  }, [walletProvider])
 
   const connectWallet = async () => {
     setIsConnecting(true)

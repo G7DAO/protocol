@@ -1,4 +1,11 @@
-import { L1_MAIN_NETWORK, L1_NETWORK, L2_MAIN_NETWORK, L2_NETWORK, L3_MAIN_NETWORK, L3_NETWORK } from '../../../../constants'
+import {
+  L1_MAIN_NETWORK,
+  L1_NETWORK,
+  L2_MAIN_NETWORK,
+  L2_NETWORK,
+  L3_MAIN_NETWORK,
+  L3_NETWORK
+} from '../../../../constants'
 import styles from './NetworkSelector.module.css'
 import { Combobox, Group, InputBase, InputBaseProps, useCombobox } from 'summon-ui/mantine'
 import IconArbitrumOne from '@/assets/IconArbitrumOne'
@@ -24,11 +31,14 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork, selectedToken }:
   const networkLogo = (chainId: number) => {
     console.log(chainId)
     switch (chainId) {
-      case chainId === L1_NETWORK.chainId || L1_MAIN_NETWORK.chainId:
+      case L1_NETWORK.chainId:
+      case L1_MAIN_NETWORK.chainId:
         return <IconEthereum />
-      case chainId === L2_NETWORK.chainId || L2_MAIN_NETWORK.chainId:
+      case L2_NETWORK.chainId:
+      case L2_MAIN_NETWORK.chainId:
         return <IconArbitrumOne />
-      case chainId === L3_NETWORK.chainId || L3_MAIN_NETWORK.chainId:
+      case L3_NETWORK.chainId:
+      case L3_MAIN_NETWORK.chainId:
         return <IconG7T />
       default:
         return <></>
