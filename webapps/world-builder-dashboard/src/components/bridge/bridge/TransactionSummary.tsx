@@ -63,7 +63,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
         <Tooltip
           multiline
           radius={'8px'}
-          label={clipboard.copied ? 'copied' : getAddress(address, true, isXsScreen ?? false)}
+          label={clipboard.copied ? 'Copied!' : getAddress(address, true, isXsScreen ?? false)}
           arrowSize={8}
           withArrow
           arrowOffset={14}

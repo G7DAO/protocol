@@ -12,12 +12,13 @@ import MarketWarsLogo from '@/assets/MarketWarsLogo'
 import SummonLogo from '@/assets/SummonLogo'
 import SummonTextLogo from '@/assets/SummonTextLogo'
 
-interface LandingPageProps { }
+interface LandingPageProps {}
 
 const LandingPage: React.FC<LandingPageProps> = () => {
   const NAVBAR_ITEMS = [
     { name: 'Home', link: '/' },
     { name: 'Faucet', link: 'faucet' },
+    { name: 'Bridge', link: 'bridge' },
     { name: 'Community', link: 'https://discord.com/invite/g7dao' },
     {
       name: 'Docs',
@@ -119,14 +120,14 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                 </div>
               ))}
               <div className={styles.ctaContainer}>
-              <div className={styles.startBuildingCTA} onClick={startBuilding}>
+                <div className={styles.startBuildingCTA} onClick={startBuilding}>
                   Start building
                 </div>
               </div>
             </div>
           </>
         )}
-        {(
+        {
           <div className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}`}>
             {/* Main */}
             <div>
@@ -137,17 +138,24 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                     <div className={styles.titleText}>Build Your Game</div>
                     <div className={styles.subtitleText}>Be a part of the future of gaming</div>
                   </div>
-                  {!smallView && (<div className={styles.ctaContainer}>
-                    <div className={styles.learnMoreCTA} onClick={() => window.open(
-                      'https://wiki.game7.io/g7-developer-resource/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network/world-builder',
-                      '_blank'
-                    )}>
-                      Learn more
+                  {!smallView && (
+                    <div className={styles.ctaContainer}>
+                      <div
+                        className={styles.learnMoreCTA}
+                        onClick={() =>
+                          window.open(
+                            'https://wiki.game7.io/g7-developer-resource/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network/world-builder',
+                            '_blank'
+                          )
+                        }
+                      >
+                        Learn more
+                      </div>
+                      <div className={styles.startBuildingCTA} onClick={startBuilding}>
+                        Start building
+                      </div>
                     </div>
-                    <div className={styles.startBuildingCTA} onClick={startBuilding}>
-                      Start building
-                    </div>
-                  </div>)}
+                  )}
                 </div>
               </div>
             </div>
@@ -226,6 +234,15 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                     </div>
                   </div>
                 </div>
+                <div className={styles.networkEssentialCard} onClick={() => navigate('/bridge')}>
+                  <div className={`${styles.networkEssentialCardImage} ${styles.networkEssentialBridge}`} />
+                  <div className={styles.networkEssentialCardText}>
+                    <div className={styles.networkEssentialCardTitle}>Bridge</div>
+                    <div className={styles.networkEssentialCardDescription}>
+                      Bridge tokens between Ethereum, Arbitrum and the G7 network
+                    </div>
+                  </div>
+                </div>
                 <div
                   className={styles.networkEssentialCard}
                   onClick={() => window.open('https://testnet.game7.io/', '_blank')}
@@ -268,12 +285,14 @@ const LandingPage: React.FC<LandingPageProps> = () => {
                   </div>
                 </div>
               </div>
-              {!smallView && (<div className={styles.startBuildingCTA} onClick={startBuilding}>
-                Start building
-              </div>)}
+              {!smallView && (
+                <div className={styles.startBuildingCTA} onClick={startBuilding}>
+                  Start building
+                </div>
+              )}
             </div>
           </div>
-        )}
+        }
 
         {smallView ? (
           <div className={styles.startBuildingCTA} onClick={startBuilding}>

@@ -1,36 +1,27 @@
 // Libraries
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
-import {
-  DEFAULT_STAKE_NATIVE_POOL_ID,
-  L1_NETWORK,
-  L2_NETWORK,
-  L3_NATIVE_TOKEN_SYMBOL,
-  L3_NETWORK,
-  MAX_ALLOWANCE_ACCOUNT
-} from '../../../../constants'
+import { ALL_NETWORKS, DEFAULT_STAKE_NATIVE_POOL_ID, L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../../../constants'
 // Styles and Icons
 import styles from './BridgeView.module.css'
 import { ethers } from 'ethers'
+// G7 SDK
+import { Bridger } from 'game7-bridge-sdk'
+// Components
 import ActionButton from '@/components/bridge/bridge/ActionButton'
 import BridgeMessage from '@/components/bridge/bridge/BridgeMessage'
-// Components
 import NetworkSelector from '@/components/bridge/bridge/NetworkSelector'
 import TransactionSummary from '@/components/bridge/bridge/TransactionSummary'
 import ValueToBridge from '@/components/bridge/bridge/ValueToBridge'
 // Blockchain Context and Utility Functions
-import { HighNetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useUISettings } from '@/contexts/UISettingsContext'
+import useTokenInformation from '@/hooks/useBalance'
+import { useCoinGeckoAPI } from '@/hooks/useCoinGeckoAPI'
 // Hooks and Constants
-import useERC20Balance from '@/hooks/useERC20Balance'
-import useEthUsdRate from '@/hooks/useEthUsdRate'
-import useNativeBalance from '@/hooks/useNativeBalance'
 import { DepositDirection } from '@/pages/BridgePage/BridgePage'
-import { estimateOutboundTransferGas } from '@/utils/bridge/depositERC20ArbitrumSDK'
-import { estimateDepositERC20ToNativeFee } from '@/utils/bridge/depositERC20ToNative'
 import { getStakeNativeTxData } from '@/utils/bridge/stakeContractInfo'
-import { estimateWithdrawGasAndFee } from '@/utils/bridge/withdrawERC20'
-import { estimateWithdrawFee } from '@/utils/bridge/withdrawNativeToken'
+import { Token } from '@/utils/tokens'
 
 const BridgeView = ({
   direction,
@@ -39,78 +30,99 @@ const BridgeView = ({
   direction: DepositDirection
   setDirection: (arg0: DepositDirection) => void
 }) => {
+  const [bridger, setBridger] = useState<Bridger>()
+
   const [value, setValue] = useState('0')
   const [message, setMessage] = useState<{ destination: string; data: string }>({ destination: '', data: '' })
   const [isMessageExpanded, setIsMessageExpanded] = useState(false)
   const [inputErrorMessages, setInputErrorMessages] = useState({ value: '', data: '', destination: '' })
   const [networkErrorMessage, setNetworkErrorMessage] = useState('')
   const { isMessagingEnabled } = useUISettings()
+  const { useUSDPriceOfToken } = useCoinGeckoAPI()
   const g7tUsdRate = useQuery(['rate'], () => 2501.32)
-  const { data: ethUsdRate } = useEthUsdRate()
-  const { connectedAccount, selectedLowNetwork, setSelectedLowNetwork, selectedHighNetwork, setSelectedHighNetwork } =
-    useBlockchainContext()
-  const { data: lowNetworkBalance, isFetching: isFetchingLowNetworkBalance } = useERC20Balance({
-    tokenAddress: selectedLowNetwork.g7TokenAddress,
+  const {
+    connectedAccount,
+    selectedLowNetwork,
+    setSelectedLowNetwork,
+    selectedHighNetwork,
+    setSelectedHighNetwork,
+    setSelectedBridgeToken,
+    selectedBridgeToken
+  } = useBlockchainContext()
+
+  const { isFetching: isFetchingTokenInformation, data: tokenInformation } = useTokenInformation({
     account: connectedAccount,
-    rpc: selectedLowNetwork.rpcs[0]
-  })
-  const { data: highNetworkBalance, isFetching: isFetchingHighNetworkBalance } = useERC20Balance({
-    tokenAddress: selectedHighNetwork.g7TokenAddress,
-    account: connectedAccount,
-    rpc: selectedHighNetwork.rpcs[0]
-  })
-  const { data: l3NativeBalance, isFetching: isFetchingL3NativeBalance } = useNativeBalance({
-    account: connectedAccount,
-    rpc: L3_NETWORK.rpcs[0]
-  })
-  const { data: lowNetworkNativeBalance } = useNativeBalance({
-    account: connectedAccount,
-    rpc: selectedLowNetwork.rpcs[0]
+    token: selectedBridgeToken
   })
 
-  const { data: highNetworkNativeBalance } = useNativeBalance({
-    account: connectedAccount,
-    rpc: selectedHighNetwork.rpcs[0]
-  })
+  const { data: coinUSDRate, isFetching: isCoinFetching } = useUSDPriceOfToken(selectedBridgeToken.geckoId ?? '')
+  const handleTokenChange = async (token: Token) => {
+    setSelectedBridgeToken(token)
+  }
 
-  const estimatedFee = useQuery(['estimatedFee', value, direction, selectedHighNetwork], async () => {
-    if (!connectedAccount) {
-      return
-    }
-    let est
-    if (direction === 'DEPOSIT') {
-      if (selectedLowNetwork.chainId === L1_NETWORK.chainId) {
-        const provider = new ethers.providers.JsonRpcProvider(L1_NETWORK.rpcs[0])
-        const estimation = await estimateOutboundTransferGas(
-          selectedHighNetwork.routerSpender ?? '',
-          selectedLowNetwork.g7TokenAddress,
-          MAX_ALLOWANCE_ACCOUNT,
-          ethers.utils.parseEther(value),
-          '0x',
-          provider
+  const estimatedFee = useQuery(
+    ['estimatedFee', bridger, connectedAccount, value],
+    async () => {
+      try {
+        const originNetwork = ALL_NETWORKS.find((n) => n.chainId === bridger?.originNetwork.chainId)
+        if (!originNetwork) throw new Error("Can't find network!")
+
+        const allowance = await bridger?.getAllowance(originNetwork.rpcs[0], connectedAccount ?? '')
+        const parsedValue = value ? ethers.utils.parseEther(value) : ethers.utils.parseEther('0')
+
+        let approvalFee = ethers.utils.parseEther('0') // Default to zero if no approval needed
+        let transferFee = ethers.utils.parseEther('0') // Default to zero
+
+        if (allowance?.lt(parsedValue)) {
+          const approvalEstimate = await bridger?.getApprovalGasAndFeeEstimation(
+            parsedValue,
+            originNetwork.rpcs[0],
+            connectedAccount ?? ''
+          )
+          approvalFee = approvalEstimate?.estimatedFee ?? ethers.utils.parseEther('0')
+        }
+
+        const transferEstimate = await bridger?.getGasAndFeeEstimation(
+          ethers.utils.parseEther('0.0'),
+          direction === 'DEPOSIT' ? selectedLowNetwork.rpcs[0] : selectedHighNetwork.rpcs[0],
+          connectedAccount ?? ''
         )
-        est = estimation.fee
-      } else {
-        est = await estimateDepositERC20ToNativeFee(
-          value,
-          MAX_ALLOWANCE_ACCOUNT,
-          selectedLowNetwork,
-          selectedHighNetwork as HighNetworkInterface
-        )
+
+        transferFee = transferEstimate?.estimatedFee ?? ethers.utils.parseEther('0')
+        const finalFee = approvalFee.add(transferFee)
+        return ethers.utils.formatEther(finalFee)
+      } catch (e) {
+        console.error(e)
+        throw e
       }
-    } else {
-      if (selectedHighNetwork.chainId === L2_NETWORK.chainId) {
-        const provider = new ethers.providers.JsonRpcProvider(L2_NETWORK.rpcs[0])
-        const estimation = await estimateWithdrawGasAndFee(value, connectedAccount, connectedAccount, provider)
-        est = ethers.utils.formatEther(estimation.estimatedFee)
-      } else {
-        const provider = new ethers.providers.JsonRpcProvider(L3_NETWORK.rpcs[0])
-        const estimation = await estimateWithdrawFee(value, connectedAccount, provider)
-        est = ethers.utils.formatEther(estimation.estimatedFee)
+    },
+    {
+      enabled: !!connectedAccount && !!selectedLowNetwork && !!selectedHighNetwork && !!value,
+      onError: (error) => {
+        console.error('Error refetching fee:', error)
       }
     }
-    return est
-  })
+  )
+
+  useEffect(() => {
+    if (selectedBridgeToken && connectedAccount && selectedHighNetwork && selectedLowNetwork) {
+      const originChainId = direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId
+      const destinationChainId = direction === 'DEPOSIT' ? selectedHighNetwork.chainId : selectedLowNetwork.chainId
+      const chainIds = Object.keys(selectedBridgeToken.tokenAddressMap)
+
+      if (!chainIds.includes(String(destinationChainId))) {
+        return
+      }
+      try {
+        const _bridger: Bridger = new Bridger(originChainId, destinationChainId, selectedBridgeToken.tokenAddressMap)
+        setBridger(_bridger)
+      } catch (e) {
+        console.log(e)
+        setNetworkErrorMessage('Cannot bridge between these 2 networks')
+      }
+    }
+  }, [selectedBridgeToken, connectedAccount, selectedHighNetwork, selectedLowNetwork])
+
   useEffect(() => {
     setNetworkErrorMessage('')
   }, [selectedHighNetwork, selectedLowNetwork, value])
@@ -139,6 +151,7 @@ const BridgeView = ({
           networks={[L1_NETWORK, L2_NETWORK]}
           selectedNetwork={selectedLowNetwork}
           onChange={setSelectedLowNetwork}
+          selectedToken={selectedBridgeToken}
         />
       )
     } else {
@@ -147,6 +160,7 @@ const BridgeView = ({
           networks={[L2_NETWORK, L3_NETWORK]}
           selectedNetwork={selectedHighNetwork}
           onChange={setSelectedHighNetwork}
+          selectedToken={selectedBridgeToken}
         />
       )
     }
@@ -187,25 +201,22 @@ const BridgeView = ({
         </div>
       </div>
       <ValueToBridge
-        symbol={L3_NATIVE_TOKEN_SYMBOL}
+        symbol={tokenInformation?.symbol ?? ''}
         value={value}
         setValue={setValue}
-        balance={
-          direction === 'DEPOSIT'
-            ? (lowNetworkBalance?.formatted ?? '0')
-            : ((selectedHighNetwork.chainId === L3_NETWORK.chainId ? l3NativeBalance : highNetworkBalance?.formatted) ??
-              '0')
+        onTokenChange={handleTokenChange}
+        balance={tokenInformation?.tokenBalance}
+        rate={
+          selectedBridgeToken.symbol === 'TG7T'
+            ? 1
+            : isCoinFetching
+              ? 0.0
+              : coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd
         }
-        rate={g7tUsdRate.data ?? 0}
-        isFetchingBalance={
-          direction === 'DEPOSIT'
-            ? isFetchingLowNetworkBalance
-            : selectedHighNetwork.chainId === L3_NETWORK.chainId
-              ? isFetchingL3NativeBalance
-              : isFetchingHighNetworkBalance
-        }
+        isFetchingBalance={isFetchingTokenInformation}
         errorMessage={inputErrorMessages.value}
         setErrorMessage={(msg) => setInputErrorMessages((prev) => ({ ...prev, value: msg }))}
+        selectedChainId={direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId}
       />
       {direction === 'DEPOSIT' && selectedLowNetwork.chainId === L2_NETWORK.chainId && isMessagingEnabled && (
         <BridgeMessage
@@ -223,7 +234,7 @@ const BridgeView = ({
       )}
       <TransactionSummary
         direction={direction}
-        gasBalance={Number((direction === 'DEPOSIT' ? lowNetworkNativeBalance : highNetworkNativeBalance) ?? 0)}
+        gasBalance={Number(tokenInformation?.tokenBalance)}
         address={connectedAccount}
         transferTime={
           direction === 'DEPOSIT'
@@ -233,22 +244,24 @@ const BridgeView = ({
         fee={Number(estimatedFee.data ?? 0)}
         isEstimatingFee={estimatedFee.isFetching}
         value={Number(value)}
-        ethRate={ethUsdRate ?? 0}
-        tokenSymbol={L3_NATIVE_TOKEN_SYMBOL}
+        ethRate={coinUSDRate ?? 0}
+        tokenSymbol={tokenInformation?.symbol ?? ''}
         tokenRate={g7tUsdRate.data ?? 0}
         gasTokenSymbol={
           direction === 'DEPOSIT'
-            ? (selectedLowNetwork.nativeCurrency?.symbol ?? '')
-            : (selectedHighNetwork.nativeCurrency?.symbol ?? '')
+            ? (selectedLowNetwork?.nativeCurrency?.symbol ?? '')
+            : (selectedHighNetwork?.nativeCurrency?.symbol ?? '')
         }
       />
       {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
       <ActionButton
         direction={direction}
-        amount={isNaN(Number(value)) ? 0 : Number(value)}
+        amount={value ?? '0'}
         isDisabled={!!inputErrorMessages.value || !!inputErrorMessages.destination || !!inputErrorMessages.data}
         setErrorMessage={setNetworkErrorMessage}
         L2L3message={isMessageExpanded ? message : { data: '', destination: '' }}
+        bridger={bridger}
+        symbol={tokenInformation?.symbol ?? ''}
       />
     </div>
   )

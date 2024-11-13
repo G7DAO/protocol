@@ -1,31 +1,18 @@
-import React from 'react'
-import { useMutation, useQueryClient } from 'react-query'
-import {
-  HIGH_NETWORKS,
-  L1_NETWORK,
-  L2_NETWORK,
-  L3_NATIVE_TOKEN_SYMBOL,
-  L3_NETWORK,
-  LOW_NETWORKS
-} from '../../../../constants'
+import React, { useCallback, useState } from 'react'
+import { HIGH_NETWORKS, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
-import { ethers } from 'ethers'
-import { Skeleton } from 'summon-ui/mantine'
+import { BridgeTransferStatus } from 'game7-bridge-sdk'
 import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
+import IconWithdrawalNodeCompleted from '@/assets/IconWithdrawalNodeCompleted'
 import WithdrawalMobile from '@/components/bridge/history/WithdrawalMobile'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
-import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
+import { useBridgeTransfer } from '@/hooks/useBridgeTransfer'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
-import { L2ToL1MessageStatus, L2ToL1MessageWriter, L2TransactionReceipt } from '@arbitrum/sdk'
+import { ChildToParentMessageStatus } from '@arbitrum/sdk'
 import { useMediaQuery } from '@mantine/hooks'
-
-export const networkRPC = (chainId: number | undefined) => {
-  const network = [L3_NETWORK, L2_NETWORK].find((n) => n.chainId === chainId)
-  return network?.rpcs[0]
-}
 
 interface WithdrawalProps {
   withdrawal: TransactionRecord
@@ -42,10 +29,10 @@ export const getStatus = (withdrawal: TransactionRecord) => {
     highNetworkHash
   } = withdrawal
   const status = completionTimestamp
-    ? L2ToL1MessageStatus.EXECUTED
+    ? ChildToParentMessageStatus.EXECUTED
     : claimableTimestamp
-      ? L2ToL1MessageStatus.CONFIRMED
-      : L2ToL1MessageStatus.UNCONFIRMED
+      ? ChildToParentMessageStatus.CONFIRMED
+      : ChildToParentMessageStatus.UNCONFIRMED
   const lowNetwork = LOW_NETWORKS.find((n) => n.chainId === lowNetworkChainId)
   const highNetwork = HIGH_NETWORKS.find((n) => n.chainId === highNetworkChainId)
   if (lowNetwork && highNetwork) {
@@ -62,168 +49,272 @@ export const getStatus = (withdrawal: TransactionRecord) => {
   }
 }
 const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
-  const targetChain = withdrawal.highNetworkChainId === L2_NETWORK.chainId ? L1_NETWORK : L2_NETWORK
-
   const status = getStatus(withdrawal)
   const { switchChain, connectedAccount, selectedNetworkType } = useBlockchainContext()
   const queryClient = useQueryClient()
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
-
-  const execute = useMutation(
-    async (highNetworkHash: string | undefined) => {
-      if (!highNetworkHash) {
-        throw new Error('transaction hash is undefined')
-      }
-      const highNetworkRPC = networkRPC(withdrawal.highNetworkChainId)
-      const highNetworkProvider = new ethers.providers.JsonRpcProvider(highNetworkRPC)
-      const receipt = await highNetworkProvider.getTransactionReceipt(highNetworkHash)
-      const l2Receipt = new L2TransactionReceipt(receipt)
-
-      let provider
-      if (window.ethereum) {
-        provider = new ethers.providers.Web3Provider(window.ethereum)
-        const currentChain = await provider.getNetwork()
-        if (currentChain.chainId !== targetChain.chainId) {
-          await switchChain(targetChain)
-          provider = new ethers.providers.Web3Provider(window.ethereum) //refresh provider
-        }
-      } else {
-        throw new Error('Wallet is not installed!')
-      }
-      const signer = provider.getSigner()
-      const messages: L2ToL1MessageWriter[] = (await l2Receipt.getL2ToL1Messages(signer)) as L2ToL1MessageWriter[]
-      const message = messages[0]
-      const res = await message.execute(highNetworkProvider)
-      return await res.wait()
-    },
-    {
-      onSuccess: (data, highNetworkHash) => {
-        try {
-          const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
-
-          let transactions = []
-          if (transactionsString) {
-            transactions = JSON.parse(transactionsString)
-          }
-          const newTransactions: TransactionRecord[] = transactions.map((t: any) => {
-            if (t.highNetworkHash === highNetworkHash) {
-              return {
-                ...t,
-                completionTimestamp: Date.now() / 1000,
-                lowNetworkTimestamp: Date.now() / 1000,
-                newTransaction: true,
-                lowNetworkHash: data.transactionHash
-              }
-            }
-            return { ...t }
-          })
-          localStorage.setItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`, JSON.stringify(newTransactions))
-        } catch (e) {
-          console.log(e)
-        }
-        refetchNewNotifications(connectedAccount ?? '')
-        queryClient.refetchQueries(['incomingMessages'])
-        queryClient.refetchQueries(['ERC20Balance'])
-        queryClient.refetchQueries(['nativeBalance'])
-        queryClient.setQueryData(['withdrawalStatus', withdrawal], (oldData: any) => {
-          return { ...oldData, status: L2ToL1MessageStatus.EXECUTED }
-        })
-
-        // status.refetch()
-        queryClient.refetchQueries(['pendingTransactions'])
-      },
-      onError: (error: Error) => {
-        console.log(error)
-      }
-    }
+  const { claim, returnTransferData } = useBridgeTransfer()
+  const [collapseExecuted, setCollapseExecuted] = useState(false)
+  const [hovered, setHovered] = useState(false)
+  const transferData = useCallback(() => returnTransferData({ txRecord: withdrawal }), [withdrawal, returnTransferData])
+  const { data: transferStatus, isLoading } = transferData()
+  const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+  let transactions = transactionsString ? JSON.parse(transactionsString) : []
+  const localStorageTransaction = transactions.find(
+    (t: TransactionRecord) => t.type === 'WITHDRAWAL' && t.highNetworkHash === withdrawal.highNetworkHash
   )
-  if (!status) {
-    return <></>
-  }
-
+  const withdrawalCompletedData = withdrawal?.lowNetworkHash ? withdrawal : localStorageTransaction
   return (
     <>
-      {status.isLoading && !status.data ? (
-        Array.from(Array(7)).map((_, idx) => (
-          <div className={styles.gridItem} key={idx}>
-            <Skeleton key={idx} h='12px' w='100%' />
-          </div>
-        ))
+      {isLoading && smallView ? (
+        <div className={styles.gridItem}>
+          <div className={styles.loading}>Loading</div>
+        </div>
       ) : (
         <>
           {smallView ? (
-            <WithdrawalMobile withdrawal={withdrawal} execute={execute} status={status} />
+            <WithdrawalMobile withdrawal={withdrawal} claim={claim} status={status} transferStatus={transferStatus} />
           ) : (
             <>
-              <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
-                <div className={styles.typeWithdrawal}>
-                  <IconArrowNarrowUp stroke={'#fff'} />
-                  Withdraw
-                </div>
-              </div>
-              <div className={styles.gridItem}>{timeAgo(status.data?.timestamp)}</div>
-              <div className={styles.gridItem}>{`${status.data?.amount} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
-              <div className={styles.gridItem}>{status.data?.from ?? ''}</div>
-              <div className={styles.gridItem}>{status.data?.to ?? ''}</div>
-              {status.data?.status === L2ToL1MessageStatus.EXECUTED && (
+              {isLoading || transferStatus?.status === undefined ? (
                 <>
-                  <div className={styles.gridItem}>
-                    <a
-                      href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
-                      target={'_blank'}
-                      className={styles.explorerLink}
-                    >
-                      <div className={styles.settled}>
-                        Settled
-                        <IconLinkExternal02 stroke={'#fff'} />
-                      </div>
-                    </a>
+                  <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
+                    <div className={styles.typeWithdrawal}>
+                      <IconArrowNarrowUp className={styles.arrowUp} />
+                      Withdraw
+                    </div>
                   </div>
-                  <div className={styles.gridItemImportant}>
-                    <div>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
+                  <div className={styles.gridItem}>{timeAgo(withdrawal.highNetworkTimestamp)}</div>
+                  <div
+                    className={styles.gridItem}
+                  >{`${status?.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
+                  <div className={styles.gridItem}>{status?.data?.from ?? ''}</div>
+                  <div className={styles.gridItem}>{status?.data?.to ?? ''}</div>
+                  <div className={styles.gridItem}>
+                    <div className={styles.loading}>Loading</div>
+                  </div>
+                  <div className={styles.gridItem}>
+                    <div className={styles.loading}>Loading</div>
                   </div>
                 </>
-              )}
-              {status.data?.status === L2ToL1MessageStatus.CONFIRMED && (
+              ) : (
                 <>
-                  <div className={styles.gridItem}>
-                    <a
-                      href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
-                      target={'_blank'}
-                      className={styles.explorerLink}
-                    >
-                      <div className={styles.claimable}>
-                        Claimable
-                        <IconLinkExternal02 stroke={'#fff'} />
+                  {transferStatus && transferStatus?.status === BridgeTransferStatus.WITHDRAW_EXECUTED && (
+                    <>
+                      <div
+                        className={styles.gridItem}
+                        title={withdrawal.highNetworkHash}
+                        onClick={() => setCollapseExecuted(!collapseExecuted)}
+                        style={{
+                          cursor: 'pointer',
+                          backgroundColor: hovered ? '#393939' : 'initial'
+                        }}
+                        onMouseEnter={() => setHovered(true)}
+                        onMouseLeave={() => setHovered(false)}
+                      >
+                        {collapseExecuted && <IconWithdrawalNodeCompleted className={styles.gridNodeCompleted} />}
+                        <div className={styles.typeWithdrawal} onClick={() => setCollapseExecuted(!collapseExecuted)}>
+                          <IconArrowNarrowUp className={styles.arrowUp} />
+                          Withdraw
+                        </div>
                       </div>
-                    </a>
-                  </div>
-                  <div className={styles.gridItem}>
-                    <button className={styles.claimButton} onClick={() => execute.mutate(status.data.highNetworkHash)}>
-                      {execute.isLoading ? 'Claiming...' : 'Claim now'}
-                    </button>
-                  </div>
-                </>
-              )}
-              {status.data?.status === L2ToL1MessageStatus.UNCONFIRMED && (
-                <>
-                  <div className={styles.gridItem}>
-                    <a
-                      href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
-                      target={'_blank'}
-                      className={styles.explorerLink}
-                    >
-                      <div className={styles.pending}>
-                        Pending
-                        <IconLinkExternal02 stroke={'#fff'} />
+                      <div
+                        className={styles.gridItem}
+                        onClick={() => setCollapseExecuted(!collapseExecuted)}
+                        style={{
+                          cursor: 'pointer',
+                          backgroundColor: hovered ? '#393939' : 'initial'
+                        }}
+                        onMouseEnter={() => setHovered(true)}
+                        onMouseLeave={() => setHovered(false)}
+                      >
+                        {timeAgo(withdrawal?.highNetworkTimestamp)}
                       </div>
-                    </a>
-                  </div>
+                      <div
+                        className={styles.gridItem}
+                        onClick={() => setCollapseExecuted(!collapseExecuted)}
+                        style={{
+                          cursor: 'pointer',
+                          backgroundColor: hovered ? '#393939' : 'initial'
+                        }}
+                        onMouseEnter={() => setHovered(true)}
+                        onMouseLeave={() => setHovered(false)}
+                      >{`${status?.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
+                      <div
+                        className={styles.gridItem}
+                        onClick={() => setCollapseExecuted(!collapseExecuted)}
+                        style={{
+                          cursor: 'pointer',
+                          backgroundColor: hovered ? '#393939' : 'initial'
+                        }}
+                        onMouseEnter={() => setHovered(true)}
+                        onMouseLeave={() => setHovered(false)}
+                      >
+                        {status?.data?.from ?? ''}
+                      </div>
+                      <div
+                        className={styles.gridItem}
+                        onClick={() => setCollapseExecuted(!collapseExecuted)}
+                        style={{
+                          cursor: 'pointer',
+                          backgroundColor: hovered ? '#393939' : 'initial'
+                        }}
+                        onMouseEnter={() => setHovered(true)}
+                        onMouseLeave={() => setHovered(false)}
+                      >
+                        {status?.data?.to ?? ''}
+                      </div>
+                      <div
+                        className={styles.gridItem}
+                        onClick={() => setCollapseExecuted(!collapseExecuted)}
+                        style={{
+                          cursor: 'pointer',
+                          backgroundColor: hovered ? '#393939' : 'initial'
+                        }}
+                        onMouseEnter={() => setHovered(true)}
+                        onMouseLeave={() => setHovered(false)}
+                      >
+                        <a
+                          href={`${getBlockExplorerUrl(withdrawalCompletedData.lowNetworkChainId)}/tx/${withdrawalCompletedData.lowNetworkHash}`}
+                          target={'_blank'}
+                          className={styles.explorerLink}
+                        >
+                          <div className={styles.settled} onClick={() => setCollapseExecuted(!collapseExecuted)}>
+                            Completed
+                            <IconLinkExternal02 stroke={'#fff'} />
+                          </div>
+                        </a>
+                      </div>
+                      <div
+                        className={styles.gridItemImportant}
+                        onClick={() => setCollapseExecuted(!collapseExecuted)}
+                        style={{
+                          cursor: 'pointer',
+                          backgroundColor: hovered ? '#393939' : 'initial'
+                        }}
+                        onMouseEnter={() => setHovered(true)}
+                        onMouseLeave={() => setHovered(false)}
+                      >
+                        <div>{timeAgo(withdrawalCompletedData?.completionTimestamp)}</div>
+                      </div>
+                      {collapseExecuted && (
+                        <>
+                          <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
+                            <div className={styles.typeCompleted}>Initiate</div>
+                          </div>
+                          <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.highNetworkTimestamp)}</div>
+                          <div
+                            className={styles.gridItemInitiate}
+                          >{`${status?.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
+                          <div className={styles.gridItemInitiate}>{status?.data?.from ?? ''}</div>
+                          <div className={styles.gridItemInitiate}>{status?.data?.to ?? ''}</div>
+                          <div className={styles.gridItemInitiate}>
+                            <a
+                              href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
+                              target={'_blank'}
+                              className={styles.explorerLink}
+                            >
+                              <div className={styles.settled}>
+                                Completed
+                                <IconLinkExternal02 stroke={'#fff'} />
+                              </div>
+                            </a>
+                          </div>
+                          <div className={styles.gridItemInitiate}>
+                            <div className={styles.timeCenter}>
+                              {timeAgo(withdrawalCompletedData?.completionTimestamp)}
+                            </div>
+                          </div>
+                          <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
+                            <div className={styles.typeCompleted}>Finalize</div>
+                          </div>
+                          <div className={styles.gridItemInitiate}>
+                            {timeAgo(withdrawalCompletedData?.completionTimestamp)}
+                          </div>
+                          <div
+                            className={styles.gridItemInitiate}
+                          >{`${status?.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
+                          <div className={styles.gridItemInitiate}>{status?.data?.from ?? ''}</div>
+                          <div className={styles.gridItemInitiate}>{status?.data?.to ?? ''}</div>
+                          <div className={styles.gridItemInitiate}>
+                            <a
+                              href={`${getBlockExplorerUrl(withdrawalCompletedData.lowNetworkChainId)}/tx/${withdrawalCompletedData.lowNetworkHash}`}
+                              target={'_blank'}
+                              className={styles.explorerLink}
+                            >
+                              <div className={styles.settled}>
+                                Completed
+                                <IconLinkExternal02 stroke={'#fff'} />
+                              </div>
+                            </a>
+                          </div>
+                          <div className={styles.gridItemInitiate}>
+                            <div className={styles.timeCenter}>
+                              {timeAgo(withdrawalCompletedData?.completionTimestamp)}
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </>
+                  )}
+                  {transferStatus && transferStatus.status != BridgeTransferStatus.WITHDRAW_EXECUTED && (
+                    <>
+                      <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
+                        <div className={styles.typeWithdrawal}>
+                          <IconArrowNarrowUp className={styles.arrowUp} />
+                          Withdraw
+                        </div>
+                      </div>
+                      <div className={styles.gridItem}>{timeAgo(status?.data?.timestamp)}</div>
+                      <div
+                        className={styles.gridItem}
+                      >{`${status?.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
+                      <div className={styles.gridItem}>{status?.data?.from ?? ''}</div>
+                      <div className={styles.gridItem}>{status?.data?.to ?? ''}</div>
+                      {transferStatus && transferStatus.status === BridgeTransferStatus.WITHDRAW_CONFIRMED && (
+                        <>
+                          <div className={styles.gridItem}>
+                            <a
+                              href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
+                              target={'_blank'}
+                              className={styles.explorerLink}
+                            >
+                              <div className={styles.claimable}>
+                                Claimable
+                                <IconLinkExternal02 className={styles.arrowUp} />
+                              </div>
+                            </a>
+                          </div>
+                          <div className={styles.gridItem}>
+                            <button className={styles.claimButton} onClick={() => claim.mutate(withdrawal)}>
+                              {claim.isLoading && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}
+                            </button>
+                          </div>
+                        </>
+                      )}
+                      {transferStatus && transferStatus.status === BridgeTransferStatus.WITHDRAW_UNCONFIRMED && (
+                        <>
+                          <div className={styles.gridItem}>
+                            <a
+                              href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
+                              target={'_blank'}
+                              className={styles.explorerLink}
+                            >
+                              <div className={styles.pending}>
+                                Pending
+                                <IconLinkExternal02 className={styles.arrowUp} />
+                              </div>
+                            </a>
+                          </div>
 
-                  <div className={styles.gridItemImportant}>
-                    <div>{ETA(status.data?.timestamp, withdrawal.challengePeriod)}</div>
-                  </div>
+                          <div className={styles.gridItemImportant}>
+                            <div>{ETA(withdrawal?.highNetworkTimestamp, withdrawal.challengePeriod)} left</div>
+                          </div>
+                        </>
+                      )}
+                    </>
+                  )}
                 </>
               )}
             </>

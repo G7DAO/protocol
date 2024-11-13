@@ -13,6 +13,7 @@ export const getBlockExplorerUrl = (chainId: number | undefined) => {
   if (network?.blockExplorerUrls) {
     return network.blockExplorerUrls[0]
   }
+  console.log(network)
 }
 
 export const getNetwork = (chainId: number) => {
@@ -47,4 +48,9 @@ export const formatBigNumber = (bigNumber: ethers.BigNumber, lengthLimit = 25, u
   const exponent = bigNumberString.length - 1 - units
 
   return `${firstDigit}.${remainingDigits}e+${exponent}`
+}
+
+export const parseUntilDelimiter = (input: any) => {
+  const match = input.match(/^[^\(\[]+/);
+  return match ? match[0] : input;
 }

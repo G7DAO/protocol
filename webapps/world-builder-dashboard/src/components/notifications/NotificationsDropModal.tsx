@@ -25,18 +25,16 @@ interface NotificationsDropModalProps {
 const copy = (notification: BridgeNotification) => {
   const targetNetwork = getNetwork(notification.to)?.displayName ?? 'unknown chain'
   if (notification.status === 'CLAIMABLE') {
-    return `Heads Up: Your ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL} withdrawal is complete and you can now claim your assets`
+    return `Heads Up: Your ${notification.amount} ${notification.tx.symbol} withdrawal is complete and you can now claim your assets`
   }
   if (notification.status === 'COMPLETED') {
     if (notification.type === 'DEPOSIT') {
-      return `${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL} deposited to ${targetNetwork}`
+      return `${notification.amount} ${notification.tx.symbol} deposited to ${targetNetwork}`
     }
     if (notification.type === 'CLAIM') {
-      return (
-        `You requested ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL}`
-      )
+      return `You requested ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL}`
     }
-    return `Your ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL} withdrawal is complete`
+    return `Your ${notification.amount} ${notification.tx.symbol} withdrawal is complete`
   }
 }
 
@@ -65,10 +63,7 @@ const NotificationsDropModal: React.FC<NotificationsDropModalProps> = ({ notific
 
   return (
     <div className={styles.container}>
-      {!notifications || (notifications.length === 0 &&
-        <div className={styles.content}>
-          No notifications yet
-        </div>)}
+      {!notifications || (notifications.length === 0 && <div className={styles.content}>No notifications yet</div>)}
       {notifications &&
         notifications.slice(0, 3).map((n, idx) => (
           <div className={styles.item} key={idx}>
@@ -79,7 +74,7 @@ const NotificationsDropModal: React.FC<NotificationsDropModalProps> = ({ notific
                   <a href={getTransactionUrl(n)} target={'_blank'} className={modalStyles.explorerLink}>
                     <div className={badgeClassName(n.status)}>
                       {n.status.toLowerCase()}
-                      <IconLinkExternal02 stroke={n.status === 'CLAIMABLE' ? '#fff' : '#fff'} />
+                      <IconLinkExternal02 stroke={'#fff'} />
                     </div>
                   </a>
                 ) : (

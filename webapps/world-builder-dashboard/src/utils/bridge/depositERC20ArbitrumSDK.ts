@@ -2,7 +2,7 @@ import { ethers, providers } from 'ethers'
 import { NetworkInterface } from '@/contexts/BlockchainContext'
 import { convertToBigNumber } from '@/utils/web3utils'
 import { L2GatewayRouterABI } from '@/web3/ABI/l2GatewayRouter_abi'
-import { Erc20Bridger, getL2Network } from '@arbitrum/sdk'
+import { Erc20Bridger, getArbitrumNetwork } from '@arbitrum/sdk'
 import { Signer } from '@ethersproject/abstract-signer'
 
 export interface DepositRecord {
@@ -36,6 +36,10 @@ export interface TransactionRecord {
   claimableTimestamp?: number
   newTransaction?: boolean
   isFailed?: boolean
+  symbol?: string
+  status?: number
+  ETA?: number
+  tokenAddress?: string
 }
 
 export const depositERC20ArbitrumSDK = async (
@@ -43,10 +47,10 @@ export const depositERC20ArbitrumSDK = async (
   highNetwork: NetworkInterface,
   amount: string,
   l1Signer: Signer
-): Promise<TransactionRecord> => {
+): Promise<TransactionRecord> => { 
   const l2Provider = new providers.JsonRpcProvider(highNetwork.rpcs[0])
 
-  const l2Network = await getL2Network(l2Provider)
+  const l2Network = await getArbitrumNetwork(l2Provider)
   const erc20Bridger = new Erc20Bridger(l2Network)
 
   const l1Erc20Address = lowNetwork.g7TokenAddress
@@ -55,9 +59,9 @@ export const depositERC20ArbitrumSDK = async (
 
   const depositTx = await erc20Bridger.deposit({
     amount: tokenDepositAmount,
-    erc20L1Address: l1Erc20Address,
-    l1Signer,
-    l2Provider: l2Provider
+    erc20ParentAddress: l1Erc20Address,
+    parentSigner: l1Signer,
+    childProvider: l2Provider
   })
 
   return {

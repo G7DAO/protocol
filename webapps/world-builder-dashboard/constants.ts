@@ -4,7 +4,7 @@ export const L1_NETWORK: NetworkInterface = {
   chainId: 11155111,
   name: 'sepolia',
   displayName: 'Sepolia',
-  rpcs: ['https://ethereum-sepolia-rpc.publicnode.com'],
+  rpcs: ['https://eth-sepolia.g.alchemy.com/v2/C-njXZM_UTlPbC2ukOvg4ojFz2V9yCS6'],
   blockExplorerUrls: ['https://sepolia.etherscan.io'],
   nativeCurrency: {
     decimals: 18,
@@ -131,3 +131,23 @@ export const getNetworks = () => {
       return ALL_TESTNET_NETWORKS
   }
 }
+
+export const TG7T: TokenAddressMap = {
+  13746: '0x0000000000000000000000000000000000000000',
+  421614: '0x10adbf84548f923577be12146eac104c899d1e75',
+  11155111: '0xe2ef69e4af84dbefb0a75f8491f27a52bf047b01'
+}
+
+export const ETH: TokenAddressMap = {
+  421614: '0x0000000000000000000000000000000000000000',
+  11155111: '0x0000000000000000000000000000000000000000'
+}
+
+export const USDC: TokenAddressMap = {
+  13746: '0xf2B58E3519C5b977a254993A4A6EaD581A8989A0',
+  421614: '0x119f0E6303BEc7021B295EcaB27A4a1A5b37ECf0',
+  11155111: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238'
+}
+
+// ETH, ARBITRUM, USDC, MANTLE, USDT,
+export const ALL_TOKEN_MAPPINGS = [TG7T, ETH, USDC]

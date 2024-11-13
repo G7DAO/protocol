@@ -28,12 +28,13 @@ export const ETA = (timestamp: number | undefined, delayInSeconds: number | unde
   if (!timestamp || !delayInSeconds) {
     return 'N/A'
   }
-  const now = new Date().getTime()
-  const date = new Date(Number(timestamp) * 1000 + delayInSeconds * 1000).getTime()
-  const timeDifference = Math.floor((date - now) / 1000)
+  const now = Math.floor(new Date().getTime() / 1000)
+  const date = Math.floor(Number(timestamp) + delayInSeconds)
+  const timeDifference = ((date - now))
   if (timeDifference < 0) {
-    return '~now'
+    return '~now' 
   }
+  
   const units = [
     { name: 'year', inSeconds: 60 * 60 * 24 * 365 },
     { name: 'month', inSeconds: 60 * 60 * 24 * 30 },
@@ -51,6 +52,7 @@ export const ETA = (timestamp: number | undefined, delayInSeconds: number | unde
   }
   return 'just now'
 }
+
 
 export const timeDifferenceInHoursAndMinutes = (start: number, end: number): string => {
   // Convert Unix timestamps to Date objects

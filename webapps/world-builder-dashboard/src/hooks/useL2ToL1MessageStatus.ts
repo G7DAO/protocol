@@ -1,9 +1,16 @@
 import { useQueries, useQuery, UseQueryResult } from 'react-query'
 import { HIGH_NETWORKS, L2_NETWORK, LOW_NETWORKS } from '../../constants'
 import { ethers, providers } from 'ethers'
+import { Transaction } from 'ethers'
 import { BridgeNotification } from '@/components/notifications/NotificationsButton'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
-import { ParentTransactionReceipt, ParentToChildMessageReader, ParentToChildMessageStatus, ChildTransactionReceipt, ChildToParentMessageReader, ChildToParentMessage, ChildToParentMessageStatus, ParentContractCallTransactionReceipt } from '@arbitrum/sdk'
+import {
+  ParentTransactionReceipt,
+  ChildToParentMessageReader,
+  ChildToParentMessageStatus,
+  ChildTransactionReceipt
+} from '@arbitrum/sdk'
+import { ParentContractCallTransactionReceipt } from '@arbitrum/sdk/dist/lib/message/ParentTransaction'
 
 const eventABI = [
   {
@@ -48,7 +55,9 @@ const fetchL2ToL1MessageStatus = async (withdrawal: TransactionRecord) => {
 
   const receipt = await l3Provider.getTransactionReceipt(highNetworkHash)
   const l2Receipt = new ChildTransactionReceipt(receipt)
-  const messages: ChildToParentMessageReader[] = (await l2Receipt.getChildToParentMessages(l2Provider)) as ChildToParentMessageReader[]
+  const messages: ChildToParentMessageReader[] = (await l2Receipt.getChildToParentMessages(
+    l2Provider
+  )) as ChildToParentMessageReader[]
   const l2ToL1Msg: ChildToParentMessageReader = messages[0]
   const status: ChildToParentMessageStatus = await l2ToL1Msg.status(l3Provider)
 
@@ -69,9 +78,37 @@ export const useL2ToL1MessageStatus = (withdrawal: TransactionRecord) => {
   })
 }
 
+export const getDecodedInputs = (tx: Transaction, ABI: any) => {
+  //ABI:  ReadonlyArray<Fragment | JsonFragment | string> gives TS building error
+  const contractInterface = new ethers.utils.Interface(ABI)
+  return contractInterface.parseTransaction({
+    data: tx.data,
+    value: tx.value
+  })
+}
+
+// const getDepositTransferType = (tx: Transaction) => {
+//   if (tx.to === networks[this.destinationNetworkChainId]?.ethBridge?.inbox) {
+//     try {
+//       const decodedInputs = getDecodedInputs(tx, INBOX_ABI)
+//       return { transferType: BridgeTransferType.DEPOSIT_GAS, decodedInputs }
+//     } catch (_) {
+//       try {
+//         const decodedInputs = getDecodedInputs(tx, ERC20_INBOX_ABI)
+//         return { transferType: BridgeTransferType.DEPOSIT_ERC20_TO_GAS, decodedInputs }
+//       } catch (_) {
+//         throw new Error(`Unable to decode inputs - unknown method of inbox contract ${tx.to}`)
+//       }
+//     }
+//   } else if (tx.to === networks[this.destinationNetworkChainId]?.tokenBridge?.parentGatewayRouter) {
+//     const decodedInputs = getDecodedInputs(tx, L1GatewayRouterABI)
+//     return { transferType: BridgeTransferType.DEPOSIT_ERC20, decodedInputs }
+//   }
+//   throw new Error(`Unable to decode inputs - ${tx.to} is unknown contract`)
+// }
+
 const fetchDepositStatus = async (deposit: TransactionRecord) => {
   const { lowNetworkChainId, highNetworkChainId, lowNetworkHash, lowNetworkTimestamp } = deposit
-
   if (lowNetworkChainId === L2_NETWORK.chainId) {
     return {
       l2Result: { complete: true },
@@ -107,10 +144,11 @@ const fetchDepositStatus = async (deposit: TransactionRecord) => {
 
   const l2Provider = new providers.JsonRpcProvider(highNetwork.rpcs[0])
   let l2Result
+
   try {
-    l2Result = await l1ContractCallReceipt.waitForChildTransactionReceipt(l2Provider, 3, 1000)
+    l2Result = await l1ContractCallReceipt.waitForChildTransactionReceipt(l2Provider, l1Receipt.confirmations)
   } catch (e) {
-    console.log(e)
+    console.error('Error waiting for child transaction receipt:', e)
   }
 
   if (!l2Result) {
@@ -133,13 +171,13 @@ export const useDepositStatus = (deposit: TransactionRecord) => {
   })
 }
 
-export interface Transaction {
+export interface TransactionType {
   txHash: string
   l2RPC: string
   l3RPC: string
 }
 
-export const useL2ToL1MessagesStatus = (transactions: Transaction[] | undefined) => {
+export const useL2ToL1MessagesStatus = (transactions: TransactionType[] | undefined) => {
   if (!transactions) {
     return useQueries([{ queryKey: ['withdrawalStatusEmpty'], queryFn: () => undefined }])
   }
@@ -163,7 +201,9 @@ export const useL2ToL1MessagesStatus = (transactions: Transaction[] | undefined)
           }
         }
 
-        const messages: ChildToParentMessageReader[] = (await l2Receipt.getChildToParentMessages(l2Provider)) as ChildToParentMessageReader[]
+        const messages: ChildToParentMessageReader[] = (await l2Receipt.getChildToParentMessages(
+          l2Provider
+        )) as ChildToParentMessageReader[]
         const l2ToL1Msg: ChildToParentMessageReader = messages[0]
         const status: ChildToParentMessageStatus = await l2ToL1Msg.status(l3Provider)
 
