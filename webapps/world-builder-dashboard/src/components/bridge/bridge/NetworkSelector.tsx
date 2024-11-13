@@ -1,4 +1,4 @@
-import { L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../../../constants'
+import { L1_MAIN_NETWORK, L1_NETWORK, L2_MAIN_NETWORK, L2_NETWORK, L3_MAIN_NETWORK, L3_NETWORK } from '../../../../constants'
 import styles from './NetworkSelector.module.css'
 import { Combobox, Group, InputBase, InputBaseProps, useCombobox } from 'summon-ui/mantine'
 import IconArbitrumOne from '@/assets/IconArbitrumOne'
@@ -22,12 +22,13 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork, selectedToken }:
   })
 
   const networkLogo = (chainId: number) => {
+    console.log(chainId)
     switch (chainId) {
-      case L1_NETWORK.chainId:
+      case chainId === L1_NETWORK.chainId || L1_MAIN_NETWORK.chainId:
         return <IconEthereum />
-      case L2_NETWORK.chainId:
+      case chainId === L2_NETWORK.chainId || L2_MAIN_NETWORK.chainId:
         return <IconArbitrumOne />
-      case L3_NETWORK.chainId:
+      case chainId === L3_NETWORK.chainId || L3_MAIN_NETWORK.chainId:
         return <IconG7T />
       default:
         return <></>
@@ -65,7 +66,6 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork, selectedToken }:
       <Combobox.Dropdown className='!bg-dark-900 !rounded-md !border-dark-700'>
         <Combobox.Options>
           {networks.map((n) => {
-            // can create token address map here
             const chainIds = Object.keys(selectedToken.tokenAddressMap)
             const isDisabled = chainIds.includes(String(n.chainId))
             return (

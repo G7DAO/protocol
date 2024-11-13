@@ -1,7 +1,16 @@
 // Libraries
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
-import { ALL_TESTNET_NETWORKS, DEFAULT_STAKE_NATIVE_POOL_ID, L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../../../constants'
+import {
+  ALL_TESTNET_NETWORKS,
+  DEFAULT_STAKE_NATIVE_POOL_ID,
+  L1_MAIN_NETWORK,
+  L1_NETWORK,
+  L2_MAIN_NETWORK,
+  L2_NETWORK,
+  L3_MAIN_NETWORK,
+  L3_NETWORK
+} from '../../../../constants'
 // Styles and Icons
 import styles from './BridgeView.module.css'
 import { ethers } from 'ethers'
@@ -47,13 +56,17 @@ const BridgeView = ({
     selectedHighNetwork,
     setSelectedHighNetwork,
     setSelectedBridgeToken,
-    selectedBridgeToken
+    selectedBridgeToken,
+    selectedNetworkType
   } = useBlockchainContext()
 
   const { isFetching: isFetchingTokenInformation, data: tokenInformation } = useTokenInformation({
     account: connectedAccount,
     token: selectedBridgeToken
   })
+
+  console.log(selectedLowNetwork)
+  console.log(selectedHighNetwork)
 
   const { data: coinUSDRate, isFetching: isCoinFetching } = useUSDPriceOfToken(selectedBridgeToken.geckoId ?? '')
   const handleTokenChange = async (token: Token) => {
@@ -148,7 +161,7 @@ const BridgeView = ({
     if ((isSource && direction === 'DEPOSIT') || (!isSource && direction === 'WITHDRAW')) {
       return (
         <NetworkSelector
-          networks={[L1_NETWORK, L2_NETWORK]}
+          networks={selectedNetworkType === 'Testnet' ? [L1_NETWORK, L2_NETWORK] : [L1_MAIN_NETWORK, L2_MAIN_NETWORK]}
           selectedNetwork={selectedLowNetwork}
           onChange={setSelectedLowNetwork}
           selectedToken={selectedBridgeToken}
@@ -157,7 +170,7 @@ const BridgeView = ({
     } else {
       return (
         <NetworkSelector
-          networks={[L2_NETWORK, L3_NETWORK]}
+          networks={selectedNetworkType === 'Testnet' ? [L2_NETWORK, L3_NETWORK] : [L2_MAIN_NETWORK, L3_MAIN_NETWORK]}
           selectedNetwork={selectedHighNetwork}
           onChange={setSelectedHighNetwork}
           selectedToken={selectedBridgeToken}
@@ -211,27 +224,32 @@ const BridgeView = ({
             ? 1
             : isCoinFetching
               ? 0.0
-              : coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd
+              : coinUSDRate[selectedBridgeToken?.geckoId ?? '']
+                ? coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd
+                : 0
         }
         isFetchingBalance={isFetchingTokenInformation}
         errorMessage={inputErrorMessages.value}
         setErrorMessage={(msg) => setInputErrorMessages((prev) => ({ ...prev, value: msg }))}
         selectedChainId={direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId}
       />
-      {direction === 'DEPOSIT' && selectedLowNetwork.chainId === L2_NETWORK.chainId && isMessagingEnabled && (
-        <BridgeMessage
-          isExpanded={isMessageExpanded}
-          setIsExpanded={setIsMessageExpanded}
-          message={message}
-          setMessage={(newMessage) => {
-            setMessage((prev) => ({ ...prev, ...newMessage }))
-          }}
-          errors={inputErrorMessages}
-          setErrors={(newErrors) => {
-            setInputErrorMessages((prev) => ({ ...prev, ...newErrors }))
-          }}
-        />
-      )}
+      {direction === 'DEPOSIT' &&
+        selectedLowNetwork.chainId === L2_NETWORK.chainId &&
+        isMessagingEnabled &&
+        selectedNetworkType === 'Testnet' && (
+          <BridgeMessage
+            isExpanded={isMessageExpanded}
+            setIsExpanded={setIsMessageExpanded}
+            message={message}
+            setMessage={(newMessage) => {
+              setMessage((prev) => ({ ...prev, ...newMessage }))
+            }}
+            errors={inputErrorMessages}
+            setErrors={(newErrors) => {
+              setInputErrorMessages((prev) => ({ ...prev, ...newErrors }))
+            }}
+          />
+        )}
       <TransactionSummary
         direction={direction}
         gasBalance={Number(tokenInformation?.tokenBalance)}
