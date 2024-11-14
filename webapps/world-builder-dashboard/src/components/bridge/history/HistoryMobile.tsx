@@ -40,8 +40,8 @@ const mapAPIDataToTransactionRecord = (apiData: any): TransactionRecord => {
   }
 }
 const HistoryMobile: React.FC<HistoryMobileProps> = ({}) => {
-  const { connectedAccount } = useBlockchainContext()
-  const messages = useMessages(connectedAccount)
+  const { connectedAccount, selectedNetworkType } = useBlockchainContext()
+  const messages = useMessages(connectedAccount, selectedNetworkType)
   const { useHistoryTransactions } = useBridgeAPI()
   const { data: apiTransactions } = useHistoryTransactions(connectedAccount)
   const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])

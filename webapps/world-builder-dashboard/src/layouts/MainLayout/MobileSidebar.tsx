@@ -2,14 +2,14 @@ import React, { ReactNode, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import parentStyles from './MainLayout.module.css'
 import styles from './MobileSidebar.module.css'
+import { Tooltip } from 'summon-ui/mantine'
 import IconExternalLink from '@/assets/IconExternalLink'
 import IconHamburgerLanding from '@/assets/IconHamburgerLanding'
+import IconInfoCircle from '@/assets/IconInfoCircle'
 import IconLogoutLarge from '@/assets/IconLogoutLarge'
 import NetworkToggle from '@/components/commonComponents/networkToggle/NetworkToggle'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
-import { Tooltip } from 'summon-ui/mantine'
-import IconInfoCircle from '@/assets/IconInfoCircle'
 
 interface MobileSidebarProps {
   navigationItems: { name: string; navigateTo: string; icon: ReactNode }[]
@@ -17,15 +17,25 @@ interface MobileSidebarProps {
 const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { connectedAccount, isMetaMask, disconnectWallet, connectWallet, isConnecting, selectedNetworkType } = useBlockchainContext()
+  const { connectedAccount, isMetaMask, disconnectWallet, connectWallet, isConnecting, selectedNetworkType } =
+    useBlockchainContext()
   const [isExpanded, setIsExpanded] = useState(false)
 
   return (
     <>
       <div className={styles.container}>
         <Game7Logo />
-        <div className={styles.iconContainer}>
-          <IconHamburgerLanding className={parentStyles.iconButton} onClick={() => setIsExpanded(!isExpanded)} />
+        <div className={styles.networkAndIconContainer} onClick={() => setIsExpanded(!isExpanded)}>
+          {!isExpanded && (
+            <div
+              className={`${styles.networkBadge} ${selectedNetworkType === 'Testnet' ? styles.networkTestnet : styles.networkMainnet}`}
+            >
+              {selectedNetworkType}
+            </div>
+          )}
+          <div className={styles.iconContainer}>
+            <IconHamburgerLanding className={parentStyles.iconButton} />
+          </div>
         </div>
       </div>
       {isExpanded && (
