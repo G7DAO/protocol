@@ -333,7 +333,7 @@ export const usePendingTransactions = (connectedAccount: string | undefined): Us
         )
         const completedTransactions = transactions.filter((t: { completionTimestamp: number }) => t.completionTimestamp)
         const newCompletedTransactions: TransactionRecord[] = []
-        for (const t of pendingTransactions) {
+        for (const t of transactions) {
           if (t.type === 'DEPOSIT') {
             const status = await fetchDepositStatus(t as TransactionRecord)
             if (status?.highNetworkTimestamp) {

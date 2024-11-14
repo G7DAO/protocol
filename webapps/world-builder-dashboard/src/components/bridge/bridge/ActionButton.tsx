@@ -147,9 +147,11 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           }
           transactions.push(record)
           localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(transactions))
+          queryClient.invalidateQueries(['incomingMessages', connectedAccount])
         } catch (e) {
           console.log(e)
         }
+        queryClient.refetchQueries(['pendingTransactions'])
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
         queryClient.refetchQueries(['pendingNotifications'])
