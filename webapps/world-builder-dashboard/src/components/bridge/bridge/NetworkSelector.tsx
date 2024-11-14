@@ -29,7 +29,6 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork, selectedToken }:
   })
 
   const networkLogo = (chainId: number) => {
-    console.log(chainId)
     switch (chainId) {
       case L1_NETWORK.chainId:
       case L1_MAIN_NETWORK.chainId:

@@ -65,9 +65,6 @@ const BridgeView = ({
     token: selectedBridgeToken
   })
 
-  console.log(selectedLowNetwork)
-  console.log(selectedHighNetwork)
-
   const { data: coinUSDRate, isFetching: isCoinFetching } = useUSDPriceOfToken(selectedBridgeToken.geckoId ?? '')
   const handleTokenChange = async (token: Token) => {
     setSelectedBridgeToken(token)
