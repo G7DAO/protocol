@@ -82,20 +82,20 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
           : tx.highNetworkHash === storedTransactions[index]?.highNetworkHash
       )
     ) {
-      // // Determine new transactions that aren’t in storedTransactions
-      // const newTransactions = combinedTransactions.filter(
-      //   (newTx) =>
-      //     !storedTransactions.some((storedTx: TransactionRecord) =>
-      //       storedTx.type === 'DEPOSIT'
-      //         ? storedTx.lowNetworkHash === newTx.lowNetworkHash
-      //         : storedTx.highNetworkHash === newTx.highNetworkHash
-      //     )
-      // )
+      // Determine new transactions that aren’t in storedTransactions
+      const newTransactions = combinedTransactions.filter(
+        (newTx) =>
+          !storedTransactions.some((storedTx: TransactionRecord) =>
+            storedTx.type === 'DEPOSIT'
+              ? storedTx.lowNetworkHash === newTx.lowNetworkHash
+              : storedTx.highNetworkHash === newTx.highNetworkHash
+          )
+      )
 
-      // localStorage.setItem(
-      //   `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
-      //   JSON.stringify([...storedTransactions, ...newTransactions])
-      // )
+      localStorage.setItem(
+        `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
+        JSON.stringify([...storedTransactions, ...newTransactions])
+      )
     }
     setMergedTransactions(combinedTransactions)
   }, [messages.data, apiTransactions])
@@ -103,7 +103,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   return (
     <div className={styles.container}>
       <div className={styles.content}>
-        {messages.data && (
+        {mergedTransactions && (
           <div className={styles.transactions}>
             <div className={styles.withdrawsGrid}>
               {headers.map((h) => (
@@ -111,7 +111,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
                   {h}
                 </div>
               ))}
-              {messages.data
+              {mergedTransactions
                 .sort((x: TransactionRecord, y: TransactionRecord) => {
                   const xTimestamp = x.type === 'DEPOSIT' ? x.lowNetworkTimestamp : x.highNetworkTimestamp
                   const yTimestamp = y.type === 'DEPOSIT' ? y.lowNetworkTimestamp : y.highNetworkTimestamp
@@ -125,7 +125,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
                     <Fragment key={idx}>{tx.lowNetworkHash && <Deposit deposit={tx} />}</Fragment>
                   )
                 )}
-              {messages.data.filter((tx: TransactionRecord) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL')
+              {mergedTransactions.filter((tx: TransactionRecord) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL')
                 .length === 0 && <div className={styles.noTransactions}> No transactions yet</div>}
             </div>
           </div>

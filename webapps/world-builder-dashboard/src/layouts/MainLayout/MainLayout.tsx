@@ -7,17 +7,17 @@ import IconDocumentation from '@/assets/IconDocumentation'
 import IconDroplets02 from '@/assets/IconDroplets02'
 import IconExplorer from '@/assets/IconExplorer'
 import IconWallet04 from '@/assets/IconWallet04'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
 // Local components and assets
 import DesktopSidebar from '@/layouts/MainLayout/DesktopSidebar'
 import MobileSidebar from '@/layouts/MainLayout/MobileSidebar'
 import { useMediaQuery } from '@mantine/hooks'
-import { useBlockchainContext } from '@/contexts/BlockchainContext'
 
 interface MainLayoutProps {}
 
 const MainLayout: React.FC<MainLayoutProps> = ({}) => {
   const location = useLocation()
-  const {selectedNetworkType} = useBlockchainContext()
+  const { selectedNetworkType } = useBlockchainContext()
 
   const TESTNET_NAVIGATION_ITEMS = [
     {
@@ -32,7 +32,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({}) => {
     },
     {
       name: 'explorer',
-      navigateTo: 'https://testnet.game7.io/',
+      navigateTo: selectedNetworkType === 'Testnet' ? `https://testnet.game7.io/` : `https://mainnet.game7.io`,
       icon: <IconExplorer stroke={'#B9B9B9'} />
     },
     {
@@ -43,7 +43,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({}) => {
   ]
 
   const MAINNET_NAVIGATION_ITEMS = TESTNET_NAVIGATION_ITEMS.slice(1, TESTNET_NAVIGATION_ITEMS.length)
-  const NAVIGATION_ITEMS = selectedNetworkType === "Mainnet" ? MAINNET_NAVIGATION_ITEMS : TESTNET_NAVIGATION_ITEMS
+  const NAVIGATION_ITEMS = selectedNetworkType === 'Mainnet' ? MAINNET_NAVIGATION_ITEMS : TESTNET_NAVIGATION_ITEMS
   const smallView = useMediaQuery('(max-width: 1199px)')
   return (
     <div className={styles.container}>
