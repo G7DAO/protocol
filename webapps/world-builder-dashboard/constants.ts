@@ -88,7 +88,7 @@ export const L2_MAIN_NETWORK: NetworkInterface = {
 export const L3_MAIN_NETWORK: NetworkInterface = {
   chainId: 2187,
   name: 'game7',
-  displayName: 'Game7 Mainnet',
+  displayName: 'Game7 Network',
   rpcs: ['https://mainnet-rpc.game7.io'],
   blockExplorerUrls: ['https://mainnet.game7.io'],
   nativeCurrency: {
