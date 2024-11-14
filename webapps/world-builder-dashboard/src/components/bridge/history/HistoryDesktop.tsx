@@ -56,9 +56,7 @@ const mapAPIDataToTransactionRecord = (apiData: any): TransactionRecord => {
 
 const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   const { connectedAccount, selectedNetworkType } = useBlockchainContext()
-  console.log(selectedNetworkType)
   const messages = useMessages(connectedAccount, selectedNetworkType)
-  console.log(messages.data)
   const { useHistoryTransactions } = useBridgeAPI()
   const { data: apiTransactions } = useHistoryTransactions(connectedAccount)
   const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])

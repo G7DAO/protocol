@@ -138,7 +138,7 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
       return [
         {
           name: 'Game7DAO',
-          symbol: 'G7T',
+          symbol: 'G7',
           address: L1_MAIN_NETWORK.g7TokenAddress,
           Icon: IconG7T,
           tokenAddressMap: G7T_MAINNET,
@@ -173,7 +173,7 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
       return [
         {
           name: 'Game7DAO',
-          symbol: 'G7T',
+          symbol: 'G7',
           address: L2_MAIN_NETWORK.g7TokenAddress,
           Icon: IconG7T,
           tokenAddressMap: G7T_MAINNET,
@@ -208,7 +208,7 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
       return [
         {
           name: 'Game7DAO',
-          symbol: 'G7T',
+          symbol: 'G7',
           address: L3_MAIN_NETWORK.g7TokenAddress,
           Icon: IconG7T,
           tokenAddressMap: G7T_MAINNET,
