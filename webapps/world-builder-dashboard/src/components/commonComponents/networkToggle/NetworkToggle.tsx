@@ -35,7 +35,6 @@ const NetworkToggle: React.FC<NetworkToggleProps> = () => {
                 <div key={network} className={styles.dropdownOption} onClick={() => handleNetworkSelect(network)}>
                   <div className={styles.dropdownNetworkContainer}>
                     <div className={styles.dropdownNetworkInformation}>
-                      {/* <network.logo /> */}
                       <div className={styles.dropdownTestnetContainer}>
                         <div
                           className={`${styles.testnetType} ${network === 'Testnet' ? styles.testnetTypeColor : styles.mainnetTypeColor}`}

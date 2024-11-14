@@ -79,7 +79,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
             ))}
             <div className={styles.spacer} />
             {isMetaMask && connectedAccount ? (
-              <div className={parentStyles.web3AddressContainer}>
+              <div className={styles.web3AddressContainer}>
                 <div className={parentStyles.web3address}>
                   {`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}
                 </div>

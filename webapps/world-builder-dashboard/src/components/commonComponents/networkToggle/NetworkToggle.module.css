@@ -6,7 +6,8 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 8px;
-  background-color: var(--Base-White, #fff);
+  /* background-color: rgba(11, 11, 11, 0.8);
+  backdrop-filter: blur(4px); */
 }
 
 .toggle {
@@ -17,8 +18,8 @@
   gap: 8px;
   align-self: stretch;
   border-radius: 8px;
-  border: 1px solid var(--Gray-true-700, #393939);
-  background: var(--Gray-true-800, #171717);
+  /* border: 1px solid var(--Gray-true-700, #393939);
+  background: var(--Gray-true-800, #171717); */
 }
 
 .testnet {
