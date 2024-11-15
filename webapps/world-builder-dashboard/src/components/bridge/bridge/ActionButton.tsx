@@ -156,6 +156,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         } catch (e) {
           console.log(e)
         }
+        queryClient.refetchQueries(['pendingTransactions'])
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
         queryClient.refetchQueries(['pendingNotifications'])

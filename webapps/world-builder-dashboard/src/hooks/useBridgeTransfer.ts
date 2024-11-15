@@ -99,6 +99,9 @@ export const useBridgeTransfer = () => {
     )
   }
   const { switchChain, connectedAccount, selectedNetworkType } = useBlockchainContext()
+  const navigate = useNavigate()
+  const { refetchNewNotifications } = useBridgeNotificationsContext()
+  const queryClient = useQueryClient()
 
   const claim = useMutation(
     async (withdrawal: TransactionRecord | undefined) => {

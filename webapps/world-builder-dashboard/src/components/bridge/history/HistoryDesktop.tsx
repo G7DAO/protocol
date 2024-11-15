@@ -64,9 +64,10 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
 
   // Merge transations only when API data is updated with new data
   useEffect(() => {
-    const localTransactions = messages.data || []
+    const localTransactions = messages || []
     const formattedApiTransactions = apiTransactions ? apiTransactions.map(mapAPIDataToTransactionRecord) : []
     const combinedTransactions = mergeTransactions(formattedApiTransactions, localTransactions)
+
     // Retrieve existing transactions from localStorage
     const storedTransactionsString = localStorage.getItem(
       `bridge-${connectedAccount}-transactions-${selectedNetworkType}`
@@ -98,7 +99,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
       )
     }
     setMergedTransactions(combinedTransactions)
-  }, [messages.data, apiTransactions])
+  }, [messages, apiTransactions])
 
   return (
     <div className={styles.container}>
