@@ -26,11 +26,11 @@ body {
 
 .navbarContainer {
     display: flex;
-    max-width: 1920px;
+    width: 100%;
     padding: 4px 0px;
     flex-direction: column;
     align-items: center;
-    align-self: stretch;
+    align-self: stretch
 }
 
 .navbar {
