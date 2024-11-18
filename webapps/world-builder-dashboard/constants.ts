@@ -74,7 +74,7 @@ export const L2_MAIN_NETWORK: NetworkInterface = {
   name: 'arbitrumOne',
   displayName: 'Arbitrum One',
   rpcs: ['https://arb-mainnet.g.alchemy.com/v2/C-njXZM_UTlPbC2ukOvg4ojFz2V9yCS6'],
-  blockExplorerUrls: ['https://arbiscan.io/'],
+  blockExplorerUrls: ['https://arbiscan.io'],
   nativeCurrency: {
     decimals: 18,
     name: 'ETH',

@@ -55,13 +55,14 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const { claim, returnTransferData } = useBridgeTransfer()
   const [collapseExecuted, setCollapseExecuted] = useState(false)
   const [hovered, setHovered] = useState(false)
-  const transferData = useCallback(() => returnTransferData({ txRecord: withdrawal }), [withdrawal, returnTransferData])
+  const transferData = useCallback(() => returnTransferData({ txRecord: withdrawal }), [withdrawal])
   const { data: transferStatus, isLoading } = transferData()
   const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
   let transactions = transactionsString ? JSON.parse(transactionsString) : []
   const localStorageTransaction = transactions.find(
     (t: TransactionRecord) => t.type === 'WITHDRAWAL' && t.highNetworkHash === withdrawal.highNetworkHash
   )
+
   const withdrawalCompletedData = withdrawal?.lowNetworkHash ? withdrawal : localStorageTransaction
   return (
     <>
