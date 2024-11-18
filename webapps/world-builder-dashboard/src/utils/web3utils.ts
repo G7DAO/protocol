@@ -1,4 +1,4 @@
-import { getHighNetworks, getLowNetworks, HIGH_NETWORKS, LOW_NETWORKS } from '../../constants'
+import { getHighNetworks, getLowNetworks } from '../../constants'
 import { ethers } from 'ethers'
 
 export const convertToBigNumber = (numberString: string, precision = 18) => {
@@ -51,6 +51,6 @@ export const formatBigNumber = (bigNumber: ethers.BigNumber, lengthLimit = 25, u
 }
 
 export const parseUntilDelimiter = (input: any) => {
-  const match = input.match(/^[^\(\[]+/);
-  return match ? match[0] : input;
+  const match = input.match(/^[^\(\[]+/)
+  return match ? match[0] : input
 }

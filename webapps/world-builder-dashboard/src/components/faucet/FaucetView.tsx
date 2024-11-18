@@ -30,9 +30,10 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const smallView = useMediaQuery('(max-width: 1199px)')
 
   const values: AccountType[] = [`External Address`, `Connected Account`]
+  const networks = getNetworks()
 
   useEffect(() => {
-    const targetNetwork = getNetworks().find((n) => n.chainId === faucetTargetChainId)
+    const targetNetwork = networks.find((n) => n.chainId === faucetTargetChainId)
     if (targetNetwork) {
       setSelectedNetwork(targetNetwork)
     }
