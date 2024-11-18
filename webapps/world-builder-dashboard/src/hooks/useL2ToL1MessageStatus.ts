@@ -1,5 +1,5 @@
 import { useQueries, useQuery, UseQueryResult } from 'react-query'
-import { HIGH_NETWORKS, L2_NETWORK, LOW_NETWORKS } from '../../constants'
+import { getHighNetworks, getLowNetworks, L2_NETWORK } from '../../constants'
 import { ethers, providers } from 'ethers'
 import { Transaction } from 'ethers'
 import { BridgeNotification } from '@/components/notifications/NotificationsButton'
@@ -45,8 +45,8 @@ export interface L2ToL1MessageStatusResult {
 const fetchL2ToL1MessageStatus = async (withdrawal: TransactionRecord) => {
   const { lowNetworkChainId, highNetworkChainId, highNetworkHash, amount, highNetworkTimestamp } = withdrawal
 
-  const lowNetwork = LOW_NETWORKS.find((n) => n.chainId === lowNetworkChainId)
-  const highNetwork = HIGH_NETWORKS.find((n) => n.chainId === highNetworkChainId)
+  const lowNetwork = getLowNetworks().find((n) => n.chainId === lowNetworkChainId)
+  const highNetwork = getHighNetworks().find((n) => n.chainId === highNetworkChainId)
   if (!highNetwork || !lowNetwork || !highNetworkHash) {
     return undefined
   }
@@ -117,8 +117,8 @@ const fetchDepositStatus = async (deposit: TransactionRecord) => {
     }
   }
 
-  const lowNetwork = LOW_NETWORKS.find((n) => n.chainId === lowNetworkChainId)
-  const highNetwork = HIGH_NETWORKS.find((n) => n.chainId === highNetworkChainId)
+  const lowNetwork = getLowNetworks().find((n) => n.chainId === lowNetworkChainId)
+  const highNetwork = getHighNetworks().find((n) => n.chainId === highNetworkChainId)
 
   if (!lowNetwork || !lowNetworkHash) {
     return undefined

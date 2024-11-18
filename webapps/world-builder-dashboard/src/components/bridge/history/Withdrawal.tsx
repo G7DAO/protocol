@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react'
-import { HIGH_NETWORKS, LOW_NETWORKS } from '../../../../constants'
+import { getHighNetworks, getLowNetworks } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import { BridgeTransferStatus } from 'game7-bridge-sdk'
 import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
@@ -33,8 +33,8 @@ export const getStatus = (withdrawal: TransactionRecord) => {
     : claimableTimestamp
       ? ChildToParentMessageStatus.CONFIRMED
       : ChildToParentMessageStatus.UNCONFIRMED
-  const lowNetwork = LOW_NETWORKS.find((n) => n.chainId === lowNetworkChainId)
-  const highNetwork = HIGH_NETWORKS.find((n) => n.chainId === highNetworkChainId)
+  const lowNetwork = getLowNetworks().find((n) => n.chainId === lowNetworkChainId)
+  const highNetwork = getHighNetworks().find((n) => n.chainId === highNetworkChainId)
   if (lowNetwork && highNetwork) {
     const data = {
       status,

@@ -1,5 +1,5 @@
 import React from 'react'
-import { HIGH_NETWORKS, LOW_NETWORKS } from '../../../../constants'
+import { getHighNetworks, getLowNetworks } from '../../../../constants'
 import DepositMobile from './DepositMobile'
 import styles from './WithdrawTransactions.module.css'
 import { BridgeTransferStatus } from 'game7-bridge-sdk'
@@ -18,8 +18,8 @@ interface DepositProps {
 }
 const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   const depositInfo = {
-    from: LOW_NETWORKS.find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
-    to: HIGH_NETWORKS.find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
+    from: getLowNetworks().find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
+    to: getHighNetworks().find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
   }
   const smallView = useMediaQuery('(max-width: 1199px)')
   const { returnTransferData } = useBridgeTransfer()

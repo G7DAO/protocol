@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { HIGH_NETWORKS, LOW_NETWORKS } from '../../../../constants'
+import { getHighNetworks, getLowNetworks} from '../../../../constants'
 import styles from './DepositMobile.module.css'
 import parentStyles from './WithdrawTransactions.module.css'
 import { BridgeTransferStatus } from 'game7-bridge-sdk'
@@ -19,8 +19,8 @@ const DepositMobile: React.FC<DepositMobileProps> = ({ deposit, transferStatus, 
   const [isCollapsed, setIsCollapsed] = useState(true)
   const status = useDepositStatus(deposit)
   const depositInfo = {
-    from: LOW_NETWORKS.find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
-    to: HIGH_NETWORKS.find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
+    from: getLowNetworks().find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
+    to: getHighNetworks().find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
   }
   const smallView = useMediaQuery('(max-width: 1199px)')
 

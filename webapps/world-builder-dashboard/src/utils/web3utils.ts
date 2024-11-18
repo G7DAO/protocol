@@ -1,4 +1,4 @@
-import { HIGH_NETWORKS, LOW_NETWORKS } from '../../constants'
+import { getHighNetworks, getLowNetworks, HIGH_NETWORKS, LOW_NETWORKS } from '../../constants'
 import { ethers } from 'ethers'
 
 export const convertToBigNumber = (numberString: string, precision = 18) => {
@@ -9,7 +9,7 @@ export const convertToBigNumber = (numberString: string, precision = 18) => {
 }
 
 export const getBlockExplorerUrl = (chainId: number | undefined) => {
-  const network = [...LOW_NETWORKS, ...HIGH_NETWORKS].find((n) => n.chainId === chainId)
+  const network = [...getLowNetworks(), ...getHighNetworks()].find((n) => n.chainId === chainId)
   if (network?.blockExplorerUrls) {
     return network.blockExplorerUrls[0]
   }
@@ -17,7 +17,7 @@ export const getBlockExplorerUrl = (chainId: number | undefined) => {
 }
 
 export const getNetwork = (chainId: number) => {
-  return [...LOW_NETWORKS, ...HIGH_NETWORKS].find((n) => n.chainId === chainId)
+  return [...getLowNetworks(), ...getHighNetworks()].find((n) => n.chainId === chainId)
 }
 
 export const tokenTypes = [

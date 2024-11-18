@@ -56,7 +56,7 @@ const mapAPIDataToTransactionRecord = (apiData: any): TransactionRecord => {
 
 const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   const { connectedAccount, selectedNetworkType } = useBlockchainContext()
-  const messages = useMessages(connectedAccount, selectedNetworkType)
+  const {data: messages} = useMessages(connectedAccount, selectedNetworkType)
   const { useHistoryTransactions } = useBridgeAPI()
   const { data: apiTransactions } = useHistoryTransactions(connectedAccount)
   const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])
@@ -98,7 +98,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
         JSON.stringify([...storedTransactions, ...newTransactions])
       )
     }
-    setMergedTransactions(combinedTransactions)
+    setMergedTransactions(selectedNetworkType === "Testnet" ? combinedTransactions : localTransactions)
   }, [messages, apiTransactions])
 
   return (
