@@ -57,7 +57,7 @@ const TokenSelector = ({ tokens, onChange, selectedToken }: TokenSelectorProps) 
             const isChainIdValid = chainIds.includes(highNetworkChainId) && chainIds.includes(lowNetworkChainId)
             if (!isChainIdValid) return
             return (
-              <Combobox.Option value={String(n.address)} key={n.address} disabled={!isChainIdValid}>
+              <Combobox.Option value={String(n.address)} key={n.address}>
                 <Group>
                   <div
                     className={
