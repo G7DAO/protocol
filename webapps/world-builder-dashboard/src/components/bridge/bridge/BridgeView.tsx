@@ -39,7 +39,6 @@ const BridgeView = ({
   const [networkErrorMessage, setNetworkErrorMessage] = useState('')
   const { isMessagingEnabled } = useUISettings()
   const { useUSDPriceOfToken } = useCoinGeckoAPI()
-  const g7tUsdRate = useQuery(['rate'], () => 2501.32)
   const {
     connectedAccount,
     selectedLowNetwork,
