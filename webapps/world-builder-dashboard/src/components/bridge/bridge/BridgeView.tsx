@@ -244,9 +244,21 @@ const BridgeView = ({
         fee={Number(estimatedFee.data ?? 0)}
         isEstimatingFee={estimatedFee.isFetching}
         value={Number(value)}
-        ethRate={coinUSDRate ?? 0}
+        ethRate={
+          selectedBridgeToken.symbol === 'TG7T'
+            ? 1
+            : isCoinFetching
+              ? 0.0
+              : coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd
+        }
         tokenSymbol={tokenInformation?.symbol ?? ''}
-        tokenRate={g7tUsdRate.data ?? 0}
+        tokenRate={
+          selectedBridgeToken.symbol === 'TG7T'
+            ? 1
+            : isCoinFetching
+              ? 0.0
+              : coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd
+        }
         gasTokenSymbol={
           direction === 'DEPOSIT'
             ? (selectedLowNetwork?.nativeCurrency?.symbol ?? '')
