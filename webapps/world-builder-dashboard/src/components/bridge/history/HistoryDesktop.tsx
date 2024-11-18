@@ -13,7 +13,7 @@ import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 
 interface HistoryDesktopProps {}
 
-const mergeTransactions = (localData: TransactionRecord[], apiData: TransactionRecord[]): TransactionRecord[] => {
+const mergeTransactions = (apiData: TransactionRecord[], localData: TransactionRecord[]): TransactionRecord[] => {
   const combinedData = new Map<string, TransactionRecord>()
 
   localData.forEach((localTx) => {
@@ -32,7 +32,8 @@ const mergeTransactions = (localData: TransactionRecord[], apiData: TransactionR
     }
   })
 
-  return Array.from(combinedData.values())
+  const combinedDataArray = Array.from(combinedData.values())
+  return combinedDataArray
 }
 
 // Maps API data to the TransactionRecord format
