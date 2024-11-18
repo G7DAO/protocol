@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { ALL_TESTNET_NETWORKS, FAUCET_CHAIN, L3_NATIVE_TOKEN_SYMBOL, L3_NETWORK } from '../../../constants'
+import { FAUCET_CHAIN, getNetworks, L3_NATIVE_TOKEN_SYMBOL, L3_NETWORK } from '../../../constants'
 import { AccountType } from '../commonComponents/accountSelector/AccountSelector'
 import AccountSelector from '../commonComponents/accountSelector/AccountSelector'
 import styles from './FaucetView.module.css'
@@ -32,7 +32,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const values: AccountType[] = [`External Address`, `Connected Account`]
 
   useEffect(() => {
-    const targetNetwork = ALL_TESTNET_NETWORKS.find((n) => n.chainId === faucetTargetChainId)
+    const targetNetwork = getNetworks().find((n) => n.chainId === faucetTargetChainId)
     if (targetNetwork) {
       setSelectedNetwork(targetNetwork)
     }

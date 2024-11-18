@@ -3,7 +3,7 @@ import React from 'react'
 import { useMutation, useQueryClient } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 // Constants
-import { ALL_TESTNET_NETWORKS, USDC } from '../../../../constants'
+import { getNetworks, USDC } from '../../../../constants'
 // Styles
 import styles from './ActionButton.module.css'
 import { ethers } from 'ethers'
@@ -21,6 +21,7 @@ interface ActionButtonProps {
   setErrorMessage: (arg0: string) => void
   bridger?: Bridger
   symbol?: string
+  decimals?: number
 }
 const ActionButton: React.FC<ActionButtonProps> = ({
   direction,
@@ -29,7 +30,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   setErrorMessage,
   L2L3message,
   bridger,
-  symbol
+  symbol,
+  decimals
 }) => {
   const {
     connectedAccount,
@@ -44,6 +46,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const navigate = useNavigate()
+  const networks = getNetworks()
 
   const getLabel = (): String | undefined => {
     if (isConnecting) {
@@ -78,28 +81,20 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   const queryClient = useQueryClient()
   const transfer = useMutation(
     async (amount: string) => {
-      const network = ALL_TESTNET_NETWORKS.find((n) => n.chainId === bridger?.originNetwork.chainId)!
+      const network = networks.find((n) => n.chainId === bridger?.originNetwork.chainId)!
       const provider = await getProvider(network)
       const signer = provider.getSigner()
       const destinationRPC = direction === 'DEPOSIT' ? selectedHighNetwork.rpcs[0] : selectedLowNetwork.rpcs[0]
       const destinationProvider = new ethers.providers.JsonRpcProvider(destinationRPC) as ethers.providers.Provider
 
       // Amount to send variable parsed to correct decimal places depending on the token
-      let amountToSend
-      const bridgeToken = bridger?.token
-
-      // if usdc, parse to 6 decimal places
-      if (bridgeToken === USDC) amountToSend = ethers.utils.parseUnits(amount, 6)
-      else amountToSend = ethers.utils.parseUnits(amount)
+      const amountToSend = ethers.utils.parseUnits(amount, decimals)
 
       // If deposit
       if (bridger?.isDeposit) {
         if (selectedBridgeToken.address != ZERO_ADDRESS) {
           const allowance = (await bridger?.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount ?? '')) ?? ''
-          let allowanceToCheck
-
-          if (bridgeToken === USDC) allowanceToCheck = ethers.utils.formatUnits(allowance, 6)
-          else allowanceToCheck = ethers.utils.formatEther(allowance)
+          const allowanceToCheck = ethers.utils.formatUnits(allowance, decimals)
 
           // approve first
           if (Number(allowanceToCheck) < Number(amount)) {

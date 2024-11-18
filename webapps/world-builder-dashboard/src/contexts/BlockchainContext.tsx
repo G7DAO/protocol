@@ -219,6 +219,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     try {
       const provider = new ethers.providers.Web3Provider(ethereum, 'any')
       const currentChain = await provider.getNetwork()
+      console.log(currentChain)
       if (currentChain.chainId !== chain.chainId) {
         const hexChainId = ethers.utils.hexStripZeros(ethers.utils.hexlify(chain.chainId))
         try {

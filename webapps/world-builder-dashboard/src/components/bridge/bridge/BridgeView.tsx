@@ -2,8 +2,8 @@
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import {
-  ALL_TESTNET_NETWORKS,
   DEFAULT_STAKE_NATIVE_POOL_ID,
+  getNetworks,
   L1_MAIN_NETWORK,
   L1_NETWORK,
   L2_MAIN_NETWORK,
@@ -65,16 +65,20 @@ const BridgeView = ({
     token: selectedBridgeToken
   })
 
+  console.log(tokenInformation)
+
   const { data: coinUSDRate, isFetching: isCoinFetching } = useUSDPriceOfToken(selectedBridgeToken.geckoId ?? '')
   const handleTokenChange = async (token: Token) => {
     setSelectedBridgeToken(token)
   }
 
+  const networks = getNetworks()
+
   const estimatedFee = useQuery(
     ['estimatedFee', bridger, connectedAccount, value],
     async () => {
       try {
-        const originNetwork = ALL_TESTNET_NETWORKS.find((n) => n.chainId === bridger?.originNetwork.chainId)
+        const originNetwork = networks.find((n) => n.chainId === bridger?.originNetwork.chainId)
         if (!originNetwork) throw new Error("Can't find network!")
 
         const allowance = await bridger?.getAllowance(originNetwork.rpcs[0], connectedAccount ?? '')
@@ -277,6 +281,7 @@ const BridgeView = ({
         L2L3message={isMessageExpanded ? message : { data: '', destination: '' }}
         bridger={bridger}
         symbol={tokenInformation?.symbol ?? ''}
+        decimals={tokenInformation?.decimalPlaces ?? 18}
       />
     </div>
   )

@@ -21,7 +21,7 @@ const mergeTransactions = (localData: TransactionRecord[], apiData: TransactionR
     combinedData.set(hashKey, localTx)
   })
 
-  apiData.forEach((tx) => {
+  apiData?.forEach((tx) => {
     const hashKey = tx.type === 'DEPOSIT' ? (tx.lowNetworkHash ?? '') : (tx.highNetworkHash ?? '')
     if (combinedData.has(hashKey)) {
       const localTx = combinedData.get(hashKey)
