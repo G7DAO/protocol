@@ -108,7 +108,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, claim, 
       <div className={styles.dataRow}>
         <div className={styles.dataText}>Status</div>
         {transferStatus?.status === ChildToParentMessageStatus.CONFIRMED && (
-          <button className={parentStyles.claimButton} onClick={() => claim.mutate(status.data.highNetworkHash)}>
+          <button className={parentStyles.claimButton} onClick={() => claim.mutate(withdrawal)}>
             {claim.isLoading && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}
           </button>
         )}

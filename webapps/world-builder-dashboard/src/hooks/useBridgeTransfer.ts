@@ -121,6 +121,8 @@ export const useBridgeTransfer = () => {
       }
       const signer = provider.getSigner()
 
+      console.log(withdrawal)
+
       // Bridge Transfer execute
       const _bridgeTransfer = new BridgeTransfer({
         txHash: withdrawal.highNetworkHash || '',
