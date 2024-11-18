@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import { HIGH_NETWORKS, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
-import { BridgeTransferStatus } from 'game7-bridge-sdk'
 import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import IconWithdrawalNodeCompleted from '@/assets/IconWithdrawalNodeCompleted'
@@ -98,7 +97,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                 </>
               ) : (
                 <>
-                  {transferStatus && transferStatus?.status === BridgeTransferStatus.WITHDRAW_EXECUTED && (
+                  {status?.data && status.data.status === ChildToParentMessageStatus.EXECUTED && (
                     <>
                       <div
                         className={styles.gridItem}
@@ -256,7 +255,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       )}
                     </>
                   )}
-                  {transferStatus && transferStatus.status != BridgeTransferStatus.WITHDRAW_EXECUTED && (
+                  {status?.data && status.data.status !== ChildToParentMessageStatus.EXECUTED && (
                     <>
                       <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
                         <div className={styles.typeWithdrawal}>
@@ -270,7 +269,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       >{`${status?.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
                       <div className={styles.gridItem}>{status?.data?.from ?? ''}</div>
                       <div className={styles.gridItem}>{status?.data?.to ?? ''}</div>
-                      {transferStatus && transferStatus.status === BridgeTransferStatus.WITHDRAW_CONFIRMED && (
+                      {status?.data && status.data.status === ChildToParentMessageStatus.CONFIRMED && (
                         <>
                           <div className={styles.gridItem}>
                             <a
@@ -291,7 +290,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           </div>
                         </>
                       )}
-                      {transferStatus && transferStatus.status === BridgeTransferStatus.WITHDRAW_UNCONFIRMED && (
+                      {status?.data && status.data.status === ChildToParentMessageStatus.UNCONFIRMED && (
                         <>
                           <div className={styles.gridItem}>
                             <a

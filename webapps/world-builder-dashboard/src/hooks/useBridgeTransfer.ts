@@ -86,6 +86,7 @@ export const useBridgeTransfer = () => {
             return { status }
           }
         },
+        staleTime: 2 * 60 * 1000,
         refetchInterval: shouldFetchStatus(getCachedTransactions().find((t: any) => t.txHash === txHash))
           ? 5 * 60 * 1000
           : false, 

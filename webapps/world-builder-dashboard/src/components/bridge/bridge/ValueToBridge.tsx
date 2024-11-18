@@ -42,7 +42,6 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   const { connectedAccount, selectedBridgeToken } = useBlockchainContext()
 
   const getTokens = async () => {
-    console.log(selectedBridgeToken)
     const _tokens = getTokensForNetwork(selectedChainId, connectedAccount)
     handleTokenChange(_tokens.find((token) => token.name === selectedBridgeToken.name) || _tokens[0])
     setTokens(_tokens)
