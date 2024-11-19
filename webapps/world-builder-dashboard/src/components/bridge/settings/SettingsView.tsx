@@ -4,16 +4,21 @@ import { L3_NATIVE_TOKEN_SYMBOL, L3_NETWORK } from '../../../../constants'
 import styles from './SettingsView.module.css'
 import IconG7tLarge from '@/assets/IconG7tLarge'
 import MessagingSettings from '@/components/bridge/settings/MessagingSettings'
-import { NetworkInterface } from '@/contexts/BlockchainContext'
+import { NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useUISettings } from '@/contexts/UISettingsContext'
 
 interface SettingsViewProps {}
 const SettingsView: React.FC<SettingsViewProps> = ({}) => {
   const { setFaucetTargetChainId } = useUISettings()
+  const { selectedNetworkType } = useBlockchainContext()
   const navigate = useNavigate()
   const handleClick = (network: NetworkInterface) => {
     setFaucetTargetChainId(network.chainId)
     navigate('/faucet')
+  }
+
+  if (selectedNetworkType === 'Mainnet') {
+    navigate('/bridge')
   }
 
   return (

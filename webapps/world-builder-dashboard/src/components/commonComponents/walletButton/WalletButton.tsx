@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ALL_NETWORKS, L3_NETWORK } from '../../../../constants'
+import { getNetworks, L3_NETWORK } from '../../../../constants'
 import TokenRow from '../tokenRow/TokenRow'
 import styles from './WalletButton.module.css'
 import { Modal } from 'summon-ui/mantine'
@@ -14,14 +14,14 @@ interface WalletButtonProps { }
 const WalletButton: React.FC<WalletButtonProps> = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [tokens, setTokens] = useState<Token[]>([])
-  const { connectedAccount, chainId } = useBlockchainContext()
+  const { connectedAccount, chainId, selectedNetworkType } = useBlockchainContext()
   const handleModalClose = () => {
     setIsModalOpen(false)
   }
 
   const { data: nativeBalance } = useNativeBalance({
     account: connectedAccount,
-    rpc: ALL_NETWORKS.find((network) => network.chainId === chainId)?.rpcs[0] || L3_NETWORK.rpcs[0]
+    rpc: getNetworks(selectedNetworkType).find((network) => network.chainId === chainId)?.rpcs[0] || L3_NETWORK.rpcs[0]
   })
 
   const getTokens = async () => {
@@ -45,7 +45,7 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
           <IconWallet04 />
           <div className={styles.balance}>
             {nativeBalance
-              ? `${Number(nativeBalance).toFixed(4)} ${ALL_NETWORKS.find((network) => network.chainId === chainId)?.nativeCurrency?.symbol}`
+              ? `${Number(nativeBalance).toFixed(4)} ${getNetworks(selectedNetworkType).find((network) => network.chainId === chainId)?.nativeCurrency?.symbol}`
               : 'Fetching...'}
           </div>
         </div>

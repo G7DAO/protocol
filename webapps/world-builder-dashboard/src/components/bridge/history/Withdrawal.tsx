@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import { HIGH_NETWORKS, LOW_NETWORKS } from '../../../../constants'
+import { getHighNetworks, getLowNetworks } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import IconWithdrawalNodeCompleted from '@/assets/IconWithdrawalNodeCompleted'
 import WithdrawalMobile from '@/components/bridge/history/WithdrawalMobile'
-import { useBlockchainContext } from '@/contexts/BlockchainContext'
+import { NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeTransfer } from '@/hooks/useBridgeTransfer'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
@@ -18,7 +18,11 @@ interface WithdrawalProps {
   withdrawal: TransactionRecord
 }
 
-export const getStatus = (withdrawal: TransactionRecord) => {
+export const getStatus = (
+  withdrawal: TransactionRecord,
+  lowNetworks: NetworkInterface[],
+  highNetworks: NetworkInterface[]
+) => {
   const {
     completionTimestamp,
     claimableTimestamp,
@@ -33,8 +37,8 @@ export const getStatus = (withdrawal: TransactionRecord) => {
     : claimableTimestamp
       ? ChildToParentMessageStatus.CONFIRMED
       : ChildToParentMessageStatus.UNCONFIRMED
-  const lowNetwork = LOW_NETWORKS.find((n) => n.chainId === lowNetworkChainId)
-  const highNetwork = HIGH_NETWORKS.find((n) => n.chainId === highNetworkChainId)
+  const lowNetwork = lowNetworks.find((n) => n.chainId === lowNetworkChainId)
+  const highNetwork = highNetworks.find((n) => n.chainId === highNetworkChainId)
   if (lowNetwork && highNetwork) {
     const data = {
       status,
@@ -49,12 +53,14 @@ export const getStatus = (withdrawal: TransactionRecord) => {
   }
 }
 const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
-  const status = getStatus(withdrawal)
-  const { connectedAccount } = useBlockchainContext()
+  const { connectedAccount, selectedNetworkType } = useBlockchainContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
   const { claim } = useBridgeTransfer()
   const [collapseExecuted, setCollapseExecuted] = useState(false)
   const [hovered, setHovered] = useState(false)
+  const lowNetworks = getLowNetworks(selectedNetworkType)
+  const highNetworks = getHighNetworks(selectedNetworkType)
+  const status = getStatus(withdrawal, lowNetworks, highNetworks)
   const tokenInformation = getTokensForNetwork(withdrawal?.highNetworkChainId, connectedAccount).find(
     (token) => token.address === withdrawal?.tokenAddress
   )
@@ -67,7 +73,12 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
       ) : (
         <>
           {smallView ? (
-            <WithdrawalMobile withdrawal={withdrawal} claim={claim} status={status} />
+            <WithdrawalMobile
+              withdrawal={withdrawal}
+              claim={claim}
+              status={status}
+              selectedNetworkType={selectedNetworkType}
+            />
           ) : (
             <>
               {status?.isLoading || status?.data === undefined ? (
@@ -169,7 +180,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         onMouseLeave={() => setHovered(false)}
                       >
                         <a
-                          href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
+                          href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId, selectedNetworkType)}/tx/${withdrawal.lowNetworkHash}`}
                           target={'_blank'}
                           className={styles.explorerLink}
                         >
@@ -204,7 +215,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           <div className={styles.gridItemInitiate}>{status?.data?.to ?? ''}</div>
                           <div className={styles.gridItemInitiate}>
                             <a
-                              href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
+                              href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId, selectedNetworkType)}/tx/${withdrawal.highNetworkHash}`}
                               target={'_blank'}
                               className={styles.explorerLink}
                             >
@@ -228,7 +239,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           <div className={styles.gridItemInitiate}>{status?.data?.to ?? ''}</div>
                           <div className={styles.gridItemInitiate}>
                             <a
-                              href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
+                              href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId, selectedNetworkType)}/tx/${withdrawal.lowNetworkHash}`}
                               target={'_blank'}
                               className={styles.explorerLink}
                             >
@@ -263,7 +274,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         <>
                           <div className={styles.gridItem}>
                             <a
-                              href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
+                              href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId, selectedNetworkType)}/tx/${withdrawal.highNetworkHash}`}
                               target={'_blank'}
                               className={styles.explorerLink}
                             >
@@ -284,7 +295,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         <>
                           <div className={styles.gridItem}>
                             <a
-                              href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
+                              href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId, selectedNetworkType)}/tx/${withdrawal.highNetworkHash}`}
                               target={'_blank'}
                               className={styles.explorerLink}
                             >

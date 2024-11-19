@@ -1,4 +1,17 @@
-import { ETH, L1_NETWORK, L2_NETWORK, L3_NETWORK, TG7T, USDC } from '../../constants'
+import {
+  ETH,
+  ETH_MAINNET,
+  G7T_MAINNET,
+  L1_MAIN_NETWORK,
+  L1_NETWORK,
+  L2_MAIN_NETWORK,
+  L2_NETWORK,
+  L3_MAIN_NETWORK,
+  L3_NETWORK,
+  TG7T,
+  USDC,
+  USDC_MAINNET
+} from '../../constants'
 import { ZERO_ADDRESS } from './web3utils'
 import { TokenAddressMap } from 'game7-bridge-sdk'
 import IconEthereum from '@/assets/IconEthereum'
@@ -94,7 +107,7 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           decimals: 6,
           geckoId: 'usd-coin'
         },
-      ...storedTokensWithItems
+        ...storedTokensWithItems
       ]
     case L3_NETWORK.chainId:
       return [
@@ -116,6 +129,101 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           rpc: L3_NETWORK.rpcs[0],
           tokenAddressMap: USDC,
           chainId: L3_NETWORK.chainId,
+          decimals: 6,
+          geckoId: 'usd-coin'
+        },
+        ...storedTokensWithItems
+      ]
+    case L1_MAIN_NETWORK.chainId:
+      return [
+        {
+          name: 'Game7DAO',
+          symbol: 'G7',
+          address: L1_MAIN_NETWORK.g7TokenAddress,
+          Icon: IconG7T,
+          tokenAddressMap: G7T_MAINNET,
+          rpc: L1_MAIN_NETWORK.rpcs[0],
+          chainId: L1_MAIN_NETWORK.chainId,
+          geckoId: 'G7T'
+        },
+        {
+          name: 'Ethereum',
+          symbol: 'ETH',
+          address: ZERO_ADDRESS,
+          Icon: IconEthereum,
+          rpc: L1_MAIN_NETWORK.rpcs[0],
+          tokenAddressMap: ETH_MAINNET,
+          chainId: L1_MAIN_NETWORK.chainId,
+          geckoId: 'ethereum'
+        },
+        {
+          name: 'USDC',
+          symbol: 'USDC',
+          address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+          Icon: IconUSDC,
+          rpc: L1_MAIN_NETWORK.rpcs[0],
+          tokenAddressMap: USDC_MAINNET,
+          chainId: L1_MAIN_NETWORK.chainId,
+          decimals: 6,
+          geckoId: 'usd-coin'
+        },
+        ...storedTokensWithItems
+      ]
+    case L2_MAIN_NETWORK.chainId:
+      return [
+        {
+          name: 'Game7DAO',
+          symbol: 'G7',
+          address: L2_MAIN_NETWORK.g7TokenAddress,
+          Icon: IconG7T,
+          tokenAddressMap: G7T_MAINNET,
+          rpc: L2_MAIN_NETWORK.rpcs[0],
+          chainId: L2_MAIN_NETWORK.chainId,
+          geckoId: 'G7T'
+        },
+        {
+          name: 'Ethereum',
+          symbol: 'ETH',
+          address: ZERO_ADDRESS,
+          Icon: IconEthereum,
+          rpc: L2_MAIN_NETWORK.rpcs[0],
+          tokenAddressMap: ETH_MAINNET,
+          chainId: L2_MAIN_NETWORK.chainId,
+          geckoId: 'ethereum'
+        },
+        {
+          name: 'USDC',
+          symbol: 'USDC',
+          address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+          Icon: IconUSDC,
+          rpc: L2_MAIN_NETWORK.rpcs[0],
+          tokenAddressMap: USDC_MAINNET,
+          chainId: L2_MAIN_NETWORK.chainId,
+          decimals: 6,
+          geckoId: 'usd-coin'
+        },
+        ...storedTokensWithItems
+      ]
+    case L3_MAIN_NETWORK.chainId:
+      return [
+        {
+          name: 'Game7DAO',
+          symbol: 'G7',
+          address: L3_MAIN_NETWORK.g7TokenAddress,
+          Icon: IconG7T,
+          tokenAddressMap: G7T_MAINNET,
+          rpc: L3_MAIN_NETWORK.rpcs[0],
+          chainId: L3_MAIN_NETWORK.chainId,
+          geckoId: 'G7T'
+        },
+        {
+          name: 'USDC',
+          symbol: 'USDC',
+          address: '0x401eCb1D350407f13ba348573E5630B83638E30D',
+          Icon: IconUSDC,
+          rpc: L3_MAIN_NETWORK.rpcs[0],
+          tokenAddressMap: USDC_MAINNET,
+          chainId: L3_MAIN_NETWORK.chainId,
           decimals: 6,
           geckoId: 'usd-coin'
         },

@@ -7,13 +7,15 @@ import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 import { ChildToParentMessageStatus } from '@arbitrum/sdk'
+import { NetworkType } from '@/contexts/BlockchainContext'
 
 interface WithdrawalMobileProps {
   withdrawal: TransactionRecord
   claim: any
   status: any
+  selectedNetworkType: NetworkType
 }
-const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, claim, status }) => {
+const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, claim, status, selectedNetworkType }) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
 
   return (
@@ -28,7 +30,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, claim, 
             <div className={styles.dataText}>Transaction</div>
             {status?.status === ChildToParentMessageStatus.EXECUTED && (
               <a
-                href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
+                href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId, selectedNetworkType)}/tx/${withdrawal.lowNetworkHash}`}
                 target={'_blank'}
                 className={parentStyles.explorerLink}
               >
@@ -40,7 +42,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, claim, 
             )}
             {status?.status === ChildToParentMessageStatus.CONFIRMED && (
               <a
-                href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
+                href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId, selectedNetworkType)}/tx/${withdrawal.highNetworkHash}`}
                 target={'_blank'}
                 className={parentStyles.explorerLink}
               >
@@ -52,7 +54,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, claim, 
             )}
             {status?.status === ChildToParentMessageStatus.UNCONFIRMED && (
               <a
-                href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
+                href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId, selectedNetworkType)}/tx/${withdrawal.highNetworkHash}`}
                 target={'_blank'}
                 className={parentStyles.explorerLink}
               >
@@ -69,7 +71,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, claim, 
               <div className={styles.dataRowCompleted}>
                 <div className={styles.dataText}>Initiate</div>
                 <a
-                  href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
+                  href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId, selectedNetworkType)}/tx/${withdrawal.highNetworkHash}`}
                   target={'_blank'}
                   className={parentStyles.explorerLink}
                 >
@@ -82,7 +84,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, claim, 
               <div className={styles.dataRowCompleted}>
                 <div className={styles.dataText}>Finalize</div>
                 <a
-                  href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
+                  href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId,selectedNetworkType)}/tx/${withdrawal.lowNetworkHash}`}
                   target={'_blank'}
                   className={parentStyles.explorerLink}
                 >

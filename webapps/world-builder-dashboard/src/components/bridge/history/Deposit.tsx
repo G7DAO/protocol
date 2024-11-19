@@ -1,5 +1,5 @@
 import React from 'react'
-import { HIGH_NETWORKS, LOW_NETWORKS } from '../../../../constants'
+import { getHighNetworks, getLowNetworks } from '../../../../constants'
 import DepositMobile from './DepositMobile'
 import styles from './WithdrawTransactions.module.css'
 import { useMediaQuery } from 'summon-ui/mantine'
@@ -16,16 +16,16 @@ interface DepositProps {
   deposit: TransactionRecord
 }
 const Deposit: React.FC<DepositProps> = ({ deposit }) => {
-  const depositInfo = {
-    from: LOW_NETWORKS.find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
-    to: HIGH_NETWORKS.find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
-  }
+  const { connectedAccount, selectedNetworkType } = useBlockchainContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
-  const { connectedAccount } = useBlockchainContext()
+  const { data: status, isLoading: isLoadingStatus } = useDepositStatus(deposit, selectedNetworkType)
+  const depositInfo = {
+    from: getLowNetworks(selectedNetworkType).find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
+    to: getHighNetworks(selectedNetworkType).find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
+  }
   const tokenInformation = getTokensForNetwork(deposit?.lowNetworkChainId, connectedAccount).find(
     (token) => token.address === deposit?.tokenAddress
   )
-  const { data: status, isLoading: isLoadingStatus } = useDepositStatus(deposit)
   return (
     <>
       {isLoadingStatus && smallView ? (
@@ -35,7 +35,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
       ) : (
         <>
           {smallView ? (
-            <DepositMobile deposit={deposit} isLoading={isLoadingStatus} />
+            <DepositMobile deposit={deposit} isLoading={isLoadingStatus} selectedNetworkType={selectedNetworkType} />
           ) : (
             <>
               <div className={styles.gridItem}>
@@ -62,7 +62,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
               ) : (
                 <>
                   <a
-                    href={`${getBlockExplorerUrl(deposit.lowNetworkChainId)}/tx/${deposit.lowNetworkHash}`}
+                    href={`${getBlockExplorerUrl(deposit.lowNetworkChainId, selectedNetworkType)}/tx/${deposit.lowNetworkHash}`}
                     target={'_blank'}
                     className={styles.explorerLink}
                   >

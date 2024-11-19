@@ -1,0 +1,113 @@
+.container {
+  cursor: pointer;
+  display: flex;
+  width: 100%;
+  padding: 0px 24px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  /* background-color: rgba(11, 11, 11, 0.8);
+  backdrop-filter: blur(4px); */
+}
+
+.toggle {
+  position: relative;
+  display: flex;
+  padding: 10px 12px;
+  align-items: center;
+  gap: 8px;
+  align-self: stretch;
+  border-radius: 8px;
+  /* border: 1px solid var(--Gray-true-700, #393939);
+  background: var(--Gray-true-800, #171717); */
+}
+
+.testnet {
+  box-shadow: 0px 0px 10px 2px rgba(179, 184, 219, 0.6) inset;
+}
+
+.mainnet {
+  box-shadow: 0px 0px 10px 2px rgba(253, 162, 155, 0.6) inset;
+}
+
+.testnetContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1 0 0;
+}
+
+.testnetName {
+  color: #fff;
+  /* Text sm/Medium */
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px; /* 142.857% */
+}
+
+.testnetType {
+  /* Text sm/Regular */
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 142.857% */
+}
+
+.testnetTypeColor {
+  color: #b3b8db;
+}
+
+.mainnetTypeColor {
+  color: #fe7071;
+}
+
+.dropdownContainer {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  display: flex;
+  padding: 4px 0px;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1 0 0;
+  align-self: stretch;
+  border-radius: 8px;
+  border: 1px solid var(--Gray-true-700, #393939);
+  background: #171717;
+  z-index: 1;
+}
+
+.dropdownOption {
+  display: flex;
+  padding: 2px 6px;
+  align-items: center;
+  align-self: stretch;
+}
+
+.dropdownNetworkContainer {
+  display: flex;
+  padding: 10px 10px 10px 8px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  flex: 1 0 0;
+  border-radius: 6px;
+}
+
+.dropdownNetworkInformation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  align-self: stretch;
+}
+
+.dropdownTestnetContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1 0 0;
+}

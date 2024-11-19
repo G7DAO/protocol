@@ -1,5 +1,6 @@
-import { HIGH_NETWORKS, LOW_NETWORKS } from '../../constants'
+import { getHighNetworks, getLowNetworks } from '../../constants'
 import { ethers } from 'ethers'
+import { NetworkType } from '@/contexts/BlockchainContext'
 
 export const convertToBigNumber = (numberString: string, precision = 18) => {
   const [integerPart, decimalPart] = numberString.split('.')
@@ -8,16 +9,19 @@ export const convertToBigNumber = (numberString: string, precision = 18) => {
   return ethers.BigNumber.from(bigNumberString)
 }
 
-export const getBlockExplorerUrl = (chainId: number | undefined) => {
-  const network = [...LOW_NETWORKS, ...HIGH_NETWORKS].find((n) => n.chainId === chainId)
+export const getBlockExplorerUrl = (chainId: number | undefined, selectedNetworkType: NetworkType) => {
+  const network = [...getLowNetworks(selectedNetworkType), ...getHighNetworks(selectedNetworkType)].find(
+    (n) => n.chainId === chainId
+  )
   if (network?.blockExplorerUrls) {
     return network.blockExplorerUrls[0]
   }
-  console.log(network)
 }
 
-export const getNetwork = (chainId: number) => {
-  return [...LOW_NETWORKS, ...HIGH_NETWORKS].find((n) => n.chainId === chainId)
+export const getNetwork = (chainId: number, selectedNetworkType: NetworkType) => {
+  return [...getLowNetworks(selectedNetworkType), ...getHighNetworks(selectedNetworkType)].find(
+    (n) => n.chainId === chainId
+  )
 }
 
 export const tokenTypes = [
@@ -51,6 +55,6 @@ export const formatBigNumber = (bigNumber: ethers.BigNumber, lengthLimit = 25, u
 }
 
 export const parseUntilDelimiter = (input: any) => {
-  const match = input.match(/^[^\(\[]+/);
-  return match ? match[0] : input;
+  const match = input.match(/^[^\(\[]+/)
+  return match ? match[0] : input
 }

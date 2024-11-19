@@ -86,7 +86,6 @@
 }
 
 .navButton {
-  background: var(--Base-White, #fff);
   cursor: pointer;
 }
 

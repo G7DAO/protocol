@@ -23,7 +23,7 @@ const mergeTransactions = (apiData: TransactionRecord[], localData: TransactionR
 
   // Merge API data, prioritizing latest withdrawal completionTimestamp
   apiData.forEach((apiTx) => {
-    const hashKey = apiTx.type === 'DEPOSIT' ? (apiTx.lowNetworkHash ?? '') : (apiTx.highNetworkHash ?? '')
+  const hashKey = apiTx.type === 'DEPOSIT' ? (apiTx.lowNetworkHash ?? '') : (apiTx.highNetworkHash ?? '')
     const existingTx = combinedData.get(hashKey)
 
     if (existingTx) {
@@ -59,8 +59,8 @@ const mapAPIDataToTransactionRecord = (apiData: any): TransactionRecord => {
 }
 
 const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
-  const { connectedAccount } = useBlockchainContext()
-  const { data: messages } = useMessages(connectedAccount)
+  const { connectedAccount, selectedNetworkType } = useBlockchainContext()
+  const {data: messages} = useMessages(connectedAccount, selectedNetworkType)
   const { useHistoryTransactions } = useBridgeAPI()
   const { data: apiTransactions } = useHistoryTransactions(connectedAccount)
   const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])
@@ -73,7 +73,9 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
     const combinedTransactions = mergeTransactions(formattedApiTransactions, localTransactions)
 
     // Retrieve existing transactions from localStorage
-    const storedTransactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+    const storedTransactionsString = localStorage.getItem(
+      `bridge-${connectedAccount}-transactions-${selectedNetworkType}`
+    )
     const storedTransactions = storedTransactionsString ? JSON.parse(storedTransactionsString) : []
 
     // Check if the combined transactions are different from those in localStorage
@@ -96,11 +98,11 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
       )
 
       localStorage.setItem(
-        `bridge-${connectedAccount}-transactions`,
+        `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
         JSON.stringify([...storedTransactions, ...newTransactions])
       )
     }
-    setMergedTransactions(combinedTransactions)
+    setMergedTransactions(selectedNetworkType === "Testnet" ? combinedTransactions : localTransactions)
   }, [messages, apiTransactions])
 
   return (

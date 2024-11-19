@@ -1,7 +1,7 @@
 import { ethers } from 'hardhat';
 import { expect } from 'chai';
-import { loadFixture, time } from '@nomicfoundation/hardhat-network-helpers';
-import { setupFixture, setupStakingPoolsFixture } from './Staker.test.1';
+import { loadFixture, setNextBlockBaseFeePerGas, time } from '@nomicfoundation/hardhat-network-helpers';
+import { setupStakingPoolsFixture, setupFixture } from './Staker.test.1';
 
 describe('Staker', function () {
     it('STAKER-113: The ERC721 representing an ERC721 staking position have as its metadata URI a data URI representing an appropriate JSON object', async function () {
@@ -31,14 +31,16 @@ describe('Staker', function () {
 
         // Get the position token ID of the newly minted token
         const positionTokenID = (await staker.TotalPositions()) - 1n;
-
         const metadataDataURI = await staker.tokenURI(positionTokenID);
         const metadataBase64 = metadataDataURI.split(',')[1];
         const metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
 
+        // Uncomment to see the image
+        // console.log(metadata.image);
+
         expect(metadata).to.deep.equal({
             token_id: positionTokenID.toString(),
-            image: 'https://badges.moonstream.to/test/staking_logo.png',
+            image: metadata.image,
             result_version: 1,
             attributes: [
                 {
@@ -62,8 +64,7 @@ describe('Staker', function () {
             ],
         });
     });
-
-    it('STAKER-114: The ERC721 representing a non-ERC721 staking position have as its metadata URI a data URI representing an appropriate JSON object', async function () {
+    it('STAKER-114: The ERC721 representing an ERC20 staking position have as its metadata URI a data URI representing an appropriate JSON object', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 0;
@@ -75,29 +76,31 @@ describe('Staker', function () {
         const stakerWithUser0 = staker.connect(user0);
         const stakeAmount = 17n;
 
-        // Mint ERC20 token to user0
+        // Mint ERC20 tokens to user0
         await erc20.mint(await user0.getAddress(), stakeAmount);
 
-        // Approve staker contract to transfer ERC721 token
+        // Approve staker contract to transfer ERC20 tokens
         await erc20.connect(user0).approve(await staker.getAddress(), stakeAmount);
 
-        // Stake ERC20 token
-        const tx = await stakerWithUser0.stakeERC20(user0, erc20PoolID, stakeAmount);
+        // Stake ERC20 tokens
+        const tx = await stakerWithUser0.stakeERC20(await user0.getAddress(), erc20PoolID, stakeAmount);
         const txReceipt = await tx.wait();
         expect(txReceipt).to.not.be.null;
         const block = await ethers.provider.getBlock(txReceipt!.blockNumber);
         expect(block).to.not.be.null;
 
-        // Get the position token ID of the newly minted token
+        // Get the position token ID of the newly minted tokens
         const positionTokenID = (await staker.TotalPositions()) - 1n;
-
         const metadataDataURI = await staker.tokenURI(positionTokenID);
         const metadataBase64 = metadataDataURI.split(',')[1];
         const metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
 
+        // Uncomment to see the image
+        //console.log(metadata.image);
+
         expect(metadata).to.deep.equal({
             token_id: positionTokenID.toString(),
-            image: 'https://badges.moonstream.to/test/staking_logo.png',
+            image: metadata.image,
             result_version: 1,
             attributes: [
                 {
@@ -121,8 +124,123 @@ describe('Staker', function () {
             ],
         });
     });
+    it('STAKER-115: The ERC721 representing an ERC1155 staking position have as its metadata URI a data URI representing an appropriate JSON object', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
 
-    it('STAKER-115: `CurrentAmountInPool` and `CurrentPositionsInPool` should accurate reflect the amount of tokens and number of positions currently open under a native token staking pool', async function () {
+        const { staker, user0, erc1155PoolID, erc1155 } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+        const tokenId = 1n;
+        const amountErc1155 = 1n;
+
+        // Mint ERC1155 tokens to user0
+        await erc1155.mint(await user0.getAddress(), tokenId, amountErc1155);
+
+        // Approve staker contract to transfer ERC1155 tokens
+        await erc1155.connect(user0).setApprovalForAll(await staker.getAddress(), true);
+
+        // Stake ERC1155 tokens
+        const tx = await stakerWithUser0.stakeERC1155(await user0.getAddress(), erc1155PoolID, amountErc1155);
+        const txReceipt = await tx.wait();
+        expect(txReceipt).to.not.be.null;
+        const block = await ethers.provider.getBlock(txReceipt!.blockNumber);
+        expect(block).to.not.be.null;
+
+        // Get the position token ID of the newly minted token
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+        const metadataDataURI = await staker.tokenURI(positionTokenID);
+        const metadataBase64 = metadataDataURI.split(',')[1];
+        const metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
+
+        // Uncomment to get image and paste it in the browser to test! (ERC1155)
+        // console.log(metadata.image);
+
+        expect(metadata).to.deep.equal({
+            token_id: positionTokenID.toString(),
+            image: metadata.image,
+            result_version: 1,
+            attributes: [
+                {
+                    trait_type: 'Pool ID',
+                    value: erc1155PoolID.toString(),
+                },
+                {
+                    trait_type: 'Staked amount',
+                    value: amountErc1155.toString(),
+                },
+                {
+                    trait_type: 'Staked at',
+                    value: block!.timestamp,
+                    display_type: 'number',
+                },
+                {
+                    trait_type: 'Lockup expires at',
+                    value: block!.timestamp + lockupSeconds,
+                    display_type: 'number',
+                },
+            ],
+        });
+    });
+    it('STAKER-116: The ERC721 representing a native staking position have as its metadata URI a data URI representing an appropriate JSON object', async function () {
+        const transferable = true;
+        const lockupSeconds = 3600;
+        const cooldownSeconds = 0;
+
+        const { staker, user0, nativePoolID } = await loadFixture(
+            setupStakingPoolsFixture(transferable, lockupSeconds, cooldownSeconds)
+        );
+
+        const stakerWithUser0 = staker.connect(user0);
+        const amountNative = 10n;
+
+        // Stake native tokens
+        const tx = await stakerWithUser0.stakeNative(user0.getAddress(), nativePoolID, { value: amountNative });
+        const txReceipt = await tx.wait();
+        expect(txReceipt).to.not.be.null;
+        const block = await ethers.provider.getBlock(txReceipt!.blockNumber);
+        expect(block).to.not.be.null;
+
+        // Get the position token ID of the newly minted token
+        const positionTokenID = (await staker.TotalPositions()) - 1n;
+        const metadataDataURI = await staker.tokenURI(positionTokenID);
+        const metadataBase64 = metadataDataURI.split(',')[1];
+        const metadata = JSON.parse(Buffer.from(metadataBase64, 'base64').toString('utf-8'));
+
+        // Uncomment to see the image
+        // console.log(metadata.image);
+
+        expect(metadata).to.deep.equal({
+            token_id: positionTokenID.toString(),
+            image: metadata.image,
+            result_version: 1,
+            attributes: [
+                {
+                    trait_type: 'Pool ID',
+                    value: nativePoolID.toString(),
+                },
+                {
+                    trait_type: 'Staked amount',
+                    value: amountNative.toString(),
+                },
+                {
+                    trait_type: 'Staked at',
+                    value: block!.timestamp,
+                    display_type: 'number',
+                },
+                {
+                    trait_type: 'Lockup expires at',
+                    value: block!.timestamp + lockupSeconds,
+                    display_type: 'number',
+                },
+            ],
+        });
+    });
+
+    it('STAKER-117: `CurrentAmountInPool` and `CurrentPositionsInPool` should accurate reflect the amount of tokens and number of positions currently open under a native token staking pool', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 0;
@@ -193,7 +311,7 @@ describe('Staker', function () {
         expect(positionsInPoolAtTime4).to.equal(positionsInPoolAtTime0);
     });
 
-    it('STAKER-116 `CurrentAmountInPool` and `CurrentPositionsInPool` should accurate reflect the amount of tokens and number of positions currently open under an ERC20 staking pool', async function () {
+    it('STAKER-118 `CurrentAmountInPool` and `CurrentPositionsInPool` should accurate reflect the amount of tokens and number of positions currently open under an ERC20 staking pool', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 0;
@@ -267,7 +385,7 @@ describe('Staker', function () {
         expect(positionsInPoolAtTime4).to.equal(positionsInPoolAtTime0);
     });
 
-    it('STAKER-117 `CurrentAmountInPool` and `CurrentPositionsInPool` should accurate reflect the amount of tokens and number of positions currently open under an ERC721 staking pool', async function () {
+    it('STAKER-119 `CurrentAmountInPool` and `CurrentPositionsInPool` should accurate reflect the amount of tokens and number of positions currently open under an ERC721 staking pool', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 0;
@@ -342,7 +460,7 @@ describe('Staker', function () {
         expect(positionsInPoolAtTime4).to.equal(positionsInPoolAtTime0);
     });
 
-    it('STAKER-118: `CurrentAmountInPool` and `CurrentPositionsInPool` should accurately reflect the amount of tokens and number of positions currently open under an ERC1155 staking pool', async function () {
+    it('STAKER-120: `CurrentAmountInPool` and `CurrentPositionsInPool` should accurately reflect the amount of tokens and number of positions currently open under an ERC1155 staking pool', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 0;
@@ -416,7 +534,7 @@ describe('Staker', function () {
         expect(positionsInPoolAtTime4).to.equal(positionsInPoolAtTime0);
     });
 
-    it('STAKER-119: `CurrentAmountInPool` and `CurrentPositionsInPool` should not be affected by positions opened under other pools', async function () {
+    it('STAKER-121: `CurrentAmountInPool` and `CurrentPositionsInPool` should not be affected by positions opened under other pools', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 0;
@@ -514,7 +632,7 @@ describe('Staker', function () {
         expect(positionsInERC20PoolAtTime4).to.equal(positionsInERC20PoolAtTime3 - 1n);
     });
 
-    it('`STAKER-120`: For pools without cooldowns, changes to the `lockupSeconds` setting apply to all unstaked users', async function () {
+    it('`STAKER-122`: For pools without cooldowns, changes to the `lockupSeconds` setting apply to all unstaked users', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 0;
@@ -552,7 +670,7 @@ describe('Staker', function () {
             .withArgs(stakePositionTokenID);
     });
 
-    it('`STAKER-121`: For pools with cooldowns, for users who have not yet initiated a cooldown, changes to the `lockupSeconds` setting apply to determine when it is possible for them to `initiateUnstake`', async function () {
+    it('`STAKER-123`: For pools with cooldowns, for users who have not yet initiated a cooldown, changes to the `lockupSeconds` setting apply to determine when it is possible for them to `initiateUnstake`', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 1;
@@ -594,7 +712,7 @@ describe('Staker', function () {
         expect(positionAfter.unstakeInitiatedAt).to.equal(initiateUnstakeBlock!.timestamp);
     });
 
-    it('`STAKER-122`: For pools with cooldowns, for users who have initiated a cooldown already, changes to the `cooldownSeconds` setting apply to their final unstake', async function () {
+    it('`STAKER-124`: For pools with cooldowns, for users who have initiated a cooldown already, changes to the `cooldownSeconds` setting apply to their final unstake', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 1;
@@ -650,7 +768,7 @@ describe('Staker', function () {
             .withArgs(stakePositionTokenID);
     });
 
-    it('`STAKER-123`: If an administrator changes `transferable` from `true` to `false`, position tokens are no longer transferable even if they were transferable, and were transferred! before', async function () {
+    it('`STAKER-125`: If an administrator changes `transferable` from `true` to `false`, position tokens are no longer transferable even if they were transferable, and were transferred! before', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 1;
@@ -688,7 +806,7 @@ describe('Staker', function () {
         expect(await staker.ownerOf(stakePositionTokenID)).to.equal(await user1.getAddress());
     });
 
-    it('`STAKER-124`: If an administrator changes `transferable` from `true` to `false`, position tokens that were not transferable before become transferable if so configured', async function () {
+    it('`STAKER-126`: If an administrator changes `transferable` from `true` to `false`, position tokens that were not transferable before become transferable if so configured', async function () {
         const transferable = false;
         const lockupSeconds = 3600;
         const cooldownSeconds = 1;
@@ -727,7 +845,7 @@ describe('Staker', function () {
         expect(await staker.ownerOf(stakePositionTokenID)).to.equal(await user1.getAddress());
     });
 
-    it('`STAKER-125`: Position tokens from transferable pools can be staked back into the `Staker`', async function () {
+    it('`STAKER-127`: Position tokens from transferable pools can be staked back into the `Staker`', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 1;
@@ -782,7 +900,7 @@ describe('Staker', function () {
         expect(newPosition.amountOrTokenID).to.equal(stakePositionTokenID);
     });
 
-    it('`STAKER-126`: A user must call the correct `stake*` method to stake their tokens', async function () {
+    it('`STAKER-128`: A user must call the correct `stake*` method to stake their tokens', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 1;
@@ -810,7 +928,7 @@ describe('Staker', function () {
             .withArgs(erc20PoolID, 20, 1155);
     });
 
-    it('`STAKER-127`: When a user calls `stakeNative`, they must stake a non-zero number of tokens', async function () {
+    it('`STAKER-129`: When a user calls `stakeNative`, they must stake a non-zero number of tokens', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 300;
@@ -827,7 +945,7 @@ describe('Staker', function () {
         );
     });
 
-    it('`STAKER-128`: When a user calls `stakeERC20`, they must stake a non-zero number of tokens', async function () {
+    it('`STAKER-130`: When a user calls `stakeERC20`, they must stake a non-zero number of tokens', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 300;
@@ -844,7 +962,7 @@ describe('Staker', function () {
         );
     });
 
-    it('`STAKER-129`: When a user calls `stakeERC1155`, they must stake a non-zero number of tokens', async function () {
+    it('`STAKER-131`: When a user calls `stakeERC1155`, they must stake a non-zero number of tokens', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 300;
@@ -861,7 +979,7 @@ describe('Staker', function () {
         );
     });
 
-    it('`STAKER-130`: Calls to `tokenURI` for position tokens of unstaked positions should revert', async function () {
+    it('`STAKER-132`: Calls to `tokenURI` for position tokens of unstaked positions should revert', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 300;
@@ -875,7 +993,7 @@ describe('Staker', function () {
             .withArgs(nonexistentPositionTokenID);
     });
 
-    it('`STAKER-131`: If a user who holds a position in a pool with `cooldownSeconds = 0` calls `initiateUnstake` after the lockup period has expired, the `unstakeInitiatedAt` parameter of the position is updated', async function () {
+    it('`STAKER-133`: If a user who holds a position in a pool with `cooldownSeconds = 0` calls `initiateUnstake` after the lockup period has expired, the `unstakeInitiatedAt` parameter of the position is updated', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 0;
@@ -914,7 +1032,7 @@ describe('Staker', function () {
         expect(position.unstakeInitiatedAt).to.equal(initiateUnstakeBlock!.timestamp);
     });
 
-    it('`STAKER-132`: If a user who holds a position in a pool with `cooldownSeconds = 0` calls `initiateUnstake` before the lockup period has expired, the transaction reverts', async function () {
+    it('`STAKER-134`: If a user who holds a position in a pool with `cooldownSeconds = 0` calls `initiateUnstake` before the lockup period has expired, the transaction reverts', async function () {
         const transferable = true;
         const lockupSeconds = 3600;
         const cooldownSeconds = 0;
