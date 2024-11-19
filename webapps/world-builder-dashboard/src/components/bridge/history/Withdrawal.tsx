@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useState } from 'react'
 import { HIGH_NETWORKS, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
@@ -49,18 +49,19 @@ export const getStatus = (withdrawal: TransactionRecord) => {
 }
 const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const status = getStatus(withdrawal)
+  console.log(
+    withdrawal.highNetworkHash === '0x4425be5ed93245e0424cce52d8bac9008679d188c8317a2ecdc5b8f35f360ba1' ? withdrawal : ""
+  )
   const { connectedAccount } = useBlockchainContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
-  const { claim, returnTransferData } = useBridgeTransfer()
+  const { claim } = useBridgeTransfer()
   const [collapseExecuted, setCollapseExecuted] = useState(false)
   const [hovered, setHovered] = useState(false)
-  const transferData = useCallback(() => returnTransferData({ txRecord: withdrawal }), [withdrawal])
   const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
   let transactions = transactionsString ? JSON.parse(transactionsString) : []
   const localStorageTransaction = transactions.find(
     (t: TransactionRecord) => t.type === 'WITHDRAWAL' && t.highNetworkHash === withdrawal.highNetworkHash
   )
-  const withdrawalCompletedData = withdrawal?.lowNetworkHash ? withdrawal : localStorageTransaction
   return (
     <>
       {status?.isLoading && smallView ? (
@@ -172,7 +173,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         onMouseLeave={() => setHovered(false)}
                       >
                         <a
-                          href={`${getBlockExplorerUrl(withdrawalCompletedData.lowNetworkChainId)}/tx/${withdrawalCompletedData.lowNetworkHash}`}
+                          href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
                           target={'_blank'}
                           className={styles.explorerLink}
                         >
@@ -192,7 +193,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         onMouseEnter={() => setHovered(true)}
                         onMouseLeave={() => setHovered(false)}
                       >
-                        <div>{timeAgo(withdrawalCompletedData?.completionTimestamp)}</div>
+                        <div>{timeAgo(withdrawal?.completionTimestamp)}</div>
                       </div>
                       {collapseExecuted && (
                         <>
@@ -218,16 +219,12 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                             </a>
                           </div>
                           <div className={styles.gridItemInitiate}>
-                            <div className={styles.timeCenter}>
-                              {timeAgo(withdrawalCompletedData?.completionTimestamp)}
-                            </div>
+                            <div className={styles.timeCenter}>{timeAgo(withdrawal?.completionTimestamp)}</div>
                           </div>
                           <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
                             <div className={styles.typeCompleted}>Finalize</div>
                           </div>
-                          <div className={styles.gridItemInitiate}>
-                            {timeAgo(withdrawalCompletedData?.completionTimestamp)}
-                          </div>
+                          <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.completionTimestamp)}</div>
                           <div
                             className={styles.gridItemInitiate}
                           >{`${status?.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
@@ -235,7 +232,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           <div className={styles.gridItemInitiate}>{status?.data?.to ?? ''}</div>
                           <div className={styles.gridItemInitiate}>
                             <a
-                              href={`${getBlockExplorerUrl(withdrawalCompletedData.lowNetworkChainId)}/tx/${withdrawalCompletedData.lowNetworkHash}`}
+                              href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
                               target={'_blank'}
                               className={styles.explorerLink}
                             >
@@ -246,9 +243,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                             </a>
                           </div>
                           <div className={styles.gridItemInitiate}>
-                            <div className={styles.timeCenter}>
-                              {timeAgo(withdrawalCompletedData?.completionTimestamp)}
-                            </div>
+                            <div className={styles.timeCenter}>{timeAgo(withdrawal?.completionTimestamp)}</div>
                           </div>
                         </>
                       )}
