@@ -12,9 +12,8 @@ interface WithdrawalMobileProps {
   withdrawal: TransactionRecord
   claim: any
   status: any
-  transferStatus: any
 }
-const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, claim, status, transferStatus }) => {
+const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, claim, status }) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
 
   return (
@@ -27,7 +26,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, claim, 
         <>
           <div className={styles.dataRow}>
             <div className={styles.dataText}>Transaction</div>
-            {transferStatus?.status === ChildToParentMessageStatus.EXECUTED && (
+            {status?.status === ChildToParentMessageStatus.EXECUTED && (
               <a
                 href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId)}/tx/${withdrawal.lowNetworkHash}`}
                 target={'_blank'}
@@ -39,7 +38,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, claim, 
                 </div>
               </a>
             )}
-            {transferStatus?.status === ChildToParentMessageStatus.CONFIRMED && (
+            {status?.status === ChildToParentMessageStatus.CONFIRMED && (
               <a
                 href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
                 target={'_blank'}
@@ -51,7 +50,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, claim, 
                 </div>
               </a>
             )}
-            {transferStatus?.status === ChildToParentMessageStatus.UNCONFIRMED && (
+            {status?.status === ChildToParentMessageStatus.UNCONFIRMED && (
               <a
                 href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId)}/tx/${withdrawal.highNetworkHash}`}
                 target={'_blank'}
@@ -64,7 +63,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, claim, 
               </a>
             )}
           </div>
-          {transferStatus?.status === ChildToParentMessageStatus.EXECUTED && (
+          {status?.status === ChildToParentMessageStatus.EXECUTED && (
           <>
               <IconWithdrawalNodeCompletedMobile className={styles.nodeCompleted} />
               <div className={styles.dataRowCompleted}>
@@ -107,16 +106,16 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, claim, 
       )}
       <div className={styles.dataRow}>
         <div className={styles.dataText}>Status</div>
-        {transferStatus?.status === ChildToParentMessageStatus.CONFIRMED && (
-          <button className={parentStyles.claimButton} onClick={() => claim.mutate(status.data.highNetworkHash)}>
+        {status?.status === ChildToParentMessageStatus.CONFIRMED && (
+          <button className={parentStyles.claimButton} onClick={() => claim.mutate(withdrawal)}>
             {claim.isLoading && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}
           </button>
         )}
 
-        {transferStatus?.status === ChildToParentMessageStatus.EXECUTED && (
+        {status?.status === ChildToParentMessageStatus.EXECUTED && (
           <div className={styles.dataTextBold}>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
         )}
-        {transferStatus?.status === ChildToParentMessageStatus.UNCONFIRMED && (
+        {status?.status === ChildToParentMessageStatus.UNCONFIRMED && (
           <div className={styles.dataTextBold}>{ETA(status.data?.timestamp, withdrawal.challengePeriod)}</div>
         )}
       </div>

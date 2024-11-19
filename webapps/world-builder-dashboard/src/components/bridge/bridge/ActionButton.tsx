@@ -70,7 +70,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       return
     }
     setErrorMessage('')
-    transfer.mutateAsync(amount)
+    transfer.mutate(amount)
     return
   }
 
@@ -104,10 +104,10 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           if (Number(allowanceToCheck) < Number(amount)) {
             const txApprove = await bridger?.approve(amountToSend, signer)
             await txApprove.wait()
+            queryClient.refetchQueries(['estimatedFee'])
           }
         }
-
-        const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })        
+        const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })
         await tx?.wait()
         return {
           type: 'DEPOSIT',
@@ -147,9 +147,11 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           }
           transactions.push(record)
           localStorage.setItem(`bridge-${connectedAccount}-transactions`, JSON.stringify(transactions))
+          queryClient.invalidateQueries(['incomingMessages', connectedAccount])
         } catch (e) {
           console.log(e)
         }
+        queryClient.refetchQueries(['pendingTransactions'])
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
         queryClient.refetchQueries(['pendingNotifications'])

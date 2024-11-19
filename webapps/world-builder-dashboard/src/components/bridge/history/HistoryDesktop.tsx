@@ -13,16 +13,30 @@ import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 
 interface HistoryDesktopProps {}
 
-const mergeTransactions = (localData: TransactionRecord[], apiData: TransactionRecord[]): TransactionRecord[] => {
+const mergeTransactions = (apiData: TransactionRecord[], localData: TransactionRecord[]): TransactionRecord[] => {
   const combinedData = new Map<string, TransactionRecord>()
 
-  apiData.forEach((tx) =>
-    combinedData.set(tx.type === 'DEPOSIT' ? (tx.lowNetworkHash ?? '') : (tx.highNetworkHash ?? ''), tx)
-  )
-  localData.forEach((tx) =>
-    combinedData.set(tx.type === 'DEPOSIT' ? (tx.lowNetworkHash ?? '') : (tx.highNetworkHash ?? ''), tx)
-  )
-  return Array.from(combinedData.values())
+  localData.forEach((localTx) => {
+    const hashKey = localTx.type === 'DEPOSIT' ? (localTx.lowNetworkHash ?? '') : (localTx.highNetworkHash ?? '')
+    combinedData.set(hashKey, localTx)
+  })
+
+  // Merge API data, prioritizing latest withdrawal completionTimestamp
+  apiData.forEach((apiTx) => {
+    const hashKey = apiTx.type === 'DEPOSIT' ? (apiTx.lowNetworkHash ?? '') : (apiTx.highNetworkHash ?? '')
+    const existingTx = combinedData.get(hashKey)
+
+    if (existingTx) {
+      if (apiTx.type === 'WITHDRAWAL' && !apiTx.completionTimestamp && existingTx.completionTimestamp) {
+        combinedData.set(hashKey, existingTx)
+      } 
+    } else {
+      combinedData.set(hashKey, apiTx)
+    }
+  })
+
+  const combinedDataArray = Array.from(combinedData.values())
+  return combinedDataArray
 }
 
 // Maps API data to the TransactionRecord format
@@ -46,17 +60,18 @@ const mapAPIDataToTransactionRecord = (apiData: any): TransactionRecord => {
 
 const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   const { connectedAccount } = useBlockchainContext()
-  const messages = useMessages(connectedAccount)
+  const { data: messages } = useMessages(connectedAccount)
   const { useHistoryTransactions } = useBridgeAPI()
   const { data: apiTransactions } = useHistoryTransactions(connectedAccount)
   const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])
   const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status']
 
-  // Merge transactions only when API data is updated with new data
+  // Merge transations only when API data is updated with new data
   useEffect(() => {
-    const localTransactions = messages.data || []
+    const localTransactions = messages || []
     const formattedApiTransactions = apiTransactions ? apiTransactions.map(mapAPIDataToTransactionRecord) : []
     const combinedTransactions = mergeTransactions(formattedApiTransactions, localTransactions)
+
     // Retrieve existing transactions from localStorage
     const storedTransactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
     const storedTransactions = storedTransactionsString ? JSON.parse(storedTransactionsString) : []
@@ -85,9 +100,8 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
         JSON.stringify([...storedTransactions, ...newTransactions])
       )
     }
-
     setMergedTransactions(combinedTransactions)
-  }, [messages.data, apiTransactions])
+  }, [messages, apiTransactions])
 
   return (
     <div className={styles.container}>

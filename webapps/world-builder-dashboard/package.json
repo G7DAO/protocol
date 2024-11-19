@@ -18,7 +18,7 @@
     "axios": "^1.6.8",
     "clsx": "^1.2.1",
     "dayjs": "^1.11.11",
-    "game7-bridge-sdk": "^0.0.52",
+    "game7-bridge-sdk": "^0.0.54",
     "history": "^5.3.0",
     "prettier-plugin-tailwindcss": "^0.6.5",
     "react": "^18.2.0",

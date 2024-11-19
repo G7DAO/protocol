@@ -1,7 +1,7 @@
 // Libraries
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
-import { DEFAULT_STAKE_NATIVE_POOL_ID, L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../../../constants'
+import { ALL_NETWORKS, DEFAULT_STAKE_NATIVE_POOL_ID, L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../../../constants'
 // Styles and Icons
 import styles from './BridgeView.module.css'
 import { ethers } from 'ethers'
@@ -39,7 +39,6 @@ const BridgeView = ({
   const [networkErrorMessage, setNetworkErrorMessage] = useState('')
   const { isMessagingEnabled } = useUISettings()
   const { useUSDPriceOfToken } = useCoinGeckoAPI()
-  const g7tUsdRate = useQuery(['rate'], () => 2501.32)
   const {
     connectedAccount,
     selectedLowNetwork,
@@ -64,19 +63,43 @@ const BridgeView = ({
     ['estimatedFee', bridger, connectedAccount, value],
     async () => {
       try {
-        const fee = await bridger?.getGasAndFeeEstimation(
-          value ? ethers.utils.parseEther(value) : ethers.utils.parseEther('0.0'),
+        const originNetwork = ALL_NETWORKS.find((n) => n.chainId === bridger?.originNetwork.chainId)
+        if (!originNetwork) throw new Error("Can't find network!")
+
+        const allowance = await bridger?.getAllowance(originNetwork.rpcs[0], connectedAccount ?? '')
+        const parsedValue = value ? ethers.utils.parseEther(value) : ethers.utils.parseEther('0')
+
+        let approvalFee = ethers.utils.parseEther('0') // Default to zero if no approval needed
+        let transferFee = ethers.utils.parseEther('0') // Default to zero
+
+        if (allowance?.lt(parsedValue)) {
+          const approvalEstimate = await bridger?.getApprovalGasAndFeeEstimation(
+            parsedValue,
+            originNetwork.rpcs[0],
+            connectedAccount ?? ''
+          )
+          approvalFee = approvalEstimate?.estimatedFee ?? ethers.utils.parseEther('0')
+        }
+
+        const transferEstimate = await bridger?.getGasAndFeeEstimation(
+          ethers.utils.parseEther('0.0'),
           direction === 'DEPOSIT' ? selectedLowNetwork.rpcs[0] : selectedHighNetwork.rpcs[0],
           connectedAccount ?? ''
         )
-        const feeFormatted = ethers.utils.formatEther(fee?.estimatedFee || '0.0')
-        return feeFormatted
+
+        transferFee = transferEstimate?.estimatedFee ?? ethers.utils.parseEther('0')
+        const finalFee = approvalFee.add(transferFee)
+        return ethers.utils.formatEther(finalFee)
       } catch (e) {
         console.error(e)
+        throw e
       }
     },
     {
-      enabled: !!connectedAccount && !!selectedLowNetwork && !!selectedHighNetwork && !!value
+      enabled: !!connectedAccount && !!selectedLowNetwork && !!selectedHighNetwork && !!value,
+      onError: (error) => {
+        console.error('Error refetching fee:', error)
+      }
     }
   )
 
@@ -90,8 +113,8 @@ const BridgeView = ({
         return
       }
       try {
-        const bridger: Bridger = new Bridger(originChainId, destinationChainId, selectedBridgeToken.tokenAddressMap)
-        setBridger(bridger)
+        const _bridger: Bridger = new Bridger(originChainId, destinationChainId, selectedBridgeToken.tokenAddressMap)
+        setBridger(_bridger)
       } catch (e) {
         console.log(e)
         setNetworkErrorMessage('Cannot bridge between these 2 networks')
@@ -182,7 +205,13 @@ const BridgeView = ({
         setValue={setValue}
         onTokenChange={handleTokenChange}
         balance={tokenInformation?.tokenBalance}
-        rate={selectedBridgeToken.symbol === 'TG7T' ? 1 : isCoinFetching ? 0.00 : coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd}
+        rate={
+          selectedBridgeToken.symbol === 'TG7T'
+            ? 1
+            : isCoinFetching
+              ? 0.0
+              : coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd
+        }
         isFetchingBalance={isFetchingTokenInformation}
         errorMessage={inputErrorMessages.value}
         setErrorMessage={(msg) => setInputErrorMessages((prev) => ({ ...prev, value: msg }))}
@@ -214,9 +243,21 @@ const BridgeView = ({
         fee={Number(estimatedFee.data ?? 0)}
         isEstimatingFee={estimatedFee.isFetching}
         value={Number(value)}
-        ethRate={coinUSDRate ?? 0}
+        ethRate={
+          selectedBridgeToken.symbol === 'TG7T'
+            ? 1
+            : isCoinFetching
+              ? 0.0
+              : coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd
+        }
         tokenSymbol={tokenInformation?.symbol ?? ''}
-        tokenRate={g7tUsdRate.data ?? 0}
+        tokenRate={
+          selectedBridgeToken.symbol === 'TG7T'
+            ? 1
+            : isCoinFetching
+              ? 0.0
+              : coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd
+        }
         gasTokenSymbol={
           direction === 'DEPOSIT'
             ? (selectedLowNetwork?.nativeCurrency?.symbol ?? '')
