@@ -55,8 +55,9 @@ const TokenSelector = ({ tokens, onChange, selectedToken }: TokenSelectorProps) 
             // can create token address map here
             const chainIds = Object.keys(n.tokenAddressMap ?? [])
             const isChainIdValid = chainIds.includes(highNetworkChainId) && chainIds.includes(lowNetworkChainId)
+            if (!isChainIdValid) return
             return (
-              <Combobox.Option value={String(n.address)} key={n.address} disabled={!isChainIdValid}>
+              <Combobox.Option value={String(n.address)} key={n.address}>
                 <Group>
                   <div
                     className={

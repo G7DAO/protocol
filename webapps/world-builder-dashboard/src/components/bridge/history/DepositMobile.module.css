@@ -92,6 +92,7 @@
 }
 
 .button {
+    cursor: pointer;
     display: flex;
     padding: 12px 16px;
     justify-content: center;

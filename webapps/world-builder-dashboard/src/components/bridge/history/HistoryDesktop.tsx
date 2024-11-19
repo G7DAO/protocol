@@ -13,7 +13,7 @@ import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 
 interface HistoryDesktopProps {}
 
-const mergeTransactions = (localData: TransactionRecord[], apiData: TransactionRecord[]): TransactionRecord[] => {
+const mergeTransactions = (apiData: TransactionRecord[], localData: TransactionRecord[]): TransactionRecord[] => {
   const combinedData = new Map<string, TransactionRecord>()
 
   localData.forEach((localTx) => {
@@ -21,18 +21,22 @@ const mergeTransactions = (localData: TransactionRecord[], apiData: TransactionR
     combinedData.set(hashKey, localTx)
   })
 
-  apiData?.forEach((tx) => {
-    const hashKey = tx.type === 'DEPOSIT' ? (tx.lowNetworkHash ?? '') : (tx.highNetworkHash ?? '')
-    if (combinedData.has(hashKey)) {
-      const localTx = combinedData.get(hashKey)
-      if (localTx) {
-        tx.status = localTx.status
-        combinedData.set(hashKey, tx)
-      }
+  // Merge API data, prioritizing latest withdrawal completionTimestamp
+  apiData.forEach((apiTx) => {
+    const hashKey = apiTx.type === 'DEPOSIT' ? (apiTx.lowNetworkHash ?? '') : (apiTx.highNetworkHash ?? '')
+    const existingTx = combinedData.get(hashKey)
+
+    if (existingTx) {
+      if (apiTx.type === 'WITHDRAWAL' && !apiTx.completionTimestamp && existingTx.completionTimestamp) {
+        combinedData.set(hashKey, existingTx)
+      } 
+    } else {
+      combinedData.set(hashKey, apiTx)
     }
   })
 
-  return Array.from(combinedData.values())
+  const combinedDataArray = Array.from(combinedData.values())
+  return combinedDataArray
 }
 
 // Maps API data to the TransactionRecord format

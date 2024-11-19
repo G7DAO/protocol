@@ -2,15 +2,14 @@ import React from 'react'
 import { getHighNetworks, getLowNetworks } from '../../../../constants'
 import DepositMobile from './DepositMobile'
 import styles from './WithdrawTransactions.module.css'
-import { BridgeTransferStatus } from 'game7-bridge-sdk'
 import { useMediaQuery } from 'summon-ui/mantine'
 import IconArrowNarrowDown from '@/assets/IconArrowNarrowDown'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
-import { useBridgeTransfer } from '@/hooks/useBridgeTransfer'
 import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
+import { getTokensForNetwork } from '@/utils/tokens'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 
 interface DepositProps {
@@ -22,25 +21,21 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
     to: getHighNetworks().find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
   }
   const smallView = useMediaQuery('(max-width: 1199px)')
-  const { returnTransferData } = useBridgeTransfer()
-  const { data: transferStatus, isLoading } = returnTransferData({ txRecord: deposit })
-  const { connectedAccount, selectedNetworkType } = useBlockchainContext()
-  const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
-  let transactions = transactionsString ? JSON.parse(transactionsString) : []
-  const localStorageTransaction = transactions.find(
-    (t: any) => t.type === 'DEPOSIT' && t.lowNetworkHash === deposit.lowNetworkHash
+  const { connectedAccount } = useBlockchainContext()
+  const tokenInformation = getTokensForNetwork(deposit?.lowNetworkChainId, connectedAccount).find(
+    (token) => token.address === deposit?.tokenAddress
   )
   const { data: status, isLoading: isLoadingStatus } = useDepositStatus(deposit)
   return (
     <>
-      {isLoading && smallView ? (
+      {isLoadingStatus && smallView ? (
         <div className={styles.gridItem}>
           <div className={styles.loading}>Loading</div>
         </div>
       ) : (
         <>
           {smallView ? (
-            <DepositMobile deposit={deposit} transferStatus={transferStatus} isLoading={isLoading} />
+            <DepositMobile deposit={deposit} isLoading={isLoadingStatus} />
           ) : (
             <>
               <div className={styles.gridItem}>
@@ -50,14 +45,16 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                 </div>
               </div>
               <div className={styles.gridItem}>{timeAgo(deposit.lowNetworkTimestamp)}</div>
-              <div className={styles.gridItem}>{`${deposit.amount} ${localStorageTransaction?.symbol}`}</div>
+              <div
+                className={styles.gridItem}
+              >{`${tokenInformation?.decimals ? Number(deposit.amount) / tokenInformation?.decimals : deposit.amount} ${tokenInformation?.symbol}`}</div>
               <div className={styles.gridItem}>{depositInfo.from}</div>
               <div className={styles.gridItem}>{depositInfo.to}</div>
-              {isLoading ? (
+              {isLoadingStatus ? (
                 <>
                   <div className={styles.gridItem}>
                     <div className={styles.loading}>Loading</div>
-                  </div>{' '}
+                  </div>
                   <div className={styles.gridItem}>
                     <div className={styles.loading}>Loading</div>
                   </div>
@@ -70,8 +67,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                     className={styles.explorerLink}
                   >
                     <div className={styles.gridItem}>
-                      {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
-                      transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ? (
+                      {status?.l2Result?.complete ? (
                         <div className={styles.settled}>
                           Completed
                           <IconLinkExternal02 stroke='#fff' />
@@ -90,8 +86,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                     </div>
                   ) : (
                     <div className={styles.gridItemImportant}>
-                      {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
-                      transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ? (
+                      {status?.highNetworkTimestamp ? (
                         <>
                           {status?.highNetworkTimestamp === undefined
                             ? 'No status found'

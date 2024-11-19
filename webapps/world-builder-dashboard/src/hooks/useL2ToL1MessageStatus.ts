@@ -149,7 +149,7 @@ const fetchDepositStatus = async (deposit: TransactionRecord) => {
   try {
     l2Result = await l1ContractCallReceipt.waitForChildTransactionReceipt(l2Provider, l1Receipt.confirmations)
   } catch (e) {
-    console.error('Error waiting for child transaction receipt:', e)
+    console.error('Error waiting for child transaction receipt:', {deposit, e})
   }
 
   if (!l2Result) {
@@ -168,7 +168,8 @@ const fetchDepositStatus = async (deposit: TransactionRecord) => {
 
 export const useDepositStatus = (deposit: TransactionRecord) => {
   return useQuery(['depositStatus', deposit], () => fetchDepositStatus(deposit), {
-    refetchInterval: 60000 * 3
+    refetchInterval: 60000 * 3,
+    staleTime: 2 * 60 * 1000 // 2 minutes
   })
 }
 

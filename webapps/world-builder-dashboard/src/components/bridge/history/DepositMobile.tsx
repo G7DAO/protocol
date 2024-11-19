@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { getHighNetworks, getLowNetworks} from '../../../../constants'
 import styles from './DepositMobile.module.css'
 import parentStyles from './WithdrawTransactions.module.css'
-import { BridgeTransferStatus } from 'game7-bridge-sdk'
 import { Skeleton, useMediaQuery } from 'summon-ui/mantine'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
@@ -12,10 +11,9 @@ import { getBlockExplorerUrl } from '@/utils/web3utils'
 
 interface DepositMobileProps {
   deposit: TransactionRecord
-  transferStatus: any
   isLoading: boolean
 }
-const DepositMobile: React.FC<DepositMobileProps> = ({ deposit, transferStatus, isLoading }) => {
+const DepositMobile: React.FC<DepositMobileProps> = ({ deposit, isLoading }) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
   const status = useDepositStatus(deposit)
   const depositInfo = {
@@ -53,8 +51,7 @@ const DepositMobile: React.FC<DepositMobileProps> = ({ deposit, transferStatus, 
                   target={'_blank'}
                   className={styles.explorerLink}
                 >
-                  {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
-                  transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ? (
+                  {status?.data?.l2Result?.complete ? (
                     <div className={parentStyles.settled}>
                       Completed
                       <IconLinkExternal02 stroke={'#fff'} />

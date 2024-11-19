@@ -39,11 +39,11 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   selectedChainId
 }) => {
   const [tokens, setTokens] = useState<Token[]>([])
-  const { connectedAccount, selectedBridgeToken, setSelectedBridgeToken } = useBlockchainContext()
+  const { connectedAccount, selectedBridgeToken } = useBlockchainContext()
 
   const getTokens = async () => {
     const _tokens = getTokensForNetwork(selectedChainId, connectedAccount)
-    handleTokenChange(_tokens[0])
+    handleTokenChange(_tokens.find((token) => token.name === selectedBridgeToken.name) || _tokens[0])
     setTokens(_tokens)
   }
 
@@ -71,7 +71,6 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   }, [connectedAccount])
 
   const handleTokenChange = (token: Token) => {
-    setSelectedBridgeToken(token)
     onTokenChange(token)
     const _tokens = getTokensForNetwork(selectedChainId, connectedAccount)
     setTokens(_tokens)
