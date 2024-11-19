@@ -218,7 +218,7 @@ const BridgeView = ({
         onTokenChange={handleTokenChange}
         balance={tokenInformation?.tokenBalance}
         rate={
-          selectedBridgeToken.symbol === 'TG7T'
+          selectedBridgeToken.symbol === 'TG7T' || selectedBridgeToken.symbol === 'G7'
             ? 1
             : isCoinFetching
               ? 0.0
@@ -261,7 +261,7 @@ const BridgeView = ({
         isEstimatingFee={estimatedFee.isFetching}
         value={Number(value)}
         ethRate={
-          selectedBridgeToken.symbol === 'TG7T'
+          selectedBridgeToken.symbol === 'TG7T' || selectedBridgeToken.symbol === 'G7'
             ? 1
             : isCoinFetching
               ? 0.0
@@ -269,7 +269,7 @@ const BridgeView = ({
         }
         tokenSymbol={tokenInformation?.symbol ?? ''}
         tokenRate={
-          selectedBridgeToken.symbol === 'TG7T'
+          selectedBridgeToken.symbol === 'TG7T' || selectedBridgeToken.symbol === 'G7'
             ? 1
             : isCoinFetching
               ? 0.0
