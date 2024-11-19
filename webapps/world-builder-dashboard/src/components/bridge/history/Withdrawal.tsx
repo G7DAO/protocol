@@ -54,8 +54,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const { claim, returnTransferData } = useBridgeTransfer()
   const [collapseExecuted, setCollapseExecuted] = useState(false)
   const [hovered, setHovered] = useState(false)
-  const transferData = useCallback(() => returnTransferData({ txRecord: withdrawal }), [withdrawal, returnTransferData])
-  const { data: transferStatus, isLoading } = transferData()
+  const transferData = useCallback(() => returnTransferData({ txRecord: withdrawal }), [withdrawal])
   const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
   let transactions = transactionsString ? JSON.parse(transactionsString) : []
   const localStorageTransaction = transactions.find(
@@ -64,17 +63,17 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const withdrawalCompletedData = withdrawal?.lowNetworkHash ? withdrawal : localStorageTransaction
   return (
     <>
-      {isLoading && smallView ? (
+      {status?.isLoading && smallView ? (
         <div className={styles.gridItem}>
           <div className={styles.loading}>Loading</div>
         </div>
       ) : (
         <>
           {smallView ? (
-            <WithdrawalMobile withdrawal={withdrawal} claim={claim} status={status} transferStatus={transferStatus} />
+            <WithdrawalMobile withdrawal={withdrawal} claim={claim} status={status} />
           ) : (
             <>
-              {isLoading || transferStatus?.status === undefined ? (
+              {status?.isLoading || status?.data === undefined ? (
                 <>
                   <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
                     <div className={styles.typeWithdrawal}>
