@@ -3,7 +3,7 @@ import React from 'react'
 import { useMutation, useQueryClient } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 // Constants
-import { getNetworks, USDC } from '../../../../constants'
+import { getNetworks } from '../../../../constants'
 // Styles
 import styles from './ActionButton.module.css'
 import { ethers } from 'ethers'
@@ -46,7 +46,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const navigate = useNavigate()
-  const networks = getNetworks()
+  const networks = getNetworks(selectedNetworkType)
 
   const getLabel = (): String | undefined => {
     if (isConnecting) {

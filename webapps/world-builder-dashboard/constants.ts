@@ -1,4 +1,4 @@
-import { NetworkInterface, HighNetworkInterface, useBlockchainContext, NetworkType } from '@/contexts/BlockchainContext'
+import { NetworkInterface, HighNetworkInterface, NetworkType } from '@/contexts/BlockchainContext'
 import { TokenAddressMap } from 'game7-bridge-sdk'
 
 export const L1_NETWORK: NetworkInterface = {

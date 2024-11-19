@@ -15,7 +15,7 @@ import { FloatingNotification } from '@/components/notifications/NotificationsDr
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 // Hooks
-import { useNotifications, usePendingTransactions } from '@/hooks/useL2ToL1MessageStatus'
+import { useNotifications } from '@/hooks/useL2ToL1MessageStatus'
 import { useMediaQuery } from '@mantine/hooks'
 
 export type DepositDirection = 'DEPOSIT' | 'WITHDRAW'

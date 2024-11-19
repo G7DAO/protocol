@@ -69,7 +69,7 @@ const BridgeView = ({
     setSelectedBridgeToken(token)
   }
 
-  const networks = getNetworks()
+  const networks = getNetworks(selectedNetworkType)
 
   const estimatedFee = useQuery(
     ['estimatedFee', bridger, connectedAccount, value],

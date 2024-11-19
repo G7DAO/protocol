@@ -73,7 +73,12 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
       ) : (
         <>
           {smallView ? (
-            <WithdrawalMobile withdrawal={withdrawal} claim={claim} status={status} />
+            <WithdrawalMobile
+              withdrawal={withdrawal}
+              claim={claim}
+              status={status}
+              selectedNetworkType={selectedNetworkType}
+            />
           ) : (
             <>
               {status?.isLoading || status?.data === undefined ? (
