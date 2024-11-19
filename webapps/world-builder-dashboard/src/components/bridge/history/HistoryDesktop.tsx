@@ -21,16 +21,18 @@ const mergeTransactions = (apiData: TransactionRecord[], localData: TransactionR
     combinedData.set(hashKey, localTx)
   })
 
-  apiData.forEach((tx) => {
-    const hashKey = tx.type === 'DEPOSIT' ? (tx.lowNetworkHash ?? '') : (tx.highNetworkHash ?? '')
-    combinedData.set(hashKey, tx)
-    // if (combinedData.has(hashKey)) {
-    //   const localTx = combinedData.get(hashKey)
-    //   if (localTx) {
-    //     tx.status = localTx.status
-    //     combinedData.set(hashKey, tx)
-    //   }
-    // }
+  // Merge API data, prioritizing latest withdrawal completionTimestamp
+  apiData.forEach((apiTx) => {
+    const hashKey = apiTx.type === 'DEPOSIT' ? (apiTx.lowNetworkHash ?? '') : (apiTx.highNetworkHash ?? '')
+    const existingTx = combinedData.get(hashKey)
+
+    if (existingTx) {
+      if (apiTx.type === 'WITHDRAWAL' && !apiTx.completionTimestamp && existingTx.completionTimestamp) {
+        combinedData.set(hashKey, existingTx)
+      } 
+    } else {
+      combinedData.set(hashKey, apiTx)
+    }
   })
 
   const combinedDataArray = Array.from(combinedData.values())

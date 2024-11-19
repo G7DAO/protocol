@@ -121,9 +121,7 @@ export const useBridgeTransfer = () => {
         throw new Error('Wallet is not installed!')
       }
       const signer = provider.getSigner()
-
-      console.log(withdrawal)
-
+ 
       // Bridge Transfer execute
       const _bridgeTransfer = new BridgeTransfer({
         txHash: withdrawal.highNetworkHash || '',

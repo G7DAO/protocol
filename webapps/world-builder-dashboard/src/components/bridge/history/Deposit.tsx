@@ -9,6 +9,7 @@ import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
+import { getTokensForNetwork } from '@/utils/tokens'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 
 interface DepositProps {
@@ -21,10 +22,8 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   }
   const smallView = useMediaQuery('(max-width: 1199px)')
   const { connectedAccount } = useBlockchainContext()
-  const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
-  let transactions = transactionsString ? JSON.parse(transactionsString) : []
-  const localStorageTransaction = transactions.find(
-    (t: any) => t.type === 'DEPOSIT' && t.lowNetworkHash === deposit.lowNetworkHash
+  const tokenInformation = getTokensForNetwork(deposit?.lowNetworkChainId, connectedAccount).find(
+    (token) => token.address === deposit?.tokenAddress
   )
   const { data: status, isLoading: isLoadingStatus } = useDepositStatus(deposit)
   return (
@@ -46,14 +45,16 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                 </div>
               </div>
               <div className={styles.gridItem}>{timeAgo(deposit.lowNetworkTimestamp)}</div>
-              <div className={styles.gridItem}>{`${deposit.amount} ${localStorageTransaction?.symbol}`}</div>
+              <div
+                className={styles.gridItem}
+              >{`${tokenInformation?.decimals ? Number(deposit.amount) / tokenInformation?.decimals : deposit.amount} ${tokenInformation?.symbol}`}</div>
               <div className={styles.gridItem}>{depositInfo.from}</div>
               <div className={styles.gridItem}>{depositInfo.to}</div>
               {isLoadingStatus ? (
                 <>
                   <div className={styles.gridItem}>
                     <div className={styles.loading}>Loading</div>
-                  </div>{' '}
+                  </div>
                   <div className={styles.gridItem}>
                     <div className={styles.loading}>Loading</div>
                   </div>

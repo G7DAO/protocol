@@ -9,6 +9,7 @@ import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeTransfer } from '@/hooks/useBridgeTransfer'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
+import { getTokensForNetwork } from '@/utils/tokens'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 import { ChildToParentMessageStatus } from '@arbitrum/sdk'
 import { useMediaQuery } from '@mantine/hooks'
@@ -49,18 +50,13 @@ export const getStatus = (withdrawal: TransactionRecord) => {
 }
 const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const status = getStatus(withdrawal)
-  console.log(
-    withdrawal.highNetworkHash === '0x4425be5ed93245e0424cce52d8bac9008679d188c8317a2ecdc5b8f35f360ba1' ? withdrawal : ""
-  )
   const { connectedAccount } = useBlockchainContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
   const { claim } = useBridgeTransfer()
   const [collapseExecuted, setCollapseExecuted] = useState(false)
   const [hovered, setHovered] = useState(false)
-  const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
-  let transactions = transactionsString ? JSON.parse(transactionsString) : []
-  const localStorageTransaction = transactions.find(
-    (t: TransactionRecord) => t.type === 'WITHDRAWAL' && t.highNetworkHash === withdrawal.highNetworkHash
+  const tokenInformation = getTokensForNetwork(withdrawal?.highNetworkChainId, connectedAccount).find(
+    (token) => token.address === withdrawal?.tokenAddress
   )
   return (
     <>
@@ -85,7 +81,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                   <div className={styles.gridItem}>{timeAgo(withdrawal.highNetworkTimestamp)}</div>
                   <div
                     className={styles.gridItem}
-                  >{`${status?.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
+                  >{`${tokenInformation?.decimals ? Number(withdrawal.amount) / tokenInformation?.decimals : withdrawal.amount} ${tokenInformation?.symbol}`}</div>
                   <div className={styles.gridItem}>{status?.data?.from ?? ''}</div>
                   <div className={styles.gridItem}>{status?.data?.to ?? ''}</div>
                   <div className={styles.gridItem}>
@@ -137,7 +133,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         }}
                         onMouseEnter={() => setHovered(true)}
                         onMouseLeave={() => setHovered(false)}
-                      >{`${status?.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
+                      >{`${tokenInformation?.decimals ? Number(withdrawal.amount) / tokenInformation?.decimals : withdrawal.amount} ${tokenInformation?.symbol}`}</div>
                       <div
                         className={styles.gridItem}
                         onClick={() => setCollapseExecuted(!collapseExecuted)}
@@ -203,7 +199,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.highNetworkTimestamp)}</div>
                           <div
                             className={styles.gridItemInitiate}
-                          >{`${status?.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
+                          >{`${tokenInformation?.decimals ? Number(withdrawal.amount) / tokenInformation?.decimals : withdrawal.amount} ${tokenInformation?.symbol}`}</div>
                           <div className={styles.gridItemInitiate}>{status?.data?.from ?? ''}</div>
                           <div className={styles.gridItemInitiate}>{status?.data?.to ?? ''}</div>
                           <div className={styles.gridItemInitiate}>
@@ -227,7 +223,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.completionTimestamp)}</div>
                           <div
                             className={styles.gridItemInitiate}
-                          >{`${status?.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
+                          >{`${tokenInformation?.decimals ? Number(withdrawal.amount) / tokenInformation?.decimals : withdrawal.amount} ${tokenInformation?.symbol}`}</div>
                           <div className={styles.gridItemInitiate}>{status?.data?.from ?? ''}</div>
                           <div className={styles.gridItemInitiate}>{status?.data?.to ?? ''}</div>
                           <div className={styles.gridItemInitiate}>
@@ -260,7 +256,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       <div className={styles.gridItem}>{timeAgo(status?.data?.timestamp)}</div>
                       <div
                         className={styles.gridItem}
-                      >{`${status?.data?.amount} ${localStorageTransaction?.symbol ?? ''}`}</div>
+                      >{`${tokenInformation?.decimals ? Number(withdrawal.amount) / tokenInformation?.decimals : withdrawal.amount} ${tokenInformation?.symbol}`}</div>
                       <div className={styles.gridItem}>{status?.data?.from ?? ''}</div>
                       <div className={styles.gridItem}>{status?.data?.to ?? ''}</div>
                       {status?.data && status.data.status === ChildToParentMessageStatus.CONFIRMED && (
