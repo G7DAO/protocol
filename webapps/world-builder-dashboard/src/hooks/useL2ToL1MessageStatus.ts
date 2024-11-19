@@ -3,7 +3,7 @@ import { getHighNetworks, getLowNetworks, L2_NETWORK } from '../../constants'
 import { ethers, providers } from 'ethers'
 import { Transaction } from 'ethers'
 import { BridgeNotification } from '@/components/notifications/NotificationsButton'
-import { useBlockchainContext } from '@/contexts/BlockchainContext'
+import { NetworkType, useBlockchainContext } from '@/contexts/BlockchainContext'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import {
   ParentTransactionReceipt,
@@ -42,11 +42,11 @@ export interface L2ToL1MessageStatusResult {
   l2Receipt?: ChildTransactionReceipt
 }
 
-const fetchL2ToL1MessageStatus = async (withdrawal: TransactionRecord) => {
+const fetchL2ToL1MessageStatus = async (withdrawal: TransactionRecord, selectedNetworkType: NetworkType) => {
   const { lowNetworkChainId, highNetworkChainId, highNetworkHash, amount, highNetworkTimestamp } = withdrawal
 
-  const lowNetwork = getLowNetworks().find((n) => n.chainId === lowNetworkChainId)
-  const highNetwork = getHighNetworks().find((n) => n.chainId === highNetworkChainId)
+  const lowNetwork = getLowNetworks(selectedNetworkType).find((n) => n.chainId === lowNetworkChainId)
+  const highNetwork = getHighNetworks(selectedNetworkType).find((n) => n.chainId === highNetworkChainId)
   if (!highNetwork || !lowNetwork || !highNetworkHash) {
     return undefined
   }
@@ -73,8 +73,8 @@ const fetchL2ToL1MessageStatus = async (withdrawal: TransactionRecord) => {
   }
 }
 
-export const useL2ToL1MessageStatus = (withdrawal: TransactionRecord) => {
-  return useQuery(['withdrawalStatus', withdrawal], () => fetchL2ToL1MessageStatus(withdrawal), {
+export const useL2ToL1MessageStatus = (withdrawal: TransactionRecord, selectedNetworkType: NetworkType) => {
+  return useQuery(['withdrawalStatus', withdrawal], () => fetchL2ToL1MessageStatus(withdrawal, selectedNetworkType), {
     refetchInterval: 60 * 1000
   })
 }
@@ -108,7 +108,7 @@ export const getDecodedInputs = (tx: Transaction, ABI: any) => {
 //   throw new Error(`Unable to decode inputs - ${tx.to} is unknown contract`)
 // }
 
-const fetchDepositStatus = async (deposit: TransactionRecord) => {
+const fetchDepositStatus = async (deposit: TransactionRecord, selectedNetworkType: NetworkType) => {
   const { lowNetworkChainId, highNetworkChainId, lowNetworkHash, lowNetworkTimestamp } = deposit
   if (lowNetworkChainId === L2_NETWORK.chainId) {
     return {
@@ -117,8 +117,8 @@ const fetchDepositStatus = async (deposit: TransactionRecord) => {
     }
   }
 
-  const lowNetwork = getLowNetworks().find((n) => n.chainId === lowNetworkChainId)
-  const highNetwork = getHighNetworks().find((n) => n.chainId === highNetworkChainId)
+  const lowNetwork = getLowNetworks(selectedNetworkType).find((n) => n.chainId === lowNetworkChainId)
+  const highNetwork = getHighNetworks(selectedNetworkType).find((n) => n.chainId === highNetworkChainId)
 
   if (!lowNetwork || !lowNetworkHash) {
     return undefined
@@ -149,7 +149,7 @@ const fetchDepositStatus = async (deposit: TransactionRecord) => {
   try {
     l2Result = await l1ContractCallReceipt.waitForChildTransactionReceipt(l2Provider, l1Receipt.confirmations)
   } catch (e) {
-    console.error('Error waiting for child transaction receipt:', {deposit, e})
+    console.error('Error waiting for child transaction receipt:', { deposit, e })
   }
 
   if (!l2Result) {
@@ -166,8 +166,8 @@ const fetchDepositStatus = async (deposit: TransactionRecord) => {
   return { l1Receipt, l2Result, highNetworkTimestamp }
 }
 
-export const useDepositStatus = (deposit: TransactionRecord) => {
-  return useQuery(['depositStatus', deposit], () => fetchDepositStatus(deposit), {
+export const useDepositStatus = (deposit: TransactionRecord, selectedNetworkType: NetworkType) => {
+  return useQuery(['depositStatus', deposit], () => fetchDepositStatus(deposit, selectedNetworkType), {
     refetchInterval: 60000 * 3,
     staleTime: 2 * 60 * 1000 // 2 minutes
   })
@@ -264,7 +264,7 @@ export const useMessages = (
       }
     },
     {
-      enabled: !!networkType && !!connectedAccount 
+      enabled: !!networkType && !!connectedAccount
     }
   )
 }
@@ -348,7 +348,7 @@ export const usePendingTransactions = (connectedAccount: string | undefined): Us
         const newCompletedTransactions: TransactionRecord[] = []
         for (const t of transactions) {
           if (t.type === 'DEPOSIT') {
-            const status = await fetchDepositStatus(t as TransactionRecord)
+            const status = await fetchDepositStatus(t as TransactionRecord, selectedNetworkType)
             if (status?.highNetworkTimestamp) {
               newCompletedTransactions.push({
                 ...t,
@@ -358,7 +358,7 @@ export const usePendingTransactions = (connectedAccount: string | undefined): Us
             }
           }
           if (t.type === 'WITHDRAWAL') {
-            const status = await fetchL2ToL1MessageStatus(t as TransactionRecord)
+            const status = await fetchL2ToL1MessageStatus(t as TransactionRecord, selectedNetworkType)
             if (status?.status === ChildToParentMessageStatus.CONFIRMED) {
               if (!t.claimableTimestamp) {
                 newCompletedTransactions.push({ ...t, claimableTimestamp: Date.now() / 1000, newTransaction: true })

@@ -32,7 +32,6 @@ const BridgePage = () => {
   const { newNotifications, refetchNewNotifications } = useBridgeNotificationsContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
   const queryClient = useQueryClient()
-  usePendingTransactions(connectedAccount)
 
   useEffect(() => {
     if (connectedAccount) {

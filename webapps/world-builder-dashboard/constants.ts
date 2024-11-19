@@ -1,4 +1,4 @@
-import { NetworkInterface, HighNetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
+import { NetworkInterface, HighNetworkInterface, useBlockchainContext, NetworkType } from '@/contexts/BlockchainContext'
 import { TokenAddressMap } from 'game7-bridge-sdk'
 
 export const L1_NETWORK: NetworkInterface = {
@@ -166,8 +166,7 @@ export const USDC_MAINNET: TokenAddressMap = {
 
 
 
-export const getNetworks = () => {
-  const { selectedNetworkType } = useBlockchainContext()
+export const getNetworks = (selectedNetworkType: NetworkType) => {
   switch (selectedNetworkType) {
     case 'Mainnet':
       return ALL_MAINNET_NETWORKS
@@ -176,8 +175,7 @@ export const getNetworks = () => {
   }
 }
 
-export const getHighNetworks = () => {
-  const { selectedNetworkType } = useBlockchainContext()
+export const getHighNetworks = (selectedNetworkType: NetworkType) => {
   switch (selectedNetworkType) {
     case 'Mainnet':
       return ALL_HIGH_MAINNET_NETWORKS
@@ -186,8 +184,7 @@ export const getHighNetworks = () => {
   }
 }
 
-export const getLowNetworks = () => {
-  const { selectedNetworkType } = useBlockchainContext()
+export const getLowNetworks = (selectedNetworkType: NetworkType) => {
   switch (selectedNetworkType) {
     case 'Mainnet':
       return ALL_LOW_MAINNET_NETWORKS
@@ -195,6 +192,3 @@ export const getLowNetworks = () => {
       return ALL_LOW_TESTNET_NETWORKS
   }
 }
-
-// ETH, ARBITRUM, USDC, MANTLE, USDT,
-export const ALL_TOKEN_MAPPINGS = [TG7T, ETH, USDC]

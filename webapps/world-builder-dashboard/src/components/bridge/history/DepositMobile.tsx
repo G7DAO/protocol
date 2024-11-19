@@ -8,17 +8,19 @@ import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
+import { NetworkType } from '@/contexts/BlockchainContext'
 
 interface DepositMobileProps {
   deposit: TransactionRecord
   isLoading: boolean
+  selectedNetworkType: NetworkType
 }
-const DepositMobile: React.FC<DepositMobileProps> = ({ deposit, isLoading }) => {
+const DepositMobile: React.FC<DepositMobileProps> = ({ deposit, isLoading, selectedNetworkType }) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
-  const status = useDepositStatus(deposit)
+  const status = useDepositStatus(deposit, selectedNetworkType)
   const depositInfo = {
-    from: getLowNetworks().find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
-    to: getHighNetworks().find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
+    from: getLowNetworks(selectedNetworkType).find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
+    to: getHighNetworks(selectedNetworkType).find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
   }
   const smallView = useMediaQuery('(max-width: 1199px)')
 
@@ -47,7 +49,7 @@ const DepositMobile: React.FC<DepositMobileProps> = ({ deposit, isLoading }) => 
               <div className={styles.dataRow}>
                 <div className={styles.dataText}> Transaction</div>
                 <a
-                  href={`${getBlockExplorerUrl(deposit.lowNetworkChainId)}/tx/${deposit.lowNetworkHash}`}
+                  href={`${getBlockExplorerUrl(deposit.lowNetworkChainId, selectedNetworkType)}/tx/${deposit.lowNetworkHash}`}
                   target={'_blank'}
                   className={styles.explorerLink}
                 >

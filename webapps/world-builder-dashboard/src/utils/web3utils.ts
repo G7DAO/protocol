@@ -1,5 +1,6 @@
 import { getHighNetworks, getLowNetworks } from '../../constants'
 import { ethers } from 'ethers'
+import { NetworkType } from '@/contexts/BlockchainContext'
 
 export const convertToBigNumber = (numberString: string, precision = 18) => {
   const [integerPart, decimalPart] = numberString.split('.')
@@ -8,15 +9,19 @@ export const convertToBigNumber = (numberString: string, precision = 18) => {
   return ethers.BigNumber.from(bigNumberString)
 }
 
-export const getBlockExplorerUrl = (chainId: number | undefined) => {
-  const network = [...getLowNetworks(), ...getHighNetworks()].find((n) => n.chainId === chainId)
+export const getBlockExplorerUrl = (chainId: number | undefined, selectedNetworkType: NetworkType) => {
+  const network = [...getLowNetworks(selectedNetworkType), ...getHighNetworks(selectedNetworkType)].find(
+    (n) => n.chainId === chainId
+  )
   if (network?.blockExplorerUrls) {
     return network.blockExplorerUrls[0]
   }
 }
 
-export const getNetwork = (chainId: number) => {
-  return [...getLowNetworks(), ...getHighNetworks()].find((n) => n.chainId === chainId)
+export const getNetwork = (chainId: number, selectedNetworkType: NetworkType) => {
+  return [...getLowNetworks(selectedNetworkType), ...getHighNetworks(selectedNetworkType)].find(
+    (n) => n.chainId === chainId
+  )
 }
 
 export const tokenTypes = [

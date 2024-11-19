@@ -13,14 +13,15 @@ interface UseTransferDataProps {
 }
 
 export const useBridgeTransfer = () => {
+  const { connectedAccount, selectedNetworkType, switchChain } = useBlockchainContext()
+    
   const returnTransferData = ({ txRecord }: UseTransferDataProps) => {
-    const { connectedAccount } = useBlockchainContext()
     const isDeposit = txRecord.type === 'DEPOSIT'
     const txHash = isDeposit ? txRecord.lowNetworkHash : txRecord.highNetworkHash
     const destinationChainId = isDeposit ? txRecord.highNetworkChainId : txRecord.lowNetworkChainId
     const originChainId = isDeposit ? txRecord.lowNetworkChainId : txRecord.highNetworkChainId
-    const destinationRpc = getNetworks().find((n) => n.chainId === destinationChainId)?.rpcs[0]
-    const originRpc = getNetworks().find((n) => n.chainId === originChainId)?.rpcs[0]
+    const destinationRpc = getNetworks(selectedNetworkType).find((n) => n.chainId === destinationChainId)?.rpcs[0]
+    const originRpc = getNetworks(selectedNetworkType).find((n) => n.chainId === originChainId)?.rpcs[0]
 
     const getCachedTransactions = () => {
       const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
@@ -130,9 +131,9 @@ export const useBridgeTransfer = () => {
         txHash: withdrawal.highNetworkHash || '',
         destinationNetworkChainId: withdrawal.lowNetworkChainId ?? 0,
         originNetworkChainId: withdrawal.highNetworkChainId ?? 0,
-        destinationSignerOrProviderOrRpc: getNetworks().find((n) => n.chainId === withdrawal.lowNetworkChainId)
+        destinationSignerOrProviderOrRpc: getNetworks(selectedNetworkType).find((n) => n.chainId === withdrawal.lowNetworkChainId)
           ?.rpcs[0],
-        originSignerOrProviderOrRpc: getNetworks().find((n) => n.chainId === withdrawal.highNetworkChainId)
+        originSignerOrProviderOrRpc: getNetworks(selectedNetworkType).find((n) => n.chainId === withdrawal.highNetworkChainId)
           ?.rpcs[0]
       })
       const res = await _bridgeTransfer?.execute(signer)
