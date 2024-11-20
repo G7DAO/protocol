@@ -20,8 +20,8 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   const smallView = useMediaQuery('(max-width: 1199px)')
   const { data: status, isLoading: isLoadingStatus } = useDepositStatus(deposit, selectedNetworkType)
   const depositInfo = {
-    from: getLowNetworks(selectedNetworkType).find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
-    to: getHighNetworks(selectedNetworkType).find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
+    from: getLowNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
+    to: getHighNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
   }
   const tokenInformation = getTokensForNetwork(deposit?.lowNetworkChainId, connectedAccount).find(
     (token) => token.address === deposit?.tokenAddress

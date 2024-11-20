@@ -45,8 +45,8 @@ export interface L2ToL1MessageStatusResult {
 const fetchL2ToL1MessageStatus = async (withdrawal: TransactionRecord, selectedNetworkType: NetworkType) => {
   const { lowNetworkChainId, highNetworkChainId, highNetworkHash, amount, highNetworkTimestamp } = withdrawal
 
-  const lowNetwork = getLowNetworks(selectedNetworkType).find((n) => n.chainId === lowNetworkChainId)
-  const highNetwork = getHighNetworks(selectedNetworkType).find((n) => n.chainId === highNetworkChainId)
+  const lowNetwork = getLowNetworks(selectedNetworkType)?.find((n) => n.chainId === lowNetworkChainId)
+  const highNetwork = getHighNetworks(selectedNetworkType)?.find((n) => n.chainId === highNetworkChainId)
   if (!highNetwork || !lowNetwork || !highNetworkHash) {
     return undefined
   }
@@ -117,8 +117,8 @@ const fetchDepositStatus = async (deposit: TransactionRecord, selectedNetworkTyp
     }
   }
 
-  const lowNetwork = getLowNetworks(selectedNetworkType).find((n) => n.chainId === lowNetworkChainId)
-  const highNetwork = getHighNetworks(selectedNetworkType).find((n) => n.chainId === highNetworkChainId)
+  const lowNetwork = getLowNetworks(selectedNetworkType)?.find((n) => n.chainId === lowNetworkChainId)
+  const highNetwork = getHighNetworks(selectedNetworkType)?.find((n) => n.chainId === highNetworkChainId)
 
   if (!lowNetwork || !lowNetworkHash) {
     return undefined

@@ -81,7 +81,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   const queryClient = useQueryClient()
   const transfer = useMutation(
     async (amount: string) => {
-      const network = networks.find((n) => n.chainId === bridger?.originNetwork.chainId)!
+      const network = networks?.find((n) => n.chainId === bridger?.originNetwork.chainId)!
       const provider = await getProvider(network)
       const signer = provider.getSigner()
       const destinationRPC = direction === 'DEPOSIT' ? selectedHighNetwork.rpcs[0] : selectedLowNetwork.rpcs[0]

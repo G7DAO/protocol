@@ -21,7 +21,7 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
 
   const { data: nativeBalance } = useNativeBalance({
     account: connectedAccount,
-    rpc: getNetworks(selectedNetworkType).find((network) => network.chainId === chainId)?.rpcs[0] || L3_NETWORK.rpcs[0]
+    rpc: getNetworks(selectedNetworkType)?.find((network) => network.chainId === chainId)?.rpcs[0] || L3_NETWORK.rpcs[0]
   })
 
   const getTokens = async () => {
@@ -45,7 +45,7 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
           <IconWallet04 />
           <div className={styles.balance}>
             {nativeBalance
-              ? `${Number(nativeBalance).toFixed(4)} ${getNetworks(selectedNetworkType).find((network) => network.chainId === chainId)?.nativeCurrency?.symbol}`
+              ? `${Number(nativeBalance).toFixed(4)} ${getNetworks(selectedNetworkType)?.find((network) => network.chainId === chainId)?.nativeCurrency?.symbol}`
               : 'Fetching...'}
           </div>
         </div>

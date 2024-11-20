@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { getHighNetworks, getLowNetworks } from '../../../../constants'
+import { getHighNetworks, getLowNetworks, HIGH_NETWORKS, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
@@ -58,8 +58,8 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const { claim } = useBridgeTransfer()
   const [collapseExecuted, setCollapseExecuted] = useState(false)
   const [hovered, setHovered] = useState(false)
-  const lowNetworks = getLowNetworks(selectedNetworkType)
-  const highNetworks = getHighNetworks(selectedNetworkType)
+  const lowNetworks = getLowNetworks(selectedNetworkType) || LOW_NETWORKS
+  const highNetworks = getHighNetworks(selectedNetworkType) || HIGH_NETWORKS
   const status = getStatus(withdrawal, lowNetworks, highNetworks)
   const tokenInformation = getTokensForNetwork(withdrawal?.highNetworkChainId, connectedAccount).find(
     (token) => token.address === withdrawal?.tokenAddress
