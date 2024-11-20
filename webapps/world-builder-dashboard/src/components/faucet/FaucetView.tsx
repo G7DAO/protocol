@@ -33,7 +33,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const networks = getNetworks(selectedNetworkType)
 
   useEffect(() => {
-    const targetNetwork = networks.find((n) => n.chainId === faucetTargetChainId)
+    const targetNetwork = networks?.find((n) => n.chainId === faucetTargetChainId)
     if (targetNetwork) {
       setSelectedNetwork(targetNetwork)
     }

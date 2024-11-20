@@ -14,16 +14,14 @@ import IconChevronDown from '@/assets/IconChevronDown'
 import IconEthereum from '@/assets/IconEthereum'
 import IconG7T from '@/assets/IconG7T'
 import { HighNetworkInterface, NetworkInterface } from '@/contexts/BlockchainContext'
-import { Token } from '@/utils/tokens'
 
 type NetworkSelectorProps = {
   networks: NetworkInterface[]
   selectedNetwork: NetworkInterface
   onChange: (network: NetworkInterface | HighNetworkInterface) => void
-  selectedToken: Token
 } & InputBaseProps
 
-const NetworkSelector = ({ networks, onChange, selectedNetwork, selectedToken }: NetworkSelectorProps) => {
+const NetworkSelector = ({ networks, onChange, selectedNetwork }: NetworkSelectorProps) => {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption()
   })
@@ -75,7 +73,6 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork, selectedToken }:
       <Combobox.Dropdown className='!bg-dark-900 !rounded-md !border-dark-700'>
         <Combobox.Options>
           {networks.map((n) => {
-            const chainIds = Object.keys(selectedToken.tokenAddressMap)
             return (
               <Combobox.Option value={String(n.chainId)} key={n.chainId}>
                 <Group>

@@ -75,7 +75,7 @@ const BridgeView = ({
     ['estimatedFee', bridger, connectedAccount, value],
     async () => {
       try {
-        const originNetwork = networks.find((n) => n.chainId === bridger?.originNetwork.chainId)
+        const originNetwork = networks?.find((n) => n.chainId === bridger?.originNetwork.chainId)
         if (!originNetwork) throw new Error("Can't find network!")
 
         const allowance = await bridger?.getAllowance(originNetwork.rpcs[0], connectedAccount ?? '')
@@ -122,6 +122,7 @@ const BridgeView = ({
       const originChainId = direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId
       const destinationChainId = direction === 'DEPOSIT' ? selectedHighNetwork.chainId : selectedLowNetwork.chainId
       const chainIds = Object.keys(selectedBridgeToken.tokenAddressMap)
+      console.log({origin, destinationChainId, chainIds, selectedBridgeToken})
 
       if (!chainIds.includes(String(destinationChainId))) {
         return
@@ -164,7 +165,6 @@ const BridgeView = ({
           networks={selectedNetworkType === 'Testnet' ? [L1_NETWORK, L2_NETWORK] : [L1_MAIN_NETWORK, L2_MAIN_NETWORK]}
           selectedNetwork={selectedLowNetwork}
           onChange={setSelectedLowNetwork}
-          selectedToken={selectedBridgeToken}
         />
       )
     } else {
@@ -173,7 +173,6 @@ const BridgeView = ({
           networks={selectedNetworkType === 'Testnet' ? [L2_NETWORK, L3_NETWORK] : [L2_MAIN_NETWORK, L3_MAIN_NETWORK]}
           selectedNetwork={selectedHighNetwork}
           onChange={setSelectedHighNetwork}
-          selectedToken={selectedBridgeToken}
         />
       )
     }

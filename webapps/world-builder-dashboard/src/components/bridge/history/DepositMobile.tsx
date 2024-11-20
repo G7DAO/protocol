@@ -19,8 +19,8 @@ const DepositMobile: React.FC<DepositMobileProps> = ({ deposit, isLoading, selec
   const [isCollapsed, setIsCollapsed] = useState(true)
   const status = useDepositStatus(deposit, selectedNetworkType)
   const depositInfo = {
-    from: getLowNetworks(selectedNetworkType).find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
-    to: getHighNetworks(selectedNetworkType).find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
+    from: getLowNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
+    to: getHighNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
   }
   const smallView = useMediaQuery('(max-width: 1199px)')
 
