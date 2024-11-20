@@ -76,9 +76,8 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork, selectedToken }:
         <Combobox.Options>
           {networks.map((n) => {
             const chainIds = Object.keys(selectedToken.tokenAddressMap)
-            const isDisabled = chainIds.includes(String(n.chainId))
             return (
-              <Combobox.Option value={String(n.chainId)} key={n.chainId} disabled={!isDisabled}>
+              <Combobox.Option value={String(n.chainId)} key={n.chainId}>
                 <Group>
                   <div
                     className={
