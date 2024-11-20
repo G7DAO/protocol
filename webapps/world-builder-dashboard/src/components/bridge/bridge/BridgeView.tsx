@@ -80,7 +80,6 @@ const BridgeView = ({
 
         const allowance = await bridger?.getAllowance(originNetwork.rpcs[0], connectedAccount ?? '')
         const decimals = tokenInformation?.decimalPlaces ?? 18
-        console.log(decimals)
         const parsedValue = value ? ethers.utils.parseUnits(value, decimals) : ethers.utils.parseEther('0')
 
         let approvalFee = ethers.utils.parseEther('0') // Default to zero if no approval needed
@@ -122,8 +121,7 @@ const BridgeView = ({
       const originChainId = direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId
       const destinationChainId = direction === 'DEPOSIT' ? selectedHighNetwork.chainId : selectedLowNetwork.chainId
       const chainIds = Object.keys(selectedBridgeToken.tokenAddressMap)
-      console.log({originChainId, destinationChainId, chainIds, selectedBridgeToken})
-
+      
       if (!chainIds.includes(String(destinationChainId))) {
         return
       }
