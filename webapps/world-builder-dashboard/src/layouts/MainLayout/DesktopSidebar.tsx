@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import styles from './MainLayout.module.css'
 import { Tooltip } from 'summon-ui/mantine'
 import IconExternalLink from '@/assets/IconExternalLink'
-import IconLock from '@/assets/IconLock'
+import IconInfoCircle from '@/assets/IconInfoCircle'
 import IconLogout from '@/assets/IconLogout'
 import NetworkToggle from '@/components/commonComponents/networkToggle/NetworkToggle'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
@@ -45,7 +45,7 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
                   <IconExternalLink className={styles.icon} />
                 ) : item.name === 'faucet' && selectedNetworkType === 'Testnet' ? (
                   <Tooltip arrowSize={8} radius={'8px'} label={'Only available on Testnet'} withArrow>
-                    <IconLock stroke='#fff' />
+                    <IconInfoCircle stroke='#fff' />
                   </Tooltip>
                 ) : (
                   <></>
