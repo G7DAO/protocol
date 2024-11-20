@@ -115,7 +115,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     if (_selectedNetworkType) {
       setSelectedNetworkType(_selectedNetworkType as NetworkType)
     } else {
-      setSelectedNetworkType('Testnet')
+      setSelectedNetworkType('Mainnet')
     }
   }, [])
 
