@@ -122,7 +122,7 @@ const BridgeView = ({
       const originChainId = direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId
       const destinationChainId = direction === 'DEPOSIT' ? selectedHighNetwork.chainId : selectedLowNetwork.chainId
       const chainIds = Object.keys(selectedBridgeToken.tokenAddressMap)
-      console.log({origin, destinationChainId, chainIds, selectedBridgeToken})
+      console.log({originChainId, destinationChainId, chainIds, selectedBridgeToken})
 
       if (!chainIds.includes(String(destinationChainId))) {
         return
