@@ -95,7 +95,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         if (selectedBridgeToken.address != ZERO_ADDRESS) {
           const allowance = (await bridger?.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount ?? '')) ?? ''
           const allowanceToCheck = ethers.utils.formatUnits(allowance, decimals)
-
+            
           // approve first
           if (Number(allowanceToCheck) < Number(amount)) {
             const txApprove = await bridger?.approve(amountToSend, signer)

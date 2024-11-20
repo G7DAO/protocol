@@ -79,7 +79,9 @@ const BridgeView = ({
         if (!originNetwork) throw new Error("Can't find network!")
 
         const allowance = await bridger?.getAllowance(originNetwork.rpcs[0], connectedAccount ?? '')
-        const parsedValue = value ? ethers.utils.parseEther(value) : ethers.utils.parseEther('0')
+        const decimals = tokenInformation?.decimalPlaces ?? 18
+        console.log(decimals)
+        const parsedValue = value ? ethers.utils.parseUnits(value, decimals) : ethers.utils.parseEther('0')
 
         let approvalFee = ethers.utils.parseEther('0') // Default to zero if no approval needed
         let transferFee = ethers.utils.parseEther('0') // Default to zero
