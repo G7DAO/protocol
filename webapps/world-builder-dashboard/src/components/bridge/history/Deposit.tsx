@@ -30,11 +30,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   )
   const { returnTransferData } = useBridgeTransfer()
   const { data: transferStatus, isLoading } = returnTransferData({ txRecord: deposit })
-  console.log(
-    deposit.lowNetworkHash === '0x5dbdde9a6783b3f12a39368f63e1ee6cecb5242b03ac23a0c19c0a624d3970b1'
-      ? transferStatus
-      : {}
-  )
+
   return (
     <>
       {isLoadingStatus && smallView ? (

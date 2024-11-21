@@ -5,11 +5,12 @@ import styles from './MobileSidebar.module.css'
 import { Tooltip } from 'summon-ui/mantine'
 import IconExternalLink from '@/assets/IconExternalLink'
 import IconHamburgerLanding from '@/assets/IconHamburgerLanding'
+import IconInfoCircle from '@/assets/IconInfoCircle'
+import IconLock from '@/assets/IconLock'
 import IconLogoutLarge from '@/assets/IconLogoutLarge'
 import NetworkToggle from '@/components/commonComponents/networkToggle/NetworkToggle'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
-import IconLock from '@/assets/IconLock'
 
 interface MobileSidebarProps {
   navigationItems: { name: string; navigateTo: string; icon: ReactNode }[]
@@ -54,7 +55,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
                   setIsExpanded(false)
                   if (item.name === 'documentation' || item.name === 'explorer') {
                     window.open(item.navigateTo, '_blank')
-                  } else {
+                  } else if (!(item.name === 'faucet' && selectedNetworkType === 'Mainnet')) {
                     navigate(item.navigateTo)
                   }
                 }}
@@ -66,8 +67,12 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
                 </div>
                 <div style={{ display: 'flex' }}>
                   {item.name === 'documentation' || item.name === 'explorer' ? (
-                    <IconExternalLink className={parentStyles.icon} />
+                    <IconExternalLink className={styles.icon} />
                   ) : item.name === 'faucet' && selectedNetworkType === 'Testnet' ? (
+                    <Tooltip arrowSize={8} radius={'8px'} label={'Only available on Testnet'} withArrow>
+                      <IconInfoCircle stroke='#fff' />
+                    </Tooltip>
+                  ) : item.name === 'faucet' && selectedNetworkType === 'Mainnet' ? (
                     <Tooltip arrowSize={8} radius={'8px'} label={'Only available on Testnet'} withArrow>
                       <IconLock stroke='#fff' />
                     </Tooltip>

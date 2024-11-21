@@ -98,12 +98,10 @@ const ActionButton: React.FC<ActionButtonProps> = ({
  
           // approve first
           if (Number(allowanceToCheck) < Number(amountToSend)) {
-            console.log("about to approve")
             const txApprove = await bridger?.approve(amountToSend, signer)
             await txApprove.wait()
           }
         }
-        console.log("approved already")
         const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })
         console.log("transfer .. ?")
         await tx?.wait()

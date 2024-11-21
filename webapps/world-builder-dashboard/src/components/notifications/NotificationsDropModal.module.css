@@ -233,7 +233,7 @@
 }
 
 .closeIconMultiple:hover {
-  stroke: var(--Purple-800, #5925dc);
+  stroke: #fff;
 }
 
 @media (max-width: 1199px) {
