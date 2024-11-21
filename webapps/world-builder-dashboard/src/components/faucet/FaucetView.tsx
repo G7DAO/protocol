@@ -12,6 +12,7 @@ import { useUISettings } from '@/contexts/UISettingsContext'
 import { useFaucetAPI } from '@/hooks/useFaucetAPI'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { timeDifferenceInHoursAndMinutes, timeDifferenceInHoursMinutesAndSeconds } from '@/utils/timeFormat'
+import { useNavigate } from 'react-router-dom'
 
 interface FaucetViewProps {}
 const FaucetView: React.FC<FaucetViewProps> = ({}) => {
@@ -28,9 +29,15 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const { faucetTargetChainId } = useUISettings()
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
+  const navigate = useNavigate()
 
   const values: AccountType[] = [`External Address`, `Connected Account`]
   const networks = getNetworks(selectedNetworkType)
+
+  if (selectedNetworkType === 'Mainnet') {
+    navigate('/bridge')
+  }
+
 
   useEffect(() => {
     const targetNetwork = networks?.find((n) => n.chainId === faucetTargetChainId)
