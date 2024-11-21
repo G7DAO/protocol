@@ -76,28 +76,25 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork, direction }: Net
       <Combobox.Dropdown className='!bg-dark-900 !rounded-md !border-dark-700'>
         <Combobox.Options>
           {networks.map((n) => {
-            if (direction === "DEPOSIT" ? selectedHighNetwork.chainId !== n.chainId && selectedHighNetwork.chainId === selectedNetwork.chainId : selectedLowNetwork.chainId !== n.chainId && selectedLowNetwork.chainId === selectedNetwork.chainId) {
-              return
-            }
-            else {
-              return (
-                <Combobox.Option value={String(n.chainId)} key={n.chainId}>
-                  <Group>
-                    <div
-                      className={
-                        n.chainId === selectedNetwork.chainId ? styles.optionContainerSelected : styles.optionContainer
-                      }
-                    >
-                      <div className={styles.optionLeftSection}>
-                        {networkLogo(n.chainId)}
-                        {n.displayName}
-                      </div>
-                      {n.chainId === selectedNetwork.chainId && <IconCheck />}
+            const isDisabled = direction === "DEPOSIT" ? selectedHighNetwork.chainId !== n.chainId && selectedHighNetwork.chainId === selectedNetwork.chainId : selectedLowNetwork.chainId !== n.chainId && selectedLowNetwork.chainId === selectedNetwork.chainId
+            return (
+              <Combobox.Option value={String(n.chainId)} key={n.chainId} disabled={isDisabled}
+                className={isDisabled ? styles.optionDisabled : styles.option} >
+                <Group>
+                  <div
+                    className={
+                      n.chainId === selectedNetwork.chainId ? styles.optionContainerSelected : styles.optionContainer
+                    }
+                  >
+                    <div className={styles.optionLeftSection}>
+                      {networkLogo(n.chainId)}
+                      {n.displayName}
                     </div>
-                  </Group>
-                </Combobox.Option>
-              )
-            }
+                    {n.chainId === selectedNetwork.chainId && <IconCheck />}
+                  </div>
+                </Group>
+              </Combobox.Option>
+            )
           })}
         </Combobox.Options>
       </Combobox.Dropdown>
