@@ -95,15 +95,17 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         if (selectedBridgeToken.address != ZERO_ADDRESS) {
           const allowance = (await bridger?.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount ?? '')) ?? ''
           const allowanceToCheck = ethers.utils.formatUnits(allowance, decimals)
-            
+ 
           // approve first
-          if (Number(allowanceToCheck) < Number(amount)) {
+          if (Number(allowanceToCheck) < Number(amountToSend)) {
+            console.log("about to approve")
             const txApprove = await bridger?.approve(amountToSend, signer)
             await txApprove.wait()
-            queryClient.refetchQueries(['estimatedFee'])
           }
         }
+        console.log("approved already")
         const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })
+        console.log("transfer .. ?")
         await tx?.wait()
         return {
           type: 'DEPOSIT',

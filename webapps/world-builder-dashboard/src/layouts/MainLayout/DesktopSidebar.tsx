@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import styles from './MainLayout.module.css'
 import { Tooltip } from 'summon-ui/mantine'
 import IconExternalLink from '@/assets/IconExternalLink'
+import IconInfoCircle from '@/assets/IconInfoCircle'
 import IconLock from '@/assets/IconLock'
 import IconLogout from '@/assets/IconLogout'
 import NetworkToggle from '@/components/commonComponents/networkToggle/NetworkToggle'
@@ -26,11 +27,12 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
         <div className={styles.navigation}>
           {navigationItems.map((item) => (
             <div
+              aria-disabled={item.name === 'faucet' && selectedNetworkType === 'Mainnet'}
               className={location.pathname.startsWith(item.navigateTo) ? styles.selectedNavButton : styles.navButton}
               onClick={() => {
                 if (item.name === 'documentation' || item.name === 'explorer') {
                   window.open(item.navigateTo, '_blank')
-                } else {
+                } else if (!(item.name === 'faucet' && selectedNetworkType === 'Mainnet')) {
                   navigate(item.navigateTo)
                 }
               }}
@@ -44,6 +46,10 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
                 {item.name === 'documentation' || item.name === 'explorer' ? (
                   <IconExternalLink className={styles.icon} />
                 ) : item.name === 'faucet' && selectedNetworkType === 'Testnet' ? (
+                  <Tooltip arrowSize={8} radius={'8px'} label={'Only available on Testnet'} withArrow>
+                    <IconInfoCircle stroke='#fff' />
+                  </Tooltip>
+                ) : item.name === 'faucet' && selectedNetworkType === 'Mainnet' ? (
                   <Tooltip arrowSize={8} radius={'8px'} label={'Only available on Testnet'} withArrow>
                     <IconLock stroke='#fff' />
                   </Tooltip>
