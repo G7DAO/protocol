@@ -13,18 +13,21 @@ import IconCheck from '@/assets/IconCheck'
 import IconChevronDown from '@/assets/IconChevronDown'
 import IconEthereum from '@/assets/IconEthereum'
 import IconG7T from '@/assets/IconG7T'
-import { HighNetworkInterface, NetworkInterface } from '@/contexts/BlockchainContext'
+import { HighNetworkInterface, NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
 
 type NetworkSelectorProps = {
   networks: NetworkInterface[]
   selectedNetwork: NetworkInterface
   onChange: (network: NetworkInterface | HighNetworkInterface) => void
+  direction: 'DEPOSIT' | 'WITHDRAW'
 } & InputBaseProps
 
-const NetworkSelector = ({ networks, onChange, selectedNetwork }: NetworkSelectorProps) => {
+const NetworkSelector = ({ networks, onChange, selectedNetwork, direction }: NetworkSelectorProps) => {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption()
   })
+
+  const { selectedHighNetwork, selectedLowNetwork } = useBlockchainContext()
 
   const networkLogo = (chainId: number) => {
     switch (chainId) {
@@ -73,23 +76,28 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork }: NetworkSelecto
       <Combobox.Dropdown className='!bg-dark-900 !rounded-md !border-dark-700'>
         <Combobox.Options>
           {networks.map((n) => {
-            return (
-              <Combobox.Option value={String(n.chainId)} key={n.chainId}>
-                <Group>
-                  <div
-                    className={
-                      n.chainId === selectedNetwork.chainId ? styles.optionContainerSelected : styles.optionContainer
-                    }
-                  >
-                    <div className={styles.optionLeftSection}>
-                      {networkLogo(n.chainId)}
-                      {n.displayName}
+            if (direction === "DEPOSIT" ? selectedHighNetwork.chainId !== n.chainId && selectedHighNetwork.chainId === selectedNetwork.chainId : selectedLowNetwork.chainId !== n.chainId && selectedLowNetwork.chainId === selectedNetwork.chainId) {
+              return
+            }
+            else {
+              return (
+                <Combobox.Option value={String(n.chainId)} key={n.chainId}>
+                  <Group>
+                    <div
+                      className={
+                        n.chainId === selectedNetwork.chainId ? styles.optionContainerSelected : styles.optionContainer
+                      }
+                    >
+                      <div className={styles.optionLeftSection}>
+                        {networkLogo(n.chainId)}
+                        {n.displayName}
+                      </div>
+                      {n.chainId === selectedNetwork.chainId && <IconCheck />}
                     </div>
-                    {n.chainId === selectedNetwork.chainId && <IconCheck />}
-                  </div>
-                </Group>
-              </Combobox.Option>
-            )
+                  </Group>
+                </Combobox.Option>
+              )
+            }
           })}
         </Combobox.Options>
       </Combobox.Dropdown>

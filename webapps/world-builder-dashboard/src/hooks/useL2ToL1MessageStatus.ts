@@ -147,7 +147,7 @@ const fetchDepositStatus = async (deposit: TransactionRecord, selectedNetworkTyp
   let l2Result
 
   try {
-    l2Result = await l1ContractCallReceipt.waitForChildTransactionReceipt(l2Provider, l1Receipt.confirmations)
+    l2Result = await l1ContractCallReceipt.waitForChildTransactionReceipt(l2Provider, l1Receipt.confirmations, 1)
   } catch (e) {
     console.error('Error waiting for child transaction receipt:', { deposit, e })
   }
@@ -169,7 +169,7 @@ const fetchDepositStatus = async (deposit: TransactionRecord, selectedNetworkTyp
 export const useDepositStatus = (deposit: TransactionRecord, selectedNetworkType: NetworkType) => {
   return useQuery(['depositStatus', deposit], () => fetchDepositStatus(deposit, selectedNetworkType), {
     refetchInterval: 60000 * 3,
-    staleTime: 2 * 60 * 1000 // 2 minutes
+    staleTime: 2 * 60 * 1000
   })
 }
 

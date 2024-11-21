@@ -80,7 +80,6 @@ const BridgeView = ({
 
         const allowance = await bridger?.getAllowance(originNetwork.rpcs[0], connectedAccount ?? '')
         const decimals = tokenInformation?.decimalPlaces ?? 18
-        console.log(decimals)
         const parsedValue = value ? ethers.utils.parseUnits(value, decimals) : ethers.utils.parseEther('0')
 
         let approvalFee = ethers.utils.parseEther('0') // Default to zero if no approval needed
@@ -122,7 +121,6 @@ const BridgeView = ({
       const originChainId = direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId
       const destinationChainId = direction === 'DEPOSIT' ? selectedHighNetwork.chainId : selectedLowNetwork.chainId
       const chainIds = Object.keys(selectedBridgeToken.tokenAddressMap)
-      console.log({originChainId, destinationChainId, chainIds, selectedBridgeToken})
 
       if (!chainIds.includes(String(destinationChainId))) {
         return
@@ -162,6 +160,7 @@ const BridgeView = ({
     if ((isSource && direction === 'DEPOSIT') || (!isSource && direction === 'WITHDRAW')) {
       return (
         <NetworkSelector
+          direction={direction}
           networks={selectedNetworkType === 'Testnet' ? [L1_NETWORK, L2_NETWORK] : [L1_MAIN_NETWORK, L2_MAIN_NETWORK]}
           selectedNetwork={selectedLowNetwork}
           onChange={setSelectedLowNetwork}
@@ -173,6 +172,7 @@ const BridgeView = ({
           networks={selectedNetworkType === 'Testnet' ? [L2_NETWORK, L3_NETWORK] : [L2_MAIN_NETWORK, L3_MAIN_NETWORK]}
           selectedNetwork={selectedHighNetwork}
           onChange={setSelectedHighNetwork}
+          direction={direction}
         />
       )
     }
