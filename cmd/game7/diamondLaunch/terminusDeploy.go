@@ -213,15 +213,15 @@ func CreateTerminusDeployCommand() *cobra.Command {
 		},
 	}
 
-	terminusCmd := CreateTerminusCommand()
+	gogogoCmd := CreateTerminusGogogoCommand()
 	TerminusFacetCmd := TerminusFacet.CreateTerminusFacetCommand()
 
-	cmd.AddCommand(terminusCmd, TerminusFacetCmd)
+	cmd.AddCommand(gogogoCmd, TerminusFacetCmd)
 
 	return cmd
 }
 
-func CreateTerminusCommand() *cobra.Command {
+func CreateTerminusGogogoCommand() *cobra.Command {
 	var keyfile, nonce, password, value, gasPrice, maxFeePerGas, maxPriorityFeePerGas, rpc, outfile string
 	var gasLimit uint64
 	var simulate bool
@@ -233,7 +233,7 @@ func CreateTerminusCommand() *cobra.Command {
 	var diamondCutFacetRaw, diamondLoupeFacetRaw, ownershipFacetRaw, terminusFacetRaw, terminusInitializerRaw string
 
 	cmd := &cobra.Command{
-		Use:   "deploy",
+		Use:   "gogogo",
 		Short: "Deploy a new Terminus diamond contract",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			if keyfile == "" {
