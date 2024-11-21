@@ -19,14 +19,15 @@ type NetworkSelectorProps = {
   networks: NetworkInterface[]
   selectedNetwork: NetworkInterface
   onChange: (network: NetworkInterface | HighNetworkInterface) => void
+  direction: 'DEPOSIT' | 'WITHDRAW'
 } & InputBaseProps
 
-const NetworkSelector = ({ networks, onChange, selectedNetwork }: NetworkSelectorProps) => {
+const NetworkSelector = ({ networks, onChange, selectedNetwork, direction }: NetworkSelectorProps) => {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption()
   })
 
-  const { selectedLowNetwork, selectedHighNetwork } = useBlockchainContext()
+  const { selectedHighNetwork, selectedLowNetwork } = useBlockchainContext()
 
   const networkLogo = (chainId: number) => {
     switch (chainId) {
@@ -75,7 +76,7 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork }: NetworkSelecto
       <Combobox.Dropdown className='!bg-dark-900 !rounded-md !border-dark-700'>
         <Combobox.Options>
           {networks.map((n) => {
-            if (selectedHighNetwork.chainId !== n.chainId && selectedHighNetwork.chainId === selectedNetwork.chainId) {
+            if (direction === "DEPOSIT" ? selectedHighNetwork.chainId !== n.chainId && selectedHighNetwork.chainId === selectedNetwork.chainId : selectedLowNetwork.chainId !== n.chainId && selectedLowNetwork.chainId === selectedNetwork.chainId) {
               return
             }
             else {
