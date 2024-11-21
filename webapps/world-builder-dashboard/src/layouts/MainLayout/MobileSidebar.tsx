@@ -5,11 +5,11 @@ import styles from './MobileSidebar.module.css'
 import { Tooltip } from 'summon-ui/mantine'
 import IconExternalLink from '@/assets/IconExternalLink'
 import IconHamburgerLanding from '@/assets/IconHamburgerLanding'
-import IconInfoCircle from '@/assets/IconInfoCircle'
 import IconLogoutLarge from '@/assets/IconLogoutLarge'
 import NetworkToggle from '@/components/commonComponents/networkToggle/NetworkToggle'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
+import IconLock from '@/assets/IconLock'
 
 interface MobileSidebarProps {
   navigationItems: { name: string; navigateTo: string; icon: ReactNode }[]
@@ -69,7 +69,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
                     <IconExternalLink className={parentStyles.icon} />
                   ) : item.name === 'faucet' && selectedNetworkType === 'Testnet' ? (
                     <Tooltip arrowSize={8} radius={'8px'} label={'Only available on Testnet'} withArrow>
-                      <IconInfoCircle stroke='#fff' />
+                      <IconLock stroke='#fff' />
                     </Tooltip>
                   ) : (
                     <></>
