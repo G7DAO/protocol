@@ -6,6 +6,10 @@ library TokenType {
         return 1;
     }
 
+    function terminus_mintable_type() internal pure returns (uint256) {
+        return 2;
+    }
+
     function erc20_type() internal pure returns (uint256) {
         return 20;
     }

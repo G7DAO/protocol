@@ -14,12 +14,11 @@ import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
-import "./LibDropperV3.sol";
-import "./interfaces/IERC721Mint.sol";
-import "./interfaces/ITerminus.sol";
-import "./diamond/security/DiamondReentrancyGuard.sol";
-import { LibDiamondDropperV3 as LibDiamond } from "./diamond/libraries/LibDiamondDropperV3.sol";
-import "./diamond/libraries/LibSignatures.sol";
+import "./libraries/LibDropperV3.sol";
+import "../../interfaces/ITerminus.sol";
+import "./security/DiamondReentrancyGuard.sol";
+import { LibDiamond as LibDiamond } from "../../utils/diamonds/contracts/libraries/LibDiamond.sol";
+import "./libraries/LibSignatures.sol";
 import { TerminusPermissions } from "../../security/terminus/TerminusPermissions.sol";
 import "../../libraries/TokenType.sol";
 
@@ -52,11 +51,7 @@ contract DropperV3Facet is ERC721Holder, ERC1155Holder, TerminusPermissions, Dia
     modifier onlyTerminusAdmin() {
         LibDropper.DropperStorage storage ds = LibDropper.dropperStorage();
         require(
-            _holdsPoolToken(
-                ds.TerminusAdminContractAddress,
-                ds.TerminusAdminPoolID,
-                TokenType.terminus_mintable_type()
-            ),
+            _holdsPoolToken(ds.TerminusAdminContractAddress, ds.TerminusAdminPoolID, 1),
             "DropperFacet.onlyTerminusAdmin: Sender does not hold administrator token"
         );
 

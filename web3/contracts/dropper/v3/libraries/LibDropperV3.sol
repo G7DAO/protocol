@@ -16,7 +16,6 @@ struct TerminusAuthorization {
 }
 
 library LibDropper {
-    //todo: Check if "game7dao.eth" wanted or something else
     bytes32 constant DROPPERV3_STORAGE_POSITION = keccak256("game7.storage.Dropper");
 
     struct DropperStorage {
@@ -27,7 +26,6 @@ library LibDropper {
         mapping(uint256 => TerminusAuthorization) DropAuthorizations;
         mapping(uint256 => DroppableToken) DropToken;
         mapping(uint256 => string) DropURI;
-        // dropID => requestID => true if claimed and false if not
         mapping(uint256 => mapping(uint256 => bool)) DropRequestClaimed;
     }
 
