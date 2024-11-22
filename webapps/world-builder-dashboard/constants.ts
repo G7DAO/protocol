@@ -39,7 +39,7 @@ export const L2_NETWORK: HighNetworkInterface = {
 export const L3_NETWORK: HighNetworkInterface = {
   chainId: 13746,
   name: 'game7Testnet',
-  displayName: 'Game7 Testnet',
+  displayName: 'Game7 Sepolia',
   rpcs: ['https://testnet-rpc.game7.io'],
   blockExplorerUrls: ['https://testnet.game7.io'],
   nativeCurrency: {
