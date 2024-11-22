@@ -1,6 +1,6 @@
-.PHONY: clean generate regenerate test docs redocs hardhat bindings test-graffiti test-web3 clean-web3 deepclean
+.PHONY: clean generate regenerate test docs redocs hardhat bindings test-graffiti test-web3 clean-web3 deepclean gitmodule
 
-build: hardhat bindings bin/game7 bin/graffiti bin/robognome
+build: gitmodule hardhat bindings bin/game7 bin/graffiti bin/robognome
 
 rebuild: clean generate build
 
@@ -100,3 +100,6 @@ deepclean: clean clean-web3
 
 hardhat:
 	cd web3 && npm install && npx hardhat compile
+
+gitmodule:
+	git submodule update --init --recursive
