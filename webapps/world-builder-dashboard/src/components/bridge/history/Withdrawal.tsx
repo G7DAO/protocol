@@ -66,7 +66,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
     (token) => token.address === withdrawal?.tokenAddress
   )
   // const { data: transactionInputs } = getTransactionInputs({ txRecord: withdrawal })
-  
+
   return (
     <>
       {status?.isLoading && smallView ? (
@@ -84,7 +84,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
             />
           ) : (
             <>
-              {status?.isLoading && isLoading ? (
+              {status?.isLoading || isLoading ? (
                 <>
                   <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
                     <div className={styles.typeWithdrawal}>
