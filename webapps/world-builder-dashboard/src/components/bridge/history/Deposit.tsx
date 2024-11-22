@@ -55,7 +55,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
               >{`${tokenInformation?.decimals ? Number(deposit.amount) / tokenInformation?.decimals : deposit.amount} ${tokenInformation?.symbol}`}</div>
               <div className={styles.gridItem}>{depositInfo.from}</div>
               <div className={styles.gridItem}>{depositInfo.to}</div>
-              {isLoading && isLoadingStatus ? (
+              {isLoading || transferStatus?.status === undefined || isLoadingStatus ? (
                 <>
                   <div className={styles.gridItem}>
                     <div className={styles.loading}>Loading</div>

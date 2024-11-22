@@ -32,8 +32,7 @@ export const useBridgeTransfer = () => {
     const shouldFetchStatus = (cachedTransaction: any) => {
       const isPending = ![2, 6, 9].includes(cachedTransaction?.status)
       const timeSinceLastUpdate = Date.now() - (cachedTransaction?.lastUpdated || 0)
-      console.log({isPending, cachedTransaction})
-      return isPending && timeSinceLastUpdate > 2 * 60 * 1000
+      return isPending && timeSinceLastUpdate > 1 * 60 * 1000
     }
 
     let status: any
@@ -96,7 +95,7 @@ export const useBridgeTransfer = () => {
             t.type === 'DEPOSIT' ? t.lowNetworkHash === txHash : t.highNetworkHash === txHash
           )
         )
-          ? 5 * 60 * 1000
+          ? 1 * 60 * 1000
           : false,
         refetchOnWindowFocus: false,
         enabled: !!txRecord && shouldFetchStatus(getCachedTransactions().find((t: any) => t.txHash === txHash))
