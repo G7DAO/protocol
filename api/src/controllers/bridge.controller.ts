@@ -7,7 +7,7 @@ export class BridgeController {
         try {
             const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 10; // Default limit value if not provided
             const offset = req.query.offset ? parseInt(req.query.offset as string, 10) : 0; // Default offset value if not provided
-            const transactions = await getTransactionHistory(req.params.address, limit, offset);
+            const transactions = await getTransactionHistory(req.params.chain, req.params.address, limit, offset);
             return res.status(200).json(transactions);
         } catch (error) {
             console.error('Error fetching transaction history:', error);
