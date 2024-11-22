@@ -55,15 +55,18 @@ export const getStatus = (
 const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const { connectedAccount, selectedNetworkType } = useBlockchainContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
-  const { claim } = useBridgeTransfer()
+  const { claim, returnTransferData } = useBridgeTransfer()
   const [collapseExecuted, setCollapseExecuted] = useState(false)
   const [hovered, setHovered] = useState(false)
   const lowNetworks = getLowNetworks(selectedNetworkType) || LOW_NETWORKS
   const highNetworks = getHighNetworks(selectedNetworkType) || HIGH_NETWORKS
   const status = getStatus(withdrawal, lowNetworks, highNetworks)
+  const { data: transferStatus, isLoading } = returnTransferData({ txRecord: withdrawal })
   const tokenInformation = getTokensForNetwork(withdrawal?.highNetworkChainId, connectedAccount).find(
     (token) => token.address === withdrawal?.tokenAddress
   )
+  console.log(transferStatus)
+
   return (
     <>
       {status?.isLoading && smallView ? (
@@ -81,7 +84,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
             />
           ) : (
             <>
-              {status?.isLoading || status?.data === undefined ? (
+              {status?.isLoading || transferStatus?.status === undefined ? (
                 <>
                   <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
                     <div className={styles.typeWithdrawal}>
@@ -104,7 +107,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                 </>
               ) : (
                 <>
-                  {status?.data && status.data.status === ChildToParentMessageStatus.EXECUTED && (
+                  {transferStatus && transferStatus.status === ChildToParentMessageStatus.EXECUTED && (
                     <>
                       <div
                         className={styles.gridItem}
@@ -256,7 +259,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       )}
                     </>
                   )}
-                  {status?.data && status.data.status !== ChildToParentMessageStatus.EXECUTED && (
+                  {transferStatus && transferStatus.status !== ChildToParentMessageStatus.EXECUTED && (
                     <>
                       <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
                         <div className={styles.typeWithdrawal}>
@@ -270,7 +273,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       >{`${tokenInformation?.decimals ? Number(withdrawal.amount) / tokenInformation?.decimals : withdrawal.amount} ${tokenInformation?.symbol}`}</div>
                       <div className={styles.gridItem}>{status?.data?.from ?? ''}</div>
                       <div className={styles.gridItem}>{status?.data?.to ?? ''}</div>
-                      {status?.data && status.data.status === ChildToParentMessageStatus.CONFIRMED && (
+                      {transferStatus && transferStatus.status === ChildToParentMessageStatus.CONFIRMED && (
                         <>
                           <div className={styles.gridItem}>
                             <a
@@ -291,7 +294,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           </div>
                         </>
                       )}
-                      {status?.data && status.data.status === ChildToParentMessageStatus.UNCONFIRMED && (
+                      {transferStatus && transferStatus.status === ChildToParentMessageStatus.UNCONFIRMED && (
                         <>
                           <div className={styles.gridItem}>
                             <a

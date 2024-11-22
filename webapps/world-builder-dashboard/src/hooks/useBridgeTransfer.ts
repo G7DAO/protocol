@@ -1,4 +1,4 @@
-  import { useMutation, useQueryClient } from 'react-query'
+import { useMutation, useQueryClient } from 'react-query'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import { getNetworks, L1_NETWORK, L2_NETWORK } from '../../constants'
@@ -14,7 +14,7 @@ interface UseTransferDataProps {
 
 export const useBridgeTransfer = () => {
   const { connectedAccount, selectedNetworkType, switchChain } = useBlockchainContext()
-    
+
   const returnTransferData = ({ txRecord }: UseTransferDataProps) => {
     const isDeposit = txRecord.type === 'DEPOSIT'
     const txHash = isDeposit ? txRecord.lowNetworkHash : txRecord.highNetworkHash
@@ -23,18 +23,13 @@ export const useBridgeTransfer = () => {
     const destinationRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === destinationChainId)?.rpcs[0]
     const originRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === originChainId)?.rpcs[0]
 
-    const getCachedTransactions = () => {
-      const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
-      return transactionsString ? JSON.parse(transactionsString) : []
-    }
+    // // If the status is pending and time since last fetched is 2 minutes, fetch again
+    // const shouldFetchStatus = (cachedTransaction: any) => {
+    //   const isPending = ![2, 6, 9].includes(cachedTransaction?.status)
+    //   const timeSinceLastUpdate = Date.now() - (cachedTransaction?.lastUpdated || 0)
 
-    // If the status is pending and time since last fetched is 2 minutes, fetch again
-    const shouldFetchStatus = (cachedTransaction: any) => {
-      const isPending = ![2, 6, 9].includes(cachedTransaction?.status)
-      const timeSinceLastUpdate = Date.now() - (cachedTransaction?.lastUpdated || 0)
-
-      return isPending && timeSinceLastUpdate > 2 * 60 * 1000 
-    }
+    //   return isPending && timeSinceLastUpdate > 2 * 60 * 1000
+    // }
 
     let status: any
     return useQuery(
@@ -50,32 +45,31 @@ export const useBridgeTransfer = () => {
 
         try {
           status = await _bridgeTransfer.getStatus()
-          const transactions = getCachedTransactions()
+          // const transactions = getCachedTransactions()
 
-          const newTransactions = transactions.map((t: any) => {
-            const isSameHash = isDeposit
-              ? t.lowNetworkHash === txRecord.lowNetworkHash
-              : t.highNetworkHash === txRecord.highNetworkHash
+          // const newTransactions = transactions.map((t: any) => {
+          //   const isSameHash = isDeposit
+          //     ? t.lowNetworkHash === txRecord.lowNetworkHash
+          //     : t.highNetworkHash === txRecord.highNetworkHash
 
-            return isSameHash ? { ...t, status: status?.status, lastUpdated: Date.now() } : t
-          })
+          //   return isSameHash ? { ...t, status: status?.status, lastUpdated: Date.now() } : t
+          // })
 
-          localStorage.setItem(
-            `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
-            JSON.stringify(newTransactions)
-          )
+          // localStorage.setItem(
+          //   `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
+          //   JSON.stringify(newTransactions)
+          // )
 
           return status
         } catch (error) {
-          const transactions = getCachedTransactions()
-          const cachedTransaction = transactions.find((t: any) =>
-            isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
-          )
-
-          if (cachedTransaction && cachedTransaction.status !== undefined) {
-            status = cachedTransaction.status
-            return { status }
-          }
+          // const transactions = getCachedTransactions()
+          // const cachedTransaction = transactions.find((t: any) =>
+          //   isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
+          // )
+          // if (cachedTransaction && cachedTransaction.status !== undefined) {
+          //   status = cachedTransaction.status
+          //   return { status }
+          // }
         }
       },
       {
@@ -91,11 +85,44 @@ export const useBridgeTransfer = () => {
         //   }
         // },
         staleTime: 2 * 60 * 1000,
-        refetchInterval: shouldFetchStatus(getCachedTransactions().find((t: any) => t.txHash === txHash))
-          ? 5 * 60 * 1000
-          : false, 
+        // refetchInterval: shouldFetchStatus(getCachedTransactions().find((t: any) => t.txHash === txHash))
+        //   ? 5 * 60 * 1000
+        //   : false,
         refetchOnWindowFocus: false,
-        enabled: !!txRecord && shouldFetchStatus(getCachedTransactions().find((t: any) => t.txHash === txHash))
+        enabled: !!txRecord // && shouldFetchStatus(getCachedTransactions().find((t: any) => t.txHash === txHash))
+      }
+    )
+  }
+
+  const getTransactionInputs = ({ txRecord }: UseTransferDataProps) => {
+    const isDeposit = txRecord.type === 'DEPOSIT'
+    const txHash = isDeposit ? txRecord.lowNetworkHash : txRecord.highNetworkHash
+    const destinationChainId = isDeposit ? txRecord.highNetworkChainId : txRecord.lowNetworkChainId
+    const originChainId = isDeposit ? txRecord.lowNetworkChainId : txRecord.highNetworkChainId
+    const destinationRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === destinationChainId)?.rpcs[0]
+    const originRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === originChainId)?.rpcs[0]
+
+    let transactionInputs: any
+
+    return useQuery(
+      ['transactionInputs', txHash],
+      async () => {
+        const _bridgeTransfer = new BridgeTransfer({
+          txHash: txHash ?? '',
+          destinationNetworkChainId: destinationChainId ?? 0,
+          originNetworkChainId: originChainId ?? 0,
+          destinationSignerOrProviderOrRpc: destinationRpc,
+          originSignerOrProviderOrRpc: originRpc
+        })
+
+        transactionInputs = await _bridgeTransfer.getTransactionInputs()
+        console.log(transactionInputs)
+        return transactionInputs
+      },
+      {
+        staleTime: 2 * 60 * 1000,
+        refetchOnWindowFocus: false,
+        enabled: !!txRecord
       }
     )
   }
@@ -125,16 +152,18 @@ export const useBridgeTransfer = () => {
         throw new Error('Wallet is not installed!')
       }
       const signer = provider.getSigner()
- 
+
       // Bridge Transfer execute
       const _bridgeTransfer = new BridgeTransfer({
         txHash: withdrawal.highNetworkHash || '',
         destinationNetworkChainId: withdrawal.lowNetworkChainId ?? 0,
         originNetworkChainId: withdrawal.highNetworkChainId ?? 0,
-        destinationSignerOrProviderOrRpc: getNetworks(selectedNetworkType)?.find((n) => n.chainId === withdrawal.lowNetworkChainId)
-          ?.rpcs[0],
-        originSignerOrProviderOrRpc: getNetworks(selectedNetworkType)?.find((n) => n.chainId === withdrawal.highNetworkChainId)
-          ?.rpcs[0]
+        destinationSignerOrProviderOrRpc: getNetworks(selectedNetworkType)?.find(
+          (n) => n.chainId === withdrawal.lowNetworkChainId
+        )?.rpcs[0],
+        originSignerOrProviderOrRpc: getNetworks(selectedNetworkType)?.find(
+          (n) => n.chainId === withdrawal.highNetworkChainId
+        )?.rpcs[0]
       })
       const res = await _bridgeTransfer?.execute(signer)
       return { res, withdrawal }
@@ -178,7 +207,9 @@ export const useBridgeTransfer = () => {
       }
     }
   )
+
   return {
+    getTransactionInputs,
     returnTransferData,
     claim
   }
