@@ -72,16 +72,22 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                       {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
                       transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||
                       transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ? (
-                        <div className={styles.settled}>Completed</div>
+                        <div className={styles.settled}>
+                          Completed
+                          <IconLinkExternal02 stroke='#fff' />
+                        </div>
                       ) : (
-                        <div className={styles.pending}>Pending</div>
+                        <div className={styles.pending}>
+                          Pending
+                          <IconLinkExternal02 className={styles.arrowUp} />
+                        </div>
                       )}
                     </div>
                   </a>
                 )}
 
                 {/* Second column */}
-                {isLoadingStatus ? (
+                {isLoading || transferStatus?.status === undefined || isLoadingStatus ? (
                   <div className={styles.gridItem}>
                     <div className={styles.loading}>Loading</div>
                   </div>
