@@ -79,17 +79,18 @@ export const useBridgeTransfer = () => {
         }
       },
       {
-        // placeholderData: () => {
-        //   const transactions = getCachedTransactions()
-        //   const cachedTransaction = transactions.find((t: any) =>
-        //     isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
-        //   )
+        placeholderData: () => {
+          const transactions = getCachedTransactions()
+          const cachedTransaction = transactions.find((t: any) =>
+            isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
+          )
 
-        //   if (cachedTransaction && cachedTransaction.status !== undefined) {
-        //     status = cachedTransaction.status
-        //     return { status }
-        //   }
-        // },
+          if (cachedTransaction && cachedTransaction.status !== undefined) {
+            status = cachedTransaction.status
+            console.log(status)
+            return { status }
+          }
+        },
         staleTime: 2 * 60 * 1000,
         refetchInterval: shouldFetchStatus(getCachedTransactions().find((t: any) => t.txHash === txHash))
           ? 5 * 60 * 1000
