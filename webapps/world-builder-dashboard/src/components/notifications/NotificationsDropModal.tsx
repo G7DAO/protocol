@@ -131,6 +131,7 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
   const { setIsDropdownOpened } = useBridgeNotificationsContext()
   const { selectedNetworkType } = useBlockchainContext()
   const handleClick = () => {
+    console.log('clickity?')
     setIsDropdownOpened(true)
   }
   if (!notifications || notifications.length === 0) {
