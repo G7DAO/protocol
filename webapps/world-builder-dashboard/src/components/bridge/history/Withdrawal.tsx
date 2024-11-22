@@ -61,7 +61,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const lowNetworks = getLowNetworks(selectedNetworkType) || LOW_NETWORKS
   const highNetworks = getHighNetworks(selectedNetworkType) || HIGH_NETWORKS
   const status = getStatus(withdrawal, lowNetworks, highNetworks)
-  const {data: transferStatus, isLoading} = returnTransferData({txRecord: withdrawal})
+  const { data: transferStatus, isLoading } = returnTransferData({ txRecord: withdrawal })
   const tokenInformation = getTokensForNetwork(withdrawal?.highNetworkChainId, connectedAccount).find(
     (token) => token.address === withdrawal?.tokenAddress
   )

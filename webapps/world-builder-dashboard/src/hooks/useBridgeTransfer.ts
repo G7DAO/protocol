@@ -87,7 +87,6 @@ export const useBridgeTransfer = () => {
 
           if (cachedTransaction && cachedTransaction.status !== undefined) {
             status = cachedTransaction.status
-            console.log(status)
             return { status }
           }
         },
