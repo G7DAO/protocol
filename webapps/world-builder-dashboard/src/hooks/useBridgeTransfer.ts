@@ -90,10 +90,10 @@ export const useBridgeTransfer = () => {
             return { status }
           }
         },
-        staleTime: 2 * 60 * 1000,
-        // refetchInterval: shouldFetchStatus(getCachedTransactions().find((t: any) => t.txHash === txHash))
-        //   ? 5 * 60 * 1000
-        //   : false,
+        staleTime: 1 * 60 * 1000,
+        refetchInterval: shouldFetchStatus(getCachedTransactions().find((t: any) => t.txHash === txHash))
+          ? 5 * 60 * 1000
+          : false,
         refetchOnWindowFocus: false,
         enabled: !!txRecord && shouldFetchStatus(getCachedTransactions().find((t: any) => t.txHash === txHash))
       }
@@ -112,20 +112,21 @@ export const useBridgeTransfer = () => {
       }
 
       const targetChain = withdrawal.highNetworkChainId === L2_NETWORK.chainId ? L1_NETWORK : L2_NETWORK
-
+      console.log(targetChain)
       let provider
       if (window.ethereum) {
         provider = new ethers.providers.Web3Provider(window.ethereum)
         const currentChain = await provider.getNetwork()
         if (currentChain.chainId !== targetChain.chainId) {
+          console.log('about to switch')
           await switchChain(targetChain)
+          console.log('switching?')
           provider = new ethers.providers.Web3Provider(window.ethereum) //refresh provider
         }
       } else {
         throw new Error('Wallet is not installed!')
       }
       const signer = provider.getSigner()
-
       // Bridge Transfer execute
       const _bridgeTransfer = new BridgeTransfer({
         txHash: withdrawal.highNetworkHash || '',
@@ -138,6 +139,7 @@ export const useBridgeTransfer = () => {
           (n) => n.chainId === withdrawal.highNetworkChainId
         )?.rpcs[0]
       })
+
       const res = await _bridgeTransfer?.execute(signer)
       return { res, withdrawal }
     },
@@ -148,12 +150,8 @@ export const useBridgeTransfer = () => {
             `bridge-${connectedAccount}-transactions-${selectedNetworkType}`
           )
           let transactions = transactionsString ? JSON.parse(transactionsString) : []
-          console.log('successful transaction')
-          console.log(res)
           const newTransactions: TransactionRecord[] = transactions.map((t: TransactionRecord) => {
             if (t.highNetworkHash === withdrawal.highNetworkHash) {
-              console.log('found matching transaction from local data')
-              console.log(t)
               return {
                 ...t,
                 completionTimestamp: Date.now() / 1000,
@@ -163,6 +161,7 @@ export const useBridgeTransfer = () => {
                 status: BridgeTransferStatus.WITHDRAW_EXECUTED
               }
             }
+            console.log("couldn't find the transaction..")
             return { ...t }
           })
           localStorage.setItem(
@@ -173,7 +172,7 @@ export const useBridgeTransfer = () => {
           console.log(e)
         }
         refetchNewNotifications(connectedAccount ?? '')
-        queryClient.refetchQueries(['transferData', withdrawal])
+        queryClient.refetchQueries(['transferData', withdrawal?.highNetworkHash])
         queryClient.refetchQueries(['incomingMessages'])
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
@@ -207,7 +206,6 @@ export const useBridgeTransfer = () => {
         })
 
         transactionInputs = await _bridgeTransfer.getTransactionInputs()
-        console.log(transactionInputs)
         return transactionInputs
       },
       {

@@ -65,6 +65,8 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const tokenInformation = getTokensForNetwork(withdrawal?.highNetworkChainId, connectedAccount).find(
     (token) => token.address === withdrawal?.tokenAddress
   )
+  // const { data: transactionInputs } = getTransactionInputs({ txRecord: withdrawal })
+  
   return (
     <>
       {status?.isLoading && smallView ? (
