@@ -28,7 +28,7 @@ const essentials = [
     },
     {
         title: "Docs",
-        description: "Get more information about building in the G7 Network",
+        description: "Get more information about building on the G7 Network",
         imageClass: styles.networkEssentialDocs,
         onClick: () => window.open('https://wiki.game7.io/g7-developer-resource/', '_blank'),
     },

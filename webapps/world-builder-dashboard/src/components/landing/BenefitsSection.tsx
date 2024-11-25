@@ -23,7 +23,7 @@ const BenefitsSection: React.FC = () => {
     return (
         <div className={styles.secondSection}>
             <div className={styles.contentContainer}>
-                <div className={styles.sectionTitle}>Get all benefits of the G7 Network</div>
+                <div className={styles.sectionTitle}>Get all of the benefits of the G7 Network</div>
                 <div className={styles.cards}>
                     {benefits.map((benefit, index) => (
                         <div className={styles.card} key={index}>

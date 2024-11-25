@@ -1,5 +1,6 @@
 import { useQuery } from 'react-query'
 import { ethers } from 'ethers'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
 
 const BASE_URL = 'https://api.game7.build'
 
