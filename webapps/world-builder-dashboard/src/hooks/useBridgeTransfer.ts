@@ -252,12 +252,11 @@ export const useBridgeTransfer = () => {
       ['transactionInputs', txHash],
       async () => {
         const cachedTransactionInputs = getCachedTransactionInputs()
-        // If found in cache, return the cached data
+
         if (cachedTransactionInputs) {
           return cachedTransactionInputs
         }
   
-        // Otherwise, fetch transaction inputs from the bridge transfer instance
         const _bridgeTransfer = new BridgeTransfer({
           txHash: txHash ?? '',
           destinationNetworkChainId: destinationChainId ?? 0,
@@ -267,9 +266,8 @@ export const useBridgeTransfer = () => {
         })
 
         
-        const transactionInputs = isDeposit ? await _bridgeTransfer.getInfo() : await _bridgeTransfer.getTransactionInputs()
-  
-        // Save the fetched transaction inputs to cache
+        const transactionInputs = await _bridgeTransfer.getInfo()
+
         saveTransactionInputsToCache({ txHash, ...transactionInputs })
   
         return transactionInputs
