@@ -13,14 +13,16 @@ async function estimateGas(directions: Array<{destinationNetworkChainId: number;
     const originProvider = new ethers.providers.JsonRpcProvider(originNetwork.rpcs[0]);
 
     const bridgeNetwork = new BridgeNetwork(direction.originNetworkChainId, [])
-    const bridgeToken = new BridgeToken(direction.token, bridgeNetwork)
+    const bridgeToken = new BridgeToken(direction.token, direction.originNetworkChainId)
     const tokenSymbol = await bridgeToken.getSymbol(originProvider)
     const destinationNetwork = networks[direction.destinationNetworkChainId]
     console.log(`${originNetwork.name} -> ${destinationNetwork.name} ${tokenSymbol}`)
 
     const bridger = new Bridger(direction.originNetworkChainId, direction.destinationNetworkChainId, direction.token)
-    const res = await bridger.getGasAndFeeEstimation(ethers.BigNumber.from(0), originProvider, from)
-    console.log(res);
+    // const res = await bridger.getGasAndFeeEstimation(ethers.utils.parseEther("0.1"), originProvider, from)
+    const approvalRes = await bridger.getApprovalGasAndFeeEstimation(ethers.utils.parseEther("0.1"), originProvider, from)
+    // console.log(res);
+    console.log("approval: ", approvalRes, approvalRes ? ethers.utils.formatEther(approvalRes.estimatedFee) : 'not needed')
     console.log('.........................')
   }
 }
@@ -37,12 +39,12 @@ export const ETH: TokenAddressMap = {
 }
 
 const directions = [
-  { originNetworkChainId: 11155111, destinationNetworkChainId: 421614, token: TG7T },
-  { originNetworkChainId: 11155111, destinationNetworkChainId: 421614, token: ETH },
-  { originNetworkChainId: 421614, destinationNetworkChainId: 11155111, token: TG7T },
-  { originNetworkChainId: 421614, destinationNetworkChainId: 11155111, token: ETH },
+  // { originNetworkChainId: 11155111, destinationNetworkChainId: 421614, token: TG7T },
+  // { originNetworkChainId: 11155111, destinationNetworkChainId: 421614, token: ETH },
+  // { originNetworkChainId: 421614, destinationNetworkChainId: 11155111, token: TG7T },
+  // { originNetworkChainId: 421614, destinationNetworkChainId: 11155111, token: ETH },
   { originNetworkChainId: 421614, destinationNetworkChainId: 13746, token: TG7T },
-  { originNetworkChainId: 13746, destinationNetworkChainId: 421614, token: TG7T },
+  // { originNetworkChainId: 13746, destinationNetworkChainId: 421614, token: TG7T },
 ]
 // Run the script
 estimateGas(directions);
