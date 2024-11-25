@@ -10,7 +10,6 @@ import { NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainCon
 import { useBridgeTransfer } from '@/hooks/useBridgeTransfer'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
-import { getTokensForNetwork } from '@/utils/tokens'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 import { ChildToParentMessageStatus } from '@arbitrum/sdk'
 import { useMediaQuery } from '@mantine/hooks'
@@ -54,7 +53,7 @@ export const getStatus = (
   }
 }
 const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
-  const { connectedAccount, selectedNetworkType } = useBlockchainContext()
+  const { selectedNetworkType } = useBlockchainContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
   const { claim, returnTransferData, getTransactionInputs } = useBridgeTransfer()
   const [collapseExecuted, setCollapseExecuted] = useState(false)
