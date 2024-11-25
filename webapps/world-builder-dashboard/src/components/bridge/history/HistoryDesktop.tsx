@@ -71,8 +71,6 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
     const localTransactions = messages || []
     const formattedApiTransactions = apiTransactions ? apiTransactions.map(mapAPIDataToTransactionRecord) : []
     const combinedTransactions = mergeTransactions(formattedApiTransactions, localTransactions)
-    console.log(formattedApiTransactions)
-    console.log(combinedTransactions)
     // Retrieve existing transactions from localStorage
     const storedTransactionsString = localStorage.getItem(
       `bridge-${connectedAccount}-transactions-${selectedNetworkType}`
