@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { getHighNetworks, getLowNetworks, HIGH_NETWORKS, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
+import { ethers } from 'ethers'
 import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import IconWithdrawalNodeCompleted from '@/assets/IconWithdrawalNodeCompleted'
@@ -62,10 +63,11 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const highNetworks = getHighNetworks(selectedNetworkType) || HIGH_NETWORKS
   const status = getStatus(withdrawal, lowNetworks, highNetworks)
   const { data: transferStatus, isLoading } = returnTransferData({ txRecord: withdrawal })
-  const tokenInformation = getTokensForNetwork(withdrawal?.highNetworkChainId, connectedAccount).find(
-    (token) => token.address === withdrawal?.tokenAddress
-  )
+
   const { data: transactionInputs } = getTransactionInputs({ txRecord: withdrawal })
+  const tokenInformation = getTokensForNetwork(withdrawal?.highNetworkChainId, connectedAccount).find(
+    (token) => token.address === transactionInputs?.tokenAddress
+  )
 
   return (
     <>
@@ -147,7 +149,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         }}
                         onMouseEnter={() => setHovered(true)}
                         onMouseLeave={() => setHovered(false)}
-                      >{`${tokenInformation?.decimals ? Number(withdrawal.amount) / tokenInformation?.decimals : withdrawal.amount} ${transactionInputs?.tokenSymbol}`}</div>
+                      >{`${transactionInputs?.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs?.amount, 6) : withdrawal.amount} ${transactionInputs?.tokenSymbol}`}</div>
                       <div
                         className={styles.gridItem}
                         onClick={() => setCollapseExecuted(!collapseExecuted)}

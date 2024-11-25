@@ -2,6 +2,7 @@ import React from 'react'
 import { getHighNetworks, getLowNetworks } from '../../../../constants'
 import DepositMobile from './DepositMobile'
 import styles from './WithdrawTransactions.module.css'
+import { ethers } from 'ethers'
 import { BridgeTransferStatus } from 'game7-bridge-sdk'
 import { useMediaQuery } from 'summon-ui/mantine'
 import IconArrowNarrowDown from '@/assets/IconArrowNarrowDown'
@@ -24,13 +25,14 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
     from: getLowNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
     to: getHighNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
   }
-  const tokenInformation = getTokensForNetwork(deposit?.lowNetworkChainId, connectedAccount).find(
-    (token) => token.address === deposit?.tokenAddress
-  )
 
   const { data: status, isLoading: isLoadingStatus } = useDepositStatus(deposit, selectedNetworkType)
-  const { returnTransferData } = useBridgeTransfer()
+  const { returnTransferData, getTransactionInputs } = useBridgeTransfer()
   const { data: transferStatus, isLoading } = returnTransferData({ txRecord: deposit })
+  const { data: transactionInputs } = getTransactionInputs({ txRecord: deposit })
+  const tokenInformation = getTokensForNetwork(deposit?.lowNetworkChainId, connectedAccount).find(
+    (token) => token.address === transactionInputs?.tokenOriginAddress
+  )
 
   return (
     <>
@@ -53,7 +55,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
               <div className={styles.gridItem}>{timeAgo(deposit.lowNetworkTimestamp)}</div>
               <div
                 className={styles.gridItem}
-              >{`${tokenInformation?.decimals ? Number(deposit.amount) / tokenInformation?.decimals : deposit.amount} ${tokenInformation?.symbol}`}</div>
+              >{`${transactionInputs?.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs?.amount, 6) : deposit.amount} ${transactionInputs?.tokenSymbol}`}</div>
               <div className={styles.gridItem}>{depositInfo.from}</div>
               <div className={styles.gridItem}>{depositInfo.to}</div>
               <>
