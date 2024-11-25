@@ -150,9 +150,7 @@ export const useBridgeTransfer = () => {
         provider = new ethers.providers.Web3Provider(window.ethereum)
         const currentChain = await provider.getNetwork()
         if (currentChain.chainId !== targetChain.chainId) {
-          console.log('about to switch')
           await switchChain(targetChain)
-          console.log('switching?')
           provider = new ethers.providers.Web3Provider(window.ethereum) //refresh provider
         }
       } else {
@@ -193,7 +191,6 @@ export const useBridgeTransfer = () => {
                 status: BridgeTransferStatus.WITHDRAW_EXECUTED
               }
             }
-            console.log("couldn't find the transaction..")
             return { ...t }
           })
           localStorage.setItem(
@@ -255,7 +252,6 @@ export const useBridgeTransfer = () => {
       ['transactionInputs', txHash],
       async () => {
         const cachedTransactionInputs = getCachedTransactionInputs()
-        console.log({cachedTransactionInputs, isDeposit})
         // If found in cache, return the cached data
         if (cachedTransactionInputs) {
           return cachedTransactionInputs
@@ -270,8 +266,7 @@ export const useBridgeTransfer = () => {
           originSignerOrProviderOrRpc: originRpc,
         })
 
-        console.log(_bridgeTransfer, isDeposit)
-  
+        
         const transactionInputs = isDeposit ? await _bridgeTransfer.getInfo() : await _bridgeTransfer.getTransactionInputs()
   
         // Save the fetched transaction inputs to cache
