@@ -115,7 +115,6 @@ export const useBridgeTransfer = () => {
       }
 
       const targetChain = withdrawal.highNetworkChainId === L2_NETWORK.chainId ? L1_NETWORK : L2_NETWORK
-      console.log(targetChain)
       let provider
       if (window.ethereum) {
         provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -194,12 +193,28 @@ export const useBridgeTransfer = () => {
     const originChainId = isDeposit ? txRecord.lowNetworkChainId : txRecord.highNetworkChainId
     const destinationRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === destinationChainId)?.rpcs[0]
     const originRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === originChainId)?.rpcs[0]
+    const storageKey = `transaction-inputs-${connectedAccount}`
 
-    let transactionInputs: any
+    const getCachedTransactionInputs = () => {
+      const cachedData = localStorage.getItem(storageKey)
+      if (!cachedData) return null
+      const cachedTransactions = JSON.parse(cachedData)
+      return cachedTransactions[txHash ?? ''] || null
+    }
+
+    const saveTransactionInputsToCache = (inputs: any) => {
+      localStorage.setItem(`transaction-inputs-${connectedAccount}`, JSON.stringify(inputs))
+    }
 
     return useQuery(
       ['transactionInputs', txHash],
       async () => {
+        const cachedTransactionInputs = getCachedTransactionInputs()
+
+        if (cachedTransactionInputs) {
+          return cachedTransactionInputs
+        }
+
         const _bridgeTransfer = new BridgeTransfer({
           txHash: txHash ?? '',
           destinationNetworkChainId: destinationChainId ?? 0,
@@ -208,7 +223,9 @@ export const useBridgeTransfer = () => {
           originSignerOrProviderOrRpc: originRpc
         })
 
-        transactionInputs = await _bridgeTransfer.getTransactionInputs()
+        const transactionInputs = await _bridgeTransfer.getTransactionInputs()
+        saveTransactionInputsToCache(transactionInputs)
+
         return transactionInputs
       },
       {

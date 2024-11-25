@@ -103,7 +103,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           }
         }
         const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })
-        console.log("transfer .. ?")
         await tx?.wait()
         return {
           type: 'DEPOSIT',
