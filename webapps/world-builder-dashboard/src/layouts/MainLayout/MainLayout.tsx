@@ -19,7 +19,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({}) => {
   const location = useLocation()
   const { selectedNetworkType } = useBlockchainContext()
 
-  const NAVIGATION_ITEMS = [
+  const TESTNET_NAVIGATION_ITEMS = [
     {
       name: 'faucet',
       navigateTo: '/faucet',
@@ -41,6 +41,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({}) => {
       icon: <IconDocumentation stroke={'#B9B9B9'} />
     }
   ]
+
+  const MAINNET_NAVIGATION_ITEMS = TESTNET_NAVIGATION_ITEMS.slice(1, TESTNET_NAVIGATION_ITEMS.length)
+  const NAVIGATION_ITEMS = selectedNetworkType === 'Testnet' ? TESTNET_NAVIGATION_ITEMS : MAINNET_NAVIGATION_ITEMS
 
   const smallView = useMediaQuery('(max-width: 1199px)')
   return (

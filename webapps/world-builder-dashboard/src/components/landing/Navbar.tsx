@@ -44,7 +44,7 @@ const Navbar: React.FC<NavbarProps> = ({ navbarOpen, smallView, setIsNavbarOpen,
                                     <div
                                         key={index}
                                         className={item.name === 'Home' ? styles.navbarItemHome : styles.navbarItem}
-                                        onClick={() => navigateLink(item)}
+                                        onClick={() => {navigateLink(item)}}
                                     >
                                         {item.name}
                                     </div>
