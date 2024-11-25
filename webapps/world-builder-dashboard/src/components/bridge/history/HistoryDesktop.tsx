@@ -101,7 +101,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
         JSON.stringify([...storedTransactions, ...newTransactions])
       )
     }
-    setMergedTransactions(selectedNetworkType === "Testnet" ? combinedTransactions : localTransactions)
+    setMergedTransactions(combinedTransactions)
   }, [messages, apiTransactions])
 
   return (
