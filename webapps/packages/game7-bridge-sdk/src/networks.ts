@@ -59,6 +59,34 @@ export interface BridgeNetworkConfig {
   };
 }
 
+const mainnetTokenBridge = {
+  parentGatewayRouter: '0x72Ce9c846789fdB6fC1f34aC4AD25Dd9ef7031ef',
+  childGatewayRouter: '0x5288c571Fd7aD117beA99bF60FE0846C4E84F933',
+  parentErc20Gateway: '0xa3A7B6F88361F48403514059F1F16C8E78d60EeC',
+  childErc20Gateway: '0x09e9222E96E7B4AE2a407B98d48e330053351EEe',
+  parentCustomGateway: '0xcEe284F754E854890e311e3280b767F80797180d',
+  childCustomGateway: '0x096760F208390250649E3e8763348E783AEF5562',
+  parentWethGateway: '0xd92023E9d9911199a6711321D1277285e6d4e2db',
+  childWethGateway: '0x6c411aD3E74De3E7Bd422b94A27770f5B86C623B',
+  childWeth: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+  parentWeth: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+  parentProxyAdmin: '0x9aD46fac0Cf7f790E5be05A0F15223935A0c0aDa',
+  childProxyAdmin: '0xd570aCE65C43af47101fC6250FD6fC63D1c22a86',
+  parentMultiCall: '0x5ba1e12693dc8f9c48aad8770482f4739beed696',
+  childMultiCall: '0x842eC2c7D803033Edf55E478F461FC547Bc54EB2',
+};
+const mainnetETHBridge = {
+  bridge: '0x8315177aB297bA92A06054cE80a67Ed4DBd7ed3a',
+  inbox: '0x4Dbd4fc535Ac27206064B68FfCf827b0A60BAB3f',
+  sequencerInbox: '0x1c479675ad559DC151F6Ec7ed3FbF8ceE79582B6',
+  outbox: '0x0B9857ae2D4A3DBe74ffE1d7DF045bb7F96E4840',
+  rollup: '0x5eF0D09d1E6204141B4d37530808eD19f60FBa35',
+  classicOutboxes: {
+    '0x667e23ABd27E623c11d4CC00ca3EC4d0bD63337a': 0,
+    '0x760723CD2e632826c38Fef8CD438A4CC7E7E1A40': 30,
+  },
+};
+
 export const networks: { [chainId: number]: BridgeNetworkConfig } = {
   421614: {
     chainId: 421614,
@@ -105,11 +133,41 @@ export const networks: { [chainId: number]: BridgeNetworkConfig } = {
       l2ForwarderFactory: '0x88feBaFBb4E36A4E7E8874E4c9Fd73A9D59C2E7c',
     },
   },
+  42161: {
+    chainId: 42161,
+    name: 'Arbitrum One',
+    parentChainId: 1,
+    tokenBridge: mainnetTokenBridge,
+    ethBridge: mainnetETHBridge,
+    teleporter: {
+      l1Teleporter: '0xCBd9c6e310D6AaDeF9F025f716284162F0158992',
+      l2ForwarderFactory: '0x791d2AbC6c3A459E13B9AdF54Fb5e97B7Af38f87',
+    },
+    confirmPeriodBlocks: 45818,
+    isCustom: false,
+    isTestnet: false,
+    explorerUrl: 'https://arbiscan.io',
+    rpcs: ['https://arb1.arbitrum.io/rpc'],
+  },
   11155111: {
     chainId: 11155111,
     name: 'Sepolia',
     explorerUrl: 'https://sepolia.etherscan.io',
     rpcs: ['https://ethereum-sepolia-rpc.publicnode.com'],
+    blockTime: 12,
+    isCustom: false,
+    isArbitrum: false,
+    nativeCurrency: {
+      decimals: 18,
+      name: 'ETH',
+      symbol: 'ETH',
+    },
+  },
+  1: {
+    chainId: 1,
+    name: 'ethereum',
+    explorerUrl: 'https://etherscan.io',
+    rpcs: ['https://ethereum-rpc.publicnode.com'],
     blockTime: 12,
     isCustom: false,
     isArbitrum: false,
@@ -163,6 +221,51 @@ export const networks: { [chainId: number]: BridgeNetworkConfig } = {
     nitroGenesisL1Block: 0,
     depositTimeout: 900000,
   },
+  2187: {
+    chainId: 2187,
+    confirmPeriodBlocks: 20, //TODO ?
+    ethBridge: {
+      bridge: '0x20aD3d835e152F25Bf8c7B6fbC31adD32393559e',
+      inbox: '0xB1146A7eb098ECF46e8AAf695f4A960A963948d6',
+      outbox: '0xfbe537816d181888fAbE52338a5D921eE131E9Db',
+      rollup: '0x60DAdF13101C66F14C958E9141498b0C0eaE0773',
+      sequencerInbox: '0x4cFe930c5B2F03Cf81B44D2e62297beb79222B68',
+    },
+    arbSys: '0x0000000000000000000000000000000000000064',
+    explorerUrl: 'https://mainnet-rpc.game7.io',
+    rpcs: ['https://mainnet.game7.io'],
+    isArbitrum: true,
+    isCustom: true,
+    name: 'Game7',
+    nativeCurrency: {
+      decimals: 18,
+      name: 'Game7 Token',
+      symbol: 'G7',
+    },
+    parentChainId: 42161,
+    retryableLifetimeSeconds: SEVEN_DAYS_IN_SECONDS,
+    tokenBridge: {
+      parentCustomGateway: '0xd7258a4BE508Da8E95F89c13B8b7469951e9Df2B',
+      parentErc20Gateway: '0xe41363751bd1C305384375F428585C20e3dF516A',
+      parentGatewayRouter: '0x8098247EE48ee54ADD4Feda2F93b3bA0d014d4c7',
+      parentMultiCall: '0x90B02D9F861017844F30dFbdF725b6aa84E63822',
+      parentProxyAdmin: '0x8767Ea2Ce21ac4e624F8a36948BD5EA23A3288D9',
+      parentWeth: '0x0000000000000000000000000000000000000000',
+      parentWethGateway: '0x0000000000000000000000000000000000000000',
+      childCustomGateway: '0x65dcAB2e219b2F895854A7fba95b56eb02eE933f',
+      childErc20Gateway: '0x36921bAAD215c5f3c5dffa89B1C2A5CF4BDAdC77',
+      childGatewayRouter: '0x7Ca9c81d2AdD8bff46CEE9813d52bD84d94901DD',
+      childMultiCall: '0x1422d8aC9b5E102E6EbA56F0949a2377AB3D8CE9',
+      childProxyAdmin: '0xC900F8976Ad0B945bc552cE4459F2ec1Baf4f1Ff',
+      childWeth: '0x0000000000000000000000000000000000000000',
+      childWethGateway: '0x0000000000000000000000000000000000000000',
+      depositTimeout: 2 * 60, //TODO ?
+    },
+    nitroGenesisBlock: 0,
+    nitroGenesisL1Block: 0,
+    depositTimeout: 900000, //TODO ?
+  },
+
 };
 
 /**
