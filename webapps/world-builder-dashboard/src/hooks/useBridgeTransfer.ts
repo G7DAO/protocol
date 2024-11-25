@@ -127,7 +127,7 @@ export const useBridgeTransfer = () => {
           ? 1 * 60 * 1000
           : false,
         refetchOnWindowFocus: false,
-        enabled: !!txRecord,
+        enabled: !!txRecord
         // retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 2000)
       }
     )
@@ -221,55 +221,56 @@ export const useBridgeTransfer = () => {
     const destinationRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === destinationChainId)?.rpcs[0]
     const originRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === originChainId)?.rpcs[0]
     const storageKey = `transaction-inputs-${connectedAccount}`
-  
+
     // Retrieve cached transaction inputs from localStorage
     const getCachedTransactionInputs = () => {
       const cachedData = localStorage.getItem(storageKey)
       if (!cachedData) return null
-  
+
       const cachedTransactions = JSON.parse(cachedData)
-  
+
       // Return the specific transaction input based on txHash
       return cachedTransactions.find((input: any) => input.txHash === txHash) || null
     }
-  
+
     // Save transaction inputs to localStorage as an array
     const saveTransactionInputsToCache = (newInput: any) => {
       const cachedData = localStorage.getItem(storageKey)
       const cachedTransactions = cachedData ? JSON.parse(cachedData) : []
-  
+
       const updatedTransactions = cachedTransactions.some((input: any) => input.txHash === newInput.txHash)
-        ? cachedTransactions.map((input: any) =>
-            input.txHash === newInput.txHash ? { ...input, ...newInput } : input
-          )
+        ? cachedTransactions.map((input: any) => (input.txHash === newInput.txHash ? { ...input, ...newInput } : input))
         : [...cachedTransactions, newInput]
-  
+
       localStorage.setItem(storageKey, JSON.stringify(updatedTransactions))
     }
-  
+
     // Use React Query to fetch or cache transaction inputs
     return useQuery(
       ['transactionInputs', txHash],
       async () => {
         const cachedTransactionInputs = getCachedTransactionInputs()
-
+        // If found in cache, return the cached data
         if (cachedTransactionInputs) {
           return cachedTransactionInputs
         }
-  
+
+        // Otherwise, fetch transaction inputs from the bridge transfer instance
         const _bridgeTransfer = new BridgeTransfer({
           txHash: txHash ?? '',
           destinationNetworkChainId: destinationChainId ?? 0,
           originNetworkChainId: originChainId ?? 0,
           destinationSignerOrProviderOrRpc: destinationRpc,
-          originSignerOrProviderOrRpc: originRpc,
+          originSignerOrProviderOrRpc: originRpc
         })
 
-        
         const transactionInputs = await _bridgeTransfer.getInfo()
 
-        saveTransactionInputsToCache({ txHash, ...transactionInputs })
-  
+        saveTransactionInputsToCache({
+          ...transactionInputs,
+          txHash
+        })
+
         return transactionInputs
       },
       {
@@ -278,7 +279,7 @@ export const useBridgeTransfer = () => {
         },
         staleTime: 2 * 60 * 1000, // Data is considered fresh for 2 minutes
         refetchOnWindowFocus: false, // Disable refetching on window focus
-        enabled: !!txRecord, // Ensure the query only runs when txRecord exists
+        enabled: !!txRecord // Ensure the query only runs when txRecord exists
       }
     )
   }
