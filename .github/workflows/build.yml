@@ -31,7 +31,7 @@ jobs:
               working-directory: ./web3
               run: npx hardhat compile
             - name: Install seer
-              run: go install github.com/G7DAO/seer@latest
+              run: go install github.com/G7DAO/seer@v0.3.5
             - name: Build everything
               run: |
                   make

@@ -52,14 +52,71 @@ export const swaggerOptions: SwaggerOptions = {
   version: '1.0.0',
 };
 
-export const tableNameGame7 = 'game7_testnet_labels'; // Game7 table name
-export const tableNameEthereum = 'sepolia_labels'; // Ethereum table name
-export const tableNameArbitrum = 'arbitrum_sepolia_labels'; // Arbitrum table name
-export const addressERC20Inbox = 'e6470bb72291c39073aed67a30ff93b69c1f47de'; // Arbitrum Deposit contract address
-export const addressEthereumOutbox = '65f07C7D521164a4d5DaC6eB8Fac8DA067A3B78F' // Ethereum L1ERC20Gateway address
-export const addressL2ERC20Gateway = '6e244cD02BBB8a6dbd7F626f05B2ef82151Ab502' // Arbitrum L2ERC20Gateway address
-export const addressL2GatewayRouter = '9fDD1C4E4AA24EEc1d913FABea925594a20d43C7' // Arbitrum L2ERC20Gateway address
-export const addressL1GatewayRouter = 'cE18836b233C83325Cc8848CA4487e94C6288264' // Ethereum deposit address
-export const addressArbitrumOutBox = '64105c6C3D494469D5F21323F0E917563489d9f5' // Arbitrum outbox address
-export const addressArbOSL2 = '0000000000000000000000000000000000000064' // Game7 ArbOS L2 address
-export const addressL1Inbox = 'aAe29B0366299461418F5324a79Afc425BE5ae21' // Ethereum inbox address
+
+interface chainsRleationship {
+  parentNetworkChainId: number;
+  childNetworkChainId: number;
+}
+
+// map of chain name to map of address and tables names
+// Map of chain name to a map of addresses and table names
+export const bridgeConfig: {
+  [chainName: string]: {
+    addressERC20Inbox: string;
+    addressEthereumOutbox: string;
+    addressL2ERC20Gateway: string;
+    addressL2GatewayRouter: string;
+    addressL1GatewayRouter: string;
+    addressArbitrumOutBox: string;
+    addressArbOSL2: string;
+    addressL1Inbox: string;
+    l3TableName: string;
+    l2TableName: string;
+    l1TableName: string;
+    l2rleationship: chainsRleationship;
+    l3rleationship: chainsRleationship;
+    l3Token: string;
+    l2Token: string;
+    l1Token: string;
+    nativeToken: string;
+  };
+} = {
+  "game7-testnet": {
+    addressERC20Inbox: "e6470bb72291c39073aed67a30ff93b69c1f47de", // Arbitrum Deposit contract address
+    addressEthereumOutbox: "65f07C7D521164a4d5DaC6eB8Fac8DA067A3B78F", // Ethereum L1ERC20Gateway address
+    addressL2ERC20Gateway: "6e244cD02BBB8a6dbd7F626f05B2ef82151Ab502", // Arbitrum L2ERC20Gateway address
+    addressL2GatewayRouter: "9fDD1C4E4AA24EEc1d913FABea925594a20d43C7", // Arbitrum L2ERC20Gateway address
+    addressL1GatewayRouter: "cE18836b233C83325Cc8848CA4487e94C6288264", // Ethereum deposit address
+    addressArbitrumOutBox: "64105c6C3D494469D5F21323F0E917563489d9f5", // Arbitrum outbox address ??
+    addressArbOSL2: "0000000000000000000000000000000000000064", // Game7 ArbOS L2 address
+    addressL1Inbox: "aAe29B0366299461418F5324a79Afc425BE5ae21", // Ethereum inbox address
+    l3TableName: "game7_testnet_labels",
+    l2TableName: "arbitrum_sepolia_labels",
+    l1TableName: "sepolia_labels",
+    l3rleationship: { parentNetworkChainId: 421614, childNetworkChainId: 13746 },
+    l2rleationship: { parentNetworkChainId: 11155111, childNetworkChainId: 421614 },
+    l3Token: "0x10adBf84548F923577Be12146eAc104C899D1E75", // l3 native token
+    l2Token: "0x10adBf84548F923577Be12146eAc104C899D1E75", // l2 l3 token
+    l1Token: "0x0000000000000000000000000000000000000000", // l1 l3 token
+    nativeToken: "0x0000000000000000000000000000000000000000" // native token
+  },
+  "game7": { //0x096760F208390250649E3e8763348E783AEF5562 L2CustomGateway  0xe80eb0238029333e368e0bDDB7acDf1b9cb28278 L2GatewayRouter
+    addressERC20Inbox: "B1146A7eb098ECF46e8AAf695f4A960A963948d6", // Arbitrum Deposit contract address
+    addressEthereumOutbox: "0B9857ae2D4A3DBe74ffE1d7DF045bb7F96E4840", // Ethereum L1ERC20Gateway address
+    addressL2ERC20Gateway: "096760F208390250649E3e8763348E783AEF5562", // Arbitrum L2ERC20Gateway address L1OrbitERC20Gateway 
+    addressL2GatewayRouter: "5288c571Fd7aD117beA99bF60FE0846C4E84F933", // Arbitrum L2ERC20Gateway address L1OrbitGatewayRouter
+    addressL1GatewayRouter: "72Ce9c846789fdB6fC1f34aC4AD25Dd9ef7031ef", // Ethereum deposit address
+    addressArbitrumOutBox: "fbe537816d181888fAbE52338a5D921eE131E9Db", // Arbitrum outbox address ??
+    addressArbOSL2: "0000000000000000000000000000000000000064", // Game7 ArbOS L2 address
+    addressL1Inbox: "4Dbd4fc535Ac27206064B68FfCf827b0A60BAB3f", // Ethereum inbox address
+    l3TableName: "game7_labels",
+    l2TableName: "arbitrum_one_labels",
+    l1TableName: "ethereum_labels",
+    l3rleationship: { parentNetworkChainId: 42161, childNetworkChainId: 2187 },
+    l2rleationship: { parentNetworkChainId: 1, childNetworkChainId: 42161 },
+    l3Token: "F18e4466F26B4cA55bbAb890b314a54976E45B17", // l3 native token
+    l2Token: "F18e4466F26B4cA55bbAb890b314a54976E45B17", // l2 l3 token
+    l1Token: "0x0000000000000000000000000000000000000000", // l1 l3 token
+    nativeToken: "0x0000000000000000000000000000000000000000" // native token
+  },
+};
