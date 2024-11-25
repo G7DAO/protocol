@@ -1,10 +1,7 @@
 import React, { ReactNode } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import styles from './MainLayout.module.css'
-import { Tooltip } from 'summon-ui/mantine'
 import IconExternalLink from '@/assets/IconExternalLink'
-import IconInfoCircle from '@/assets/IconInfoCircle'
-import IconLock from '@/assets/IconLock'
 import IconLogout from '@/assets/IconLogout'
 import NetworkToggle from '@/components/commonComponents/networkToggle/NetworkToggle'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
@@ -45,14 +42,6 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
               <div style={{ display: 'flex' }}>
                 {item.name === 'documentation' || item.name === 'explorer' ? (
                   <IconExternalLink className={styles.icon} />
-                ) : item.name === 'faucet' && selectedNetworkType === 'Testnet' ? (
-                  <Tooltip arrowSize={8} radius={'8px'} label={'Only available on Testnet'} withArrow>
-                    <IconInfoCircle stroke='#fff' />
-                  </Tooltip>
-                ) : item.name === 'faucet' && selectedNetworkType === 'Mainnet' ? (
-                  <Tooltip arrowSize={8} radius={'8px'} label={'Only available on Testnet'} withArrow>
-                    <IconLock stroke='#fff' />
-                  </Tooltip>
                 ) : (
                   <></>
                 )}
