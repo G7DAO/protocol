@@ -336,7 +336,7 @@ export class BridgeTransfer {
       console.log(e)
     }
     if (!receipt) {
-      throw new Error("Can't get transaction receipt");
+      throw new Error("Can't get Parent Transaction receipt");
     }
     const parentTransactionReceipt = new ParentTransactionReceipt(receipt)
     let res
@@ -356,9 +356,13 @@ export class BridgeTransfer {
       const ETA = this.destinationNetwork.tokenBridge?.depositTimeout ? this.destinationNetwork.tokenBridge.depositTimeout * 1000 + Date.now() : undefined
       try {
         res = await parentContractCallReceipt.waitForChildTransactionReceipt(this.destinationProvider, 3, 1000)
-      } catch (e) {
+      } catch (e: any) {
         console.error(e)
-        return {status: BridgeTransferStatus.DEPOSIT_ERC20_NOT_YET_CREATED, ETA}
+        if (e.message?.includes("Timed out waiting to retrieve retryable creation receipt")) {
+          return {status: BridgeTransferStatus.DEPOSIT_ERC20_NOT_YET_CREATED, ETA}
+        } else {
+          throw new Error("Can't get Child Transaction receipt")
+        }
       }
       const childTxHash = (res as any).childTxReceipt?.transactionHash
       const status = mapDepositERC20Status(res.status)
