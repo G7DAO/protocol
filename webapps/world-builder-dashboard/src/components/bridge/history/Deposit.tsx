@@ -12,14 +12,13 @@ import { useBridgeTransfer } from '@/hooks/useBridgeTransfer'
 import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
-import { getTokensForNetwork } from '@/utils/tokens'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 
 interface DepositProps {
   deposit: TransactionRecord
 }
 const Deposit: React.FC<DepositProps> = ({ deposit }) => {
-  const { connectedAccount, selectedNetworkType } = useBlockchainContext()
+  const { selectedNetworkType } = useBlockchainContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
   const depositInfo = {
     from: getLowNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
@@ -30,9 +29,6 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   const { returnTransferData, getTransactionInputs } = useBridgeTransfer()
   const { data: transferStatus, isLoading } = returnTransferData({ txRecord: deposit })
   const { data: transactionInputs } = getTransactionInputs({ txRecord: deposit })
-  const tokenInformation = getTokensForNetwork(deposit?.lowNetworkChainId, connectedAccount).find(
-    (token) => token.address === transactionInputs?.tokenOriginAddress
-  )
 
   return (
     <>

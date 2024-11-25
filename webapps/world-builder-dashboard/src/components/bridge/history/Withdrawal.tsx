@@ -10,7 +10,6 @@ import { NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainCon
 import { useBridgeTransfer } from '@/hooks/useBridgeTransfer'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
-import { getTokensForNetwork } from '@/utils/tokens'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 import { ChildToParentMessageStatus } from '@arbitrum/sdk'
 import { useMediaQuery } from '@mantine/hooks'
@@ -54,7 +53,7 @@ export const getStatus = (
   }
 }
 const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
-  const { connectedAccount, selectedNetworkType } = useBlockchainContext()
+  const { selectedNetworkType } = useBlockchainContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
   const { claim, returnTransferData, getTransactionInputs } = useBridgeTransfer()
   const [collapseExecuted, setCollapseExecuted] = useState(false)
@@ -65,9 +64,6 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const { data: transferStatus, isLoading } = returnTransferData({ txRecord: withdrawal })
 
   const { data: transactionInputs } = getTransactionInputs({ txRecord: withdrawal })
-  const tokenInformation = getTokensForNetwork(withdrawal?.highNetworkChainId, connectedAccount).find(
-    (token) => token.address === transactionInputs?.tokenAddress
-  )
 
   return (
     <>
@@ -97,7 +93,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                   <div className={styles.gridItem}>{timeAgo(withdrawal.highNetworkTimestamp)}</div>
                   <div
                     className={styles.gridItem}
-                  >{`${tokenInformation?.decimals ? Number(withdrawal.amount) / tokenInformation?.decimals : withdrawal.amount} ${transactionInputs?.tokenSymbol}`}</div>
+                  >{`${transactionInputs?.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs?.amount, 6) : withdrawal.amount} ${transactionInputs?.tokenSymbol}`}</div>
                   <div className={styles.gridItem}>{status?.data?.from ?? ''}</div>
                   <div className={styles.gridItem}>{status?.data?.to ?? ''}</div>
                   <div className={styles.gridItem}>
@@ -215,7 +211,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.highNetworkTimestamp)}</div>
                           <div
                             className={styles.gridItemInitiate}
-                          >{`${tokenInformation?.decimals ? Number(withdrawal.amount) / tokenInformation?.decimals : withdrawal.amount} ${transactionInputs?.tokenSymbol}`}</div>
+                          >{`${transactionInputs?.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs?.amount, 6) : withdrawal.amount} ${transactionInputs?.tokenSymbol}`}</div>
                           <div className={styles.gridItemInitiate}>{status?.data?.from ?? ''}</div>
                           <div className={styles.gridItemInitiate}>{status?.data?.to ?? ''}</div>
                           <div className={styles.gridItemInitiate}>
@@ -239,7 +235,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.completionTimestamp)}</div>
                           <div
                             className={styles.gridItemInitiate}
-                          >{`${tokenInformation?.decimals ? Number(withdrawal.amount) / tokenInformation?.decimals : withdrawal.amount} ${transactionInputs?.tokenSymbol}`}</div>
+                          >{`${transactionInputs?.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs?.amount, 6) : withdrawal.amount} ${transactionInputs?.tokenSymbol}`}</div>
                           <div className={styles.gridItemInitiate}>{status?.data?.from ?? ''}</div>
                           <div className={styles.gridItemInitiate}>{status?.data?.to ?? ''}</div>
                           <div className={styles.gridItemInitiate}>
@@ -272,7 +268,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       <div className={styles.gridItem}>{timeAgo(status?.data?.timestamp)}</div>
                       <div
                         className={styles.gridItem}
-                      >{`${tokenInformation?.decimals ? Number(withdrawal.amount) / tokenInformation?.decimals : withdrawal.amount} ${transactionInputs?.tokenSymbol}`}</div>
+                      >{`${transactionInputs?.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs?.amount, 6) : withdrawal.amount} ${transactionInputs?.tokenSymbol}`}</div>
                       <div className={styles.gridItem}>{status?.data?.from ?? ''}</div>
                       <div className={styles.gridItem}>{status?.data?.to ?? ''}</div>
                       {transferStatus && transferStatus?.status === ChildToParentMessageStatus.CONFIRMED && (
