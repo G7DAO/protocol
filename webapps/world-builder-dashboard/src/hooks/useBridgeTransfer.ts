@@ -1,4 +1,4 @@
-  import { useMutation, useQueryClient } from 'react-query'
+import { useMutation, useQueryClient } from 'react-query'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import { getNetworks, L1_NETWORK, L2_NETWORK } from '../../constants'
@@ -14,7 +14,7 @@ interface UseTransferDataProps {
 
 export const useBridgeTransfer = () => {
   const { connectedAccount, selectedNetworkType, switchChain } = useBlockchainContext()
-    
+
   const returnTransferData = ({ txRecord }: UseTransferDataProps) => {
     const isDeposit = txRecord.type === 'DEPOSIT'
     const txHash = isDeposit ? txRecord.lowNetworkHash : txRecord.highNetworkHash
@@ -32,8 +32,7 @@ export const useBridgeTransfer = () => {
     const shouldFetchStatus = (cachedTransaction: any) => {
       const isPending = ![2, 6, 9].includes(cachedTransaction?.status)
       const timeSinceLastUpdate = Date.now() - (cachedTransaction?.lastUpdated || 0)
-
-      return isPending && timeSinceLastUpdate > 2 * 60 * 1000 
+      return isPending && timeSinceLastUpdate > 1 * 60 * 1000
     }
 
     let status: any
@@ -79,21 +78,25 @@ export const useBridgeTransfer = () => {
         }
       },
       {
-        // placeholderData: () => {
-        //   const transactions = getCachedTransactions()
-        //   const cachedTransaction = transactions.find((t: any) =>
-        //     isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
-        //   )
+        placeholderData: () => {
+          const transactions = getCachedTransactions()
+          const cachedTransaction = transactions.find((t: any) =>
+            isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
+          )
 
-        //   if (cachedTransaction && cachedTransaction.status !== undefined) {
-        //     status = cachedTransaction.status
-        //     return { status }
-        //   }
-        // },
-        staleTime: 2 * 60 * 1000,
-        refetchInterval: shouldFetchStatus(getCachedTransactions().find((t: any) => t.txHash === txHash))
-          ? 5 * 60 * 1000
-          : false, 
+          if (cachedTransaction && cachedTransaction.status !== undefined) {
+            status = cachedTransaction.status
+            return { status }
+          }
+        },
+        staleTime: 1 * 60 * 1000,
+        refetchInterval: shouldFetchStatus(
+          getCachedTransactions().find((t: TransactionRecord) =>
+            t.type === 'DEPOSIT' ? t.lowNetworkHash === txHash : t.highNetworkHash === txHash
+          )
+        )
+          ? 1 * 60 * 1000
+          : false,
         refetchOnWindowFocus: false,
         enabled: !!txRecord && shouldFetchStatus(getCachedTransactions().find((t: any) => t.txHash === txHash))
       }
@@ -112,30 +115,33 @@ export const useBridgeTransfer = () => {
       }
 
       const targetChain = withdrawal.highNetworkChainId === L2_NETWORK.chainId ? L1_NETWORK : L2_NETWORK
-
       let provider
       if (window.ethereum) {
         provider = new ethers.providers.Web3Provider(window.ethereum)
         const currentChain = await provider.getNetwork()
         if (currentChain.chainId !== targetChain.chainId) {
+          console.log('about to switch')
           await switchChain(targetChain)
+          console.log('switching?')
           provider = new ethers.providers.Web3Provider(window.ethereum) //refresh provider
         }
       } else {
         throw new Error('Wallet is not installed!')
       }
       const signer = provider.getSigner()
- 
       // Bridge Transfer execute
       const _bridgeTransfer = new BridgeTransfer({
         txHash: withdrawal.highNetworkHash || '',
         destinationNetworkChainId: withdrawal.lowNetworkChainId ?? 0,
         originNetworkChainId: withdrawal.highNetworkChainId ?? 0,
-        destinationSignerOrProviderOrRpc: getNetworks(selectedNetworkType)?.find((n) => n.chainId === withdrawal.lowNetworkChainId)
-          ?.rpcs[0],
-        originSignerOrProviderOrRpc: getNetworks(selectedNetworkType)?.find((n) => n.chainId === withdrawal.highNetworkChainId)
-          ?.rpcs[0]
+        destinationSignerOrProviderOrRpc: getNetworks(selectedNetworkType)?.find(
+          (n) => n.chainId === withdrawal.lowNetworkChainId
+        )?.rpcs[0],
+        originSignerOrProviderOrRpc: getNetworks(selectedNetworkType)?.find(
+          (n) => n.chainId === withdrawal.highNetworkChainId
+        )?.rpcs[0]
       })
+
       const res = await _bridgeTransfer?.execute(signer)
       return { res, withdrawal }
     },
@@ -157,6 +163,7 @@ export const useBridgeTransfer = () => {
                 status: BridgeTransferStatus.WITHDRAW_EXECUTED
               }
             }
+            console.log("couldn't find the transaction..")
             return { ...t }
           })
           localStorage.setItem(
@@ -167,7 +174,7 @@ export const useBridgeTransfer = () => {
           console.log(e)
         }
         refetchNewNotifications(connectedAccount ?? '')
-        queryClient.refetchQueries(['transferData', withdrawal])
+        queryClient.refetchQueries(['transferData', withdrawal?.highNetworkHash])
         queryClient.refetchQueries(['incomingMessages'])
         queryClient.refetchQueries(['ERC20Balance'])
         queryClient.refetchQueries(['nativeBalance'])
@@ -178,7 +185,59 @@ export const useBridgeTransfer = () => {
       }
     }
   )
+
+  const getTransactionInputs = ({ txRecord }: UseTransferDataProps) => {
+    const isDeposit = txRecord.type === 'DEPOSIT'
+    const txHash = isDeposit ? txRecord.lowNetworkHash : txRecord.highNetworkHash
+    const destinationChainId = isDeposit ? txRecord.highNetworkChainId : txRecord.lowNetworkChainId
+    const originChainId = isDeposit ? txRecord.lowNetworkChainId : txRecord.highNetworkChainId
+    const destinationRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === destinationChainId)?.rpcs[0]
+    const originRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === originChainId)?.rpcs[0]
+    const storageKey = `transaction-inputs-${connectedAccount}`
+
+    const getCachedTransactionInputs = () => {
+      const cachedData = localStorage.getItem(storageKey)
+      if (!cachedData) return null
+      const cachedTransactions = JSON.parse(cachedData)
+      return cachedTransactions[txHash ?? ''] || null
+    }
+
+    const saveTransactionInputsToCache = (inputs: any) => {
+      localStorage.setItem(`transaction-inputs-${connectedAccount}`, JSON.stringify(inputs))
+    }
+
+    return useQuery(
+      ['transactionInputs', txHash],
+      async () => {
+        const cachedTransactionInputs = getCachedTransactionInputs()
+
+        if (cachedTransactionInputs) {
+          return cachedTransactionInputs
+        }
+
+        const _bridgeTransfer = new BridgeTransfer({
+          txHash: txHash ?? '',
+          destinationNetworkChainId: destinationChainId ?? 0,
+          originNetworkChainId: originChainId ?? 0,
+          destinationSignerOrProviderOrRpc: destinationRpc,
+          originSignerOrProviderOrRpc: originRpc
+        })
+
+        const transactionInputs = await _bridgeTransfer.getTransactionInputs()
+        saveTransactionInputsToCache(transactionInputs)
+
+        return transactionInputs
+      },
+      {
+        staleTime: 2 * 60 * 1000,
+        refetchOnWindowFocus: false,
+        enabled: !!txRecord
+      }
+    )
+  }
+
   return {
+    getTransactionInputs,
     returnTransferData,
     claim
   }

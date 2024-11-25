@@ -20,7 +20,6 @@ interface DepositProps {
 const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   const { connectedAccount, selectedNetworkType } = useBlockchainContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
-  const { data: status, isLoading: isLoadingStatus } = useDepositStatus(deposit, selectedNetworkType)
   const depositInfo = {
     from: getLowNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
     to: getHighNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
@@ -28,6 +27,8 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   const tokenInformation = getTokensForNetwork(deposit?.lowNetworkChainId, connectedAccount).find(
     (token) => token.address === deposit?.tokenAddress
   )
+
+  const { data: status, isLoading: isLoadingStatus } = useDepositStatus(deposit, selectedNetworkType)
   const { returnTransferData } = useBridgeTransfer()
   const { data: transferStatus, isLoading } = returnTransferData({ txRecord: deposit })
 
@@ -55,17 +56,13 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
               >{`${tokenInformation?.decimals ? Number(deposit.amount) / tokenInformation?.decimals : deposit.amount} ${tokenInformation?.symbol}`}</div>
               <div className={styles.gridItem}>{depositInfo.from}</div>
               <div className={styles.gridItem}>{depositInfo.to}</div>
-              {isLoading ? (
-                <>
+              <>
+                {/* First column */}
+                {isLoading || transferStatus?.status === undefined ? (
                   <div className={styles.gridItem}>
                     <div className={styles.loading}>Loading</div>
                   </div>
-                  <div className={styles.gridItem}>
-                    <div className={styles.loading}>Loading</div>
-                  </div>
-                </>
-              ) : (
-                <>
+                ) : (
                   <a
                     href={`${getBlockExplorerUrl(deposit.lowNetworkChainId, selectedNetworkType)}/tx/${deposit.lowNetworkHash}`}
                     target={'_blank'}
@@ -87,27 +84,29 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                       )}
                     </div>
                   </a>
-                  {isLoadingStatus ? (
-                    <div className={styles.gridItem}>
-                      <div className={styles.loading}>Loading</div>
-                    </div>
-                  ) : (
-                    <div className={styles.gridItemImportant}>
-                      {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
-                      transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
-                      transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ? (
-                        <>
-                          {status?.highNetworkTimestamp === undefined
-                            ? 'No status found'
-                            : timeAgo(status?.highNetworkTimestamp)}
-                        </>
-                      ) : (
-                        <>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)}</>
-                      )}
-                    </div>
-                  )}
-                </>
-              )}
+                )}
+
+                {/* Second column */}
+                {isLoading || transferStatus?.status === undefined || isLoadingStatus ? (
+                  <div className={styles.gridItem}>
+                    <div className={styles.loading}>Loading</div>
+                  </div>
+                ) : (
+                  <div className={styles.gridItemImportant}>
+                    {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
+                    transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||
+                    transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ? (
+                      <>
+                        {status?.highNetworkTimestamp === undefined
+                          ? 'No status found'
+                          : timeAgo(status?.highNetworkTimestamp)}
+                      </>
+                    ) : (
+                      <>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)}</>
+                    )}
+                  </div>
+                )}
+              </>
             </>
           )}
         </>
