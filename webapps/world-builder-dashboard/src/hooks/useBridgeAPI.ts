@@ -1,15 +1,19 @@
 import { useQuery } from 'react-query'
 import { ethers } from 'ethers'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
 
 const BASE_URL = 'https://api.game7.build'
 
 export const useBridgeAPI = () => {
   const useHistoryTransactions = (address: string | undefined) => {
     const isValidAddress = ethers.utils.isAddress(address ?? '')
+    const { selectedNetworkType } = useBlockchainContext()
+    const uriSnippet = selectedNetworkType === 'Testnet' ? '-testnet' : ''
     return useQuery(
-      ['historyTransactions', address],
+      ['historyTransactions', address, selectedNetworkType],
       async () => {
-        const res = await fetch(`${BASE_URL}/bridge/${address}/transactions?limit=50&offset=0`, {
+        console.log(selectedNetworkType)
+        const res = await fetch(`${BASE_URL}/bridge/game7${uriSnippet}/${address}/transactions?limit=50&offset=0`, {
           method: 'GET'
         })
         if (!res.ok) {
@@ -19,7 +23,7 @@ export const useBridgeAPI = () => {
         return data
       },
       {
-        enabled: !!address && isValidAddress,
+        enabled: !!address && isValidAddress && !!selectedNetworkType,
         retry: false
       }
     )

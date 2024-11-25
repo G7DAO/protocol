@@ -293,6 +293,7 @@ export const useNotifications = (
   offset: number,
   limit: number
 ): UseQueryResult<BridgeNotification[]> => {
+  const { selectedNetworkType } = useBlockchainContext()
   return useQuery(
     ['notifications', connectedAccount, offset, limit],
     async () => {
@@ -300,7 +301,7 @@ export const useNotifications = (
         return []
       }
       // const { selectedNetworkType } = useBlockchainContext()
-      const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+      const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
       let transactions
       if (!transactionsString) {
         return []

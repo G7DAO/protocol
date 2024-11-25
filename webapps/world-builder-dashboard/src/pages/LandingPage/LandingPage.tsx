@@ -9,14 +9,17 @@ import AlliesSection from "@/components/landing/AlliesSection";
 import NetworkEssentials from "@/components/landing/NetworksEssentials";
 import Navbar from "@/components/landing/Navbar";
 import Container from "@/components/landing/Container";
+import { useBlockchainContext } from '@/contexts/BlockchainContext';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
+  const {setSelectedNetworkType} = useBlockchainContext()
   const [navbarOpen, setNavBarOpen] = useState<boolean>(false);
   const smallView = useMediaQuery('(max-width: 750px)');
   const isLargeView = useMediaQuery('(min-width: 1440px)');
 
   const startBuilding = () => {
+    setSelectedNetworkType('Testnet')
     navigate('/faucet');
   };
 
