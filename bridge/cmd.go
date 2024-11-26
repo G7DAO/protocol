@@ -122,7 +122,6 @@ func CreateBridgeNativeTokenL1ToL2Command() *cobra.Command {
 					}
 				} else {
 					fmt.Println("--safe-nonce not specified, fetching from Safe")
-					safeNonce = big.NewInt(0)
 				}
 			}
 
@@ -354,7 +353,6 @@ func CreateBridgeERC20L1ToL2Command() *cobra.Command {
 					}
 				} else {
 					fmt.Println("--safe-nonce not specified, fetching from Safe")
-					safeNonce = big.NewInt(0)
 				}
 
 				if l1Rpc == "" {
