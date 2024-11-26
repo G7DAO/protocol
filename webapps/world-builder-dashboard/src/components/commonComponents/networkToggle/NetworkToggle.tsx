@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import styles from './NetworkToggle.module.css'
 import IconChevronDownToggle from '@/assets/IconChevronDownToggle'
 import { NetworkType, useBlockchainContext } from '@/contexts/BlockchainContext'
@@ -11,12 +12,36 @@ const NetworkToggle: React.FC<NetworkToggleProps> = () => {
   const { selectedNetworkType, setSelectedNetworkType } = useBlockchainContext()
   const [isDropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
-
+  const [searchParams, setSearchParams] = useSearchParams()
   const toggleDropdown = () => setDropdownOpen((prev) => !prev)
+
+  useEffect(() => {
+    const networkType = searchParams.get('network')
+    const defaultNetworkType = networkType
+      ? (networkType as NetworkType)
+      : selectedNetworkType
+        ? selectedNetworkType
+        : 'Mainnet'
+
+    setSelectedNetworkType(defaultNetworkType)
+
+    if (!networkType) {
+      setSearchParams({ network: defaultNetworkType as string })
+    }
+  }, [selectedNetworkType])
+
+  useEffect(() => {
+    const networkType = searchParams.get('network')
+    if (!networkType) {
+      const defaultNetworkType = selectedNetworkType ?? 'Mainnet'
+      setSearchParams({ network: defaultNetworkType })
+    }
+  }, [location])
 
   const handleNetworkSelect = (network: NetworkType) => {
     setSelectedNetworkType(network as NetworkType)
     setDropdownOpen(!isDropdownOpen)
+    setSearchParams({ network: network as string })
   }
 
   useEffect(() => {
