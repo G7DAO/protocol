@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import styles from './NetworkToggle.module.css'
 import IconChevronDownToggle from '@/assets/IconChevronDownToggle'
 import { NetworkType, useBlockchainContext } from '@/contexts/BlockchainContext'
@@ -10,15 +10,30 @@ interface NetworkToggleProps {}
 const NetworkToggle: React.FC<NetworkToggleProps> = () => {
   const { selectedNetworkType, setSelectedNetworkType } = useBlockchainContext()
   const [isDropdownOpen, setDropdownOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const toggleDropdown = () => setDropdownOpen(!isDropdownOpen)
+  const toggleDropdown = () => setDropdownOpen((prev) => !prev)
 
   const handleNetworkSelect = (network: NetworkType) => {
     setSelectedNetworkType(network as NetworkType)
-    setDropdownOpen(false)
+    setDropdownOpen(!isDropdownOpen)
   }
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false)
+      }
+    }
+
+    document.addEventListener('click', handleClickOutside)
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+    }
+  }, [])
+
   return (
-    <div className={styles.container} onClick={toggleDropdown}>
+    <div ref={dropdownRef} className={styles.container} onClick={toggleDropdown}>
       <div className={`${styles.toggle} ${selectedNetworkType === 'Testnet' ? styles.testnet : styles.mainnet}`}>
         <div className={styles.testnetContainer}>
           <div
