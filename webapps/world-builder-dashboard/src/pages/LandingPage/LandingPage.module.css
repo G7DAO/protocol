@@ -442,6 +442,11 @@ body {
   backdrop-filter: blur(0.6990200281143188px);
 }
 
+.sponsorCard:hover {
+  cursor: url('../../assets/hand.svg'), pointer;
+  border: 1px solid #f04438;
+}
+
 .sponsorCardImage {
   display: flex;
   padding: 8.627px;
@@ -510,17 +515,17 @@ body {
 }
 
 .networkEssentialBridge {
-  background: url('../../assets/G7BridgeCardDark.jpg') 50% / cover no-repeat;;
+  background: url('../../assets/G7BridgeCardDark.jpg') 50% / cover no-repeat;
   background-size: contain;
 }
 
 .networkEssentialExplorer {
-  background: url('../../assets/G7ExplorerCardDark.jpg') 50% / cover no-repeat;;
+  background: url('../../assets/G7ExplorerCardDark.jpg') 50% / cover no-repeat;
   background-size: contain;
 }
 
 .networkEssentialDocs {
-  background: url('../../assets/G7DocsCardDark.jpg') 50% / cover no-repeat;;
+  background: url('../../assets/G7DocsCardDark.jpg') 50% / cover no-repeat;
   background-size: contain;
 }
 
@@ -585,8 +590,6 @@ body {
   align-self: stretch;
   flex: 1 0 auto;
 }
-
-
 
 @media (max-width: 1199px) {
   .layout {
