@@ -421,6 +421,7 @@ body {
 }
 
 .sponsorCards {
+    cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -430,6 +431,7 @@ body {
 }
 
 .sponsorCard {
+    cursor: url('../../assets/hand.svg'), pointer;
     display: flex;
     height: 120px;
     width: 220px;
@@ -440,6 +442,10 @@ body {
     border: 1px solid #727272;
     background: #171717;
     backdrop-filter: blur(0.6990200281143188px);
+}
+
+.sponsorCard::hover {
+    
 }
 
 .sponsorCardImage {
