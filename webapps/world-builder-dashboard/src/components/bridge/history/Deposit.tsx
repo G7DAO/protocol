@@ -38,7 +38,6 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
         const cachedTransaction = transactions.find((t: any) => t.lowNetworkHash === deposit.lowNetworkHash)
 
         if (cachedTransaction && cachedTransaction.highNetworkTimestamp) {
-          console.log('Timestamp found in cache:', cachedTransaction.highNetworkTimestamp)
           setHighNetworkTimestamp(cachedTransaction.highNetworkTimestamp)
           return
         }

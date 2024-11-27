@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
-import { getNetworks, L1_NETWORK, L2_NETWORK } from '../../constants'
+import { getNetworks, L1_MAIN_NETWORK, L1_NETWORK, L2_MAIN_NETWORK, L2_NETWORK } from '../../constants'
 import { ethers } from 'ethers'
 import { BridgeTransfer, BridgeTransferStatus } from 'game7-bridge-sdk'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
@@ -23,7 +23,6 @@ export const useBridgeTransfer = () => {
     const originChainId = isDeposit ? txRecord.lowNetworkChainId : txRecord.highNetworkChainId
     const destinationRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === destinationChainId)?.rpcs[0]
     const originRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === originChainId)?.rpcs[0]
-
 
     // Retry function with exponential backoff for handling 429 errors
     const retryWithExponentialBackoff = async (fn: () => Promise<any>, retries: number = 5, delay: number = 1000) => {
@@ -68,7 +67,7 @@ export const useBridgeTransfer = () => {
           // Fetch status with retry logic
           status = await retryWithExponentialBackoff(async () => await _bridgeTransfer.getStatus())
 
-          const transactions = getCachedTransactions(connectedAccount ?? "", selectedNetworkType)
+          const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
 
           // Update the cache with the latest status
           const newTransactions = transactions.map((t: any) => {
@@ -89,7 +88,7 @@ export const useBridgeTransfer = () => {
           console.error('Error fetching status:', error)
 
           // Fallback to cached status if available
-          const transactions = getCachedTransactions(connectedAccount ?? "", selectedNetworkType)
+          const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
           const cachedTransaction = transactions.find((t: any) =>
             isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
           )
@@ -105,7 +104,7 @@ export const useBridgeTransfer = () => {
       {
         // Placeholder data from cache
         placeholderData: () => {
-          const transactions = getCachedTransactions(connectedAccount ?? "", selectedNetworkType)
+          const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
           const cachedTransaction = transactions.find((t: any) =>
             isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
           )
@@ -115,9 +114,9 @@ export const useBridgeTransfer = () => {
             return { status }
           }
         },
-        staleTime: 2 * 60 * 1000, // Data is considered fresh for 2 minutes
+        staleTime: 2 * 60 * 1000,
         refetchInterval: shouldFetchStatus(
-          getCachedTransactions().find((t: any) =>
+          getCachedTransactions(connectedAccount ?? '', selectedNetworkType).find((t: any) =>
             t.type === 'DEPOSIT' ? t.lowNetworkHash === txHash : t.highNetworkHash === txHash
           )
         )
@@ -140,20 +139,27 @@ export const useBridgeTransfer = () => {
       if (!withdrawal) {
         throw new Error('transaction hash is undefined')
       }
-
-      const targetChain = withdrawal.highNetworkChainId === L2_NETWORK.chainId ? L1_NETWORK : L2_NETWORK
-      let provider
+      
+      let targetChain
+      if (selectedNetworkType === 'Testnet')
+        targetChain = withdrawal.highNetworkChainId === L2_NETWORK.chainId ? L1_NETWORK : L2_NETWORK
+      else 
+        targetChain = withdrawal.highNetworkChainId === L2_MAIN_NETWORK.chainId ? L1_MAIN_NETWORK : L2_MAIN_NETWORK
+      
+        let provider
       if (window.ethereum) {
         provider = new ethers.providers.Web3Provider(window.ethereum)
         const currentChain = await provider.getNetwork()
         if (currentChain.chainId !== targetChain.chainId) {
           await switchChain(targetChain)
-          provider = new ethers.providers.Web3Provider(window.ethereum) //refresh provider
+          provider = new ethers.providers.Web3Provider(window.ethereum)
         }
       } else {
         throw new Error('Wallet is not installed!')
       }
       const signer = provider.getSigner()
+      console.log(signer)
+
       // Bridge Transfer execute
       const _bridgeTransfer = new BridgeTransfer({
         txHash: withdrawal.highNetworkHash || '',
@@ -166,8 +172,8 @@ export const useBridgeTransfer = () => {
           (n) => n.chainId === withdrawal.highNetworkChainId
         )?.rpcs[0]
       })
-
-      const res = await _bridgeTransfer?.execute(signer)
+      console.log(_bridgeTransfer)
+      const res = await _bridgeTransfer?.execute(signer) 
       return { res, withdrawal }
     },
     {
