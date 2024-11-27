@@ -49,7 +49,7 @@ export const useBridgeTransfer = () => {
 
     // If the status is pending and time since last fetched is > 2 minutes, fetch again
     const shouldFetchStatus = (cachedTransaction: any) => {
-      const isPending = ![2, 6, 9].includes(cachedTransaction?.status) // Add actual pending statuses
+      const isPending = ![1, 2, 6, 9].includes(cachedTransaction?.status) // Add actual pending statuses
       const timeSinceLastUpdate = Date.now() - (cachedTransaction?.lastUpdated || 0)
       return isPending && timeSinceLastUpdate > 1 * 60 * 1000 // Adjust timing as needed
     }
@@ -86,7 +86,7 @@ export const useBridgeTransfer = () => {
             `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
             JSON.stringify(newTransactions)
           )
-
+          console.log(status)
           return status
         } catch (error) {
           console.error('Error fetching status:', error)

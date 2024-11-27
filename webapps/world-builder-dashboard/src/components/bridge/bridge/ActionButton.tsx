@@ -95,7 +95,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         if (selectedBridgeToken.address != ZERO_ADDRESS) {
           const allowance = (await bridger?.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount ?? '')) ?? ''
           const allowanceToCheck = ethers.utils.formatUnits(allowance, decimals)
- 
+
           // approve first
           if (Number(allowanceToCheck) < Number(amountToSend)) {
             const txApprove = await bridger?.approve(amountToSend, signer)
@@ -126,7 +126,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           highNetworkChainId: selectedHighNetwork.chainId,
           highNetworkHash: tx?.hash,
           highNetworkTimestamp: Date.now() / 1000,
-          challengePeriod: 60 * 60,
+          challengePeriod: selectedNetworkType === 'Testnet' ? 60 * 60 : 60 * 60 * 24 * 7,
           symbol: symbol,
           status: BridgeTransferStatus.WITHDRAW_UNCONFIRMED
         }
