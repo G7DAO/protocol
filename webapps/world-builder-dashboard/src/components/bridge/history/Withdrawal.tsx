@@ -63,7 +63,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const status = getStatus(withdrawal, lowNetworks, highNetworks)
   const { data: transferStatus, isLoading } = returnTransferData({ txRecord: withdrawal })
   const { data: transactionInputs } = getTransactionInputs({ txRecord: withdrawal })
-
+  
   return (
     <>
       {status?.isLoading && smallView ? (
@@ -77,7 +77,9 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
               withdrawal={withdrawal}
               claim={claim}
               status={status}
+              transferStatus={transferStatus}
               selectedNetworkType={selectedNetworkType}
+              transactionInputs={transactionInputs}
             />
           ) : (
             <>
@@ -285,7 +287,13 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                             </a>
                           </div>
                           <div className={styles.gridItem}>
-                            <button className={styles.claimButton} onClick={() => claim.mutate(withdrawal)}>
+                            <button
+                              className={styles.claimButton}
+                              onClick={() => {
+                                console.log(withdrawal)
+                                claim.mutate(withdrawal)
+                              }}
+                            >
                               {claim.isLoading && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}
                             </button>
                           </div>

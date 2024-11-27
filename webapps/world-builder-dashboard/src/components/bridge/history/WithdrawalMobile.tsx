@@ -3,32 +3,41 @@ import styles from './DepositMobile.module.css'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import IconWithdrawalNodeCompletedMobile from '@/assets/IconWithdrawalNodeCompletedMobile'
 import parentStyles from '@/components/bridge/history/WithdrawTransactions.module.css'
+import { NetworkType } from '@/contexts/BlockchainContext'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 import { ChildToParentMessageStatus } from '@arbitrum/sdk'
-import { NetworkType } from '@/contexts/BlockchainContext'
 
 interface WithdrawalMobileProps {
   withdrawal: TransactionRecord
   claim: any
   status: any
+  transferStatus: any
   selectedNetworkType: NetworkType
+  transactionInputs: any
 }
-const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, claim, status, selectedNetworkType }) => {
+const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
+  withdrawal,
+  claim,
+  status,
+  transferStatus,
+  selectedNetworkType,
+  transactionInputs
+}) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
-
+  console.log(transactionInputs)
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.title}>Withdraw</div>
-        <div className={styles.amount}>{`${withdrawal.amount} ${withdrawal.symbol}`}</div>
+        <div className={styles.amount}>{`${withdrawal.amount} ${transactionInputs?.tokenSymbol}`}</div>
       </div>
       {!isCollapsed && (
         <>
           <div className={styles.dataRow}>
             <div className={styles.dataText}>Transaction</div>
-            {status?.status === ChildToParentMessageStatus.EXECUTED && (
+            {transferStatus && transferStatus?.status === ChildToParentMessageStatus.EXECUTED && (
               <a
                 href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId, selectedNetworkType)}/tx/${withdrawal.lowNetworkHash}`}
                 target={'_blank'}
@@ -40,7 +49,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, claim, 
                 </div>
               </a>
             )}
-            {status?.status === ChildToParentMessageStatus.CONFIRMED && (
+            {transferStatus && transferStatus?.status === ChildToParentMessageStatus.CONFIRMED && (
               <a
                 href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId, selectedNetworkType)}/tx/${withdrawal.highNetworkHash}`}
                 target={'_blank'}
@@ -52,7 +61,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, claim, 
                 </div>
               </a>
             )}
-            {status?.status === ChildToParentMessageStatus.UNCONFIRMED && (
+            {transferStatus && transferStatus?.status === ChildToParentMessageStatus.UNCONFIRMED && (
               <a
                 href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId, selectedNetworkType)}/tx/${withdrawal.highNetworkHash}`}
                 target={'_blank'}
@@ -65,8 +74,8 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, claim, 
               </a>
             )}
           </div>
-          {status?.status === ChildToParentMessageStatus.EXECUTED && (
-          <>
+          {transferStatus && transferStatus?.status === ChildToParentMessageStatus.EXECUTED && (
+            <>
               <IconWithdrawalNodeCompletedMobile className={styles.nodeCompleted} />
               <div className={styles.dataRowCompleted}>
                 <div className={styles.dataText}>Initiate</div>
@@ -84,7 +93,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, claim, 
               <div className={styles.dataRowCompleted}>
                 <div className={styles.dataText}>Finalize</div>
                 <a
-                  href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId,selectedNetworkType)}/tx/${withdrawal.lowNetworkHash}`}
+                  href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId, selectedNetworkType)}/tx/${withdrawal.lowNetworkHash}`}
                   target={'_blank'}
                   className={parentStyles.explorerLink}
                 >
@@ -108,16 +117,15 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({ withdrawal, claim, 
       )}
       <div className={styles.dataRow}>
         <div className={styles.dataText}>Status</div>
-        {status?.status === ChildToParentMessageStatus.CONFIRMED && (
+        {transferStatus && transferStatus?.status === ChildToParentMessageStatus.CONFIRMED && (
           <button className={parentStyles.claimButton} onClick={() => claim.mutate(withdrawal)}>
             {claim.isLoading && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}
           </button>
         )}
-
-        {status?.status === ChildToParentMessageStatus.EXECUTED && (
+        {transferStatus && transferStatus?.status === ChildToParentMessageStatus.EXECUTED && (
           <div className={styles.dataTextBold}>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
         )}
-        {status?.status === ChildToParentMessageStatus.UNCONFIRMED && (
+        {transferStatus && transferStatus?.status === ChildToParentMessageStatus.UNCONFIRMED && (
           <div className={styles.dataTextBold}>{ETA(status.data?.timestamp, withdrawal.challengePeriod)}</div>
         )}
       </div>

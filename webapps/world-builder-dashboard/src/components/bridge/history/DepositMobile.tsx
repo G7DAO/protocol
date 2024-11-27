@@ -1,23 +1,32 @@
 import React, { useState } from 'react'
-import { getHighNetworks, getLowNetworks} from '../../../../constants'
+import { getHighNetworks, getLowNetworks } from '../../../../constants'
 import styles from './DepositMobile.module.css'
 import parentStyles from './WithdrawTransactions.module.css'
+import { BridgeTransferStatus } from 'game7-bridge-sdk'
 import { Skeleton, useMediaQuery } from 'summon-ui/mantine'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
-import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
+import { NetworkType } from '@/contexts/BlockchainContext'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
-import { NetworkType } from '@/contexts/BlockchainContext'
 
 interface DepositMobileProps {
   deposit: TransactionRecord
   isLoading: boolean
   selectedNetworkType: NetworkType
+  transactionInputs: any
+  highNetworkTimestamp: number
+  transferStatus: any
 }
-const DepositMobile: React.FC<DepositMobileProps> = ({ deposit, isLoading, selectedNetworkType }) => {
+const DepositMobile: React.FC<DepositMobileProps> = ({
+  deposit,
+  isLoading,
+  selectedNetworkType,
+  transactionInputs,
+  highNetworkTimestamp,
+  transferStatus
+}) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
-  const status = useDepositStatus(deposit, selectedNetworkType)
   const depositInfo = {
     from: getLowNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
     to: getHighNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
@@ -42,7 +51,7 @@ const DepositMobile: React.FC<DepositMobileProps> = ({ deposit, isLoading, selec
         <div className={styles.container}>
           <div className={styles.header}>
             <div className={styles.title}>Deposit</div>
-            <div className={styles.amount}>{`${deposit.amount} ${deposit.symbol}`}</div>
+            <div className={styles.amount}>{`${deposit.amount} ${transactionInputs?.tokenSymbol}`}</div>
           </div>
           {!isCollapsed && (
             <>
@@ -53,7 +62,9 @@ const DepositMobile: React.FC<DepositMobileProps> = ({ deposit, isLoading, selec
                   target={'_blank'}
                   className={styles.explorerLink}
                 >
-                  {status?.data?.l2Result?.complete ? (
+                  {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
+                  transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||
+                  transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ? (
                     <div className={parentStyles.settled}>
                       Completed
                       <IconLinkExternal02 stroke={'#fff'} />
@@ -79,8 +90,10 @@ const DepositMobile: React.FC<DepositMobileProps> = ({ deposit, isLoading, selec
           <div className={styles.dataRow}>
             <div className={styles.dataText}> Status</div>
             <div className={styles.dataTextBold}>
-              {status.data && status.data.highNetworkTimestamp ? (
-                <div>{timeAgo(status.data.highNetworkTimestamp)}</div>
+              {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
+              transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||
+              transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ? (
+                <div>{timeAgo(highNetworkTimestamp)}</div>
               ) : (
                 <div>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)}</div>
               )}
