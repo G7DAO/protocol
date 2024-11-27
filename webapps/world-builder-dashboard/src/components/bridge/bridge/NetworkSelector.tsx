@@ -82,11 +82,11 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork, direction }: Net
               direction === 'DEPOSIT'
                 ? selectedHighNetwork.chainId !== n.chainId && selectedHighNetwork.chainId === selectedNetwork.chainId
                 : selectedLowNetwork.chainId !== n.chainId && selectedLowNetwork.chainId === selectedNetwork.chainId
+            if (isDisabled) return
             return (
               <Combobox.Option
                 value={String(n.chainId)}
-                key={n.chainId}
-                disabled={isDisabled}
+                key={n.chainId}   
                 className={isDisabled ? styles.optionDisabled : styles.option}
               >
                 <Group>

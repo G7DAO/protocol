@@ -1,6 +1,7 @@
 import { getHighNetworks, getLowNetworks, HIGH_NETWORKS, LOW_NETWORKS } from '../../constants'
 import { ethers } from 'ethers'
 import { NetworkType } from '@/contexts/BlockchainContext'
+import { providers } from 'ethers'
 
 export const convertToBigNumber = (numberString: string, precision = 18) => {
   const [integerPart, decimalPart] = numberString.split('.')
@@ -57,4 +58,31 @@ export const formatBigNumber = (bigNumber: ethers.BigNumber, lengthLimit = 25, u
 export const parseUntilDelimiter = (input: any) => {
   const match = input.match(/^[^\(\[]+/)
   return match ? match[0] : input
+}
+
+export const fetchTransactionTimestamp = async (completionTxHash: string, rpcUrl: string): Promise<number | null> => {
+  try {
+    // Initialize the provider with the RPC URL
+    const provider = new providers.JsonRpcProvider(rpcUrl)
+
+    // Fetch the transaction receipt
+    const receipt = await provider.getTransactionReceipt(completionTxHash)
+    if (!receipt) {
+      console.warn('Transaction receipt not found for hash:', completionTxHash)
+      return null
+    }
+
+    // Fetch the block details using the block number from the receipt
+    const block = await provider.getBlock(receipt.blockNumber)
+    if (!block) {
+      console.warn('Block not found for block number:', receipt.blockNumber)
+      return null
+    }
+
+    // Return the timestamp from the block
+    return block.timestamp
+  } catch (error) {
+    console.error('Error fetching transaction timestamp:', error)
+    return null
+  }
 }

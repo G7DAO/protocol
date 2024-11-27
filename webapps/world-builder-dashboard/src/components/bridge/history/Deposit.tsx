@@ -1,5 +1,5 @@
-import React from 'react'
-import { getHighNetworks, getLowNetworks } from '../../../../constants'
+import React, { useEffect, useState } from 'react'
+import { getHighNetworks, getLowNetworks, getNetworks } from '../../../../constants'
 import DepositMobile from './DepositMobile'
 import styles from './WithdrawTransactions.module.css'
 import { ethers } from 'ethers'
@@ -9,14 +9,14 @@ import IconArrowNarrowDown from '@/assets/IconArrowNarrowDown'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeTransfer } from '@/hooks/useBridgeTransfer'
-import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
-import { getBlockExplorerUrl } from '@/utils/web3utils'
+import { fetchTransactionTimestamp, getBlockExplorerUrl } from '@/utils/web3utils'
 
 interface DepositProps {
   deposit: TransactionRecord
 }
+
 const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   const { selectedNetworkType } = useBlockchainContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
@@ -25,21 +25,43 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
     to: getHighNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
   }
 
-  const { data: status, isLoading: isLoadingStatus } = useDepositStatus(deposit, selectedNetworkType)
   const { returnTransferData, getTransactionInputs } = useBridgeTransfer()
   const { data: transferStatus, isLoading } = returnTransferData({ txRecord: deposit })
   const { data: transactionInputs } = getTransactionInputs({ txRecord: deposit })
+  const [highNetworkTimestamp, setHighNetworkTimestamp] = useState<number>(0)
+
+
+  useEffect(() => {
+    const fetchTimestamp = async () => {
+      if (transferStatus) {
+        if (transferStatus?.completionTxHash) {
+          console.log(selectedNetworkType)
+          const destinationRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.highNetworkChainId)
+            ?.rpcs[0]
+          const timestamp = await fetchTransactionTimestamp(transferStatus.completionTxHash, destinationRpc ?? '')
+          if (timestamp) {
+            console.log(timestamp)
+            setHighNetworkTimestamp(timestamp)
+          }
+        } else {
+          console.log("no compl;etion tx hash found" )
+        }
+      }
+    }
+
+    fetchTimestamp()
+  }, [transferStatus?.completionTxHash])
 
   return (
     <>
-      {isLoadingStatus && smallView ? (
+      {isLoading && smallView ? (
         <div className={styles.gridItem}>
           <div className={styles.loading}>Loading</div>
         </div>
       ) : (
         <>
           {smallView ? (
-            <DepositMobile deposit={deposit} isLoading={isLoadingStatus} selectedNetworkType={selectedNetworkType} />
+            <DepositMobile deposit={deposit} isLoading={isLoading} selectedNetworkType={selectedNetworkType} />
           ) : (
             <>
               <div className={styles.gridItem}>
@@ -85,7 +107,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                 )}
 
                 {/* Second column */}
-                {isLoading || transferStatus?.status === undefined || isLoadingStatus ? (
+                {isLoading || transferStatus?.status === undefined || !highNetworkTimestamp ? (
                   <div className={styles.gridItem}>
                     <div className={styles.loading}>Loading</div>
                   </div>
@@ -94,11 +116,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                     {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
                     transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||
                     transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ? (
-                      <>
-                        {status?.highNetworkTimestamp === undefined
-                          ? 'No status found'
-                          : timeAgo(status?.highNetworkTimestamp)}
-                      </>
+                      <>{timeAgo(highNetworkTimestamp)}</>
                     ) : (
                       <>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)}</>
                     )}

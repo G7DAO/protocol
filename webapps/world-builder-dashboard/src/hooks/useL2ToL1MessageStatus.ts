@@ -147,9 +147,9 @@ const fetchDepositStatus = async (deposit: TransactionRecord, selectedNetworkTyp
   let l2Result
 
   try {
-    l2Result = await l1ContractCallReceipt.waitForChildTransactionReceipt(l2Provider, l1Receipt.confirmations, 1)
+    l2Result = await l1ContractCallReceipt.waitForChildTransactionReceipt(l2Provider, l1Receipt.confirmations)
   } catch (e) {
-    console.error('Error waiting for child transaction receipt:', { deposit, e })
+    console.error('Error waiting for child transaction receipt: ', { error: e, receipt: l1Receipt })
   }
 
   if (!l2Result) {
