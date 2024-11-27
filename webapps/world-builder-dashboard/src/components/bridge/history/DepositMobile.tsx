@@ -6,7 +6,6 @@ import { BridgeTransferStatus } from 'game7-bridge-sdk'
 import { Skeleton, useMediaQuery } from 'summon-ui/mantine'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import { NetworkType } from '@/contexts/BlockchainContext'
-import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
@@ -28,7 +27,6 @@ const DepositMobile: React.FC<DepositMobileProps> = ({
   transferStatus
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
-  const status = useDepositStatus(deposit, selectedNetworkType)
   const depositInfo = {
     from: getLowNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
     to: getHighNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
