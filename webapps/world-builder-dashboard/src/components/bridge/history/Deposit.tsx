@@ -11,14 +11,14 @@ import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeTransfer } from '@/hooks/useBridgeTransfer'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
-import { fetchTransactionTimestamp, getBlockExplorerUrl } from '@/utils/web3utils'
+import { fetchTransactionTimestamp, getBlockExplorerUrl, getCachedTransactions } from '@/utils/web3utils'
 
 interface DepositProps {
   deposit: TransactionRecord
 }
 
 const Deposit: React.FC<DepositProps> = ({ deposit }) => {
-  const { selectedNetworkType } = useBlockchainContext()
+  const { selectedNetworkType, connectedAccount } = useBlockchainContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
   const depositInfo = {
     from: getLowNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
@@ -30,21 +30,49 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   const { data: transactionInputs } = getTransactionInputs({ txRecord: deposit })
   const [highNetworkTimestamp, setHighNetworkTimestamp] = useState<number>(0)
 
-
   useEffect(() => {
     const fetchTimestamp = async () => {
-      if (transferStatus) {
+      if (deposit) {
+        const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
+
+        const cachedTransaction = transactions.find((t: any) => t.lowNetworkHash === deposit.lowNetworkHash)
+
+        if (cachedTransaction && cachedTransaction.highNetworkTimestamp) {
+          console.log('Timestamp found in cache:', cachedTransaction.highNetworkTimestamp)
+          setHighNetworkTimestamp(cachedTransaction.highNetworkTimestamp)
+          return
+        }
+
+        const destinationRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.highNetworkChainId)
+          ?.rpcs[0]
+
         if (transferStatus?.completionTxHash) {
-          console.log(selectedNetworkType)
-          const destinationRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.highNetworkChainId)
-            ?.rpcs[0]
-          const timestamp = await fetchTransactionTimestamp(transferStatus.completionTxHash, destinationRpc ?? '')
-          if (timestamp) {
-            console.log(timestamp)
-            setHighNetworkTimestamp(timestamp)
+          try {
+            const timestamp = await fetchTransactionTimestamp(transferStatus.completionTxHash, destinationRpc ?? '')
+
+            if (timestamp) {
+              setHighNetworkTimestamp(timestamp)
+
+              const updatedTransactions = transactions.map((t: any) => {
+                const isSameHash = t.lowNetworkHash === deposit.lowNetworkHash
+
+                return isSameHash ? { ...t, highNetworkTimestamp: timestamp, lastUpdated: Date.now() } : t
+              })
+
+              localStorage.setItem(
+                `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
+                JSON.stringify(updatedTransactions)
+              )
+            }
+          } catch (error) {
+            console.error('Error fetching timestamp:', error)
+
+            if (cachedTransaction && cachedTransaction.highNetworkTimestamp) {
+              setHighNetworkTimestamp(cachedTransaction.highNetworkTimestamp)
+            }
           }
         } else {
-          console.log("no compl;etion tx hash found" )
+          console.log('No completion transaction hash found')
         }
       }
     }

@@ -7,6 +7,7 @@ import { BridgeTransfer, BridgeTransferStatus } from 'game7-bridge-sdk'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
+import { getCachedTransactions } from '@/utils/web3utils'
 
 interface UseTransferDataProps {
   txRecord: TransactionRecord
@@ -23,10 +24,6 @@ export const useBridgeTransfer = () => {
     const destinationRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === destinationChainId)?.rpcs[0]
     const originRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === originChainId)?.rpcs[0]
 
-    const getCachedTransactions = () => {
-      const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
-      return transactionsString ? JSON.parse(transactionsString) : []
-    }
 
     // Retry function with exponential backoff for handling 429 errors
     const retryWithExponentialBackoff = async (fn: () => Promise<any>, retries: number = 5, delay: number = 1000) => {
@@ -71,7 +68,7 @@ export const useBridgeTransfer = () => {
           // Fetch status with retry logic
           status = await retryWithExponentialBackoff(async () => await _bridgeTransfer.getStatus())
 
-          const transactions = getCachedTransactions()
+          const transactions = getCachedTransactions(connectedAccount ?? "", selectedNetworkType)
 
           // Update the cache with the latest status
           const newTransactions = transactions.map((t: any) => {
@@ -92,7 +89,7 @@ export const useBridgeTransfer = () => {
           console.error('Error fetching status:', error)
 
           // Fallback to cached status if available
-          const transactions = getCachedTransactions()
+          const transactions = getCachedTransactions(connectedAccount ?? "", selectedNetworkType)
           const cachedTransaction = transactions.find((t: any) =>
             isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
           )
@@ -108,7 +105,7 @@ export const useBridgeTransfer = () => {
       {
         // Placeholder data from cache
         placeholderData: () => {
-          const transactions = getCachedTransactions()
+          const transactions = getCachedTransactions(connectedAccount ?? "", selectedNetworkType)
           const cachedTransaction = transactions.find((t: any) =>
             isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
           )

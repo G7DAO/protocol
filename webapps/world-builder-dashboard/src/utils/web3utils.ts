@@ -86,3 +86,8 @@ export const fetchTransactionTimestamp = async (completionTxHash: string, rpcUrl
     return null
   }
 }
+
+export const getCachedTransactions = (connectedAccount: string, selectedNetworkType: NetworkType) => {
+  const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
+  return transactionsString ? JSON.parse(transactionsString) : []
+}

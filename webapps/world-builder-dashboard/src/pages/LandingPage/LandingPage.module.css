@@ -85,7 +85,6 @@ body {
 }
 
 .navbarCTA {
-  cursor: url('../../assets/hand.svg'), pointer;
   display: flex;
   padding: 10px 16px;
   justify-content: center;
@@ -102,6 +101,24 @@ body {
   font-weight: 600;
   line-height: 20px;
 }
+
+.navbarCTA:hover {
+  display: flex;
+  padding: 10px 16px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  background: linear-gradient(147deg, #f04438 11.16%, #fff 142.48%);
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  color: #fff;
+  font-family: Inter;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px;
+}
+
 
 .logoWrapper {
   cursor: url('../../assets/hand.svg'), pointer;
