@@ -88,7 +88,14 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
       ) : (
         <>
           {smallView ? (
-            <DepositMobile deposit={deposit} isLoading={isLoading} selectedNetworkType={selectedNetworkType} />
+            <DepositMobile
+              deposit={deposit}
+              isLoading={isLoading}
+              selectedNetworkType={selectedNetworkType}
+              transactionInputs={transactionInputs}
+              highNetworkTimestamp={highNetworkTimestamp}
+              transferStatus={transferStatus}
+            />
           ) : (
             <>
               <div className={styles.gridItem}>

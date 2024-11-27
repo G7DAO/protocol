@@ -77,7 +77,9 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
               withdrawal={withdrawal}
               claim={claim}
               status={status}
+              transferStatus={transferStatus}
               selectedNetworkType={selectedNetworkType}
+              transactionInputs={transactionInputs}
             />
           ) : (
             <>
