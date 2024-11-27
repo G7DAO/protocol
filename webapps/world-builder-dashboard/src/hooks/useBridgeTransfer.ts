@@ -139,14 +139,13 @@ export const useBridgeTransfer = () => {
       if (!withdrawal) {
         throw new Error('transaction hash is undefined')
       }
-      
+
       let targetChain
       if (selectedNetworkType === 'Testnet')
         targetChain = withdrawal.highNetworkChainId === L2_NETWORK.chainId ? L1_NETWORK : L2_NETWORK
-      else 
-        targetChain = withdrawal.highNetworkChainId === L2_MAIN_NETWORK.chainId ? L1_MAIN_NETWORK : L2_MAIN_NETWORK
-      
-        let provider
+      else targetChain = withdrawal.highNetworkChainId === L2_MAIN_NETWORK.chainId ? L1_MAIN_NETWORK : L2_MAIN_NETWORK
+
+      let provider
       if (window.ethereum) {
         provider = new ethers.providers.Web3Provider(window.ethereum)
         const currentChain = await provider.getNetwork()
@@ -158,7 +157,6 @@ export const useBridgeTransfer = () => {
         throw new Error('Wallet is not installed!')
       }
       const signer = provider.getSigner()
-      console.log(signer)
 
       // Bridge Transfer execute
       const _bridgeTransfer = new BridgeTransfer({
@@ -173,7 +171,7 @@ export const useBridgeTransfer = () => {
         )?.rpcs[0]
       })
       console.log(_bridgeTransfer)
-      const res = await _bridgeTransfer?.execute(signer) 
+      const res = await _bridgeTransfer?.execute(signer)
       return { res, withdrawal }
     },
     {
@@ -223,7 +221,7 @@ export const useBridgeTransfer = () => {
     const originChainId = isDeposit ? txRecord.lowNetworkChainId : txRecord.highNetworkChainId
     const destinationRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === destinationChainId)?.rpcs[0]
     const originRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === originChainId)?.rpcs[0]
-    const storageKey = `transaction-inputs-${connectedAccount}`
+    const storageKey = `bridge-${connectedAccount}-transactions-${selectedNetworkType}`
 
     // Retrieve cached transaction inputs from localStorage
     const getCachedTransactionInputs = () => {
