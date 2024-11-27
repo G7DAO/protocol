@@ -148,6 +148,11 @@ export const networks: { [chainId: number]: BridgeNetworkConfig } = {
     isTestnet: false,
     explorerUrl: 'https://arbiscan.io',
     rpcs: ['https://arb1.arbitrum.io/rpc'],
+    nativeCurrency: {
+      decimals: 18,
+      name: 'ETH',
+      symbol: 'ETH',
+    },
   },
   11155111: {
     chainId: 11155111,
