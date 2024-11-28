@@ -219,11 +219,38 @@ export const useBridgeTransfer = () => {
     const originChainId = isDeposit ? txRecord.lowNetworkChainId : txRecord.highNetworkChainId
     const destinationRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === destinationChainId)?.rpcs[0]
     const originRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === originChainId)?.rpcs[0]
-    let transferInputs: any
-    // Use React Query to fetch or cache transaction inputs
+    const storageKey = `transactionInputs-${connectedAccount}-${selectedNetworkType}`
+
+    const getCachedTransactionInputs = () => {
+      const cachedData = localStorage.getItem(storageKey)
+      if (!cachedData) return null
+
+      const cachedTransactions: any[] = JSON.parse(cachedData)
+      console.log(cachedTransactions)
+
+      return cachedTransactions?.find((input: any) => input.txHash === txHash) || null
+    }
+
+    const saveTransactionInputsToCache = (newInput: any) => {
+      const cachedData = localStorage.getItem(storageKey)
+      const cachedTransactions = cachedData ? JSON.parse(cachedData) : []
+
+      const updatedTransactions = cachedTransactions.some((input: any) => input.txHash === newInput.txHash)
+        ? cachedTransactions.map((input: any) => (input.txHash === newInput.txHash ? { ...input, ...newInput } : input))
+        : [...cachedTransactions, newInput]
+
+      localStorage.setItem(storageKey, JSON.stringify(updatedTransactions))
+    }
+
     return useQuery(
       ['transactionInputs', txHash],
       async () => {
+        const cachedTransactionInputs = getCachedTransactionInputs()
+
+        if (cachedTransactionInputs) {
+          return cachedTransactionInputs
+        }
+
         const _bridgeTransfer = new BridgeTransfer({
           txHash: txHash ?? '',
           destinationNetworkChainId: destinationChainId ?? 0,
@@ -232,51 +259,22 @@ export const useBridgeTransfer = () => {
           originSignerOrProviderOrRpc: originRpc
         })
 
-        try {
-          // Fetch status with retry logic
-          transferInputs = await _bridgeTransfer.getInfo()
+        const transactionInputs = await _bridgeTransfer.getInfo()
 
-          const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
+        saveTransactionInputsToCache({
+          ...transactionInputs,
+          txHash
+        })
 
-          // Update the cache with the latest status
-          const newTransactions = transactions.map((t: any) => {
-            const isSameHash = isDeposit
-              ? t.lowNetworkHash === txRecord.lowNetworkHash
-              : t.highNetworkHash === txRecord.highNetworkHash
-
-            return isSameHash ? { ...t, symbol: transferInputs?.tokenSymbol } : t
-          })
-
-          localStorage.setItem(
-            `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
-            JSON.stringify(newTransactions)
-          )
-
-          return transferInputs
-        } catch (error) {
-          console.error('Error fetching status:', error)
-
-          // Fallback to cached status if available
-          const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
-          const cachedTransaction = transactions.find((t: any) =>
-            isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
-          )
-
-          if (cachedTransaction && cachedTransaction.status !== undefined) {
-            transferInputs = { tokenSymbol: cachedTransaction.symbol }
-            return transferInputs // Return cached status
-          }
-
-          throw error // Re-throw error if no cache
-        }
+        return transactionInputs
       },
       {
         placeholderData: () => {
-          return getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
+          return getCachedTransactionInputs()
         },
-        staleTime: 2 * 60 * 1000, // Data is considered fresh for 2 minutes
-        refetchOnWindowFocus: false, // Disable refetching on window focus
-        enabled: !!txRecord // Ensure the query only runs when txRecord exists
+        staleTime: 2 * 60 * 1000,
+        refetchOnWindowFocus: false,
+        enabled: !!txRecord
       }
     )
   }
