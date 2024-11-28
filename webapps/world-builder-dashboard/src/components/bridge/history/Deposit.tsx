@@ -38,17 +38,17 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
         const cachedTransaction = transactions.find((t: any) => t.lowNetworkHash === deposit.lowNetworkHash)
 
         if (cachedTransaction && cachedTransaction.highNetworkTimestamp) {
+          console.log('..')
           setHighNetworkTimestamp(cachedTransaction.highNetworkTimestamp)
           return
         }
 
         const destinationRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.highNetworkChainId)
           ?.rpcs[0]
-
         if (transferStatus?.completionTxHash) {
           try {
             const timestamp = await fetchTransactionTimestamp(transferStatus.completionTxHash, destinationRpc ?? '')
-
+            console.log(timestamp)
             if (timestamp) {
               setHighNetworkTimestamp(timestamp)
 

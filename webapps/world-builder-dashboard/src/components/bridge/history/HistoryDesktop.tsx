@@ -23,13 +23,15 @@ const mergeTransactions = (apiData: TransactionRecord[], localData: TransactionR
 
   // Merge API data, prioritizing latest withdrawal completionTimestamp
   apiData.forEach((apiTx) => {
-  const hashKey = apiTx.type === 'DEPOSIT' ? (apiTx.lowNetworkHash ?? '') : (apiTx.highNetworkHash ?? '')
+    const hashKey = apiTx.type === 'DEPOSIT' ? (apiTx.lowNetworkHash ?? '') : (apiTx.highNetworkHash ?? '')
     const existingTx = combinedData.get(hashKey)
 
     if (existingTx) {
       if (apiTx.type === 'WITHDRAWAL' && !apiTx.completionTimestamp && existingTx.completionTimestamp) {
         combinedData.set(hashKey, existingTx)
-      } 
+      } else if (apiTx.type === 'WITHDRAWAL' && apiTx.completionTimestamp && !existingTx.completionTimestamp) {
+        combinedData.set(hashKey, apiTx)
+      }
     } else {
       combinedData.set(hashKey, apiTx)
     }
@@ -60,7 +62,7 @@ const mapAPIDataToTransactionRecord = (apiData: any): TransactionRecord => {
 
 const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   const { connectedAccount, selectedNetworkType } = useBlockchainContext()
-  const {data: messages} = useMessages(connectedAccount, selectedNetworkType || 'Testnet')
+  const { data: messages } = useMessages(connectedAccount, selectedNetworkType || 'Testnet')
   const { useHistoryTransactions } = useBridgeAPI()
   const { data: apiTransactions } = useHistoryTransactions(connectedAccount)
   const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])

@@ -270,16 +270,18 @@ export const useMessages = (
 }
 
 export const getNotifications = (transactions: TransactionRecord[]) => {
-  const completedTransactions = transactions.filter((tx) => tx.completionTimestamp || tx.claimableTimestamp)
+  const completedTransactions = transactions.filter((tx) =>
+    tx.type === 'DEPOSIT' ? tx.status === 6 || tx.status === 9 : tx.completionTimestamp || tx.claimableTimestamp
+  )
   const notifications: BridgeNotification[] = completedTransactions
     .map((ct) => {
-      const timestamp = ct.completionTimestamp ?? ct.claimableTimestamp ?? Date.now() / 1000 //
+      const timestamp = ct.completionTimestamp ?? ct.claimableTimestamp ?? Date.now() / 1000
       return {
         status: ct.isFailed ? 'FAILED' : ct.completionTimestamp ? 'COMPLETED' : 'CLAIMABLE',
         type: ct.type,
         timestamp,
         amount: ct.amount,
-        to: (ct.type === 'WITHDRAWAL' ? ct.lowNetworkChainId : ct.highNetworkChainId) ?? 1, //TODO remove null assertion
+        to: (ct.type === 'WITHDRAWAL' ? ct.lowNetworkChainId : ct.highNetworkChainId) ?? 1,
         seen: !ct.newTransaction,
         tx: ct
       }
