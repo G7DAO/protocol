@@ -25,7 +25,7 @@ It also contains:
 
 [Implementation of the Game7 ERC20 token](./web3/contracts/token/ERC20.sol)
 
-This token will be deployed on Ethereum mainnet. The implementation consists of slight modifications to
+This token will be deployed on the Ethereum mainnet. The implementation consists of slight modifications to
 the wrapped Ether contract, [`WETH9`](https://github.com/gnosis/canonical-weth/blob/master/contracts/WETH9.sol).
 
 ### Staker
@@ -34,9 +34,9 @@ the wrapped Ether contract, [`WETH9`](https://github.com/gnosis/canonical-weth/b
 - [Execution flows used to test the `Staker`](./web3/flows/staker.md)
 - Staker test files: [1](./web3/test/Staker.test.1.ts), [2](./web3/test/Staker.test.1.ts), [3](./web3/test/Staker.test.1.ts)
 
-The `Staker` is a permissionless staking contract that can be used by anybody.
+The `Staker` is a permissionless staking contract that anybody can use.
 
-Anyone can create staking pools which accept either one of:
+Anyone can create staking pools that accept either one of the following:
 1. The native token of the chain the `Staker` is deployed to
 2. Tokens from an ERC20 contract
 3. Tokens from an ERC721 contract
@@ -58,13 +58,13 @@ transferring administration of that pool to the zero address.
 
 ### Metronome
 
-The `Metronome` contract allows anyone to set incentivize for Game7 chain users to submit transactions at regular intervals.
+The `Metronome` contract allows anyone to set incentives for Game7 chain users to submit transactions at regular intervals.
 
 These incentives can have different purposes for different applications. For example, they can be used to improve the fairness of blockhash-based
 on-chain entropy sources. We also use the `Metronome` to incentivize steady block production on Game7 testnet.
 
 - The [`Metronome` smart contract](./web3/contracts/metronome/Metronome.sol).
-- [`robognome`](./cmd/robognome/README.md) - A reference bot which claims `Metronome` bounties.
+- [`robognome`](./cmd/robognome/README.md) - A reference bot that claims `Metronome` bounties.
 
 ## Development
 
