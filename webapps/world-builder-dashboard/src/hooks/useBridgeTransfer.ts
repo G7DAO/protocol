@@ -124,7 +124,6 @@ export const useBridgeTransfer = () => {
           : false,
         refetchOnWindowFocus: false,
         enabled: !!txRecord
-        // retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 2000)
       }
     )
   }

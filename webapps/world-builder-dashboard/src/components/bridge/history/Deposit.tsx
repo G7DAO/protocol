@@ -29,7 +29,6 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   const { data: transferStatus, isLoading } = returnTransferData({ txRecord: deposit })
   const { data: transactionInputs } = getTransactionInputs({ txRecord: deposit })
   const [highNetworkTimestamp, setHighNetworkTimestamp] = useState<number>(0)
-
   useEffect(() => {
     const fetchTimestamp = async () => {
       if (deposit) {
@@ -38,7 +37,6 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
         const cachedTransaction = transactions.find((t: any) => t.lowNetworkHash === deposit.lowNetworkHash)
 
         if (cachedTransaction && cachedTransaction.highNetworkTimestamp) {
-          console.log('..')
           setHighNetworkTimestamp(cachedTransaction.highNetworkTimestamp)
           return
         }
@@ -48,13 +46,11 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
         if (transferStatus?.completionTxHash) {
           try {
             const timestamp = await fetchTransactionTimestamp(transferStatus.completionTxHash, destinationRpc ?? '')
-            console.log(timestamp)
             if (timestamp) {
               setHighNetworkTimestamp(timestamp)
 
               const updatedTransactions = transactions.map((t: any) => {
                 const isSameHash = t.lowNetworkHash === deposit.lowNetworkHash
-
                 return isSameHash ? { ...t, highNetworkTimestamp: timestamp, lastUpdated: Date.now() } : t
               })
 

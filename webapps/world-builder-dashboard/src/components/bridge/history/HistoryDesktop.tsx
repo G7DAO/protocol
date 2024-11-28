@@ -31,6 +31,10 @@ const mergeTransactions = (apiData: TransactionRecord[], localData: TransactionR
         combinedData.set(hashKey, existingTx)
       } else if (apiTx.type === 'WITHDRAWAL' && apiTx.completionTimestamp && !existingTx.completionTimestamp) {
         combinedData.set(hashKey, apiTx)
+      } else if (apiTx.type === 'DEPOSIT' && !apiTx.symbol && existingTx.symbol) {
+        combinedData.set(hashKey, existingTx)
+      } else if (apiTx.type === 'DEPOSIT' && !apiTx.symbol && existingTx.symbol) {
+        combinedData.set(hashKey, apiTx)
       }
     } else {
       combinedData.set(hashKey, apiTx)

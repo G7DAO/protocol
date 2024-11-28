@@ -26,7 +26,6 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
   transactionInputs
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
-  console.log(transactionInputs)
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -99,7 +98,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
                 >
                   <div className={parentStyles.settled}>
                     Completed
-                    <IconLinkExternal02 stroke={'#fff'} />
+                    <IconLinkExternal02 stroke={'#fff'} /> 
                   </div>
                 </a>
               </div>
@@ -107,11 +106,11 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
           )}
           <div className={styles.dataRow}>
             <div className={styles.dataText}>From</div>
-            <div className={styles.dataText}>{status.data?.from ?? ''}</div>
+            <div className={styles.dataText}>{status?.data?.from ?? ''}</div>
           </div>
           <div className={styles.dataRow}>
             <div className={styles.dataText}>To</div>
-            <div className={styles.dataText}>{status.data?.to ?? ''}</div>
+            <div className={styles.dataText}>{status?.data?.to ?? ''}</div>
           </div>
         </>
       )}
@@ -123,10 +122,10 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
           </button>
         )}
         {transferStatus && transferStatus?.status === ChildToParentMessageStatus.EXECUTED && (
-          <div className={styles.dataTextBold}>{timeAgo(status.data.lowNetworkTimeStamp)}</div>
+          <div className={styles.dataTextBold}>{timeAgo(status?.data?.lowNetworkTimeStamp)}</div>
         )}
         {transferStatus && transferStatus?.status === ChildToParentMessageStatus.UNCONFIRMED && (
-          <div className={styles.dataTextBold}>{ETA(status.data?.timestamp, withdrawal.challengePeriod)}</div>
+          <div className={styles.dataTextBold}>{ETA(status?.data?.timestamp, withdrawal.challengePeriod)}</div>
         )}
       </div>
       <div className={styles.button} onClick={() => setIsCollapsed(!isCollapsed)}>
