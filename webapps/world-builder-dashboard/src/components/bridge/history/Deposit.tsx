@@ -29,7 +29,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   const { data: transferStatus, isLoading } = returnTransferData({ txRecord: deposit })
   const { data: transactionInputs } = getTransactionInputs({ txRecord: deposit })
   const [highNetworkTimestamp, setHighNetworkTimestamp] = useState<number>(0)
-  
+
   useEffect(() => {
     const fetchTimestamp = async () => {
       if (deposit) {

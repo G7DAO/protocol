@@ -25,7 +25,6 @@ const mergeTransactions = (apiData: TransactionRecord[], localData: TransactionR
   apiData.forEach((apiTx) => {
     const hashKey = apiTx.type === 'DEPOSIT' ? (apiTx.lowNetworkHash ?? '') : (apiTx.highNetworkHash ?? '')
     const existingTx = combinedData.get(hashKey)
-
     if (existingTx) {
       if (apiTx.type === 'WITHDRAWAL' && !apiTx.completionTimestamp && existingTx.completionTimestamp) {
         combinedData.set(hashKey, existingTx)

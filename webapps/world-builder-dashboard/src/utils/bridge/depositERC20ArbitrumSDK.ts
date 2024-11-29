@@ -1,4 +1,5 @@
 import { ethers, providers } from 'ethers'
+import { BridgeTransferInfo } from 'game7-bridge-sdk'
 import { NetworkInterface } from '@/contexts/BlockchainContext'
 import { convertToBigNumber } from '@/utils/web3utils'
 import { L2GatewayRouterABI } from '@/web3/ABI/l2GatewayRouter_abi'
@@ -40,6 +41,7 @@ export interface TransactionRecord {
   status?: number
   ETA?: number
   tokenAddress?: string
+  transactionInputs?: BridgeTransferInfo
 }
 
 export const depositERC20ArbitrumSDK = async (
@@ -47,7 +49,7 @@ export const depositERC20ArbitrumSDK = async (
   highNetwork: NetworkInterface,
   amount: string,
   l1Signer: Signer
-): Promise<TransactionRecord> => { 
+): Promise<TransactionRecord> => {
   const l2Provider = new providers.JsonRpcProvider(highNetwork.rpcs[0])
 
   const l2Network = await getArbitrumNetwork(l2Provider)
