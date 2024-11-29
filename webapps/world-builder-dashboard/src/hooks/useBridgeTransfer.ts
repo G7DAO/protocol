@@ -226,7 +226,6 @@ export const useBridgeTransfer = () => {
       if (!cachedData) return null
 
       const cachedTransactions: any[] = JSON.parse(cachedData)
-      console.log(cachedTransactions)
 
       return cachedTransactions?.find((input: any) => input.txHash === txHash) || null
     }
