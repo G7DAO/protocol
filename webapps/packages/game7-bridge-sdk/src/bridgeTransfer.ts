@@ -365,7 +365,7 @@ export class BridgeTransfer {
         }
       }
       const childTxReceipt = (res as any).childTxReceipt
-      const childTxHash = childTxReceipt?.transactionHash ?? res.message?.childTxHash //sometimes childTxHash is in the res, but childTxReceipt isn't
+      const childTxHash = childTxReceipt?.transactionHash
       const status = mapDepositERC20Status(res.status)
       return { messageStatus: res.status, ETA, childTxReceipt, status, completionTxHash: childTxHash, completionExplorerLink: `${this.destinationNetwork.explorerUrl}/tx/${childTxHash}`}
     }
