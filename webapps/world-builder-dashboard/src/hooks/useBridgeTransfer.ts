@@ -45,9 +45,9 @@ export const useBridgeTransfer = () => {
 
     // If the status is pending and time since last fetched is > 2 minutes, fetch again
     const shouldFetchStatus = (cachedTransaction: any) => {
-      const isPending = ![2, 6, 9].includes(cachedTransaction?.status) // Add actual pending statuses
+      const isPending = ![1, 2, 6, 9].includes(cachedTransaction?.status)
       const timeSinceLastUpdate = Date.now() - (cachedTransaction?.lastUpdated || 0)
-      return isPending && timeSinceLastUpdate > 1 * 60 * 1000 // Adjust timing as needed
+      return isPending && timeSinceLastUpdate > 1 * 60 * 1000
     }
 
     let status: any
@@ -219,37 +219,10 @@ export const useBridgeTransfer = () => {
     const originChainId = isDeposit ? txRecord.lowNetworkChainId : txRecord.highNetworkChainId
     const destinationRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === destinationChainId)?.rpcs[0]
     const originRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === originChainId)?.rpcs[0]
-    const storageKey = `transactionInputs-${connectedAccount}-${selectedNetworkType}`
-
-    const getCachedTransactionInputs = () => {
-      const cachedData = localStorage.getItem(storageKey)
-      if (!cachedData) return null
-
-      const cachedTransactions: any[] = JSON.parse(cachedData)
-
-      return cachedTransactions?.find((input: any) => input.txHash === txHash) || null
-    }
-
-    const saveTransactionInputsToCache = (newInput: any) => {
-      const cachedData = localStorage.getItem(storageKey)
-      const cachedTransactions = cachedData ? JSON.parse(cachedData) : []
-
-      const updatedTransactions = cachedTransactions.some((input: any) => input.txHash === newInput.txHash)
-        ? cachedTransactions.map((input: any) => (input.txHash === newInput.txHash ? { ...input, ...newInput } : input))
-        : [...cachedTransactions, newInput]
-
-      localStorage.setItem(storageKey, JSON.stringify(updatedTransactions))
-    }
 
     return useQuery(
       ['transactionInputs', txHash],
       async () => {
-        const cachedTransactionInputs = getCachedTransactionInputs()
-
-        if (cachedTransactionInputs) {
-          return cachedTransactionInputs
-        }
-
         const _bridgeTransfer = new BridgeTransfer({
           txHash: txHash ?? '',
           destinationNetworkChainId: destinationChainId ?? 0,
@@ -260,16 +233,34 @@ export const useBridgeTransfer = () => {
 
         const transactionInputs = await _bridgeTransfer.getInfo()
 
-        saveTransactionInputsToCache({
-          ...transactionInputs,
-          txHash
+        const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
+
+        // Update the cache with the latest status
+        const newTransactions = transactions.map((t: any) => {
+          const isSameHash = isDeposit
+            ? t.lowNetworkHash === txRecord.lowNetworkHash
+            : t.highNetworkHash === txRecord.highNetworkHash
+
+          return isSameHash ? { ...t, transactionInputs: transactionInputs } : t
         })
 
+        localStorage.setItem(
+          `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
+          JSON.stringify(newTransactions)
+        )
         return transactionInputs
       },
       {
         placeholderData: () => {
-          return getCachedTransactionInputs()
+          const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
+          const cachedTransaction = transactions.find((t: any) =>
+            isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
+          )
+          console.log(cachedTransaction)
+          if (cachedTransaction && cachedTransaction.transactionInputs !== undefined) {
+            console.log({ transactionInputs: cachedTransaction?.transactionInputs })
+            return cachedTransaction?.transactionInputs
+          }
         },
         staleTime: 2 * 60 * 1000,
         refetchOnWindowFocus: false,
