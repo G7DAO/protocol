@@ -347,11 +347,11 @@ export class BridgeTransfer {
       res = await parentEthDepositReceipt.waitForChildTransactionReceipt(this.destinationProvider, 3 ,1000);
       const ethDepositMessageStatus = await res.message.status()
       const status = ethDepositMessageStatus === EthDepositMessageStatus.DEPOSITED ? BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED : BridgeTransferStatus.DEPOSIT_GAS_PENDING
-      const childTxHash = res.childTxReceipt?.transactionHash
+      const childTxReceipt = (res as any).childTxReceipt
+      const childTxHash = childTxReceipt?.transactionHash ?? res.message?.childTxHash //sometimes childTxHash is in the res, but childTxReceipt isn't
       const ETA = this.destinationNetwork.ethBridge?.depositTimeout ? this.destinationNetwork.ethBridge.depositTimeout * 1000 + Date.now() : undefined
-      return {ETA, status, completionTxHash: childTxHash, completionExplorerLink: `${this.destinationNetwork.explorerUrl}/tx/${childTxHash}`}
+      return {messageStatus: ethDepositMessageStatus, ETA, childTxReceipt, status, completionTxHash: childTxHash, completionExplorerLink: `${this.destinationNetwork.explorerUrl}/tx/${childTxHash}`}
     } else {
-
       const parentContractCallReceipt = new ParentContractCallTransactionReceipt(parentTransactionReceipt)
       const ETA = this.destinationNetwork.tokenBridge?.depositTimeout ? this.destinationNetwork.tokenBridge.depositTimeout * 1000 + Date.now() : undefined
       try {
@@ -364,9 +364,10 @@ export class BridgeTransfer {
           throw new Error("Can't get Child Transaction receipt")
         }
       }
-      const childTxHash = (res as any).childTxReceipt?.transactionHash
+      const childTxReceipt = (res as any).childTxReceipt
+      const childTxHash = childTxReceipt?.transactionHash ?? res.message?.childTxHash //sometimes childTxHash is in the res, but childTxReceipt isn't
       const status = mapDepositERC20Status(res.status)
-      return {ETA, status, completionTxHash: childTxHash, completionExplorerLink: `${this.destinationNetwork.explorerUrl}/tx/${childTxHash}`}
+      return { messageStatus: res.status, ETA, childTxReceipt, status, completionTxHash: childTxHash, completionExplorerLink: `${this.destinationNetwork.explorerUrl}/tx/${childTxHash}`}
     }
   }
 
