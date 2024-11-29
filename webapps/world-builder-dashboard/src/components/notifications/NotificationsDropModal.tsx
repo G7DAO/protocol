@@ -63,7 +63,7 @@ const NotificationsDropModal: React.FC<NotificationsDropModalProps> = ({ notific
 
   return (
     <div className={styles.container}>
-      {!notifications || (notifications.length === 0 && <div className={styles.content}>No notifications yet</div>)}
+      {!notifications || (notifications.length === 0 && <div className={styles.content}>No notifications</div>)}
       {notifications &&
         notifications.slice(0, 3).map((n, idx) => (
           <div className={styles.item} key={idx}>
@@ -203,10 +203,9 @@ export const NotificationsModal: React.FC<NotificationsDropModalProps> = ({ noti
           Notifications
           <IconClose className={modalStyles.closeButton} onClick={() => setIsModalOpened(false)} />
         </div>
-        <div className={modalStyles.supportingText}>Review your notification center</div>
       </div>
       <div className={modalStyles.itemsContainer} ref={itemsContainerRef}>
-        {!notifications || (notifications.length === 0 && <div className={styles.content}>No notifications yet</div>)}
+        {!notifications || (notifications.length === 0 && <div className={styles.content}>No notifications</div>)}
         {notifications &&
           notifications.slice(0, LIMIT * page + LIMIT).map((n, idx) => (
             <div
