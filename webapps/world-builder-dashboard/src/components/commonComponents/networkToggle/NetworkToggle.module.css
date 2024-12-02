@@ -18,6 +18,7 @@
   gap: 8px;
   align-self: stretch;
   border-radius: 8px;
+  background-color: #171717;
   /* border: 1px solid var(--Gray-true-700, #393939);
   background: var(--Gray-true-800, #171717); */
 }

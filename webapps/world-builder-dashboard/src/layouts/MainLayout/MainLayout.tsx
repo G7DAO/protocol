@@ -28,7 +28,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({}) => {
     {
       name: 'bridge',
       navigateTo: '/bridge',
-      icon: <IconWallet04 stroke={location.pathname.startsWith('/bridge') ? '#fff' : '#B9B9B9'} />
+      icon: (
+        <IconWallet04
+          className={styles.icomButton}
+          stroke={location.pathname.startsWith('/bridge') ? '#fff' : '#B9B9B9'}
+        />
+      )
     },
     {
       name: 'explorer',

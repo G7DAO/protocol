@@ -41,7 +41,7 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
               </div>
               <div style={{ display: 'flex' }}>
                 {item.name === 'documentation' || item.name === 'explorer' ? (
-                  <IconExternalLink className={styles.icon} />
+                  <IconExternalLink className={styles.iconButton} />
                 ) : (
                   <></>
                 )}

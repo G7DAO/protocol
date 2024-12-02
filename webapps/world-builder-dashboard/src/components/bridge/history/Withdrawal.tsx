@@ -290,7 +290,6 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                             <button
                               className={styles.claimButton}
                               onClick={() => {
-                                console.log(withdrawal)
                                 claim.mutate(withdrawal)
                               }}
                             >

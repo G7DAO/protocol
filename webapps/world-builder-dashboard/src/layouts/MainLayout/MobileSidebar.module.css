@@ -61,7 +61,7 @@
   width: 100vw;
   height: calc(100vh);
   background-color: rgba(11, 11, 11, 0.8);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(8px);
 }
 
 .spacer {
