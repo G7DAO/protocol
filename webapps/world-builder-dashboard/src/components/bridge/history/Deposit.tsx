@@ -49,7 +49,6 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
             const timestamp = await fetchTransactionTimestamp(transferStatus.completionTxHash, destinationRpc ?? '')
             if (timestamp) {
               setHighNetworkTimestamp(timestamp)
-
               const updatedTransactions = transactions.map((t: any) => {
                 const isSameHash = t.lowNetworkHash === deposit.lowNetworkHash
                 return isSameHash ? { ...t, highNetworkTimestamp: timestamp, lastUpdated: Date.now() } : t
