@@ -232,7 +232,6 @@ const BridgeView = ({
         setErrorMessage={(msg) => setInputErrorMessages((prev) => ({ ...prev, value: msg }))}
         selectedChainId={direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId}
         gasFee={estimatedFee.data ?? ""}
-        isEstimatingFee={estimatedFee.isFetching}
       />
       {direction === 'DEPOSIT' &&
         selectedLowNetwork.chainId === L2_NETWORK.chainId &&

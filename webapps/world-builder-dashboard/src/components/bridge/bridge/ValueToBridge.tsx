@@ -26,7 +26,6 @@ interface ValueToBridgeProps {
   onTokenChange: (token: Token) => void
   selectedChainId: number
   gasFee?: string | undefined
-  isEstimatingFee?: boolean
 }
 const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   setValue,
@@ -40,7 +39,6 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   onTokenChange,
   selectedChainId,
   gasFee,
-  isEstimatingFee
 }) => {
   const [tokens, setTokens] = useState<Token[]>([])
   const { connectedAccount, selectedBridgeToken, selectedHighNetwork, selectedLowNetwork } = useBlockchainContext()

@@ -22,7 +22,6 @@ interface ActionButtonProps {
   bridger?: Bridger
   symbol?: string
   decimals?: number
-  gasFee?: string
 }
 const ActionButton: React.FC<ActionButtonProps> = ({
   direction,
@@ -32,8 +31,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   L2L3message,
   bridger,
   symbol,
-  decimals,
-  gasFee
+  decimals
 }) => {
   const {
     connectedAccount,
