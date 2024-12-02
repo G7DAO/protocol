@@ -25,6 +25,8 @@ interface ValueToBridgeProps {
   setErrorMessage: (arg0: string) => void
   onTokenChange: (token: Token) => void
   selectedChainId: number
+  gasFee?: string | undefined
+  isEstimatingFee?: boolean
 }
 const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   setValue,
@@ -36,7 +38,9 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   errorMessage,
   setErrorMessage,
   onTokenChange,
-  selectedChainId
+  selectedChainId,
+  gasFee,
+  isEstimatingFee
 }) => {
   const [tokens, setTokens] = useState<Token[]>([])
   const { connectedAccount, selectedBridgeToken, selectedHighNetwork, selectedLowNetwork } = useBlockchainContext()
@@ -72,7 +76,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
       setErrorMessage('Invalid number')
       return
     }
-    if (num > Number(balance)) {
+    if (num + Number(gasFee) > Number(balance)) {
       setErrorMessage('Insufficient funds')
       return
     }
@@ -84,6 +88,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
       setValue('')
     }
   }, [connectedAccount])
+
 
   const handleTokenChange = (token: Token) => {
     onTokenChange(token)
@@ -105,7 +110,11 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
           disabled={!connectedAccount}
           placeholder={'0'}
         />
-        <button className={styles.maxButton} onClick={() => setValue(String(balance))} disabled={!connectedAccount}>
+        <button
+          className={styles.maxButton}
+          onClick={() => setValue(String(Number(balance) - 0.0025))}
+          disabled={!connectedAccount}
+        >
           MAX
         </button>
         {tokens.length > 0 && selectedBridgeToken && (
