@@ -256,9 +256,7 @@ export const useBridgeTransfer = () => {
           const cachedTransaction = transactions.find((t: any) =>
             isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
           )
-          console.log(cachedTransaction)
           if (cachedTransaction && cachedTransaction.transactionInputs !== undefined) {
-            console.log({ transactionInputs: cachedTransaction?.transactionInputs })
             return cachedTransaction?.transactionInputs
           }
         },

@@ -44,7 +44,7 @@ const BridgePage = () => {
     <div className={styles.container}>
       <div className={styles.top}>
         <div className={styles.headerContainer}>
-          {notifications.data && <FloatingNotification notifications={newNotifications} />}
+          {notifications.data && <FloatingNotification notifications={newNotifications}/>}
           <div className={styles.title}>Bridge</div>
           <NotificationsButton notifications={notifications.data ?? []} />
         </div>
