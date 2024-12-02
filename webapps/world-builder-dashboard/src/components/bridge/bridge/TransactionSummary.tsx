@@ -96,7 +96,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
             )}
           </div>
         ) : (
-          <div className={styles.valueNote}>{isEstimatingFee ? 'estimating...' : `can't estimate fee`}</div>
+          <div className={styles.valueNote}>{isEstimatingFee ? 'Estimating...' : `Can't estimate fee`}</div>
         )}
       </div>
       <div className={styles.dataRow}>
