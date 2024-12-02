@@ -81,16 +81,7 @@ const NotificationsDropModal: React.FC<NotificationsDropModalProps> = ({ notific
                   <div className={badgeClassName(n.status)}>{n.status.toLowerCase()}</div>
                 )}
               </div>
-              <div className={styles.headerTime}>
-                {timeAgo(
-                  n.type === 'DEPOSIT'
-                    ? n.tx.highNetworkTimestamp
-                      ? n.tx.highNetworkTimestamp
-                      : n.timestamp
-                    : n.timestamp,
-                  true
-                )}
-              </div>
+              <div className={styles.headerTime}>{timeAgo(n.timestamp, true)}</div>
             </div>
             <div className={styles.content}>{copy(n, selectedNetworkType)}</div>
           </div>
@@ -144,6 +135,11 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
     setIsDropdownOpened(true)
     setShow(!show)
   }
+
+  const handleExit = () => {
+    setShow(!show)
+  }
+  
   if (!notifications || notifications.length === 0) {
     return <></>
   }
@@ -162,7 +158,7 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
   return (
     <div onClick={handleClick} className={toastClassName(notifications[0].status)}>
       {copy(notifications[0], selectedNetworkType)}
-      <IconCloseSmall className={iconCloseClassName(notifications[0].status)} onClick={handleClick} />
+      <IconCloseSmall className={iconCloseClassName(notifications[0].status)} onClick={handleExit} />
     </div>
   )
 }
