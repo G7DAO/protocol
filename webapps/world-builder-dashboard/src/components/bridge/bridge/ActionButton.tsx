@@ -126,7 +126,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           highNetworkChainId: selectedHighNetwork.chainId,
           highNetworkHash: tx?.hash,
           highNetworkTimestamp: Date.now() / 1000,
-          challengePeriod: selectedNetworkType === 'Testnet' ? 60 * 60 : 60 * 60 * 24 * 7,
+          challengePeriod: selectedNetworkType === 'Testnet' ? (60 * 60) : (60 * 60) * 24 * 7,
           symbol: symbol,
           status: BridgeTransferStatus.WITHDRAW_UNCONFIRMED
         }

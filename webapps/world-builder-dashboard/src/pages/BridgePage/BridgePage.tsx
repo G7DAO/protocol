@@ -67,7 +67,7 @@ const BridgePage = () => {
           >
             History
           </button>
-          {selectedNetworkType === 'Testnet' && (
+          {/* {selectedNetworkType === 'Testnet' && (
             <button
               className={
                 location.pathname === '/bridge/settings'
@@ -78,7 +78,7 @@ const BridgePage = () => {
             >
               Settings
             </button>
-          )}
+          )} */}
         </div>
       </div>
       <div className={styles.viewContainer}>
