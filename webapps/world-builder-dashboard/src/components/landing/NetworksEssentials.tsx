@@ -70,7 +70,7 @@ const NetworkEssentials: React.FC<NetworkEssentialsProps> = ({ smallView, startB
       </div>
       {!smallView && (
         <div className={styles.startBuildingCTA} onClick={startBuilding}>
-          Start building
+          Start Building
         </div>
       )}
     </div>

@@ -51,7 +51,7 @@ const Navbar: React.FC<NavbarProps> = ({ navbarOpen, smallView, setIsNavbarOpen,
                   </div>
                 ))}
                 <div className={styles.navbarCTA} onClick={startBuilding}>
-                  Start building
+                  Start Building
                 </div>
               </div>
             ) : (
@@ -77,7 +77,7 @@ const Navbar: React.FC<NavbarProps> = ({ navbarOpen, smallView, setIsNavbarOpen,
           ))}
           <div className={styles.ctaContainer}>
             <div className={styles.navbarCTA} onClick={startBuilding}>
-              Start building
+              Start Building
             </div>
           </div>
         </div>

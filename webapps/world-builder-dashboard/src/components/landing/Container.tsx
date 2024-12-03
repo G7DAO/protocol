@@ -76,7 +76,7 @@ const Container: React.FC<ContainerProps> = ({components, isNavbarOpen, setIsNav
                       </div>
                       {isSmallView && (
                           <div className={parentStyles.startBuildingCTA} onClick={startBuilding}>
-                              Start building
+                              Start Building
                           </div>
                       )}
                   </div>

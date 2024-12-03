@@ -72,7 +72,7 @@ const LandingPage: React.FC = () => {
 
           {smallView && (
             <div className={styles.startBuildingCTA} onClick={startBuilding}>
-              Start building
+              Start Building
             </div>
           )}
         </div>

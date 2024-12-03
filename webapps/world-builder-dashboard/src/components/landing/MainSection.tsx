@@ -29,7 +29,7 @@ const MainSection: React.FC<MainSectionProps> = ({ smallView, startBuilding }) =
                             Learn more
                         </div>
                         <div className={styles.startBuildingCTA} onClick={startBuilding}>
-                            Start building
+                            Start Building
                         </div>
                     </div>
                 )}
