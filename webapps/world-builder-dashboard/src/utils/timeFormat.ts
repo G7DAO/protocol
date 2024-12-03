@@ -21,7 +21,7 @@ export const timeAgo = (timestamp: number | undefined, short = false) => {
       return `${value}${short ? '' : ' '}${short ? unit.shortName : unit.name}${short ? '' : value > 1 ? 's' : ''} ago`
     }
   }
-  return 'just now'
+  return 'Just now'
 }
 
 export const ETA = (timestamp: number | undefined, delayInSeconds: number | undefined, isApproximate = true) => {
@@ -32,7 +32,7 @@ export const ETA = (timestamp: number | undefined, delayInSeconds: number | unde
   const date = Math.floor(Number(timestamp) + delayInSeconds)
   const timeDifference = ((date - now))
   if (timeDifference < 0) {
-    return '~now' 
+    return '~Now' 
   }
   
   const units = [
@@ -50,7 +50,7 @@ export const ETA = (timestamp: number | undefined, delayInSeconds: number | unde
       return `${isApproximate ? '~' : ''}${value} ${unit.name}${value > 1 ? 's' : ''}`
     }
   }
-  return 'just now'
+  return 'Just now'
 }
 
 
