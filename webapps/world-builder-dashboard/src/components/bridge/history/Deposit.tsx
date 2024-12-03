@@ -120,11 +120,15 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                   >
                     <div className={styles.gridItem}>
                       {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
-                      transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||
-                      transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ? (
+                      transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ? (
                         <div className={styles.settled}>
                           Completed
                           <IconLinkExternal02 stroke='#fff' />
+                        </div>
+                      ) : transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ? (
+                        <div className={styles.pending}>
+                          Claimable
+                          <IconLinkExternal02 className={styles.arrowUp} />
                         </div>
                       ) : (
                         <div className={styles.pending}>
