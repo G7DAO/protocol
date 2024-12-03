@@ -65,7 +65,7 @@ export const BridgeNotificationsProvider: React.FC<BridgeNotificationsProviderPr
     if (connectedAccount) {
       fetchNewNotifications(connectedAccount)
     }
-  }, [connectedAccount])
+  }, [connectedAccount, selectedNetworkType])
 
   return (
     <BridgeNotificationsContext.Provider

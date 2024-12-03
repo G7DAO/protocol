@@ -15,7 +15,6 @@ interface NavbarProps {
 }
 
 const NAVBAR_ITEMS = [
-  { name: 'Home', link: '/' },
   { name: 'Faucet', link: 'faucet' },
   { name: 'Bridge', link: 'bridge' },
   { name: 'Community', link: 'https://discord.com/invite/g7dao' },
