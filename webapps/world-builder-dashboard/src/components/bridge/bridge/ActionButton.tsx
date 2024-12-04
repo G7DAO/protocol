@@ -11,6 +11,7 @@ import { Bridger, BridgeTransferStatus } from 'game7-bridge-sdk'
 // Absolute Imports
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
+import { getTokensForNetwork } from '@/utils/tokens'
 import { ZERO_ADDRESS } from '@/utils/web3utils'
 
 interface ActionButtonProps {
@@ -84,9 +85,12 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       const network = networks?.find((n) => n.chainId === bridger?.originNetwork.chainId)!
       const provider = await getProvider(network)
       const signer = provider.getSigner()
-      const destinationRPC = direction === 'DEPOSIT' ? selectedHighNetwork.rpcs[0] : selectedLowNetwork.rpcs[0]
+      const destinationChain = direction === 'DEPOSIT' ? selectedHighNetwork : selectedLowNetwork
+      const destinationRPC = destinationChain.rpcs[0]
       const destinationProvider = new ethers.providers.JsonRpcProvider(destinationRPC) as ethers.providers.Provider
-
+      const destinationTokenAddress = getTokensForNetwork(destinationChain.chainId, connectedAccount).find(
+        (token) => token.symbol === selectedBridgeToken.symbol
+      )?.address
       // Amount to send variable parsed to correct decimal places depending on the token
       const amountToSend = ethers.utils.parseUnits(amount, decimals)
 
@@ -115,7 +119,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           newTransaction: true,
           symbol: symbol,
           status:
-            selectedBridgeToken.address === ZERO_ADDRESS
+            destinationTokenAddress === ZERO_ADDRESS
               ? BridgeTransferStatus.DEPOSIT_GAS_PENDING
               : BridgeTransferStatus.DEPOSIT_ERC20_NOT_YET_CREATED
         }
@@ -129,7 +133,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           highNetworkChainId: selectedHighNetwork.chainId,
           highNetworkHash: tx?.hash,
           highNetworkTimestamp: Date.now() / 1000,
-          challengePeriod: selectedNetworkType === 'Testnet' ? (60 * 60) : (60 * 60) * 24 * 7,
+          challengePeriod: selectedNetworkType === 'Testnet' ? 60 * 60 : 60 * 60 * 24 * 7,
           symbol: symbol,
           status: BridgeTransferStatus.WITHDRAW_UNCONFIRMED
         }
