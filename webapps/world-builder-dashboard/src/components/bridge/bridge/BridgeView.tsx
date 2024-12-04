@@ -65,7 +65,7 @@ const BridgeView = ({
     account: connectedAccount,
     token: selectedBridgeToken
   })
-  const { isFetching: isFetchingNativeTokenInformation, data: nativeTokenInformation } = useTokenInformation({
+  const { data: nativeTokenInformation } = useTokenInformation({
     account: connectedAccount,
     token: selectedNativeToken
   })

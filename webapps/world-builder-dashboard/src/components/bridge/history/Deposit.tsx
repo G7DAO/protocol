@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { getHighNetworks, getLowNetworks, getNetworks } from '../../../../constants'
+import React from 'react'
+import { getHighNetworks, getLowNetworks } from '../../../../constants'
 import DepositMobile from './DepositMobile'
 import styles from './WithdrawTransactions.module.css'
 import { ethers } from 'ethers'
