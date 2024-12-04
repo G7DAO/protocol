@@ -16,7 +16,7 @@ interface UseTransferDataProps {
 export const useBridgeTransfer = () => {
   const { connectedAccount, selectedNetworkType, switchChain } = useBlockchainContext()
   // Retry function with exponential backoff for handling 429 errors
-  const retryWithExponentialBackoff = async (fn: () => Promise<any>, retries: number = 5, delay: number = 1000) => {
+  const retryWithExponentialBackoff = async (fn: () => Promise<any>, retries = 5, delay = 1000, jitterFactor = 0.5) => {
     let attempt = 0
 
     while (attempt < retries) {
@@ -24,7 +24,9 @@ export const useBridgeTransfer = () => {
         return await fn()
       } catch (error: any) {
         if (error?.response?.status === 429 && attempt < retries - 1) {
-          const retryDelay = delay * 2 ** attempt
+          const baseDelay = delay *2**attempt
+          const jitter = baseDelay * (Math.random() * jitterFactor * 2 - jitterFactor) 
+          const retryDelay = Math.max(baseDelay + jitter, 0)
           await new Promise((resolve) => setTimeout(resolve, retryDelay))
           attempt++
         } else {
@@ -317,7 +319,7 @@ export const useBridgeTransfer = () => {
           const cachedTransaction = transactions.find((t: any) => t.lowNetworkHash === txRecord?.lowNetworkHash)
           return cachedTransaction?.highNetworkTimestamp
         },
-        
+
         staleTime: 1 * 60 * 1000,
         refetchInterval: false,
         refetchOnWindowFocus: false,
