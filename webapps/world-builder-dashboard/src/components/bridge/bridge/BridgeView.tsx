@@ -272,7 +272,7 @@ const BridgeView = ({
       <TransactionSummary
         direction={direction}
         address={connectedAccount}
-        gasBalance={Number(nativeTokenInformation?.tokenBalance)}
+        nativeBalance={Number(nativeTokenInformation?.tokenBalance)}
         transferTime={
           direction === 'DEPOSIT'
             ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
@@ -296,7 +296,7 @@ const BridgeView = ({
               ? 0.0
               : coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd
         }
-        gasTokenSymbol={
+        nativeTokenSymbol={
           direction === 'DEPOSIT'
             ? (selectedLowNetwork?.nativeCurrency?.symbol ?? '')
             : (selectedHighNetwork?.nativeCurrency?.symbol ?? '')
