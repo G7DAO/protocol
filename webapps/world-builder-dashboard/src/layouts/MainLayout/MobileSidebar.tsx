@@ -26,7 +26,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
         <div className={styles.networkAndIconContainer} onClick={() => setIsExpanded(!isExpanded)}>
           {!isExpanded && (
             <div
-              className={`${styles.networkBadge} ${selectedNetworkType === 'Testnet' ? styles.networkTestnet : styles.networkMainnet}`}
+              className={`${styles.networkBadge} ${selectedNetworkType === 'testnet' ? styles.networkTestnet : styles.networkMainnet}`}
             >
               {selectedNetworkType}
             </div>
@@ -52,7 +52,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
                   setIsExpanded(false)
                   if (item.name === 'documentation' || item.name === 'explorer') {
                     window.open(item.navigateTo, '_blank')
-                  } else if (!(item.name === 'faucet' && selectedNetworkType === 'Mainnet')) {
+                  } else if (!(item.name === 'faucet' && selectedNetworkType === 'mainnet')) {
                     navigate(item.navigateTo)
                   }
                 }}

@@ -161,7 +161,7 @@ const BridgeView = ({
       return (
         <NetworkSelector
           direction={direction}
-          networks={selectedNetworkType === 'Testnet' ? [L1_NETWORK, L2_NETWORK] : [L1_MAIN_NETWORK, L2_MAIN_NETWORK]}
+          networks={selectedNetworkType === 'testnet' ? [L1_NETWORK, L2_NETWORK] : [L1_MAIN_NETWORK, L2_MAIN_NETWORK]}
           selectedNetwork={selectedLowNetwork}
           onChange={setSelectedLowNetwork}
         />
@@ -169,7 +169,7 @@ const BridgeView = ({
     } else {
       return (
         <NetworkSelector
-          networks={selectedNetworkType === 'Testnet' ? [L2_NETWORK, L3_NETWORK] : [L2_MAIN_NETWORK, L3_MAIN_NETWORK]}
+          networks={selectedNetworkType === 'testnet' ? [L2_NETWORK, L3_NETWORK] : [L2_MAIN_NETWORK, L3_MAIN_NETWORK]}
           selectedNetwork={selectedHighNetwork}
           onChange={setSelectedHighNetwork}
           direction={direction}
@@ -236,7 +236,7 @@ const BridgeView = ({
       {direction === 'DEPOSIT' &&
         selectedLowNetwork.chainId === L2_NETWORK.chainId &&
         isMessagingEnabled &&
-        selectedNetworkType === 'Testnet' && (
+        selectedNetworkType === 'testnet' && (
           <BridgeMessage
             isExpanded={isMessageExpanded}
             setIsExpanded={setIsMessageExpanded}

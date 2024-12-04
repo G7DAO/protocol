@@ -168,27 +168,27 @@ export const USDC_MAINNET: TokenAddressMap = {
 
 export const getNetworks = (selectedNetworkType: NetworkType) => {
   switch (selectedNetworkType) {
-    case 'Mainnet':
+    case 'mainnet':
       return ALL_MAINNET_NETWORKS
-    case 'Testnet':
+    case 'testnet':
       return ALL_TESTNET_NETWORKS
   }
 }
 
 export const getHighNetworks = (selectedNetworkType: NetworkType) => {
   switch (selectedNetworkType) {
-    case 'Mainnet':
+    case 'mainnet':
       return ALL_HIGH_MAINNET_NETWORKS
-    case 'Testnet':
+    case 'testnet':
       return ALL_HIGH_TESTNET_NETWORKS
   }
 }
 
 export const getLowNetworks = (selectedNetworkType: NetworkType) => {
   switch (selectedNetworkType) {
-    case 'Mainnet':
+    case 'mainnet':
       return ALL_LOW_MAINNET_NETWORKS
-    case 'Testnet':
+    case 'testnet':
       return ALL_LOW_TESTNET_NETWORKS
   }
 }

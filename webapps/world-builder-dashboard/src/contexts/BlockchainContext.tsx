@@ -61,7 +61,7 @@ export interface NetworkInterface {
   wrappedG7TokenAddress?: string
 }
 
-export type NetworkType = 'Testnet' | 'Mainnet' | undefined
+export type NetworkType = 'testnet' | 'mainnet' | undefined
 
 export interface HighNetworkInterface extends NetworkInterface {
   inbox: string
@@ -77,10 +77,10 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   const [walletProvider, setWalletProvider] = useState<ethers.providers.Web3Provider>()
   const [selectedNetworkType, setSelectedNetworkType] = useState<NetworkType>(undefined)
   const [selectedLowNetwork, _setSelectedLowNetwork] = useState<NetworkInterface>(
-    selectedNetworkType === 'Testnet' ? DEFAULT_LOW_NETWORK : DEFAULT_LOW_MAINNET_NETWORK
+    selectedNetworkType === 'testnet' ? DEFAULT_LOW_NETWORK : DEFAULT_LOW_MAINNET_NETWORK
   )
   const [selectedHighNetwork, _setSelectedHighNetwork] = useState<NetworkInterface>(
-    selectedNetworkType === 'Testnet' ? DEFAULT_HIGH_NETWORK : DEFAULT_HIGH_MAINNET_NETWORK
+    selectedNetworkType === 'testnet' ? DEFAULT_HIGH_NETWORK : DEFAULT_HIGH_MAINNET_NETWORK
   )
   const [isMetaMask, setIsMetaMask] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
@@ -95,18 +95,18 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
 
   const setSelectedLowNetwork = (network: NetworkInterface) => {
     if (network === L1_NETWORK || network === L1_MAIN_NETWORK) {
-      _setSelectedHighNetwork(selectedNetworkType === 'Testnet' ? L2_NETWORK : L2_MAIN_NETWORK)
+      _setSelectedHighNetwork(selectedNetworkType === 'testnet' ? L2_NETWORK : L2_MAIN_NETWORK)
     } else {
-      _setSelectedHighNetwork(selectedNetworkType === 'Testnet' ? L3_NETWORK : L3_MAIN_NETWORK)
+      _setSelectedHighNetwork(selectedNetworkType === 'testnet' ? L3_NETWORK : L3_MAIN_NETWORK)
     }
     _setSelectedLowNetwork(network)
   }
 
   const setSelectedHighNetwork = (network: NetworkInterface) => {
     if (network === L2_NETWORK || network === L2_MAIN_NETWORK) {
-      _setSelectedLowNetwork(selectedNetworkType === 'Testnet' ? L1_NETWORK : L1_MAIN_NETWORK)
+      _setSelectedLowNetwork(selectedNetworkType === 'testnet' ? L1_NETWORK : L1_MAIN_NETWORK)
     } else {
-      _setSelectedLowNetwork(selectedNetworkType === 'Testnet' ? L2_NETWORK : L2_MAIN_NETWORK)
+      _setSelectedLowNetwork(selectedNetworkType === 'testnet' ? L2_NETWORK : L2_MAIN_NETWORK)
     }
     _setSelectedHighNetwork(network)
   }
@@ -116,7 +116,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     if (_selectedNetworkType) {
       setSelectedNetworkType(_selectedNetworkType as NetworkType)
     } else {
-      setSelectedNetworkType('Mainnet')
+      setSelectedNetworkType('mainnet')
     }
   }, [])
 
@@ -149,7 +149,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     if (selectedNetworkType) {
       localStorage.setItem('selectedNetworkType', selectedNetworkType)
     }
-    if (selectedNetworkType === 'Testnet') {
+    if (selectedNetworkType === 'testnet') {
       setSelectedLowNetwork(DEFAULT_LOW_NETWORK)
       setSelectedHighNetwork(DEFAULT_HIGH_NETWORK)
     } else {

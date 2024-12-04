@@ -4,7 +4,15 @@ import styles from './NetworkToggle.module.css'
 import IconChevronDownToggle from '@/assets/IconChevronDownToggle'
 import { NetworkType, useBlockchainContext } from '@/contexts/BlockchainContext'
 
-const NETWORK_OPTIONS: NetworkType[] = ['Testnet', 'Mainnet']
+interface NetworkOption {
+  type: NetworkType
+  label: String
+}
+
+const NETWORK_OPTIONS: NetworkOption[] = [
+  { type: 'testnet', label: 'Testnet' },
+  { type: 'mainnet', label: 'Mainnet' }
+]
 
 interface NetworkToggleProps {}
 
@@ -18,10 +26,10 @@ const NetworkToggle: React.FC<NetworkToggleProps> = () => {
   useEffect(() => {
     const networkType = searchParams.get('network')
     setSelectedNetworkType(
-      networkType ? (networkType as NetworkType) : selectedNetworkType ? selectedNetworkType : 'Mainnet'
+      networkType ? (networkType as NetworkType) : selectedNetworkType ? selectedNetworkType : 'mainnet'
     )
     setSearchParams({
-      network: networkType ? (networkType as string) : selectedNetworkType ? (selectedNetworkType as string) : 'Mainnet'
+      network: networkType ? (networkType as string) : selectedNetworkType ? (selectedNetworkType as string) : 'mainnet'
     })
   }, [selectedNetworkType])
 
@@ -46,10 +54,10 @@ const NetworkToggle: React.FC<NetworkToggleProps> = () => {
 
   return (
     <div ref={dropdownRef} className={styles.container} onClick={toggleDropdown}>
-      <div className={`${styles.toggle} ${selectedNetworkType === 'Testnet' ? styles.testnet : styles.mainnet}`}>
+      <div className={`${styles.toggle} ${selectedNetworkType === 'testnet' ? styles.testnet : styles.mainnet}`}>
         <div className={styles.testnetContainer}>
           <div
-            className={`${styles.testnetType} ${selectedNetworkType === 'Testnet' ? styles.testnetTypeColor : styles.mainnetTypeColor}`}
+            className={`${styles.testnetType} ${selectedNetworkType === 'testnet' ? styles.testnetTypeColor : styles.mainnetTypeColor}`}
           >
             {selectedNetworkType}
           </div>
@@ -57,16 +65,20 @@ const NetworkToggle: React.FC<NetworkToggleProps> = () => {
         <IconChevronDownToggle color='#fff' />
         {isDropdownOpen && (
           <div className={styles.dropdownContainer}>
-            {NETWORK_OPTIONS.filter((network: NetworkType) => network !== selectedNetworkType).map(
-              (network: NetworkType) => (
-                <div key={network} className={styles.dropdownOption} onClick={() => handleNetworkSelect(network)}>
+            {NETWORK_OPTIONS.filter((network: NetworkOption) => network.type !== selectedNetworkType).map(
+              (network: NetworkOption) => (
+                <div
+                  key={network.type}
+                  className={styles.dropdownOption}
+                  onClick={() => handleNetworkSelect(network.type)}
+                >
                   <div className={styles.dropdownNetworkContainer}>
                     <div className={styles.dropdownNetworkInformation}>
                       <div className={styles.dropdownTestnetContainer}>
                         <div
-                          className={`${styles.testnetType} ${network === 'Testnet' ? styles.testnetTypeColor : styles.mainnetTypeColor}`}
+                          className={`${styles.testnetType} ${network.type === 'testnet' ? styles.testnetTypeColor : styles.mainnetTypeColor}`}
                         >
-                          {network}
+                          {network.label}
                         </div>
                       </div>
                     </div>

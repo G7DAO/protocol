@@ -14,7 +14,7 @@ const essentials = [
     description: 'Get testnet tokens to start building on G7 Sepolia',
     imageClass: styles.networkEssentialFaucet,
     onClick: (navigate: (path: string) => void, setSelectedNetworkType: (type: NetworkType) => void) => {
-      setSelectedNetworkType('Testnet')
+      setSelectedNetworkType('testnet')
       navigate('/faucet')
     }
   },
@@ -23,7 +23,7 @@ const essentials = [
     description: 'Bridge tokens between Ethereum, Arbitrum and the G7 network',
     imageClass: styles.networkEssentialBridge,
     onClick: (navigate: (path: string) => void, setSelectedNetworkType: (type: NetworkType) => void) => {
-      setSelectedNetworkType('Mainnet')
+      setSelectedNetworkType('mainnet')
       navigate('/bridge')
     }
   },

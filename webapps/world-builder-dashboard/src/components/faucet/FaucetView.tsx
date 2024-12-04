@@ -34,7 +34,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   const values: AccountType[] = [`External Address`, `Connected Account`]
   const networks = getNetworks(selectedNetworkType)
 
-  if (selectedNetworkType === 'Mainnet') {
+  if (selectedNetworkType === 'mainnet') {
     navigate('/bridge')
   }
 

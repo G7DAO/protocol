@@ -140,7 +140,7 @@ export const useBridgeTransfer = () => {
       }
 
       let targetChain
-      if (selectedNetworkType === 'Testnet')
+      if (selectedNetworkType === 'testnet')
         targetChain = withdrawal.highNetworkChainId === L2_NETWORK.chainId ? L1_NETWORK : L2_NETWORK
       else targetChain = withdrawal.highNetworkChainId === L2_MAIN_NETWORK.chainId ? L1_MAIN_NETWORK : L2_MAIN_NETWORK
 

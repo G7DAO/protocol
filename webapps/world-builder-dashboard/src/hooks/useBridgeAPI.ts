@@ -8,7 +8,7 @@ export const useBridgeAPI = () => {
   const useHistoryTransactions = (address: string | undefined) => {
     const isValidAddress = ethers.utils.isAddress(address ?? '')
     const { selectedNetworkType } = useBlockchainContext()
-    const uriSnippet = selectedNetworkType === 'Testnet' ? '-testnet' : ''
+    const uriSnippet = selectedNetworkType === 'testnet' ? '-testnet' : ''
     return useQuery(
       ['historyTransactions', address, selectedNetworkType],
       async () => {

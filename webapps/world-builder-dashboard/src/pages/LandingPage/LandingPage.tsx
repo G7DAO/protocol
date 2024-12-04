@@ -19,16 +19,16 @@ const LandingPage: React.FC = () => {
   const isLargeView = useMediaQuery('(min-width: 1440px)')
 
   const startBuilding = () => {
-    setSelectedNetworkType('Testnet')
+    setSelectedNetworkType('testnet')
     navigate('/faucet')
   }
 
   const navigateLink = (item: any) => {
     if (item.name === 'Faucet') {
-      setSelectedNetworkType('Testnet')
+      setSelectedNetworkType('testnet')
       navigate(`/${item.link}`)
     } else if (item.name === "Bridge") {
-      setSelectedNetworkType('Mainnet')
+      setSelectedNetworkType('mainnet')
       navigate(`/${item.link}`)
     } else {
       window.open(item.link, '_blank')

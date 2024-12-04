@@ -37,7 +37,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({}) => {
     },
     {
       name: 'explorer',
-      navigateTo: selectedNetworkType === 'Testnet' ? `https://testnet.game7.io/` : `https://mainnet.game7.io`,
+      navigateTo: selectedNetworkType === 'testnet' ? `https://testnet.game7.io/` : `https://mainnet.game7.io`,
       icon: <IconExplorer stroke={'#B9B9B9'} />
     },
     {
@@ -48,7 +48,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({}) => {
   ]
 
   const MAINNET_NAVIGATION_ITEMS = TESTNET_NAVIGATION_ITEMS.slice(1, TESTNET_NAVIGATION_ITEMS.length)
-  const NAVIGATION_ITEMS = selectedNetworkType === 'Testnet' ? TESTNET_NAVIGATION_ITEMS : MAINNET_NAVIGATION_ITEMS
+  const NAVIGATION_ITEMS = selectedNetworkType === 'testnet' ? TESTNET_NAVIGATION_ITEMS : MAINNET_NAVIGATION_ITEMS
 
   const smallView = useMediaQuery('(max-width: 1199px)')
   return (

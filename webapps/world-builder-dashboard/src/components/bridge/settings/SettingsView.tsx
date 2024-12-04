@@ -17,7 +17,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({}) => {
     navigate('/faucet')
   }
 
-  if (selectedNetworkType === 'Mainnet') {
+  if (selectedNetworkType === 'mainnet') {
     navigate('/bridge')
   }
 

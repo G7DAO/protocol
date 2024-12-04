@@ -24,12 +24,12 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
         <div className={styles.navigation}>
           {navigationItems.map((item) => (
             <div
-              aria-disabled={item.name === 'faucet' && selectedNetworkType === 'Mainnet'}
+              aria-disabled={item.name === 'faucet' && selectedNetworkType === 'mainnet'}
               className={location.pathname.startsWith(item.navigateTo) ? styles.selectedNavButton : styles.navButton}
               onClick={() => {
                 if (item.name === 'documentation' || item.name === 'explorer') {
                   window.open(item.navigateTo, '_blank')
-                } else if (!(item.name === 'faucet' && selectedNetworkType === 'Mainnet')) {
+                } else if (!(item.name === 'faucet' && selectedNetworkType === 'mainnet')) {
                   navigate(item.navigateTo)
                 }
               }}
