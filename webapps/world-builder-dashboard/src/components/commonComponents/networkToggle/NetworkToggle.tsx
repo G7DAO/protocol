@@ -22,6 +22,7 @@ const NetworkToggle: React.FC<NetworkToggleProps> = () => {
   const dropdownRef = useRef<HTMLDivElement>(null)
   const [searchParams, setSearchParams] = useSearchParams()
   const toggleDropdown = () => setDropdownOpen((prev) => !prev)
+  const displayNetworkType = NETWORK_OPTIONS.find((network) => network.type === selectedNetworkType)?.label
 
   useEffect(() => {
     const networkType = searchParams.get('network')
@@ -59,7 +60,7 @@ const NetworkToggle: React.FC<NetworkToggleProps> = () => {
           <div
             className={`${styles.testnetType} ${selectedNetworkType === 'testnet' ? styles.testnetTypeColor : styles.mainnetTypeColor}`}
           >
-            {selectedNetworkType}
+            {displayNetworkType}
           </div>
         </div>
         <IconChevronDownToggle color='#fff' />
