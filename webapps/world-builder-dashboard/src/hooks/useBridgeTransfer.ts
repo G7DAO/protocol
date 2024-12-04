@@ -7,7 +7,7 @@ import { BridgeTransfer, BridgeTransferStatus } from 'game7-bridge-sdk'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
-import { getCachedTransactions } from '@/utils/web3utils'
+import { fetchTransactionTimestamp, getCachedTransactions } from '@/utils/web3utils'
 
 interface UseTransferDataProps {
   txRecord: TransactionRecord
@@ -15,6 +15,24 @@ interface UseTransferDataProps {
 
 export const useBridgeTransfer = () => {
   const { connectedAccount, selectedNetworkType, switchChain } = useBlockchainContext()
+  // Retry function with exponential backoff for handling 429 errors
+  const retryWithExponentialBackoff = async (fn: () => Promise<any>, retries: number = 5, delay: number = 1000) => {
+    let attempt = 0
+
+    while (attempt < retries) {
+      try {
+        return await fn()
+      } catch (error: any) {
+        if (error?.response?.status === 429 && attempt < retries - 1) {
+          const retryDelay = delay * 2 ** attempt
+          await new Promise((resolve) => setTimeout(resolve, retryDelay))
+          attempt++
+        } else {
+          throw error // Rethrow error if not 429 or max retries reached
+        }
+      }
+    }
+  }
 
   const returnTransferData = ({ txRecord }: UseTransferDataProps) => {
     const isDeposit = txRecord.type === 'DEPOSIT'
@@ -23,25 +41,6 @@ export const useBridgeTransfer = () => {
     const originChainId = isDeposit ? txRecord.lowNetworkChainId : txRecord.highNetworkChainId
     const destinationRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === destinationChainId)?.rpcs[0]
     const originRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === originChainId)?.rpcs[0]
-
-    // Retry function with exponential backoff for handling 429 errors
-    const retryWithExponentialBackoff = async (fn: () => Promise<any>, retries: number = 5, delay: number = 1000) => {
-      let attempt = 0
-
-      while (attempt < retries) {
-        try {
-          return await fn()
-        } catch (error: any) {
-          if (error?.response?.status === 429 && attempt < retries - 1) {
-            const retryDelay = delay * 2 ** attempt
-            await new Promise((resolve) => setTimeout(resolve, retryDelay))
-            attempt++
-          } else {
-            throw error // Rethrow error if not 429 or max retries reached
-          }
-        }
-      }
-    }
 
     // If the status is pending and time since last fetched is > 2 minutes, fetch again
     const shouldFetchStatus = (cachedTransaction: any) => {
@@ -266,9 +265,71 @@ export const useBridgeTransfer = () => {
       }
     )
   }
+
+  const getHighNetworkTimestamp = ({
+    txRecord,
+    transferStatus,
+  }: {
+    txRecord: any
+    transferStatus: any
+  }) => {
+
+
+    return useQuery(
+      ['highNetworkTimestamp', txRecord?.lowNetworkHash],
+      async () => {
+        if (!txRecord) throw new Error('Deposit data is missing.')
+
+        const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
+        const cachedTransaction = transactions.find((t: any) => t.lowNetworkHash === txRecord.lowNetworkHash)
+
+        if (cachedTransaction?.highNetworkTimestamp) {
+          return cachedTransaction.highNetworkTimestamp
+        }
+
+        const destinationRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === txRecord.highNetworkChainId)
+          ?.rpcs[0]
+
+        if (!transferStatus?.completionTxHash) {
+          console.log('No completion transaction hash found')
+          throw new Error('Completion transaction hash is missing.')
+        }
+
+        const timestamp = await retryWithExponentialBackoff(() =>
+          fetchTransactionTimestamp(transferStatus.completionTxHash, destinationRpc ?? '')
+        )
+
+        const updatedTransactions = transactions.map((t: any) => {
+          const isSameHash = t.lowNetworkHash === txRecord.lowNetworkHash
+          return isSameHash ? { ...t, highNetworkTimestamp: timestamp, lastUpdated: Date.now() } : t
+        })
+
+        localStorage.setItem(
+          `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
+          JSON.stringify(updatedTransactions)
+        )
+
+        return timestamp
+      },
+      {
+        placeholderData: () => {
+          const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
+          const cachedTransaction = transactions.find((t: any) => t.lowNetworkHash === txRecord?.lowNetworkHash)
+          return cachedTransaction?.highNetworkTimestamp
+        },
+        
+        staleTime: 1 * 60 * 1000,
+        refetchInterval: false,
+        refetchOnWindowFocus: false,
+        enabled: !!txRecord && !!transferStatus?.completionTxHash // Run query only if data is valid
+      }
+    )
+  }
+
   return {
     getTransactionInputs,
     returnTransferData,
+    getHighNetworkTimestamp,
     claim
   }
 }

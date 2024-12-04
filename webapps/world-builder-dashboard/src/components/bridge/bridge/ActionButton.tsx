@@ -114,7 +114,10 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           completionTimestamp: Date.now() / 1000,
           newTransaction: true,
           symbol: symbol,
-          status: BridgeTransferStatus.DEPOSIT_GAS_PENDING
+          status:
+            selectedBridgeToken.address === ZERO_ADDRESS
+              ? BridgeTransferStatus.DEPOSIT_GAS_PENDING
+              : BridgeTransferStatus.DEPOSIT_ERC20_NOT_YET_CREATED
         }
       } else {
         const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })

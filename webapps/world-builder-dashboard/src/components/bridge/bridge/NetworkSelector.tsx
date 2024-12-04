@@ -28,7 +28,7 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork, direction }: Net
     onDropdownClose: () => combobox.resetSelectedOption()
   })
 
-  const { selectedHighNetwork, selectedLowNetwork } = useBlockchainContext()
+  const { selectedHighNetwork, selectedLowNetwork, setSelectedNativeToken } = useBlockchainContext()
 
   const networkLogo = (chainId: number) => {
     switch (chainId) {
@@ -86,7 +86,7 @@ const NetworkSelector = ({ networks, onChange, selectedNetwork, direction }: Net
             return (
               <Combobox.Option
                 value={String(n.chainId)}
-                key={n.chainId}   
+                key={n.chainId}
                 className={isDisabled ? styles.optionDisabled : styles.option}
               >
                 <Group>

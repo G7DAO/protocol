@@ -81,7 +81,6 @@ export const L2_MAIN_NETWORK: NetworkInterface = {
     symbol: 'ETH'
   },
   g7TokenAddress: '0xF18e4466F26B4cA55bbAb890b314a54976E45B17',
-  routerSpender: '0x902b3e5f8f19571859f4ab1003b960a5df693aff',
   retryableCreationTimeout: 15 * 60
 }
 
@@ -97,7 +96,6 @@ export const L3_MAIN_NETWORK: NetworkInterface = {
     symbol: 'G7T'
   },
   g7TokenAddress: '0x0000000000000000000000000000000000000000',
-  routerSpender: '0x902b3e5f8f19571859f4ab1003b960a5df693aff',
   retryableCreationTimeout: 15 * 60,
   wrappedG7TokenAddress: '0xfa3ed70386b9255fC04aA008A8ad1B0CDa816Fac'
 }
@@ -128,8 +126,6 @@ export const FIVE_MINUTES = 1000 * 60 * 5
 
 export const DEFAULT_STAKE_NATIVE_POOL_ID = '1'
 
-export const MAX_ALLOWANCE_ACCOUNT = '0x9ed191DB1829371F116Deb9748c26B49467a592A'
-
 export const TG7T: TokenAddressMap = {
   13746: '0x0000000000000000000000000000000000000000',
   421614: '0x10adbf84548f923577be12146eac104c899d1e75',
@@ -143,7 +139,7 @@ export const ETH: TokenAddressMap = {
 
 export const USDC: TokenAddressMap = {
   13746: '0xf2B58E3519C5b977a254993A4A6EaD581A8989A0',
-  421614: '0x119f0E6303BEc7021B295EcaB27A4a1A5b37ECf0',
+  421614: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d',
   11155111: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238'
 }
 

@@ -38,7 +38,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
   tokenRate,
   tokenSymbol,
   gasTokenSymbol,
-  value
+  value,
 }) => {
   const clipboard = useClipboard({ timeout: 700 })
 
@@ -87,7 +87,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
           <div className={styles.valueContainer}>
             <div
               className={styles.value}
-              title={`balance: ${String(gasBalance)}`}
+              title={`Balance: ${String(gasBalance)} ${gasTokenSymbol}`}
             >{`${fee.toFixed(18).replace(/\.?0+$/, '')} ${gasTokenSymbol}`}</div>
             {!!(fee * (direction === 'DEPOSIT' ? ethRate : tokenRate)) && (
               <div className={styles.valueNote}>
@@ -96,7 +96,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
             )}
           </div>
         ) : (
-          <div className={styles.valueNote}>{isEstimatingFee ? 'estimating...' : `can't estimate fee`}</div>
+          <div className={styles.valueNote}>{isEstimatingFee ? 'Estimating...' : `Can't estimate fee`}</div>
         )}
       </div>
       <div className={styles.dataRow}>

@@ -1,6 +1,6 @@
 import React from 'react'
 
-const IconTokenNoSynbol: React.FC<React.SVGProps<SVGSVGElement>> = () => (
+const IconTokenNoSymbol: React.FC<React.SVGProps<SVGSVGElement>> = () => (
   <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'>
     <path
       fillRule='evenodd'
@@ -15,4 +15,4 @@ const IconTokenNoSynbol: React.FC<React.SVGProps<SVGSVGElement>> = () => (
   </svg>
 )
 
-export default IconTokenNoSynbol
+export default IconTokenNoSymbol

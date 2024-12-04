@@ -88,26 +88,6 @@ export const getDecodedInputs = (tx: Transaction, ABI: any) => {
   })
 }
 
-// const getDepositTransferType = (tx: Transaction) => {
-//   if (tx.to === networks[this.destinationNetworkChainId]?.ethBridge?.inbox) {
-//     try {
-//       const decodedInputs = getDecodedInputs(tx, INBOX_ABI)
-//       return { transferType: BridgeTransferType.DEPOSIT_GAS, decodedInputs }
-//     } catch (_) {
-//       try {
-//         const decodedInputs = getDecodedInputs(tx, ERC20_INBOX_ABI)
-//         return { transferType: BridgeTransferType.DEPOSIT_ERC20_TO_GAS, decodedInputs }
-//       } catch (_) {
-//         throw new Error(`Unable to decode inputs - unknown method of inbox contract ${tx.to}`)
-//       }
-//     }
-//   } else if (tx.to === networks[this.destinationNetworkChainId]?.tokenBridge?.parentGatewayRouter) {
-//     const decodedInputs = getDecodedInputs(tx, L1GatewayRouterABI)
-//     return { transferType: BridgeTransferType.DEPOSIT_ERC20, decodedInputs }
-//   }
-//   throw new Error(`Unable to decode inputs - ${tx.to} is unknown contract`)
-// }
-
 const fetchDepositStatus = async (deposit: TransactionRecord, selectedNetworkType: NetworkType) => {
   const { lowNetworkChainId, highNetworkChainId, lowNetworkHash, lowNetworkTimestamp } = deposit
   if (lowNetworkChainId === L2_NETWORK.chainId) {

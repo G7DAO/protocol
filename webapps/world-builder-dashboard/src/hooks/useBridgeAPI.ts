@@ -12,7 +12,6 @@ export const useBridgeAPI = () => {
     return useQuery(
       ['historyTransactions', address, selectedNetworkType],
       async () => {
-        console.log(selectedNetworkType)
         const res = await fetch(`${BASE_URL}/bridge/game7${uriSnippet}/${address}/transactions?limit=50&offset=0`, {
           method: 'GET'
         })
