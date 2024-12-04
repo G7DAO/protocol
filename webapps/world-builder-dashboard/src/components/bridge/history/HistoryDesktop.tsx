@@ -77,24 +77,20 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
     const formattedApiTransactions = apiTransactions ? apiTransactions.map(mapAPIDataToTransactionRecord) : []
     const combinedTransactions = mergeTransactions(formattedApiTransactions, localTransactions)
     // Retrieve existing transactions from localStorage
-    const storedTransactionsString = localStorage.getItem(
-      `bridge-${connectedAccount}-transactions-${selectedNetworkType}`
-    )
-    const storedTransactions = storedTransactionsString ? JSON.parse(storedTransactionsString) : []
-
+    
     // Check if the combined transactions are different from those in localStorage
     if (
-      combinedTransactions.length !== storedTransactions.length ||
+      combinedTransactions.length !== localTransactions.length ||
       !combinedTransactions.every((tx, index) =>
         tx.type === 'DEPOSIT'
-          ? tx.lowNetworkHash === storedTransactions[index]?.lowNetworkHash
-          : tx.highNetworkHash === storedTransactions[index]?.highNetworkHash
+          ? tx.lowNetworkHash === localTransactions[index]?.lowNetworkHash
+          : tx.highNetworkHash === localTransactions[index]?.highNetworkHash
       )
     ) {
       // Determine new transactions that aren’t in storedTransactions
       const newTransactions = combinedTransactions.filter(
         (newTx) =>
-          !storedTransactions.some((storedTx: TransactionRecord) =>
+          !localTransactions.some((storedTx: TransactionRecord) =>
             storedTx.type === 'DEPOSIT'
               ? storedTx.lowNetworkHash === newTx.lowNetworkHash
               : storedTx.highNetworkHash === newTx.highNetworkHash
@@ -103,7 +99,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
 
       localStorage.setItem(
         `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
-        JSON.stringify([...storedTransactions, ...newTransactions])
+        JSON.stringify([...localTransactions, ...newTransactions])
       )
     }
     setMergedTransactions(combinedTransactions)

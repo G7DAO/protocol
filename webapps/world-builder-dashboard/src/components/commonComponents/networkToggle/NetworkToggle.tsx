@@ -11,7 +11,7 @@ interface NetworkToggleProps {}
 const NetworkToggle: React.FC<NetworkToggleProps> = () => {
   const { selectedNetworkType, setSelectedNetworkType } = useBlockchainContext()
   const [isDropdownOpen, setDropdownOpen] = useState(false)
-  const dropdownRef = useRef<HTMLDivElement>(null)
+  const dropdownRef = useRef<HTMLDivElement | null>(null)
   const [searchParams, setSearchParams] = useSearchParams()
   const toggleDropdown = () => setDropdownOpen((prev) => !prev)
 

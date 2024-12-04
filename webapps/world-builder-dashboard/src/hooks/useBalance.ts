@@ -5,14 +5,14 @@ import { Token } from '@/utils/tokens'
 
 interface UseBalanceProps {
   account: string | undefined
-  token: Token
+  token: Token | null
 }
 
 const useTokenInformation = ({ account, token }: UseBalanceProps) => {
   return useQuery(
     ['balance', account, token],
     async () => {
-      if (!account) {
+      if (!account || !token) {
         return { tokenBalance: '0', symbol: '' }
       }
       const bridgeToken: BridgeToken = new BridgeToken(token.tokenAddressMap, token.chainId)

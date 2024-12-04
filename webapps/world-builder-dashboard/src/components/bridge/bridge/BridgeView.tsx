@@ -30,7 +30,7 @@ import { useCoinGeckoAPI } from '@/hooks/useCoinGeckoAPI'
 // Hooks and Constants
 import { DepositDirection } from '@/pages/BridgePage/BridgePage'
 import { getStakeNativeTxData } from '@/utils/bridge/stakeContractInfo'
-import { Token } from '@/utils/tokens'
+import { getTokensForNetwork, Token } from '@/utils/tokens'
 
 const BridgeView = ({
   direction,
@@ -56,12 +56,18 @@ const BridgeView = ({
     setSelectedHighNetwork,
     setSelectedBridgeToken,
     selectedBridgeToken,
-    selectedNetworkType
+    selectedNetworkType,
+    setSelectedNativeToken,
+    selectedNativeToken
   } = useBlockchainContext()
 
   const { isFetching: isFetchingTokenInformation, data: tokenInformation } = useTokenInformation({
     account: connectedAccount,
     token: selectedBridgeToken
+  })
+  const { data: nativeTokenInformation } = useTokenInformation({
+    account: connectedAccount,
+    token: selectedNativeToken
   })
 
   const { data: coinUSDRate, isFetching: isCoinFetching } = useUSDPriceOfToken(selectedBridgeToken.geckoId ?? '')
@@ -126,6 +132,20 @@ const BridgeView = ({
         return
       }
       try {
+        if (direction === 'DEPOSIT') {
+          const token =
+            getTokensForNetwork(selectedLowNetwork.chainId, connectedAccount).find(
+              (token) => token.symbol === selectedLowNetwork.nativeCurrency?.symbol
+            ) ?? null
+          setSelectedNativeToken(token)
+        } else if (direction === 'WITHDRAW') {
+          const token =
+            getTokensForNetwork(selectedLowNetwork.chainId, connectedAccount).find(
+              (token) => token.symbol === selectedLowNetwork.nativeCurrency?.symbol
+            ) ?? null
+
+          setSelectedNativeToken(token)
+        }
         const _bridger: Bridger = new Bridger(originChainId, destinationChainId, selectedBridgeToken.tokenAddressMap)
         setBridger(_bridger)
       } catch (e) {
@@ -252,8 +272,8 @@ const BridgeView = ({
         )}
       <TransactionSummary
         direction={direction}
-        gasBalance={Number(tokenInformation?.tokenBalance)}
         address={connectedAccount}
+        nativeBalance={Number(nativeTokenInformation?.tokenBalance)}
         transferTime={
           direction === 'DEPOSIT'
             ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
@@ -277,7 +297,7 @@ const BridgeView = ({
               ? 0.0
               : coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd
         }
-        gasTokenSymbol={
+        nativeTokenSymbol={
           direction === 'DEPOSIT'
             ? (selectedLowNetwork?.nativeCurrency?.symbol ?? '')
             : (selectedHighNetwork?.nativeCurrency?.symbol ?? '')

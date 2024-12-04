@@ -20,16 +20,16 @@ interface TransactionSummaryProps {
   fee: number
   isEstimatingFee: boolean
   value: number
-  gasBalance: number
+  nativeBalance: number
   ethRate: number
   tokenSymbol: string
-  gasTokenSymbol: string
+  nativeTokenSymbol: string
   tokenRate: number
   direction: 'DEPOSIT' | 'WITHDRAW'
 }
 const TransactionSummary: React.FC<TransactionSummaryProps> = ({
   direction,
-  gasBalance,
+  nativeBalance,
   address,
   transferTime,
   fee,
@@ -37,7 +37,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
   ethRate,
   tokenRate,
   tokenSymbol,
-  gasTokenSymbol,
+  nativeTokenSymbol,
   value
 }) => {
   const clipboard = useClipboard({ timeout: 700 })
@@ -87,8 +87,8 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
           <div className={styles.valueContainer}>
             <div
               className={styles.value}
-              title={`Balance: ${String(gasBalance)}`}
-            >{`${fee.toFixed(18).replace(/\.?0+$/, '')} ${gasTokenSymbol}`}</div>
+              title={`Balance: ${String(nativeBalance)} ${nativeTokenSymbol}`}
+            >{`${fee.toFixed(18).replace(/\.?0+$/, '')} ${nativeTokenSymbol}`}</div>
             {!!(fee * (direction === 'DEPOSIT' ? ethRate : tokenRate)) && (
               <div className={styles.valueNote}>
                 {formatCurrency(fee * (direction === 'DEPOSIT' ? ethRate : tokenRate))}
