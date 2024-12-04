@@ -239,8 +239,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
       <div className={styles.header}>
         <div className={styles.title}>G7 Sepolia Faucet</div>
         <div className={styles.supportingText}>
-          Request and get <strong> 1 {L3_NATIVE_TOKEN_SYMBOL} token </strong> to your connected wallet or an external
-          address on G7 Sepolia.
+          Request <strong> 1 {L3_NATIVE_TOKEN_SYMBOL} token </strong> to your connected wallet or an external address on G7 Sepolia.
         </div>
       </div>
       <div className={styles.contentContainer}>

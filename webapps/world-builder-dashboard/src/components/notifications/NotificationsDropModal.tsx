@@ -139,7 +139,7 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
   const handleExit = () => {
     setShow(!show)
   }
-  
+
   if (!notifications || notifications.length === 0) {
     return <></>
   }
@@ -149,7 +149,13 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
       show && (
         <div onClick={handleClick} className={styles.toastMultiple}>
           {`You have ${notifications.length} new notifications. Click here to view`}
-          <IconCloseSmall className={styles.closeIconMultiple} />
+          <IconCloseSmall
+            onClick={(e) => {
+              e.stopPropagation()
+              handleExit()
+            }}
+            className={styles.closeIconMultiple}
+          />
         </div>
       )
     )
