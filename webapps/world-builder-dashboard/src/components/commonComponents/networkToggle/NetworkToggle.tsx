@@ -14,6 +14,10 @@ const NETWORK_OPTIONS: NetworkOption[] = [
   { type: 'mainnet', label: 'Mainnet' }
 ]
 
+function isNetworkType(value: any): value is NetworkType {
+  return value === 'testnet' || value === 'mainnet' || value === undefined
+}
+
 interface NetworkToggleProps {}
 
 const NetworkToggle: React.FC<NetworkToggleProps> = () => {
@@ -26,11 +30,21 @@ const NetworkToggle: React.FC<NetworkToggleProps> = () => {
 
   useEffect(() => {
     const networkType = searchParams.get('network')
-    setSelectedNetworkType(
-      networkType ? (networkType as NetworkType) : selectedNetworkType ? selectedNetworkType : 'mainnet'
-    )
+    const _networkType: any = networkType
+      ? (networkType as NetworkType)
+      : selectedNetworkType
+        ? selectedNetworkType
+        : 'mainnet'
+
+    isNetworkType(_networkType) ? setSelectedNetworkType(_networkType) : setSelectedNetworkType(selectedNetworkType)
+
     setSearchParams({
-      network: networkType ? (networkType as string) : selectedNetworkType ? (selectedNetworkType as string) : 'mainnet'
+      network:
+        networkType && (networkType as NetworkType)
+          ? (networkType as string)
+          : selectedNetworkType
+            ? (selectedNetworkType as string)
+            : 'mainnet'
     })
   }, [selectedNetworkType])
 
