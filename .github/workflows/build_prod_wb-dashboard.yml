@@ -1,13 +1,16 @@
+name: Build prod WB dashboard
+
 on:
   pull_request:
     branches:
       - "main"
+      - "staging"
     paths:
-      - '.github/workflows/prod_build_wb-dashboard.yml'
+      - '.github/workflows/build_prod_wb-dashboard.yml'
       - 'webapps/world-builder-dashboard/**'
 
 jobs:
-    prod_build_wb-dashboard:
+    build_prod_wb-dashboard:
         runs-on: ubuntu-latest
 
         steps:

@@ -1,12 +1,15 @@
-name: Build
+name: Build Smart Contracts
 
 on:
     pull_request:
         branches:
             - main
+        paths:
+          - '.github/workflows/build_web3.yml'
+          - 'web3/**'
 
 jobs:
-    build:
+    build_web3:
         runs-on: ubuntu-20.04
         steps:
             - name: Checkout

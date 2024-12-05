@@ -1,4 +1,4 @@
-name: Manual deploy branch wb-dashboard
+name: Manual Deploy branch WB dashboard
 
 on:
     workflow_dispatch:  # Allow manual trigger
@@ -11,11 +11,11 @@ on:
       branches:
           - staging
       paths:
-        - '.github/workflows/manual_branch_deploy_wb-dashboard.yml'
+        - '.github/workflows/deploy_manual_branch_wb-dashboard.yml'
         - 'webapps/world-builder-dashboard/**'
 
 jobs:
-    manual_branch_deploy_wb-dashboard:
+    deploy_manual_branch_wb-dashboard:
         runs-on: ubuntu-latest
 
         steps:
@@ -39,3 +39,13 @@ jobs:
               working-directory: ./webapps/world-builder-dashboard/dist
               run: |
                 sed -i "s/Disallow:.*/Disallow: \//" robots.txt
+
+            - name: Upload static site to S3 bucket and invalidate CloudFront cache
+              working-directory: ./webapps/world-builder-dashboard
+              env:
+                  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+              run: |
+                  aws s3 sync ./dist ${{ secrets.AWS_FRONTEND_BUCKET_WB_DASHBOARD_BRANCH }} --delete
+                  aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DISTRIBUTION_ID_WB_DASHBOARD_BRANCH }} --paths '/*'

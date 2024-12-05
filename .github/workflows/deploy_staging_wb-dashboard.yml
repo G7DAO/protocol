@@ -1,15 +1,15 @@
-name: Deploy staging wb-dashboard
+name: Deploy staging WB dashboard
 
 on:
     push:
       branches:
         - staging
       paths:
-        - '.github/workflows/staging_deploy_wb-dashboard.yml'
+        - '.github/workflows/deploy_staging_wb-dashboard.yml'
         - 'webapps/world-builder-dashboard/**'
 
 jobs:
-    staging_deploy_wb-dashboard:
+    deploy_staging_wb-dashboard:
         runs-on: ubuntu-latest
 
         steps:
