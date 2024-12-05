@@ -19,7 +19,7 @@ import { withdrawERC20, withdrawEth, withdrawNative } from './actions/withdraw';
 import { BridgerError, GasEstimationError, UnsupportedNetworkError } from './errors';
 
 // Internal Modules - Networks and Types
-import { BridgeNetworkConfig, networks } from './networks';
+import {BridgeNetworkConfig, networks} from './networks';
 import { TokenAddressMap } from './types';
 import { SignerOrProvider } from './bridgeNetwork';
 import { getProvider } from './utils/web3Utils';
@@ -264,6 +264,11 @@ export class Bridger {
       throw new Error("Token address not found for the specified network");
     }
 
+    const spender = this.getDepositSpender();
+    if (!spender) {
+      return null
+    }
+
     const provider = getProvider(_provider)
     const allowance = await this.getAllowance(provider, _from)
     if (!allowance) { //allowance is a BigNumber, zero is not falsy
@@ -273,7 +278,7 @@ export class Bridger {
       return null
     }
 
-    return estimateApproval(amount, provider, tokenAddress, this.getDepositSpender(), _from)
+    return estimateApproval(amount, provider, tokenAddress, spender, _from)
   }
 
 
@@ -421,19 +426,23 @@ export class Bridger {
    *
    * @returns {string} The address of the spender for the deposit transaction.
    *
-   * @throws {BridgerError} If the spender address cannot be determined.
    */
   private getDepositSpender() {
-    let spenderAddress: string;
-    if (this.token[this.destinationNetwork.chainId] === ethers.constants.AddressZero) {
-      spenderAddress = this.destinationNetwork.ethBridge?.inbox ?? '';
-    } else {
-      spenderAddress = this.destinationNetwork.tokenBridge?.parentErc20Gateway ?? '';
+    const tokenAddress = this.token[this.originNetwork.chainId];
+    if (!this.isDeposit && this.originNetwork.usdcAddresses && tokenAddress === this.originNetwork.usdcAddresses.bridged) {
+      return this.originNetwork.usdcAddresses.rollupGateway
     }
-    if (!spenderAddress) {
-      throw new BridgerError("Can't evaluate deposit spender");
+    if (this.isDeposit) {
+      if (this.destinationNetwork.usdcAddresses && this.token[this.destinationNetwork.chainId] === this.destinationNetwork.usdcAddresses.bridged) {
+        return this.destinationNetwork.usdcAddresses.settlementLayerGateway
+      }
+      if (this.token[this.destinationNetwork.chainId] === ethers.constants.AddressZero) {
+        return this.destinationNetwork.ethBridge?.inbox ?? '';
+      } else {
+        return this.destinationNetwork.tokenBridge?.parentErc20Gateway ?? '';
+      }
     }
-    return spenderAddress;
+    return null;
   }
 
   /**
@@ -452,9 +461,6 @@ export class Bridger {
     provider: ethers.Signer | ethers.providers.Provider | string,
     account: string,
   ): Promise<BigNumber | null | undefined> {
-    if (!this.isDeposit) {
-      return null;
-    }
     const tokenAddress = this.token[this.originNetwork.chainId];
     if (tokenAddress === ethers.constants.AddressZero) {
       return null;
@@ -465,10 +471,33 @@ export class Bridger {
     if (!tokenAddress) {
       throw new Error('Token address not found for the specified network');
     }
+    const spender = this.getDepositSpender()
+    if (spender === null) {
+      return null;
+    }
 
     const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
-    return await tokenContract.allowance(account, this.getDepositSpender());
+    return await tokenContract.allowance(account, spender);
   }
+
+  public async getNativeAllowance(
+      provider: ethers.Signer | ethers.providers.Provider | string,
+      account: string,
+  ): Promise<BigNumber | null | undefined> {
+
+
+    if (typeof provider === 'string') {
+      provider = new ethers.providers.JsonRpcProvider(provider);
+    }
+
+    const spender = this.getDepositSpender()
+    if (spender === null || !this.destinationNetwork.nativeToken) {
+      return null;
+    }
+    const tokenContract = new ethers.Contract(this.destinationNetwork.nativeToken, ERC20_ABI, provider);
+    return await tokenContract.allowance(account, spender);
+  }
+
 
   /**
    * Approves the specified amount of ERC20 tokens for the deposit spender.
@@ -492,15 +521,31 @@ export class Bridger {
     if (!tokenAddress) {
       throw new Error('Token address not found for the specified network');
     }
-
+    const spender = this.getDepositSpender()
+    if (!spender) {
+      throw new Error("Approval is not needed or spender address is missed in the network configuration")
+    }
     const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, signer);
 
     try {
-      return await tokenContract.approve(this.getDepositSpender(), amount);
+      return tokenContract.approve(spender, amount);
     } catch (error: any) {
       console.error('Approval transaction failed:', error);
       throw new Error('Approval transaction failed: ' + error.message);
     }
+  }
+
+  public async approveNative (
+      amount: BigNumber,
+      signer: ethers.Signer,
+  ): Promise<ethers.ContractTransaction> {
+    const spender = this.getDepositSpender()
+    if (spender === null || !this.destinationNetwork.nativeToken) {
+      throw new Error("Approval is not needed or spender address is missed in the network configuration");
+    }
+
+    const tokenContract = new ethers.Contract(this.destinationNetwork.nativeToken, ERC20_ABI, signer);
+    return await tokenContract.approve(spender, amount);
   }
 
   /**
