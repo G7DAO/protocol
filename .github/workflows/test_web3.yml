@@ -1,4 +1,4 @@
-name: Smart Contracts Test
+name: Test Smart Contracts
 
 on:
   pull_request:

@@ -1,22 +1,28 @@
-name: Deploy staging wb-dashboard
+name: Manual deploy branch wb-dashboard
 
 on:
-    push:
+    workflow_dispatch:  # Allow manual trigger
+      inputs:
+        branch:
+          description: "Branch to deploy"
+          required: true
+          default: "staging"
+    pull_request:
       branches:
-        - staging
+          - staging
       paths:
-        - '.github/workflows/staging_deploy_wb-dashboard.yml'
+        - '.github/workflows/manual_branch_deploy_wb-dashboard.yml'
         - 'webapps/world-builder-dashboard/**'
 
 jobs:
-    staging_deploy_wb-dashboard:
+    manual_branch_deploy_wb-dashboard:
         runs-on: ubuntu-latest
 
         steps:
             - name: Checkout repository and main branch
               uses: actions/checkout@v2
               with:
-                  ref: staging
+                  ref: ${{ github.event.inputs.branch || github.event.pull_request.head.ref }}
 
             - name: Set up node.js
               uses: actions/setup-node@v3
@@ -33,12 +39,3 @@ jobs:
               working-directory: ./webapps/world-builder-dashboard/dist
               run: |
                 sed -i "s/Disallow:.*/Disallow: \//" robots.txt
-
-            - name: Publish to CloudFlare Page
-              uses: cloudflare/pages-action@v1
-              with:
-                    apiToken: ${{ secrets.CF_API_TOKEN_STAGE }}
-                    accountId: ${{ secrets.CF_ACCOUNT_ID_STAGE }}
-                    projectName: ${{ secrets.CF_PROJECT_NAME_WB_DASHBOARD_STAGE }}
-                    directory: ./webapps/world-builder-dashboard/dist
-                    gitHubToken: ${{ secrets.GITHUB_TOKEN }}
