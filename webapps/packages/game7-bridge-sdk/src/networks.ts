@@ -33,6 +33,13 @@ export interface Teleporter {
   l2ForwarderFactory: string;
 }
 
+export interface UsdcAddresses {
+  bridged: string,
+  settlementLayer: string,
+  rollupGateway: string,
+  settlementLayerGateway: string,
+}
+
 export interface BridgeNetworkConfig {
   chainId: number;
   confirmPeriodBlocks?: number;
@@ -57,6 +64,8 @@ export interface BridgeNetworkConfig {
     name: string;
     symbol: string;
   };
+  nativeToken?: string; //Arbitrum address of chain's native token
+  usdcAddresses?: UsdcAddresses,
 }
 
 const mainnetTokenBridge = {
@@ -205,6 +214,7 @@ export const networks: { [chainId: number]: BridgeNetworkConfig } = {
     },
     parentChainId: 421614,
     retryableLifetimeSeconds: SEVEN_DAYS_IN_SECONDS,
+    nativeToken: "0x10adBf84548F923577Be12146eAc104C899D1E75",
     tokenBridge: {
       parentCustomGateway: '0x81aCB22000A2A81D26E7e1ed5a8f51930A31598E',
       parentErc20Gateway: '0x4A24f98D6fB62Ce8eA8f6C2D5AF9c8BF1c853fD7',
@@ -225,6 +235,12 @@ export const networks: { [chainId: number]: BridgeNetworkConfig } = {
     nitroGenesisBlock: 0,
     nitroGenesisL1Block: 0,
     depositTimeout: 900000,
+    usdcAddresses: {
+      bridged: '0xf2B58E3519C5b977a254993A4A6EaD581A8989A0',
+      settlementLayer: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d',
+      rollupGateway: '0xd37E4B6b75F3502FAFDeeA4Bb27843E01603edCe',
+      settlementLayerGateway: '0x183c02988d4E92bE5a5DB2805f357f4d39bAf086',
+    }
   },
   2187: {
     chainId: 2187,
