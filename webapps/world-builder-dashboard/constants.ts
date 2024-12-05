@@ -21,7 +21,7 @@ export const L2_NETWORK: HighNetworkInterface = {
   chainId: 421614,
   name: 'arbitrumSepolia',
   displayName: 'Arbitrum Sepolia',
-  rpcs: ['https://sepolia-rollup.arbitrum.io/rpc'],
+  rpcs: ['https://nb.moonstream.to/nb/arbitrum-sepolia/jsonrpc/36c13893-c382-405b-a73c-1af3e9e25700'],
   blockExplorerUrls: ['https://sepolia.arbiscan.io'],
   nativeCurrency: {
     decimals: 18,
