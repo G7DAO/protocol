@@ -1,3 +1,5 @@
+name: Manual deploy branch wb-dashboard
+
 on:
     workflow_dispatch:  # Allow manual trigger
       inputs:
