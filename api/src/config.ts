@@ -68,7 +68,7 @@ export const bridgeConfig: {
     addressL2GatewayRouter: string;
     addressL1GatewayRouter: string;
     addressArbitrumOutBox: string;
-    addressArbOSL2: string;
+    addressArbOS: string;
     addressL1Inbox: string;
     l3TableName: string;
     l2TableName: string;
@@ -88,7 +88,7 @@ export const bridgeConfig: {
     addressL2GatewayRouter: "9fDD1C4E4AA24EEc1d913FABea925594a20d43C7", // Arbitrum L2ERC20Gateway address
     addressL1GatewayRouter: "cE18836b233C83325Cc8848CA4487e94C6288264", // Ethereum deposit address
     addressArbitrumOutBox: "64105c6C3D494469D5F21323F0E917563489d9f5", // Arbitrum outbox address ??
-    addressArbOSL2: "0000000000000000000000000000000000000064", // Game7 ArbOS L2 address
+    addressArbOS: "0000000000000000000000000000000000000064", // Game7 ArbOS L2 address
     addressL1Inbox: "aAe29B0366299461418F5324a79Afc425BE5ae21", // Ethereum inbox address
     l3TableName: "game7_testnet_labels",
     l2TableName: "arbitrum_sepolia_labels",
@@ -99,7 +99,7 @@ export const bridgeConfig: {
     l2Token: "0x10adBf84548F923577Be12146eAc104C899D1E75", // l2 l3 token
     l1Token: "0x0000000000000000000000000000000000000000", // l1 l3 token
     nativeToken: "0x0000000000000000000000000000000000000000" // native token
-  },
+  }, // 09e9222E96E7B4AE2a407B98d48e330053351EEe replace 0x096760F208390250649E3e8763348E783AEF5562
   "game7": { //0x096760F208390250649E3e8763348E783AEF5562 L2CustomGateway  0xe80eb0238029333e368e0bDDB7acDf1b9cb28278 L2GatewayRouter
     addressERC20Inbox: "B1146A7eb098ECF46e8AAf695f4A960A963948d6", // Arbitrum Deposit contract address
     addressEthereumOutbox: "0B9857ae2D4A3DBe74ffE1d7DF045bb7F96E4840", // Ethereum L1ERC20Gateway address
@@ -107,7 +107,7 @@ export const bridgeConfig: {
     addressL2GatewayRouter: "5288c571Fd7aD117beA99bF60FE0846C4E84F933", // Arbitrum L2ERC20Gateway address L1OrbitGatewayRouter
     addressL1GatewayRouter: "72Ce9c846789fdB6fC1f34aC4AD25Dd9ef7031ef", // Ethereum deposit address
     addressArbitrumOutBox: "fbe537816d181888fAbE52338a5D921eE131E9Db", // Arbitrum outbox address ??
-    addressArbOSL2: "0000000000000000000000000000000000000064", // Game7 ArbOS L2 address
+    addressArbOS: "0000000000000000000000000000000000000064", // Game7 ArbOS L2 address
     addressL1Inbox: "4Dbd4fc535Ac27206064B68FfCf827b0A60BAB3f", // Ethereum inbox address
     l3TableName: "game7_labels",
     l2TableName: "arbitrum_one_labels",
