@@ -128,7 +128,7 @@ const iconCloseClassName = (status: string) => {
 }
 
 export const FloatingNotification = ({ notifications }: { notifications: BridgeNotification[] }) => {
-  const { setIsDropdownOpened } = useBridgeNotificationsContext()
+  const { newNotifications, setIsDropdownOpened } = useBridgeNotificationsContext()
   const { selectedNetworkType } = useBlockchainContext()
   const [show, setShow] = useState(false)
   const handleClick = () => {
@@ -144,11 +144,11 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
     return <></>
   }
 
-  if (notifications.length > 1) {
+  if (newNotifications.length > 1) {
     return (
       show && (
         <div onClick={handleClick} className={styles.toastMultiple}>
-          {`You have ${notifications.length} new notifications. Click here to view`}
+          {`You have ${newNotifications.length} new notifications. Click here to view`}
           <IconCloseSmall
             onClick={(e) => {
               e.stopPropagation()

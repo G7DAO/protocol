@@ -92,7 +92,7 @@
 
 .withdrawsGrid {
   display: grid;
-  grid-template-columns: repeat(7, auto);
+  grid-template-columns: repeat(8, auto);
   width: 100%;
   overflow-y: auto;
   max-height: calc(100vh - 282px);
@@ -133,7 +133,6 @@
   line-height: 20px; /* 142.857% */
   border-bottom: 1px solid var(--Gray-200, #eaecf0);
 }
-
 
 .clickable {
   cursor: pointer;
@@ -212,6 +211,21 @@
   font-style: normal;
   font-weight: 500;
   line-height: 18px; /* 150% */
+}
+
+.transactionsHeaderEmpty {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  width: 68px;
+  height: 44px;
+  padding: 12px 24px;
+  align-items: center;
+  gap: 12px;
+  align-self: stretch;
+  background: var(--Gray-60, #f9fafb);
+  color: var(--Gray-600, #475467);
 }
 
 .typeWithdrawal {
@@ -396,3 +410,13 @@
 .arrowUp {
   stroke: var(--Arrow-Up, #fff);
 }
+
+.emptyCell {
+  display: flex;
+  height: 72px;
+  padding: 16px 24px;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid #393939;
+}
+

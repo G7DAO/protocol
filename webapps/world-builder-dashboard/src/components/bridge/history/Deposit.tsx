@@ -155,7 +155,9 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                       <>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)}</>
                     )}
                   </div>
+                  
                 )}
+                 <div className={styles.emptyCell} />
               </>
             </>
           )}

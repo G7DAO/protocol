@@ -69,7 +69,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   const { useHistoryTransactions } = useBridgeAPI()
   const { data: apiTransactions } = useHistoryTransactions(connectedAccount)
   const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])
-  const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status']
+  const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status', '']
 
   // Merge transations only when API data is updated with new data
   useEffect(() => {
@@ -116,7 +116,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
           <div className={styles.transactions}>
             <div className={styles.withdrawsGrid}>
               {headers.map((h) => (
-                <div className={styles.transactionsHeader} key={h}>
+                <div className={h !== ' ' ? styles.transactionsHeader : styles.transactionsHeaderEmpty} key={h}>
                   {h}
                 </div>
               ))}
