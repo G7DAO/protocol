@@ -270,7 +270,7 @@
   gap: 4px;
 
   border-radius: 16px;
-  background: var(--Indigo-50, #eef4ff);
+  background: #3538cd;
   mix-blend-mode: var(--mix-blend, multiply);
   color: var(--Indigo-700, #3538cd);
   text-align: center;
@@ -417,7 +417,7 @@
   padding: 16px 24px;
   align-items: center;
   gap: 12px;
-  border-bottom: 1px solid var(--Gray-200, #eaecf0)
+  border-bottom: 1px solid var(--Gray-200, #eaecf0);
 }
 
 .emptyCellInitiate {
@@ -429,4 +429,3 @@
   border-bottom: 1px solid var(--Gray-200, #eaecf0);
   background-color: var(--Base-White, #fff);
 }
-

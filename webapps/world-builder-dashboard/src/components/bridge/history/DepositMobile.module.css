@@ -23,7 +23,7 @@
     gap: 12px;
     align-self: stretch;
 
-    background: var(--Gray-50, #F9FAFB);
+    background: #393939;
 }
 
 .title {
@@ -60,8 +60,8 @@
     align-items: center;
     gap: 12px;
     align-self: stretch;
-
     border-top: 1px solid var(--Gray-200, #EAECF0);
+    background-color: #171717
 }
 
 .dataRowCompleted {
@@ -109,7 +109,7 @@
     line-height: 20px; /* 142.857% */
     border: none;
     border-top: 1px solid var(--Gray-200, #EAECF0);
-    background: var(--Base-White, #ffffff);
+    background: #171717;
     border-radius: 0 0 12px 12px;
 }
 

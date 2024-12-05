@@ -9,6 +9,7 @@ import { NetworkType } from '@/contexts/BlockchainContext'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
+import IconArrowNarrowDown from '@/assets/IconArrowNarrowDown'
 
 interface DepositMobileProps {
   deposit: TransactionRecord
@@ -50,7 +51,10 @@ const DepositMobile: React.FC<DepositMobileProps> = ({
       ) : (
         <div className={styles.container}>
           <div className={styles.header}>
-            <div className={styles.title}>Deposit</div>
+            <div className={parentStyles.typeDeposit}>
+              Deposit
+              <IconArrowNarrowDown className={parentStyles.arrowUp} />
+            </div>
             <div className={styles.amount}>{`${deposit.amount} ${transactionInputs?.tokenSymbol}`}</div>
           </div>
           {!isCollapsed && (
@@ -88,7 +92,7 @@ const DepositMobile: React.FC<DepositMobileProps> = ({
             </>
           )}
           <div className={styles.dataRow}>
-            <div className={styles.dataText}> Status</div>
+            <div className={styles.dataText}>Status</div>
             <div className={styles.dataTextBold}>
               {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
               transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||

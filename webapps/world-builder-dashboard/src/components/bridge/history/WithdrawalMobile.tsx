@@ -8,6 +8,7 @@ import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 import { ChildToParentMessageStatus } from '@arbitrum/sdk'
+import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
 
 interface WithdrawalMobileProps {
   withdrawal: TransactionRecord
@@ -29,7 +30,10 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <div className={styles.title}>Withdraw</div>
+        <div className={parentStyles.typeWithdrawal}>
+          <IconArrowNarrowUp className={parentStyles.arrowUp} />
+          Withdraw
+        </div>
         <div className={styles.amount}>{`${withdrawal.amount} ${transactionInputs?.tokenSymbol}`}</div>
       </div>
       {!isCollapsed && (
@@ -98,7 +102,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
                 >
                   <div className={parentStyles.settled}>
                     Completed
-                    <IconLinkExternal02 stroke={'#fff'} /> 
+                    <IconLinkExternal02 stroke={'#fff'} />
                   </div>
                 </a>
               </div>
