@@ -1,0 +1,39 @@
+on:
+    workflow_dispatch:  # Allow manual trigger
+      inputs:
+        branch:
+          description: "Branch to deploy"
+          required: true
+          default: "staging"
+    pull_request:
+      branches:
+          - staging
+      paths:
+        - '.github/workflows/manual_branch_deploy_wb-dashboard.yml'
+        - 'webapps/world-builder-dashboard/**'
+
+jobs:
+    manual_branch_deploy_wb-dashboard:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository and main branch
+              uses: actions/checkout@v2
+              with:
+                  ref: ${{ github.event.inputs.branch || github.event.pull_request.head.ref }}
+
+            - name: Set up node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: "20.14.0"
+
+            - name: Install and build staging app
+              working-directory: ./webapps/world-builder-dashboard
+              run: |
+                  npm install
+                  npm run build
+            
+            - name: Update robots.txt, block alpha for crawlers
+              working-directory: ./webapps/world-builder-dashboard/dist
+              run: |
+                sed -i "s/Disallow:.*/Disallow: \//" robots.txt
