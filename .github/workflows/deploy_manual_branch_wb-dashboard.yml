@@ -7,22 +7,23 @@ on:
           description: "Branch to deploy"
           required: true
           default: "staging"
-    pull_request:
-      branches:
-          - staging
-      paths:
-        - '.github/workflows/deploy_manual_branch_wb-dashboard.yml'
-        - 'webapps/world-builder-dashboard/**'
 
 jobs:
     deploy_manual_branch_wb-dashboard:
         runs-on: ubuntu-latest
 
         steps:
+            - name: Extract branch name
+              run: |
+                echo "BRANCH_NAME=${{ github.event.inputs.branch || github.event.pull_request.head.ref }}" >> $GITHUB_ENV
+                echo "Running manual deployment for ${BRANCH_NAME} branch"
+
             - name: Checkout repository and main branch
+              env:
+                BRANCH_NAME: ${{ env.BRANCH_NAME }}
               uses: actions/checkout@v2
               with:
-                  ref: ${{ github.event.inputs.branch || github.event.pull_request.head.ref }}
+                  ref: ${BRANCH_NAME}
 
             - name: Set up node.js
               uses: actions/setup-node@v3
@@ -46,6 +47,7 @@ jobs:
                   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
                   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                   AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+                  BRANCH_NAME: ${{ env.BRANCH_NAME }}
               run: |
-                  aws s3 sync ./dist ${{ secrets.AWS_FRONTEND_BUCKET_WB_DASHBOARD_BRANCH }} --delete
-                  aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DISTRIBUTION_ID_WB_DASHBOARD_BRANCH }} --paths '/*'
+                  aws s3 sync ./dist ${{ secrets.AWS_FRONTEND_BUCKET_WB_DASHBOARD_BRANCH }}/${BRANCH_NAME} --delete
+                  aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DISTRIBUTION_ID_WB_DASHBOARD_BRANCH }} --paths '/${BRANCH_NAME}/*'
