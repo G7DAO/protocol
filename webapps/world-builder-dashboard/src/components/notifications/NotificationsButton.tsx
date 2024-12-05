@@ -48,6 +48,9 @@ const NotificationsButton: React.FC<NotificationsButtonProps> = ({ notifications
           backgroundOpacity: 0.7,
           blur: 8
         }}
+        classNames={{
+          content: styles.customModalContent // Reference a custom CSS class
+        }}
       >
         <NotificationsModal notifications={notifications} />
       </Modal>
@@ -58,7 +61,7 @@ const NotificationsButton: React.FC<NotificationsButtonProps> = ({ notifications
             setIsDropdownOpened(!isDropdownOpened)
           }}
         >
-          <IconBell className={styles.icon}/>
+          <IconBell className={styles.icon} />
           {!smallView && <div className={styles.label}>Notifications</div>}
           {newNotifications.length > 0 && <div className={styles.badge}>{newNotifications.length}</div>}
         </button>

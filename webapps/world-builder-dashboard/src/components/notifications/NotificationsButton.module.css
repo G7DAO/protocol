@@ -54,6 +54,10 @@
   border-color: #393939 !important;
 }
 
+.customModalContent {
+  background-color: black !important;
+}
+
 .icon {
   stroke: var(--Gray-700, #344054);
 }
