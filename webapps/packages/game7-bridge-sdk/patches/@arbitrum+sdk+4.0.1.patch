@@ -1,5 +1,5 @@
 diff --git a/node_modules/@arbitrum/sdk/dist/lib/assetBridger/erc20Bridger.js b/node_modules/@arbitrum/sdk/dist/lib/assetBridger/erc20Bridger.js
-index 09d1e1e..3c97994 100644
+index 09d1e1e..c77cd9b 100644
 --- a/node_modules/@arbitrum/sdk/dist/lib/assetBridger/erc20Bridger.js
 +++ b/node_modules/@arbitrum/sdk/dist/lib/assetBridger/erc20Bridger.js
 @@ -239,7 +239,7 @@ class Erc20Bridger extends assetBridger_1.AssetBridger {
@@ -21,10 +21,10 @@ index 09d1e1e..3c97994 100644
          if (erc20ChildChainAddress.toLowerCase() ===
              this.childNetwork.tokenBridge.childWeth.toLowerCase()) {
 diff --git a/node_modules/@arbitrum/sdk/dist/lib/dataEntities/networks.js b/node_modules/@arbitrum/sdk/dist/lib/dataEntities/networks.js
-index 97fcda5..400627c 100644
+index 97fcda5..101e31f 100644
 --- a/node_modules/@arbitrum/sdk/dist/lib/dataEntities/networks.js
 +++ b/node_modules/@arbitrum/sdk/dist/lib/dataEntities/networks.js
-@@ -138,6 +138,86 @@ const networks = {
+@@ -138,6 +138,87 @@ const networks = {
              l2ForwarderFactory: '0x88feBaFBb4E36A4E7E8874E4c9Fd73A9D59C2E7c',
          },
      },
@@ -42,8 +42,9 @@ index 97fcda5..400627c 100644
 +        isCustom: true,
 +        isTestnet: true,
 +        name: 'Game7 Testnet',
-+        parentChainID: 421614,
++        parentChainId: 421614,
 +        retryableLifetimeSeconds: constants_1.SEVEN_DAYS_IN_SECONDS,
++        nativeToken: "0x10adBf84548F923577Be12146eAc104C899D1E75",
 +        tokenBridge: {
 +            parentCustomGateway: '0x81aCB22000A2A81D26E7e1ed5a8f51930A31598E',
 +            parentErc20Gateway: '0x4A24f98D6fB62Ce8eA8f6C2D5AF9c8BF1c853fD7',
@@ -75,8 +76,8 @@ index 97fcda5..400627c 100644
 +            sequencerInbox: '0x4cFe930c5B2F03Cf81B44D2e62297beb79222B68',
 +        },
 +        arbSys: '0x0000000000000000000000000000000000000064',
-+        explorerUrl: 'https://mainnet-rpc.game7.io',
-+        rpcs: ['https://mainnet.game7.io'],
++        explorerUrl: 'https://mainnet.game7.io',
++        rpcs: ['https://mainnet-rpc.game7.io'],
 +        isArbitrum: true,
 +        isCustom: true,
 +        name: 'Game7',
@@ -112,10 +113,10 @@ index 97fcda5..400627c 100644
  /**
   * Determines if a chain is a parent of *any* other chain. Could be an L1 or an L2 chain.
 diff --git a/node_modules/@arbitrum/sdk/dist/lib/message/ParentToChildMessageGasEstimator.js b/node_modules/@arbitrum/sdk/dist/lib/message/ParentToChildMessageGasEstimator.js
-index 636937d..cdbefc4 100644
+index 636937d..ab521ac 100644
 --- a/node_modules/@arbitrum/sdk/dist/lib/message/ParentToChildMessageGasEstimator.js
 +++ b/node_modules/@arbitrum/sdk/dist/lib/message/ParentToChildMessageGasEstimator.js
-@@ -184,7 +184,10 @@ class ParentToChildMessageGasEstimator {
+@@ -184,7 +184,11 @@ class ParentToChildMessageGasEstimator {
              // ethersjs currently doesnt throw for custom solidity errors, so we shouldn't end up here
              // however we try to catch and parse the error anyway in case ethersjs changes
              // behaviour and we dont pick up on it
@@ -123,6 +124,7 @@ index 636937d..cdbefc4 100644
 +
 +            //Metamask error
 +            const res = err.error?.data?.originalError?.data ?? err
++            console.log(err)
 +            retryable = retryableData_1.RetryableDataTools.tryParseError(res);
              if (!(0, lib_1.isDefined)(retryable)) {
                  throw new errors_1.ArbSdkError('No retryable data found in error', err);
