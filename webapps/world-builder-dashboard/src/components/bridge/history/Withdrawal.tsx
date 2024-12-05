@@ -3,6 +3,8 @@ import { getHighNetworks, getLowNetworks, HIGH_NETWORKS, LOW_NETWORKS } from '..
 import styles from './WithdrawTransactions.module.css'
 import { ethers } from 'ethers'
 import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
+import IconChevronDown from '@/assets/IconChevronDown'
+import IconChevronUp from '@/assets/IconChevronUp'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import IconWithdrawalNodeCompleted from '@/assets/IconWithdrawalNodeCompleted'
 import WithdrawalMobile from '@/components/bridge/history/WithdrawalMobile'
@@ -204,6 +206,19 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       >
                         <div>{timeAgo(withdrawal?.completionTimestamp)}</div>
                       </div>
+                      <div
+                        className={styles.emptyCell}
+                        onClick={() => setCollapseExecuted(!collapseExecuted)}
+                        style={{
+                          cursor: 'pointer',
+                          backgroundColor: hovered ? '#393939' : 'initial'
+                        }}
+                        onMouseEnter={() => setHovered(true)}
+                        onMouseLeave={() => setHovered(false)}
+                      >
+                        {!collapseExecuted ? <IconChevronDown stroke='#b9b9b9' /> : <IconChevronUp stroke="#b9b9b9" />}
+                      </div>
+
                       {collapseExecuted && (
                         <>
                           <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
@@ -230,6 +245,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           <div className={styles.gridItemInitiate}>
                             <div className={styles.timeCenter}>{timeAgo(withdrawal?.completionTimestamp)}</div>
                           </div>
+                          <div className={styles.emptyCellInitiate} />
                           <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
                             <div className={styles.typeCompleted}>Finalize</div>
                           </div>
@@ -254,6 +270,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           <div className={styles.gridItemInitiate}>
                             <div className={styles.timeCenter}>{timeAgo(withdrawal?.completionTimestamp)}</div>
                           </div>
+                          <div className={styles.emptyCellInitiate} />
                         </>
                       )}
                     </>
@@ -318,10 +335,9 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           </div>
                         </>
                       )}
+                      <div className={styles.emptyCell} />
                     </>
                   )}
-
-                  <div className={styles.emptyCell} />
                 </>
               )}
             </>

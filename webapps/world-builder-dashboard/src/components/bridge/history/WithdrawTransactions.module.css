@@ -417,6 +417,16 @@
   padding: 16px 24px;
   align-items: center;
   gap: 12px;
-  border-bottom: 1px solid #393939;
+  border-bottom: 1px solid var(--Gray-200, #eaecf0)
+}
+
+.emptyCellInitiate {
+  display: flex;
+  height: 72px;
+  padding: 16px 24px;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--Gray-200, #eaecf0);
+  background-color: var(--Base-White, #fff);
 }
 
