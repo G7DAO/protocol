@@ -1,13 +1,12 @@
 import { TokenAddressMap } from 'game7-bridge-sdk'
 import { NetworkInterface, HighNetworkInterface, NetworkType } from '@/contexts/BlockchainContext'
-import * as 
 
 export const L1_NETWORK: NetworkInterface = {
   chainId: 11155111,
   name: 'sepolia',
   displayName: 'Sepolia',
   rpcs: [
-    `${process.env.NEXT_PUBLIC_NB_JSON_RPC_URI}/sepolia/jsonrpc/${process.env.NEXT_PUBLIC_NB_WB_DASHBOARD_ACCESS_ID}`
+    `${import.meta.env.VITE_NB_JSON_RPC_URI}/sepolia/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`
   ],
   blockExplorerUrls: ['https://sepolia.etherscan.io'],
   nativeCurrency: {
@@ -24,7 +23,9 @@ export const L2_NETWORK: HighNetworkInterface = {
   chainId: 421614,
   name: 'arbitrumSepolia',
   displayName: 'Arbitrum Sepolia',
-  rpcs: [`${process.env.NEXT_PUBLIC_NB_JSON_RPC_URI}/arbitrum-sepolia/jsonrpc/${process.env.NEXT_PUBLIC_NB_WB_DASHBOARD_ACCESS_ID}`],
+  rpcs: [
+    `${import.meta.env.VITE_NB_JSON_RPC_URI}/arbitrum-sepolia/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`
+  ],
   blockExplorerUrls: ['https://sepolia.arbiscan.io'],
   nativeCurrency: {
     decimals: 18,
@@ -60,7 +61,9 @@ export const L1_MAIN_NETWORK: NetworkInterface = {
   chainId: 1,
   name: 'ethereum',
   displayName: 'Ethereum',
-  rpcs: [`${process.env.NEXT_PUBLIC_NB_JSON_RPC_URI}/ethereum/jsonrpc/${process.env.NEXT_PUBLIC_NB_WB_DASHBOARD_ACCESS_ID}`],
+  rpcs: [
+    `${import.meta.env.VITE_NB_JSON_RPC_URI}/ethereum/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`
+  ],
   blockExplorerUrls: ['https://etherscan.io'],
   nativeCurrency: {
     decimals: 18,
@@ -76,7 +79,9 @@ export const L2_MAIN_NETWORK: NetworkInterface = {
   chainId: 42161,
   name: 'arbitrumOne',
   displayName: 'Arbitrum One',
-  rpcs: [`${process.env.NEXT_PUBLIC_NB_JSON_RPC_URI}/arbitrum-one/jsonrpc/${process.env.NEXT_PUBLIC_NB_WB_DASHBOARD_ACCESS_ID}`],
+  rpcs: [
+    `${import.meta.env.VITE_NB_JSON_RPC_URI}/arbitrum-one/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`
+  ],
   blockExplorerUrls: ['https://arbiscan.io'],
   nativeCurrency: {
     decimals: 18,
