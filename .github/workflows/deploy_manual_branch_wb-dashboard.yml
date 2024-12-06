@@ -1,0 +1,53 @@
+name: Manual Deploy branch WB dashboard
+
+on:
+    workflow_dispatch: # Allow manual trigger
+        inputs:
+            branch:
+                description: "Branch to deploy"
+                required: true
+                default: "staging"
+
+jobs:
+    deploy_manual_branch_wb-dashboard:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Show branch name
+              run: |
+                  echo "Running manual deployment for ${{ github.event.inputs.branch || github.event.pull_request.head.ref }} branch"
+
+            - name: Checkout repository and main branch
+              uses: actions/checkout@v2
+              with:
+                  ref: ${{ github.event.inputs.branch || github.event.pull_request.head.ref }}
+
+            - name: Set up node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: "20.14.0"
+
+            - name: Install and build staging app
+              working-directory: ./webapps/world-builder-dashboard
+              env:
+                  VITE_NB_JSON_RPC_URI: ${{ secrets.VITE_NB_JSON_RPC_URI }}
+                  VITE_NB_WB_DASHBOARD_ACCESS_ID: ${{ secrets.VITE_NB_WB_DASHBOARD_ACCESS_ID }}
+                  VITE_BUILD_TARGET: ${{ github.event.inputs.branch || github.event.pull_request.head.ref }}
+              run: |
+                  npm install
+                  npm run build
+
+            - name: Update robots.txt, block alpha for crawlers
+              working-directory: ./webapps/world-builder-dashboard/dist
+              run: |
+                  sed -i "s/Disallow:.*/Disallow: \//" robots.txt
+
+            - name: Upload static site to S3 bucket and invalidate CloudFront cache
+              working-directory: ./webapps/world-builder-dashboard
+              env:
+                  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+              run: |
+                  aws s3 sync ./dist ${{ secrets.AWS_FRONTEND_BUCKET_WB_DASHBOARD_BRANCH }}/${{ github.event.inputs.branch || github.event.pull_request.head.ref }} --delete
+                  aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DISTRIBUTION_ID_WB_DASHBOARD_BRANCH }} --paths '/${{ github.event.inputs.branch || github.event.pull_request.head.ref }}/*'

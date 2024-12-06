@@ -11,10 +11,12 @@ import { toUnixTimestamp } from '../utils/date';
 
 export class FaucetService {
   tokenSender: ethers.Contract;
+  provider: ethers.JsonRpcProvider;
+  signer: AwsKmsSigner;
 
   constructor() {
-    const provider = new ethers.JsonRpcProvider(GAME7_TESTNET_RPC_URL);
-    const signer = new AwsKmsSigner(
+    this.provider = new ethers.JsonRpcProvider(GAME7_TESTNET_RPC_URL);
+     this.signer = new AwsKmsSigner(
       {
         region: KMS_CREDENTIALS.region,
         keyId: KMS_CREDENTIALS.keyId,
@@ -23,12 +25,12 @@ export class FaucetService {
           secretAccessKey: KMS_CREDENTIALS.secretAccessKey,
         },
       },
-      provider
+      this.provider
     );
     this.tokenSender = new ethers.Contract(
       TOKEN_SENDER_ADDRESS,
       TokenSenderABI,
-      signer
+      this.signer
     );
   }
 
@@ -57,5 +59,14 @@ export class FaucetService {
     const remainingTime = interval - (toUnixTimestamp(new Date()) - lastSentTimestamp);
     if (remainingTime <= 0) return 0;
     else return remainingTime;
+  }
+  async getBalance() {
+    const signerAddress = await this.signer.getAddress();
+    const balance = await this.provider.getBalance(signerAddress);
+
+    return {
+      address: signerAddress,
+      balance: ethers.formatEther(balance),
+    };   
   }
 }

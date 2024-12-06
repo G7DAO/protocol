@@ -1,0 +1,42 @@
+name: Deploy prod WB dashboard
+
+on:
+    push:
+        branches:
+            - main
+        paths:
+            - ".github/workflows/deploy_prod_wb-dashboard.yml"
+            - "webapps/world-builder-dashboard/**"
+
+jobs:
+    deploy_prod_wb-dashboard:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository and main branch
+              uses: actions/checkout@v2
+              with:
+                  ref: main
+
+            - name: Set up node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: "20.14.0"
+
+            - name: Install and build production app
+              working-directory: ./webapps/world-builder-dashboard
+              env:
+                  VITE_NB_JSON_RPC_URI: ${{ secrets.VITE_NB_JSON_RPC_URI }}
+                  VITE_NB_WB_DASHBOARD_ACCESS_ID: ${{ secrets.VITE_NB_WB_DASHBOARD_ACCESS_ID }}
+              run: |
+                  npm install
+                  npm run build
+
+            - name: Publish to CloudFlare Page
+              uses: cloudflare/pages-action@v1
+              with:
+                  apiToken: ${{ secrets.CF_API_TOKEN_PROD }}
+                  accountId: ${{ secrets.CF_ACCOUNT_ID_PROD }}
+                  projectName: ${{ secrets.CF_PROJECT_NAME_WB_DASHBOARD_PROD }}
+                  directory: ./webapps/world-builder-dashboard/dist
+                  gitHubToken: ${{ secrets.GITHUB_TOKEN }}

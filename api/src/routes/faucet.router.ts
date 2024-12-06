@@ -100,6 +100,22 @@ const faucetRoutes = (): Router => {
     (req: Request, res: Response) => faucetController.getRemainingTime(req, res)
   );
 
+    /**
+   * @swagger
+   * /faucet/balance:
+   *   get:
+   *     summary: Get the current balance of the faucet.
+   *     description: Retrieve the current balance of the faucet contract in Ether.
+   *     responses:
+   *       '200':
+   *         description: A successful response with the faucet balance.
+   *       '500':
+   *         description: Internal server error
+   */
+    FaucetRouter.get('/balance', (req: Request, res: Response) =>
+      faucetController.getBalance(req, res)
+    );
+
   return FaucetRouter;
 };
 
