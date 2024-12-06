@@ -25,6 +25,12 @@ jobs:
 
             - name: Install and build staging app
               working-directory: ./webapps/world-builder-dashboard
+              env:
+                NEXT_PUBLIC_ARBITRUM_SEPOLIA_NB_WB_DASHBOARD_JSON_RPC_URI: ${{ secrets.NEXT_PUBLIC_ARBITRUM_SEPOLIA_NB_WB_DASHBOARD_JSON_RPC_URI }}
+                NEXT_PUBLIC_SEPOLIA_NB_WB_DASHBOARD_JSON_RPC_URI: ${{ secrets.NEXT_PUBLIC_SEPOLIA_NB_WB_DASHBOARD_JSON_RPC_URI }}
+                NEXT_PUBLIC_ETHEREUM_NB_WB_DASHBOARD_JSON_RPC_URI: ${{ secrets.NEXT_PUBLIC_ETHEREUM_NB_WB_DASHBOARD_JSON_RPC_URI }}
+                NEXT_PUBLIC_ARBITRUM_ONE_NB_WB_DASHBOARD_JSON_RPC_URI: ${{ secrets.NEXT_PUBLIC_ARBITRUM_ONE_NB_WB_DASHBOARD_JSON_RPC_URI }}
+                NEXT_PUBLIC_BUILD_TARGET: staging
               run: |
                   npm install
                   npm run build
