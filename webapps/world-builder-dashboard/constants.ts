@@ -1,13 +1,11 @@
 import { NetworkInterface, HighNetworkInterface, NetworkType } from '@/contexts/BlockchainContext'
 import { TokenAddressMap } from 'game7-bridge-sdk'
-import * as dotenv from 'dotenv';
-dotenv.config()
 
 export const L1_NETWORK: NetworkInterface = {
   chainId: 11155111,
   name: 'sepolia',
   displayName: 'Sepolia',
-  rpcs: ['https://eth-sepolia.g.alchemy.com/v2/'],
+  rpcs: [`${import.meta.env.VITE_NB_JSON_RPC_URI}/sepolia/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`],
   blockExplorerUrls: ['https://sepolia.etherscan.io'],
   nativeCurrency: {
     decimals: 18,
@@ -23,7 +21,7 @@ export const L2_NETWORK: HighNetworkInterface = {
   chainId: 421614,
   name: 'arbitrumSepolia',
   displayName: 'Arbitrum Sepolia',
-  rpcs: ['https://sepolia-rollup.arbitrum.io/rpc'],
+  rpcs: [`${import.meta.env.VITE_NB_JSON_RPC_URI}/arbitrum-sepolia/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`],
   blockExplorerUrls: ['https://sepolia.arbiscan.io'],
   nativeCurrency: {
     decimals: 18,
@@ -59,7 +57,7 @@ export const L1_MAIN_NETWORK: NetworkInterface = {
   chainId: 1,
   name: 'ethereum',
   displayName: 'Ethereum',
-  rpcs: [`https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`],
+  rpcs: [`${import.meta.env.VITE_NB_JSON_RPC_URI}/ethereum/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`],
   blockExplorerUrls: ['https://etherscan.io'],
   nativeCurrency: {
     decimals: 18,
@@ -75,7 +73,7 @@ export const L2_MAIN_NETWORK: NetworkInterface = {
   chainId: 42161,
   name: 'arbitrumOne',
   displayName: 'Arbitrum One',
-  rpcs: [`https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`],
+  rpcs: [`${import.meta.env.VITE_NB_JSON_RPC_URI}/arbitrum-one/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`],
   blockExplorerUrls: ['https://arbiscan.io'],
   nativeCurrency: {
     decimals: 18,
