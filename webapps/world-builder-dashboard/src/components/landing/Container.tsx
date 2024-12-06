@@ -27,7 +27,7 @@ const Container: React.FC<ContainerProps> = ({components, isNavbarOpen, setIsNav
 
     useEffect(() => {
         const handleScroll = () => {
-            const progress = window.scrollY / (8000 - window.innerHeight)
+            const progress = window.scrollY / (5000 - window.innerHeight)
             setProgress(progress * 100)
             setPage(Math.min(Math.floor(progress * components.length), components.length - 1));
         };
