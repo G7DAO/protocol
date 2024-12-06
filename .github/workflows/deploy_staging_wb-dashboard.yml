@@ -2,11 +2,11 @@ name: Deploy staging WB dashboard
 
 on:
     push:
-      branches:
-        - staging
-      paths:
-        - '.github/workflows/deploy_staging_wb-dashboard.yml'
-        - 'webapps/world-builder-dashboard/**'
+        branches:
+            - staging
+        paths:
+            - ".github/workflows/deploy_staging_wb-dashboard.yml"
+            - "webapps/world-builder-dashboard/**"
 
 jobs:
     deploy_staging_wb-dashboard:
@@ -26,23 +26,23 @@ jobs:
             - name: Install and build staging app
               working-directory: ./webapps/world-builder-dashboard
               env:
-                NEXT_PUBLIC_NB_JSON_RPC_URI: ${{ secrets.NEXT_PUBLIC_NB_JSON_RPC_URI }}
-                NEXT_PUBLIC_NB_WB_DASHBOARD_ACCESS_ID: ${{ secrets.NEXT_PUBLIC_NB_WB_DASHBOARD_ACCESS_ID }}
-                NEXT_PUBLIC_BUILD_TARGET: staging
+                  VITE_NB_JSON_RPC_URI: ${{ secrets.VITE_NB_JSON_RPC_URI }}
+                  VITE_NB_WB_DASHBOARD_ACCESS_ID: ${{ secrets.VITE_NB_WB_DASHBOARD_ACCESS_ID }}
+                  VITE_BUILD_TARGET: staging
               run: |
                   npm install
                   npm run build
-            
+
             - name: Update robots.txt, block alpha for crawlers
               working-directory: ./webapps/world-builder-dashboard/dist
               run: |
-                sed -i "s/Disallow:.*/Disallow: \//" robots.txt
+                  sed -i "s/Disallow:.*/Disallow: \//" robots.txt
 
             - name: Publish to CloudFlare Page
               uses: cloudflare/pages-action@v1
               with:
-                    apiToken: ${{ secrets.CF_API_TOKEN_STAGE }}
-                    accountId: ${{ secrets.CF_ACCOUNT_ID_STAGE }}
-                    projectName: ${{ secrets.CF_PROJECT_NAME_WB_DASHBOARD_STAGE }}
-                    directory: ./webapps/world-builder-dashboard/dist
-                    gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+                  apiToken: ${{ secrets.CF_API_TOKEN_STAGE }}
+                  accountId: ${{ secrets.CF_ACCOUNT_ID_STAGE }}
+                  projectName: ${{ secrets.CF_PROJECT_NAME_WB_DASHBOARD_STAGE }}
+                  directory: ./webapps/world-builder-dashboard/dist
+                  gitHubToken: ${{ secrets.GITHUB_TOKEN }}
