@@ -52,7 +52,7 @@
 }
 
 .container:hover {
-  border: 1px solid var(--Primary-600, #F04438);
+  border: 1px solid var(--Primary-700, #F04438);
   background: var(--Primary-700, #F04438);
   transition: all linear 200ms;
 
@@ -77,7 +77,7 @@
   border-radius: 8px;
   background: var(--Disabled-Button, #393939);
   cursor: not-allowed;
-  border: none;
+  /* border: none; */
 }
 
 /*Mantine */

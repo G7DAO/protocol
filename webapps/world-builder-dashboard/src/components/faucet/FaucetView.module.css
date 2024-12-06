@@ -203,6 +203,20 @@
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
 }
 
+.requestTokensButton:hover {
+  cursor: pointer;
+  display: flex;
+  height: 36px;
+  padding: 8px var(--14px, 14px);
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  border: 1px solid #D92D20;
+  background: #D92D20;
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+}
+
 .requestTokensButtonDisabled {
   cursor: not-allowed;
   display: flex;
@@ -228,7 +242,7 @@
   line-height: 20px; /* 142.857% */ 
 }
 
-.requestTokensButtonDisabled {
+.requestTokensButtonDisabledText {
   color: rgba(255, 255, 255, 0.7); /* Font opacity via RGBA */
 }
 
