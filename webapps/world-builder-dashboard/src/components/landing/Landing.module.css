@@ -101,6 +101,29 @@ body {
   line-height: 20px;
 }
 
+.navbarCTA {
+  cursor: url('../../assets/hand.svg'), pointer;
+  display: flex;
+  padding: 10px 16px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  border: 1px solid #f04438;
+  background: #f04438;
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  color: #fff;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.navbarCTAMobile {
+  width: 100%;
+}
+
 .navbarCTA:hover {
   display: inline-flex;
   padding: 10px 16px;

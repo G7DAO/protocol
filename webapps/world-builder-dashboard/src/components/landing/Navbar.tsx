@@ -76,7 +76,7 @@ const Navbar: React.FC<NavbarProps> = ({ navbarOpen, smallView, setIsNavbarOpen,
             </div>
           ))}
           <div className={styles.ctaContainer}>
-            <div className={styles.navbarCTA} onClick={startBuilding}>
+            <div className={`${styles.navbarCTA} ${styles.navbarCTAMobile}`} onClick={startBuilding}>
               Start Building
             </div>
           </div>
