@@ -1,11 +1,14 @@
-import { NetworkInterface, HighNetworkInterface, NetworkType } from '@/contexts/BlockchainContext'
 import { TokenAddressMap } from 'game7-bridge-sdk'
+import { NetworkInterface, HighNetworkInterface, NetworkType } from '@/contexts/BlockchainContext'
+import * as 
 
 export const L1_NETWORK: NetworkInterface = {
   chainId: 11155111,
   name: 'sepolia',
   displayName: 'Sepolia',
-  rpcs: ['https://eth-sepolia.g.alchemy.com/v2/C-njXZM_UTlPbC2ukOvg4ojFz2V9yCS6'],
+  rpcs: [
+    `${process.env.NEXT_PUBLIC_NB_JSON_RPC_URI}/sepolia/jsonrpc/${process.env.NEXT_PUBLIC_NB_WB_DASHBOARD_ACCESS_ID}`
+  ],
   blockExplorerUrls: ['https://sepolia.etherscan.io'],
   nativeCurrency: {
     decimals: 18,
@@ -21,7 +24,7 @@ export const L2_NETWORK: HighNetworkInterface = {
   chainId: 421614,
   name: 'arbitrumSepolia',
   displayName: 'Arbitrum Sepolia',
-  rpcs: ['https://nb.moonstream.to/nb/arbitrum-sepolia/jsonrpc/36c13893-c382-405b-a73c-1af3e9e25700'],
+  rpcs: [`${process.env.NEXT_PUBLIC_NB_JSON_RPC_URI}/arbitrum-sepolia/jsonrpc/${process.env.NEXT_PUBLIC_NB_WB_DASHBOARD_ACCESS_ID}`],
   blockExplorerUrls: ['https://sepolia.arbiscan.io'],
   nativeCurrency: {
     decimals: 18,
@@ -57,7 +60,7 @@ export const L1_MAIN_NETWORK: NetworkInterface = {
   chainId: 1,
   name: 'ethereum',
   displayName: 'Ethereum',
-  rpcs: ['https://eth-mainnet.g.alchemy.com/v2/C-njXZM_UTlPbC2ukOvg4ojFz2V9yCS6'],
+  rpcs: [`${process.env.NEXT_PUBLIC_NB_JSON_RPC_URI}/ethereum/jsonrpc/${process.env.NEXT_PUBLIC_NB_WB_DASHBOARD_ACCESS_ID}`],
   blockExplorerUrls: ['https://etherscan.io'],
   nativeCurrency: {
     decimals: 18,
@@ -73,7 +76,7 @@ export const L2_MAIN_NETWORK: NetworkInterface = {
   chainId: 42161,
   name: 'arbitrumOne',
   displayName: 'Arbitrum One',
-  rpcs: ['https://arb-mainnet.g.alchemy.com/v2/C-njXZM_UTlPbC2ukOvg4ojFz2V9yCS6'],
+  rpcs: [`${process.env.NEXT_PUBLIC_NB_JSON_RPC_URI}/arbitrum-one/jsonrpc/${process.env.NEXT_PUBLIC_NB_WB_DASHBOARD_ACCESS_ID}`],
   blockExplorerUrls: ['https://arbiscan.io'],
   nativeCurrency: {
     decimals: 18,
@@ -106,7 +109,6 @@ export const ALL_HIGH_TESTNET_NETWORKS = [L2_NETWORK, L3_NETWORK]
 export const ALL_LOW_TESTNET_NETWORKS = [L1_NETWORK, L2_NETWORK]
 export const ALL_HIGH_MAINNET_NETWORKS = [L2_MAIN_NETWORK, L3_MAIN_NETWORK]
 export const ALL_LOW_MAINNET_NETWORKS = [L1_MAIN_NETWORK, L2_MAIN_NETWORK]
-
 
 export const L3_NATIVE_TOKEN_SYMBOL = 'TG7T'
 export const DEFAULT_LOW_NETWORK = L1_NETWORK
@@ -159,8 +161,6 @@ export const USDC_MAINNET: TokenAddressMap = {
   42161: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
   1: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
 }
-
-
 
 export const getNetworks = (selectedNetworkType: NetworkType) => {
   switch (selectedNetworkType) {
