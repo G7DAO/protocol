@@ -1,3 +1,4 @@
+import { TokenAddressMap } from 'game7-bridge-sdk'
 import { NetworkInterface, HighNetworkInterface, NetworkType } from '@/contexts/BlockchainContext'
 import { TokenAddressMap } from 'game7-bridge-sdk'
 
@@ -107,7 +108,6 @@ export const ALL_LOW_TESTNET_NETWORKS = [L1_NETWORK, L2_NETWORK]
 export const ALL_HIGH_MAINNET_NETWORKS = [L2_MAIN_NETWORK, L3_MAIN_NETWORK]
 export const ALL_LOW_MAINNET_NETWORKS = [L1_MAIN_NETWORK, L2_MAIN_NETWORK]
 
-
 export const L3_NATIVE_TOKEN_SYMBOL = 'TG7T'
 export const DEFAULT_LOW_NETWORK = L1_NETWORK
 export const DEFAULT_HIGH_NETWORK = L2_NETWORK
@@ -159,8 +159,6 @@ export const USDC_MAINNET: TokenAddressMap = {
   42161: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
   1: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
 }
-
-
 
 export const getNetworks = (selectedNetworkType: NetworkType) => {
   switch (selectedNetworkType) {
