@@ -891,3 +891,9 @@ body {
     min-width: 340px;
   }
 }
+
+@media(min-width: 1860px) {
+  .networkEssentialCards {
+    justify-content: center;  /*cards fit to container */
+  }
+}
