@@ -30,7 +30,7 @@ const bridgeController = new BridgeController();
  *       '500':
  *         description: Internal server error.
  */
-router.get('/:address/transactions', (req: Request, res: Response) =>
+router.get('/:chain/:address/transactions', (req: Request, res: Response) =>
     bridgeController.getTransactionHistory(req, res)
 );
 

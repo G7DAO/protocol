@@ -1,4 +1,4 @@
-name: Prepare release
+name: Prepare release game7 app
 
 on:
     push:
@@ -6,7 +6,7 @@ on:
             - "game7-v*"
 
 jobs:
-    create_release:
+    release-game7:
         runs-on: ubuntu-20.04
         steps:
             - uses: actions/create-release@v1

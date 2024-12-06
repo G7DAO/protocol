@@ -70,4 +70,16 @@ export class FaucetController {
       return res.status(500).send({ status: 'error', result: "Internal server error" });
     }
   }
+  async getBalance(req: Request, res: Response) {
+    try {
+      console.log(`[FaucetController::getBalance] Retrieving faucet balance`);
+      const { address, balance } = await this.faucetService.getBalance();
+      console.log(`[FaucetController::getBalance] Signer Address: ${address}, Balance: ${balance} ETH`);
+      return res.status(200).send({ status: 'success', result: { address, balance } });
+    } catch (error: any) {
+      const decodedError = await tokenSenderErrorDecoder.decode(error);
+      console.log(`[FaucetController::getBalance] Error retrieving balance: ${decodedError.name} - ${decodedError.args}`);
+      return res.status(500).send({ status: 'error', result: "Internal server error" });
+    }
+  }
 }

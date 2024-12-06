@@ -1,15 +1,21 @@
-name: Build
+name: Build Smart Contracts
 
 on:
     pull_request:
         branches:
             - main
+        paths:
+          - '.github/workflows/build_web3.yml'
+          - 'web3/**'
 
 jobs:
-    build:
+    build_web3:
         runs-on: ubuntu-20.04
         steps:
-            - uses: actions/checkout@v3
+            - name: Checkout
+              uses: actions/checkout@v3
+              with:
+                submodules: recursive # Ensure submodules are checked out and
             - name: Install Node.js
               uses: actions/setup-node@v3
               with:

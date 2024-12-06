@@ -5,11 +5,11 @@ on:
     branches:
       - main
     paths:
-      - '.github/workflows/prod_deploy_protocol-api.yml'
+      - '.github/workflows/deploy_prod_protocol-api.yml'
       - "api/**"
 
 jobs:
-  prod_deploy_protocol-api:
+  deploy_prod_protocol-api:
     runs-on: ubuntu-latest
 
     steps:
