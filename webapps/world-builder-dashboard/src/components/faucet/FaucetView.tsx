@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useNavigate } from 'react-router-dom'
 import { FAUCET_CHAIN, getNetworks, L3_NATIVE_TOKEN_SYMBOL, L3_NETWORK } from '../../../constants'
 import { AccountType } from '../commonComponents/accountSelector/AccountSelector'
 import AccountSelector from '../commonComponents/accountSelector/AccountSelector'
@@ -12,7 +13,6 @@ import { useUISettings } from '@/contexts/UISettingsContext'
 import { useFaucetAPI } from '@/hooks/useFaucetAPI'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { timeDifferenceInHoursAndMinutes, timeDifferenceInHoursMinutesAndSeconds } from '@/utils/timeFormat'
-import { useNavigate } from 'react-router-dom'
 
 interface FaucetViewProps {}
 const FaucetView: React.FC<FaucetViewProps> = ({}) => {
@@ -37,7 +37,6 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
   if (selectedNetworkType === 'mainnet') {
     navigate('/bridge')
   }
-
 
   useEffect(() => {
     const targetNetwork = networks?.find((n) => n.chainId === faucetTargetChainId)
@@ -105,14 +104,19 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
     {
       onSuccess: (data: TransactionRecord | undefined, { address }) => {
         try {
-          const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
+          const transactionsString = localStorage.getItem(
+            `bridge-${connectedAccount}-transactions-${selectedNetworkType}`
+          )
 
           let transactions = []
           if (transactionsString) {
             transactions = JSON.parse(transactionsString)
           }
           transactions.push({ ...data })
-          localStorage.setItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`, JSON.stringify(transactions))
+          localStorage.setItem(
+            `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
+            JSON.stringify(transactions)
+          )
         } catch (e) {
           console.log(e)
         }
@@ -179,7 +183,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
       enabled: !!address && !!faucetIntervalQuery.data && !!lastClaimedTimestampQuery.data
     }
   )
-  
+
   useEffect(() => {
     let isButtonDisabled = true
 
@@ -239,7 +243,8 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
       <div className={styles.header}>
         <div className={styles.title}>G7 Sepolia Faucet</div>
         <div className={styles.supportingText}>
-          Request <strong> 1 {L3_NATIVE_TOKEN_SYMBOL} token </strong> to your connected wallet or an external address on G7 Sepolia.
+          Request <strong> 1 {L3_NATIVE_TOKEN_SYMBOL} token </strong> to your connected wallet or an external address on
+          G7 Sepolia.
         </div>
       </div>
       <div className={styles.contentContainer}>
@@ -310,7 +315,9 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
           }}
           disabled={requestDisabled}
         >
-          <div className={styles.requestTokensButtonText}>{claim.isLoading ? `Requesting...` : `Request Tokens`}</div>
+          <div className={`${styles.requestTokensButtonText} ${requestDisabled ? styles.requestTokensButtonDisabled : ''}`}>
+            {claim.isLoading ? `Requesting...` : `Request Tokens`}
+          </div>
         </button>
       </div>
     </div>

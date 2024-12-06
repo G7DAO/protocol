@@ -30,7 +30,7 @@
 }
 
 .errorMessage {
-  color: var(--Error-600, #D92D20);
+  color: var(--Error-600, #d92d20);
   text-align: right;
 
   /* Text xs/Medium */
@@ -67,7 +67,8 @@
   line-height: 18px; /* 150% */
 }
 
-.inputGroup, .inputWithError {
+.inputGroup,
+.inputWithError {
   display: flex;
   padding-left: 12px;
   align-items: center;
@@ -101,7 +102,7 @@
 }
 
 .inputWithError {
-  border: 1px solid var(--Error-500, #F04438);
+  border: 1px solid var(--Error-500, #f04438);
 }
 
 .maxButton {
@@ -126,6 +127,7 @@
 
 .maxButton:disabled {
   background: var(--Disabled-Button, #475467);
+  color: rgba(255, 255, 255, 0.7); /* Font opacity via RGBA */
   cursor: not-allowed;
 }
 
@@ -149,7 +151,6 @@
   font-weight: 600;
   line-height: 20px; /* 142.857% */
 }
-
 
 @media (max-width: 1199px) {
   .input {

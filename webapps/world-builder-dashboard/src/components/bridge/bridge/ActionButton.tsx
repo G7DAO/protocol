@@ -177,7 +177,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
             ((!L2L3message?.destination || !L2L3message.data) && Number(amount) === 0))
         }
       >
-        <div className={isConnecting || transfer.isLoading ? styles.buttonLabelLoading : styles.buttonLabel}>
+        <div className={isConnecting || transfer.isLoading || isDisabled ? styles.buttonLabelLoading : styles.buttonLabel}>
           {getLabel() ?? 'Submit'}
         </div>
       </button>

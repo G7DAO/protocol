@@ -20,7 +20,8 @@ body {
 }
 
 .layout.darkened {
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent dark overlay */
+  background: rgba(57, 57, 57, 0.7);
+  backdrop-filter: blur(8px); /* Semi-transparent dark overlay */
   pointer-events: none; /* Prevent interactions with the background */
 }
 
@@ -842,7 +843,8 @@ body {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.75);
+    background: rgba(57, 57, 57, 0.7);
+    backdrop-filter: blur(8px);
     z-index: 999;
   }
 

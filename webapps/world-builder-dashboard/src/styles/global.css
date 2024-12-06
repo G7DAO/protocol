@@ -171,6 +171,6 @@ button {
   --Selected-Theme-Icon: #ffffff;
   --Connect-Wallet-Button-Faucet: #fda29b;
   --Connect-Wallet-Text-Faucet: #912018;
-
-  --Disabled-Button: #393939;
+  --Disabled-Button: #F04438;
+  --Disabled-Text: opacity: 0.7;
 }
