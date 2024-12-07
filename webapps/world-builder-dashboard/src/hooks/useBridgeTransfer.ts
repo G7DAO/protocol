@@ -16,7 +16,7 @@ interface UseTransferDataProps {
 export const useBridgeTransfer = () => {
   const { connectedAccount, selectedNetworkType, switchChain } = useBlockchainContext()
   // Retry function with exponential backoff for handling 429 errors
-  const retryWithExponentialBackoff = async (fn: () => Promise<any>, retries = 5, delay = 1000, jitterFactor = 0.5) => {
+  const retryWithExponentialBackoff = async (fn: () => Promise<any>, retries = 20, delay = 1000, jitterFactor = 0.5) => {
     let attempt = 0
 
     while (attempt < retries) {
@@ -59,7 +59,7 @@ export const useBridgeTransfer = () => {
       return isPending && timeSinceLastUpdate > 1 * 60 * 1000
     }
 
-    let status: any
+    let transferStatus: any
 
     return useQuery(
       ['transferData', txHash],
@@ -82,7 +82,9 @@ export const useBridgeTransfer = () => {
 
         try {
           // Fetch status with retry logic
-          status = await retryWithExponentialBackoff(async () => await _bridgeTransfer.getStatus())
+          const statusResponse = await retryWithExponentialBackoff(async () => await _bridgeTransfer.getStatus())
+          transferStatus = statusResponse
+
 
           // Update the cache with the latest status
           const newTransactions = transactions.map((t: any) => {
@@ -90,7 +92,7 @@ export const useBridgeTransfer = () => {
               ? t.lowNetworkHash === txRecord.lowNetworkHash
               : t.highNetworkHash === txRecord.highNetworkHash
 
-            return isSameHash ? { ...t, status: status?.status, lastUpdated: Date.now() } : t
+            return isSameHash ? { ...t, status: statusResponse?.status, lastUpdated: Date.now() } : t
           })
 
           localStorage.setItem(
@@ -98,7 +100,7 @@ export const useBridgeTransfer = () => {
             JSON.stringify(newTransactions)
           )
 
-          return status
+          return statusResponse
         } catch (error) {
           console.error('Error fetching status:', error)
 
@@ -109,8 +111,8 @@ export const useBridgeTransfer = () => {
           )
 
           if (cachedTransaction && cachedTransaction.status !== undefined) {
-            status = cachedTransaction.status
-            return { status, ...cachedTransaction } // Return cached status
+            transferStatus = cachedTransaction.status
+            return { status: transferStatus, ...cachedTransaction } // Return cached status
           }
 
           throw error // Re-throw error if no cache
@@ -125,8 +127,8 @@ export const useBridgeTransfer = () => {
           )
 
           if (cachedTransaction && cachedTransaction.status !== undefined) {
-            status = cachedTransaction.status
-            return { status }
+            transferStatus = cachedTransaction.status
+            return { status: transferStatus }
           }
         },
         staleTime: 0.5 * 60 * 1000,
@@ -235,20 +237,21 @@ export const useBridgeTransfer = () => {
     const destinationRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === destinationChainId)?.rpcs[0]
     const originRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === originChainId)?.rpcs[0]
 
-    // Check cache before setting up the query
-    const cachedTransactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
-    const cachedTransaction = cachedTransactions.find((t: any) =>
-      isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
-    )
-    const hasCachedInputs = cachedTransaction?.transactionInputs !== undefined
-
 
     return useQuery(
       ['transactionInputs', txHash],
       async () => {
-        if (hasCachedInputs) {
+        // Get fresh cache data
+        const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
+        const cachedTransaction = transactions.find((t: any) =>
+          isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
+        )
+
+        // Check if we have cached inputs
+        if (cachedTransaction?.transactionInputs !== undefined) {
           return cachedTransaction.transactionInputs
         }
+
         const _bridgeTransfer = new BridgeTransfer({
           txHash: txHash ?? '',
           destinationNetworkChainId: destinationChainId ?? 0,
@@ -257,17 +260,17 @@ export const useBridgeTransfer = () => {
           originSignerOrProviderOrRpc: originRpc
         })
 
-        const transactionInputs = await retryWithExponentialBackoff(async () => await _bridgeTransfer.getInfo())
+        const transactionInputs = await retryWithExponentialBackoff(
+          async () => _bridgeTransfer.getInfo()
+        )
 
-        const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
-
-        // Update the cache with the latest status
+        // Update cache with new data
         const newTransactions = transactions.map((t: any) => {
           const isSameHash = isDeposit
             ? t.lowNetworkHash === txRecord.lowNetworkHash
             : t.highNetworkHash === txRecord.highNetworkHash
 
-          return isSameHash ? { ...t, transactionInputs: transactionInputs } : t
+          return isSameHash ? { ...t, transactionInputs: transactionInputs, lastUpdated: Date.now() } : t
         })
 
         localStorage.setItem(
@@ -278,9 +281,12 @@ export const useBridgeTransfer = () => {
       },
       {
         placeholderData: () => {
-          if (hasCachedInputs) {
-            return cachedTransaction.transactionInputs
-          }
+          // Get fresh cache data for placeholder
+          const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
+          const cachedTransaction = transactions.find((t: any) =>
+            isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
+          )
+          return cachedTransaction?.transactionInputs
         },
         staleTime: 30 * 60 * 1000,
         refetchOnWindowFocus: false,
@@ -288,7 +294,6 @@ export const useBridgeTransfer = () => {
       }
     )
   }
-
   const getHighNetworkTimestamp = ({
     txRecord,
     transferStatus,
