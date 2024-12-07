@@ -1,5 +1,5 @@
 // LandingPage.tsx
-import React, { useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './LandingPage.module.css'
 import { useMediaQuery } from 'summon-ui/mantine'
@@ -10,6 +10,7 @@ import MainSection from '@/components/landing/MainSection'
 import Navbar from '@/components/landing/Navbar'
 import NetworkEssentials from '@/components/landing/NetworksEssentials'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
+import backgroundImage from "@/assets/G7LandingPageBGDark.jpg";
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate()
@@ -17,6 +18,17 @@ const LandingPage: React.FC = () => {
   const [navbarOpen, setNavBarOpen] = useState<boolean>(false)
   const smallView = useMediaQuery('(max-width: 750px)')
   const isLargeView = useMediaQuery('(min-width: 1440px)')
+
+  const [backgroundStyle, setBackgroundStyle] = useState<string | undefined>();
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = backgroundImage as string;
+
+    img.onload = () => {
+      setBackgroundStyle(`#1b1b1b url(${backgroundImage}) 50% / cover no-repeat`);
+    };
+  }, []);
 
   const startBuilding = () => {
     setSelectedNetworkType('Testnet')
@@ -63,7 +75,9 @@ const LandingPage: React.FC = () => {
             navigateLink={navigateLink}
           />
 
-          <div className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}`}>
+          <div className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}`}
+               style={backgroundStyle ? { background: backgroundStyle } : undefined}
+          >
             <MainSection smallView={!!smallView} startBuilding={startBuilding} />
             <BenefitsSection />
             <AlliesSection />
