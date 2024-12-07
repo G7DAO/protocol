@@ -150,9 +150,8 @@ body {
   align-self: stretch;
   border-radius: 12px;
   border: 1px solid #727272;
-  background: url('../../assets/G7LandingPageBGDark.jpg') lightgray 50% / cover no-repeat;
+  background-color: #1b1b1b;
   overflow-y: scroll;
-  padding: 40px;
   scrollbar-width: none;
   -ms-overflow-style: none;
   transition: justify-content 0.3s ease;
@@ -889,5 +888,11 @@ body {
 
   .networkEssentialCard {
     min-width: 340px;
+  }
+}
+
+@media(min-width: 1860px) {
+  .networkEssentialCards {
+    justify-content: center;  /*cards fit to container */
   }
 }
