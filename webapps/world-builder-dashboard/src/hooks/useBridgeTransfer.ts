@@ -23,11 +23,18 @@ export const useBridgeTransfer = () => {
       try {
         return await fn()
       } catch (error: any) {
-        const retryableStatusCodes = [429, 503]
-        if (retryableStatusCodes.includes(error?.response?.status) && attempt < retries - 1) {
+        // Add network failure errors to retryable conditions
+        const isNetworkError = error.message?.includes('net::ERR_FAILED') ||
+          error.message?.includes('Network Error') ||
+          error.code === 'ECONNABORTED' ||
+          !error.response;
+        const retryableStatusCodes = [429, 503, 502, 500];
+
+        if ((isNetworkError || retryableStatusCodes.includes(error?.response?.status)) && attempt < retries - 1) {
           const baseDelay = delay * 2 ** attempt
           const jitter = baseDelay * (Math.random() * jitterFactor * 2 - jitterFactor)
           const retryDelay = Math.max(baseDelay + jitter, 0)
+          console.warn(`Retry attempt ${attempt + 1}/${retries} after ${retryDelay}ms due to:`, error.message)
           await new Promise((resolve) => setTimeout(resolve, retryDelay))
           attempt++
         } else {
@@ -76,8 +83,6 @@ export const useBridgeTransfer = () => {
         try {
           // Fetch status with retry logic
           status = await retryWithExponentialBackoff(async () => await _bridgeTransfer.getStatus())
-
-          const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
 
           // Update the cache with the latest status
           const newTransactions = transactions.map((t: any) => {
@@ -255,6 +260,7 @@ export const useBridgeTransfer = () => {
         const transactionInputs = await retryWithExponentialBackoff(
           async () => _bridgeTransfer.getInfo()
         )
+        console.log(transactionInputs)
         const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
 
         // Update the cache with the latest status
