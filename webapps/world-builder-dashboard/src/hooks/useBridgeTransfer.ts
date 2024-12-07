@@ -257,10 +257,8 @@ export const useBridgeTransfer = () => {
           originSignerOrProviderOrRpc: originRpc
         })
 
-        const transactionInputs = await retryWithExponentialBackoff(
-          async () => _bridgeTransfer.getInfo()
-        )
-        console.log(transactionInputs)
+        const transactionInputs = await retryWithExponentialBackoff(async () => await _bridgeTransfer.getInfo())
+
         const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
 
         // Update the cache with the latest status
