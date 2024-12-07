@@ -55,9 +55,15 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                 </div>
               </div>
               <div className={styles.gridItem}>{timeAgo(deposit.lowNetworkTimestamp)}</div>
-              <div
-                className={styles.gridItem}
-              >{`${transactionInputs?.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs?.amount, 6) : deposit.amount} ${transactionInputs?.tokenSymbol}`}</div>
+              {!transactionInputs?.tokenSymbol ? (
+                <div className={styles.gridItem}>
+                  <div className={styles.loading}>Loading</div>
+                </div>
+              ) : (
+                <div className={styles.gridItem}>
+                  {`${transactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs.amount, 6) : deposit.amount} ${transactionInputs.tokenSymbol}`}
+                </div>
+              )}
               <div className={styles.gridItem}>{depositInfo.from}</div>
               <div className={styles.gridItem}>{depositInfo.to}</div>
               <>
@@ -74,8 +80,8 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                   >
                     <div className={styles.gridItem}>
                       {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
-                      transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||
-                      transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ? (
+                        transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||
+                        transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ? (
                         <div className={styles.settled}>
                           Completed
                           <IconLinkExternal02 stroke='#fff' />
@@ -98,8 +104,8 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                 ) : (
                   <div className={styles.gridItemImportant}>
                     {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
-                    transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||
-                    transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ? (
+                      transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||
+                      transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ? (
                       <>{timeAgo(highNetworkTimestamp)}</>
                     ) : (
                       <>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)}</>
