@@ -23,14 +23,15 @@ export const useBridgeTransfer = () => {
       try {
         return await fn()
       } catch (error: any) {
-        if (error?.response?.status === 429 && attempt < retries - 1) {
-          const baseDelay = delay *2**attempt
-          const jitter = baseDelay * (Math.random() * jitterFactor * 2 - jitterFactor) 
+        const retryableStatusCodes = [429, 503]
+        if (retryableStatusCodes.includes(error?.response?.status) && attempt < retries - 1) {
+          const baseDelay = delay * 2 ** attempt
+          const jitter = baseDelay * (Math.random() * jitterFactor * 2 - jitterFactor)
           const retryDelay = Math.max(baseDelay + jitter, 0)
           await new Promise((resolve) => setTimeout(resolve, retryDelay))
           attempt++
         } else {
-          throw error // Rethrow error if not 429 or max retries reached
+          throw error
         }
       }
     }
@@ -56,6 +57,14 @@ export const useBridgeTransfer = () => {
     return useQuery(
       ['transferData', txHash],
       async () => {
+        const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
+        const cachedTransaction = transactions.find((t: any) =>
+          isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
+        )
+
+        if (cachedTransaction?.status && !shouldFetchStatus(cachedTransaction)) {
+          return { status: cachedTransaction.status }
+        }
         const _bridgeTransfer = new BridgeTransfer({
           txHash: txHash ?? '',
           destinationNetworkChainId: destinationChainId ?? 0,
@@ -96,7 +105,7 @@ export const useBridgeTransfer = () => {
 
           if (cachedTransaction && cachedTransaction.status !== undefined) {
             status = cachedTransaction.status
-            return { status } // Return cached status
+            return { status, ...cachedTransaction } // Return cached status
           }
 
           throw error // Re-throw error if no cache
@@ -221,9 +230,20 @@ export const useBridgeTransfer = () => {
     const destinationRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === destinationChainId)?.rpcs[0]
     const originRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === originChainId)?.rpcs[0]
 
+    // Check cache before setting up the query
+    const cachedTransactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
+    const cachedTransaction = cachedTransactions.find((t: any) =>
+      isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
+    )
+    const hasCachedInputs = cachedTransaction?.transactionInputs !== undefined
+
+
     return useQuery(
       ['transactionInputs', txHash],
       async () => {
+        if (hasCachedInputs) {
+          return cachedTransaction.transactionInputs
+        }
         const _bridgeTransfer = new BridgeTransfer({
           txHash: txHash ?? '',
           destinationNetworkChainId: destinationChainId ?? 0,
@@ -232,8 +252,9 @@ export const useBridgeTransfer = () => {
           originSignerOrProviderOrRpc: originRpc
         })
 
-        const transactionInputs = await _bridgeTransfer.getInfo()
-
+        const transactionInputs = await retryWithExponentialBackoff(
+          async () => _bridgeTransfer.getInfo()
+        )
         const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
 
         // Update the cache with the latest status
@@ -253,15 +274,11 @@ export const useBridgeTransfer = () => {
       },
       {
         placeholderData: () => {
-          const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
-          const cachedTransaction = transactions.find((t: any) =>
-            isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
-          )
-          if (cachedTransaction && cachedTransaction.transactionInputs !== undefined) {
-            return cachedTransaction?.transactionInputs
+          if (hasCachedInputs) {
+            return cachedTransaction.transactionInputs
           }
         },
-        staleTime: 2 * 60 * 1000,
+        staleTime: 30 * 60 * 1000,
         refetchOnWindowFocus: false,
         enabled: !!txRecord
       }
@@ -320,7 +337,7 @@ export const useBridgeTransfer = () => {
           return cachedTransaction?.highNetworkTimestamp
         },
 
-        staleTime: 1 * 60 * 1000,
+        staleTime: Infinity,
         refetchInterval: false,
         refetchOnWindowFocus: false,
         enabled: !!txRecord && !!transferStatus?.completionTxHash // Run query only if data is valid
