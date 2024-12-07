@@ -63,12 +63,12 @@ const ActionButtonStake: React.FC<ActionButtonStakeProps> = ({ actionType, param
             const provider = await getProvider(L3_NETWORK)
             if (actionType === 'CREATEPOOL') {
                 const { tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds } = params as CreatePoolParams
-                _createPool.mutate({ tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds, provider });
+                _createPool.mutateAsync({ tokenType, tokenAddress, tokenID, transferable, lockupSeconds, cooldownSeconds, provider });
                 return
             }
             if (actionType === 'EDITPOOL') {
                 const { poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds } = params as EditPoolParams
-                _editPool.mutate({ poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds, provider });
+                _editPool.mutateAsync({ poolId, changeTransferability, transferable, changeLockup, lockupSeconds, changeCooldown, cooldownSeconds, provider });
                 return
             }
         } else {

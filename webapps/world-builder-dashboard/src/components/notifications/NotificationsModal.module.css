@@ -19,7 +19,7 @@
     align-items: flex-start;
     gap: 4px;
     align-self: stretch;
-    border-bottom: 1px solid var(--Gray-200, #EAECF0);
+    border-bottom: 1px solid #393939;
     background: var(--Base-White, #FFF);
 }
 
@@ -63,11 +63,11 @@
 
     border-radius: 8px;
     cursor: pointer;
-    stroke: #667085;
+    stroke: #B9B9B9;
 
 }
 .closeButton:hover {
-    stroke: var(--Gray-600, #475467);
+    stroke: #fff;
 }
 
 .itemsContainer {
@@ -87,7 +87,7 @@
     align-self: stretch;
     width: 100%;
 
-    border-bottom: 1px solid var(--Gray-200, #EAECF0);
+    border-bottom: 1px solid #393939;
 }
 
 .itemWithoutBorder {
@@ -175,7 +175,7 @@
 }
 
 .headerTime {
-    color: var(--Gray-500, #667085);
+    color: #B9B9B9;
 
     /* Text sm/Regular */
     font-size: 14px;

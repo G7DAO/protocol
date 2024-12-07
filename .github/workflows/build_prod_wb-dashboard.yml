@@ -1,13 +1,13 @@
 name: Build prod WB dashboard
 
 on:
-  pull_request:
-    branches:
-      - "main"
-      - "staging"
-    paths:
-      - '.github/workflows/build_prod_wb-dashboard.yml'
-      - 'webapps/world-builder-dashboard/**'
+    pull_request:
+        branches:
+            - "main"
+            - "staging"
+        paths:
+            - ".github/workflows/build_prod_wb-dashboard.yml"
+            - "webapps/world-builder-dashboard/**"
 
 jobs:
     build_prod_wb-dashboard:
@@ -24,6 +24,9 @@ jobs:
 
             - name: Build frontend
               working-directory: ./webapps/world-builder-dashboard
+              env:
+                  VITE_NB_JSON_RPC_URI: ${{ secrets.VITE_NB_JSON_RPC_URI }}
+                  VITE_NB_WB_DASHBOARD_ACCESS_ID: ${{ secrets.VITE_NB_WB_DASHBOARD_ACCESS_ID }}
               run: |
                   npm install
                   npm run build

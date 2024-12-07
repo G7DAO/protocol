@@ -15,7 +15,7 @@ import { FloatingNotification } from '@/components/notifications/NotificationsDr
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 // Hooks
-import { useNotifications, usePendingTransactions } from '@/hooks/useL2ToL1MessageStatus'
+import { useNotifications } from '@/hooks/useL2ToL1MessageStatus'
 import { useMediaQuery } from '@mantine/hooks'
 
 export type DepositDirection = 'DEPOSIT' | 'WITHDRAW'
@@ -24,7 +24,6 @@ const BridgePage = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const { connectedAccount } = useBlockchainContext()
-  const pendingTransacions = usePendingTransactions(connectedAccount)
   const [notificationsOffset] = useState(0)
   const [notificationsLimit] = useState(10)
   const [direction, setDirection] = useState<DepositDirection>('DEPOSIT')
@@ -35,17 +34,17 @@ const BridgePage = () => {
   const queryClient = useQueryClient()
 
   useEffect(() => {
-    if (pendingTransacions.data && connectedAccount) {
+    if (connectedAccount) {
       queryClient.refetchQueries(['incomingMessages'])
       refetchNewNotifications(connectedAccount)
     }
-  }, [pendingTransacions.data, connectedAccount])
+  }, [connectedAccount])
 
   return (
     <div className={styles.container}>
       <div className={styles.top}>
         <div className={styles.headerContainer}>
-          {notifications.data && <FloatingNotification notifications={newNotifications} />}
+          {notifications.data && <FloatingNotification notifications={newNotifications}/>}
           <div className={styles.title}>Bridge</div>
           <NotificationsButton notifications={notifications.data ?? []} />
         </div>
@@ -67,16 +66,6 @@ const BridgePage = () => {
             onClick={() => navigate('/bridge/transactions')}
           >
             History
-          </button>
-          <button
-            className={
-              location.pathname === '/bridge/settings'
-                ? styles.selectedNavigationButton
-                : styles.unselectedNavigationButton
-            }
-            onClick={() => navigate('/bridge/settings')}
-          >
-            Settings
           </button>
         </div>
       </div>

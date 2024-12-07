@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import styles from './HistoryHeader.module.css'
 import { Icon } from 'summon-ui'
 import { L2ToL1MessageStatusResult } from '@/hooks/useL2ToL1MessageStatus'
-import { L2ToL1MessageStatus } from '@arbitrum/sdk'
+import { ChildToParentMessageStatus } from '@arbitrum/sdk'
 
 interface HistoryHeaderProps {
   messages: (L2ToL1MessageStatusResult | undefined)[] | undefined
@@ -11,11 +11,11 @@ interface HistoryHeaderProps {
 
 const numberOfUnconfirmed = (messages: (L2ToL1MessageStatusResult | undefined)[]) => {
   if (!messages) return 0
-  return messages.filter((m) => m?.status === L2ToL1MessageStatus.UNCONFIRMED).length
+  return messages.filter((m) => m?.status === ChildToParentMessageStatus.UNCONFIRMED).length
 }
 const numberOfConfirmed = (messages: (L2ToL1MessageStatusResult | undefined)[]) => {
   if (!messages) return 0
-  return messages.filter((m) => m?.status === L2ToL1MessageStatus.CONFIRMED).length
+  return messages.filter((m) => m?.status === ChildToParentMessageStatus.CONFIRMED).length
 }
 const HistoryHeader: React.FC<HistoryHeaderProps> = ({ messages }) => {
   const navigate = useNavigate()
@@ -23,7 +23,7 @@ const HistoryHeader: React.FC<HistoryHeaderProps> = ({ messages }) => {
     <div onClick={() => navigate('/bridge/transactions')}>
       {(!messages ||
         !messages.some(
-          (m) => m?.status === L2ToL1MessageStatus.UNCONFIRMED || m?.status === L2ToL1MessageStatus.CONFIRMED
+          (m) => m?.status === ChildToParentMessageStatus.UNCONFIRMED || m?.status === ChildToParentMessageStatus.CONFIRMED
         )) && (
         <div className={styles.container}>
           <Icon className={styles.defaultIcon} name={'File06'} />
@@ -31,7 +31,7 @@ const HistoryHeader: React.FC<HistoryHeaderProps> = ({ messages }) => {
           <Icon className={styles.defaultIcon} name={'ArrowNarrowRight'} />
         </div>
       )}
-      {messages && messages.some((m) => m?.status === L2ToL1MessageStatus.CONFIRMED) && (
+      {messages && messages.some((m) => m?.status === ChildToParentMessageStatus.CONFIRMED) && (
         <div className={styles.claimable}>
           <Icon name={'AlertTriangle'} color={'#F79009'} />
           <div className={styles.claimableCaption}>
@@ -44,8 +44,8 @@ const HistoryHeader: React.FC<HistoryHeaderProps> = ({ messages }) => {
         </div>
       )}
       {messages &&
-        messages.some((m) => m?.status === L2ToL1MessageStatus.UNCONFIRMED) &&
-        !messages.some((m) => m?.status === L2ToL1MessageStatus.CONFIRMED) && (
+        messages.some((m) => m?.status === ChildToParentMessageStatus.UNCONFIRMED) &&
+        !messages.some((m) => m?.status === ChildToParentMessageStatus.CONFIRMED) && (
           <div className={styles.pending}>
             <Icon name={'SwitchHorizontal01'} color={'#4E5BA6'} />
             <div className={styles.claimableCaption}>

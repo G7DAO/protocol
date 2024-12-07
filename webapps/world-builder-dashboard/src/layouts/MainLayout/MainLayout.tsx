@@ -6,6 +6,8 @@ import styles from './MainLayout.module.css'
 import IconDocumentation from '@/assets/IconDocumentation'
 import IconDroplets02 from '@/assets/IconDroplets02'
 import IconExplorer from '@/assets/IconExplorer'
+import IconWallet04 from '@/assets/IconWallet04'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
 // Local components and assets
 import DesktopSidebar from '@/layouts/MainLayout/DesktopSidebar'
 import MobileSidebar from '@/layouts/MainLayout/MobileSidebar'
@@ -15,16 +17,27 @@ interface MainLayoutProps {}
 
 const MainLayout: React.FC<MainLayoutProps> = ({}) => {
   const location = useLocation()
+  const { selectedNetworkType } = useBlockchainContext()
 
-  const NAVIGATION_ITEMS = [
+  const TESTNET_NAVIGATION_ITEMS = [
     {
       name: 'faucet',
       navigateTo: '/faucet',
       icon: <IconDroplets02 stroke={location.pathname.startsWith('/faucet') ? '#fff' : '#B9B9B9'} />
     },
     {
+      name: 'bridge',
+      navigateTo: '/bridge',
+      icon: (
+        <IconWallet04
+          className={styles.icomButton}
+          stroke={location.pathname.startsWith('/bridge') ? '#fff' : '#B9B9B9'}
+        />
+      )
+    },
+    {
       name: 'explorer',
-      navigateTo: 'https://testnet.game7.io/',
+      navigateTo: selectedNetworkType === 'Testnet' ? `https://testnet.game7.io/` : `https://mainnet.game7.io`,
       icon: <IconExplorer stroke={'#B9B9B9'} />
     },
     {
@@ -33,6 +46,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({}) => {
       icon: <IconDocumentation stroke={'#B9B9B9'} />
     }
   ]
+
+  const MAINNET_NAVIGATION_ITEMS = TESTNET_NAVIGATION_ITEMS.slice(1, TESTNET_NAVIGATION_ITEMS.length)
+  const NAVIGATION_ITEMS = selectedNetworkType === 'Testnet' ? TESTNET_NAVIGATION_ITEMS : MAINNET_NAVIGATION_ITEMS
 
   const smallView = useMediaQuery('(max-width: 1199px)')
   return (

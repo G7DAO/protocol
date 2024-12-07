@@ -1,0 +1,13 @@
+diff --git a/node_modules/@ethersproject/abstract-provider/src.ts/index.ts b/node_modules/@ethersproject/abstract-provider/src.ts/index.ts
+index d56958a..3c7e859 100644
+--- a/node_modules/@ethersproject/abstract-provider/src.ts/index.ts
++++ b/node_modules/@ethersproject/abstract-provider/src.ts/index.ts
+@@ -237,7 +237,7 @@ export abstract class Provider implements OnceBlockable {
+             block: this.getBlock("latest"),
+             gasPrice: this.getGasPrice().catch((error) => {
+                 // @TODO: Why is this now failing on Calaveras?
+-                //console.log(error);
++                console.log(error);
+                 return null;
+             })
+         });

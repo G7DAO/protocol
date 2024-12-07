@@ -21,12 +21,12 @@ interface BridgeNotificationsProviderProps {
 
 export const BridgeNotificationsProvider: React.FC<BridgeNotificationsProviderProps> = ({ children }) => {
   const [newNotifications, setNewNotifications] = useState<BridgeNotification[]>([])
-  const { connectedAccount } = useBlockchainContext()
+  const { connectedAccount, selectedNetworkType } = useBlockchainContext()
   const [isDropdownOpened, setIsDropdownOpened] = useState(false)
   const [isModalOpened, setIsModalOpened] = useState(false)
 
   const fetchNewNotifications = (connectedAccount: string) => {
-    const storageKey = `bridge-${connectedAccount}-transactions`
+    const storageKey = `bridge-${connectedAccount}-transactions-${selectedNetworkType}`
     const transactionsString = localStorage.getItem(storageKey)
     let transactions
     if (transactionsString) {
@@ -44,7 +44,7 @@ export const BridgeNotificationsProvider: React.FC<BridgeNotificationsProviderPr
   }
 
   const cleanNewNotifications = (connectedAccount: string) => {
-    const storageKey = `bridge-${connectedAccount}-transactions`
+    const storageKey = `bridge-${connectedAccount}-transactions-${selectedNetworkType}`
     const transactionsString = localStorage.getItem(storageKey)
     let transactions
     if (transactionsString) {

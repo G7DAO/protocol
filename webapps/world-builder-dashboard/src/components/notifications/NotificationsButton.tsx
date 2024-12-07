@@ -44,7 +44,7 @@ const NotificationsButton: React.FC<NotificationsButtonProps> = ({ notifications
         size={'678px'}
         radius={'12px'}
         overlayProps={{
-          color: 'rgba(52, 64, 84)',
+          color: 'rgba(57, 57, 57)',
           backgroundOpacity: 0.7,
           blur: 8
         }}
