@@ -1,27 +1,5 @@
-diff --git a/node_modules/@arbitrum/sdk/dist/lib/assetBridger/erc20Bridger.js b/node_modules/@arbitrum/sdk/dist/lib/assetBridger/erc20Bridger.js
-index 09d1e1e..c77cd9b 100644
---- a/node_modules/@arbitrum/sdk/dist/lib/assetBridger/erc20Bridger.js
-+++ b/node_modules/@arbitrum/sdk/dist/lib/assetBridger/erc20Bridger.js
-@@ -239,7 +239,7 @@ class Erc20Bridger extends assetBridger_1.AssetBridger {
-      * @returns
-      */
-     async getChildErc20Address(erc20ParentAddress, parentProvider) {
--        await this.checkParentNetwork(parentProvider);
-+        // await this.checkParentNetwork(parentProvider);
-         const parentGatewayRouter = L1GatewayRouter__factory_1.L1GatewayRouter__factory.connect(this.childNetwork.tokenBridge.parentGatewayRouter, parentProvider);
-         return await parentGatewayRouter.functions
-             .calculateL2TokenAddress(erc20ParentAddress)
-@@ -253,7 +253,7 @@ class Erc20Bridger extends assetBridger_1.AssetBridger {
-      * @returns
-      */
-     async getParentErc20Address(erc20ChildChainAddress, childProvider) {
--        await this.checkChildNetwork(childProvider);
-+        // await this.checkChildNetwork(childProvider);
-         // child network WETH contract doesn't have the parentAddress method on it
-         if (erc20ChildChainAddress.toLowerCase() ===
-             this.childNetwork.tokenBridge.childWeth.toLowerCase()) {
 diff --git a/node_modules/@arbitrum/sdk/dist/lib/dataEntities/networks.js b/node_modules/@arbitrum/sdk/dist/lib/dataEntities/networks.js
-index 97fcda5..101e31f 100644
+index 97fcda5..2b9122c 100644
 --- a/node_modules/@arbitrum/sdk/dist/lib/dataEntities/networks.js
 +++ b/node_modules/@arbitrum/sdk/dist/lib/dataEntities/networks.js
 @@ -138,6 +138,87 @@ const networks = {
