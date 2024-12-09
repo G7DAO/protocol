@@ -1,4 +1,4 @@
-import { ethers, Transaction } from 'ethers';
+import {BigNumber, ethers, Transaction} from 'ethers';
 import { SignerOrProviderOrRpc } from '../bridgeTransfer';
 
 export const getBlockTimeDifference = async (
@@ -67,4 +67,30 @@ export const getProvider = (
     'Invalid input: expected a Signer with associated provider, Provider, or RPC URL string',
   );
 };
+
+export function percentIncrease(
+    num: BigNumber,
+    increase: BigNumber
+): BigNumber {
+  return num.add(num.mul(increase).div(100))
+}
+
+export function scaleFrom18DecimalsToNativeTokenDecimals( {amount, decimals}: {amount: BigNumber, decimals: number}) {
+  // do nothing for 18 decimals
+  if (decimals === 18) {
+    return amount;
+  }
+  if (decimals < 18) {
+    const scaledAmount = amount.div(ethers.BigNumber.from(10).pow(ethers.BigNumber.from(18 - decimals)));
+    // round up if necessary
+    if (scaledAmount
+        .mul(ethers.BigNumber.from(10).pow(ethers.BigNumber.from(18 - decimals)))
+        .lt(amount)) {
+      return scaledAmount.add(ethers.BigNumber.from(1));
+    }
+    return scaledAmount;
+  }
+  // decimals > 18
+  return amount.mul(ethers.BigNumber.from(10).pow(ethers.BigNumber.from(decimals - 18)));
+}
 
