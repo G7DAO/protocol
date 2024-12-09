@@ -7,11 +7,12 @@ import { ethers } from 'ethers'
 import Deposit from '@/components/bridge/history/Deposit'
 import Withdrawal from '@/components/bridge/history/Withdrawal'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
-import { useBridgeAPI } from '@/hooks/useBridgeAPI'
-import { useMessages } from '@/hooks/useL2ToL1MessageStatus'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 
-interface HistoryDesktopProps {}
+interface HistoryDesktopProps {
+  apiTransactions: TransactionRecord[]
+  messages: TransactionRecord[] | undefined
+}
 
 const mergeTransactions = (apiData: TransactionRecord[], localData: TransactionRecord[]): TransactionRecord[] => {
   const combinedData = new Map<string, TransactionRecord>()
@@ -63,11 +64,8 @@ const mapAPIDataToTransactionRecord = (apiData: any): TransactionRecord => {
   }
 }
 
-const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
+const HistoryDesktop: React.FC<HistoryDesktopProps> = ({ apiTransactions, messages }) => {
   const { connectedAccount, selectedNetworkType } = useBlockchainContext()
-  const { data: messages } = useMessages(connectedAccount, selectedNetworkType || 'Testnet')
-  const { useHistoryTransactions } = useBridgeAPI()
-  const { data: apiTransactions } = useHistoryTransactions(connectedAccount)
   const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])
   const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status', '']
 

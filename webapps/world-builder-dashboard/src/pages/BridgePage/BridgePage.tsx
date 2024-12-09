@@ -17,13 +17,15 @@ import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsCon
 // Hooks
 import { useNotifications } from '@/hooks/useL2ToL1MessageStatus'
 import { useMediaQuery } from '@mantine/hooks'
+import { useBridgeAPI } from '@/hooks/useBridgeAPI'
+import { useMessages } from '@/hooks/useL2ToL1MessageStatus'
 
 export type DepositDirection = 'DEPOSIT' | 'WITHDRAW'
 
 const BridgePage = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { connectedAccount } = useBlockchainContext()
+  const { connectedAccount, selectedNetworkType } = useBlockchainContext()
   const [notificationsOffset] = useState(0)
   const [notificationsLimit] = useState(10)
   const [direction, setDirection] = useState<DepositDirection>('DEPOSIT')
@@ -32,6 +34,11 @@ const BridgePage = () => {
   const { newNotifications, refetchNewNotifications } = useBridgeNotificationsContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
   const queryClient = useQueryClient()
+
+  const { data: messages } = useMessages(connectedAccount, selectedNetworkType || 'Testnet')
+  const { useHistoryTransactions } = useBridgeAPI()
+  const { data: apiTransactions } = useHistoryTransactions(connectedAccount)
+
 
   useEffect(() => {
     if (connectedAccount) {
@@ -71,7 +78,7 @@ const BridgePage = () => {
       </div>
       <div className={styles.viewContainer}>
         {location.pathname === '/bridge' && <BridgeView direction={direction} setDirection={setDirection} />}
-        {location.pathname === '/bridge/transactions' && (!smallView ? <HistoryDesktop /> : <HistoryMobile />)}
+        {location.pathname === '/bridge/transactions' && (!smallView ? <HistoryDesktop apiTransactions={apiTransactions} messages={messages} /> : <HistoryMobile />)}
         {location.pathname === '/bridge/settings' && <SettingsView />}
       </div>
     </div>

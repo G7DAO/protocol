@@ -233,11 +233,11 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           </div>
                           <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.highNetworkTimestamp)}</div>
                           {!transactionInputs?.tokenSymbol ? (
-                            <div className={styles.gridItem}>
+                            <div className={styles.gridItemInitiate}>
                               <div className={styles.loading}>Loading</div>
                             </div>
                           ) : (
-                            <div className={styles.gridItem}>
+                            <div className={styles.gridItemInitiate}>
                               {`${transactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs.amount, 6) : withdrawal.amount} ${transactionInputs.tokenSymbol}`}
                             </div>
                           )}
@@ -264,11 +264,11 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           </div>
                           <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.completionTimestamp)}</div>
                           {!transactionInputs?.tokenSymbol ? (
-                            <div className={styles.gridItem}>
+                            <div className={styles.gridItemInitiate}>
                               <div className={styles.loading}>Loading</div>
                             </div>
                           ) : (
-                            <div className={styles.gridItem}>
+                            <div className={styles.gridItemInitiate}>
                               {`${transactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs.amount, 6) : withdrawal.amount} ${transactionInputs.tokenSymbol}`}
                             </div>
                           )}
