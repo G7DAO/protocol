@@ -104,7 +104,7 @@ const BridgeView = ({
           ethers.utils.parseEther('0.0'),
           direction === 'DEPOSIT' ? selectedLowNetwork.rpcs[0] : selectedHighNetwork.rpcs[0],
           connectedAccount ?? '',
-          direction === 'DEPOSIT' ? selectedHighNetwork.rpcs[0] : selectedLowNetwork.rpcs[0]
+          direction === 'DEPOSIT' ? selectedHighNetwork.rpcs[0] : undefined
         )
 
         transferFee = transferEstimate?.estimatedFee ?? ethers.utils.parseEther('0')
@@ -314,6 +314,7 @@ const BridgeView = ({
         bridger={bridger}
         symbol={tokenInformation?.symbol ?? ''}
         decimals={tokenInformation?.decimalPlaces ?? 18}
+        balance={tokenInformation?.tokenBalance}
       />
     </div>
   )

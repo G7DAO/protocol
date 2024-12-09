@@ -1,5 +1,5 @@
 // External Libraries
-import React from 'react'
+import React, { useState } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 // Constants
@@ -13,6 +13,7 @@ import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 import { getTokensForNetwork } from '@/utils/tokens'
 import { ZERO_ADDRESS } from '@/utils/web3utils'
+import { MultiTokenApproval } from './MultiTokenApproval'
 
 interface ActionButtonProps {
   direction: 'DEPOSIT' | 'WITHDRAW'
@@ -23,6 +24,7 @@ interface ActionButtonProps {
   bridger?: Bridger
   symbol?: string
   decimals?: number
+  balance?: string
 }
 const ActionButton: React.FC<ActionButtonProps> = ({
   direction,
@@ -32,7 +34,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   L2L3message,
   bridger,
   symbol,
-  decimals
+  decimals,
+  balance
 }) => {
   const {
     connectedAccount,
@@ -48,6 +51,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const navigate = useNavigate()
   const networks = getNetworks(selectedNetworkType)
+  const [showApproval, setShowApproval] = useState(false)
 
   const getLabel = (): String | undefined => {
     if (isConnecting) {
@@ -100,10 +104,13 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           const allowance = (await bridger?.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount ?? '')) ?? ''
           const allowanceToCheck = ethers.utils.formatUnits(allowance, decimals)
 
-          // approve first
+          // Approve first
           if (Number(allowanceToCheck) < Number(amountToSend)) {
-            const txApprove = await bridger?.approve(amountToSend, signer)
-            await txApprove.wait()
+            // const txApprove = await bridger?.approve(amountToSend, signer)
+            // await txApprove.wait()
+            console.log('approving')
+            setShowApproval(true)
+            return null
           }
         }
         const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })
@@ -141,6 +148,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     },
     {
       onSuccess: async (record: any) => {
+        if (!record) return
         try {
           const transactionsString = localStorage.getItem(
             `bridge-${connectedAccount}-transactions-${selectedNetworkType}`
@@ -188,6 +196,14 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           {getLabel() ?? 'Submit'}
         </div>
       </button>
+      {<MultiTokenApproval
+        showApproval={showApproval}
+        setShowApproval={setShowApproval}
+        balance={balance}
+        amount={amount}
+        bridger={bridger}
+        decimals={decimals}
+      />}
     </>
   )
 }
