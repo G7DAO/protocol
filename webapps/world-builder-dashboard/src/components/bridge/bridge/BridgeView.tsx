@@ -103,7 +103,8 @@ const BridgeView = ({
         const transferEstimate = await bridger?.getGasAndFeeEstimation(
           ethers.utils.parseEther('0.0'),
           direction === 'DEPOSIT' ? selectedLowNetwork.rpcs[0] : selectedHighNetwork.rpcs[0],
-          connectedAccount ?? ''
+          connectedAccount ?? '',
+          direction === 'DEPOSIT' ? selectedHighNetwork.rpcs[0] : selectedLowNetwork.rpcs[0]
         )
 
         transferFee = transferEstimate?.estimatedFee ?? ethers.utils.parseEther('0')
