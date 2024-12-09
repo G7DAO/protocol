@@ -14,10 +14,9 @@ type AllowanceSelectorProps = {
   amount: ethers.BigNumber
   disabled: boolean
   token: Token
-  decimals: number
 }
 
-const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled, token, decimals }: AllowanceSelectorProps) => {
+const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled, token }: AllowanceSelectorProps) => {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption()
   })
@@ -27,7 +26,7 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled, tok
       store={combobox}
       variant='unstyled'
       onOptionSubmit={(val: string) => {
-        const amountInWei = ethers.utils.parseUnits(val, decimals)
+        const amountInWei = ethers.utils.parseUnits(val, token.decimals)
         try {
           onChange(ethers.BigNumber.from(amountInWei))
         } catch (e) {
@@ -44,7 +43,7 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled, tok
         >
           <div className={styles.tokenAmountContainer}>
             {token?.Icon && <token.Icon />}
-            <div className={styles.value}>{formatBigNumber(allowance)}</div>
+            <div className={styles.value}>{formatBigNumber(allowance, 4, token.decimals)} {token?.symbol}</div>
           </div>
           <button
               className={styles.minButton}
@@ -59,7 +58,6 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled, tok
           <IconChevronDown className={styles.chevron} />
         </div>
       </Combobox.Target>
-
       <Combobox.Dropdown className={styles.dropdownContainer}>
         <Combobox.Options>
           {[25, 50, 75, 100]
@@ -69,9 +67,9 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled, tok
             })
             .filter(({ percentage }) => percentage.gt(amount))
             .map(({ n, percentage }) => (
-              <Combobox.Option className={styles.optionContainer} value={ethers.utils.formatEther(percentage)} key={n}>
+              <Combobox.Option className={styles.optionContainer} value={ethers.utils.formatUnits(percentage, token.decimals)} key={n}>
                 <div className={styles.optionPercent}>{`${n}%`}</div>
-                <div className={styles.optionValue}>{formatBigNumber(percentage, 4, decimals)}</div>
+                <div className={styles.optionValue}>{formatBigNumber(percentage, 4, token.decimals)} {token?.symbol}</div>
                 {allowance.eq(percentage) && <IconCheck />}
               </Combobox.Option>
             ))}

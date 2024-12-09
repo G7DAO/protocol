@@ -30,7 +30,13 @@
 }
 
 .value {
-    flex: 1;
+    flex: 1 0 0;
+    color: #FFF;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px;
 }
 
 .tokenAmountContainer {

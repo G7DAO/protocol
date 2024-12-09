@@ -27,11 +27,12 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
   const [newAllowance, setNewAllowance] = useState(ethers.utils.parseUnits(amount || '0', 18))
   const [approvedTokens, setApprovedTokens] = useState<Set<string>>(new Set())
   const [currentTokenIndex, setCurrentTokenIndex] = useState(0)
-  
+
   const approve = useMutation(
     async (amount: ethers.BigNumber) => {
       const currentToken = tokens[currentTokenIndex];
-      const network = networks?.find((n) => n.chainId === bridger?.originNetwork.chainId)!
+      const network = networks?.find((n) => n.chainId === bridger?.originNetwork.chainId)
+      if (!network) throw new Error('Network not found')
       const provider = await getProvider(network)
       const signer = provider.getSigner()
       const txApprove = await bridger?.approve(amount, signer)
@@ -39,7 +40,7 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
       return { tx: txApprove, tokenSymbol: currentToken.symbol }
     },
     {
-      onSuccess: ({tokenSymbol}) => {
+      onSuccess: ({ tokenSymbol }) => {
         setApprovedTokens(prev => new Set([...prev, tokenSymbol]))
         if (currentTokenIndex < tokens.length - 1) {
           setCurrentTokenIndex(prev => prev + 1)
@@ -51,7 +52,7 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
       }
     }
   )
-  
+
   return (
     <Modal
       opened={showApproval}
@@ -90,7 +91,6 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
               onChange={(value) => setNewAllowance(value)}
               allowance={newAllowance}
               disabled={approve.isLoading}
-              decimals={decimals || 18}
             />
           </div>
           <div className={styles.hintText}>
