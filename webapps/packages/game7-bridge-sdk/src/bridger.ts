@@ -10,8 +10,11 @@ import { L2GatewayRouterABI } from './abi/L2GatewayRouterABI';
 import {
   depositERC20,
   depositETH,
-  depositNative, estimateApproval, estimateDepositErc20, estimateDepositERC20ToEth, estimateDepositEth,
-  estimateOutboundTransferGas,
+  depositNative,
+  estimateApproval,
+  estimateDepositERC20ToEth,
+  estimateDepositEth,
+  getDepositGasEstimation,
 } from './actions/deposit';
 import { withdrawERC20, withdrawEth, withdrawNative } from './actions/withdraw';
 
@@ -22,7 +25,10 @@ import { BridgerError, GasEstimationError, UnsupportedNetworkError } from './err
 import {BridgeNetworkConfig, networks} from './networks';
 import { TokenAddressMap } from './types';
 import { SignerOrProvider } from './bridgeNetwork';
-import { getProvider } from './utils/web3Utils';
+import {getProvider, percentIncrease, scaleFrom18DecimalsToNativeTokenDecimals} from './utils/web3Utils';
+
+
+export const DEFAULT_GAS_PRICE_PERCENT_INCREASE = BigNumber.from(500)
 
 /**
  * Represents the estimated gas and fees.
@@ -43,6 +49,8 @@ export interface GasAndFeeEstimation {
    * This is calculated as the product of `estimatedGas` and `gasPrice`.
    */
   estimatedFee: BigNumber;
+
+  childNetworkEstimation?: GasAndFeeEstimation
 }
 
 
@@ -202,8 +210,9 @@ export class Bridger {
    * depending on the configuration of the bridge. It supports both native and ERC20 token transfers.
    *
    * @param {BigNumber} amount - The amount of the token to be transferred.
-   * @param {SignerOrProvider} provider - A signer or provider for connecting to the Ethereum network. Can be an RPC URL string.
+   * @param {SignerOrProvider} provider - A signer or provider for connecting to the origin network. Can be an RPC URL string.
    * @param {string} _from - The address initiating the transfer.
+   * @param {SignerOrProvider} destinationProvider - A signer or provider for connecting to the destination network. Can be an RPC URL string.
    * @returns {Promise<GasAndFeeEstimation>} A promise that resolves to the estimated gas and fee details.
    *
    * @throws {GasEstimationError} If the gas estimation fails for any reason.
@@ -212,6 +221,7 @@ export class Bridger {
     amount: BigNumber,
     provider: SignerOrProvider,
     _from: string,
+    destinationProvider?: SignerOrProvider,
   ): Promise<GasAndFeeEstimation> {
     const originToken = this.token[this.originNetwork.chainId];
     const destinationToken = this.token[this.destinationNetwork.chainId];
@@ -233,7 +243,13 @@ export class Bridger {
         }
         return this.estimateDepositERC20ToEth(amount, provider, from);
       } else {
-        return this.estimateDepositERC20(amount, provider, from);
+        if (destinationProvider) {
+          const parentProvider = getProvider(provider)
+          const childProvider = getProvider(destinationProvider)
+          return this.estimateDepositERC20(amount, parentProvider, childProvider, from, this.destinationNetwork.nativeCurrency?.decimals ?? 18);
+        } else {
+          throw new GasEstimationError('ERC20 deposit gas estimation requires destination network provider')
+        }
       }
     }
   }
@@ -404,16 +420,48 @@ export class Bridger {
 
   private async estimateDepositERC20(
     amount: BigNumber,
-    _provider: SignerOrProvider,
+    parentProvider: ethers.providers.Provider,
+    childProvider: ethers.providers.Provider,
     from: string,
+    childNativeCurrencyDecimals,
   ): Promise<GasAndFeeEstimation> {
     const contractAddress = this.destinationNetwork.tokenBridge?.parentGatewayRouter;
+
     if (!contractAddress) {
       throw new GasEstimationError("parentGatewayRouter contract isn't set")
     }
+
     const tokenAddress = this.token[this.originNetwork.chainId];
-    const provider = getProvider(_provider)
-    return estimateDepositErc20(amount, provider as ethers.providers.Provider, contractAddress, from, tokenAddress)
+    const gasEstimation = await getDepositGasEstimation(amount, parentProvider, childProvider, from, tokenAddress)
+    const parentGasPrice = await parentProvider.getGasPrice();
+    const parentEstimatedFee =  gasEstimation.estimatedParentChainGas.mul(parentGasPrice);
+    const childGasPrice = await childProvider.getGasPrice();
+
+    const estimatedDestinationChainGasFeeEth = parseFloat(
+        ethers.utils.formatEther(
+            gasEstimation.estimatedChildChainGas
+                .mul(
+                    percentIncrease(
+                        childGasPrice,
+                        DEFAULT_GAS_PRICE_PERCENT_INCREASE
+                    )
+                )
+                .add(gasEstimation.estimatedChildChainSubmissionCost)
+        )
+    )
+
+    const estimatedDestinationChainGasFee =
+        scaleFrom18DecimalsToNativeTokenDecimals({
+          amount: ethers.utils.parseEther(String(estimatedDestinationChainGasFeeEth)),
+          decimals: childNativeCurrencyDecimals
+        })
+
+    const childNetworkEstimation: GasAndFeeEstimation = {
+      gasPrice: childGasPrice,
+      estimatedFee: estimatedDestinationChainGasFee,
+      estimatedGas: gasEstimation.estimatedChildChainGas
+    }
+    return {gasPrice: parentGasPrice, estimatedFee: parentEstimatedFee, estimatedGas: gasEstimation.estimatedParentChainGas, childNetworkEstimation }
   }
 
   /**

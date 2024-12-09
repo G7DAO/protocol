@@ -1,5 +1,5 @@
 import { BigNumber, ethers, PayableOverrides } from 'ethers';
-import { Erc20Bridger, EthBridger, getArbitrumNetwork } from '@arbitrum/sdk';
+import {Erc20Bridger, EthBridger, getArbitrumNetwork, ParentToChildTransactionRequest} from '@arbitrum/sdk';
 import { UnsupportedNetworkError } from '../errors';
 import { ERC20_INBOX_ABI } from '../abi/erc20_inbox_abi';
 import { BridgeNetworkConfig, networks } from '../networks';
@@ -215,6 +215,50 @@ export const estimateOutboundTransfer2 = async (txHash: string, provider: ethers
 
   console.log(`Estimated Gas: ${estimatedGas.toString()}`);
   return estimatedGas;
+}
+
+
+
+export interface DepositGasEstimation {
+  estimatedParentChainGas: BigNumber,
+  estimatedChildChainGas: BigNumber,
+  estimatedChildChainSubmissionCost: BigNumber,
+  request: ParentToChildTransactionRequest,
+}
+
+export const getDepositGasEstimation = async (amount, parentProvider: ethers.providers.Provider, childProvider: ethers.providers.Provider, from: string, parentChainErc20Address: string): Promise<DepositGasEstimation> => {
+  const erc20Bridger = await Erc20Bridger.fromProvider(childProvider)
+
+  try {
+    const request = await erc20Bridger.getDepositRequest({
+      amount,
+      erc20ParentAddress: parentChainErc20Address,
+      parentProvider: parentProvider,
+      childProvider: childProvider,
+      from,
+      retryableGasOverrides: {
+        // the gas limit may vary by about 20k due to SSTORE (zero vs nonzero)
+        // the 30% gas limit increase should cover the difference
+        gasLimit: { percentIncrease: BigNumber.from(30) }
+      }
+    })
+    const { txRequest, retryableData } = request
+    let estimatedParentChainGas
+    try {
+      estimatedParentChainGas = await parentProvider.estimateGas(txRequest)
+    } catch (e) {
+      console.error('Error estimating parentChainGas: ')
+    }
+    return {
+      estimatedParentChainGas,
+      estimatedChildChainGas: retryableData.gasLimit,
+      estimatedChildChainSubmissionCost: retryableData.maxSubmissionCost,
+      request,
+    }
+  } catch (e) {
+    console.error('getDepositRequest error')
+  }
+
 }
 
 
