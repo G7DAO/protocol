@@ -72,6 +72,7 @@
 
 .directionButton:hover {
   background: rgba(57, 57, 57, 0.5);
+  color: #fff;
 }
 
 .networksContainer {
