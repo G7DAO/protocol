@@ -539,7 +539,7 @@ export class Bridger {
     }
 
     const spender = this.getDepositSpender()
-    if (spender === null || !this.destinationNetwork.nativeToken) {
+    if (spender === null || !this.destinationNetwork.nativeToken || this.token[this.destinationNetwork.chainId] === ethers.constants.AddressZero) {
       return null;
     }
     const tokenContract = new ethers.Contract(this.destinationNetwork.nativeToken, ERC20_ABI, provider);
