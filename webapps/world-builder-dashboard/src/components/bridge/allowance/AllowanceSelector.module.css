@@ -1,4 +1,5 @@
-.container, .containerDisabled {
+.container,
+.containerDisabled {
     display: flex;
     gap: 8px;
     justify-content: space-between;
@@ -6,15 +7,16 @@
     padding: 7px 13px;
 
     border-radius: 8px;
-    border: 1px solid #F2F4F7;
-    background: var(--Base-White, #FFF);
-    color: var(--Gray-700, #344054);
+    border: 1px solid #393939;
+    background: #171717;
+    color: #FFF;
 
     /* Text sm/Medium */
     font-family: Inter, sans-serif;
     font-size: 14px;
     font-style: normal;
-    line-height: 20px; /* 142.857% */
+    line-height: 20px;
+    /* 142.857% */
     width: 100%;
     cursor: pointer;
 }
@@ -29,6 +31,13 @@
 
 .value {
     flex: 1;
+}
+
+.tokenAmountContainer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1 0 0;
 }
 
 .rightSection {
@@ -54,7 +63,8 @@
     font-size: 12px;
     font-style: normal;
     font-weight: 500;
-    line-height: 18px; /* 150% */
+    line-height: 18px;
+    /* 150% */
 }
 
 .minButton:disabled {
@@ -86,11 +96,14 @@
 
 .dropdownContainer {
     border-radius: 8px !important;
-    border: 1px solid var(--Gray-200, #EAECF0) !important;;
-    background: var(--Base-White, #FFF) !important;;
+    border: 1px solid var(--Gray-200, #EAECF0) !important;
+    ;
+    background: var(--Base-White, #FFF) !important;
+    ;
 
     /* Shadow/lg */
-    box-shadow: 0 12px 16px -4px rgba(16, 24, 40, 0.08), 0 4px 6px -2px rgba(16, 24, 40, 0.03) !important;;
+    box-shadow: 0 12px 16px -4px rgba(16, 24, 40, 0.08), 0 4px 6px -2px rgba(16, 24, 40, 0.03) !important;
+    ;
 }
 
 .optionPercent {
@@ -100,7 +113,8 @@
     font-size: 14px;
     font-style: normal;
     font-weight: 500;
-    line-height: 20px; /* 142.857% */
+    line-height: 20px;
+    /* 142.857% */
 }
 
 .optionValue {
@@ -113,6 +127,7 @@
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
-    line-height: 20px; /* 142.857% */
+    line-height: 20px;
+    /* 142.857% */
     margin-right: auto;
 }

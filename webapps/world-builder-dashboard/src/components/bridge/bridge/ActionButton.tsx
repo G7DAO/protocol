@@ -203,6 +203,13 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         amount={amount}
         bridger={bridger}
         decimals={decimals}
+        tokens={
+          [selectedBridgeToken,
+            getTokensForNetwork(
+              selectedHighNetwork.chainId,
+              connectedAccount).find(token => token.symbol === selectedHighNetwork.nativeCurrency?.symbol)!
+            ]
+        }
       />}
     </>
   )

@@ -66,17 +66,25 @@
     flex-direction: column;
     align-items: flex-start;
     flex: 1 0 0;
-    border-top: 4px solid var(--Error-500, #F04438);
+    border-top: 4px solid #393939;
+}
+
+.barApproved {
+    border-top-color: #F04438;
 }
 
 .barTitle {
     align-self: stretch;
-    color: var(--Gray-true-500, #727272);
+    color: #727272;
     font-family: Inter;
     font-size: 14px;
     font-style: normal;
     font-weight: 600;
     line-height: 20px;
+}
+
+.barTitleApproved {
+    color: #F04438;
 }
 
 .allowanceSection {
@@ -170,7 +178,7 @@
 }
 
 .buttonText {
-    color: var(--Base-White, #FFF);
+    color: #FFF;
     font-family: Inter;
     font-size: 14px;
     font-style: normal;

@@ -8,6 +8,7 @@ import { useMutation } from 'react-query';
 import { Bridger } from 'game7-bridge-sdk';
 import { useBlockchainContext } from '@/contexts/BlockchainContext';
 import { getNetworks } from '../../../../constants';
+import { Token } from '@/utils/tokens';
 
 interface MultiTokenApprovalProps {
   showApproval: boolean
@@ -16,25 +17,33 @@ interface MultiTokenApprovalProps {
   amount: string
   bridger: Bridger | undefined
   decimals: number | undefined
+  tokens: Token[]
 }
 
-export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showApproval, setShowApproval, bridger, amount, balance, decimals }) => {
+export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showApproval, setShowApproval, bridger, amount, balance, decimals, tokens }) => {
   const { selectedNetworkType, getProvider } = useBlockchainContext()
   const queryClient = useQueryClient()
   const networks = getNetworks(selectedNetworkType)
   const [newAllowance, setNewAllowance] = useState(ethers.utils.parseUnits(amount || '0', 18))
-
+  const [approvedTokens, setApprovedTokens] = useState<Set<string>>(new Set())
+  const [currentTokenIndex, setCurrentTokenIndex] = useState(0)
+  
   const approve = useMutation(
     async (amount: ethers.BigNumber) => {
+      const currentToken = tokens[currentTokenIndex];
       const network = networks?.find((n) => n.chainId === bridger?.originNetwork.chainId)!
       const provider = await getProvider(network)
       const signer = provider.getSigner()
       const txApprove = await bridger?.approve(amount, signer)
       await txApprove?.wait()
-      return txApprove
+      return { tx: txApprove, tokenSymbol: currentToken.symbol }
     },
     {
-      onSuccess: () => {
+      onSuccess: ({tokenSymbol}) => {
+        setApprovedTokens(prev => new Set([...prev, tokenSymbol]))
+        if (currentTokenIndex < tokens.length - 1) {
+          setCurrentTokenIndex(prev => prev + 1)
+        }
         queryClient.refetchQueries(['ERC20Balance'])
       },
       onError: (e) => {
@@ -42,6 +51,7 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
       }
     }
   )
+  
   return (
     <Modal
       opened={showApproval}
@@ -49,6 +59,11 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
       onClose={() => setShowApproval(false)}
       withCloseButton={false}
       padding={'0px'}
+      overlayProps={{
+        color: 'rgba(57, 57, 57)',
+        backgroundOpacity: 0.7,
+        blur: 8
+      }}
     >
       <div className={styles.modal}>
         <div className={styles.modalHeader}>
@@ -58,23 +73,25 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
         <div className={styles.space} />
         <div className={styles.tokenApprovalBarContainer}>
           <div className={styles.barContainer}>
-            <div className={styles.bar}>
-              <div className={styles.barTitle}>Approve USDC</div>
-            </div>
-            <div className={styles.bar}>
-              <div className={styles.barTitle}>Approve G7</div>
-            </div>
+            {tokens.map((token) => (
+              <div key={token.symbol} className={styles.bar}>
+                <div className={styles.barTitle}>Approve {token.symbol}</div>
+              </div>
+            ))}
           </div>
         </div>
         <div className={styles.allowanceSection}>
           <div className={styles.allowanceContainer}>
-            <div className={styles.allowanceTitle}>Allowance (800 avail.)</div>
+            <div className={styles.allowanceTitle}>Allowance {balance ? `(${balance} available)` : ''}</div>
             <AllowanceSelector
+              token={tokens[currentTokenIndex]}
               balance={ethers.utils.parseUnits(balance || '0', decimals || 18)}
               amount={ethers.utils.parseUnits(amount || '0', decimals || 18)}
               onChange={(value) => setNewAllowance(value)}
               allowance={newAllowance}
-              disabled={approve.isLoading} />
+              disabled={approve.isLoading}
+              decimals={decimals || 18}
+            />
           </div>
           <div className={styles.hintText}>
             Set token limit to allow the bridge contract to perform token transfers on your behalf. It cannot move funds without your permission.
