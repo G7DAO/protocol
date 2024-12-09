@@ -45,11 +45,6 @@ const AccountSelector = ({ values, onChange, selectedValue }: AccountSelectorPro
       <Combobox.Dropdown className='!bg-dark-900 !rounded-md !border-dark-700'>
         <Combobox.Options>
           {values
-            .sort((a, b) => {
-              if (a === selectedValue) return 1
-              if (b === selectedValue) return -1
-              return 0
-            })
             .map((n) => (
               <Combobox.Option value={n} key={n}>
                 <Group>

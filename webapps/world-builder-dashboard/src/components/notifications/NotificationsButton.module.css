@@ -42,7 +42,7 @@
   font-weight: 500;
   line-height: 20px; /* 142.857% */
 
-  position: absolute;
+  position: absolute; 
   right: 0;
   top: 0;
   transform: translateX(12px) translateY(-50%);
@@ -51,6 +51,7 @@
 /* Mantine classes */
 .dropdown {
   background: var(--Base-White, #ffffff) !important;
+  border-color: #393939 !important;
 }
 
 .icon {

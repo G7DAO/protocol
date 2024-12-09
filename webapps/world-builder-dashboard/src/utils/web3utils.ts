@@ -1,5 +1,7 @@
-import { HIGH_NETWORKS, LOW_NETWORKS } from '../../constants'
+import { getHighNetworks, getLowNetworks, HIGH_NETWORKS, LOW_NETWORKS } from '../../constants'
 import { ethers } from 'ethers'
+import { NetworkType } from '@/contexts/BlockchainContext'
+import { providers } from 'ethers'
 
 export const convertToBigNumber = (numberString: string, precision = 18) => {
   const [integerPart, decimalPart] = numberString.split('.')
@@ -8,15 +10,19 @@ export const convertToBigNumber = (numberString: string, precision = 18) => {
   return ethers.BigNumber.from(bigNumberString)
 }
 
-export const getBlockExplorerUrl = (chainId: number | undefined) => {
-  const network = [...LOW_NETWORKS, ...HIGH_NETWORKS].find((n) => n.chainId === chainId)
+export const getBlockExplorerUrl = (chainId: number | undefined, selectedNetworkType: NetworkType) => {
+  const network = [...getLowNetworks(selectedNetworkType) || LOW_NETWORKS, ...getHighNetworks(selectedNetworkType) || HIGH_NETWORKS].find(
+    (n) => n.chainId === chainId
+  )
   if (network?.blockExplorerUrls) {
     return network.blockExplorerUrls[0]
   }
 }
 
-export const getNetwork = (chainId: number) => {
-  return [...LOW_NETWORKS, ...HIGH_NETWORKS].find((n) => n.chainId === chainId)
+export const getNetwork = (chainId: number, selectedNetworkType: NetworkType) => {
+  return [...getLowNetworks(selectedNetworkType) || LOW_NETWORKS, ...getHighNetworks(selectedNetworkType) || HIGH_NETWORKS].find(
+    (n) => n.chainId === chainId
+  )
 }
 
 export const tokenTypes = [
@@ -47,4 +53,41 @@ export const formatBigNumber = (bigNumber: ethers.BigNumber, lengthLimit = 25, u
   const exponent = bigNumberString.length - 1 - units
 
   return `${firstDigit}.${remainingDigits}e+${exponent}`
+}
+
+export const parseUntilDelimiter = (input: any) => {
+  const match = input.match(/^[^\(\[]+/)
+  return match ? match[0] : input
+}
+
+export const fetchTransactionTimestamp = async (completionTxHash: string, rpcUrl: string): Promise<number | null> => {
+  try {
+    // Initialize the provider with the RPC URL
+    const provider = new providers.JsonRpcProvider(rpcUrl)
+
+    // Fetch the transaction receipt
+    const receipt = await provider.getTransactionReceipt(completionTxHash)
+    if (!receipt) {
+      console.warn('Transaction receipt not found for hash:', completionTxHash)
+      return null
+    }
+
+    // Fetch the block details using the block number from the receipt
+    const block = await provider.getBlock(receipt.blockNumber)
+    if (!block) {
+      console.warn('Block not found for block number:', receipt.blockNumber)
+      return null
+    }
+
+    // Return the timestamp from the block
+    return block.timestamp
+  } catch (error) {
+    console.error('Error fetching transaction timestamp:', error)
+    return null
+  }
+}
+
+export const getCachedTransactions = (connectedAccount: string, selectedNetworkType: NetworkType) => {
+  const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
+  return transactionsString ? JSON.parse(transactionsString) : []
 }

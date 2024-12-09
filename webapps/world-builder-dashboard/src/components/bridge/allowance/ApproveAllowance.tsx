@@ -46,7 +46,7 @@ const ApproveAllowance: React.FC<ApproveAllowanceProps> = ({ amount, balance, on
     if (approveAllowance.isSuccess) {
       onSuccess()
     } else {
-      approveAllowance.mutate({ newAllowance, allowanceProps })
+      approveAllowance.mutateAsync({ newAllowance, allowanceProps })
     }
   }
 

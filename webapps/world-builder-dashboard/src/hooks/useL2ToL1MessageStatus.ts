@@ -1,10 +1,17 @@
 import { useQueries, useQuery, UseQueryResult } from 'react-query'
-import { HIGH_NETWORKS, L2_NETWORK, LOW_NETWORKS } from '../../constants'
+import { getHighNetworks, getLowNetworks, L2_NETWORK } from '../../constants'
 import { ethers, providers } from 'ethers'
+import { Transaction } from 'ethers'
 import { BridgeNotification } from '@/components/notifications/NotificationsButton'
+import { NetworkType, useBlockchainContext } from '@/contexts/BlockchainContext'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
-import { L1TransactionReceipt, L2ToL1MessageReader, L2ToL1MessageStatus, L2TransactionReceipt } from '@arbitrum/sdk'
-import { L1ContractCallTransactionReceipt } from '@arbitrum/sdk/dist/lib/message/L1Transaction'
+import {
+  ParentTransactionReceipt,
+  ChildToParentMessageReader,
+  ChildToParentMessageStatus,
+  ChildTransactionReceipt
+} from '@arbitrum/sdk'
+import { ParentContractCallTransactionReceipt } from '@arbitrum/sdk/dist/lib/message/ParentTransaction'
 
 const eventABI = [
   {
@@ -31,15 +38,15 @@ export interface L2ToL1MessageStatusResult {
   value?: string
   timestamp?: number
   confirmations?: number
-  status?: L2ToL1MessageStatus
-  l2Receipt?: L2TransactionReceipt
+  status?: ChildToParentMessageStatus
+  l2Receipt?: ChildTransactionReceipt
 }
 
-const fetchL2ToL1MessageStatus = async (withdrawal: TransactionRecord) => {
+const fetchL2ToL1MessageStatus = async (withdrawal: TransactionRecord, selectedNetworkType: NetworkType) => {
   const { lowNetworkChainId, highNetworkChainId, highNetworkHash, amount, highNetworkTimestamp } = withdrawal
 
-  const lowNetwork = LOW_NETWORKS.find((n) => n.chainId === lowNetworkChainId)
-  const highNetwork = HIGH_NETWORKS.find((n) => n.chainId === highNetworkChainId)
+  const lowNetwork = getLowNetworks(selectedNetworkType)?.find((n) => n.chainId === lowNetworkChainId)
+  const highNetwork = getHighNetworks(selectedNetworkType)?.find((n) => n.chainId === highNetworkChainId)
   if (!highNetwork || !lowNetwork || !highNetworkHash) {
     return undefined
   }
@@ -48,10 +55,12 @@ const fetchL2ToL1MessageStatus = async (withdrawal: TransactionRecord) => {
   const l2Provider = new providers.JsonRpcProvider(lowNetwork.rpcs[0])
 
   const receipt = await l3Provider.getTransactionReceipt(highNetworkHash)
-  const l2Receipt = new L2TransactionReceipt(receipt)
-  const messages: L2ToL1MessageReader[] = (await l2Receipt.getL2ToL1Messages(l2Provider)) as L2ToL1MessageReader[]
-  const l2ToL1Msg: L2ToL1MessageReader = messages[0]
-  const status: L2ToL1MessageStatus = await l2ToL1Msg.status(l3Provider)
+  const l2Receipt = new ChildTransactionReceipt(receipt)
+  const messages: ChildToParentMessageReader[] = (await l2Receipt.getChildToParentMessages(
+    l2Provider
+  )) as ChildToParentMessageReader[]
+  const l2ToL1Msg: ChildToParentMessageReader = messages[0]
+  const status: ChildToParentMessageStatus = await l2ToL1Msg.status(l3Provider)
 
   return {
     status,
@@ -64,15 +73,23 @@ const fetchL2ToL1MessageStatus = async (withdrawal: TransactionRecord) => {
   }
 }
 
-export const useL2ToL1MessageStatus = (withdrawal: TransactionRecord) => {
-  return useQuery(['withdrawalStatus', withdrawal], () => fetchL2ToL1MessageStatus(withdrawal), {
+export const useL2ToL1MessageStatus = (withdrawal: TransactionRecord, selectedNetworkType: NetworkType) => {
+  return useQuery(['withdrawalStatus', withdrawal], () => fetchL2ToL1MessageStatus(withdrawal, selectedNetworkType), {
     refetchInterval: 60 * 1000
   })
 }
 
-const fetchDepositStatus = async (deposit: TransactionRecord) => {
-  const { lowNetworkChainId, highNetworkChainId, lowNetworkHash, lowNetworkTimestamp } = deposit
+export const getDecodedInputs = (tx: Transaction, ABI: any) => {
+  //ABI:  ReadonlyArray<Fragment | JsonFragment | string> gives TS building error
+  const contractInterface = new ethers.utils.Interface(ABI)
+  return contractInterface.parseTransaction({
+    data: tx.data,
+    value: tx.value
+  })
+}
 
+const fetchDepositStatus = async (deposit: TransactionRecord, selectedNetworkType: NetworkType) => {
+  const { lowNetworkChainId, highNetworkChainId, lowNetworkHash, lowNetworkTimestamp } = deposit
   if (lowNetworkChainId === L2_NETWORK.chainId) {
     return {
       l2Result: { complete: true },
@@ -80,8 +97,8 @@ const fetchDepositStatus = async (deposit: TransactionRecord) => {
     }
   }
 
-  const lowNetwork = LOW_NETWORKS.find((n) => n.chainId === lowNetworkChainId)
-  const highNetwork = HIGH_NETWORKS.find((n) => n.chainId === highNetworkChainId)
+  const lowNetwork = getLowNetworks(selectedNetworkType)?.find((n) => n.chainId === lowNetworkChainId)
+  const highNetwork = getHighNetworks(selectedNetworkType)?.find((n) => n.chainId === highNetworkChainId)
 
   if (!lowNetwork || !lowNetworkHash) {
     return undefined
@@ -99,8 +116,8 @@ const fetchDepositStatus = async (deposit: TransactionRecord) => {
     return
   }
 
-  const l1Receipt = new L1TransactionReceipt(receipt)
-  const l1ContractCallReceipt = new L1ContractCallTransactionReceipt(l1Receipt)
+  const l1Receipt = new ParentTransactionReceipt(receipt)
+  const l1ContractCallReceipt = new ParentContractCallTransactionReceipt(l1Receipt)
 
   if (!highNetwork) {
     return { l1Receipt }
@@ -108,10 +125,11 @@ const fetchDepositStatus = async (deposit: TransactionRecord) => {
 
   const l2Provider = new providers.JsonRpcProvider(highNetwork.rpcs[0])
   let l2Result
+
   try {
-    l2Result = await l1ContractCallReceipt.waitForL2(l2Provider, 3, 1000)
+    l2Result = await l1ContractCallReceipt.waitForChildTransactionReceipt(l2Provider, l1Receipt.confirmations)
   } catch (e) {
-    console.log(e)
+    console.error('Error waiting for child transaction receipt: ', { error: e, receipt: l1Receipt })
   }
 
   if (!l2Result) {
@@ -128,19 +146,20 @@ const fetchDepositStatus = async (deposit: TransactionRecord) => {
   return { l1Receipt, l2Result, highNetworkTimestamp }
 }
 
-export const useDepositStatus = (deposit: TransactionRecord) => {
-  return useQuery(['depositStatus', deposit], () => fetchDepositStatus(deposit), {
-    refetchInterval: 60000 * 3
+export const useDepositStatus = (deposit: TransactionRecord, selectedNetworkType: NetworkType) => {
+  return useQuery(['depositStatus', deposit], () => fetchDepositStatus(deposit, selectedNetworkType), {
+    refetchInterval: 60000 * 3,
+    staleTime: 2 * 60 * 1000
   })
 }
 
-export interface Transaction {
+export interface TransactionType {
   txHash: string
   l2RPC: string
   l3RPC: string
 }
 
-export const useL2ToL1MessagesStatus = (transactions: Transaction[] | undefined) => {
+export const useL2ToL1MessagesStatus = (transactions: TransactionType[] | undefined) => {
   if (!transactions) {
     return useQueries([{ queryKey: ['withdrawalStatusEmpty'], queryFn: () => undefined }])
   }
@@ -151,7 +170,7 @@ export const useL2ToL1MessagesStatus = (transactions: Transaction[] | undefined)
         const l3Provider = new ethers.providers.JsonRpcProvider(l3RPC)
         const l2Provider = new ethers.providers.JsonRpcProvider(l2RPC)
         const receipt = await l3Provider.getTransactionReceipt(txHash)
-        const l2Receipt = new L2TransactionReceipt(receipt)
+        const l2Receipt = new ChildTransactionReceipt(receipt)
         const log = receipt.logs.find((l) => l.data !== '0x')
         let decodedLog
 
@@ -164,9 +183,11 @@ export const useL2ToL1MessagesStatus = (transactions: Transaction[] | undefined)
           }
         }
 
-        const messages: L2ToL1MessageReader[] = (await l2Receipt.getL2ToL1Messages(l2Provider)) as L2ToL1MessageReader[]
-        const l2ToL1Msg: L2ToL1MessageReader = messages[0]
-        const status: L2ToL1MessageStatus = await l2ToL1Msg.status(l3Provider)
+        const messages: ChildToParentMessageReader[] = (await l2Receipt.getChildToParentMessages(
+          l2Provider
+        )) as ChildToParentMessageReader[]
+        const l2ToL1Msg: ChildToParentMessageReader = messages[0]
+        const status: ChildToParentMessageStatus = await l2ToL1Msg.status(l3Provider)
 
         return {
           from: decodedLog?.args?.caller,
@@ -205,31 +226,42 @@ const sortTransactions = (a: TransactionRecord, b: TransactionRecord) => {
   return getTimestamp(b) - getTimestamp(a)
 }
 
-export const useMessages = (connectedAccount: string | undefined): UseQueryResult<TransactionRecord[]> => {
-  return useQuery(['incomingMessages', connectedAccount], () => {
-    if (!connectedAccount) {
-      return []
+export const useMessages = (
+  connectedAccount: string | undefined,
+  networkType: string
+): UseQueryResult<TransactionRecord[]> => {
+  return useQuery(
+    ['incomingMessages', connectedAccount, networkType],
+    () => {
+      if (!connectedAccount) {
+        return []
+      }
+      const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${networkType}`)
+      if (transactionsString) {
+        return JSON.parse(transactionsString).sort(sortTransactions)
+      } else {
+        return []
+      }
+    },
+    {
+      enabled: !!networkType && !!connectedAccount
     }
-    const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
-    if (transactionsString) {
-      return JSON.parse(transactionsString).sort(sortTransactions)
-    } else {
-      return []
-    }
-  })
+  )
 }
 
 export const getNotifications = (transactions: TransactionRecord[]) => {
-  const completedTransactions = transactions.filter((tx) => tx.completionTimestamp || tx.claimableTimestamp)
+  const completedTransactions = transactions.filter((tx) =>
+    tx.type === 'DEPOSIT' ? tx.status === 6 || tx.status === 9 : tx.completionTimestamp || tx.claimableTimestamp
+  )
   const notifications: BridgeNotification[] = completedTransactions
     .map((ct) => {
-      const timestamp = ct.completionTimestamp ?? ct.claimableTimestamp ?? Date.now() / 1000 //
+      const timestamp = ct.completionTimestamp ?? ct.claimableTimestamp ?? Date.now() / 1000
       return {
         status: ct.isFailed ? 'FAILED' : ct.completionTimestamp ? 'COMPLETED' : 'CLAIMABLE',
         type: ct.type,
         timestamp,
         amount: ct.amount,
-        to: (ct.type === 'WITHDRAWAL' ? ct.lowNetworkChainId : ct.highNetworkChainId) ?? 1, //TODO remove null assertion
+        to: (ct.type === 'WITHDRAWAL' ? ct.lowNetworkChainId : ct.highNetworkChainId) ?? 1,
         seen: !ct.newTransaction,
         tx: ct
       }
@@ -243,13 +275,14 @@ export const useNotifications = (
   offset: number,
   limit: number
 ): UseQueryResult<BridgeNotification[]> => {
+  const { selectedNetworkType } = useBlockchainContext()
   return useQuery(
-    ['notifications', connectedAccount, offset, limit],
+    ['notifications', connectedAccount, offset, limit, selectedNetworkType],
     async () => {
       if (!connectedAccount) {
         return []
       }
-      const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions`)
+      const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
       let transactions
       if (!transactionsString) {
         return []
@@ -272,13 +305,14 @@ export const useNotifications = (
 }
 
 export const usePendingTransactions = (connectedAccount: string | undefined): UseQueryResult<boolean> => {
+  const { selectedNetworkType } = useBlockchainContext()
   return useQuery(
     ['pendingTransactions', connectedAccount],
     async () => {
       if (!connectedAccount) {
         return false
       }
-      const storageKey = `bridge-${connectedAccount}-transactions`
+      const storageKey = `bridge-${connectedAccount}-transactions-${selectedNetworkType}`
       const transactionsString = localStorage.getItem(storageKey)
       let transactions
       if (!transactionsString) {
@@ -294,9 +328,9 @@ export const usePendingTransactions = (connectedAccount: string | undefined): Us
         )
         const completedTransactions = transactions.filter((t: { completionTimestamp: number }) => t.completionTimestamp)
         const newCompletedTransactions: TransactionRecord[] = []
-        for (const t of pendingTransactions) {
+        for (const t of transactions) {
           if (t.type === 'DEPOSIT') {
-            const status = await fetchDepositStatus(t as TransactionRecord)
+            const status = await fetchDepositStatus(t as TransactionRecord, selectedNetworkType)
             if (status?.highNetworkTimestamp) {
               newCompletedTransactions.push({
                 ...t,
@@ -306,13 +340,13 @@ export const usePendingTransactions = (connectedAccount: string | undefined): Us
             }
           }
           if (t.type === 'WITHDRAWAL') {
-            const status = await fetchL2ToL1MessageStatus(t as TransactionRecord)
-            if (status?.status === L2ToL1MessageStatus.CONFIRMED) {
+            const status = await fetchL2ToL1MessageStatus(t as TransactionRecord, selectedNetworkType)
+            if (status?.status === ChildToParentMessageStatus.CONFIRMED) {
               if (!t.claimableTimestamp) {
                 newCompletedTransactions.push({ ...t, claimableTimestamp: Date.now() / 1000, newTransaction: true })
               }
             }
-            if (status?.status === L2ToL1MessageStatus.EXECUTED) {
+            if (status?.status === ChildToParentMessageStatus.EXECUTED) {
               newCompletedTransactions.push({ ...t, completionTimestamp: Date.now() / 1000, newTransaction: true })
             }
           }

@@ -62,6 +62,7 @@
 
 .navButton,
 .selectedNavButton {
+  cursor: pointer;
   display: flex;
   padding: 8px 12px;
   align-items: center;
@@ -80,14 +81,14 @@
   text-transform: capitalize;
 }
 
+.navButton:hover {
+  background: rgba(57, 57, 57, 0.5);
+  color: #fff;
+}
+
 .selectedNavButton {
   background: #393939;
   color: var(--Gray-900, #101828);
-}
-
-.navButton {
-  background: var(--Base-White, #fff);
-  cursor: pointer;
 }
 
 .footer {
@@ -128,7 +129,7 @@
 }
 
 .iconButton:hover {
-  stroke: var(--Gray-600, #475467);
+  stroke: #fff;
 }
 
 @media (max-width: 1199px) {
@@ -151,8 +152,8 @@
   gap: 8px;
   flex: 1 0 0;
   border-radius: 8px;
-  border: 1px solid var(--Primary-600, #F04438);
-  background: var(--Primary-600, #F04438);
+  border: 1px solid var(--Primary-600, #f04438);
+  background: var(--Primary-600, #f04438);
 
   /* Shadow/xs */
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
