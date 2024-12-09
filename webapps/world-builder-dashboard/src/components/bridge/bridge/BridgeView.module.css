@@ -70,6 +70,10 @@
   color: var(--Gray-600, #fff);
 }
 
+.directionButton:hover {
+  background: rgba(57, 57, 57, 0.5);
+}
+
 .networksContainer {
   display: flex;
   padding: 11px;
