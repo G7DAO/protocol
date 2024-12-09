@@ -226,37 +226,28 @@ export interface DepositGasEstimation {
   request: ParentToChildTransactionRequest,
 }
 
-export const getDepositGasEstimation = async (amount, parentProvider: ethers.providers.Provider, childProvider: ethers.providers.Provider, from: string, parentChainErc20Address: string): Promise<DepositGasEstimation> => {
+export const getDepositGasEstimation = async (amount: BigNumber, parentProvider: ethers.providers.Provider, childProvider: ethers.providers.Provider, from: string, parentChainErc20Address: string): Promise<DepositGasEstimation> => {
   const erc20Bridger = await Erc20Bridger.fromProvider(childProvider)
 
-  try {
-    const request = await erc20Bridger.getDepositRequest({
-      amount,
-      erc20ParentAddress: parentChainErc20Address,
-      parentProvider: parentProvider,
-      childProvider: childProvider,
-      from,
-      retryableGasOverrides: {
-        // the gas limit may vary by about 20k due to SSTORE (zero vs nonzero)
-        // the 30% gas limit increase should cover the difference
-        gasLimit: { percentIncrease: BigNumber.from(30) }
-      }
-    })
-    const { txRequest, retryableData } = request
-    let estimatedParentChainGas
-    try {
-      estimatedParentChainGas = await parentProvider.estimateGas(txRequest)
-    } catch (e) {
-      console.error('Error estimating parentChainGas: ')
+  const request = await erc20Bridger.getDepositRequest({
+    amount,
+    erc20ParentAddress: parentChainErc20Address,
+    parentProvider: parentProvider,
+    childProvider: childProvider,
+    from,
+    retryableGasOverrides: {
+      // the gas limit may vary by about 20k due to SSTORE (zero vs nonzero)
+      // the 30% gas limit increase should cover the difference
+      gasLimit: { percentIncrease: BigNumber.from(30) }
     }
-    return {
-      estimatedParentChainGas,
-      estimatedChildChainGas: retryableData.gasLimit,
-      estimatedChildChainSubmissionCost: retryableData.maxSubmissionCost,
-      request,
-    }
-  } catch (e) {
-    console.error('getDepositRequest error')
+  })
+  const { txRequest, retryableData } = request
+  const estimatedParentChainGas = await parentProvider.estimateGas(txRequest)
+  return {
+    estimatedParentChainGas,
+    estimatedChildChainGas: retryableData.gasLimit,
+    estimatedChildChainSubmissionCost: retryableData.maxSubmissionCost,
+    request,
   }
 
 }

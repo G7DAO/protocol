@@ -423,7 +423,7 @@ export class Bridger {
     parentProvider: ethers.providers.Provider,
     childProvider: ethers.providers.Provider,
     from: string,
-    childNativeCurrencyDecimals,
+    childNativeCurrencyDecimals: number,
   ): Promise<GasAndFeeEstimation> {
     const contractAddress = this.destinationNetwork.tokenBridge?.parentGatewayRouter;
 
