@@ -31,12 +31,17 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
   const approve = useMutation(
     async (amount: ethers.BigNumber) => {
       const currentToken = tokens[currentTokenIndex];
-      const network = networks?.find((n) => n.chainId === bridger?.originNetwork.chainId)
+      const network = networks?.find((n) => n.chainId === bridger?.destinationNetwork.chainId)
       if (!network) throw new Error('Network not found')
       const provider = await getProvider(network)
       const signer = provider.getSigner()
-      const txApprove = await bridger?.approve(amount, signer)
+
+      const txApprove = currentTokenIndex === 0
+        ? await bridger?.approve(amount, signer)
+        : await bridger?.approveNative(amount, signer);
+
       await txApprove?.wait()
+
       return { tx: txApprove, tokenSymbol: currentToken.symbol }
     },
     {
@@ -48,7 +53,7 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
         queryClient.refetchQueries(['ERC20Balance'])
       },
       onError: (e) => {
-        console.log(e)
+        console.error('Approval error:', e)
       }
     }
   )
@@ -75,8 +80,13 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
         <div className={styles.tokenApprovalBarContainer}>
           <div className={styles.barContainer}>
             {tokens.map((token) => (
-              <div key={token.symbol} className={styles.bar}>
-                <div className={styles.barTitle}>Approve {token.symbol}</div>
+              <div
+                key={token.symbol}
+                className={`${styles.bar} ${approvedTokens.has(token.symbol) ? styles.barApproved : ''}`}
+              >
+                <div className={`${styles.barTitle} ${approvedTokens.has(token.symbol) ? styles.barTitleApproved : ''}`}>
+                  Approve {token.symbol}
+                </div>
               </div>
             ))}
           </div>
@@ -104,7 +114,7 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
         </div>
         <div className={styles.buttonSpacer} />
         <div className={styles.buttonSection}>
-          <div className={styles.button}>
+          <div className={styles.button} onClick={() => approve.mutate(newAllowance)}>
             <div className={styles.buttonText}>Approve</div>
           </div>
         </div>

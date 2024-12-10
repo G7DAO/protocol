@@ -110,7 +110,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
             // await txApprove.wait()
             console.log('approving')
             setShowApproval(true)
-            return null
+            // return null
           }
         }
         const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })
