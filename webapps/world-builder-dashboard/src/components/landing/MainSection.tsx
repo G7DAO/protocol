@@ -21,7 +21,7 @@ const MainSection: React.FC<MainSectionProps> = ({ smallView, startBuilding }) =
                             className={styles.learnMoreCTA}
                             onClick={() =>
                                 window.open(
-                                    'https://wiki.game7.io/g7-developer-resource/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network/world-builder',
+                                    'https://docs.game7.io/',
                                     '_blank'
                                 )
                             }
