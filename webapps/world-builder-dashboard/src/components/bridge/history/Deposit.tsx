@@ -27,8 +27,9 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
 
   const { returnTransferData, getTransactionInputs, getHighNetworkTimestamp } = useBridgeTransfer()
   const { data: transferStatus, isLoading } = returnTransferData({ txRecord: deposit })
-  const { data: transactionInputs, isLoading: isLoadingInputs } = getTransactionInputs({ txRecord: deposit })
   const { data: highNetworkTimestamp } = getHighNetworkTimestamp({ txRecord: deposit, transferStatus: transferStatus })
+  const { data: transactionInputs, isLoading: isLoadingInputs } = getTransactionInputs({ txRecord: deposit })
+  const finalTransactionInputs = transactionInputs || deposit.transactionInputs
 
   return (
     <>
@@ -56,13 +57,17 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                 </div>
               </div>
               <div className={styles.gridItem}>{timeAgo(deposit.lowNetworkTimestamp)}</div>
-              {!isLoadingInputs && transactionInputs?.tokenSymbol ? (
+              {!isLoadingInputs && finalTransactionInputs?.tokenSymbol ? (
                 <div className={styles.gridItem}>
-                  {`${transactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs.amount, 6) : deposit.amount} ${transactionInputs.tokenSymbol}`}
+                  {`${finalTransactionInputs.tokenSymbol === 'USDC'
+                    ? ethers.utils.formatUnits(finalTransactionInputs.amount, 6)
+                    : deposit.amount} ${finalTransactionInputs.tokenSymbol}`}
                 </div>
               ) : (
                 <div className={styles.gridItem}>
-                  <div className={styles.loading}>Loading</div>
+                  <div className={styles.loading}>
+                    Loading
+                  </div>
                 </div>
               )}
               <div className={styles.gridItem}>{depositInfo.from}</div>

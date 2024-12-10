@@ -63,7 +63,6 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const status = getStatus(withdrawal, lowNetworks, highNetworks)
   const { data: transferStatus, isLoading } = returnTransferData({ txRecord: withdrawal })
   const { data: transactionInputs } = getTransactionInputs({ txRecord: withdrawal })
-
   return (
     <>
       {status?.isLoading && smallView ? (
