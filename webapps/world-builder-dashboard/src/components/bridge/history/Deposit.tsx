@@ -55,13 +55,13 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                 </div>
               </div>
               <div className={styles.gridItem}>{timeAgo(deposit.lowNetworkTimestamp)}</div>
-              {!transactionInputs?.tokenSymbol ? (
+              {transactionInputs?.tokenSymbol ? (
                 <div className={styles.gridItem}>
-                  <div className={styles.loading}>Loading</div>
+                  {`${transactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs.amount, 6) : deposit.amount} ${transactionInputs.tokenSymbol}`}
                 </div>
               ) : (
                 <div className={styles.gridItem}>
-                  {`${transactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs.amount, 6) : deposit.amount} ${transactionInputs.tokenSymbol}`}
+                  <div className={styles.loading}>Loading</div>
                 </div>
               )}
               <div className={styles.gridItem}>{depositInfo.from}</div>
