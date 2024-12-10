@@ -27,8 +27,9 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
 
   const { returnTransferData, getTransactionInputs, getHighNetworkTimestamp } = useBridgeTransfer()
   const { data: transferStatus, isLoading } = returnTransferData({ txRecord: deposit })
-  const { data: transactionInputs } = getTransactionInputs({ txRecord: deposit })
+  const { data: transactionInputs, isLoading: isLoadingInputs } = getTransactionInputs({ txRecord: deposit })
   const { data: highNetworkTimestamp } = getHighNetworkTimestamp({ txRecord: deposit, transferStatus: transferStatus })
+
   return (
     <>
       {isLoading && smallView ? (
@@ -55,7 +56,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                 </div>
               </div>
               <div className={styles.gridItem}>{timeAgo(deposit.lowNetworkTimestamp)}</div>
-              {transactionInputs?.tokenSymbol ? (
+              {!isLoadingInputs && transactionInputs?.tokenSymbol ? (
                 <div className={styles.gridItem}>
                   {`${transactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs.amount, 6) : deposit.amount} ${transactionInputs.tokenSymbol}`}
                 </div>
