@@ -63,7 +63,6 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const status = getStatus(withdrawal, lowNetworks, highNetworks)
   const { data: transferStatus, isLoading } = returnTransferData({ txRecord: withdrawal })
   const { data: transactionInputs } = getTransactionInputs({ txRecord: withdrawal })
-
   return (
     <>
       {status?.isLoading && smallView ? (
@@ -143,16 +142,30 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       >
                         {timeAgo(withdrawal?.highNetworkTimestamp)}
                       </div>
-                      <div
-                        className={styles.gridItem}
-                        onClick={() => setCollapseExecuted(!collapseExecuted)}
-                        style={{
-                          cursor: 'pointer',
-                          backgroundColor: hovered ? '#393939' : 'initial'
-                        }}
-                        onMouseEnter={() => setHovered(true)}
-                        onMouseLeave={() => setHovered(false)}
-                      >{`${transactionInputs?.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs?.amount, 6) : withdrawal.amount} ${transactionInputs?.tokenSymbol}`}</div>
+                      {transactionInputs?.tokenSymbol ? (
+                        <div
+                          className={styles.gridItem}
+                          onClick={() => setCollapseExecuted(!collapseExecuted)}
+                          style={{
+                            cursor: 'pointer',
+                            backgroundColor: hovered ? '#393939' : 'initial'
+                          }}
+                          onMouseEnter={() => setHovered(true)}
+                          onMouseLeave={() => setHovered(false)}
+                        >{`${transactionInputs?.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs?.amount, 6) : withdrawal.amount} ${transactionInputs?.tokenSymbol}`}</div>) : (
+                        <div
+                          className={styles.gridItem}
+                          onClick={() => setCollapseExecuted(!collapseExecuted)}
+                          style={{
+                            cursor: 'pointer',
+                            backgroundColor: hovered ? '#393939' : 'initial'
+                          }}
+                          onMouseEnter={() => setHovered(true)}
+                          onMouseLeave={() => setHovered(false)}
+                        >
+                          <div className={styles.loading}>Loading</div>
+                        </div>
+                      )}
                       <div
                         className={styles.gridItem}
                         onClick={() => setCollapseExecuted(!collapseExecuted)}
@@ -216,8 +229,8 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                             <div className={styles.typeCompleted}>Initiate</div>
                           </div>
                           <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.highNetworkTimestamp)}</div>
-                            {transactionInputs?.tokenSymbol ? (
-                              <div className={styles.gridItemInitiate}>
+                          {transactionInputs?.tokenSymbol ? (
+                            <div className={styles.gridItemInitiate}>
                               {`${transactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs.amount, 6) : withdrawal.amount} ${transactionInputs.tokenSymbol}`}
                             </div>
                           ) : (

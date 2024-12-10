@@ -52,11 +52,12 @@ export const useBridgeTransfer = () => {
     const destinationRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === destinationChainId)?.rpcs[0]
     const originRpc = getNetworks(selectedNetworkType)?.find((n) => n.chainId === originChainId)?.rpcs[0]
 
-    // If the status is pending and time since last fetched is > 2 minutes, fetch again
+    // Update shouldFetchStatus to prevent refetching for completed transactions
     const shouldFetchStatus = (cachedTransaction: any) => {
-      const isPending = ![1, 2, 6, 9].includes(cachedTransaction?.status)
+      const isCompleted = [1, 2, 6, 9].includes(cachedTransaction?.status)
+      if (isCompleted) return false
       const timeSinceLastUpdate = Date.now() - (cachedTransaction?.lastUpdated || 0)
-      return isPending && timeSinceLastUpdate > 1 * 60 * 1000
+      return timeSinceLastUpdate > 1 * 60 * 1000
     }
 
     let status: any
@@ -124,13 +125,13 @@ export const useBridgeTransfer = () => {
           }
         },
         staleTime: 0.5 * 60 * 1000,
-        refetchInterval: shouldFetchStatus(
-          getCachedTransactions(connectedAccount ?? '', selectedNetworkType).find((t: any) =>
+        refetchInterval: () => {
+          const cachedTx = getCachedTransactions(connectedAccount ?? '', selectedNetworkType).find((t: any) =>
             t.type === 'DEPOSIT' ? t.lowNetworkHash === txHash : t.highNetworkHash === txHash
           )
-        )
-          ? 1 * 60 * 1000
-          : false,
+          
+          return shouldFetchStatus(cachedTx) ? 1 * 60 * 1000 : false
+        },
         refetchOnWindowFocus: false,
         enabled: !!txRecord
       }
@@ -232,6 +233,10 @@ export const useBridgeTransfer = () => {
     return useQuery(
       ['transactionInputs', txHash],
       async () => {
+        if (txRecord.transactionInputs) {
+          return txRecord.transactionInputs
+        }
+
         const _bridgeTransfer = new BridgeTransfer({
           txHash: txHash ?? '',
           destinationNetworkChainId: destinationChainId ?? 0,
@@ -265,11 +270,12 @@ export const useBridgeTransfer = () => {
           const cachedTransaction = transactions.find((t: any) =>
             isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
           )
-          console.log(cachedTransaction)
-          if (cachedTransaction && cachedTransaction.transactionInputs !== undefined) {
-            console.log('returning..')
-            return cachedTransaction?.transactionInputs
+          
+          if (cachedTransaction?.transactionInputs) {
+            return cachedTransaction.transactionInputs
           }
+          
+          return null
         },
         staleTime: 2 * 60 * 1000,
         refetchOnWindowFocus: false,
