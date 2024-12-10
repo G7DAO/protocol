@@ -26,6 +26,7 @@ interface ActionButtonProps {
   decimals?: number
   balance?: string
 }
+
 const ActionButton: React.FC<ActionButtonProps> = ({
   direction,
   amount,
@@ -52,6 +53,28 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   const navigate = useNavigate()
   const networks = getNetworks(selectedNetworkType)
   const [showApproval, setShowApproval] = useState(false)
+  const [startingTokenIndex, setStartingTokenIndex] = useState(0)
+
+  const checkAllowances = async () => {
+    if (!bridger || !connectedAccount) return null;
+
+    const bridgeTokenAllowance = await bridger.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount)
+    const amountToSend = ethers.utils.parseUnits(amount, decimals)
+    if (!bridgeTokenAllowance || bridgeTokenAllowance.lt(amountToSend)) {
+      setStartingTokenIndex(0)
+      setShowApproval(true)
+      return false
+    }
+
+    const nativeTokenAllowance = await bridger.getNativeAllowance(selectedHighNetwork.rpcs[0], connectedAccount)
+    if (!nativeTokenAllowance || nativeTokenAllowance.lt(amountToSend)) {
+      setStartingTokenIndex(1)
+      setShowApproval(true)
+      return false
+    }
+
+    return true
+  }
 
   const getLabel = (): String | undefined => {
     if (isConnecting) {
@@ -79,6 +102,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       return
     }
     setErrorMessage('')
+
     transfer.mutate(amount)
     return
   }
@@ -95,22 +119,15 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       const destinationTokenAddress = getTokensForNetwork(destinationChain.chainId, connectedAccount).find(
         (token) => token.symbol === selectedBridgeToken.symbol
       )?.address
-      // Amount to send variable parsed to correct decimal places depending on the token
       const amountToSend = ethers.utils.parseUnits(amount, decimals)
 
-      // If deposit
       if (bridger?.isDeposit) {
         if (selectedBridgeToken.address != ZERO_ADDRESS) {
-          const allowance = (await bridger?.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount ?? '')) ?? ''
-          const allowanceToCheck = ethers.utils.formatUnits(allowance, decimals)
-
-          // Approve first
-          if (Number(allowanceToCheck) <= Number(amountToSend)) {
-            // const txApprove = await bridger?.approve(amountToSend, signer)
-            // await txApprove.wait()
-            setShowApproval(true)
-            return null
+          const allowancesOk = await checkAllowances()
+          if (!allowancesOk) {
+            return
           }
+          setShowApproval(false)
         }
         const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })
         await tx?.wait()
@@ -195,19 +212,20 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           {getLabel() ?? 'Submit'}
         </div>
       </button>
-      {<MultiTokenApproval
+      {showApproval && <MultiTokenApproval
         showApproval={showApproval}
         setShowApproval={setShowApproval}
         balance={balance}
         amount={amount}
         bridger={bridger}
         decimals={decimals}
+        startingTokenIndex={startingTokenIndex}
         tokens={
           [selectedBridgeToken,
             getTokensForNetwork(
               selectedHighNetwork.chainId,
               connectedAccount).find(token => token.symbol === selectedHighNetwork.nativeCurrency?.symbol)!
-            ]
+          ]
         }
       />}
     </>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './MultiTokenApproval.module.css';
 import { Modal } from 'summon-ui/mantine';
 import AllowanceSelector from '../allowance/AllowanceSelector';
@@ -18,15 +18,16 @@ interface MultiTokenApprovalProps {
   bridger: Bridger | undefined
   decimals: number | undefined
   tokens: Token[]
+  startingTokenIndex: number
 }
 
-export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showApproval, setShowApproval, bridger, amount, balance, decimals, tokens }) => {
+export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showApproval, setShowApproval, bridger, amount, balance, decimals, tokens, startingTokenIndex }) => {
   const { selectedNetworkType, getProvider } = useBlockchainContext()
   const queryClient = useQueryClient()
   const networks = getNetworks(selectedNetworkType)
   const [newAllowance, setNewAllowance] = useState(ethers.utils.parseUnits(amount || '0', 18))
   const [approvedTokens, setApprovedTokens] = useState<Set<string>>(new Set())
-  const [currentTokenIndex, setCurrentTokenIndex] = useState(0)
+  const [currentTokenIndex, setCurrentTokenIndex] = useState(startingTokenIndex)
 
   const approve = useMutation(
     async (amount: ethers.BigNumber) => {
@@ -35,6 +36,7 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
       if (!network) throw new Error('Network not found')
       const provider = await getProvider(network)
       const signer = provider.getSigner()
+      console.log(currentTokenIndex, startingTokenIndex)
       const txApprove = currentTokenIndex === 0
         ? await bridger?.approve(amount, signer)
         : await bridger?.approveNative(amount, signer);
@@ -56,6 +58,19 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
       }
     }
   )
+
+  useEffect(() => {
+    const approvedSymbols = new Set<string>();
+    tokens.forEach((token, index) => {
+      if (index < startingTokenIndex) {
+        console.log(index, startingTokenIndex)
+        approvedSymbols.add(token.symbol);
+      }
+    });
+
+    setApprovedTokens(approvedSymbols);
+    setCurrentTokenIndex(startingTokenIndex);
+  }, [tokens, startingTokenIndex]);
 
   return (
     <Modal
@@ -113,8 +128,10 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
         </div>
         <div className={styles.buttonSpacer} />
         <div className={styles.buttonSection}>
-          <div className={styles.button} onClick={() => approve.mutate(newAllowance)}>
-            <div className={styles.buttonText}>Approve</div>
+          <div className={`${styles.button} ${approve.isLoading ? styles.buttonLoading : ''}`}>
+            <div className={`${styles.buttonText} ${approve.isLoading ? styles.buttonLoadingText : ''}`}>
+              {approve.isLoading ? 'Approving...' : 'Approve'}
+            </div>
           </div>
         </div>
       </div>

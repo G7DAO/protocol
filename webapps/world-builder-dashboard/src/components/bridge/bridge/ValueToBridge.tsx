@@ -107,6 +107,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
           onChange={(e) => setValue(e.target.value)}
           disabled={!connectedAccount}
           placeholder={'0'}
+          type='number'
         />
         <button
           className={styles.maxButton}
