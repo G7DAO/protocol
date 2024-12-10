@@ -232,6 +232,16 @@ export const useBridgeTransfer = () => {
     return useQuery(
       ['transactionInputs', txHash],
       async () => {
+        const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
+        const cachedTransaction = transactions.find((t: any) =>
+          isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
+        )
+
+        // Check if we have cached inputs
+        if (cachedTransaction?.transactionInputs !== undefined) {
+          return cachedTransaction.transactionInputs
+        }
+
         const _bridgeTransfer = new BridgeTransfer({
           txHash: txHash ?? '',
           destinationNetworkChainId: destinationChainId ?? 0,
@@ -242,15 +252,13 @@ export const useBridgeTransfer = () => {
 
         const transactionInputs = await _bridgeTransfer.getInfo()
 
-        const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
-
         // Update the cache with the latest status
         const newTransactions = transactions.map((t: any) => {
           const isSameHash = isDeposit
             ? t.lowNetworkHash === txRecord.lowNetworkHash
             : t.highNetworkHash === txRecord.highNetworkHash
 
-          return isSameHash ? { ...t, transactionInputs: transactionInputs } : t
+          return isSameHash ? { ...t, transactionInputs: transactionInputs, lastUpdated: Date.now() } : t
         })
 
         localStorage.setItem(
@@ -265,13 +273,11 @@ export const useBridgeTransfer = () => {
           const cachedTransaction = transactions.find((t: any) =>
             isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
           )
-          console.log(cachedTransaction)
           if (cachedTransaction && cachedTransaction.transactionInputs !== undefined) {
-            console.log('returning..')
             return cachedTransaction?.transactionInputs
           }
         },
-        staleTime: 2 * 60 * 1000,
+        staleTime: 30 * 60 * 1000,
         refetchOnWindowFocus: false,
         enabled: !!txRecord
       }
