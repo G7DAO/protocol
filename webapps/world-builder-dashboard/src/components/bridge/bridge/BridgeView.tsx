@@ -70,15 +70,6 @@ const BridgeView = ({
     token: selectedNativeToken
   })
 
-  const childToken = getTokensForNetwork(selectedHighNetwork.chainId, connectedAccount).find(
-    (token) => token.symbol === selectedHighNetwork.nativeCurrency?.symbol
-  ) ?? null
-
-  const { data: childTokenInformation } = useTokenInformation({
-    account: connectedAccount,
-    token: childToken
-  })
-
   const { data: coinUSDRate, isFetching: isCoinFetching } = useUSDPriceOfToken(selectedBridgeToken.geckoId ?? '')
   const handleTokenChange = async (token: Token) => {
     setSelectedBridgeToken(token)
@@ -324,7 +315,7 @@ const BridgeView = ({
         symbol={tokenInformation?.symbol ?? ''}
         decimals={tokenInformation?.decimalPlaces ?? 18}
         balance={tokenInformation?.tokenBalance}
-        nativeBalance={childTokenInformation?.tokenBalance}
+        nativeBalance={nativeTokenInformation?.tokenBalance}
       />
     </div>
   )

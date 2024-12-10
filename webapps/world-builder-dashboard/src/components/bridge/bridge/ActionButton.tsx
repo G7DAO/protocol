@@ -70,7 +70,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       return false
     }
 
-    const nativeTokenAllowance = await bridger.getNativeAllowance(selectedHighNetwork.rpcs[0], connectedAccount)
+    const nativeTokenAllowance = await bridger.getNativeAllowance(selectedLowNetwork.rpcs[0], connectedAccount)
     console.log(nativeTokenAllowance)
     if (!nativeTokenAllowance || nativeTokenAllowance.lt(amountToSend)) {
       setStartingTokenIndex(1)
