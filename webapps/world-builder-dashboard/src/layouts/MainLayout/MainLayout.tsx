@@ -42,7 +42,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({}) => {
     },
     {
       name: 'documentation',
-      navigateTo: 'https://wiki.game7.io/g7-developer-resource',
+      navigateTo: 'https://docs.game7.io/',
       icon: <IconDocumentation stroke={'#B9B9B9'} />
     }
   ]

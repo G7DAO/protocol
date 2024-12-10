@@ -21,7 +21,7 @@ const NAVBAR_ITEMS = [
   { name: 'Community', link: 'https://discord.com/invite/g7dao' },
   {
     name: 'Docs',
-    link: 'https://wiki.game7.io/g7-developer-resource/bWmdEUXVjGpgIbH3H5XT/introducing-the-g7-network/world-builder'
+    link: 'https://docs.game7.io/'
   }
 ]
 

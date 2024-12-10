@@ -31,13 +31,13 @@ const essentials = [
     title: 'Block explorer',
     description: 'Track and interact directly with your smart contracts',
     imageClass: styles.networkEssentialExplorer,
-    onClick: () => window.open('https://testnet.game7.io/', '_blank')
+    onClick: () => window.open('https://mainnet.game7.io/', '_blank')
   },
   {
     title: 'Docs',
     description: 'Get more information about building on the G7 Network',
     imageClass: styles.networkEssentialDocs,
-    onClick: () => window.open('https://wiki.game7.io/g7-developer-resource/', '_blank')
+    onClick: () => window.open('https://docs.game7.io/', '_blank')
   },
   {
     title: 'Discord',
