@@ -20,7 +20,6 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled, tok
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption()
   })
-
   return (
     <Combobox
       store={combobox}
@@ -43,7 +42,7 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled, tok
         >
           <div className={styles.tokenAmountContainer}>
             {token?.Icon && <token.Icon />}
-            <div className={styles.value}>{formatBigNumber(allowance, 4, token.decimals)} {token?.symbol}</div>
+            <div className={styles.value}>{formatBigNumber(allowance, token.decimals)} {token?.symbol}</div>
           </div>
           <button
               className={styles.minButton}
@@ -69,7 +68,7 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled, tok
             .map(({ n, percentage }) => (
               <Combobox.Option className={styles.optionContainer} value={ethers.utils.formatUnits(percentage, token.decimals)} key={n}>
                 <div className={styles.optionPercent}>{`${n}%`}</div>
-                <div className={styles.optionValue}>{formatBigNumber(percentage, 4, token.decimals)} {token?.symbol}</div>
+                <div className={styles.optionValue}>{formatBigNumber(percentage, token.decimals)} {token?.symbol}</div>
                 {allowance.eq(percentage) && <IconCheck />}
               </Combobox.Option>
             ))}

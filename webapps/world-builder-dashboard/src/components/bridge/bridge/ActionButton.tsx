@@ -25,6 +25,7 @@ interface ActionButtonProps {
   symbol?: string
   decimals?: number
   balance?: string
+  nativeBalance?: string
 }
 
 const ActionButton: React.FC<ActionButtonProps> = ({
@@ -36,7 +37,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   bridger,
   symbol,
   decimals,
-  balance
+  balance,
+  nativeBalance
 }) => {
   const {
     connectedAccount,
@@ -58,15 +60,18 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   const checkAllowances = async () => {
     if (!bridger || !connectedAccount) return null;
 
+    // L2 token approval check
     const bridgeTokenAllowance = await bridger.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount)
     const amountToSend = ethers.utils.parseUnits(amount, decimals)
     if (!bridgeTokenAllowance || bridgeTokenAllowance.lt(amountToSend)) {
       setStartingTokenIndex(0)
       setShowApproval(true)
+      console.log('Bridge token allowance check failed')
       return false
     }
 
     const nativeTokenAllowance = await bridger.getNativeAllowance(selectedHighNetwork.rpcs[0], connectedAccount)
+    console.log(nativeTokenAllowance)
     if (!nativeTokenAllowance || nativeTokenAllowance.lt(amountToSend)) {
       setStartingTokenIndex(1)
       setShowApproval(true)
@@ -124,10 +129,10 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       if (bridger?.isDeposit) {
         if (selectedBridgeToken.address != ZERO_ADDRESS) {
           const allowancesOk = await checkAllowances()
+          console.log(allowancesOk)
           if (!allowancesOk) {
             return
           }
-          setShowApproval(false)
         }
         const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })
         await tx?.wait()
@@ -196,6 +201,13 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     }
   )
 
+  // Add callback for when approval is completed
+  const handleApprovalComplete = () => {
+    setShowApproval(false)
+    // Continue with transfer
+    transfer.mutate(amount)
+  }
+
   return (
     <>
       <button
@@ -212,22 +224,26 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           {getLabel() ?? 'Submit'}
         </div>
       </button>
-      {showApproval && <MultiTokenApproval
-        showApproval={showApproval}
-        setShowApproval={setShowApproval}
-        balance={balance}
-        amount={amount}
-        bridger={bridger}
-        decimals={decimals}
-        startingTokenIndex={startingTokenIndex}
-        tokens={
-          [selectedBridgeToken,
+      {showApproval && 
+        <MultiTokenApproval
+          showApproval={showApproval}
+          setShowApproval={setShowApproval}
+          balance={balance}
+          nativeBalance={nativeBalance}
+          amount={amount}
+          bridger={bridger}
+          decimals={decimals}
+          startingTokenIndex={startingTokenIndex}
+          tokens={[
+            selectedBridgeToken,
             getTokensForNetwork(
               selectedHighNetwork.chainId,
-              connectedAccount).find(token => token.symbol === selectedHighNetwork.nativeCurrency?.symbol)!
-          ]
-        }
-      />}
+              connectedAccount
+            ).find(token => token.symbol === selectedHighNetwork.nativeCurrency?.symbol)!
+          ]}
+          onApprovalComplete={handleApprovalComplete}
+        />
+      }
     </>
   )
 }

@@ -14,14 +14,16 @@ interface MultiTokenApprovalProps {
   showApproval: boolean
   setShowApproval: (showApproval: boolean) => void
   balance: string | undefined
+  nativeBalance: string | undefined
   amount: string
   bridger: Bridger | undefined
   decimals: number | undefined
   tokens: Token[]
   startingTokenIndex: number
+  onApprovalComplete: () => void;
 }
 
-export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showApproval, setShowApproval, bridger, amount, balance, decimals, tokens, startingTokenIndex }) => {
+export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showApproval, setShowApproval, bridger, amount, balance, nativeBalance, decimals, tokens, startingTokenIndex, onApprovalComplete }) => {
   const { selectedNetworkType, getProvider } = useBlockchainContext()
   const queryClient = useQueryClient()
   const networks = getNetworks(selectedNetworkType)
@@ -36,13 +38,12 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
       if (!network) throw new Error('Network not found')
       const provider = await getProvider(network)
       const signer = provider.getSigner()
-      console.log(currentTokenIndex, startingTokenIndex)
+      
       const txApprove = currentTokenIndex === 0
         ? await bridger?.approve(amount, signer)
         : await bridger?.approveNative(amount, signer);
 
       await txApprove?.wait()
-
       return { tx: txApprove, tokenSymbol: currentToken.symbol }
     },
     {
@@ -50,6 +51,8 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
         setApprovedTokens(prev => new Set([...prev, tokenSymbol]))
         if (currentTokenIndex < tokens.length - 1) {
           setCurrentTokenIndex(prev => prev + 1)
+        } else {
+          handleAllApprovalsComplete()
         }
         queryClient.refetchQueries(['ERC20Balance'])
       },
@@ -63,7 +66,6 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
     const approvedSymbols = new Set<string>();
     tokens.forEach((token, index) => {
       if (index < startingTokenIndex) {
-        console.log(index, startingTokenIndex)
         approvedSymbols.add(token.symbol);
       }
     });
@@ -71,6 +73,11 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
     setApprovedTokens(approvedSymbols);
     setCurrentTokenIndex(startingTokenIndex);
   }, [tokens, startingTokenIndex]);
+
+  const handleAllApprovalsComplete = () => {
+    setShowApproval(false)
+    onApprovalComplete()
+  }
 
   return (
     <Modal
@@ -107,10 +114,10 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
         </div>
         <div className={styles.allowanceSection}>
           <div className={styles.allowanceContainer}>
-            <div className={styles.allowanceTitle}>Allowance {balance ? `(${balance} available)` : ''}</div>
+            <div className={styles.allowanceTitle}>Allowance {currentTokenIndex === 0 ? `(${balance} available)` : `(${nativeBalance} available)`}</div>
             <AllowanceSelector
               token={tokens[currentTokenIndex]}
-              balance={ethers.utils.parseUnits(balance || '0', decimals || 18)}
+              balance={currentTokenIndex === 0 ? ethers.utils.parseUnits(balance || '0', decimals || 18) : ethers.utils.parseUnits(nativeBalance || '0', decimals || 18)}
               amount={ethers.utils.parseUnits(amount || '0', decimals || 18)}
               onChange={(value) => setNewAllowance(value)}
               allowance={newAllowance}
@@ -128,7 +135,7 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
         </div>
         <div className={styles.buttonSpacer} />
         <div className={styles.buttonSection}>
-          <div className={`${styles.button} ${approve.isLoading ? styles.buttonLoading : ''}`}>
+          <div onClick={() => approve.mutate(newAllowance)} className={`${styles.button} ${approve.isLoading ? styles.buttonLoading : ''}`}>
             <div className={`${styles.buttonText} ${approve.isLoading ? styles.buttonLoadingText : ''}`}>
               {approve.isLoading ? 'Approving...' : 'Approve'}
             </div>
