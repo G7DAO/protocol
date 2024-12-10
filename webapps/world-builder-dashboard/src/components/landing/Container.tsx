@@ -3,6 +3,8 @@ import styles from "./Container.module.css";
 import parentStyles from "./Landing.module.css"
 import SegmentedProgressBar from "./SegmentedProgressBar";
 import Navbar from "@/components/landing/Navbar";
+import backgroundImage from "../../assets/G7LandingPageBGDark.jpg";
+
 
 interface ContainerProps {
     components: ReactNode[]
@@ -23,11 +25,20 @@ const Container: React.FC<ContainerProps> = ({components, isNavbarOpen, setIsNav
     const [isFadingOut, setIsFadingOut] = useState(false)
     const hasRunOnce = useRef(false) //to not fade out at first render
 
+    const [backgroundStyle, setBackgroundStyle] = useState<string | undefined>();
 
+    useEffect(() => {
+        const img = new Image();
+        img.src = backgroundImage as string;
+
+        img.onload = () => {
+            setBackgroundStyle(`#1b1b1b url(${backgroundImage}) 50% / cover no-repeat`);
+        };
+    }, []);
 
     useEffect(() => {
         const handleScroll = () => {
-            const progress = window.scrollY / (8000 - window.innerHeight)
+            const progress = window.scrollY / (5000 - window.innerHeight)
             setProgress(progress * 100)
             setPage(Math.min(Math.floor(progress * components.length), components.length - 1));
         };
@@ -69,7 +80,9 @@ const Container: React.FC<ContainerProps> = ({components, isNavbarOpen, setIsNav
                           navigateLink={navigateLink}
                       />
 
-                      <div className={`${parentStyles.mainLayout} ${isNavbarOpen ? styles.layoutDarkened : ''}`}>
+                      <div className={`${parentStyles.mainLayout} ${isNavbarOpen ? styles.layoutDarkened : ''}`}
+                           style={backgroundStyle ? { background: backgroundStyle } : undefined}
+                      >
                           <div className={isFadingOut ? styles.fadeOut : styles.fadeIn}>
                             {components[pageToRender]}
                           </div>
