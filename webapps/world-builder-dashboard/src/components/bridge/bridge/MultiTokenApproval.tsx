@@ -31,11 +31,10 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
   const approve = useMutation(
     async (amount: ethers.BigNumber) => {
       const currentToken = tokens[currentTokenIndex];
-      const network = networks?.find((n) => n.chainId === bridger?.destinationNetwork.chainId)
+      const network = networks?.find((n) => currentTokenIndex === 0 ? n.chainId === bridger?.originNetwork.chainId : n.chainId === bridger?.destinationNetwork.chainId)
       if (!network) throw new Error('Network not found')
       const provider = await getProvider(network)
       const signer = provider.getSigner()
-
       const txApprove = currentTokenIndex === 0
         ? await bridger?.approve(amount, signer)
         : await bridger?.approveNative(amount, signer);

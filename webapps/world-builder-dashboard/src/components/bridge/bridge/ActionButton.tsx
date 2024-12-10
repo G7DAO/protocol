@@ -105,12 +105,11 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           const allowanceToCheck = ethers.utils.formatUnits(allowance, decimals)
 
           // Approve first
-          if (Number(allowanceToCheck) < Number(amountToSend)) {
+          if (Number(allowanceToCheck) <= Number(amountToSend)) {
             // const txApprove = await bridger?.approve(amountToSend, signer)
             // await txApprove.wait()
-            console.log('approving')
             setShowApproval(true)
-            // return null
+            return null
           }
         }
         const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })
