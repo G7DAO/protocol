@@ -59,21 +59,36 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 
   const checkAllowances = async () => {
     if (!bridger || !connectedAccount) return null;
-
-    // L2 token approval check
-    const bridgeTokenAllowance = await bridger.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount)
     const amountToSend = ethers.utils.parseUnits(amount, decimals)
-    if (!bridgeTokenAllowance || bridgeTokenAllowance.lt(amountToSend)) {
-      setStartingTokenIndex(0)
-      setShowApproval(true)
+    const oneEther = ethers.utils.parseEther('1')
+
+    console.log('------------------')
+    // Check bridge token allowance
+    const bridgeTokenAllowance = await bridger.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount)
+    console.log("Bridge Token Allowance:", bridgeTokenAllowance ? ethers.utils.formatUnits(bridgeTokenAllowance, decimals) : 'null (not needed)')
+
+    // Check native token allowance
+    const nativeTokenAllowance = await bridger.getNativeAllowance(selectedLowNetwork.rpcs[0], connectedAccount)
+    console.log("Native Token Allowance:", nativeTokenAllowance ? ethers.utils.formatUnits(nativeTokenAllowance, 18) : 'null (not needed)')
+    console.log('------------------')
+
+    // If bridge token needs approval
+    if (bridgeTokenAllowance !== null && bridgeTokenAllowance?.lt(amountToSend)) {
+      if (!showApproval) {
+        console.log('Bridge token needs approval')
+        setStartingTokenIndex(0)
+        setShowApproval(true)
+      }
       return false
     }
 
-    const nativeTokenAllowance = await bridger.getNativeAllowance(selectedLowNetwork.rpcs[0], connectedAccount)
-    console.log(nativeTokenAllowance)
-    if (!nativeTokenAllowance || nativeTokenAllowance.lt(amountToSend)) {
-      setStartingTokenIndex(1)
-      setShowApproval(true)
+    // If native token needs approval (only check if getNativeAllowance returns non-null)
+    if (nativeTokenAllowance !== null && nativeTokenAllowance?.lt(oneEther)) {
+      if (!showApproval) {
+        console.log('Native token needs approval')
+        setStartingTokenIndex(1)
+        setShowApproval(true)
+      }
       return false
     }
 
@@ -125,52 +140,33 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       )?.address
       const amountToSend = ethers.utils.parseUnits(amount, decimals)
 
+      console.log('Debug Transfer Details:', {
+        tokenAddress: selectedBridgeToken.address,
+        tokenSymbol: selectedBridgeToken.symbol,
+        decimals: decimals,
+        rawAmount: amount,
+        parsedAmount: amountToSend.toString(),
+        fromNetwork: selectedLowNetwork.chainId,
+        toNetwork: selectedHighNetwork.chainId,
+        connectedAccount: connectedAccount
+      });
+
       if (bridger?.isDeposit) {
         if (selectedBridgeToken.address != ZERO_ADDRESS) {
-          console.log('------------------')
-          console.log('Checking bridge token allowance...')
-          const bridgeTokenAllowance = await bridger.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount)
-          console.log("Bridge Token Allowance:", bridgeTokenAllowance ? ethers.utils.formatUnits(bridgeTokenAllowance, decimals) : 'not needed')
-          console.log("Amount needed:", ethers.utils.formatUnits(amountToSend, decimals))
-          
-          console.log('------------------')
-          console.log('Checking native token allowance...')
-          const nativeTokenAllowance = await bridger.getNativeAllowance(selectedLowNetwork.rpcs[0], connectedAccount)
-          console.log("Native Token Allowance:", nativeTokenAllowance ? ethers.utils.formatUnits(nativeTokenAllowance, 18) : 'not needed')
-          
+
+          const bridgeTokenAllowance = await bridger.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount ?? '')
+          console.log(ethers.utils.formatUnits(bridgeTokenAllowance ?? 0, decimals))
+
           const allowancesOk = await checkAllowances()
-          console.log('Allowances OK:', allowancesOk)
+          console.log(allowancesOk)
           if (!allowancesOk) {
             return
           }
         }
-
-        console.log('------------------')
-        console.log('Estimating gas and fees...')
-        try {
-          const gasAndFee = await bridger.getGasAndFeeEstimation(
-            amountToSend, 
-            provider, 
-            connectedAccount, 
-            destinationProvider
-          )
-          console.log('Gas and Fee Estimation:', {
-            parentFee: ethers.utils.formatEther(gasAndFee.estimatedFee),
-            childFee: gasAndFee.childNetworkEstimation 
-              ? ethers.utils.formatEther(gasAndFee.childNetworkEstimation.estimatedFee) 
-              : 0
-          })
-        } catch (e) {
-          console.error('Gas estimation error:', e)
-        }
-
-        console.log('------------------')
-        console.log('Initiating transfer...')
+        console.log('transferring')
         const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })
-        console.log('Transfer initiated, waiting for confirmation...')
         await tx?.wait()
-        console.log('Transfer confirmed:', tx?.hash)
-
+        console.log('transferred')
         return {
           type: 'DEPOSIT',
           amount: amount,

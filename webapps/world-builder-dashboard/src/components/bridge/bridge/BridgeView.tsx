@@ -69,6 +69,7 @@ const BridgeView = ({
     account: connectedAccount,
     token: selectedNativeToken
   })
+
   const { data: coinUSDRate, isFetching: isCoinFetching } = useUSDPriceOfToken(selectedBridgeToken.geckoId ?? '')
   const handleTokenChange = async (token: Token) => {
     setSelectedBridgeToken(token)
@@ -148,7 +149,6 @@ const BridgeView = ({
         setBridger(_bridger)
         const fetchAllowances = async () => {
           try {
-            console.log('fetching allowances')
             const bridgeTokenAllowance = await _bridger.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount)
             const nativeTokenAllowance = await _bridger.getNativeAllowance(selectedLowNetwork.rpcs[0], connectedAccount)
             console.log(bridgeTokenAllowance, nativeTokenAllowance)

@@ -39,9 +39,15 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
       const provider = await getProvider(network)
       const signer = provider.getSigner()
 
+      console.log('Approving token:', {
+        currentIndex: currentTokenIndex,
+        tokenSymbol: currentToken.symbol,
+        isNative: currentTokenIndex === 1
+      });
+
       const txApprove = currentTokenIndex === 0
         ? await bridger?.approve(amount, signer)
-        : await bridger?.approveNative(amount, signer);
+        : await bridger?.approveNative(ethers.utils.parseEther('1'), signer);
 
       await txApprove?.wait()
       return { tx: txApprove, tokenSymbol: currentToken.symbol }
@@ -49,9 +55,20 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
     {
       onSuccess: ({ tokenSymbol }) => {
         setApprovedTokens(prev => new Set([...prev, tokenSymbol]))
+        
+        // Log the current state
+        console.log('Approval success:', {
+          tokenSymbol,
+          currentIndex: currentTokenIndex,
+          totalTokens: tokens.length,
+          approvedTokens: Array.from(approvedTokens)
+        });
+
         if (currentTokenIndex < tokens.length - 1) {
+          console.log('Moving to next token');
           setCurrentTokenIndex(prev => prev + 1)
         } else {
+          console.log('All tokens approved');
           handleAllApprovalsComplete()
         }
         queryClient.refetchQueries(['ERC20Balance'])
@@ -73,6 +90,14 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
     setApprovedTokens(approvedSymbols);
     setCurrentTokenIndex(startingTokenIndex);
   }, [tokens, startingTokenIndex]);
+
+  useEffect(() => {
+    console.log('Current state:', {
+      currentIndex: currentTokenIndex,
+      approvedTokens: Array.from(approvedTokens),
+      totalTokens: tokens.length
+    });
+  }, [currentTokenIndex, approvedTokens, tokens.length]);
 
   const handleAllApprovalsComplete = () => {
     setShowApproval(false)
