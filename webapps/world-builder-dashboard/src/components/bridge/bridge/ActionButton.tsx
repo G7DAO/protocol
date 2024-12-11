@@ -60,17 +60,23 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 
   const checkAllowances = async () => {
     if (!bridger || !connectedAccount) return null;
+
     if (allowancesVerified) {
       console.log('Allowances already verified, skipping check');
       return true;
     }
     
-    const amountToSend = ethers.utils.parseUnits(amount, decimals)
+    if (amount === '0.1') {
+      setStartingTokenIndex(0);
+      setShowApproval(true);
+      return false;
+    }
+    
     const bridgeTokenAllowance = await bridger.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount)
     const nativeTokenAllowance = await bridger.getNativeAllowance(selectedLowNetwork.rpcs[0], connectedAccount)
 
-    const needsBridgeTokenApproval = bridgeTokenAllowance !== null && bridgeTokenAllowance?.lt(amountToSend);
-    const needsNativeTokenApproval = nativeTokenAllowance !== null;
+    const needsBridgeTokenApproval = bridgeTokenAllowance !== null
+    const needsNativeTokenApproval = nativeTokenAllowance !== null
 
     if (needsBridgeTokenApproval || needsNativeTokenApproval) {
       setStartingTokenIndex(needsBridgeTokenApproval ? 0 : 1)
@@ -139,12 +145,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       });
 
       if (bridger?.isDeposit) {
-        console.log('checking allowances')
+        console.log('proceeding with deposit')
         if (selectedBridgeToken.address != ZERO_ADDRESS) {
-          const allowancesOk = await checkAllowances()
-          if (!allowancesOk) {
-            return
-          }
           const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })
           await tx?.wait()
           return {
@@ -214,9 +216,11 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   )
 
   const handleApprovalComplete = () => {
-    console.log('approval complete')
+    console.log('=== ActionButton: handleApprovalComplete ===');
+    console.log('Setting allowancesVerified to true');
     setShowApproval(false)
     setAllowancesVerified(true)
+    console.log('Triggering transfer');
     transfer.mutate(amount)
   }
 
@@ -229,7 +233,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       transfer.mutate(amount)
       return
     }
-
+  
     console.log('Checking allowances before transfer');
     const allowancesOk = await checkAllowances()
     console.log('Allowances check result:', allowancesOk);

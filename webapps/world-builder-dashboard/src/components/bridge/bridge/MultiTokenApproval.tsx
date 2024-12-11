@@ -62,21 +62,21 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
     },
     {
       onSuccess: ({ tokenSymbol }) => {
-        setApprovedTokens(prev => new Set([...prev, tokenSymbol]))
+        console.log('=== Approval onSuccess ===');
+        setApprovedTokens(prev => {
+          const newSet = new Set([...prev, tokenSymbol]);
+          console.log('Updated approvedTokens:', Array.from(newSet));
+          return newSet;
+        })
         
-        // Log the current state
-        console.log('Approval success:', {
-          tokenSymbol,
-          currentIndex: currentTokenIndex,
-          totalTokens: tokens.length,
-          approvedTokens: Array.from(approvedTokens)
-        });
-
+        console.log('Current token index:', currentTokenIndex);
+        console.log('Total tokens:', tokens.length);
+        
         if (currentTokenIndex < tokens.length - 1) {
           console.log('Moving to next token');
           setCurrentTokenIndex(prev => prev + 1)
         } else {
-          console.log('All tokens approved');
+          console.log('All tokens approved, triggering completion');
           handleAllApprovalsComplete()
         }
         queryClient.refetchQueries(['ERC20Balance'])
@@ -88,6 +88,8 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
   )
 
   const handleAllApprovalsComplete = () => {
+    console.log('=== handleAllApprovalsComplete ===');
+    console.log('Closing approval modal and triggering completion callback');
     setShowApproval(false)
     onApprovalComplete()
   }
