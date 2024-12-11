@@ -27,6 +27,7 @@
 
 .containerDisabled {
     cursor: not-allowed;
+    background: #393939;
 }
 
 .value {

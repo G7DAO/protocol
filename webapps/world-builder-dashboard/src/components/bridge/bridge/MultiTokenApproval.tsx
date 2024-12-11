@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styles from './MultiTokenApproval.module.css';
 import { Modal } from 'summon-ui/mantine';
 import AllowanceSelector from '../allowance/AllowanceSelector';
@@ -9,6 +9,7 @@ import { Bridger } from 'game7-bridge-sdk';
 import { useBlockchainContext } from '@/contexts/BlockchainContext';
 import { getNetworks } from '../../../../constants';
 import { Token } from '@/utils/tokens';
+import IconCheck from '@/assets/IconCheck';
 
 interface MultiTokenApprovalProps {
   showApproval: boolean
@@ -28,7 +29,14 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
   const queryClient = useQueryClient()
   const networks = getNetworks(selectedNetworkType)
   const [newAllowance, setNewAllowance] = useState(ethers.utils.parseUnits(amount || '0', decimals || 18))
-  const [approvedTokens, setApprovedTokens] = useState<Set<string>>(new Set())
+  
+  // Initialize approvedTokens with already approved tokens
+  const initialApprovedTokens = new Set(
+    tokens
+      .filter((_, index) => index < startingTokenIndex)
+      .map(token => token.symbol)
+  );
+  const [approvedTokens, setApprovedTokens] = useState<Set<string>>(initialApprovedTokens)
   const [currentTokenIndex, setCurrentTokenIndex] = useState(startingTokenIndex)
 
   const approve = useMutation(
@@ -47,7 +55,7 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
 
       const txApprove = currentTokenIndex === 0
         ? await bridger?.approve(amount, signer)
-        : await bridger?.approveNative(ethers.utils.parseEther('1'), signer);
+        : await bridger?.approveNative(newAllowance, signer);
 
       await txApprove?.wait()
       return { tx: txApprove, tokenSymbol: currentToken.symbol }
@@ -78,26 +86,6 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
       }
     }
   )
-
-  useEffect(() => {
-    const approvedSymbols = new Set<string>();
-    tokens.forEach((token, index) => {
-      if (index < startingTokenIndex) {
-        approvedSymbols.add(token.symbol);
-      }
-    });
-
-    setApprovedTokens(approvedSymbols);
-    setCurrentTokenIndex(startingTokenIndex);
-  }, [tokens, startingTokenIndex]);
-
-  useEffect(() => {
-    console.log('Current state:', {
-      currentIndex: currentTokenIndex,
-      approvedTokens: Array.from(approvedTokens),
-      totalTokens: tokens.length
-    });
-  }, [currentTokenIndex, approvedTokens, tokens.length]);
 
   const handleAllApprovalsComplete = () => {
     setShowApproval(false)
@@ -130,9 +118,15 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
                 key={token.symbol}
                 className={`${styles.bar} ${approvedTokens.has(token.symbol) ? styles.barApproved : ''}`}
               >
-                <div className={`${styles.barTitle} ${approvedTokens.has(token.symbol) ? styles.barTitleApproved : ''}`}>
-                  Approve {token.symbol}
+                <div className={styles.barTitleContainer}>
+                  <div className={`${styles.barTitle} ${approvedTokens.has(token.symbol) ? styles.barTitleApproved : ''}`}>
+                    Approve {token.symbol}
+                  </div>
+                  {approvedTokens.has(token.symbol) && <IconCheck stroke="#F04438" />}
                 </div>
+                {approve.isLoading && currentTokenIndex === tokens.indexOf(token) && (
+                  <div className={styles.loadingBar} />
+                )}
               </div>
             ))}
           </div>

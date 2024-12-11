@@ -73,6 +73,12 @@
     border-top-color: #F04438;
 }
 
+.barTitleContainer {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+}
+
 .barTitle {
     align-self: stretch;
     color: #727272;
