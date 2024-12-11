@@ -18,8 +18,6 @@ import IconEthereum from '@/assets/IconEthereum'
 import IconG7T from '@/assets/IconG7T'
 import IconTokenNoSynbol from '@/assets/IconTokenNoSymbol'
 import IconUSDC from '@/assets/IconUSDC'
-import IconUSDC from '@/assets/IconUSDC'
-
 
 export interface Token {
   name: string
