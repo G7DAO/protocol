@@ -53,8 +53,12 @@ const ApproveAllowance: React.FC<ApproveAllowanceProps> = ({ amount, balance, on
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.titleAndCloseButton}>
-          <div className={styles.title}>Approve Allowance</div>
-          <IconClose onClick={onClose} className={styles.closeButton} />
+          <div className={styles.titleAndCloseButtonContainer}>
+            <div className={styles.title}>
+              Approve Allowance
+            </div>
+            <IconClose onClick={onClose} className={styles.closeButton} />
+          </div>
         </div>
         <div className={styles.supportingText}>
           We need permission for token allowances in order to facilitate transactions.

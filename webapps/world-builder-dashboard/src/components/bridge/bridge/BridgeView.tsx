@@ -88,32 +88,36 @@ const BridgeView = ({
         const originNetwork = networks?.find((n) => n.chainId === bridger?.originNetwork.chainId)
         if (!originNetwork) throw new Error("Can't find network!")
 
-        const allowance = await bridger?.getAllowance(originNetwork.rpcs[0], connectedAccount ?? '')
         const decimals = tokenInformation?.decimalPlaces ?? 18
         const parsedValue = value ? ethers.utils.parseUnits(value, decimals) : ethers.utils.parseEther('0')
 
-        let approvalFee = ethers.utils.parseEther('0') // Default to zero if no approval needed
-        let transferFee = ethers.utils.parseEther('0') // Default to zero
+        console.log('fetching gas fee...')
+        const originProvider = direction === 'DEPOSIT' ? selectedLowNetwork.rpcs[0] : selectedHighNetwork.rpcs[0]
+        const destinationProvider = direction === 'DEPOSIT' ? selectedHighNetwork.rpcs[0] : undefined
 
-        if (allowance?.lt(parsedValue)) {
-          const approvalEstimate = await bridger?.getApprovalGasAndFeeEstimation(
+        try {
+          const gasAndFee = await bridger?.getGasAndFeeEstimation(
             parsedValue,
-            originNetwork.rpcs[0],
-            connectedAccount ?? ''
+            originProvider,
+            connectedAccount ?? '',
+            destinationProvider
           )
-          approvalFee = approvalEstimate?.estimatedFee ?? ethers.utils.parseEther('0')
+
+          const parentFee = ethers.utils.formatEther(gasAndFee?.estimatedFee ?? '0')
+          const childFee = gasAndFee?.childNetworkEstimation
+            ? ethers.utils.formatEther(gasAndFee.childNetworkEstimation.estimatedFee)
+            : '0'
+          console.log(Number(parentFee) + Number(childFee))
+
+          return {
+            parentFee,
+            childFee,
+            totalFee: String(Number(parentFee) + Number(childFee))
+          }
+        } catch (e) {
+          console.error('gas estimation error', e)
+          throw e
         }
-
-        const transferEstimate = await bridger?.getGasAndFeeEstimation(
-          ethers.utils.parseEther('0.0'),
-          direction === 'DEPOSIT' ? selectedLowNetwork.rpcs[0] : selectedHighNetwork.rpcs[0],
-          connectedAccount ?? '',
-          direction === 'DEPOSIT' ? selectedHighNetwork.rpcs[0] : undefined
-        )
-
-        transferFee = transferEstimate?.estimatedFee ?? ethers.utils.parseEther('0')
-        const finalFee = approvalFee.add(transferFee)
-        return ethers.utils.formatEther(finalFee)
       } catch (e) {
         console.error(e)
         throw e
@@ -271,7 +275,7 @@ const BridgeView = ({
         errorMessage={inputErrorMessages.value}
         setErrorMessage={(msg) => setInputErrorMessages((prev) => ({ ...prev, value: msg }))}
         selectedChainId={direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId}
-        gasFee={estimatedFee.data ?? ""}
+        gasFee={estimatedFee.data?.totalFee ?? ""}
       />
       {direction === 'DEPOSIT' &&
         selectedLowNetwork.chainId === L2_NETWORK.chainId &&
@@ -299,8 +303,8 @@ const BridgeView = ({
             ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
             : `~${Math.floor((selectedHighNetwork.challengePeriod ?? 0) / 60)} min`
         }
-        fee={Number(estimatedFee.data ?? 0)}
-        isEstimatingFee={estimatedFee.isFetching}
+        fee={Number(estimatedFee.data?.totalFee ?? 0)}
+        isEstimatingFee={estimatedFee.isLoading}
         value={Number(value)}
         ethRate={
           selectedBridgeToken.symbol === 'TG7T' || selectedBridgeToken.symbol === 'G7'
@@ -335,6 +339,7 @@ const BridgeView = ({
         decimals={tokenInformation?.decimalPlaces ?? 18}
         balance={tokenInformation?.tokenBalance}
         nativeBalance={nativeTokenInformation?.tokenBalance}
+        gasFees={[estimatedFee.data?.parentFee ?? '', estimatedFee.data?.childFee ?? '']}
       />
     </div>
   )
