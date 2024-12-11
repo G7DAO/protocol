@@ -93,7 +93,7 @@ export const L3_MAIN_NETWORK: NetworkInterface = {
   nativeCurrency: {
     decimals: 18,
     name: 'Game7 Token',
-    symbol: 'G7T'
+    symbol: 'G7'
   },
   g7TokenAddress: '0x0000000000000000000000000000000000000000',
   retryableCreationTimeout: 15 * 60,

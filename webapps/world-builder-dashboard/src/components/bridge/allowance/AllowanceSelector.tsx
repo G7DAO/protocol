@@ -4,7 +4,7 @@ import { Combobox, Tooltip, useCombobox } from 'summon-ui/mantine'
 import IconAlertCircle from '@/assets/IconChevronDownToggle'
 import IconCheck from '@/assets/IconCheck'
 import IconChevronDown from '@/assets/IconChevronDown'
-import { formatBigNumber } from '@/utils/web3utils'
+import { Token } from '@/utils/tokens'
 
 type AllowanceSelectorProps = {
   balance: ethers.BigNumber
@@ -12,19 +12,19 @@ type AllowanceSelectorProps = {
   allowance: ethers.BigNumber
   amount: ethers.BigNumber
   disabled: boolean
+  token: Token
 }
 
-const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled }: AllowanceSelectorProps) => {
+const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled, token }: AllowanceSelectorProps) => {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption()
   })
-
   return (
     <Combobox
       store={combobox}
       variant='unstyled'
       onOptionSubmit={(val: string) => {
-        const amountInWei = ethers.utils.parseUnits(val, 18)
+        const amountInWei = ethers.utils.parseUnits(val, token.decimals)
         try {
           onChange(ethers.BigNumber.from(amountInWei))
         } catch (e) {
@@ -39,9 +39,14 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled }: A
           className={disabled ? styles.containerDisabled : styles.container}
           onClick={() => combobox.toggleDropdown()}
         >
-          <div className={styles.value}>{formatBigNumber(allowance)}</div>
+          <div className={styles.tokenAmountContainer}>
+            {token?.Icon && <token.Icon />}
+            <div className={styles.value}>
+              {ethers.utils.formatUnits(allowance, token.decimals)} {token?.symbol}
+            </div>
+          </div>
           <button
-            className={styles.minButton}
+              className={styles.minButton}
             onClick={(e) => {
               onChange(amount)
               e.stopPropagation()
@@ -53,7 +58,6 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled }: A
           <IconChevronDown className={styles.chevron} />
         </div>
       </Combobox.Target>
-
       <Combobox.Dropdown className={styles.dropdownContainer}>
         <Combobox.Options>
           {[25, 50, 75, 100]
@@ -63,9 +67,9 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled }: A
             })
             .filter(({ percentage }) => percentage.gt(amount))
             .map(({ n, percentage }) => (
-              <Combobox.Option className={styles.optionContainer} value={ethers.utils.formatEther(percentage)} key={n}>
+              <Combobox.Option className={styles.optionContainer} value={ethers.utils.formatUnits(percentage, token.decimals)} key={n}>
                 <div className={styles.optionPercent}>{`${n}%`}</div>
-                <div className={styles.optionValue}>{formatBigNumber(percentage)}</div>
+                <div className={styles.optionValue}>{ethers.utils.formatUnits(percentage, token.decimals)} {token?.symbol}</div>
                 {allowance.eq(percentage) && <IconCheck />}
               </Combobox.Option>
             ))}

@@ -58,16 +58,20 @@ const BridgeView = ({
     selectedBridgeToken,
     selectedNetworkType,
     setSelectedNativeToken,
-    selectedNativeToken
   } = useBlockchainContext()
 
   const { isFetching: isFetchingTokenInformation, data: tokenInformation } = useTokenInformation({
     account: connectedAccount,
     token: selectedBridgeToken
   })
+
+  const nativeToken = getTokensForNetwork(selectedLowNetwork.chainId, connectedAccount).find(
+    (token) => token.symbol === selectedHighNetwork.nativeCurrency?.symbol
+  ) ?? null
+
   const { data: nativeTokenInformation } = useTokenInformation({
     account: connectedAccount,
-    token: selectedNativeToken
+    token: nativeToken
   })
 
   const { data: coinUSDRate, isFetching: isCoinFetching } = useUSDPriceOfToken(selectedBridgeToken.geckoId ?? '')
@@ -103,7 +107,8 @@ const BridgeView = ({
         const transferEstimate = await bridger?.getGasAndFeeEstimation(
           ethers.utils.parseEther('0.0'),
           direction === 'DEPOSIT' ? selectedLowNetwork.rpcs[0] : selectedHighNetwork.rpcs[0],
-          connectedAccount ?? ''
+          connectedAccount ?? '',
+          direction === 'DEPOSIT' ? selectedHighNetwork.rpcs[0] : undefined
         )
 
         transferFee = transferEstimate?.estimatedFee ?? ethers.utils.parseEther('0')
@@ -127,27 +132,42 @@ const BridgeView = ({
       const originChainId = direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId
       const destinationChainId = direction === 'DEPOSIT' ? selectedHighNetwork.chainId : selectedLowNetwork.chainId
       const chainIds = Object.keys(selectedBridgeToken.tokenAddressMap)
-
+      console.log('in use effect')
       if (!chainIds.includes(String(destinationChainId))) {
         return
       }
       try {
         if (direction === 'DEPOSIT') {
-          const token =
-            getTokensForNetwork(selectedLowNetwork.chainId, connectedAccount).find(
-              (token) => token.symbol === selectedLowNetwork.nativeCurrency?.symbol
-            ) ?? null
+          const token = getTokensForNetwork(selectedLowNetwork.chainId, connectedAccount).find(
+            (token) => token.symbol === selectedLowNetwork.nativeCurrency?.symbol
+          ) ?? null
           setSelectedNativeToken(token)
         } else if (direction === 'WITHDRAW') {
-          const token =
-            getTokensForNetwork(selectedLowNetwork.chainId, connectedAccount).find(
-              (token) => token.symbol === selectedLowNetwork.nativeCurrency?.symbol
-            ) ?? null
-
+          const token = getTokensForNetwork(selectedHighNetwork.chainId, connectedAccount).find(
+            (token) => token.symbol === selectedLowNetwork.nativeCurrency?.symbol
+          ) ?? null
           setSelectedNativeToken(token)
         }
+        console.log('in use effect 2')
         const _bridger: Bridger = new Bridger(originChainId, destinationChainId, selectedBridgeToken.tokenAddressMap)
         setBridger(_bridger)
+        const fetchAllowances = async () => {
+          try {
+            const bridgeTokenAllowance = await _bridger.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount)
+            const nativeTokenAllowance = await _bridger.getNativeAllowance(selectedLowNetwork.rpcs[0], connectedAccount)
+            console.log(bridgeTokenAllowance, nativeTokenAllowance)
+            if (bridgeTokenAllowance && nativeTokenAllowance) {
+              console.log(
+                ethers.utils.formatUnits(bridgeTokenAllowance!, selectedBridgeToken.decimals),
+                ethers.utils.formatEther(nativeTokenAllowance!)
+              )
+            }
+          } catch (error) {
+            console.error('Error fetching allowances:', error)
+          }
+        }
+        fetchAllowances()
+
       } catch (e) {
         console.log(e)
         setNetworkErrorMessage('Cannot bridge between these 2 networks')
@@ -313,6 +333,8 @@ const BridgeView = ({
         bridger={bridger}
         symbol={tokenInformation?.symbol ?? ''}
         decimals={tokenInformation?.decimalPlaces ?? 18}
+        balance={tokenInformation?.tokenBalance}
+        nativeBalance={nativeTokenInformation?.tokenBalance}
       />
     </div>
   )

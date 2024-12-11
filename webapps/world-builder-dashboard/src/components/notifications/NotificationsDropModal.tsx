@@ -206,7 +206,7 @@ export const NotificationsModal: React.FC<NotificationsDropModalProps> = ({ noti
     if (itemsContainerRef.current) {
       itemsContainerRef.current.scrollTo({
         top: itemsContainerRef.current.scrollHeight,
-        behavior: 'smooth' // Optional, for smooth scrolling
+        behavior: 'smooth'
       })
     }
   }, [page])
