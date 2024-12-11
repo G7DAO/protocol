@@ -42,7 +42,10 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled, tok
           <div className={styles.tokenAmountContainer}>
             {token?.Icon && <token.Icon />}
             <div className={styles.value}>
-              {ethers.utils.formatUnits(allowance, token.decimals)} {token?.symbol}
+              {allowance.eq(ethers.constants.MaxUint256) 
+                ? `Infinity ${token?.symbol}`
+                : `${ethers.utils.formatUnits(allowance, token.decimals)} ${token?.symbol}`
+              }
             </div>
           </div>
           <button
