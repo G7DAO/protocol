@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math/big"
 
+	"github.com/G7DAO/protocol/bindings/ETHOrbitBridger"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/spf13/cobra"
@@ -23,6 +24,7 @@ func CreateBridgeCommand() *cobra.Command {
 
 	bridgeCmd.AddCommand(CreateBridgeNativeTokenCommand())
 	bridgeCmd.AddCommand(CreateBridgeERC20Command())
+	bridgeCmd.AddCommand(ETHOrbitBridger.CreateETHOrbitBridgerCommand())
 
 	return bridgeCmd
 }
