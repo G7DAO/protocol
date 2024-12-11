@@ -66,7 +66,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     if (!bridgeTokenAllowance || bridgeTokenAllowance.lt(amountToSend)) {
       setStartingTokenIndex(0)
       setShowApproval(true)
-      console.log('Bridge token allowance check failed')
       return false
     }
 
@@ -128,14 +127,50 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 
       if (bridger?.isDeposit) {
         if (selectedBridgeToken.address != ZERO_ADDRESS) {
+          console.log('------------------')
+          console.log('Checking bridge token allowance...')
+          const bridgeTokenAllowance = await bridger.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount)
+          console.log("Bridge Token Allowance:", bridgeTokenAllowance ? ethers.utils.formatUnits(bridgeTokenAllowance, decimals) : 'not needed')
+          console.log("Amount needed:", ethers.utils.formatUnits(amountToSend, decimals))
+          
+          console.log('------------------')
+          console.log('Checking native token allowance...')
+          const nativeTokenAllowance = await bridger.getNativeAllowance(selectedLowNetwork.rpcs[0], connectedAccount)
+          console.log("Native Token Allowance:", nativeTokenAllowance ? ethers.utils.formatUnits(nativeTokenAllowance, 18) : 'not needed')
+          
           const allowancesOk = await checkAllowances()
-          console.log(allowancesOk)
+          console.log('Allowances OK:', allowancesOk)
           if (!allowancesOk) {
             return
           }
         }
+
+        console.log('------------------')
+        console.log('Estimating gas and fees...')
+        try {
+          const gasAndFee = await bridger.getGasAndFeeEstimation(
+            amountToSend, 
+            provider, 
+            connectedAccount, 
+            destinationProvider
+          )
+          console.log('Gas and Fee Estimation:', {
+            parentFee: ethers.utils.formatEther(gasAndFee.estimatedFee),
+            childFee: gasAndFee.childNetworkEstimation 
+              ? ethers.utils.formatEther(gasAndFee.childNetworkEstimation.estimatedFee) 
+              : 0
+          })
+        } catch (e) {
+          console.error('Gas estimation error:', e)
+        }
+
+        console.log('------------------')
+        console.log('Initiating transfer...')
         const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })
+        console.log('Transfer initiated, waiting for confirmation...')
         await tx?.wait()
+        console.log('Transfer confirmed:', tx?.hash)
+
         return {
           type: 'DEPOSIT',
           amount: amount,

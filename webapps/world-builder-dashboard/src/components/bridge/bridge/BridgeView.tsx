@@ -69,7 +69,6 @@ const BridgeView = ({
     account: connectedAccount,
     token: selectedNativeToken
   })
-
   const { data: coinUSDRate, isFetching: isCoinFetching } = useUSDPriceOfToken(selectedBridgeToken.geckoId ?? '')
   const handleTokenChange = async (token: Token) => {
     setSelectedBridgeToken(token)
@@ -128,27 +127,43 @@ const BridgeView = ({
       const originChainId = direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId
       const destinationChainId = direction === 'DEPOSIT' ? selectedHighNetwork.chainId : selectedLowNetwork.chainId
       const chainIds = Object.keys(selectedBridgeToken.tokenAddressMap)
-
+      console.log('in use effect')
       if (!chainIds.includes(String(destinationChainId))) {
         return
       }
       try {
         if (direction === 'DEPOSIT') {
-          const token =
-            getTokensForNetwork(selectedLowNetwork.chainId, connectedAccount).find(
-              (token) => token.symbol === selectedLowNetwork.nativeCurrency?.symbol
-            ) ?? null
+          const token = getTokensForNetwork(selectedLowNetwork.chainId, connectedAccount).find(
+            (token) => token.symbol === selectedLowNetwork.nativeCurrency?.symbol
+          ) ?? null
           setSelectedNativeToken(token)
         } else if (direction === 'WITHDRAW') {
-          const token =
-            getTokensForNetwork(selectedLowNetwork.chainId, connectedAccount).find(
-              (token) => token.symbol === selectedLowNetwork.nativeCurrency?.symbol
-            ) ?? null
-
+          const token = getTokensForNetwork(selectedHighNetwork.chainId, connectedAccount).find(
+            (token) => token.symbol === selectedLowNetwork.nativeCurrency?.symbol
+          ) ?? null
           setSelectedNativeToken(token)
         }
+        console.log('in use effect 2')
         const _bridger: Bridger = new Bridger(originChainId, destinationChainId, selectedBridgeToken.tokenAddressMap)
         setBridger(_bridger)
+        const fetchAllowances = async () => {
+          try {
+            console.log('fetching allowances')
+            const bridgeTokenAllowance = await _bridger.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount)
+            const nativeTokenAllowance = await _bridger.getNativeAllowance(selectedLowNetwork.rpcs[0], connectedAccount)
+            console.log(bridgeTokenAllowance, nativeTokenAllowance)
+            if (bridgeTokenAllowance && nativeTokenAllowance) {
+              console.log(
+                ethers.utils.formatUnits(bridgeTokenAllowance!, selectedBridgeToken.decimals),
+                ethers.utils.formatEther(nativeTokenAllowance!)
+              )
+            }
+          } catch (error) {
+            console.error('Error fetching allowances:', error)
+          }
+        }
+        fetchAllowances()
+
       } catch (e) {
         console.log(e)
         setNetworkErrorMessage('Cannot bridge between these 2 networks')

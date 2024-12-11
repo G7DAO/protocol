@@ -27,7 +27,7 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
   const { selectedNetworkType, getProvider } = useBlockchainContext()
   const queryClient = useQueryClient()
   const networks = getNetworks(selectedNetworkType)
-  const [newAllowance, setNewAllowance] = useState(ethers.utils.parseUnits(amount || '0', 18))
+  const [newAllowance, setNewAllowance] = useState(ethers.utils.parseUnits(amount || '0', decimals || 18))
   const [approvedTokens, setApprovedTokens] = useState<Set<string>>(new Set())
   const [currentTokenIndex, setCurrentTokenIndex] = useState(startingTokenIndex)
 
@@ -117,8 +117,14 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
             <div className={styles.allowanceTitle}>Allowance {currentTokenIndex === 0 ? `(${balance} available)` : `(${nativeBalance} available)`}</div>
             <AllowanceSelector
               token={tokens[currentTokenIndex]}
-              balance={currentTokenIndex === 0 ? ethers.utils.parseUnits(balance || '0', decimals || 18) : ethers.utils.parseUnits(nativeBalance || '0', decimals || 18)}
-              amount={ethers.utils.parseUnits(amount || '0', decimals || 18)}
+              balance={currentTokenIndex === 0 
+                ? ethers.utils.parseUnits(balance || '0', decimals || 18)
+                : ethers.utils.parseUnits(nativeBalance || '0', 18)
+              }
+              amount={currentTokenIndex === 0
+                ? ethers.utils.parseUnits(amount || '0', decimals || 18)
+                : ethers.utils.parseUnits(amount || '0', 18)
+              }
               onChange={(value) => setNewAllowance(value)}
               allowance={newAllowance}
               disabled={approve.isLoading}
