@@ -43,7 +43,7 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled, tok
             {token?.Icon && <token.Icon />}
             <div className={styles.value}>
               {allowance.eq(ethers.constants.MaxUint256) 
-                ? `Infinity ${token?.symbol}`
+                ? `Infinite ${token?.symbol}`
                 : `${ethers.utils.formatUnits(allowance, token.decimals)} ${token?.symbol}`
               }
             </div>
@@ -68,17 +68,22 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled, tok
               const percentage = balance.mul(ethers.BigNumber.from(n)).div(ethers.BigNumber.from(100))
               return { n, percentage }
             })
-            .filter(({ percentage }) => percentage.gt(amount))
             .map(({ n, percentage }) => (
-              <Combobox.Option className={styles.optionContainer} value={ethers.utils.formatUnits(percentage, token.decimals)} key={n}>
+              <Combobox.Option 
+                className={styles.optionContainer} 
+                value={ethers.utils.formatUnits(percentage, token.decimals)} 
+                key={n}
+              >
                 <div className={styles.optionPercent}>{`${n}%`}</div>
-                <div className={styles.optionValue}>{ethers.utils.formatUnits(percentage, token.decimals)} {token?.symbol}</div>
+                <div className={styles.optionValue}>
+                  {ethers.utils.formatUnits(percentage, token.decimals)} {token?.symbol}
+                </div>
                 {allowance.eq(percentage) && <IconCheck />}
               </Combobox.Option>
             ))}
           <Combobox.Option
             className={styles.optionContainer}
-            value={ethers.utils.formatEther(ethers.constants.MaxUint256)}
+            value={ethers.utils.formatUnits(ethers.constants.MaxUint256, token.decimals)}
           >
             <div className={styles.optionPercent}>Infinite</div>
             <div className={styles.optionValue}>
