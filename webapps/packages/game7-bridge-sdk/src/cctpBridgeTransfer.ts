@@ -182,7 +182,7 @@ export class CctpBridgeTransfer extends BridgeTransfer {
         }
 
         const MESSAGE_TRANSMITTER_CONTRACT_ADDRESS =
-            CHAIN_IDS_TO_MESSAGE_TRANSMITTER_ADDRESSES[this.destinationNetworkChainId]
+            CHAIN_IDS_TO_MESSAGE_TRANSMITTER_ADDRESSES[this.destinationNetworkChainId as keyof typeof CHAIN_IDS_TO_MESSAGE_TRANSMITTER_ADDRESSES]
         const contract = new ethers.Contract(
             MESSAGE_TRANSMITTER_CONTRACT_ADDRESS,
             MessageTransmitterAbi,
