@@ -20,8 +20,50 @@ export class CctpBridger extends Bridger {
         _from: string,
         destinationProvider?: SignerOrProvider
     ): Promise<GasAndFeeEstimation> {
-        return //estimation is not available for cctp
-    }
+        try {
+            const {
+                usdcContractAddress,
+                tokenMessengerContractAddress,
+                targetChainDomain
+            } = getCctpContracts({
+                originChainId: this.originNetwork.chainId
+            })
+
+            if (typeof provider === 'string') {
+                provider = new ethers.providers.JsonRpcProvider(provider);
+            }
+
+            const contract = new ethers.Contract(
+                tokenMessengerContractAddress,
+                TokenMessengerAbi,
+                provider
+            );
+
+
+            // burn token on the selected chain to be transferred from cctp contracts to the other chain
+
+            // CCTP uses 32 bytes addresses, while EVEM uses 20 bytes addresses
+            const mintRecipient = ethers.utils.hexlify(ethers.utils.zeroPad(_from, 32))
+
+            // Estimate gas for the transaction
+            const estimatedGas = await contract.estimateGas.depositForBurn(
+                amount,
+                targetChainDomain,
+                mintRecipient,
+                usdcContractAddress
+            );
+
+            // Fetch the current gas price
+            const gasPrice = await provider.getGasPrice();
+
+            // Calculate the estimated fee
+            const estimatedFee = estimatedGas.mul(gasPrice);
+
+            return { estimatedGas, gasPrice, estimatedFee };
+        } catch (error) {
+            console.error("Error estimating gas:", error);
+            throw error;
+        }    }
 
     /**
      * Estimates gas and fees for token approval.
@@ -86,7 +128,7 @@ export class CctpBridger extends Bridger {
      * @override
      */
     async approveNative(amount: BigNumber, signer: ethers.Signer): Promise<ethers.ContractTransaction> {
-        return
+        throw new Error('native approval is not needed')
     }
 
     /**
