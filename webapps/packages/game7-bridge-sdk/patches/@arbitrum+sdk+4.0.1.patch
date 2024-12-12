@@ -1,8 +1,8 @@
 diff --git a/node_modules/@arbitrum/sdk/dist/lib/dataEntities/networks.js b/node_modules/@arbitrum/sdk/dist/lib/dataEntities/networks.js
-index 97fcda5..2b9122c 100644
+index 97fcda5..0e55cc5 100644
 --- a/node_modules/@arbitrum/sdk/dist/lib/dataEntities/networks.js
 +++ b/node_modules/@arbitrum/sdk/dist/lib/dataEntities/networks.js
-@@ -138,6 +138,87 @@ const networks = {
+@@ -138,6 +138,88 @@ const networks = {
              l2ForwarderFactory: '0x88feBaFBb4E36A4E7E8874E4c9Fd73A9D59C2E7c',
          },
      },
@@ -66,6 +66,7 @@ index 97fcda5..2b9122c 100644
 +        },
 +        parentChainId: 42161,
 +        retryableLifetimeSeconds: constants_1.SEVEN_DAYS_IN_SECONDS,
++        nativeToken: '0xF18e4466F26B4cA55bbAb890b314a54976E45B17',
 +        tokenBridge: {
 +            parentCustomGateway: '0xd7258a4BE508Da8E95F89c13B8b7469951e9Df2B',
 +            parentErc20Gateway: '0xe41363751bd1C305384375F428585C20e3dF516A',
