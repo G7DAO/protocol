@@ -13,28 +13,51 @@ export async function getTransactionHistory(chain: string, address: string, limi
 
   try {
     const query = `
-    WITH game7_withdrawal AS (
+    WITH game7_withdrawal_calls AS (
+        SELECT
+            transaction_hash,
+            COALESCE(label_data -> 'args' ->> '_l1Token', '${bridgeConfig[chain].l3Token}') AS token,
+            '0x' || encode(origin_address, 'hex') AS origin_address,
+            label_data -> 'args' ->> '_amount' AS amount,
+            block_timestamp,
+            label_data ->> 'status' AS status
+        FROM
+            ${bridgeConfig[chain].l3TableName} AS labels
+        WHERE
+            (address, label_name) IN (
+                (DECODE($1, 'hex'), 'withdrawEth'),
+                (DECODE($11, 'hex'), 'outboundTransfer')
+            )
+    ), game7_withdrawal_events AS (
+        SELECT
+            transaction_hash,
+            label_data -> 'args' ->> 'position' AS position,
+            label_data -> 'args' ->> 'callvalue' AS amount,
+            label_data -> 'args' ->> 'destination' AS to_address
+        FROM
+            ${bridgeConfig[chain].l3TableName}
+        WHERE
+            address = DECODE($1, 'hex')
+    ), game7_withdrawal AS (
       SELECT
           'WITHDRAWAL' AS type,
-          label_data->'args'->>'position' AS position,
-          label_data->'args'->>'callvalue' AS amount,
+          we.position AS position,
+          coalesce(wc.amount, we.amount) AS amount,
           ${bridgeConfig[chain].l3rleationship.parentNetworkChainId} AS parentNetworkChainId,
           ${bridgeConfig[chain].l3rleationship.childNetworkChainId} AS childNetworkChainId,
-          transaction_hash AS childNetworkHash,
-          block_timestamp AS childNetworkTimestamp,
-          label_data->'args'->>'caller' AS from_address,
-          label_data->'args'->>'destination' AS to_address,
+          wc.transaction_hash AS childNetworkHash,
+          wc.block_timestamp AS childNetworkTimestamp,
+          wc.origin_address AS from_address,
+          we.to_address AS to_address,
           3600 AS challengePeriod,
-          block_timestamp + 3600 AS claimableTimestamp,
-          '${bridgeConfig[chain].l3Token}' AS token,
-          block_timestamp AS block_timestamp
-      FROM ${bridgeConfig[chain].l3TableName}
-      WHERE
-          label = 'seer' AND
-          address = DECODE($1, 'hex') AND -- '0000000000000000000000000000000000000064' -- Game7 ArbOS L2 address
-          label_type = 'event' AND
-          label_name = 'L2ToL1Tx'
-    ), arbirtrum_claims as (
+          (wc.block_timestamp + 3600) AS claimableTimestamp,
+          wc.block_timestamp AS block_timestamp,
+          wc.token AS token,
+          wc.status AS status
+      FROM
+          game7_withdrawal_calls wc
+              JOIN game7_withdrawal_events we ON we.transaction_hash = wc.transaction_hash
+    ),arbirtrum_claims as (
       SELECT
           'CLAIM' AS type,
           transaction_hash,
@@ -53,32 +76,6 @@ export async function getTransactionHistory(chain: string, address: string, limi
           label_type = 'event' AND
           label_name = 'OutBoxTransactionExecuted' AND
           address = DECODE($2, 'hex') -- '64105c6C3D494469D5F21323F0E917563489d9f5' -- Arbitrum outbox address
-    ), game7_withdrawal_failed as (
-      SELECT
-          'WITHDRAWAL' AS type,
-          null AS position,
-          NULL AS amount,
-          ${bridgeConfig[chain].l3rleationship.parentNetworkChainId} AS parentNetworkChainId,
-          ${bridgeConfig[chain].l3rleationship.childNetworkChainId} AS childNetworkChainId,
-          transaction_hash AS childNetworkHash,
-          block_timestamp AS childNetworkTimestamp,
-          label_data->'args'->>'caller' AS from_address,
-          null AS to_address,
-          3600 AS challengePeriod,
-          block_timestamp + 3600 AS claimableTimestamp,
-          '${bridgeConfig[chain].l3Token}' AS token,
-          NULL::double precision AS completionTimestamp,
-          NULL::double precision AS parentNetworkTimestamp,
-          NULL AS parentNetworkHash,
-          false AS status,
-          block_timestamp AS block_timestamp
-      FROM ${bridgeConfig[chain].l3TableName}
-      WHERE
-          label = 'seer' AND
-          label_type = 'tx_call' AND
-          label_name = 'withdrawEth' AND
-          ADDRESS = DECODE($1, 'hex') AND -- '0000000000000000000000000000000000000064' -- Game7 ArbOS L2 address
-          (label_data->>'status' = '0' or label_data->'status' IS NULL)
     ), withdrawal_l3_l2 as (
       SELECT
           'WITHDRAWAL' AS type,
@@ -101,11 +98,6 @@ export async function getTransactionHistory(chain: string, address: string, limi
       FROM
           game7_withdrawal
           LEFT JOIN arbirtrum_claims ON game7_withdrawal.position = arbirtrum_claims.position
-      UNION ALL
-      SELECT
-          *
-      FROM
-          game7_withdrawal_failed
     ), withdrawal_calls_arbitrum AS (
         SELECT
             transaction_hash,
@@ -371,7 +363,7 @@ export async function getTransactionHistory(chain: string, address: string, limi
     bridgeConfig[chain].addressERC20Inbox,
     bridgeConfig[chain].addressL1GatewayRouter,
     bridgeConfig[chain].addressL1Inbox,
-      address, offset, limit])
+      address, offset, limit, bridgeConfig[chain].addressL3GatewayRouter])
     // unpack the data from the result
     const data = result.rows.map((row: any) => row.data);
     return data;

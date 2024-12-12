@@ -67,6 +67,7 @@ export const bridgeConfig: {
     addressL2ERC20Gateway: string;
     addressL2GatewayRouter: string;
     addressL1GatewayRouter: string;
+    addressL3GatewayRouter: string;
     addressArbitrumOutBox: string;
     addressArbOS: string;
     addressL1Inbox: string;
@@ -87,6 +88,7 @@ export const bridgeConfig: {
     addressL2ERC20Gateway: "6e244cD02BBB8a6dbd7F626f05B2ef82151Ab502", // Arbitrum L2ERC20Gateway address
     addressL2GatewayRouter: "9fDD1C4E4AA24EEc1d913FABea925594a20d43C7", // Arbitrum L2ERC20Gateway address
     addressL1GatewayRouter: "cE18836b233C83325Cc8848CA4487e94C6288264", // Ethereum deposit address
+    addressL3GatewayRouter: "DA379C01a484fB9F0875730430a418eB8AAFdca2", // L3 Gateway Router address
     addressArbitrumOutBox: "64105c6C3D494469D5F21323F0E917563489d9f5", // Arbitrum outbox address ??
     addressArbOS: "0000000000000000000000000000000000000064", // Game7 ArbOS L2 address
     addressL1Inbox: "aAe29B0366299461418F5324a79Afc425BE5ae21", // Ethereum inbox address
@@ -106,6 +108,7 @@ export const bridgeConfig: {
     addressL2ERC20Gateway: "096760F208390250649E3e8763348E783AEF5562", // Arbitrum L2ERC20Gateway address L1OrbitERC20Gateway 
     addressL2GatewayRouter: "5288c571Fd7aD117beA99bF60FE0846C4E84F933", // Arbitrum L2ERC20Gateway address L1OrbitGatewayRouter
     addressL1GatewayRouter: "72Ce9c846789fdB6fC1f34aC4AD25Dd9ef7031ef", // Ethereum deposit address
+    addressL3GatewayRouter: "0000000000000000000000000000000000000000", // L3 Gateway Router address
     addressArbitrumOutBox: "fbe537816d181888fAbE52338a5D921eE131E9Db", // Arbitrum outbox address ??
     addressArbOS: "0000000000000000000000000000000000000064", // Game7 ArbOS L2 address
     addressL1Inbox: "4Dbd4fc535Ac27206064B68FfCf827b0A60BAB3f", // Ethereum inbox address
