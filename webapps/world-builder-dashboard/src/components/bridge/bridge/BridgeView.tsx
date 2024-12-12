@@ -58,6 +58,7 @@ const BridgeView = ({
     selectedBridgeToken,
     selectedNetworkType,
     setSelectedNativeToken,
+    selectedNativeToken
   } = useBlockchainContext()
 
   const { isFetching: isFetchingTokenInformation, data: tokenInformation } = useTokenInformation({
@@ -84,50 +85,75 @@ const BridgeView = ({
   const estimatedFee = useQuery(
     ['estimatedFee', bridger, connectedAccount, value],
     async () => {
+      // Early return if required values are missing
+      if (!bridger || !connectedAccount || !value) {
+        return { parentFee: '0', childFee: '0', totalFee: '0' }
+      }
+
       try {
-        const originNetwork = networks?.find((n) => n.chainId === bridger?.originNetwork.chainId)
-        if (!originNetwork) throw new Error("Can't find network!")
+        const originNetwork = networks?.find((n) => n.chainId === bridger.originNetwork.chainId)
+        if (!originNetwork) {
+          console.warn("Can't find origin network, returning zero fees")
+          return { parentFee: '0', childFee: '0', totalFee: '0' }
+        }
 
         const decimals = tokenInformation?.decimalPlaces ?? 18
         const parsedValue = value ? ethers.utils.parseUnits(value, decimals) : ethers.utils.parseEther('0')
 
-        console.log('fetching gas fee...')
-        const originProvider = direction === 'DEPOSIT' ? selectedLowNetwork.rpcs[0] : selectedHighNetwork.rpcs[0]
-        const destinationProvider = direction === 'DEPOSIT' ? selectedHighNetwork.rpcs[0] : undefined
+        // Ensure we have valid RPC endpoints
+        const originProvider = direction === 'DEPOSIT' ? 
+          selectedLowNetwork.rpcs[0] : 
+          selectedHighNetwork.rpcs[0]
+        const destinationProvider = direction === 'DEPOSIT' ? 
+          selectedHighNetwork.rpcs[0] : 
+          undefined
 
-        try {
-          const gasAndFee = await bridger?.getGasAndFeeEstimation(
-            parsedValue,
-            originProvider,
-            connectedAccount ?? '',
-            destinationProvider
-          )
+        if (!originProvider) {
+          console.warn("Missing origin provider, returning zero fees")
+          return { parentFee: '0', childFee: '0', totalFee: '0' }
+        }
 
-          const parentFee = ethers.utils.formatEther(gasAndFee?.estimatedFee ?? '0')
-          const childFee = gasAndFee?.childNetworkEstimation
-            ? ethers.utils.formatEther(gasAndFee.childNetworkEstimation.estimatedFee)
-            : '0'
-          console.log(Number(parentFee) + Number(childFee))
+        // Add retry logic for the gas estimation
+        let attempts = 0
+        const maxAttempts = 3
+        
+        while (attempts < maxAttempts) {
+          try {
+            const gasAndFee = await bridger.getGasAndFeeEstimation(
+              parsedValue,
+              originProvider,
+              connectedAccount,
+              destinationProvider
+            )
 
-          return {
-            parentFee,
-            childFee,
-            totalFee: String(Number(parentFee) + Number(childFee))
+            const parentFee = ethers.utils.formatEther(gasAndFee?.estimatedFee ?? '0')
+            const childFee = gasAndFee?.childNetworkEstimation
+              ? ethers.utils.formatEther(gasAndFee.childNetworkEstimation.estimatedFee)
+              : '0'
+
+            return {
+              parentFee,
+              childFee,
+              totalFee: String(Number(parentFee) + Number(childFee))
+            }
+          } catch (e) {
+            attempts++
+            if (attempts === maxAttempts) throw e
+            // Wait before retrying
+            await new Promise(resolve => setTimeout(resolve, 1000))
           }
-        } catch (e) {
-          console.error('gas estimation error', e)
-          throw e
         }
       } catch (e) {
-        console.error(e)
-        throw e
+        console.error('Fee estimation failed:', e)
+        return { parentFee: '0', childFee: '0', totalFee: '0' }
       }
     },
     {
-      enabled: !!connectedAccount && !!selectedLowNetwork && !!selectedHighNetwork && !!value,
-      onError: (error) => {
-        console.error('Error refetching fee:', error)
-      }
+      enabled: !!connectedAccount && !!selectedLowNetwork && !!selectedHighNetwork && !!value && !!bridger,
+      retry: 2,
+      retryDelay: 1000,
+      staleTime: 30000,
+      cacheTime: 60000,
     }
   )
 
@@ -303,7 +329,8 @@ const BridgeView = ({
             ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
             : `~${Math.floor((selectedHighNetwork.challengePeriod ?? 0) / 60)} min`
         }
-        fee={Number(estimatedFee.data?.totalFee ?? 0)}
+        fee={Number(estimatedFee.data?.parentFee ?? 0)}
+        childFee={Number(estimatedFee.data?.childFee ?? 0)}
         isEstimatingFee={estimatedFee.isLoading}
         value={Number(value)}
         ethRate={
@@ -313,7 +340,6 @@ const BridgeView = ({
               ? 0.0
               : coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd
         }
-        tokenSymbol={tokenInformation?.symbol ?? ''}
         tokenRate={
           selectedBridgeToken.symbol === 'TG7T' || selectedBridgeToken.symbol === 'G7'
             ? 1
@@ -321,11 +347,15 @@ const BridgeView = ({
               ? 0.0
               : coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd
         }
-        nativeTokenSymbol={
-          direction === 'DEPOSIT'
-            ? (selectedLowNetwork?.nativeCurrency?.symbol ?? '')
-            : (selectedHighNetwork?.nativeCurrency?.symbol ?? '')
+        tokenSymbol={tokenInformation?.symbol ?? ''}
+        gasNativeTokenSymbol={
+          selectedNativeToken?.symbol ?? ''
         }
+        gasChildNativeTokenSymbol={
+          selectedHighNetwork.nativeCurrency?.symbol ?? ''
+        }
+        selectedLowChain={selectedLowNetwork}
+        selectedHighChain={selectedHighNetwork}
       />
       {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
       <ActionButton

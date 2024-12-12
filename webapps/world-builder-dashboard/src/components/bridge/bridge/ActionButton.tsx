@@ -61,28 +61,29 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   const [allowancesVerified, setAllowancesVerified] = useState(false)
   let bridgeTokenAllowance: ethers.BigNumber = ethers.BigNumber.from(0)
   let nativeTokenAllowance: ethers.BigNumber = ethers.BigNumber.from(0)
-  
+
   const checkAllowances = async () => {
     if (!bridger || !connectedAccount) return null;
 
-    if (allowancesVerified) {
-      console.log('Allowances already verified, skipping check');
-      return true;
-    }
-    
+
     // For testing only!
-    if (amount === '0.01') {
+    if (amount === '3') {
       console.log('Starting token index set to 0');
       setStartingTokenIndex(0);
       setShowApproval(true);
       return false;
     }
-    
+
+    if (allowancesVerified) {
+      console.log('Allowances already verified, skipping check');
+      return true;
+    }
+
     bridgeTokenAllowance = await bridger.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount) ?? ethers.BigNumber.from(0)
     nativeTokenAllowance = await bridger.getNativeAllowance(selectedLowNetwork.rpcs[0], connectedAccount) ?? ethers.BigNumber.from(0)
 
     const amountBN = ethers.utils.parseUnits(amount, decimals)
-    
+
     const needsBridgeTokenApproval = bridgeTokenAllowance !== null && bridgeTokenAllowance.lt(amountBN)
     const needsNativeTokenApproval = nativeTokenAllowance !== null && nativeTokenAllowance.lt(amountBN)
 
@@ -122,7 +123,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       return
     }
     setErrorMessage('')
-    
+
     // Replace direct transfer.mutate with allowance check
     checkAllowancesAndTransfer()
   }
@@ -234,17 +235,17 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   const checkAllowancesAndTransfer = async () => {
     console.log('=== checkAllowancesAndTransfer START ===');
     console.log('Current allowancesVerified state:', allowancesVerified);
-    
+
     if (allowancesVerified) {
       console.log('Allowances already verified, proceeding to transfer');
       transfer.mutate(amount)
       return
     }
-  
+
     console.log('Checking allowances before transfer');
     const allowancesOk = await checkAllowances()
     console.log('Allowances check result:', allowancesOk);
-    
+
     if (allowancesOk) {
       console.log('Allowances OK, proceeding to transfer');
       transfer.mutate(amount)
@@ -291,6 +292,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
             }
             return [];
           })()}
+          amount={amount}
           onApprovalComplete={handleApprovalComplete}
           gasFees={gasFees ?? []}
         />
