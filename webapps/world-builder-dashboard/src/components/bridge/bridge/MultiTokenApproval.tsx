@@ -23,12 +23,14 @@ interface MultiTokenApprovalProps {
   startingTokenIndex: number
   onApprovalComplete: () => void
   gasFees: string[]
+  amount: string
 }
 
-export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showApproval, setShowApproval, bridger, balance, nativeBalance, decimals, tokens, startingTokenIndex, onApprovalComplete, gasFees }) => {
+export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showApproval, setShowApproval, bridger, balance, nativeBalance, decimals, tokens, startingTokenIndex, onApprovalComplete, gasFees, amount }) => {
   const { selectedNetworkType, getProvider, selectedNativeToken } = useBlockchainContext()
   const queryClient = useQueryClient()
   const networks = getNetworks(selectedNetworkType)
+
   // Initialize approvedTokens with already approved tokens
   const initialApprovedTokens = new Set(
     tokens
@@ -39,23 +41,33 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
   const [currentTokenIndex, setCurrentTokenIndex] = useState(startingTokenIndex)
   const [newAllowance, setNewAllowance] = useState(() => {
     const currentToken = tokens[currentTokenIndex];
-    const initialAmount = currentTokenIndex === 0
-      ? ethers.utils.parseUnits(balance || '0', decimals || 18)
-      : ethers.utils.parseUnits(nativeBalance || '0', currentToken.decimals || 18);
-    
-    const calculatedAllowance = initialAmount.mul(25).div(100);
-    return calculatedAllowance;
+    if (currentTokenIndex === 1) {
+      // Convert gas fee to same decimal precision as token
+      const gasFeeAmount = ethers.utils.parseUnits(gasFees[1] || '0', currentToken.decimals || 18);
+      console.log('Initial gas fee allowance:', ethers.utils.formatUnits(gasFeeAmount, currentToken.decimals || 18));
+      return gasFeeAmount;
+    }
+    return currentTokenIndex === 0
+      ? ethers.utils.parseUnits(amount || '0', decimals || 18)
+      : ethers.utils.parseUnits(amount || '0', currentToken.decimals || 18);
   });
 
   useEffect(() => {
     const currentToken = tokens[currentTokenIndex];
-    const initialAmount = currentTokenIndex === 0
-      ? ethers.utils.parseUnits(balance || '0', decimals || 18)
-      : ethers.utils.parseUnits(nativeBalance || '0', currentToken.decimals || 18);
-    
-    const calculatedAllowance = initialAmount.mul(25).div(100);    
-    setNewAllowance(calculatedAllowance);
-  }, [currentTokenIndex, balance, nativeBalance, decimals, tokens]);
+    const initialAmount = currentTokenIndex === 1
+      ? ethers.utils.parseUnits(gasFees[1] || '0', currentToken.decimals || 18)
+      : currentTokenIndex === 0
+        ? ethers.utils.parseUnits(amount || '0', decimals || 18)
+        : ethers.utils.parseUnits(amount || '0', currentToken.decimals || 18);
+
+    console.log('Setting allowance:', {
+      gasFee: gasFees[1],
+      decimals: currentToken.decimals,
+      formatted: ethers.utils.formatUnits(initialAmount, currentToken.decimals || 18)
+    });
+
+    setNewAllowance(initialAmount);
+  }, [currentTokenIndex]);
 
   const approve = useMutation(
     async (amount: ethers.BigNumber) => {
@@ -122,7 +134,7 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
     >
       <div className={styles.modal}>
         <div className={styles.modalHeader}>
-          <div className={styles.titleAndCloseButton}> 
+          <div className={styles.titleAndCloseButton}>
             <div className={styles.modalTitle}>
               Approve Tokens
             </div>
@@ -160,10 +172,7 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
                 ? ethers.utils.parseUnits(balance || '0', decimals || 18)
                 : ethers.utils.parseUnits(nativeBalance || '0', tokens[currentTokenIndex].decimals || 18)
               }
-              amount={currentTokenIndex === 0
-                ? ethers.utils.parseUnits(balance || '0', decimals || 18).mul(25).div(100)
-                : ethers.utils.parseUnits(nativeBalance || '0', tokens[currentTokenIndex].decimals || 18).mul(25).div(100)
-              }
+              amount={ethers.utils.parseUnits(amount || '0', decimals || 18)}
               onChange={(value) => setNewAllowance(value)}
               allowance={newAllowance}
               disabled={approve.isLoading}
@@ -174,7 +183,7 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
           </div>
           <div className={styles.hintBadge}>
             <div className={styles.hintBadgeText}>
-              ~{gasFees[currentTokenIndex]} {selectedNativeToken?.symbol} will be used for gas
+              ~{gasFees[currentTokenIndex]} {currentTokenIndex === 0 ? selectedNativeToken?.symbol : tokens[currentTokenIndex].symbol} will be used for gas
             </div>
           </div>
         </div>

@@ -58,7 +58,7 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled, tok
             </div>
           </div>
           <button
-              className={styles.minButton}
+            className={styles.minButton}
             onClick={(e) => {
               onChange(amount)
               e.stopPropagation()
@@ -67,6 +67,7 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled, tok
           >
             MIN
           </button>
+
           <IconChevronDown className={styles.chevron} />
         </div>
       </Combobox.Target>
@@ -77,11 +78,12 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled, tok
               const percentage = balance.mul(ethers.BigNumber.from(n)).div(ethers.BigNumber.from(100))
               return { n, percentage }
             })
+            // Only show percentages that are greater than the required amount
             .filter(({ percentage }) => percentage.gte(amount))
             .map(({ n, percentage }) => (
-              <Combobox.Option 
-                className={styles.optionContainer} 
-                value={ethers.utils.formatUnits(percentage, token.decimals)} 
+              <Combobox.Option
+                className={styles.optionContainer}
+                value={ethers.utils.formatUnits(percentage, token.decimals)}
                 key={n}
               >
                 <div className={styles.optionPercent}>{`${n}%`}</div>

@@ -67,13 +67,13 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 
 
     // For testing only!
-    if (amount === '0.01') {
+    if (amount === '3') {
       console.log('Starting token index set to 0');
       setStartingTokenIndex(0);
       setShowApproval(true);
       return false;
     }
-    
+
     if (allowancesVerified) {
       console.log('Allowances already verified, skipping check');
       return true;
@@ -292,6 +292,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
             }
             return [];
           })()}
+          amount={amount}
           onApprovalComplete={handleApprovalComplete}
           gasFees={gasFees ?? []}
         />
