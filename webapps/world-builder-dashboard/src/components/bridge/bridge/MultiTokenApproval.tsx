@@ -39,25 +39,11 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
   const [currentTokenIndex, setCurrentTokenIndex] = useState(startingTokenIndex)
   const [newAllowance, setNewAllowance] = useState(() => {
     const currentToken = tokens[currentTokenIndex];
-    console.log('=== Initializing newAllowance ===', {
-      currentTokenIndex,
-      balance,
-      nativeBalance,
-      decimals: currentToken.decimals,
-      tokenSymbol: currentToken.symbol
-    });
-
     const initialAmount = currentTokenIndex === 0
       ? ethers.utils.parseUnits(balance || '0', decimals || 18)
       : ethers.utils.parseUnits(nativeBalance || '0', currentToken.decimals || 18);
     
     const calculatedAllowance = initialAmount.mul(25).div(100);
-    console.log('Calculated allowance:', {
-      initialAmount: initialAmount.toString(),
-      calculatedAllowance: calculatedAllowance.toString(),
-      decimals: currentToken.decimals
-    });
-    
     return calculatedAllowance;
   });
 
@@ -67,14 +53,7 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
       ? ethers.utils.parseUnits(balance || '0', decimals || 18)
       : ethers.utils.parseUnits(nativeBalance || '0', currentToken.decimals || 18);
     
-    const calculatedAllowance = initialAmount.mul(25).div(100);
-    console.log('Resetting allowance for new token:', {
-      tokenSymbol: currentToken.symbol,
-      decimals: currentToken.decimals,
-      initialAmount: initialAmount.toString(),
-      calculatedAllowance: calculatedAllowance.toString()
-    });
-    
+    const calculatedAllowance = initialAmount.mul(25).div(100);    
     setNewAllowance(calculatedAllowance);
   }, [currentTokenIndex, balance, nativeBalance, decimals, tokens]);
 
@@ -90,23 +69,14 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
       if (!network) throw new Error('Network not found')
       const provider = await getProvider(network)
       const signer = provider.getSigner()
-
-      console.log('Approving token:', {
-        currentIndex: currentTokenIndex,
-        tokenSymbol: currentToken.symbol,
-        isNative: currentTokenIndex === 1
-      })
-
       const txApprove = currentTokenIndex === 0
         ? await bridger?.approve(amount, signer)
         : await bridger?.approveNative(newAllowance, signer)
-        console.log(tokens.length)
       await txApprove?.wait()
       return { tx: txApprove, tokenSymbol: currentToken.symbol }
     },
     {
       onSuccess: ({ tokenSymbol }) => {
-        console.log('=== Approval onSuccess ===')
         setApprovedTokens(prev => {
           const newSet = new Set([...prev, tokenSymbol])
           return newSet;
@@ -120,10 +90,8 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
 
         // Otherwise continue with multiple token logic
         if (currentTokenIndex < tokens.length - 1) {
-          console.log('Moving to next token')
           setCurrentTokenIndex(prev => prev + 1)
         } else {
-          console.log('All tokens approved, triggering completion')
           handleAllApprovalsComplete()
         }
         queryClient.refetchQueries(['ERC20Balance'])
@@ -135,8 +103,6 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
   )
 
   const handleAllApprovalsComplete = () => {
-    console.log('=== handleAllApprovalsComplete ===')
-    console.log('Closing approval modal and triggering completion callback')
     setShowApproval(false)
     onApprovalComplete()
   }
