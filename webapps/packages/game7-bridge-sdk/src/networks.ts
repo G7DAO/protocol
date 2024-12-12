@@ -152,6 +152,7 @@ export const networks: { [chainId: number]: BridgeNetworkConfig } = {
       l1Teleporter: '0xCBd9c6e310D6AaDeF9F025f716284162F0158992',
       l2ForwarderFactory: '0x791d2AbC6c3A459E13B9AdF54Fb5e97B7Af38f87',
     },
+    arbSys: '0x0000000000000000000000000000000000000064',
     confirmPeriodBlocks: 45818,
     isCustom: false,
     isTestnet: false,
