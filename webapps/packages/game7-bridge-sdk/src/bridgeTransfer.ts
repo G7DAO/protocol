@@ -50,6 +50,8 @@ export enum BridgeTransferType {
   DEPOSIT_ERC20,
   DEPOSIT_GAS,
   DEPOSIT_ERC20_TO_GAS,
+  DEPOSIT_CCTP,
+  WITHDRAW_CCTP
 }
 
 export enum BridgeTransferStatus {
@@ -62,7 +64,10 @@ export enum BridgeTransferStatus {
   DEPOSIT_ERC20_REDEEMED,
   DEPOSIT_ERC20_EXPIRED,
   DEPOSIT_GAS_PENDING,
-  DEPOSIT_GAS_DEPOSITED
+  DEPOSIT_GAS_DEPOSITED,
+  CCTP_PENDING,
+  CCTP_COMPLETE,
+  CCTP_REDEEMED
 }
 
 function mapDepositERC20Status(status: ParentToChildMessageStatus): BridgeTransferStatus {
@@ -94,10 +99,10 @@ export class BridgeTransfer {
   public readonly destinationName: string;
   public readonly value: BigNumber = BigNumber.from(0);
   public readonly explorerLink: string;
-  private childTransactionReceipt: ChildTransactionReceipt | undefined;
-  private readonly originProvider: Provider;
-  private readonly destinationProvider: Provider;
-  private readonly destinationNetwork: BridgeNetworkConfig;
+  protected childTransactionReceipt: ChildTransactionReceipt | undefined;
+  protected readonly originProvider: Provider;
+  protected readonly destinationProvider: Provider;
+  protected readonly destinationNetwork: BridgeNetworkConfig;
 
   /**
    * Constructs a new instance of the BridgeTransfer class.
