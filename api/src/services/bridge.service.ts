@@ -38,6 +38,7 @@ export async function getTransactionHistory(chain: string, address: string, limi
             ${bridgeConfig[chain].l3TableName}
         WHERE
             address = DECODE($1, 'hex')
+            AND label_name = 'L2ToL1Tx'
     ), game7_withdrawal AS (
       SELECT
           'WITHDRAWAL' AS type,
@@ -56,7 +57,7 @@ export async function getTransactionHistory(chain: string, address: string, limi
           wc.status AS status
       FROM
           game7_withdrawal_calls wc
-              JOIN game7_withdrawal_events we ON we.transaction_hash = wc.transaction_hash
+          LEFT JOIN game7_withdrawal_events we ON we.transaction_hash = wc.transaction_hash
     ),arbirtrum_claims as (
       SELECT
           'CLAIM' AS type,
