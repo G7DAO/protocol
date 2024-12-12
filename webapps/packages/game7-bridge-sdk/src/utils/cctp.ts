@@ -34,6 +34,20 @@ type Contracts = {
     tokenMinterContractAddress: string
 }
 
+export type MessageSent = {
+    attestationHash: string
+    blockNumber: string
+    blockTimestamp: string
+    id: string
+    message: string
+    nonce: string
+    sender: string
+    recipient: string
+    sourceDomain: `${ChainDomain}`
+    transactionHash: string
+    amount: string
+}
+
 export const CommonAddress = {
     Ethereum: {
         USDC: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
@@ -60,6 +74,18 @@ export const CommonAddress = {
         tokenMessengerContractAddress: '0x9f3B8679c73C2Fef8b59B4f3444d4e156fb70AA5'
     }
 } as const
+
+export const chainIdToUSDC = (chainId: number): string | null => {
+    const chainMapping: { [key: number]: string | undefined } = {
+        1: CommonAddress.Ethereum.USDC, // Mainnet
+        42161: CommonAddress.ArbitrumOne.USDC, // Arbitrum One
+        11155111: CommonAddress.Sepolia.USDC, // Sepolia
+        421613: CommonAddress.ArbitrumSepolia.USDC, // Arbitrum Sepolia
+        660279: CommonAddress[660279]?.CU // Xai Mainnet (optional CU as example)
+    };
+
+    return chainMapping[chainId] || null;
+};
 
 const contracts: Record<CCTPSupportedChainId, Contracts> = {
     [ChainId.Ethereum]: {
@@ -197,4 +223,30 @@ export const getCctpUtils = ({ originChainId }: { originChainId?: number }) => {
         fetchAttestation,
         waitForAttestation
     }
+}
+
+export const isTokenMainnetUSDC = (tokenAddress: string | undefined) =>
+    tokenAddress?.toLowerCase() === CommonAddress.Ethereum.USDC.toLowerCase()
+
+export const isTokenSepoliaUSDC = (tokenAddress: string | undefined) =>
+    tokenAddress?.toLowerCase() === CommonAddress.Sepolia.USDC.toLowerCase()
+
+export const isTokenArbitrumOneNativeUSDC = (
+    tokenAddress: string | undefined | null
+) =>
+    tokenAddress?.toLowerCase() === CommonAddress.ArbitrumOne.USDC.toLowerCase()
+
+export const isTokenArbitrumSepoliaNativeUSDC = (
+    tokenAddress: string | undefined
+) =>
+    tokenAddress?.toLowerCase() ===
+    CommonAddress.ArbitrumSepolia.USDC.toLowerCase()
+
+export const isTokenNativeUSDC = (tokenAddress: string | undefined) => {
+    return (
+        isTokenMainnetUSDC(tokenAddress) ||
+        isTokenSepoliaUSDC(tokenAddress) ||
+        isTokenArbitrumOneNativeUSDC(tokenAddress) ||
+        isTokenArbitrumSepoliaNativeUSDC(tokenAddress)
+    )
 }
