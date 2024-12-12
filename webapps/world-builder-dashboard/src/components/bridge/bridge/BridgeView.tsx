@@ -58,6 +58,7 @@ const BridgeView = ({
     selectedBridgeToken,
     selectedNetworkType,
     setSelectedNativeToken,
+    selectedNativeToken
   } = useBlockchainContext()
 
   const { isFetching: isFetchingTokenInformation, data: tokenInformation } = useTokenInformation({
@@ -303,7 +304,8 @@ const BridgeView = ({
             ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
             : `~${Math.floor((selectedHighNetwork.challengePeriod ?? 0) / 60)} min`
         }
-        fee={Number(estimatedFee.data?.totalFee ?? 0)}
+        fee={Number(estimatedFee.data?.parentFee ?? 0)}
+        childFee={Number(estimatedFee.data?.childFee ?? 0)}
         isEstimatingFee={estimatedFee.isLoading}
         value={Number(value)}
         ethRate={
@@ -313,7 +315,6 @@ const BridgeView = ({
               ? 0.0
               : coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd
         }
-        tokenSymbol={tokenInformation?.symbol ?? ''}
         tokenRate={
           selectedBridgeToken.symbol === 'TG7T' || selectedBridgeToken.symbol === 'G7'
             ? 1
@@ -321,11 +322,15 @@ const BridgeView = ({
               ? 0.0
               : coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd
         }
-        nativeTokenSymbol={
-          direction === 'DEPOSIT'
-            ? (selectedLowNetwork?.nativeCurrency?.symbol ?? '')
-            : (selectedHighNetwork?.nativeCurrency?.symbol ?? '')
+        tokenSymbol={tokenInformation?.symbol ?? ''}
+        gasNativeTokenSymbol={
+          selectedNativeToken?.symbol ?? ''
         }
+        gasChildNativeTokenSymbol={
+          selectedHighNetwork.nativeCurrency?.symbol ?? ''
+        }
+        selectedLowChain={selectedLowNetwork}
+        selectedHighChain={selectedHighNetwork}
       />
       {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
       <ActionButton
