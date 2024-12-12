@@ -266,6 +266,7 @@ export const networks: { [chainId: number]: BridgeNetworkConfig } = {
     },
     parentChainId: 42161,
     retryableLifetimeSeconds: SEVEN_DAYS_IN_SECONDS,
+    nativeToken: '0xF18e4466F26B4cA55bbAb890b314a54976E45B17',
     tokenBridge: {
       parentCustomGateway: '0xd7258a4BE508Da8E95F89c13B8b7469951e9Df2B',
       parentErc20Gateway: '0xe41363751bd1C305384375F428585C20e3dF516A',
@@ -286,6 +287,12 @@ export const networks: { [chainId: number]: BridgeNetworkConfig } = {
     nitroGenesisBlock: 0,
     nitroGenesisL1Block: 0,
     depositTimeout: 900000, //TODO ?
+    usdcAddresses: {
+      bridged: '0x401eCb1D350407f13ba348573E5630B83638E30D',
+      settlementLayer: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+      rollupGateway: '0xF70ae1Af7D49dA0f7D66Bb55469caC9da336181b',
+      settlementLayerGateway: '0x404922a9B29b4a5205a6074AbA31A7392BD28944',
+    }
   },
 
 };
