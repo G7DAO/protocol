@@ -273,7 +273,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           setShowApproval={setShowApproval}
           balance={balance}
           nativeBalance={nativeBalance}
-          amount={amount}
           bridger={bridger}
           decimals={decimals}
           startingTokenIndex={startingTokenIndex}
