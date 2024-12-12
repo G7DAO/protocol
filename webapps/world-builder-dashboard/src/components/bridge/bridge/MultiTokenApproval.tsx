@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './MultiTokenApproval.module.css';
 import { Modal } from 'summon-ui/mantine';
 import AllowanceSelector from '../allowance/AllowanceSelector';
@@ -17,7 +17,6 @@ interface MultiTokenApprovalProps {
   setShowApproval: (showApproval: boolean) => void
   balance: string | undefined
   nativeBalance: string | undefined
-  amount: string
   bridger: Bridger | undefined
   decimals: number | undefined
   tokens: Token[]
@@ -26,12 +25,10 @@ interface MultiTokenApprovalProps {
   gasFees: string[]
 }
 
-export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showApproval, setShowApproval, bridger, amount, balance, nativeBalance, decimals, tokens, startingTokenIndex, onApprovalComplete, gasFees }) => {
+export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showApproval, setShowApproval, bridger, balance, nativeBalance, decimals, tokens, startingTokenIndex, onApprovalComplete, gasFees }) => {
   const { selectedNetworkType, getProvider, selectedNativeToken } = useBlockchainContext()
   const queryClient = useQueryClient()
   const networks = getNetworks(selectedNetworkType)
-  const [newAllowance, setNewAllowance] = useState(ethers.utils.parseUnits(amount || '0', decimals || 18))
-
   // Initialize approvedTokens with already approved tokens
   const initialApprovedTokens = new Set(
     tokens
@@ -40,9 +37,54 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
   )
   const [approvedTokens, setApprovedTokens] = useState<Set<string>>(initialApprovedTokens)
   const [currentTokenIndex, setCurrentTokenIndex] = useState(startingTokenIndex)
+  const [newAllowance, setNewAllowance] = useState(() => {
+    const currentToken = tokens[currentTokenIndex];
+    console.log('=== Initializing newAllowance ===', {
+      currentTokenIndex,
+      balance,
+      nativeBalance,
+      decimals: currentToken.decimals,
+      tokenSymbol: currentToken.symbol
+    });
+
+    const initialAmount = currentTokenIndex === 0
+      ? ethers.utils.parseUnits(balance || '0', decimals || 18)
+      : ethers.utils.parseUnits(nativeBalance || '0', currentToken.decimals || 18);
+    
+    const calculatedAllowance = initialAmount.mul(25).div(100);
+    console.log('Calculated allowance:', {
+      initialAmount: initialAmount.toString(),
+      calculatedAllowance: calculatedAllowance.toString(),
+      decimals: currentToken.decimals
+    });
+    
+    return calculatedAllowance;
+  });
+
+  useEffect(() => {
+    const currentToken = tokens[currentTokenIndex];
+    const initialAmount = currentTokenIndex === 0
+      ? ethers.utils.parseUnits(balance || '0', decimals || 18)
+      : ethers.utils.parseUnits(nativeBalance || '0', currentToken.decimals || 18);
+    
+    const calculatedAllowance = initialAmount.mul(25).div(100);
+    console.log('Resetting allowance for new token:', {
+      tokenSymbol: currentToken.symbol,
+      decimals: currentToken.decimals,
+      initialAmount: initialAmount.toString(),
+      calculatedAllowance: calculatedAllowance.toString()
+    });
+    
+    setNewAllowance(calculatedAllowance);
+  }, [currentTokenIndex, balance, nativeBalance, decimals, tokens]);
 
   const approve = useMutation(
     async (amount: ethers.BigNumber) => {
+      console.log('=== Starting Approval Process ===', {
+        amount: amount.toString(),
+        currentTokenIndex,
+        tokenSymbol: tokens[currentTokenIndex].symbol
+      });
       const currentToken = tokens[currentTokenIndex]
       const network = networks?.find((n) => n.chainId === bridger?.originNetwork.chainId)
       if (!network) throw new Error('Network not found')
@@ -150,11 +192,11 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
               token={tokens[currentTokenIndex]}
               balance={currentTokenIndex === 0
                 ? ethers.utils.parseUnits(balance || '0', decimals || 18)
-                : ethers.utils.parseUnits(nativeBalance || '0', 18)
+                : ethers.utils.parseUnits(nativeBalance || '0', tokens[currentTokenIndex].decimals || 18)
               }
               amount={currentTokenIndex === 0
-                ? ethers.utils.parseUnits(amount || '0', decimals || 18)
-                : ethers.utils.parseUnits(amount || '0', 18)
+                ? ethers.utils.parseUnits(balance || '0', decimals || 18).mul(25).div(100)
+                : ethers.utils.parseUnits(nativeBalance || '0', tokens[currentTokenIndex].decimals || 18).mul(25).div(100)
               }
               onChange={(value) => setNewAllowance(value)}
               allowance={newAllowance}

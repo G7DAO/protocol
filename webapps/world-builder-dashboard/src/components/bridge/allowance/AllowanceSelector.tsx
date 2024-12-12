@@ -19,16 +19,28 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled, tok
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption()
   })
+
+  const formatAllowanceDisplay = () => {
+    if (allowance.eq(ethers.constants.MaxUint256)) {
+      return `Infinite ${token?.symbol}`
+    }
+    const formattedAllowance = ethers.utils.formatUnits(allowance, token.decimals)
+    console.log('Formatted Allowance Display:', formattedAllowance, token.symbol)
+    return `${formattedAllowance} ${token?.symbol}`
+  }
+
   return (
     <Combobox
       store={combobox}
       variant='unstyled'
       onOptionSubmit={(val: string) => {
-        const amountInWei = ethers.utils.parseUnits(val, token.decimals)
+        console.log('Submitted Value:', val)
         try {
-          onChange(ethers.BigNumber.from(amountInWei))
+          const amountInWei = ethers.utils.parseUnits(val, token.decimals)
+          console.log('Parsed Amount in Wei:', amountInWei.toString())
+          onChange(amountInWei)
         } catch (e) {
-          console.log(e)
+          console.error('Error parsing units:', e)
         }
         combobox.closeDropdown()
       }}
@@ -42,10 +54,7 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled, tok
           <div className={styles.tokenAmountContainer}>
             {token?.Icon && <token.Icon />}
             <div className={styles.value}>
-              {allowance.eq(ethers.constants.MaxUint256) 
-                ? `Infinite ${token?.symbol}`
-                : `${ethers.utils.formatUnits(allowance, token.decimals)} ${token?.symbol}`
-              }
+              {formatAllowanceDisplay()}
             </div>
           </div>
           <button
