@@ -70,7 +70,9 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       return true;
     }
     
+    // For testing only!
     if (amount === '0.01') {
+      console.log('Starting token index set to 0');
       setStartingTokenIndex(0);
       setShowApproval(true);
       return false;
@@ -79,11 +81,13 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     bridgeTokenAllowance = await bridger.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount) ?? ethers.BigNumber.from(0)
     nativeTokenAllowance = await bridger.getNativeAllowance(selectedLowNetwork.rpcs[0], connectedAccount) ?? ethers.BigNumber.from(0)
 
-    const needsBridgeTokenApproval = bridgeTokenAllowance !== null
-    const needsNativeTokenApproval = nativeTokenAllowance !== null
+    const amountBN = ethers.utils.parseUnits(amount, decimals)
+    
+    const needsBridgeTokenApproval = bridgeTokenAllowance !== null && bridgeTokenAllowance.lt(amountBN)
+    const needsNativeTokenApproval = nativeTokenAllowance !== null && nativeTokenAllowance.lt(amountBN)
 
     if (needsBridgeTokenApproval || needsNativeTokenApproval) {
-      setStartingTokenIndex(needsBridgeTokenApproval ? 0 : 1)
+      setStartingTokenIndex(!needsBridgeTokenApproval && needsNativeTokenApproval ? 1 : 0)
       setShowApproval(true)
       return false
     }
