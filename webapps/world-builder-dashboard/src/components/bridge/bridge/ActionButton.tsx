@@ -1,5 +1,5 @@
 // External Libraries
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 // Constants
@@ -7,7 +7,7 @@ import { getNetworks } from '../../../../constants'
 // Styles
 import styles from './ActionButton.module.css'
 import { ethers } from 'ethers'
-import { Bridger, BridgeTransferStatus, TransferParams } from 'game7-bridge-sdk'
+import { Bridger, BridgeTransferStatus } from 'game7-bridge-sdk'
 // Absolute Imports
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
@@ -44,7 +44,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   nativeBalance,
   gasFees,
   bridgeAllowance,
-  nativeAllowance 
+  nativeAllowance
 }) => {
   const {
     connectedAccount,
@@ -63,6 +63,13 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   const [showApproval, setShowApproval] = useState(false)
   const [startingTokenIndex, setStartingTokenIndex] = useState(0)
   const [allowancesVerified, setAllowancesVerified] = useState(false)
+
+
+  useEffect(() => {
+    console.log('bridger changed')
+    setAllowancesVerified(false)
+  }, [bridger])
+
   const checkAllowances = async () => {
     if (!bridger || !connectedAccount) return null;
 
@@ -90,7 +97,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     } else {
       const needsBridgeTokenApproval = bridgeAllowance?.lt(amountBN)
       const needsNativeTokenApproval = nativeAllowance !== null && nativeAllowance?.lt(amountBN)
-      
+
       if (needsBridgeTokenApproval || needsNativeTokenApproval) {
         setStartingTokenIndex(needsBridgeTokenApproval ? 0 : 1)
         setShowApproval(true)
@@ -141,7 +148,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       const signer = provider.getSigner()
       const destinationChain = direction === 'DEPOSIT' ? selectedHighNetwork : selectedLowNetwork
       const destinationRPC = destinationChain.rpcs[0]
-      console.log(destinationRPC)
       const destinationProvider = new ethers.providers.JsonRpcProvider(destinationRPC) as ethers.providers.Provider
       const destinationTokenAddress = getTokensForNetwork(destinationChain.chainId, connectedAccount).find(
         (token) => token.symbol === selectedBridgeToken.symbol
@@ -158,7 +164,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         toNetwork: selectedHighNetwork.chainId,
         connectedAccount: connectedAccount
       });
-      console.log(bridger?.isDeposit)
       if (bridger?.isDeposit) {
         const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })
         await tx?.wait()
@@ -232,7 +237,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     console.log('Setting allowancesVerified to true');
     setShowApproval(false)
     setAllowancesVerified(true)
-    console.log('Triggering transfer');
     transfer.mutate(amount)
   }
 
@@ -241,32 +245,37 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     console.log('Current allowancesVerified state:', allowancesVerified);
 
     if (allowancesVerified) {
-      console.log('Allowances already verified, proceeding to transfer');
       transfer.mutate(amount)
       return
     }
 
-    console.log('Checking allowances before transfer');
     const allowancesOk = await checkAllowances()
-    console.log('Allowances check result:', allowancesOk);
 
     if (allowancesOk) {
-      console.log('Allowances OK, proceeding to transfer');
       transfer.mutate(amount)
     }
   }
 
   const tokens = (() => {
     const nativeToken = getTokensForNetwork(
-      selectedLowNetwork.chainId,
+      direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId,
       connectedAccount
-    ).find(token => token.symbol === selectedHighNetwork.nativeCurrency?.symbol)!;
-    if (bridgeAllowance === null) {
+    ).find(
+      token => direction === 'DEPOSIT' ?
+        token.symbol === selectedHighNetwork.nativeCurrency?.symbol :
+        token.symbol === selectedLowNetwork.nativeCurrency?.symbol
+    )!
+    if (bridgeAllowance === null && nativeAllowance !== null) {
       return [nativeToken];
     }
-    if (nativeAllowance === null) {
+    if (nativeAllowance === null && bridgeAllowance !== null) {
       return [selectedBridgeToken];
     }
+    
+    if (nativeAllowance === null && bridgeAllowance === null) {
+      return [];
+    }
+
     return [selectedBridgeToken, nativeToken];
   })();
 

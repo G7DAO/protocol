@@ -118,9 +118,10 @@ const BridgeView = ({
         setBridger(_bridger)
         const fetchAllowances = async () => {
           try {
-            const bridgeTokenAllowance = await _bridger.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount)
-            const nativeTokenAllowance = await _bridger.getNativeAllowance(selectedLowNetwork.rpcs[0], connectedAccount)
+            console.log('fetching allowances')
+            const bridgeTokenAllowance = await _bridger.getAllowance(direction === 'DEPOSIT' ? selectedLowNetwork.rpcs[0] : selectedHighNetwork.rpcs[0], connectedAccount)
             console.log('bridgeTokenAllowance', bridgeTokenAllowance)
+            const nativeTokenAllowance = await _bridger.getNativeAllowance(direction === 'DEPOSIT' ? selectedLowNetwork.rpcs[0] : selectedHighNetwork.rpcs[0], connectedAccount)
             console.log('nativeTokenAllowance', nativeTokenAllowance)
             if (bridgeTokenAllowance && nativeTokenAllowance) {
               console.log(

@@ -40,12 +40,10 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
   const [approvedTokens, setApprovedTokens] = useState<Set<string>>(initialApprovedTokens)
   const [currentTokenIndex, setCurrentTokenIndex] = useState(startingTokenIndex)
   const [newAllowance, setNewAllowance] = useState(() => {
-    console.log('tokens', tokens)
     const currentToken = tokens[currentTokenIndex];
     if (currentTokenIndex === 1) {
-      // Convert gas fee to same decimal precision as token
       const gasFeeAmount = ethers.utils.parseUnits(gasFees[1] || '0', currentToken.decimals || 18)
-      return gasFeeAmount;
+      return gasFeeAmount
     }
     return currentTokenIndex === 0
       ? ethers.utils.parseUnits(amount || '0', decimals || 18)
@@ -53,10 +51,9 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
   });
 
   useEffect(() => {
-    // Add guard clause to prevent accessing invalid index
     if (currentTokenIndex >= tokens.length) {
-      console.warn('Invalid token index:', currentTokenIndex, 'tokens:', tokens);
-      return;
+      console.warn('Invalid token index:', currentTokenIndex, 'tokens:', tokens)
+      return
     }
 
     const currentToken = tokens[currentTokenIndex];
