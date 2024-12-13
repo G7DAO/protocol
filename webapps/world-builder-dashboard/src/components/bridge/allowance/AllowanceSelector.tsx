@@ -25,7 +25,6 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled, tok
       return `Infinite ${token?.symbol}`
     }
     const formattedAllowance = ethers.utils.formatUnits(allowance, token.decimals)
-    console.log('Formatted Allowance Display:', formattedAllowance, token.symbol)
     return `${formattedAllowance} ${token?.symbol}`
   }
 
@@ -34,10 +33,8 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled, tok
       store={combobox}
       variant='unstyled'
       onOptionSubmit={(val: string) => {
-        console.log('Submitted Value:', val)
         try {
           const amountInWei = ethers.utils.parseUnits(val, token.decimals)
-          console.log('Parsed Amount in Wei:', amountInWei.toString())
           onChange(amountInWei)
         } catch (e) {
           console.error('Error parsing units:', e)
