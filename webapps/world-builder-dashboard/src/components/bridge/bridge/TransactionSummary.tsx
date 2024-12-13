@@ -107,14 +107,14 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
                 </div>
               )}
             </div>
-          ) : (
+          ) : ( 
             <div className={styles.valueNote}>{isEstimatingFee ? 'Estimating...' : `Can't estimate fee`}</div>
           )}
         </div>
         <div className={styles.dataRow}>
           <div className={styles.itemName}>Estimated gas fee on {selectedHighChain.displayName}</div>
           {!!childFee ? (
-            <div className={styles.valueContainer}>
+            <div className={styles.valueContainer}> 
               <div
                 className={styles.value}
                 title={`Balance: ${String(nativeBalance)} ${gasChildNativeTokenSymbol}`}

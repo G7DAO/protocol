@@ -1,9 +1,7 @@
 // Libraries
 import { useEffect, useState } from 'react'
-import { useQuery } from 'react-query'
 import {
   DEFAULT_STAKE_NATIVE_POOL_ID,
-  getNetworks,
   L1_MAIN_NETWORK,
   L1_NETWORK,
   L2_MAIN_NETWORK,
@@ -31,6 +29,7 @@ import { useCoinGeckoAPI } from '@/hooks/useCoinGeckoAPI'
 import { DepositDirection } from '@/pages/BridgePage/BridgePage'
 import { getStakeNativeTxData } from '@/utils/bridge/stakeContractInfo'
 import { getTokensForNetwork, Token } from '@/utils/tokens'
+import { useBridger } from '@/hooks/useBridger'
 
 const BridgeView = ({
   direction,
@@ -80,82 +79,19 @@ const BridgeView = ({
     setSelectedBridgeToken(token)
   }
 
-  const networks = getNetworks(selectedNetworkType)
+  const { getEstimatedFee } = useBridger()
 
-  const estimatedFee = useQuery(
-    ['estimatedFee', bridger, connectedAccount, value],
-    async () => {
-      // Early return if required values are missing
-      if (!bridger || !connectedAccount || !value) {
-        return { parentFee: '0', childFee: '0', totalFee: '0' }
-      }
+  const estimatedFee = getEstimatedFee({
+    bridger,
+    value,
+    direction,
+    selectedLowNetwork,
+    selectedHighNetwork,
+    tokenInformation
+  })
 
-      try {
-        const originNetwork = networks?.find((n) => n.chainId === bridger.originNetwork.chainId)
-        if (!originNetwork) {
-          console.warn("Can't find origin network, returning zero fees")
-          return { parentFee: '0', childFee: '0', totalFee: '0' }
-        }
-
-        const decimals = tokenInformation?.decimalPlaces ?? 18
-        const parsedValue = value ? ethers.utils.parseUnits(value, decimals) : ethers.utils.parseEther('0')
-
-        // Ensure we have valid RPC endpoints
-        const originProvider = direction === 'DEPOSIT' ? 
-          selectedLowNetwork.rpcs[0] : 
-          selectedHighNetwork.rpcs[0]
-        const destinationProvider = direction === 'DEPOSIT' ? 
-          selectedHighNetwork.rpcs[0] : 
-          undefined
-
-        if (!originProvider) {
-          console.warn("Missing origin provider, returning zero fees")
-          return { parentFee: '0', childFee: '0', totalFee: '0' }
-        }
-
-        // Add retry logic for the gas estimation
-        let attempts = 0
-        const maxAttempts = 3
-        
-        while (attempts < maxAttempts) {
-          try {
-            const gasAndFee = await bridger.getGasAndFeeEstimation(
-              parsedValue,
-              originProvider,
-              connectedAccount,
-              destinationProvider
-            )
-
-            const parentFee = ethers.utils.formatEther(gasAndFee?.estimatedFee ?? '0')
-            const childFee = gasAndFee?.childNetworkEstimation
-              ? ethers.utils.formatEther(gasAndFee.childNetworkEstimation.estimatedFee)
-              : '0'
-
-            return {
-              parentFee,
-              childFee,
-              totalFee: String(Number(parentFee) + Number(childFee))
-            }
-          } catch (e) {
-            attempts++
-            if (attempts === maxAttempts) throw e
-            // Wait before retrying
-            await new Promise(resolve => setTimeout(resolve, 1000))
-          }
-        }
-      } catch (e) {
-        console.error('Fee estimation failed:', e)
-        return { parentFee: '0', childFee: '0', totalFee: '0' }
-      }
-    },
-    {
-      enabled: !!connectedAccount && !!selectedLowNetwork && !!selectedHighNetwork && !!value && !!bridger,
-      retry: 2,
-      retryDelay: 1000,
-      staleTime: 30000,
-      cacheTime: 60000,
-    }
-  )
+  const [bridgeTokenAllowance, setBridgeTokenAllowance] = useState<ethers.BigNumber | null>(null)
+  const [nativeTokenAllowance, setNativeTokenAllowance] = useState<ethers.BigNumber | null>(null)
 
   useEffect(() => {
     if (selectedBridgeToken && connectedAccount && selectedHighNetwork && selectedLowNetwork) {
@@ -178,20 +114,22 @@ const BridgeView = ({
           ) ?? null
           setSelectedNativeToken(token)
         }
-        console.log('in use effect 2')
         const _bridger: Bridger = new Bridger(originChainId, destinationChainId, selectedBridgeToken.tokenAddressMap)
         setBridger(_bridger)
         const fetchAllowances = async () => {
           try {
             const bridgeTokenAllowance = await _bridger.getAllowance(selectedLowNetwork.rpcs[0], connectedAccount)
             const nativeTokenAllowance = await _bridger.getNativeAllowance(selectedLowNetwork.rpcs[0], connectedAccount)
-            console.log(bridgeTokenAllowance, nativeTokenAllowance)
+            console.log('bridgeTokenAllowance', bridgeTokenAllowance)
+            console.log('nativeTokenAllowance', nativeTokenAllowance)
             if (bridgeTokenAllowance && nativeTokenAllowance) {
               console.log(
                 ethers.utils.formatUnits(bridgeTokenAllowance!, selectedBridgeToken.decimals),
                 ethers.utils.formatEther(nativeTokenAllowance!)
               )
             }
+            setBridgeTokenAllowance(bridgeTokenAllowance as ethers.BigNumber | null)
+            setNativeTokenAllowance(nativeTokenAllowance as ethers.BigNumber | null)
           } catch (error) {
             console.error('Error fetching allowances:', error)
           }
@@ -370,6 +308,8 @@ const BridgeView = ({
         balance={tokenInformation?.tokenBalance}
         nativeBalance={nativeTokenInformation?.tokenBalance}
         gasFees={[estimatedFee.data?.parentFee ?? '', estimatedFee.data?.childFee ?? '']}
+        bridgeAllowance={bridgeTokenAllowance}
+        nativeAllowance={nativeTokenAllowance}
       />
     </div>
   )

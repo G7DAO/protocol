@@ -40,42 +40,37 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
   const [approvedTokens, setApprovedTokens] = useState<Set<string>>(initialApprovedTokens)
   const [currentTokenIndex, setCurrentTokenIndex] = useState(startingTokenIndex)
   const [newAllowance, setNewAllowance] = useState(() => {
+    console.log('tokens', tokens)
     const currentToken = tokens[currentTokenIndex];
     if (currentTokenIndex === 1) {
       // Convert gas fee to same decimal precision as token
-      const gasFeeAmount = ethers.utils.parseUnits(gasFees[1] || '0', currentToken.decimals || 18);
-      console.log('Initial gas fee allowance:', ethers.utils.formatUnits(gasFeeAmount, currentToken.decimals || 18));
+      const gasFeeAmount = ethers.utils.parseUnits(gasFees[1] || '0', currentToken.decimals || 18)
       return gasFeeAmount;
     }
     return currentTokenIndex === 0
       ? ethers.utils.parseUnits(amount || '0', decimals || 18)
-      : ethers.utils.parseUnits(amount || '0', currentToken.decimals || 18);
+      : ethers.utils.parseUnits(amount || '0', currentToken.decimals || 18)
   });
 
   useEffect(() => {
+    // Add guard clause to prevent accessing invalid index
+    if (currentTokenIndex >= tokens.length) {
+      console.warn('Invalid token index:', currentTokenIndex, 'tokens:', tokens);
+      return;
+    }
+
     const currentToken = tokens[currentTokenIndex];
     const initialAmount = currentTokenIndex === 1
       ? ethers.utils.parseUnits(gasFees[1] || '0', currentToken.decimals || 18)
       : currentTokenIndex === 0
         ? ethers.utils.parseUnits(amount || '0', decimals || 18)
-        : ethers.utils.parseUnits(amount || '0', currentToken.decimals || 18);
-
-    console.log('Setting allowance:', {
-      gasFee: gasFees[1],
-      decimals: currentToken.decimals,
-      formatted: ethers.utils.formatUnits(initialAmount, currentToken.decimals || 18)
-    });
+        : ethers.utils.parseUnits(amount || '0', currentToken.decimals || 18)
 
     setNewAllowance(initialAmount);
-  }, [currentTokenIndex]);
+  }, [currentTokenIndex, tokens, amount, decimals, gasFees]);
 
   const approve = useMutation(
     async (amount: ethers.BigNumber) => {
-      console.log('=== Starting Approval Process ===', {
-        amount: amount.toString(),
-        currentTokenIndex,
-        tokenSymbol: tokens[currentTokenIndex].symbol
-      });
       const currentToken = tokens[currentTokenIndex]
       const network = networks?.find((n) => n.chainId === bridger?.originNetwork.chainId)
       if (!network) throw new Error('Network not found')
@@ -136,57 +131,65 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
         <div className={styles.modalHeader}>
           <div className={styles.titleAndCloseButton}>
             <div className={styles.modalTitle}>
-              Approve Tokens
+              {tokens.length === 1 ? 'Approve Allowance' : 'Approve Tokens'}
             </div>
             <IconClose onClick={() => setShowApproval(false)} className={styles.closeButton} stroke="#fff" />
           </div>
-          <div className={styles.modalSubtitle}>Approve the tokens you want to bridge</div>
+          <div className={styles.modalSubtitle}>Approve the token you want to bridge</div>
         </div>
-        <div className={styles.space} />
-        <div className={styles.tokenApprovalBarContainer}>
-          <div className={styles.barContainer}>
-            {tokens.map((token) => (
-              <div
-                key={token.symbol}
-                className={`${styles.bar} ${approvedTokens.has(token.symbol) ? styles.barApproved : ''}`}
-              >
-                <div className={styles.barTitleContainer}>
-                  <div className={`${styles.barTitle} ${approvedTokens.has(token.symbol) ? styles.barTitleApproved : ''}`}>
-                    Approve {token.symbol}
+        {tokens.length > 1 && (
+          <>
+            <div className={styles.space} />
+            <div className={styles.tokenApprovalBarContainer}>
+              <div className={styles.barContainer}>
+                {tokens.map((token) => (
+                  <div
+                    key={token.symbol}
+                    className={`${styles.bar} ${approvedTokens.has(token.symbol) ? styles.barApproved : ''}`}
+                  >
+                    <div className={styles.barTitleContainer}>
+                      <div className={`${styles.barTitle} ${approvedTokens.has(token.symbol) ? styles.barTitleApproved : ''}`}>
+                        Approve {token.symbol}
+                      </div>
+                      {approvedTokens.has(token.symbol) && <IconCheck stroke="#F04438" />}
+                    </div>
+                    {approve.isLoading && currentTokenIndex === tokens.indexOf(token) && (
+                      <div className={styles.loadingBar} />
+                    )}
                   </div>
-                  {approvedTokens.has(token.symbol) && <IconCheck stroke="#F04438" />}
-                </div>
-                {approve.isLoading && currentTokenIndex === tokens.indexOf(token) && (
-                  <div className={styles.loadingBar} />
-                )}
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-        <div className={styles.allowanceSection}>
-          <div className={styles.allowanceContainer}>
-            <div className={styles.allowanceTitle}>Allowance {currentTokenIndex === 0 ? `(${balance} available)` : `(${nativeBalance} available)`}</div>
-            <AllowanceSelector
-              token={tokens[currentTokenIndex]}
-              balance={currentTokenIndex === 0
-                ? ethers.utils.parseUnits(balance || '0', decimals || 18)
-                : ethers.utils.parseUnits(nativeBalance || '0', tokens[currentTokenIndex].decimals || 18)
-              }
-              amount={ethers.utils.parseUnits(amount || '0', decimals || 18)}
-              onChange={(value) => setNewAllowance(value)}
-              allowance={newAllowance}
-              disabled={approve.isLoading}
-            />
-          </div>
-          <div className={styles.hintText}>
-            Set token limit to allow the bridge contract to perform token transfers on your behalf. It cannot move funds without your permission.
-          </div>
-          <div className={styles.hintBadge}>
-            <div className={styles.hintBadgeText}>
-              ~{gasFees[currentTokenIndex]} {currentTokenIndex === 0 ? selectedNativeToken?.symbol : tokens[currentTokenIndex].symbol} will be used for gas
+            </div>
+          </>
+        )}
+        {currentTokenIndex < tokens.length ? (
+          <div className={styles.allowanceSection}>
+            <div className={styles.allowanceContainer}>
+              <div className={styles.allowanceTitle}>Allowance {currentTokenIndex === 0 ? `(${balance} available)` : `(${nativeBalance} available)`}</div>
+              <AllowanceSelector
+                token={tokens[currentTokenIndex]}
+                balance={currentTokenIndex === 0
+                  ? ethers.utils.parseUnits(balance || '0', decimals || 18)
+                  : ethers.utils.parseUnits(nativeBalance || '0', tokens[currentTokenIndex].decimals || 18)
+                }
+                amount={ethers.utils.parseUnits(amount || '0', decimals || 18)}
+                onChange={(value) => setNewAllowance(value)}
+                allowance={newAllowance}
+                disabled={approve.isLoading}
+              />
+            </div>
+            <div className={styles.hintText}>
+              Set token limit to allow the bridge contract to perform token transfers on your behalf. It cannot move funds without your permission.
+            </div>
+            <div className={styles.hintBadge}>
+              <div className={styles.hintBadgeText}>
+                ~{gasFees[currentTokenIndex]} {currentTokenIndex === 0 ? selectedNativeToken?.symbol : tokens[currentTokenIndex].symbol} will be used for gas
+              </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div>Invalid token selection</div>
+        )}
         <div className={styles.buttonSpacer} />
         <div className={styles.buttonSection}>
           <div onClick={() => approve.mutate(newAllowance)} className={`${styles.button} ${approve.isLoading ? styles.buttonLoading : ''}`}>
