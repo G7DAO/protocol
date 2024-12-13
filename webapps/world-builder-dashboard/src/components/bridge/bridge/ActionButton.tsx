@@ -72,13 +72,14 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 
   const checkAllowances = async () => {
     if (!bridger || !connectedAccount) return null;
-
+    console.log('check allowances start')
     if (amount === '0.01') {
       setStartingTokenIndex(0);
       setShowApproval(true);
       return false;
     }
 
+    console.log('allowancesVerified', allowancesVerified)
     if (allowancesVerified) {
       console.log('Allowances already verified, skipping check')
       return true
@@ -88,7 +89,9 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     const amountBN = ethers.utils.parseUnits(amount, decimals)
 
     if (bridgeAllowance === null) {
-      const needsNativeTokenApproval = nativeAllowance !== null && nativeAllowance?.lt(amountBN)
+      console.log('bridgeAllowance is null')
+      const gasFeesAmount = gasFees?.[1] ? ethers.utils.parseUnits(gasFees[1], 18) : amountBN
+      const needsNativeTokenApproval = nativeAllowance !== null ? nativeAllowance?.lt(gasFeesAmount) : false
       if (needsNativeTokenApproval) {
         setStartingTokenIndex(0)
         setShowApproval(true)
@@ -96,8 +99,9 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       }
     } else {
       const needsBridgeTokenApproval = bridgeAllowance?.lt(amountBN)
-      const needsNativeTokenApproval = nativeAllowance !== null && nativeAllowance?.lt(amountBN)
-
+      const gasFeesAmount = gasFees?.[1] ? ethers.utils.parseUnits(gasFees[1], 18) : amountBN
+      const needsNativeTokenApproval = nativeAllowance !== null ? nativeAllowance?.lt(gasFeesAmount) : false
+      
       if (needsBridgeTokenApproval || needsNativeTokenApproval) {
         setStartingTokenIndex(needsBridgeTokenApproval ? 0 : 1)
         setShowApproval(true)
@@ -271,7 +275,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     if (nativeAllowance === null && bridgeAllowance !== null) {
       return [selectedBridgeToken];
     }
-    
+
     if (nativeAllowance === null && bridgeAllowance === null) {
       return [];
     }
