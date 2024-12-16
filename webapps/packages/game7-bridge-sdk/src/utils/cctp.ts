@@ -289,7 +289,7 @@ export const isNativeUSDC = (chainId: number, tokenAddress: string) => {
     const chainKey = ChainId[chainId] as keyof typeof CommonAddress;
     const chainData = CommonAddress[chainKey];
     if (!chainData) return false;
-    return chainData.USDC === tokenAddress;
+    return chainData.USDC.toLowerCase() === tokenAddress.toLowerCase();
 }
 
 export const hashSourceAndNonce = (source: number, nonce: number): string => {
