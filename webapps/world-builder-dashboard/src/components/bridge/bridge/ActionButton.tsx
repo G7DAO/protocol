@@ -72,7 +72,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 
   const checkAllowances = async () => {
     if (!bridger || !connectedAccount) return null
-    console.log('check allowances start')
     if (amount === '0.01') {
       setStartingTokenIndex(0)
       setShowApproval(true)
@@ -87,6 +86,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 
 
     const amountBN = ethers.utils.parseUnits(amount, decimals)
+    console.log('amountBN', amountBN.toString())
+    console.log('bridgeAllowance', bridgeAllowance?.toString())
 
     if (bridgeAllowance === null) {
       const gasFeesAmount = gasFees?.[1] ? ethers.utils.parseUnits(gasFees[1], 18) : amountBN
@@ -138,6 +139,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       return
     }
     setErrorMessage('')
+
+    setAllowancesVerified(false)
 
     // Replace direct transfer.mutate with allowance check
     checkAllowancesAndTransfer()
