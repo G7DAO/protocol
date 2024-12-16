@@ -26,6 +26,8 @@ import {BridgeNetworkConfig, networks} from './networks';
 import { TokenAddressMap } from './types';
 import { SignerOrProvider } from './bridgeNetwork';
 import {getProvider, percentIncrease, scaleFrom18DecimalsToNativeTokenDecimals} from './utils/web3Utils';
+import {isNativeUSDC, isTokenNativeUSDC} from "./utils/cctp";
+import {CctpBridger} from "./cctpBridger";
 
 
 export const DEFAULT_GAS_PRICE_PERCENT_INCREASE = BigNumber.from(500)
@@ -201,6 +203,17 @@ export class Bridger {
     this.token = token;
     this.useLocalStorage = params?.useLocalStorage ?? false;
     this.approveDepositAllowance = params?.approveDepositAllowance ?? true;
+  }
+
+
+  static getBridger(originNetworkChainId: number,
+                    destinationNetworkChainId: number,
+                    token: TokenAddressMap,
+                    params?: { useLocalStorage?: boolean; approveDepositAllowance?: boolean }) {
+    if (isNativeUSDC(originNetworkChainId, token[originNetworkChainId])) {
+      return new CctpBridger(originNetworkChainId, destinationNetworkChainId, token, params)
+    }
+    return new Bridger(originNetworkChainId, destinationNetworkChainId, token, params)
   }
 
   /**
