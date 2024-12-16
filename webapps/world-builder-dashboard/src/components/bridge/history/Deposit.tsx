@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { getHighNetworks, getLowNetworks } from '../../../../constants'
 import DepositMobile from './DepositMobile'
 import styles from './WithdrawTransactions.module.css'
@@ -30,6 +30,9 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   const { data: highNetworkTimestamp } = getHighNetworkTimestamp({ txRecord: deposit, transferStatus: transferStatus })
   const { data: transactionInputs, isLoading: isLoadingInputs } = getTransactionInputs({ txRecord: deposit })
   const finalTransactionInputs = transactionInputs || deposit.transactionInputs
+  const [collapseExecuted, setCollapseExecuted] = useState(false)
+  const [hovered, setHovered] = useState(false)
+
   return (
     <>
       {isLoading && smallView ? (
@@ -49,15 +52,36 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
             />
           ) : (
             <>
-              <div className={styles.gridItem}>
+              <div
+                className={styles.gridItem}
+                onClick={() => setCollapseExecuted(!collapseExecuted)}
+                style={{
+                  cursor: 'pointer',
+                  backgroundColor: hovered ? '#393939' : 'initial'
+                }}
+                onMouseEnter={() => setHovered(true)}
+                onMouseLeave={() => setHovered(false)}
+              >
                 <div className={styles.typeDeposit}>
                   Deposit
-                  <IconArrowNarrowDown className={styles.arrowUp} />
                 </div>
               </div>
-              <div className={styles.gridItem}>{timeAgo(deposit.lowNetworkTimestamp)}</div>
+              <div className={styles.gridItem}
+                onClick={() => setCollapseExecuted(!collapseExecuted)}
+                style={{
+                  cursor: 'pointer',
+                  backgroundColor: hovered ? '#393939' : 'initial'
+                }}
+                onMouseEnter={() => setHovered(true)}
+                onMouseLeave={() => setHovered(false)}>{timeAgo(deposit.lowNetworkTimestamp)}</div>
               {!isLoadingInputs && finalTransactionInputs?.tokenSymbol ? (
-                <div className={styles.gridItem}>
+                <div className={styles.gridItem} onClick={() => setCollapseExecuted(!collapseExecuted)}
+                  style={{
+                    cursor: 'pointer',
+                    backgroundColor: hovered ? '#393939' : 'initial'
+                  }}
+                  onMouseEnter={() => setHovered(true)}
+                  onMouseLeave={() => setHovered(false)}>
                   {`${finalTransactionInputs.tokenSymbol === 'USDC'
                     ? ethers.utils.formatUnits(finalTransactionInputs.amount, 6)
                     : deposit.amount} ${finalTransactionInputs.tokenSymbol}`}
@@ -69,8 +93,24 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                   </div>
                 </div>
               )}
-              <div className={styles.gridItem}>{depositInfo.from}</div>
-              <div className={styles.gridItem}>{depositInfo.to}</div>
+              <div
+                className={styles.gridItem}
+                onClick={() => setCollapseExecuted(!collapseExecuted)}
+                style={{
+                  cursor: 'pointer',
+                  backgroundColor: hovered ? '#393939' : 'initial'
+                }}
+                onMouseEnter={() => setHovered(true)}
+                onMouseLeave={() => setHovered(false)}>{depositInfo.from}</div>
+              <div
+                onClick={() => setCollapseExecuted(!collapseExecuted)}
+                style={{
+                  cursor: 'pointer',
+                  backgroundColor: hovered ? '#393939' : 'initial'
+                }}
+                onMouseEnter={() => setHovered(true)}
+                onMouseLeave={() => setHovered(false)}
+                className={styles.gridItem}>{depositInfo.to}</div>
               <>
                 {/* First column */}
                 {isLoading || transferStatus?.status === undefined ? (
@@ -83,7 +123,13 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                     target={'_blank'}
                     className={styles.explorerLink}
                   >
-                    <div className={styles.gridItem}>
+                    <div className={styles.gridItem} onClick={() => setCollapseExecuted(!collapseExecuted)}
+                      style={{
+                        cursor: 'pointer',
+                        backgroundColor: hovered ? '#393939' : 'initial'
+                      }}
+                      onMouseEnter={() => setHovered(true)}
+                      onMouseLeave={() => setHovered(false)}>
                       {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
                         transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||
                         transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ? (
@@ -103,11 +149,25 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
 
                 {/* Second column */}
                 {isLoading || transferStatus?.status === undefined || !highNetworkTimestamp ? (
-                  <div className={styles.gridItem}>
+                  <div className={styles.gridItem}
+                    onClick={() => setCollapseExecuted(!collapseExecuted)}
+                    style={{
+                      cursor: 'pointer',
+                      backgroundColor: hovered ? '#393939' : 'initial'
+                    }}
+                    onMouseEnter={() => setHovered(true)}
+                    onMouseLeave={() => setHovered(false)}>
                     <div className={styles.loading}>Loading</div>
                   </div>
                 ) : (
-                  <div className={styles.gridItemImportant}>
+                  <div className={styles.gridItemImportant}
+                    onClick={() => setCollapseExecuted(!collapseExecuted)}
+                    style={{
+                      cursor: 'pointer',
+                      backgroundColor: hovered ? '#393939' : 'initial'
+                    }}
+                    onMouseEnter={() => setHovered(true)}
+                    onMouseLeave={() => setHovered(false)}>
                     {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
                       transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||
                       transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ? (
