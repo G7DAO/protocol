@@ -15,7 +15,8 @@ import {AttestationStatus, getAttestation} from "./utils/attestationService";
 import {MessageTransmitterAbi} from "./abi/MessageTransmitterContract";
 import {getDecodedInputs} from "./utils/web3Utils";
 import {TokenMessengerAbi} from "./abi/TokenMessagerABI";
-import {chainIdToUSDC, getCctpContracts, getCctpUtils, hashSourceAndNonce} from "./utils/cctp";
+import {chainIdToUSDC, getCctpContracts, getCctpUtils, hashSourceAndNonce, isCctp} from "./utils/cctp";
+import {TransactionResponse} from "@ethersproject/abstract-provider/src.ts";
 
 /**
  * CctpBridgeTransfer is a specialized implementation of the BridgeTransfer class for CCTP.
@@ -120,12 +121,15 @@ export class CctpBridgeTransfer extends BridgeTransfer {
      * Overrides the method to fetch detailed transfer information, adding CCTP-specific logic.
      * @returns {Promise<any>} Transfer information specific to CCTP.
      */
-    async getInfo(): Promise<any> {
-        const tx = await this.originProvider.getTransaction(this.txHash);
+    async getInfo(_tx: TransactionResponse): Promise<any> {
+        let tx = _tx
+        if (!_tx) {
+            tx = await this.originProvider.getTransaction(this.txHash);
+        }
+
         if (!tx) {
             throw new Error('Transaction not found');
         }
-
         const {originNetworkChainId, destinationNetworkChainId, isDeposit, originName, destinationName, txHash} = this
 
         let info: BridgeTransferInfo = {

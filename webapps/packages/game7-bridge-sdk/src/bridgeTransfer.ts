@@ -216,8 +216,11 @@ export class BridgeTransfer {
   }
 
 
-  public async getInfo(): Promise<BridgeTransferInfo>{
-    const tx = await this.originProvider.getTransaction(this.txHash);
+  public async getInfo(_tx?: TransactionResponse): Promise<BridgeTransferInfo>{
+    let tx = _tx
+    if (!tx) {
+      tx = await this.originProvider.getTransaction(this.txHash);
+    }
     if (!tx) {
       throw new Error('Transaction not found');
     }
