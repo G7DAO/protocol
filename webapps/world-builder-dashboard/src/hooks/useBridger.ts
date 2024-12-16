@@ -1,6 +1,8 @@
 import { useQuery } from 'react-query'
 import { ethers } from 'ethers'
-import { useBlockchainContext } from '@/contexts/BlockchainContext'
+import { NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
+import { DepositDirection } from '@/pages/BridgePage/BridgePage'
+import { Bridger } from 'game7-bridge-sdk'
 
 export const useBridger = () => {
     const { connectedAccount } = useBlockchainContext()
@@ -118,7 +120,42 @@ export const useBridger = () => {
         )
     }
 
+    const useAllowances = ({
+        bridger,
+        direction,
+        selectedLowNetwork,
+        selectedHighNetwork,
+        connectedAccount
+    }: {
+        bridger: Bridger | undefined
+        direction: DepositDirection
+        selectedLowNetwork: NetworkInterface
+        selectedHighNetwork: NetworkInterface
+        connectedAccount: string
+      }) => {
+        return useQuery(
+          ['allowances', bridger, direction, selectedLowNetwork.chainId, selectedHighNetwork.chainId, connectedAccount],
+          async () => {
+            if (!bridger || !connectedAccount) return null
+    
+            const rpc = direction === 'DEPOSIT' ? selectedLowNetwork.rpcs[0] : selectedHighNetwork.rpcs[0]
+    
+            const bridgeTokenAllowance = await bridger.getAllowance(rpc, connectedAccount)
+            const nativeTokenAllowance = await bridger.getNativeAllowance(rpc, connectedAccount)
+    
+            return {
+              bridgeTokenAllowance,
+              nativeTokenAllowance
+            }
+          },
+          {
+            enabled: !!bridger && !!connectedAccount
+          }
+        )
+      }
+
     return {
-        getEstimatedFee
+        getEstimatedFee,
+        useAllowances
     }
 }

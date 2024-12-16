@@ -79,7 +79,7 @@ const BridgeView = ({
     setSelectedBridgeToken(token)
   }
 
-  const { getEstimatedFee } = useBridger()
+  const { getEstimatedFee, useAllowances } = useBridger()
 
   const estimatedFee = getEstimatedFee({
     bridger,
@@ -90,8 +90,16 @@ const BridgeView = ({
     tokenInformation
   })
 
-  const [bridgeTokenAllowance, setBridgeTokenAllowance] = useState<ethers.BigNumber | null>(null)
-  const [nativeTokenAllowance, setNativeTokenAllowance] = useState<ethers.BigNumber | null>(null)
+  const {
+    data: allowances,
+    isLoading: isLoadingAllowances
+  } = useAllowances({
+    bridger,
+    direction,
+    selectedLowNetwork,
+    selectedHighNetwork,
+    connectedAccount: connectedAccount ?? ''
+  })
 
   useEffect(() => {
     if (selectedBridgeToken && connectedAccount && selectedHighNetwork && selectedLowNetwork) {
@@ -116,21 +124,6 @@ const BridgeView = ({
         }
         const _bridger: Bridger = new Bridger(originChainId, destinationChainId, selectedBridgeToken.tokenAddressMap)
         setBridger(_bridger)
-        const fetchAllowances = async () => {
-          try {
-            console.log('fetching allowances')
-            const bridgeTokenAllowance = await _bridger.getAllowance(direction === 'DEPOSIT' ? selectedLowNetwork.rpcs[0] : selectedHighNetwork.rpcs[0], connectedAccount)
-            bridgeTokenAllowance && console.log('bridgeTokenAllowance', ethers.utils.formatUnits(bridgeTokenAllowance, selectedBridgeToken.decimals))
-            const nativeTokenAllowance = await _bridger.getNativeAllowance(direction === 'DEPOSIT' ? selectedLowNetwork.rpcs[0] : selectedHighNetwork.rpcs[0], connectedAccount)
-            nativeTokenAllowance && console.log('nativeTokenAllowance', ethers.utils.formatEther(nativeTokenAllowance))
-
-            setBridgeTokenAllowance(bridgeTokenAllowance as ethers.BigNumber | null)
-            setNativeTokenAllowance(nativeTokenAllowance as ethers.BigNumber | null)
-          } catch (error) {
-            console.error('Error fetching allowances:', error)
-          }
-        }
-        fetchAllowances()
 
       } catch (e) {
         console.log(e)
@@ -304,8 +297,9 @@ const BridgeView = ({
         balance={tokenInformation?.tokenBalance}
         nativeBalance={nativeTokenInformation?.tokenBalance}
         gasFees={[estimatedFee.data?.parentFee ?? '', estimatedFee.data?.childFee ?? '']}
-        bridgeAllowance={bridgeTokenAllowance}
-        nativeAllowance={nativeTokenAllowance}
+        bridgeAllowance={allowances?.bridgeTokenAllowance ?? null}
+        nativeAllowance={allowances?.nativeTokenAllowance ?? null}
+        isLoadingAllowances={isLoadingAllowances}
       />
     </div>
   )

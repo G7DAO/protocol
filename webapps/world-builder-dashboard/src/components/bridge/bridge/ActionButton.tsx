@@ -29,6 +29,7 @@ interface ActionButtonProps {
   gasFees?: string[]
   bridgeAllowance?: ethers.BigNumber | null
   nativeAllowance?: ethers.BigNumber | null
+  isLoadingAllowances?: boolean
 }
 
 const ActionButton: React.FC<ActionButtonProps> = ({
@@ -44,7 +45,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   nativeBalance,
   gasFees,
   bridgeAllowance,
-  nativeAllowance
+  nativeAllowance,
+  isLoadingAllowances
 }) => {
   const {
     connectedAccount,
@@ -72,7 +74,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 
   const checkAllowances = async () => {
     if (!bridger || !connectedAccount) return null
-    console.log('check allowances start')
     if (amount === '0.01') {
       setStartingTokenIndex(0)
       setShowApproval(true)
@@ -80,13 +81,10 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     }
 
     console.log('allowancesVerified', allowancesVerified)
-    if (allowancesVerified) {
-      console.log('Allowances already verified, skipping check')
-      return true
-    }
-
 
     const amountBN = ethers.utils.parseUnits(amount, decimals)
+    console.log('amountBN', amountBN.toString())
+    console.log('bridgeAllowance', bridgeAllowance?.toString())
 
     if (bridgeAllowance === null) {
       const gasFeesAmount = gasFees?.[1] ? ethers.utils.parseUnits(gasFees[1], 18) : amountBN
@@ -122,6 +120,11 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     if (!connectedAccount) {
       return 'Connect wallet'
     }
+
+    if (isLoadingAllowances) {
+      return 'Checking allowances...'
+    }
+
     return 'Submit'
   }
 
@@ -139,8 +142,12 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     }
     setErrorMessage('')
 
-    // Replace direct transfer.mutate with allowance check
-    checkAllowancesAndTransfer()
+    setAllowancesVerified(false)
+
+    const allowancesOk = await checkAllowances()
+    if (allowancesOk) {
+      transfer.mutate(amount)
+    }
   }
 
   const queryClient = useQueryClient()
@@ -243,22 +250,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     transfer.mutate(amount)
   }
 
-  const checkAllowancesAndTransfer = async () => {
-    console.log('=== checkAllowancesAndTransfer START ===')
-    console.log('Current allowancesVerified state:', allowancesVerified)
-
-    if (allowancesVerified) {
-      transfer.mutate(amount)
-      return
-    }
-
-    const allowancesOk = await checkAllowances()
-
-    if (allowancesOk) {
-      transfer.mutate(amount)
-    }
-  }
-
   const tokens = (() => {
     const nativeToken = getTokensForNetwork(
       direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId,
@@ -291,7 +282,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           getLabel() === 'Submit' &&
           (isDisabled ||
             Number(amount) < 0 ||
-            ((!L2L3message?.destination || !L2L3message.data) && Number(amount) === 0))
+            ((!L2L3message?.destination || !L2L3message.data) && Number(amount) === 0)) ||
+            isLoadingAllowances
         }
       >
         <div className={isConnecting || transfer.isLoading ? styles.buttonLabelLoading : styles.buttonLabel}>
