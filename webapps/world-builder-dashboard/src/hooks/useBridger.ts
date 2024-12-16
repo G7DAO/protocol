@@ -66,7 +66,7 @@ export const useBridger = () => {
 
                     const destinationProvider = direction === 'DEPOSIT' ?
                         selectedHighNetwork.rpcs[0] :
-                        undefined
+                        selectedLowNetwork.rpcs[0]
 
                     console.log("Destination provider:", destinationProvider)
 
