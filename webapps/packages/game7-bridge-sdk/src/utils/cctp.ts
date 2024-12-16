@@ -61,10 +61,6 @@ export const CommonAddress = {
 
         CU: '0x89c49a3fa372920ac23ce757a029e6936c0b8e02'
     },
-    // Xai Mainnet
-    660279: {
-        CU: '0x89c49a3fa372920ac23ce757a029e6936c0b8e02'
-    },
     Sepolia: {
         USDC: '0x1c7d4b196cb0c7b01d743fbc6116a902379c7238',
         tokenMessengerContractAddress: '0x9f3B8679c73C2Fef8b59B4f3444d4e156fb70AA5'
@@ -280,6 +276,14 @@ export const isTokenNativeUSDC = (tokenAddress: string | undefined) => {
         isTokenArbitrumOneNativeUSDC(tokenAddress) ||
         isTokenArbitrumSepoliaNativeUSDC(tokenAddress)
     )
+}
+
+export const isCctp = (chainId: number, contractAddress: string) => {
+    const chainKey = ChainId[chainId] as keyof typeof CommonAddress;
+    const chainData = CommonAddress[chainKey];
+    if (!chainData) return false;
+    return chainData.tokenMessengerContractAddress === contractAddress;
+
 }
 
 export const hashSourceAndNonce = (source: number, nonce: number): string => {
