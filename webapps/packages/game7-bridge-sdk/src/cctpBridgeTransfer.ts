@@ -8,16 +8,14 @@ import {
 import {ethers} from 'ethers';
 import {networks} from "./networks";
 
-import { defaultAbiCoder, id, keccak256 } from 'ethers/lib/utils'
-
-import type { BigNumber } from '@ethersproject/bignumber'
-import type { Log } from '@ethersproject/providers'
-import type { Bytes } from 'ethers/lib/utils'
+import type {Bytes} from 'ethers/lib/utils'
+import {defaultAbiCoder, id, keccak256} from 'ethers/lib/utils'
+import type {Log} from '@ethersproject/providers'
 import {AttestationStatus, getAttestation} from "./utils/attestationService";
 import {MessageTransmitterAbi} from "./abi/MessageTransmitterContract";
 import {getDecodedInputs} from "./utils/web3Utils";
 import {TokenMessengerAbi} from "./abi/TokenMessagerABI";
-import {chainIdToUSDC, CommonAddress} from "./utils/cctp";
+import {chainIdToUSDC, getCctpContracts, getCctpUtils, hashSourceAndNonce} from "./utils/cctp";
 
 /**
  * CctpBridgeTransfer is a specialized implementation of the BridgeTransfer class for CCTP.
@@ -62,6 +60,18 @@ export class CctpBridgeTransfer extends BridgeTransfer {
      */
     async getStatus(): Promise<any> {
         const transactionReceipt = await this.originProvider.getTransactionReceipt(this.txHash)
+        const {fetchMessages, checkNonce, fetchAttestation} = getCctpUtils({originChainId: this.originNetworkChainId})
+        const messages = (await fetchMessages(this.txHash)).messages
+
+        if (messages) {
+            const nonce = messages[0].eventNonce
+            const {sourceChainDomain} = getCctpContracts({originChainId: this.originNetworkChainId})
+            const sourceAndNonce = hashSourceAndNonce(sourceChainDomain, Number(nonce))
+            const check = await checkNonce({nonce: sourceAndNonce, destinationProvider: this.destinationProvider})
+            if (check.toString() === '1') {
+                return {status: BridgeTransferStatus.CCTP_REDEEMED}
+            }
+        }
         function getMessageBytesFromEventLogs(
             logs: Log[],
             topic: string
@@ -74,61 +84,35 @@ export class CctpBridgeTransfer extends BridgeTransfer {
             return keccak256(message)
         }
 
-        // function getNoncefromEventLogs(
-        //     logs: Log[],
-        //     topic: string
-        // ): Bytes {
-        //     const eventTopic = id(topic)
-        //     const log = logs.filter((l) => l.topics[0] === eventTopic)[0]
-        //     const  defaultAbiCoder.decode(['uint64'], log.data)[0] as Bytes
-        // }
-
 
 
         if (transactionReceipt) {
             const { status, logs } = transactionReceipt
 
             const messageType = 'MessageSent(bytes)'
-            // Success
-
                 if (messageType) {
                     // decode log to get messageBytes
                     const messageBytes = getMessageBytesFromEventLogs(logs, messageType)
-                    const nonce =
                     this.messageBytes = messageBytes
                     // hash the message bytes
                     const messageHash = getMessageHashFromBytes(messageBytes)
-                    console.log({messageHash})
-                    const attestation = await getAttestation(messageHash)
-                    console.log({attestation})
-                    if (attestation != null) {
-                        const { status, message } = attestation
-
-                        // Success
-                        if (status === AttestationStatus.complete && message !== null) {
-                            const newTransaction = {
-                                // ...transaction,
-                                signature: message,
-                            }
-                            this.signature = message
+                    const attestationResponse = (await fetchAttestation(messageHash)) as any
+                    if (attestationResponse?.status === AttestationStatus.pending_confirmations) {
+                        return {status: BridgeTransferStatus.CCTP_PENDING}
+                    }
+                    if (attestationResponse.attestation !== null) {
+                        const { status, attestation } = attestationResponse
+                        if (status === AttestationStatus.complete && attestation !== null) {
+                            this.signature = attestation
                             return {status: BridgeTransferStatus.CCTP_COMPLETE}
-                            // setTransaction(txHash, newTransaction)
-                            // setSignature(message)
-
-                            // handleComplete()
-                            // clearInterval(interval)
                         }
                     } else {
                         return {status: BridgeTransferStatus.CCTP_PENDING}
                     }
-
-                    // return handleSuccess({ messageBytes, messageHash })
-                } else {
-                    // return handleSuccess()
                 }
 
         }
-
+        return {status: BridgeTransferStatus.CCTP_PENDING}
     }
 
 
@@ -159,8 +143,7 @@ export class CctpBridgeTransfer extends BridgeTransfer {
             info.timestamp = block?.timestamp;
         }
         const inputs = await getDecodedInputs(tx, TokenMessengerAbi)
-        console.log(inputs.args[1], typeof inputs.args[1])
-        info.to = `0x${inputs.args[1].toString().slice(-40)}`
+        info.to = `0x${inputs.args[2].toString().slice(-40)}`
         info.amount = inputs.args[0]
         info.tokenSymbol = 'USDC'
         info.tokenDestinationAddress = chainIdToUSDC(destinationNetworkChainId) ?? ''
