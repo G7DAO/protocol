@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import styles from './MultiTokenApproval.module.css';
-import { Modal } from 'summon-ui/mantine';
-import AllowanceSelector from '../allowance/AllowanceSelector';
-import { ethers } from 'ethers';
-import { useQueryClient } from 'react-query';
-import { useMutation } from 'react-query';
-import { Bridger } from 'game7-bridge-sdk';
-import { useBlockchainContext } from '@/contexts/BlockchainContext';
-import { getNetworks } from '../../../../constants';
-import { Token } from '@/utils/tokens';
-import IconCheck from '@/assets/IconCheck';
-import IconClose from '@/assets/IconClose';
+import React, { useState, useEffect } from 'react'
+import styles from './MultiTokenApproval.module.css'
+import { Modal } from 'summon-ui/mantine'
+import AllowanceSelector from '../allowance/AllowanceSelector'
+import { ethers } from 'ethers'
+import { useQueryClient } from 'react-query'
+import { useMutation } from 'react-query'
+import { Bridger } from 'game7-bridge-sdk'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
+import { getNetworks } from '../../../../constants'
+import { Token } from '@/utils/tokens'
+import IconCheck from '@/assets/IconCheck'
+import IconClose from '@/assets/IconClose'
 
 interface MultiTokenApprovalProps {
   showApproval: boolean
@@ -40,15 +40,20 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
   const [approvedTokens, setApprovedTokens] = useState<Set<string>>(initialApprovedTokens)
   const [currentTokenIndex, setCurrentTokenIndex] = useState(startingTokenIndex)
   const [newAllowance, setNewAllowance] = useState(() => {
-    const currentToken = tokens[currentTokenIndex];
+    const currentToken = tokens[currentTokenIndex]
     if (currentTokenIndex === 1) {
-      const gasFeeAmount = ethers.utils.parseUnits(gasFees[1] || '0', currentToken.decimals || 18)
+      const gasFeeAmount = ethers.utils.parseUnits(
+        (gasFees[1] === '0' ? amount : gasFees[1]) || amount, 
+        currentToken.decimals || 18
+      )
       return gasFeeAmount
     }
     return currentTokenIndex === 0
       ? ethers.utils.parseUnits(amount || '0', decimals || 18)
       : ethers.utils.parseUnits(amount || '0', currentToken.decimals || 18)
-  });
+  })
+
+  const [allowanceInitialized, setAllowanceInitialized] = useState(false)
 
   useEffect(() => {
     if (currentTokenIndex >= tokens.length) {
@@ -56,16 +61,16 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
       return
     }
 
-    const currentToken = tokens[currentTokenIndex];
-    if (!newAllowance) {
-      const initialAmount = currentTokenIndex === 1
-        ? ethers.utils.parseUnits(gasFees[1] || '0', currentToken.decimals || 18)
-        : currentTokenIndex === 0
-          ? ethers.utils.parseUnits(amount || '0', decimals || 18)
-          : ethers.utils.parseUnits(amount || '0', currentToken.decimals || 18)
-      setNewAllowance(initialAmount);
+    if (!allowanceInitialized && currentTokenIndex === 1) {
+      const currentToken = tokens[currentTokenIndex]
+      const gasFeeAmount = ethers.utils.parseUnits(
+        (gasFees[1] === '0' ? amount : gasFees[1]) || amount, 
+        currentToken.decimals || 18
+      )
+      setNewAllowance(gasFeeAmount)
+      setAllowanceInitialized(true)
     }
-  }, [currentTokenIndex, tokens, amount, decimals, gasFees]);
+  }, [currentTokenIndex, tokens, amount, decimals, gasFees, allowanceInitialized])
 
   const approve = useMutation(
     async (amount: ethers.BigNumber) => {
@@ -84,7 +89,7 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
       onSuccess: ({ tokenSymbol }) => {
         setApprovedTokens(prev => {
           const newSet = new Set([...prev, tokenSymbol])
-          return newSet;
+          return newSet
         })
 
         // If there's only one token, complete immediately

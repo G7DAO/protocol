@@ -71,12 +71,12 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   }, [bridger])
 
   const checkAllowances = async () => {
-    if (!bridger || !connectedAccount) return null;
+    if (!bridger || !connectedAccount) return null
     console.log('check allowances start')
     if (amount === '0.01') {
-      setStartingTokenIndex(0);
-      setShowApproval(true);
-      return false;
+      setStartingTokenIndex(0)
+      setShowApproval(true)
+      return false
     }
 
     console.log('allowancesVerified', allowancesVerified)
@@ -89,7 +89,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     const amountBN = ethers.utils.parseUnits(amount, decimals)
 
     if (bridgeAllowance === null) {
-      console.log('bridgeAllowance is null')
       const gasFeesAmount = gasFees?.[1] ? ethers.utils.parseUnits(gasFees[1], 18) : amountBN
       const needsNativeTokenApproval = nativeAllowance !== null ? nativeAllowance?.lt(gasFeesAmount) : false
       if (needsNativeTokenApproval) {
@@ -167,7 +166,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         fromNetwork: selectedLowNetwork.chainId,
         toNetwork: selectedHighNetwork.chainId,
         connectedAccount: connectedAccount
-      });
+      })
       if (bridger?.isDeposit) {
         const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })
         await tx?.wait()
@@ -237,16 +236,16 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   )
 
   const handleApprovalComplete = () => {
-    console.log('=== ActionButton: handleApprovalComplete ===');
-    console.log('Setting allowancesVerified to true');
+    console.log('=== ActionButton: handleApprovalComplete ===')
+    console.log('Setting allowancesVerified to true')
     setShowApproval(false)
     setAllowancesVerified(true)
     transfer.mutate(amount)
   }
 
   const checkAllowancesAndTransfer = async () => {
-    console.log('=== checkAllowancesAndTransfer START ===');
-    console.log('Current allowancesVerified state:', allowancesVerified);
+    console.log('=== checkAllowancesAndTransfer START ===')
+    console.log('Current allowancesVerified state:', allowancesVerified)
 
     if (allowancesVerified) {
       transfer.mutate(amount)
@@ -270,18 +269,18 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         token.symbol === selectedLowNetwork.nativeCurrency?.symbol
     )!
     if (bridgeAllowance === null && nativeAllowance !== null) {
-      return [nativeToken];
+      return [nativeToken]
     }
     if (nativeAllowance === null && bridgeAllowance !== null) {
-      return [selectedBridgeToken];
+      return [selectedBridgeToken]
     }
 
     if (nativeAllowance === null && bridgeAllowance === null) {
-      return [];
+      return []
     }
 
-    return [selectedBridgeToken, nativeToken];
-  })();
+    return [selectedBridgeToken, nativeToken]
+  })()
 
   return (
     <>
