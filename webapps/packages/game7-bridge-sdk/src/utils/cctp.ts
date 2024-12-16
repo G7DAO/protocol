@@ -27,6 +27,7 @@ export type CCTPSupportedChainId =
 type Contracts = {
     tokenMessengerContractAddress: string
     targetChainDomain: ChainDomain
+    sourceChainDomain: ChainDomain
     targetChainId: CCTPSupportedChainId
     usdcContractAddress: string
     messageTransmitterContractAddress: string
@@ -93,6 +94,7 @@ const contracts: Record<CCTPSupportedChainId, Contracts> = {
         CommonAddress.Ethereum.tokenMessengerContractAddress,
         targetChainDomain: ChainDomain.ArbitrumOne,
         targetChainId: ChainId.ArbitrumOne,
+        sourceChainDomain: ChainDomain.Ethereum,
         usdcContractAddress: CommonAddress.Ethereum.USDC,
         messageTransmitterContractAddress:
             '0xc30362313fbba5cf9163f0bb16a0e01f01a896ca',
@@ -104,6 +106,7 @@ const contracts: Record<CCTPSupportedChainId, Contracts> = {
         CommonAddress.Sepolia.tokenMessengerContractAddress,
         targetChainDomain: ChainDomain.ArbitrumOne,
         targetChainId: ChainId.ArbitrumSepolia,
+        sourceChainDomain: ChainDomain.Ethereum,
         usdcContractAddress: CommonAddress.Sepolia.USDC,
         messageTransmitterContractAddress:
             '0xacf1ceef35caac005e15888ddb8a3515c41b4872',
@@ -115,6 +118,7 @@ const contracts: Record<CCTPSupportedChainId, Contracts> = {
         CommonAddress.ArbitrumOne.tokenMessengerContractAddress,
         targetChainDomain: ChainDomain.Ethereum,
         targetChainId: ChainId.Ethereum,
+        sourceChainDomain: ChainDomain.ArbitrumOne,
         usdcContractAddress: CommonAddress.ArbitrumOne.USDC,
         messageTransmitterContractAddress:
             '0x0a992d191deec32afe36203ad87d7d289a738f81',
@@ -126,6 +130,7 @@ const contracts: Record<CCTPSupportedChainId, Contracts> = {
         CommonAddress.ArbitrumSepolia.tokenMessengerContractAddress,
         targetChainDomain: ChainDomain.Ethereum,
         targetChainId: ChainId.Sepolia,
+        sourceChainDomain: ChainDomain.ArbitrumOne,
         usdcContractAddress: CommonAddress.ArbitrumSepolia.USDC,
         messageTransmitterContractAddress:
             '0x7865fafc2db2093669d92c0f33aeef291086befd',
@@ -176,7 +181,8 @@ export function fetchPerMessageBurnLimit({originChainId, originProvider}: {
 export const getCctpUtils = ({ originChainId }: { originChainId?: number }) => {
     const {
         attestationApiUrl,
-        messageTransmitterContractAddress
+        messageTransmitterContractAddress,
+        sourceChainDomain
     } = getCctpContracts({ originChainId })
 
     const fetchAttestation = async (attestationHash: string) => {
@@ -187,6 +193,15 @@ export const getCctpUtils = ({ originChainId }: { originChainId?: number }) => {
 
         const attestationResponse: AttestationResponse = await response.json()
         return attestationResponse
+    }
+
+    const fetchMessages = async (transactionHash: string) => {
+        const response = await fetch(
+            `${attestationApiUrl}/messages/${sourceChainDomain}/${transactionHash}`,
+            { method: 'GET', headers: { accept: 'application/json' } }
+        )
+
+        return await response.json()
     }
 
     const waitForAttestation = async (attestationHash: string) => {
@@ -218,10 +233,26 @@ export const getCctpUtils = ({ originChainId }: { originChainId?: number }) => {
         );
     }
 
+    const checkNonce = async ({nonce, destinationProvider}: {
+        nonce: string
+        destinationProvider: ethers.providers.Provider
+    }) => {
+
+        const messageTransmitterContract = new ethers.Contract(
+            messageTransmitterContractAddress,
+            MessageTransmitterAbi,
+            destinationProvider
+        );
+
+        return await messageTransmitterContract.usedNonces(nonce);
+    }
+
     return {
         receiveMessage,
         fetchAttestation,
-        waitForAttestation
+        waitForAttestation,
+        fetchMessages,
+        checkNonce,
     }
 }
 
@@ -250,3 +281,18 @@ export const isTokenNativeUSDC = (tokenAddress: string | undefined) => {
         isTokenArbitrumSepoliaNativeUSDC(tokenAddress)
     )
 }
+
+export const hashSourceAndNonce = (source: number, nonce: number): string => {
+    if (!Number.isInteger(source) || source < 0) {
+        throw new Error("Source must be a non-negative integer.");
+    }
+    if (!Number.isInteger(nonce) || nonce < 0) {
+        throw new Error("Nonce must be a non-negative integer.");
+    }
+
+    // Pack the source and nonce into a single byte array
+    const encodedData = ethers.utils.solidityPack(["uint32", "uint64"], [source, nonce]);
+
+    // Compute the keccak256 hash of the encoded data
+    return ethers.utils.keccak256(encodedData);
+};
