@@ -120,15 +120,10 @@ const BridgeView = ({
           try {
             console.log('fetching allowances')
             const bridgeTokenAllowance = await _bridger.getAllowance(direction === 'DEPOSIT' ? selectedLowNetwork.rpcs[0] : selectedHighNetwork.rpcs[0], connectedAccount)
-            console.log('bridgeTokenAllowance', bridgeTokenAllowance)
+            bridgeTokenAllowance && console.log('bridgeTokenAllowance', ethers.utils.formatUnits(bridgeTokenAllowance, selectedBridgeToken.decimals))
             const nativeTokenAllowance = await _bridger.getNativeAllowance(direction === 'DEPOSIT' ? selectedLowNetwork.rpcs[0] : selectedHighNetwork.rpcs[0], connectedAccount)
-            console.log('nativeTokenAllowance', nativeTokenAllowance)
-            if (bridgeTokenAllowance && nativeTokenAllowance) {
-              console.log(
-                ethers.utils.formatUnits(bridgeTokenAllowance!, selectedBridgeToken.decimals),
-                ethers.utils.formatEther(nativeTokenAllowance!)
-              )
-            }
+            nativeTokenAllowance && console.log('nativeTokenAllowance', ethers.utils.formatEther(nativeTokenAllowance))
+
             setBridgeTokenAllowance(bridgeTokenAllowance as ethers.BigNumber | null)
             setNativeTokenAllowance(nativeTokenAllowance as ethers.BigNumber | null)
           } catch (error) {

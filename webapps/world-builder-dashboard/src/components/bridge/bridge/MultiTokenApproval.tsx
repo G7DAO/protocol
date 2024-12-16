@@ -57,13 +57,14 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
     }
 
     const currentToken = tokens[currentTokenIndex];
-    const initialAmount = currentTokenIndex === 1
-      ? ethers.utils.parseUnits(gasFees[1] || '0', currentToken.decimals || 18)
-      : currentTokenIndex === 0
-        ? ethers.utils.parseUnits(amount || '0', decimals || 18)
-        : ethers.utils.parseUnits(amount || '0', currentToken.decimals || 18)
-
-    setNewAllowance(initialAmount);
+    if (!newAllowance) {
+      const initialAmount = currentTokenIndex === 1
+        ? ethers.utils.parseUnits(gasFees[1] || '0', currentToken.decimals || 18)
+        : currentTokenIndex === 0
+          ? ethers.utils.parseUnits(amount || '0', decimals || 18)
+          : ethers.utils.parseUnits(amount || '0', currentToken.decimals || 18)
+      setNewAllowance(initialAmount);
+    }
   }, [currentTokenIndex, tokens, amount, decimals, gasFees]);
 
   const approve = useMutation(
