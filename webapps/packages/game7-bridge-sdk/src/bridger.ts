@@ -574,13 +574,7 @@ export class Bridger {
       throw new Error("Approval is not needed or spender address is missed in the network configuration")
     }
     const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, signer);
-
-    try {
-      return tokenContract.approve(spender, amount);
-    } catch (error: any) {
-      console.error('Approval transaction failed:', error);
-      throw new Error('Approval transaction failed: ' + error.message);
-    }
+    return tokenContract.approve(spender, amount);
   }
 
   public async approveNative (
