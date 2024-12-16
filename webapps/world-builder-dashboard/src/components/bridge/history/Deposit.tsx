@@ -30,7 +30,6 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   const { data: highNetworkTimestamp } = getHighNetworkTimestamp({ txRecord: deposit, transferStatus: transferStatus })
   const { data: transactionInputs, isLoading: isLoadingInputs } = getTransactionInputs({ txRecord: deposit })
   const finalTransactionInputs = transactionInputs || deposit.transactionInputs
-
   return (
     <>
       {isLoading && smallView ? (

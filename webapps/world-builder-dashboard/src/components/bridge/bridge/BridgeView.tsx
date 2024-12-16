@@ -30,6 +30,8 @@ import { DepositDirection } from '@/pages/BridgePage/BridgePage'
 import { getStakeNativeTxData } from '@/utils/bridge/stakeContractInfo'
 import { getTokensForNetwork, Token } from '@/utils/tokens'
 import { useBridger } from '@/hooks/useBridger'
+import IconAlertCircle from '@/assets/IconAlertCircle'
+import { Tooltip } from 'summon-ui/mantine'
 
 const BridgeView = ({
   direction,
@@ -75,6 +77,7 @@ const BridgeView = ({
   })
 
   const { data: coinUSDRate, isFetching: isCoinFetching } = useUSDPriceOfToken(selectedBridgeToken.geckoId ?? '')
+  const { data: ethRate } = useUSDPriceOfToken('ethereum')
   const handleTokenChange = async (token: Token) => {
     setSelectedBridgeToken(token)
   }
@@ -260,13 +263,7 @@ const BridgeView = ({
         childFee={Number(estimatedFee.data?.childFee ?? 0)}
         isEstimatingFee={estimatedFee.isLoading}
         value={Number(value)}
-        ethRate={
-          selectedBridgeToken.symbol === 'TG7T' || selectedBridgeToken.symbol === 'G7'
-            ? 1
-            : isCoinFetching
-              ? 0.0
-              : coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd
-        }
+        ethRate={ethRate?.ethereum?.usd ?? 0}
         tokenRate={
           selectedBridgeToken.symbol === 'TG7T' || selectedBridgeToken.symbol === 'G7'
             ? 1
@@ -285,6 +282,21 @@ const BridgeView = ({
         selectedHighChain={selectedHighNetwork}
       />
       {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
+      {direction === 'DEPOSIT' && <div className={styles.manualGasMessageContainer}>
+        <div className={styles.manualGasMessageText}>
+          May need manual gas completion on {selectedHighNetwork.displayName}
+        </div>
+        <Tooltip
+          content={`
+            Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.
+          `}
+          label=' Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.'
+          position='top'
+          className={styles.manualGasMessageTooltip }
+        >
+          <IconAlertCircle stroke='#FFFAEB' height={12} width={12} />
+        </Tooltip>
+      </div>}
       <ActionButton
         direction={direction}
         amount={value ?? '0'}

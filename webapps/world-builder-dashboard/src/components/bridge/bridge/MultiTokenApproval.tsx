@@ -43,7 +43,7 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
     const currentToken = tokens[currentTokenIndex]
     if (currentTokenIndex === 1) {
       const gasFeeAmount = ethers.utils.parseUnits(
-        (gasFees[1] === '0' ? amount : gasFees[1]) || amount, 
+        (gasFees[1] === '0' ? amount : gasFees[1]) || amount,
         currentToken.decimals || 18
       )
       return gasFeeAmount
@@ -64,7 +64,7 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
     if (!allowanceInitialized && currentTokenIndex === 1) {
       const currentToken = tokens[currentTokenIndex]
       const gasFeeAmount = ethers.utils.parseUnits(
-        (gasFees[1] === '0' ? amount : gasFees[1]) || amount, 
+        (gasFees[1] === '0' ? amount : gasFees[1]) || amount,
         currentToken.decimals || 18
       )
       setNewAllowance(gasFeeAmount)
@@ -138,7 +138,8 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
             </div>
             <IconClose onClick={() => setShowApproval(false)} className={styles.closeButton} stroke="#fff" />
           </div>
-          <div className={styles.modalSubtitle}>Approve the token you want to bridge</div>
+          <div className={styles.modalSubtitle}>This sets a limit to the amount of tokens that can be processed through the bridge.
+          </div>
         </div>
         {tokens.length > 1 && (
           <>
