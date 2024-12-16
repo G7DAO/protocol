@@ -1,7 +1,7 @@
 import { BigNumber, ethers, Transaction } from 'ethers';
 import { BridgeNetworkConfig, networks } from './networks';
 import { UnsupportedNetworkError } from './errors';
-import { TransactionReceipt } from '@ethersproject/abstract-provider/src.ts';
+import { TransactionReceipt, TransactionResponse } from '@ethersproject/abstract-provider/src.ts';
 
 import { Provider } from '@ethersproject/abstract-provider';
 import { getBlockETA, getDecodedInputs, getProvider } from './utils/web3Utils';
@@ -19,12 +19,22 @@ import { ERC20_ABI } from './abi/ERC20_ABI';
 import { ERC20_INBOX_ABI } from './abi/erc20_inbox_abi';
 import { L1GatewayRouterABI } from './abi/L1GatewayRouterABI';
 import { INBOX_ABI } from './abi/inbox_abi';
+import {CctpBridgeTransfer} from "./cctpBridgeTransfer";
+import {isCctp} from "./utils/cctp";
 
 export type SignerOrProviderOrRpc = ethers.Signer | ethers.providers.Provider | string;
 
 export interface BridgeReceipt {
   description: string;
   receipt: TransactionReceipt;
+}
+
+export interface BridgeTransferParams {
+  txHash: string;
+  destinationNetworkChainId: number;
+  originNetworkChainId: number;
+  originSignerOrProviderOrRpc?: SignerOrProviderOrRpc;
+  destinationSignerOrProviderOrRpc?: SignerOrProviderOrRpc;
 }
 
 export interface BridgeTransferInfo {
@@ -134,13 +144,7 @@ export class BridgeTransfer {
                 originNetworkChainId,
                 originSignerOrProviderOrRpc,
                 destinationSignerOrProviderOrRpc,
-              }: {
-    txHash: string;
-    destinationNetworkChainId: number;
-    originNetworkChainId: number;
-    originSignerOrProviderOrRpc?: SignerOrProviderOrRpc;
-    destinationSignerOrProviderOrRpc?: SignerOrProviderOrRpc;
-  }) {
+              }: BridgeTransferParams) {
     this.originNetworkChainId = originNetworkChainId;
     this.destinationNetworkChainId = destinationNetworkChainId;
     const originNetwork = networks[originNetworkChainId];
@@ -161,6 +165,24 @@ export class BridgeTransfer {
     this.txHash = txHash;
     this.explorerLink = `${originNetwork.explorerUrl}/tx/${txHash}`
     this.destinationNetwork = destinationNetwork;
+  }
+
+  static getBridgeTransfer(params: BridgeTransferParams, isCCTP: boolean) {
+    if (isCCTP) {
+      return new CctpBridgeTransfer(params)
+    }
+    return new BridgeTransfer(params)
+  }
+
+  static async getBridgerTransferAndInfo(params: BridgeTransferParams) {
+    const originNetwork = networks[params.originNetworkChainId];
+    const originProvider = getProvider(params.originSignerOrProviderOrRpc ?? originNetwork.rpcs[0]);
+    const tx =  await originProvider.getTransaction(params.txHash);
+    const bridgeTransfer = isCctp(originNetwork.chainId, tx.to ?? '') ?
+        new CctpBridgeTransfer(params) :
+        new BridgeTransfer(params)
+    const info = await bridgeTransfer.getInfo(tx)
+    return {bridgeTransfer, info}
   }
 
   public async getStatus() {
