@@ -77,6 +77,12 @@ export class CctpBridger extends Bridger {
         throw new Error('getApprovalGasAndFeeEstimation is not implemented yet.');
     }
 
+
+    public isCctp(): boolean {
+        return true
+    }
+
+
     /**
      * Gets the allowance for the deposit spender.
      * @override
