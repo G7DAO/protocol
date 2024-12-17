@@ -175,6 +175,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         connectedAccount: connectedAccount
       })
       if (bridger?.isDeposit) {
+        const isCCTP = bridger?.isCctp
         const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })
         await tx?.wait()
         return {
@@ -190,9 +191,11 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           status:
             destinationTokenAddress === ZERO_ADDRESS
               ? BridgeTransferStatus.DEPOSIT_GAS_PENDING
-              : BridgeTransferStatus.DEPOSIT_ERC20_NOT_YET_CREATED
+              : BridgeTransferStatus.DEPOSIT_ERC20_NOT_YET_CREATED,
+          isCCTP: isCCTP
         }
       } else {
+        const isCCTP = bridger?.isCctp
         const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })
         await tx?.wait()
         return {
@@ -204,7 +207,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           highNetworkTimestamp: Date.now() / 1000,
           challengePeriod: selectedNetworkType === 'Testnet' ? 60 * 60 : 60 * 60 * 24 * 7,
           symbol: symbol,
-          status: BridgeTransferStatus.WITHDRAW_UNCONFIRMED
+          status: BridgeTransferStatus.WITHDRAW_UNCONFIRMED,
+          isCCTP: isCCTP
         }
       }
     },

@@ -13,7 +13,7 @@ import {
 import styles from './BridgeView.module.css'
 import { ethers } from 'ethers'
 // G7 SDK
-import { Bridger } from 'game7-bridge-sdk'
+import { Bridger, getBridger } from 'game7-bridge-sdk'
 // Components
 import ActionButton from '@/components/bridge/bridge/ActionButton'
 import BridgeMessage from '@/components/bridge/bridge/BridgeMessage'
@@ -125,7 +125,7 @@ const BridgeView = ({
           ) ?? null
           setSelectedNativeToken(token)
         }
-        const _bridger: Bridger = new Bridger(originChainId, destinationChainId, selectedBridgeToken.tokenAddressMap)
+        const _bridger: Bridger = getBridger(originChainId, destinationChainId, selectedBridgeToken.tokenAddressMap)
         setBridger(_bridger)
 
       } catch (e) {
