@@ -167,24 +167,6 @@ export class BridgeTransfer {
     this.destinationNetwork = destinationNetwork;
   }
 
-  static getBridgeTransfer(params: BridgeTransferParams, isCCTP: boolean) {
-    if (isCCTP) {
-      return new CctpBridgeTransfer(params)
-    }
-    return new BridgeTransfer(params)
-  }
-
-  static async getBridgerTransferAndInfo(params: BridgeTransferParams) {
-    const originNetwork = networks[params.originNetworkChainId];
-    const originProvider = getProvider(params.originSignerOrProviderOrRpc ?? originNetwork.rpcs[0]);
-    const tx =  await originProvider.getTransaction(params.txHash);
-    const bridgeTransfer = isCctp(originNetwork.chainId, tx.to ?? '') ?
-        new CctpBridgeTransfer(params) :
-        new BridgeTransfer(params)
-    const info = await bridgeTransfer.getInfo(tx)
-    return {bridgeTransfer, info}
-  }
-
   public async getStatus() {
     if (!this.isDeposit) {
       const originReceipt = await this.originProvider.getTransactionReceipt(this.txHash);

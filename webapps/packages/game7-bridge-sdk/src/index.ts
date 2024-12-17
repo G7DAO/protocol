@@ -4,3 +4,5 @@ export * from './bridgeToken'
 export * from './bridgeNetwork'
 export * from './bridgeTransfer'
 export * from './bridgerFactory'
+export * from './bridgeTransferFactory'
+
