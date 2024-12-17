@@ -252,7 +252,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                   >
                     <div className={styles.gridItem}>
                       <div className={styles.settled}>
-                        Completed
+                        Pending
                         <IconLinkExternal02 stroke='#fff' />
                       </div>
                     </div>
