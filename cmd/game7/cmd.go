@@ -24,7 +24,7 @@ import (
 	"github.com/G7DAO/protocol/bindings/TokenFaucet"
 	"github.com/G7DAO/protocol/bindings/WrappedNativeToken"
 	"github.com/G7DAO/protocol/bridge"
-	terminus "github.com/G7DAO/protocol/cmd/game7/diamondLaunch"
+	terminus "github.com/G7DAO/protocol/cmd/game7/diamondLaunch/terminus"
 	"github.com/G7DAO/protocol/cmd/game7/version"
 )
 
