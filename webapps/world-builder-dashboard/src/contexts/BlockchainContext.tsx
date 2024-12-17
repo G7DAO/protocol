@@ -1,7 +1,19 @@
 // BlockchainContext.tsx
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react'
-import { DEFAULT_HIGH_NETWORK, DEFAULT_LOW_NETWORK, L1_NETWORK, L2_NETWORK, L3_NETWORK } from '../../constants'
+import {
+  DEFAULT_HIGH_MAINNET_NETWORK,
+  DEFAULT_HIGH_NETWORK,
+  DEFAULT_LOW_MAINNET_NETWORK,
+  DEFAULT_LOW_NETWORK,
+  L1_MAIN_NETWORK,
+  L1_NETWORK,
+  L2_MAIN_NETWORK,
+  L2_NETWORK,
+  L3_MAIN_NETWORK,
+  L3_NETWORK
+} from '../../constants'
 import { ethers } from 'ethers'
+import { getTokensForNetwork, Token } from '@/utils/tokens'
 
 interface BlockchainContextType {
   walletProvider?: ethers.providers.Web3Provider
@@ -14,12 +26,18 @@ interface BlockchainContextType {
   setSelectedLowNetwork: (network: NetworkInterface) => void
   selectedHighNetwork: NetworkInterface
   setSelectedHighNetwork: (network: NetworkInterface) => void
+  selectedBridgeToken: Token
+  setSelectedBridgeToken: (token: Token) => void
+  selectedNativeToken: Token | null
+  setSelectedNativeToken: (token: Token | null) => void
   isMetaMask: boolean
   getProvider: (network: NetworkInterface) => Promise<ethers.providers.Web3Provider>
   accounts: string[]
   setAccounts: (accounts: string[]) => void
   chainId: number | undefined
   isConnecting: boolean
+  selectedNetworkType: NetworkType
+  setSelectedNetworkType: (networkType: NetworkType) => void
 }
 
 export interface NetworkInterface {
@@ -42,7 +60,10 @@ export interface NetworkInterface {
   challengePeriod?: number //seconds
   staker?: string
   inbox?: string
+  wrappedG7TokenAddress?: string
 }
+
+export type NetworkType = 'Testnet' | 'Mainnet' | undefined
 
 export interface HighNetworkInterface extends NetworkInterface {
   inbox: string
@@ -56,32 +77,55 @@ interface BlockchainProviderProps {
 
 export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children }) => {
   const [walletProvider, setWalletProvider] = useState<ethers.providers.Web3Provider>()
-  const [selectedLowNetwork, _setSelectedLowNetwork] = useState<NetworkInterface>(DEFAULT_LOW_NETWORK)
-  const [selectedHighNetwork, _setSelectedHighNetwork] = useState<NetworkInterface>(DEFAULT_HIGH_NETWORK)
+  const [selectedNetworkType, setSelectedNetworkType] = useState<NetworkType>(undefined)
+  const [selectedLowNetwork, _setSelectedLowNetwork] = useState<NetworkInterface>(
+    selectedNetworkType === 'Testnet' ? DEFAULT_LOW_NETWORK : DEFAULT_LOW_MAINNET_NETWORK
+  )
+  const [selectedHighNetwork, _setSelectedHighNetwork] = useState<NetworkInterface>(
+    selectedNetworkType === 'Testnet' ? DEFAULT_HIGH_NETWORK : DEFAULT_HIGH_MAINNET_NETWORK
+  )
   const [isMetaMask, setIsMetaMask] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
   const [chainId, setChainId] = useState<number | undefined>(undefined)
   const [connectedAccount, setConnectedAccount] = useState<string>()
   const [accounts, setAccounts] = useState<string[]>([''])
+  const [selectedBridgeToken, setSelectedBridgeToken] = useState<Token>(
+    getTokensForNetwork(DEFAULT_LOW_NETWORK.chainId, connectedAccount)[0]
+  )
+  const [selectedNativeToken, setSelectedNativeToken] = useState<Token | null>(
+    getTokensForNetwork(DEFAULT_LOW_NETWORK.chainId, connectedAccount).find(
+      (token) => token.symbol === DEFAULT_LOW_NETWORK.nativeCurrency?.symbol
+    ) ?? null
+  )
+
   const tokenAddress = '0x5f88d811246222F6CB54266C42cc1310510b9feA'
 
   const setSelectedLowNetwork = (network: NetworkInterface) => {
-    if (network === L1_NETWORK) {
-      _setSelectedHighNetwork(L2_NETWORK)
+    if (network === L1_NETWORK || network === L1_MAIN_NETWORK) {
+      _setSelectedHighNetwork(selectedNetworkType === 'Testnet' ? L2_NETWORK : L2_MAIN_NETWORK)
     } else {
-      _setSelectedHighNetwork(L3_NETWORK)
+      _setSelectedHighNetwork(selectedNetworkType === 'Testnet' ? L3_NETWORK : L3_MAIN_NETWORK)
     }
     _setSelectedLowNetwork(network)
   }
 
   const setSelectedHighNetwork = (network: NetworkInterface) => {
-    if (network === L2_NETWORK) {
-      _setSelectedLowNetwork(L1_NETWORK)
+    if (network === L2_NETWORK || network === L2_MAIN_NETWORK) {
+      _setSelectedLowNetwork(selectedNetworkType === 'Testnet' ? L1_NETWORK : L1_MAIN_NETWORK)
     } else {
-      _setSelectedLowNetwork(L2_NETWORK)
+      _setSelectedLowNetwork(selectedNetworkType === 'Testnet' ? L2_NETWORK : L2_MAIN_NETWORK)
     }
     _setSelectedHighNetwork(network)
   }
+
+  useEffect(() => {
+    const _selectedNetworkType = localStorage.getItem('selectedNetworkType')
+    if (_selectedNetworkType) {
+      setSelectedNetworkType(_selectedNetworkType as NetworkType)
+    } else {
+      setSelectedNetworkType('Mainnet')
+    }
+  }, [])
 
   useEffect(() => {
     const ethereum = window.ethereum
@@ -97,6 +141,36 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     }
   }, [window.ethereum])
 
+  useEffect(() => {
+    fetchChainId()
+    if (window.ethereum?.on) {
+      window.ethereum.on('chainChanged', handleChainChanged)
+    }
+  }, [walletProvider])
+
+  useEffect(() => {
+    handleAccountsChanged()
+  }, [walletProvider])
+
+  useEffect(() => {
+    if (selectedNetworkType) {
+      localStorage.setItem('selectedNetworkType', selectedNetworkType)
+    }
+    if (selectedNetworkType === 'Testnet') {
+      setSelectedLowNetwork(DEFAULT_LOW_NETWORK)
+      setSelectedHighNetwork(DEFAULT_HIGH_NETWORK)
+    } else {
+      setSelectedLowNetwork(DEFAULT_LOW_MAINNET_NETWORK)
+      setSelectedHighNetwork(DEFAULT_HIGH_MAINNET_NETWORK)
+    }
+  }, [selectedNetworkType])
+
+  useEffect(() => {
+    if (selectedNetworkType) {
+      localStorage.setItem('selectedNetworkType', selectedNetworkType)
+    }
+  }, [selectedNetworkType])
+
   const fetchChainId = async () => {
     const _chainId = (await walletProvider?.getNetwork())?.chainId
     setChainId(_chainId)
@@ -106,13 +180,6 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     const newChainId = parseInt(hexedChainId, 16) // Convert hex chainId to decimal
     setChainId(newChainId)
   }
-
-  useEffect(() => {
-    fetchChainId()
-    if (window.ethereum?.on) {
-      window.ethereum.on('chainChanged', handleChainChanged)
-    }
-  }, [walletProvider])
 
   const handleAccountsChanged = async () => {
     const ethereum = window.ethereum
@@ -129,10 +196,6 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
       }
     }
   }
-
-  useEffect(() => {
-    handleAccountsChanged()
-  }, [walletProvider])
 
   const connectWallet = async () => {
     setIsConnecting(true)
@@ -255,7 +318,13 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
         getProvider,
         isConnecting,
         accounts,
-        setAccounts
+        setAccounts,
+        setSelectedBridgeToken,
+        selectedBridgeToken,
+        selectedNetworkType,
+        setSelectedNetworkType,
+        setSelectedNativeToken,
+        selectedNativeToken
       }}
     >
       {children}

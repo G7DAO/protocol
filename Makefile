@@ -75,12 +75,15 @@ bindings/utils/security/Terminus.go: hardhat
 	mkdir -p bindings/security/terminus/TerminusInitializer
 	seer evm generate --package TerminusInitializer --output bindings/security/terminus/TerminusInitializer/TerminusInitializer.go --hardhat web3/artifacts/contracts/security/terminus/TerminusInitializer.sol/TerminusInitializer.json --cli --struct TerminusInitializer
 
+bindings/ETHOrbitBridger/ETHOrbitBridger.go: hardhat
+	mkdir -p bindings/ETHOrbitBridger
+	seer evm generate --package ETHOrbitBridger --output bindings/ETHOrbitBridger/ETHOrbitBridger.go --hardhat web3/artifacts/contracts/bridge/ETHOrbitBridger.sol/ETHOrbitBridger.json --cli --struct ETHOrbitBridger
 
 bindings/TokenSender/TokenSender.go: hardhat
 	mkdir -p bindings/TokenSender
 	seer evm generate --package TokenSender --output bindings/TokenSender/TokenSender.go --hardhat web3/artifacts/contracts/faucet/TokenSender.sol/TokenSender.json --cli --struct TokenSender
 
-bindings: bindings/ERC20/ERC20.go bindings/TokenFaucet/TokenFaucet.go bindings/WrappedNativeToken/WrappedNativeToken.go bindings/Staker/Staker.go bindings/MockERC20/MockERC20.go bindings/MockERC721/MockERC721.go bindings/MockERC1155/MockERC1155.go bindings/PositionMetadata/PositionMetadata.go bindings/Metronome/Metronome.go bindings/TokenSender/TokenSender.go bindings/utils/diamonds/Diamonds.go bindings/utils/security/Terminus.go
+bindings: bindings/ERC20/ERC20.go bindings/TokenFaucet/TokenFaucet.go bindings/WrappedNativeToken/WrappedNativeToken.go bindings/Staker/Staker.go bindings/MockERC20/MockERC20.go bindings/MockERC721/MockERC721.go bindings/MockERC1155/MockERC1155.go bindings/PositionMetadata/PositionMetadata.go bindings/Metronome/Metronome.go bindings/TokenSender/TokenSender.go bindings/utils/diamonds/Diamonds.go bindings/utils/security/Terminus.go bindings/ETHOrbitBridger/ETHOrbitBridger.go
 
 test-web3:
 	cd web3 && npx hardhat test
@@ -91,7 +94,7 @@ test-graffiti:
 test: test-web3 test-graffiti
 
 clean:
-	rm -rf bindings/ERC20/* bin/* bindings/TokenFaucet/* bindings/WrappedNativeToken/* bindings/Staker/* bindings/MockERC20/* bindings/MockERC721/* bindings/MockERC1155/* bindings/PositionMetadata/* bindings/TokenSender/* bindings/utils/* bindings/security/*
+	rm -rf bindings/ERC20/* bin/* bindings/TokenFaucet/* bindings/WrappedNativeToken/* bindings/Staker/* bindings/MockERC20/* bindings/MockERC721/* bindings/MockERC1155/* bindings/PositionMetadata/* bindings/TokenSender/* bindings/utils/* bindings/security/* bindings/ETHOrbitBridger/*
 
 clean-web3:
 	rm -rf web3/node_modules web3/artifacts

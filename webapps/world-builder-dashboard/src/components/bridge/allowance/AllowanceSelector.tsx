@@ -1,7 +1,7 @@
 import styles from './AllowanceSelector.module.css'
 import { ethers } from 'ethers'
 import { Combobox, Tooltip, useCombobox } from 'summon-ui/mantine'
-import IconAlertCircle from '@/assets/IconAlertCircle'
+import IconAlertCircle from '@/assets/IconChevronDownToggle'
 import IconCheck from '@/assets/IconCheck'
 import IconChevronDown from '@/assets/IconChevronDown'
 import { formatBigNumber } from '@/utils/web3utils'

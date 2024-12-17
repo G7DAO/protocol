@@ -1,10 +1,14 @@
 import React from 'react'
-import { HIGH_NETWORKS, L3_NATIVE_TOKEN_SYMBOL, LOW_NETWORKS } from '../../../../constants'
+import { getHighNetworks, getLowNetworks } from '../../../../constants'
+import DepositMobile from './DepositMobile'
 import styles from './WithdrawTransactions.module.css'
-import { Skeleton } from 'summon-ui/mantine'
+import { ethers } from 'ethers'
+import { BridgeTransferStatus } from 'game7-bridge-sdk'
+import { useMediaQuery } from 'summon-ui/mantine'
 import IconArrowNarrowDown from '@/assets/IconArrowNarrowDown'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
-import { useDepositStatus } from '@/hooks/useL2ToL1MessageStatus'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
+import { useBridgeTransfer } from '@/hooks/useBridgeTransfer'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
@@ -12,62 +16,111 @@ import { getBlockExplorerUrl } from '@/utils/web3utils'
 interface DepositProps {
   deposit: TransactionRecord
 }
+
 const Deposit: React.FC<DepositProps> = ({ deposit }) => {
+  const { selectedNetworkType } = useBlockchainContext()
+  const smallView = useMediaQuery('(max-width: 1199px)')
   const depositInfo = {
-    from: LOW_NETWORKS.find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
-    to: HIGH_NETWORKS.find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
+    from: getLowNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
+    to: getHighNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
   }
 
-  const status = useDepositStatus(deposit)
+  const { returnTransferData, getTransactionInputs, getHighNetworkTimestamp } = useBridgeTransfer()
+  const { data: transferStatus, isLoading } = returnTransferData({ txRecord: deposit })
+  const { data: highNetworkTimestamp } = getHighNetworkTimestamp({ txRecord: deposit, transferStatus: transferStatus })
+  const { data: transactionInputs, isLoading: isLoadingInputs } = getTransactionInputs({ txRecord: deposit })
+  const finalTransactionInputs = transactionInputs || deposit.transactionInputs
 
   return (
     <>
-      {status.isLoading ? (
-        Array.from(Array(7)).map((_, idx) => (
-          <div className={styles.gridItem} key={idx}>
-            <Skeleton key={idx} h='12px' w='100%' />
-          </div>
-        ))
+      {isLoading && smallView ? (
+        <div className={styles.gridItem}>
+          <div className={styles.loading}>Loading</div>
+        </div>
       ) : (
         <>
-          <div className={styles.gridItem}>
-            <div className={styles.typeDeposit}>
-              Deposit
-              <IconArrowNarrowDown className={styles.arrowUp} />
-            </div>
-          </div>
-          <div className={styles.gridItem}>{timeAgo(deposit.lowNetworkTimestamp)}</div>
-          <div className={styles.gridItem}>{`${deposit.amount} ${L3_NATIVE_TOKEN_SYMBOL}`}</div>
-          <div className={styles.gridItem}>{depositInfo.from}</div>
-          <div className={styles.gridItem}>{depositInfo.to}</div>
-          <>
-            <a
-              href={`${getBlockExplorerUrl(deposit.lowNetworkChainId)}/tx/${deposit.lowNetworkHash}`}
-              target={'_blank'}
-              className={styles.explorerLink}
-            >
+          {smallView ? (
+            <DepositMobile
+              deposit={deposit}
+              isLoading={isLoading}
+              selectedNetworkType={selectedNetworkType}
+              transactionInputs={transactionInputs}
+              highNetworkTimestamp={highNetworkTimestamp}
+              transferStatus={transferStatus}
+            />
+          ) : (
+            <>
               <div className={styles.gridItem}>
-                {status.data && status.data.l2Result?.complete ? (
-                  <div className={styles.settled}>
-                    Completed
-                    <IconLinkExternal02 stroke="#fff" />
+                <div className={styles.typeDeposit}>
+                  Deposit
+                  <IconArrowNarrowDown className={styles.arrowUp} />
+                </div>
+              </div>
+              <div className={styles.gridItem}>{timeAgo(deposit.lowNetworkTimestamp)}</div>
+              {!isLoadingInputs && finalTransactionInputs?.tokenSymbol ? (
+                <div className={styles.gridItem}>
+                  {`${finalTransactionInputs.tokenSymbol === 'USDC'
+                    ? ethers.utils.formatUnits(finalTransactionInputs.amount, 6)
+                    : deposit.amount} ${finalTransactionInputs.tokenSymbol}`}
+                </div>
+              ) : (
+                <div className={styles.gridItem}>
+                  <div className={styles.loading}>
+                    Loading
+                  </div>
+                </div>
+              )}
+              <div className={styles.gridItem}>{depositInfo.from}</div>
+              <div className={styles.gridItem}>{depositInfo.to}</div>
+              <>
+                {/* First column */}
+                {isLoading || transferStatus?.status === undefined ? (
+                  <div className={styles.gridItem}>
+                    <div className={styles.loading}>Loading</div>
                   </div>
                 ) : (
-                  <div className={styles.pending}>
-                    Pending
-                    <IconLinkExternal02 stroke="#fff" />
-                  </div>    
+                  <a
+                    href={`${getBlockExplorerUrl(deposit.lowNetworkChainId, selectedNetworkType)}/tx/${deposit.lowNetworkHash}`}
+                    target={'_blank'}
+                    className={styles.explorerLink}
+                  >
+                    <div className={styles.gridItem}>
+                      {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
+                        transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||
+                        transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ? (
+                        <div className={styles.settled}>
+                          Completed
+                          <IconLinkExternal02 stroke='#fff' />
+                        </div>
+                      ) : (
+                        <div className={styles.pending}>
+                          Pending
+                          <IconLinkExternal02 className={styles.arrowUp} />
+                        </div>
+                      )}
+                    </div>
+                  </a>
                 )}
-              </div>
-            </a>
-            <div className={styles.gridItemImportant}>
-              {status.data && status.data.highNetworkTimestamp ? (
-                <div>{timeAgo(status.data.highNetworkTimestamp)}</div>
-              ) : (
-                <div>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)}</div>
-              )}
-            </div>
-          </>
+
+                {/* Second column */}
+                {isLoading || transferStatus?.status === undefined || !highNetworkTimestamp ? (
+                  <div className={styles.gridItem}>
+                    <div className={styles.loading}>Loading</div>
+                  </div>
+                ) : (
+                  <div className={styles.gridItemImportant}>
+                    {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
+                      transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||
+                      transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ? (
+                      <>{timeAgo(highNetworkTimestamp)}</>
+                    ) : (
+                      <>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)}</>
+                    )}
+                  </div>
+                )}
+              </>
+            </>
+          )}
         </>
       )}
     </>
