@@ -98,7 +98,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       const needsBridgeTokenApproval = bridgeAllowance?.lt(amountBN)
       const gasFeesAmount = gasFees?.[1] ? ethers.utils.parseUnits(gasFees[1], 18) : amountBN
       const needsNativeTokenApproval = nativeAllowance !== null ? nativeAllowance?.lt(gasFeesAmount) : false
-      
+
       if (needsBridgeTokenApproval || needsNativeTokenApproval) {
         setStartingTokenIndex(needsBridgeTokenApproval ? 0 : 1)
         setShowApproval(true)
@@ -175,7 +175,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         connectedAccount: connectedAccount
       })
       if (bridger?.isDeposit) {
-        const isCCTP = bridger?.isCctp
+        const isCCTP = bridger?.isCctp()
         const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })
         await tx?.wait()
         return {
@@ -191,11 +191,13 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           status:
             destinationTokenAddress === ZERO_ADDRESS
               ? BridgeTransferStatus.DEPOSIT_GAS_PENDING
-              : BridgeTransferStatus.DEPOSIT_ERC20_NOT_YET_CREATED,
+              : isCCTP
+                ? BridgeTransferStatus.CCTP_PENDING
+                : BridgeTransferStatus.DEPOSIT_ERC20_NOT_YET_CREATED,
           isCCTP: isCCTP
         }
       } else {
-        const isCCTP = bridger?.isCctp
+        const isCCTP = bridger?.isCctp()
         const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })
         await tx?.wait()
         return {
@@ -207,7 +209,10 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           highNetworkTimestamp: Date.now() / 1000,
           challengePeriod: selectedNetworkType === 'Testnet' ? 60 * 60 : 60 * 60 * 24 * 7,
           symbol: symbol,
-          status: BridgeTransferStatus.WITHDRAW_UNCONFIRMED,
+          status:
+            isCCTP
+              ? BridgeTransferStatus.CCTP_PENDING
+              : BridgeTransferStatus.WITHDRAW_UNCONFIRMED,
           isCCTP: isCCTP
         }
       }
@@ -223,6 +228,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           if (transactionsString) {
             transactions = JSON.parse(transactionsString)
           }
+          console.log(record)
           transactions.push(record)
           localStorage.setItem(
             `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
@@ -287,7 +293,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           (isDisabled ||
             Number(amount) < 0 ||
             ((!L2L3message?.destination || !L2L3message.data) && Number(amount) === 0)) ||
-            isLoadingAllowances
+          isLoadingAllowances
         }
       >
         <div className={isConnecting || transfer.isLoading ? styles.buttonLabelLoading : styles.buttonLabel}>

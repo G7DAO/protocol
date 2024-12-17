@@ -13,6 +13,7 @@ import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 import { ChildToParentMessageStatus } from '@arbitrum/sdk'
 import { useMediaQuery } from '@mantine/hooks'
+import { BridgeTransferStatus } from 'game7-bridge-sdk'
 
 interface WithdrawalProps {
   withdrawal: TransactionRecord
@@ -309,7 +310,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       )}
                       <div className={styles.gridItem}>{status?.data?.from ?? ''}</div>
                       <div className={styles.gridItem}>{status?.data?.to ?? ''}</div>
-                      {transferStatus && transferStatus?.status === ChildToParentMessageStatus.CONFIRMED && (
+                      {transferStatus && (transferStatus?.status === ChildToParentMessageStatus.CONFIRMED || transferStatus?.status === BridgeTransferStatus.CCTP_COMPLETE) && (
                         <>
                           <div className={styles.gridItem}>
                             <a

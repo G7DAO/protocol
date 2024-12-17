@@ -62,8 +62,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
   }
 
   const isXsScreen = useMediaQuery(`(max-width: ${mantineBreakpoints.xs})`)
-  console.log(isEstimatingFee)
-
+  
   return (
     <div className={styles.container}>
       <div className={styles.header}>Transaction Summary</div>

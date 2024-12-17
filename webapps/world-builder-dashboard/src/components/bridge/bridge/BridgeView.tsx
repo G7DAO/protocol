@@ -103,6 +103,7 @@ const BridgeView = ({
     selectedHighNetwork,
     connectedAccount: connectedAccount ?? ''
   })
+  console.log(allowances)
 
   useEffect(() => {
     if (selectedBridgeToken && connectedAccount && selectedHighNetwork && selectedLowNetwork) {
