@@ -282,7 +282,7 @@ export const isCctp = (chainId: number, contractAddress: string) => {
     const chainKey = ChainId[chainId] as keyof typeof CommonAddress;
     const chainData = CommonAddress[chainKey];
     if (!chainData) return false;
-    return chainData.tokenMessengerContractAddress === contractAddress;
+    return chainData.tokenMessengerContractAddress.toLowerCase() === contractAddress.toLowerCase();
 }
 
 export const isNativeUSDC = (chainId: number, tokenAddress: string) => {
