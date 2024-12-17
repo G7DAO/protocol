@@ -5,7 +5,6 @@ import styles from './WithdrawTransactions.module.css'
 import { ethers } from 'ethers'
 import { BridgeTransferStatus } from 'game7-bridge-sdk'
 import { useMediaQuery } from 'summon-ui/mantine'
-import IconArrowNarrowDown from '@/assets/IconArrowNarrowDown'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeTransfer } from '@/hooks/useBridgeTransfer'
@@ -111,39 +110,107 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                     onMouseEnter={() => setHovered(true)}
                     onMouseLeave={() => setHovered(false)}
                     className={styles.gridItem}>{depositInfo.to}</div>
-                                          <div
-                        className={styles.gridItem}
-                        onClick={() => setCollapseExecuted(!collapseExecuted)}
-                        style={{
-                          cursor: 'pointer',
-                          backgroundColor: hovered ? '#393939' : 'initial'
-                        }}
-                        onMouseEnter={() => setHovered(true)}
-                        onMouseLeave={() => setHovered(false)}
-                      >
+                  <div
+                    className={styles.gridItem}
+                    onClick={() => setCollapseExecuted(!collapseExecuted)}
+                    style={{
+                      cursor: 'pointer',
+                      backgroundColor: hovered ? '#393939' : 'initial'
+                    }}
+                    onMouseEnter={() => setHovered(true)}
+                    onMouseLeave={() => setHovered(false)}
+                  >
+                    <a
+                      href={`${getBlockExplorerUrl(deposit.highNetworkChainId, selectedNetworkType)}/tx/${deposit.highNetworkHash}`}
+                      target={'_blank'}
+                      className={styles.explorerLink}
+                    >
+                      <div className={styles.settled} onClick={() => setCollapseExecuted(!collapseExecuted)}>
+                        Completed
+                        <IconLinkExternal02 stroke={'#fff'} />
+                      </div>
+                    </a>
+                  </div>
+                  <div
+                    className={styles.gridItemImportant}
+                    onClick={() => setCollapseExecuted(!collapseExecuted)}
+                    style={{
+                      cursor: 'pointer',
+                      backgroundColor: hovered ? '#393939' : 'initial'
+                    }}
+                    onMouseEnter={() => setHovered(true)}
+                    onMouseLeave={() => setHovered(false)}
+                  >
+                    <div>{timeAgo(deposit?.completionTimestamp)}</div>
+                  </div>
+                  {collapseExecuted && (
+                    <>
+
+                      {/* INITIATE */}
+                      <div className={styles.gridItemChild} title={deposit.lowNetworkHash}>
+                        <div className={styles.typeCompleted}>Initiate</div>
+                      </div>
+                      <div className={styles.gridItemInitiate}>{timeAgo(deposit?.lowNetworkTimestamp)}</div>
+                      {transactionInputs?.tokenSymbol ? (
+                        <div className={styles.gridItemInitiate}>
+                          {`${transactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs.amount, 6) : deposit.amount} ${transactionInputs.tokenSymbol}`}
+                        </div>
+                      ) : (
+                        <div className={styles.gridItemInitiate}>
+                          <div className={styles.loading}>Loading</div>
+                        </div>
+                      )}
+                      <div className={styles.gridItemInitiate}>{depositInfo.from ?? ''}</div>
+                      <div className={styles.gridItemInitiate}>{depositInfo.to ?? ''}</div>
+                      <div className={styles.gridItemInitiate}>
                         <a
-                          href={`${getBlockExplorerUrl(deposit.highNetworkChainId, selectedNetworkType)}/tx/${deposit.highNetworkHash}`}
+                          href={`${getBlockExplorerUrl(deposit.lowNetworkChainId, selectedNetworkType)}/tx/${deposit.lowNetworkHash}`}
                           target={'_blank'}
                           className={styles.explorerLink}
                         >
-                          <div className={styles.settled} onClick={() => setCollapseExecuted(!collapseExecuted)}>
+                          <div className={styles.settled}>
                             Completed
                             <IconLinkExternal02 stroke={'#fff'} />
                           </div>
                         </a>
                       </div>
-                      <div
-                        className={styles.gridItemImportant}
-                        onClick={() => setCollapseExecuted(!collapseExecuted)}
-                        style={{
-                          cursor: 'pointer',
-                          backgroundColor: hovered ? '#393939' : 'initial'
-                        }}
-                        onMouseEnter={() => setHovered(true)}
-                        onMouseLeave={() => setHovered(false)}
-                      >
-                        <div>{timeAgo(deposit?.completionTimestamp)}</div>
+                      <div className={styles.gridItemInitiate}>
+                        <div className={styles.timeCenter}>{timeAgo(deposit?.highNetworkTimestamp)}</div>
                       </div>
+
+                      {/* FINALIZE */}
+                      <div className={styles.gridItemChild} title={deposit.lowNetworkHash}>
+                        <div className={styles.typeCompleted}>Finalize</div>
+                      </div>
+                      <div className={styles.gridItemInitiate}>{timeAgo(deposit?.highNetworkTimestamp)}</div>
+                      {transactionInputs?.tokenSymbol ? (
+                        <div className={styles.gridItemInitiate}>
+                          {`${transactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs.amount, 6) : deposit.amount} ${transactionInputs.tokenSymbol}`}
+                        </div>
+                      ) : (
+                        <div className={styles.gridItem}>
+                          <div className={styles.loading}>Loading</div>
+                        </div>
+                      )}
+                      <div className={styles.gridItemInitiate}>{depositInfo.from ?? ''}</div>
+                      <div className={styles.gridItemInitiate}>{depositInfo.to ?? ''}</div>
+                      <div className={styles.gridItemInitiate}>
+                        <a
+                          href={`${getBlockExplorerUrl(deposit.highNetworkChainId, selectedNetworkType)}/tx/${deposit.highNetworkHash}`}
+                          target={'_blank'}
+                          className={styles.explorerLink}
+                        >
+                          <div className={styles.settled}>
+                            Completed
+                            <IconLinkExternal02 stroke={'#fff'} />
+                          </div>
+                        </a>
+                      </div>
+                      <div className={styles.gridItemInitiate}>
+                        <div className={styles.timeCenter}>{timeAgo(deposit?.highNetworkTimestamp)}</div>
+                      </div>
+                    </>
+                  )}
                 </>
               ) : (
                 <>
