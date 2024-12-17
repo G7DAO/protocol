@@ -3,7 +3,7 @@ import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import { getNetworks, L1_MAIN_NETWORK, L1_NETWORK, L2_MAIN_NETWORK, L2_NETWORK } from '../../constants'
 import { ethers } from 'ethers'
-import { BridgeTransfer, BridgeTransferStatus } from 'game7-bridge-sdk'
+import { BridgeTransfer, BridgeTransferStatus, getBridgeTransfer } from 'game7-bridge-sdk'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
@@ -65,15 +65,16 @@ export const useBridgeTransfer = () => {
     return useQuery(
       ['transferData', txHash],
       async () => {
-        const _bridgeTransfer = new BridgeTransfer({
-          txHash: txHash ?? '',
-          destinationNetworkChainId: destinationChainId ?? 0,
-          originNetworkChainId: originChainId ?? 0,
-          destinationSignerOrProviderOrRpc: destinationRpc,
-          originSignerOrProviderOrRpc: originRpc
-        })
 
         try {
+          const _bridgeTransfer: BridgeTransfer = await getBridgeTransfer({
+            txHash: txHash ?? '',
+            destinationNetworkChainId: destinationChainId ?? 0,
+            originNetworkChainId: originChainId ?? 0,
+            destinationSignerOrProviderOrRpc: destinationRpc,
+            originSignerOrProviderOrRpc: originRpc
+          }, txRecord.isCCTP)
+          console.log(_bridgeTransfer)
           // Fetch status with retry logic
           status = await retryWithExponentialBackoff(async () => await _bridgeTransfer.getStatus())
 
@@ -95,7 +96,7 @@ export const useBridgeTransfer = () => {
 
           return status
         } catch (error) {
-          console.error('Error fetching status:', error)
+          console.log('Error fetching status:', error, originChainId, destinationChainId, txRecord.tokenAddress, txHash)
 
           // Fallback to cached status if available
           const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
@@ -129,7 +130,7 @@ export const useBridgeTransfer = () => {
           const cachedTx = getCachedTransactions(connectedAccount ?? '', selectedNetworkType).find((t: any) =>
             t.type === 'DEPOSIT' ? t.lowNetworkHash === txHash : t.highNetworkHash === txHash
           )
-          
+
           return shouldFetchStatus(cachedTx) ? 1 * 60 * 1000 : false
         },
         refetchOnWindowFocus: false,
@@ -168,7 +169,7 @@ export const useBridgeTransfer = () => {
       const signer = provider.getSigner()
 
       // Bridge Transfer execute
-      const _bridgeTransfer = new BridgeTransfer({
+      const _bridgeTransfer: BridgeTransfer = await getBridgeTransfer({
         txHash: withdrawal.highNetworkHash || '',
         destinationNetworkChainId: withdrawal.lowNetworkChainId ?? 0,
         originNetworkChainId: withdrawal.highNetworkChainId ?? 0,
@@ -178,7 +179,7 @@ export const useBridgeTransfer = () => {
         originSignerOrProviderOrRpc: getNetworks(selectedNetworkType)?.find(
           (n) => n.chainId === withdrawal.highNetworkChainId
         )?.rpcs[0]
-      })
+      }, withdrawal.isCCTP)
       const res = await _bridgeTransfer?.execute(signer)
       return { res, withdrawal }
     },
@@ -237,13 +238,13 @@ export const useBridgeTransfer = () => {
           return txRecord.transactionInputs
         }
 
-        const _bridgeTransfer = new BridgeTransfer({
+        const _bridgeTransfer: BridgeTransfer = await getBridgeTransfer({
           txHash: txHash ?? '',
           destinationNetworkChainId: destinationChainId ?? 0,
           originNetworkChainId: originChainId ?? 0,
           destinationSignerOrProviderOrRpc: destinationRpc,
           originSignerOrProviderOrRpc: originRpc
-        })
+        }, txRecord.isCCTP)
 
         const transactionInputs = await _bridgeTransfer.getInfo()
 
@@ -270,11 +271,11 @@ export const useBridgeTransfer = () => {
           const cachedTransaction = transactions.find((t: any) =>
             isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
           )
-          
+
           if (cachedTransaction?.transactionInputs) {
             return cachedTransaction.transactionInputs
           }
-          
+
           return null
         },
         staleTime: 2 * 60 * 1000,
