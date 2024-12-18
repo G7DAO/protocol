@@ -201,7 +201,6 @@ export const useBridgeTransfer = () => {
       onSuccess: ({ res, txRecord }) => {
         const isDeposit = txRecord.type === 'DEPOSIT'
         const txHash = isDeposit ? txRecord.lowNetworkHash : txRecord.highNetworkHash
-        console.log('res', res)
         try {
           const transactionsString = localStorage.getItem(
             `bridge-${connectedAccount}-transactions-${selectedNetworkType}`

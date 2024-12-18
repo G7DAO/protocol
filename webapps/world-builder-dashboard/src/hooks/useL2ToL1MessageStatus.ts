@@ -12,6 +12,7 @@ import {
   ChildTransactionReceipt
 } from '@arbitrum/sdk'
 import { ParentContractCallTransactionReceipt } from '@arbitrum/sdk/dist/lib/message/ParentTransaction'
+import { BridgeTransferStatus } from 'game7-bridge-sdk'
 
 const eventABI = [
   {
@@ -251,7 +252,7 @@ export const useMessages = (
 
 export const getNotifications = (transactions: TransactionRecord[]) => {
   const completedTransactions = transactions.filter((tx) =>
-    tx.type === 'DEPOSIT' ? tx.status === 6 || tx.status === 9 : tx.completionTimestamp || tx.claimableTimestamp
+    tx.type === 'DEPOSIT' ? tx.status === 6 || tx.status === 9 || tx.status === 12 : tx.completionTimestamp || tx.claimableTimestamp
   )
   const notifications: BridgeNotification[] = completedTransactions
     .map((ct) => {
@@ -341,7 +342,7 @@ export const usePendingTransactions = (connectedAccount: string | undefined): Us
           }
           if (t.type === 'WITHDRAWAL') {
             const status = await fetchL2ToL1MessageStatus(t as TransactionRecord, selectedNetworkType)
-            if (status?.status === ChildToParentMessageStatus.CONFIRMED) {
+            if (status?.status === ChildToParentMessageStatus.CONFIRMED || t.status === BridgeTransferStatus.CCTP_REDEEMED) {
               if (!t.claimableTimestamp) {
                 newCompletedTransactions.push({ ...t, claimableTimestamp: Date.now() / 1000, newTransaction: true })
               }

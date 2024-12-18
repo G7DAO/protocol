@@ -103,15 +103,7 @@ export const useBridger = () => {
                     })
                 } catch (e) {
                     console.error('Fee estimation failed:', e)
-                    return {
-                        parentFee: direction === 'DEPOSIT'
-                            ? '0.01'
-                            : '0.001',
-                        childFee: '0.001',
-                        totalFee: direction === 'DEPOSIT'
-                            ? '0.011'
-                            : '0.002'
-                    };
+                    return null
                 }
             },
             {
@@ -144,6 +136,7 @@ export const useBridger = () => {
 
                 const bridgeTokenAllowance = await bridger.getAllowance(rpc, connectedAccount)
                 const nativeTokenAllowance = await bridger.getNativeAllowance(rpc, connectedAccount)
+                console.log(bridgeTokenAllowance?.toString(), nativeTokenAllowance?.toString())
 
                 return {
                     bridgeTokenAllowance,
