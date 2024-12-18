@@ -65,7 +65,7 @@ const BridgePage = () => {
             }
             onClick={() => navigate('/bridge/transactions')}
           >
-            History
+            Activity
           </button>
         </div>
       </div>
