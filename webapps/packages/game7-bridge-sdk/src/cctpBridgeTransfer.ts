@@ -166,6 +166,8 @@ export class CctpBridgeTransfer extends BridgeTransfer {
         const CHAIN_IDS_TO_MESSAGE_TRANSMITTER_ADDRESSES = {
             [11155111]: '0x7865fafc2db2093669d92c0f33aeef291086befd',
             [421614]: '0xacf1ceef35caac005e15888ddb8a3515c41b4872',
+            [42161]: '0x0a992d191deec32afe36203ad87d7d289a738f81',
+            [1]: '0xc30362313fbba5cf9163f0bb16a0e01f01a896ca',
         }
 
         const MESSAGE_TRANSMITTER_CONTRACT_ADDRESS =
