@@ -14,6 +14,8 @@ import { getBlockExplorerUrl } from '@/utils/web3utils'
 import { ChildToParentMessageStatus } from '@arbitrum/sdk'
 import { useMediaQuery } from '@mantine/hooks'
 import { BridgeTransferStatus } from 'game7-bridge-sdk'
+import IconChevronDown from '@/assets/IconChevronDown'
+import IconChevronUp from '@/assets/IconChevronUp'
 
 interface WithdrawalProps {
   withdrawal: TransactionRecord
@@ -224,6 +226,17 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       >
                         <div>{timeAgo(withdrawal?.completionTimestamp)}</div>
                       </div>
+                      <div className={styles.emptyCell}
+                        onClick={() => setCollapseExecuted(!collapseExecuted)}
+                        style={{
+                          cursor: 'pointer',
+                          backgroundColor: hovered ? '#393939' : 'initial'
+                        }}
+                        onMouseEnter={() => setHovered(true)}
+                        onMouseLeave={() => setHovered(false)}
+                      >
+                        {!collapseExecuted ? <IconChevronDown stroke={'#fff'} /> : <IconChevronUp stroke="#fff" />}
+                      </div>
                       {collapseExecuted && (
                         <>
                           <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
@@ -256,6 +269,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           <div className={styles.gridItemInitiate}>
                             <div className={styles.timeCenter}>{timeAgo(withdrawal?.completionTimestamp)}</div>
                           </div>
+                          <div className={styles.emptyCellInitiate} />
                           <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
                             <div className={styles.typeCompleted}>Finalize</div>
                           </div>
@@ -286,6 +300,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           <div className={styles.gridItemInitiate}>
                             <div className={styles.timeCenter}>{timeAgo(withdrawal?.completionTimestamp)}</div>
                           </div>
+                          <div className={styles.emptyCellInitiate} />
                         </>
                       )}
                     </>
@@ -334,6 +349,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                               {claim.isLoading && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}
                             </button>
                           </div>
+                          <div className={styles.emptyCell} />
                         </>
                       )}
                       {transferStatus && (transferStatus?.status === ChildToParentMessageStatus.UNCONFIRMED || transferStatus?.status === BridgeTransferStatus.CCTP_PENDING) && (
@@ -350,10 +366,10 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                               </div>
                             </a>
                           </div>
-
                           <div className={styles.gridItemImportant}>
                             <div>{ETA(withdrawal?.highNetworkTimestamp, withdrawal.challengePeriod)} left</div>
                           </div>
+                          <div className={styles.emptyCell} />
                         </>
                       )}
                     </>
@@ -361,7 +377,6 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
 
                 </>
               )}
-              <div className={styles.emptyCell} />
             </>
           )}
         </>

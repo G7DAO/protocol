@@ -113,7 +113,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
           <div className={styles.transactions}>
             <div className={styles.withdrawsGrid}>
               {headers.map((h) => (
-                <div className={h !== ' ' ? styles.transactionsHeader : styles.transactionsHeaderEmpty} key={h}>
+                <div className={h !== '' ? styles.transactionsHeader : styles.transactionsHeaderEmpty} key={h}>
                   {h}
                 </div>
               ))}

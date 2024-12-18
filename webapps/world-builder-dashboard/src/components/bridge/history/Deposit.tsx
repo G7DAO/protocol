@@ -12,6 +12,8 @@ import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 import IconChevronDown from '@/assets/IconChevronDown'
+import IconChevronUp from '@/assets/IconChevronUp'
+import IconWithdrawalNodeCompleted from '@/assets/IconWithdrawalNodeCompleted'
 
 interface DepositProps {
   deposit: TransactionRecord
@@ -62,6 +64,8 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                     onMouseEnter={() => setHovered(true)}
                     onMouseLeave={() => setHovered(false)}
                   >
+
+                    {collapseExecuted && <IconWithdrawalNodeCompleted className={styles.gridNodeCompleted} />}
                     <div className={styles.typeDeposit}>
                       Deposit
                     </div>
@@ -151,14 +155,16 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                   >
                     <div>{timeAgo(deposit?.completionTimestamp)}</div>
                   </div>
-                  <div className={styles.emptyCell} onClick={() => setCollapseExecuted(!collapseExecuted)}
+                  <div className={styles.emptyCell}
+                    onClick={() => setCollapseExecuted(!collapseExecuted)}
                     style={{
                       cursor: 'pointer',
                       backgroundColor: hovered ? '#393939' : 'initial'
                     }}
                     onMouseEnter={() => setHovered(true)}
-                    onMouseLeave={() => setHovered(false)}>
-                    <IconChevronDown stroke={'#fff'} />
+                    onMouseLeave={() => setHovered(false)}
+                  >
+                    {!collapseExecuted ? <IconChevronDown stroke={'#fff'} /> : <IconChevronUp stroke="#fff" />}
                   </div>
                   {collapseExecuted && (
                     <>
