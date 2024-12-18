@@ -73,6 +73,7 @@ export const useBridgeTransfer = () => {
             destinationSignerOrProviderOrRpc: destinationRpc,
             originSignerOrProviderOrRpc: originRpc
           }, txRecord.isCCTP)
+
           // Fetch status with retry logic
           status = await retryWithExponentialBackoff(async () => await _bridgeTransfer.getStatus())
 
@@ -155,8 +156,14 @@ export const useBridgeTransfer = () => {
       }
 
       let targetChain
-      if (selectedNetworkType === 'Testnet' )
-        targetChain = originChainId === L2_NETWORK.chainId ? L1_NETWORK : L2_NETWORK
+      if (selectedNetworkType === 'Testnet' ) {
+        if (isDeposit && txRecord.isCCTP && txRecord.isCCTP === true) {
+          targetChain = L2_NETWORK
+        } else {
+          targetChain = originChainId === L2_NETWORK.chainId ? L1_NETWORK : L2_NETWORK
+        }
+        console.log('targetChain', targetChain)
+      } 
       else {
         if (isDeposit && txRecord.isCCTP && txRecord.isCCTP === true) {
           targetChain = L2_MAIN_NETWORK
@@ -164,7 +171,6 @@ export const useBridgeTransfer = () => {
           targetChain = originChainId === L2_MAIN_NETWORK.chainId ? L1_MAIN_NETWORK : L2_MAIN_NETWORK
         }
       }
-
       let provider
       if (window.ethereum) {
         provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -186,6 +192,7 @@ export const useBridgeTransfer = () => {
         destinationSignerOrProviderOrRpc: destinationRpc,
         originSignerOrProviderOrRpc: originRpc
       }, txRecord.isCCTP)
+
       const res = await _bridgeTransfer?.execute(signer)
       return { res, txRecord }
     },

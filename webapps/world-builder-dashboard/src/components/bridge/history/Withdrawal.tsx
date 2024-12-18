@@ -265,7 +265,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                               {`${transactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs.amount, 6) : withdrawal.amount} ${transactionInputs.tokenSymbol}`}
                             </div>
                           ) : (
-                            <div className={styles.gridItem}>
+                            <div className={styles.gridItemInitiate}>
                               <div className={styles.loading}>Loading</div>
                             </div>
                           )}
@@ -336,7 +336,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           </div>
                         </>
                       )}
-                      {transferStatus && transferStatus?.status === ChildToParentMessageStatus.UNCONFIRMED && (
+                      {transferStatus && (transferStatus?.status === ChildToParentMessageStatus.UNCONFIRMED || transferStatus?.status === BridgeTransferStatus.CCTP_PENDING) && (
                         <>
                           <div className={styles.gridItem}>
                             <a
