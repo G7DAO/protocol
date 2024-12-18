@@ -34,7 +34,7 @@ export const getStatus = (
     highNetworkHash
   } = withdrawal
   const status = completionTimestamp
-    ? ChildToParentMessageStatus.EXECUTED
+    ? ChildToParentMessageStatus.EXECUTED || BridgeTransferStatus.CCTP_REDEEMED
     : claimableTimestamp
       ? ChildToParentMessageStatus.CONFIRMED
       : ChildToParentMessageStatus.UNCONFIRMED
@@ -112,7 +112,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                 </>
               ) : (
                 <>
-                  {transferStatus && transferStatus?.status === ChildToParentMessageStatus.EXECUTED && (
+                  {transferStatus && (transferStatus?.status === BridgeTransferStatus.WITHDRAW_EXECUTED || transferStatus?.status === BridgeTransferStatus.CCTP_REDEEMED) && (
                     <>
                       <div
                         className={styles.gridItem}
@@ -290,7 +290,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       )}
                     </>
                   )}
-                  {transferStatus && transferStatus?.status !== ChildToParentMessageStatus.EXECUTED && (
+                  {transferStatus && (transferStatus?.status !== BridgeTransferStatus.WITHDRAW_EXECUTED && transferStatus?.status !== BridgeTransferStatus.CCTP_REDEEMED) && (
                     <>
                       <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
                         <div className={styles.typeWithdrawal}>

@@ -86,7 +86,14 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                         : deposit.amount} ${finalTransactionInputs.tokenSymbol}`}
                     </div>
                   ) : (
-                    <div className={styles.gridItem}>
+                    <div className={styles.gridItem}
+                      onClick={() => setCollapseExecuted(!collapseExecuted)}
+                      style={{
+                        cursor: 'pointer',
+                        backgroundColor: hovered ? '#393939' : 'initial'
+                      }}
+                      onMouseEnter={() => setHovered(true)}
+                      onMouseLeave={() => setHovered(false)}>
                       <div className={styles.loading}>
                         Loading
                       </div>
@@ -145,7 +152,6 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                   </div>
                   {collapseExecuted && (
                     <>
-
                       {/* INITIATE */}
                       <div className={styles.gridItemChild} title={deposit.lowNetworkHash}>
                         <div className={styles.typeCompleted}>Initiate</div>
@@ -237,69 +243,69 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                   )}
                   <div className={styles.gridItem}>{depositInfo.from}</div>
                   <div className={styles.gridItem}>{depositInfo.to}</div>
+                  <>
+                    {isLoading || transferStatus?.status === undefined ? (
+                      <div className={styles.gridItem}>
+                        <div className={styles.loading}>Loading</div>
+                      </div>
+                    ) : (
+                      <a
+                        href={`${getBlockExplorerUrl(deposit.lowNetworkChainId, selectedNetworkType)}/tx/${deposit.lowNetworkHash}`}
+                        target={'_blank'}
+                        className={styles.explorerLink}
+                      >
+                        <div className={styles.gridItem}>
+                          {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
+                            transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ? (
+                            <div className={styles.settled}>
+                              Completed
+                              <IconLinkExternal02 stroke='#fff' />
+                            </div>
+                          ) : transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD || transferStatus?.status === BridgeTransferStatus.CCTP_COMPLETE ? (
+                            <div className={styles.claimable}>
+                              Claimable
+                              <IconLinkExternal02 className={styles.arrowUp} />
+                            </div>
+                          ) : (
+                            <div className={styles.pending}>
+                              Pending
+                              <IconLinkExternal02 className={styles.arrowUp} />
+                            </div>
+                          )}
+                        </div>
+                      </a>
+                    )}
+                    {isLoading || transferStatus?.status === undefined && !highNetworkTimestamp ? (
+                      <div className={styles.gridItem}>
+                        <div className={styles.loading}>Loading</div>
+                      </div>
+                    ) : (
+                      <div className={styles.gridItemImportant}>
+                        {transferStatus?.status === BridgeTransferStatus.CCTP_COMPLETE ? (
+                          <>
+                            <button
+                              className={styles.claimButton}
+                              onClick={() => {
+                                claim.mutate(deposit)
+                              }}
+                            >
+                              {claim.isLoading && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}
+                            </button>
+                          </>
+                        ) : (
+                          transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
+                            transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||
+                            transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ? (
+                            <>{timeAgo(highNetworkTimestamp)}</>
+                          ) : (
+                            <>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)}</>
+                          )
+                        )}
+                      </div>
+                    )}
+                  </>
                 </>
               )}
-              <>
-                {isLoading || transferStatus?.status === undefined ? (
-                  <div className={styles.gridItem}>
-                    <div className={styles.loading}>Loading</div>
-                  </div>
-                ) : (
-                  <a
-                    href={`${getBlockExplorerUrl(deposit.lowNetworkChainId, selectedNetworkType)}/tx/${deposit.lowNetworkHash}`}
-                    target={'_blank'}
-                    className={styles.explorerLink}
-                  >
-                    <div className={styles.gridItem}>
-                      {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
-                        transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ? (
-                        <div className={styles.settled}>
-                          Completed
-                          <IconLinkExternal02 stroke='#fff' />
-                        </div>
-                      ) : transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD || transferStatus?.status === BridgeTransferStatus.CCTP_COMPLETE ? (
-                        <div className={styles.claimable}>
-                          Claimable
-                          <IconLinkExternal02 className={styles.arrowUp} />
-                        </div>
-                      ) : (
-                        <div className={styles.pending}>
-                          Pending
-                          <IconLinkExternal02 className={styles.arrowUp} />
-                        </div>
-                      )}
-                    </div>
-                  </a>
-                )}
-                {isLoading || transferStatus?.status === undefined && !highNetworkTimestamp ? (
-                  <div className={styles.gridItem}>
-                    <div className={styles.loading}>Loading</div>
-                  </div>
-                ) : (
-                  <div className={styles.gridItemImportant}>
-                    {transferStatus?.status === BridgeTransferStatus.CCTP_COMPLETE ? (
-                      <>
-                          <button
-                            className={styles.claimButton}
-                            onClick={() => {
-                              claim.mutate(deposit)
-                            }}
-                          >
-                            {claim.isLoading && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}
-                          </button>
-                      </>
-                    ) : (
-                      transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
-                        transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||
-                        transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ? (
-                        <>{timeAgo(highNetworkTimestamp)}</>
-                      ) : (
-                        <>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)}</>
-                      )
-                    )}
-                  </div>
-                )}
-              </>
             </>
           )}
         </>
