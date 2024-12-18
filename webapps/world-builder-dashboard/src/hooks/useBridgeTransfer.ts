@@ -155,14 +155,14 @@ export const useBridgeTransfer = () => {
       }
 
       let targetChain
-      if (selectedNetworkType === 'Testnet' ) {
+      if (selectedNetworkType === 'Testnet') {
         if (isDeposit && txRecord.isCCTP && txRecord.isCCTP === true) {
           targetChain = L2_NETWORK
         } else {
           targetChain = originChainId === L2_NETWORK.chainId ? L1_NETWORK : L2_NETWORK
         }
         console.log('targetChain', targetChain)
-      } 
+      }
       else {
         if (isDeposit && txRecord.isCCTP && txRecord.isCCTP === true) {
           targetChain = L2_MAIN_NETWORK
@@ -192,15 +192,16 @@ export const useBridgeTransfer = () => {
         destinationSignerOrProviderOrRpc: destinationRpc,
         originSignerOrProviderOrRpc: originRpc
       }, txRecord.isCCTP)
-      
+
       await _bridgeTransfer.getStatus()
-      const res = await _bridgeTransfer?.execute(signer)
+      const res: any = await _bridgeTransfer?.execute(signer)
       return { res, txRecord }
     },
     {
       onSuccess: ({ res, txRecord }) => {
         const isDeposit = txRecord.type === 'DEPOSIT'
         const txHash = isDeposit ? txRecord.lowNetworkHash : txRecord.highNetworkHash
+        console.log('res', res)
         try {
           const transactionsString = localStorage.getItem(
             `bridge-${connectedAccount}-transactions-${selectedNetworkType}`
@@ -213,8 +214,8 @@ export const useBridgeTransfer = () => {
                 completionTimestamp: isDeposit ? t.completionTimestamp : Date.now() / 1000,
                 lowNetworkTimestamp: isDeposit ? t.lowNetworkTimestamp : Date.now() / 1000,
                 newTransaction: true,
-                highNetworkHash: isDeposit ? res?.transactionHash : t.highNetworkHash,
-                lowNetworkHash: !isDeposit ? res?.transactionHash : t.lowNetworkHash,
+                highNetworkHash: isDeposit ? txRecord.isCCTP ? res?.hash : res?.transactionHash : t.highNetworkHash,
+                lowNetworkHash: !isDeposit ? txRecord.isCCTP ? res?.hash : res?.transactionHash : t.lowNetworkHash,
                 status: txRecord.isCCTP
                   ? BridgeTransferStatus.CCTP_REDEEMED
                   : !isDeposit ? BridgeTransferStatus.WITHDRAW_EXECUTED : BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED

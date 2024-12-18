@@ -181,7 +181,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                         </a>
                       </div>
                       <div className={styles.gridItemInitiate}>
-                        <div className={styles.timeCenter}>{timeAgo(deposit?.highNetworkTimestamp)}</div>
+                        <div className={styles.timeCenter}>{timeAgo(deposit?.completionTimestamp)}</div>
                       </div>
 
                       {/* FINALIZE */}
@@ -213,7 +213,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                         </a>
                       </div>
                       <div className={styles.gridItemInitiate}>
-                        <div className={styles.timeCenter}>{timeAgo(deposit?.highNetworkTimestamp)}</div>
+                        <div className={styles.timeCenter}>{timeAgo(deposit?.completionTimestamp)}</div>
                       </div>
                     </>
                   )}
