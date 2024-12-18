@@ -358,8 +358,10 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       )}
                     </>
                   )}
+
                 </>
               )}
+              <div className={styles.emptyCell} />
             </>
           )}
         </>

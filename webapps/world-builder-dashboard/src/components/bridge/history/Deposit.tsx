@@ -11,6 +11,7 @@ import { useBridgeTransfer } from '@/hooks/useBridgeTransfer'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
+import IconChevronDown from '@/assets/IconChevronDown'
 
 interface DepositProps {
   deposit: TransactionRecord
@@ -150,6 +151,15 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                   >
                     <div>{timeAgo(deposit?.completionTimestamp)}</div>
                   </div>
+                  <div className={styles.emptyCell} onClick={() => setCollapseExecuted(!collapseExecuted)}
+                    style={{
+                      cursor: 'pointer',
+                      backgroundColor: hovered ? '#393939' : 'initial'
+                    }}
+                    onMouseEnter={() => setHovered(true)}
+                    onMouseLeave={() => setHovered(false)}>
+                    <IconChevronDown stroke={'#fff'} />
+                  </div>
                   {collapseExecuted && (
                     <>
                       {/* INITIATE */}
@@ -183,7 +193,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                       <div className={styles.gridItemInitiate}>
                         <div className={styles.timeCenter}>{timeAgo(deposit?.completionTimestamp)}</div>
                       </div>
-
+                      <div className={styles.emptyCellInitiate} />
                       {/* FINALIZE */}
                       <div className={styles.gridItemChild} title={deposit.lowNetworkHash}>
                         <div className={styles.typeCompleted}>Finalize</div>
@@ -215,6 +225,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                       <div className={styles.gridItemInitiate}>
                         <div className={styles.timeCenter}>{timeAgo(deposit?.completionTimestamp)}</div>
                       </div>
+                      <div className={styles.emptyCellInitiate} />
                     </>
                   )}
                 </>
@@ -304,6 +315,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                       </div>
                     )}
                   </>
+                  <div className={styles.emptyCell} />
                 </>
               )}
             </>
