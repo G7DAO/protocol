@@ -23,10 +23,10 @@ interface TransactionSummaryProps {
   value: number
   nativeBalance: number
   ethRate: number
+  tokenRate: number
   tokenSymbol: string
   gasNativeTokenSymbol: string
   gasChildNativeTokenSymbol: string
-  tokenRate: number
   direction: 'DEPOSIT' | 'WITHDRAW'
   selectedLowChain: NetworkInterface
   selectedHighChain: NetworkInterface
@@ -62,7 +62,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
   }
 
   const isXsScreen = useMediaQuery(`(max-width: ${mantineBreakpoints.xs})`)
-
+  
   return (
     <div className={styles.container}>
       <div className={styles.header}>Transaction Summary</div>
@@ -97,7 +97,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
           <>
             <div className={styles.dataRow}>
               <div className={styles.itemName}>Estimated gas fee on {selectedLowChain.displayName}</div>
-              {!!fee ? (
+              {!isEstimatingFee ? (
                 <div className={styles.valueContainer}>
                   <div
                     className={styles.value}
@@ -110,12 +110,12 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
                   )}
                 </div>
               ) : ( 
-                <div className={styles.valueNote}>{isEstimatingFee ? 'Estimating...' : `Can't estimate fee`}</div>
+                <div className={styles.valueNote}>Estimating...</div>
               )}
             </div>
             <div className={styles.dataRow}>
               <div className={styles.itemName}>Estimated gas fee on {selectedHighChain.displayName}</div>
-              {!!childFee ? (
+              {!isEstimatingFee ? (
                 <div className={styles.valueContainer}> 
                   <div
                     className={styles.value}
@@ -128,7 +128,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
                   )}
                 </div>
               ) : (
-                <div className={styles.valueNote}>{isEstimatingFee ? 'Estimating...' : `Can't estimate fee`}</div>
+                <div className={styles.valueNote}>Estimating...</div>
               )}
             </div>
           </>
@@ -136,25 +136,25 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
           <>
             <div className={styles.dataRow}>
               <div className={styles.itemName}>Estimated gas fee on {selectedHighChain.displayName}</div>
-              {!!childFee ? (
+              {!isEstimatingFee ? (
                 <div className={styles.valueContainer}> 
                   <div
                     className={styles.value}
                     title={`Balance: ${String(nativeBalance)} ${gasChildNativeTokenSymbol}`}
                   >{`${childFee.toFixed(18).replace(/\.?0+$/, '')} ${gasChildNativeTokenSymbol}`}</div>
-                  {!!(childFee * tokenRate) && (
+                  {!!(childFee * ethRate) && (
                     <div className={styles.valueNote}>
-                      {formatCurrency(childFee * tokenRate)}
+                      {formatCurrency(childFee * ethRate)}
                     </div>
                   )}
                 </div>
               ) : (
-                <div className={styles.valueNote}>{isEstimatingFee ? 'Estimating...' : `Can't estimate fee`}</div>
+                <div className={styles.valueNote}>Estimating...</div>
               )}
             </div>
             <div className={styles.dataRow}>
               <div className={styles.itemName}>Estimated gas fee on {selectedLowChain.displayName}</div>
-              {!!fee ? (
+              {!isEstimatingFee ? (
                 <div className={styles.valueContainer}>
                   <div
                     className={styles.value}
@@ -167,7 +167,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
                   )}
                 </div>
               ) : ( 
-                <div className={styles.valueNote}>{isEstimatingFee ? 'Estimating...' : `Can't estimate fee`}</div>
+                <div className={styles.valueNote}>Estimating...</div>
               )}
             </div>
           </>
@@ -177,7 +177,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
           <div className={styles.itemName}>You will receive</div>
           <div className={styles.valueContainer}>
             <div className={styles.value}>{`${value} ${tokenSymbol}`}</div>
-            {tokenRate > 0 && <div className={styles.valueNote}>{formatCurrency(value * tokenRate)}</div>}
+            {tokenRate > 0 && <div className={styles.valueNote}>{formatCurrency(value * (tokenSymbol === 'ETH' || tokenSymbol === 'G7' || tokenSymbol === 'TG7T' ? ethRate : tokenRate))}</div>}
           </div>
         </div>
       </div>
