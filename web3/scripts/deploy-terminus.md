@@ -27,7 +27,7 @@ This checklist describes how to deploy the Terminus diamond contract.
 - [ ] Deploy Terminus contract
 
 ```bash
-bin/game7 terminus deploy \
+bin/game7 terminus gogogo \
   --rpc $RPC \
   --keyfile $KEY \
   --contract-owner $OWNER 
