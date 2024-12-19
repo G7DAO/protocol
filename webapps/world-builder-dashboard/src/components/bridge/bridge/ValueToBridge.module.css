@@ -150,6 +150,18 @@
   line-height: 20px; /* 142.857% */
 }
 
+.input::-webkit-outer-spin-button,
+.input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* For Firefox */
+.input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
 
 @media (max-width: 1199px) {
   .input {
@@ -157,3 +169,4 @@
     font-weight: 700;
   }
 }
+

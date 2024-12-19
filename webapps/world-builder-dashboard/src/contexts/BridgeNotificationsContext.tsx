@@ -51,7 +51,7 @@ export const BridgeNotificationsProvider: React.FC<BridgeNotificationsProviderPr
       try {
         transactions = JSON.parse(transactionsString)
         if (Array.isArray(transactions) && transactions.some((t) => t.newTransaction)) {
-          const newTransactions = transactions.map((t: any) => ({ ...t, newTransaction: null }))
+          const newTransactions = transactions.map((t: any) => ({ ...t, newTransaction: null, seen: true }))
           localStorage.setItem(storageKey, JSON.stringify(newTransactions))
           setNewNotifications([])
         }
