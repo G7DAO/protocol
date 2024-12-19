@@ -257,7 +257,8 @@ export const getNotifications = (transactions: TransactionRecord[]) => {
   const notifications: BridgeNotification[] = completedTransactions
     .map((ct) => {
       const timestamp = ct.completionTimestamp ?? ct.claimableTimestamp ?? Date.now() / 1000
-
+      console.log(ct)
+      console.log(timestamp)
       return {
         status: ct.isFailed ? 'FAILED' : ct.completionTimestamp ? 'COMPLETED' : 'CLAIMABLE',
         type: ct.type,
@@ -336,9 +337,7 @@ export const usePendingTransactions = (connectedAccount: string | undefined): Us
           }
           if (t.type === 'WITHDRAWAL') {
             if (t.status === ChildToParentMessageStatus.CONFIRMED || t.status === BridgeTransferStatus.CCTP_COMPLETE) {
-              if (!t.claimableTimestamp) {
                 updatedTransactions.push({ ...t, claimableTimestamp: Date.now() / 1000, newTransaction: true })
-              }
             }
           }
         }
