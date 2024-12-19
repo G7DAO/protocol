@@ -71,6 +71,9 @@ export const bridgeConfig: {
     addressArbitrumOutBox: string;
     addressArbOS: string;
     addressL1Inbox: string;
+    L2OrbitGatewayRouter: string;
+    AtbitrumCircleTokenMessenger: string;
+    EthereumCircleTokenMessenger: string;
     l3TableName: string;
     l2TableName: string;
     l1TableName: string;
@@ -92,6 +95,9 @@ export const bridgeConfig: {
     addressArbitrumOutBox: "64105c6C3D494469D5F21323F0E917563489d9f5", // Arbitrum outbox address ??
     addressArbOS: "0000000000000000000000000000000000000064", // Game7 ArbOS L2 address
     addressL1Inbox: "aAe29B0366299461418F5324a79Afc425BE5ae21", // Ethereum inbox address
+    L2OrbitGatewayRouter: "73EeAEEC11473534a2249c851e4b245E61Da8732", // L1 Orbit Gateway Router address
+    AtbitrumCircleTokenMessenger: "9f3B8679c73C2Fef8b59B4f3444d4e156fb70AA5", // Arbitrum Circle Token Messenger address
+    EthereumCircleTokenMessenger: "9f3B8679c73C2Fef8b59B4f3444d4e156fb70AA5", // Ethereum Circle Token Messenger address
     l3TableName: "game7_testnet_labels",
     l2TableName: "arbitrum_sepolia_labels",
     l1TableName: "sepolia_labels",
@@ -112,6 +118,9 @@ export const bridgeConfig: {
     addressArbitrumOutBox: "fbe537816d181888fAbE52338a5D921eE131E9Db", // Arbitrum outbox address ??
     addressArbOS: "0000000000000000000000000000000000000064", // Game7 ArbOS L2 address
     addressL1Inbox: "4Dbd4fc535Ac27206064B68FfCf827b0A60BAB3f", // Ethereum inbox address
+    L2OrbitGatewayRouter: "73EeAEEC11473534a2249c851e4b245E61Da8732", // L1 Orbit Gateway Router Deposit
+    AtbitrumCircleTokenMessenger: "19330d10D9Cc8751218eaf51E8885D058642E08A", // Arbitrum Circle Token Messenger address
+    EthereumCircleTokenMessenger: "Bd3fa81B58Ba92a82136038B25aDec7066af3155", // Ethereum Circle Token Messenger address
     l3TableName: "game7_labels",
     l2TableName: "arbitrum_one_labels",
     l1TableName: "ethereum_labels",
@@ -123,3 +132,4 @@ export const bridgeConfig: {
     nativeToken: "0x0000000000000000000000000000000000000000" // native token
   },
 };
+
