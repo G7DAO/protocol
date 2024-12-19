@@ -78,7 +78,11 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
           <div className={styles.itemName}>You will receive</div>
           <div className={styles.valueContainer}>
             <div className={styles.value}>{`${value} ${tokenSymbol}`}</div>
-            {tokenRate > 0 && <div className={styles.valueNote}>{formatCurrency(value * (tokenSymbol === 'ETH' || tokenSymbol === 'G7' || tokenSymbol === 'TG7T' ? ethRate : tokenRate))}</div>}
+            {tokenRate > 0 && (
+              <div className={styles.valueNote}>
+                {formatCurrency(value * (tokenSymbol === 'ETH' || tokenSymbol === 'G7' || tokenSymbol === 'TG7T' ? ethRate : tokenRate ?? 0))}
+              </div>
+            )}
           </div>
         </div>
       </div>

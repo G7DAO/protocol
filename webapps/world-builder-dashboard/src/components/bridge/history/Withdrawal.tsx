@@ -65,6 +65,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const highNetworks = getHighNetworks(selectedNetworkType) || HIGH_NETWORKS
   const status = getStatus(withdrawal, lowNetworks, highNetworks)
   const { data: transferStatus, isLoading } = returnTransferData({ txRecord: withdrawal })
+  console.log(transferStatus)
   const { data: transactionInputs } = getTransactionInputs({ txRecord: withdrawal })
   return (
     <>

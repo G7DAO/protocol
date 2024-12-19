@@ -256,13 +256,16 @@ export const getNotifications = (transactions: TransactionRecord[]) => {
   )
   const notifications: BridgeNotification[] = completedTransactions
     .map((ct) => {
-      const timestamp = ct.completionTimestamp ?? ct.claimableTimestamp ?? Date.now() / 1000
-
+      const timestamp = ct.type === 'DEPOSIT' ? ct.status === 6 || ct.status === 9 || ct.status === 12 ? ct.highNetworkTimestamp ?? ct.completionTimestamp ?? Date.now() / 1000 : ct.claimableTimestamp ?? Date.now() / 1000 : ct.completionTimestamp ?? ct.claimableTimestamp ?? Date.now() / 1000
+      const amount = ct.transactionInputs?.tokenSymbol === 'USDC'
+        ? ethers.utils.formatUnits(ct.transactionInputs?.amount ?? 0, 6)
+        : ethers.utils.formatEther(ct?.transactionInputs?.amount ?? 0)
+        ?? ct.amount
       return {
         status: ct.isFailed ? 'FAILED' : ct.completionTimestamp ? 'COMPLETED' : 'CLAIMABLE',
         type: ct.type,
+        amount: amount,
         timestamp,
-        amount: ct.amount,
         to: (ct.type === 'WITHDRAWAL' ? ct.lowNetworkChainId : ct.highNetworkChainId) ?? 1,
         seen: !ct.newTransaction,
         tx: ct
@@ -336,9 +339,7 @@ export const usePendingTransactions = (connectedAccount: string | undefined): Us
           }
           if (t.type === 'WITHDRAWAL') {
             if (t.status === ChildToParentMessageStatus.CONFIRMED || t.status === BridgeTransferStatus.CCTP_COMPLETE) {
-              if (!t.claimableTimestamp) {
-                updatedTransactions.push({ ...t, claimableTimestamp: Date.now() / 1000, newTransaction: true })
-              }
+              updatedTransactions.push({ ...t, claimableTimestamp: Date.now() / 1000, newTransaction: true })
             }
           }
         }

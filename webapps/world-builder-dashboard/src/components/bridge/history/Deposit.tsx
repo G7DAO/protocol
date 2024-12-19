@@ -88,7 +88,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                       onMouseLeave={() => setHovered(false)}>
                       {`${finalTransactionInputs.tokenSymbol === 'USDC'
                         ? ethers.utils.formatUnits(finalTransactionInputs.amount, 6)
-                        : deposit.amount} ${finalTransactionInputs.tokenSymbol}`}
+                        : ethers.utils.formatEther(finalTransactionInputs?.amount) ?? deposit.amount} ${finalTransactionInputs.tokenSymbol}`}
                     </div>
                   ) : (
                     <div className={styles.gridItem}
@@ -204,7 +204,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                       <div className={styles.gridItemChild} title={deposit.lowNetworkHash}>
                         <div className={styles.typeCompleted}>Finalize</div>
                       </div>
-                      <div className={styles.gridItemInitiate}>{timeAgo(deposit?.completionTimestamp)}</div>
+                      <div className={styles.gridItemInitiate}>{timeAgo(deposit?.lowNetworkTimestamp)}</div>
                       {transactionInputs?.tokenSymbol ? (
                         <div className={styles.gridItemInitiate}>
                           {`${transactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs.amount, 6) : deposit.amount} ${transactionInputs.tokenSymbol}`}
@@ -249,7 +249,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                     <div className={styles.gridItem}>
                       {`${finalTransactionInputs.tokenSymbol === 'USDC'
                         ? ethers.utils.formatUnits(finalTransactionInputs.amount, 6)
-                        : deposit.amount} ${finalTransactionInputs.tokenSymbol}`}
+                        : ethers.utils.formatEther(finalTransactionInputs?.amount) ?? deposit.amount} ${finalTransactionInputs.tokenSymbol}`}
                     </div>
                   ) : (
                     <div className={styles.gridItem}>
