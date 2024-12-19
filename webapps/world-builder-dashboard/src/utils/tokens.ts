@@ -9,16 +9,15 @@ import {
   L3_MAIN_NETWORK,
   L3_NETWORK,
   TG7T,
-  // USDC,
-  // USDC_MAINNET
+  USDC,
+  USDC_MAINNET
 } from '../../constants'
 import { ZERO_ADDRESS } from './web3utils'
 import { TokenAddressMap } from 'game7-bridge-sdk'
 import IconEthereum from '@/assets/IconEthereum'
 import IconG7T from '@/assets/IconG7T'
 import IconTokenNoSynbol from '@/assets/IconTokenNoSymbol'
-// import IconUSDC from '@/assets/IconUSDC'
-
+import IconUSDC from '@/assets/IconUSDC'
 
 export interface Token {
   name: string
@@ -62,17 +61,17 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           chainId: L1_NETWORK.chainId,
           geckoId: 'ethereum'
         },
-        // {
-        //   name: 'USDC',
-        //   symbol: 'USDC',
-        //   address: '0xf2B58E3519C5b977a254993A4A6EaD581A8989A0',
-        //   Icon: IconUSDC,
-        //   rpc: L1_NETWORK.rpcs[0],
-        //   tokenAddressMap: USDC,
-        //   chainId: L1_NETWORK.chainId,
-        //   decimals: 6,
-        //   geckoId: 'usd-coin'
-        // },
+        {
+          name: 'USDC',
+          symbol: 'USDC',
+          address: '0xf2B58E3519C5b977a254993A4A6EaD581A8989A0',
+          Icon: IconUSDC,
+          rpc: L1_NETWORK.rpcs[0],
+          tokenAddressMap: USDC,
+          chainId: L1_NETWORK.chainId,
+          decimals: 6,
+          geckoId: 'usd-coin'
+        },
         ...storedTokensWithItems
       ]
     case L2_NETWORK.chainId:
@@ -97,17 +96,17 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           chainId: L2_NETWORK.chainId,
           geckoId: 'ethereum'
         },
-        // {
-        //   name: 'USDC',
-        //   symbol: 'USDC',
-        //   address: '0x119f0E6303BEc7021B295EcaB27A4a1A5b37ECf0',
-        //   Icon: IconUSDC,
-        //   rpc: L2_NETWORK.rpcs[0],
-        //   tokenAddressMap: USDC,
-        //   chainId: L2_NETWORK.chainId,
-        //   decimals: 6,
-        //   geckoId: 'usd-coin'
-        // },
+        {
+          name: 'USDC',
+          symbol: 'USDC',
+          address: '0x119f0E6303BEc7021B295EcaB27A4a1A5b37ECf0',
+          Icon: IconUSDC,
+          rpc: L2_NETWORK.rpcs[0],
+          tokenAddressMap: USDC,
+          chainId: L2_NETWORK.chainId,
+          decimals: 6,
+          geckoId: 'usd-coin'
+        },
         ...storedTokensWithItems
       ]
     case L3_NETWORK.chainId:
@@ -122,17 +121,17 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           chainId: L3_NETWORK.chainId,
           geckoId: 'G7T'
         },
-        // {
-        //   name: 'USDC',
-        //   symbol: 'USDC',
-        //   address: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
-        //   Icon: IconUSDC,
-        //   rpc: L3_NETWORK.rpcs[0],
-        //   tokenAddressMap: USDC,
-        //   chainId: L3_NETWORK.chainId,
-        //   decimals: 6,
-        //   geckoId: 'usd-coin'
-        // },
+        {
+          name: 'USDC',
+          symbol: 'USDC',
+          address: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
+          Icon: IconUSDC,
+          rpc: L3_NETWORK.rpcs[0],
+          tokenAddressMap: USDC,
+          chainId: L3_NETWORK.chainId,
+          decimals: 6,
+          geckoId: 'usd-coin'
+        },
         ...storedTokensWithItems
       ]
     case L1_MAIN_NETWORK.chainId:
@@ -157,17 +156,17 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           chainId: L1_MAIN_NETWORK.chainId,
           geckoId: 'ethereum'
         },
-        // {
-        //   name: 'USDC',
-        //   symbol: 'USDC',
-        //   address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-        //   Icon: IconUSDC,
-        //   rpc: L1_MAIN_NETWORK.rpcs[0],
-        //   tokenAddressMap: USDC_MAINNET,
-        //   chainId: L1_MAIN_NETWORK.chainId,
-        //   decimals: 6,
-        //   geckoId: 'usd-coin'
-        // },
+        {
+          name: 'USDC',
+          symbol: 'USDC',
+          address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+          Icon: IconUSDC,
+          rpc: L1_MAIN_NETWORK.rpcs[0],
+          tokenAddressMap: USDC_MAINNET,
+          chainId: L1_MAIN_NETWORK.chainId,
+          decimals: 6,
+          geckoId: 'usd-coin'
+        },
         ...storedTokensWithItems
       ]
     case L2_MAIN_NETWORK.chainId:
@@ -192,17 +191,17 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           chainId: L2_MAIN_NETWORK.chainId,
           geckoId: 'ethereum'
         },
-        // {
-        //   name: 'USDC',
-        //   symbol: 'USDC',
-        //   address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
-        //   Icon: IconUSDC,
-        //   rpc: L2_MAIN_NETWORK.rpcs[0],
-        //   tokenAddressMap: USDC_MAINNET,
-        //   chainId: L2_MAIN_NETWORK.chainId,
-        //   decimals: 6,
-        //   geckoId: 'usd-coin'
-        // },
+        {
+          name: 'USDC',
+          symbol: 'USDC',
+          address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+          Icon: IconUSDC,
+          rpc: L2_MAIN_NETWORK.rpcs[0],
+          tokenAddressMap: USDC_MAINNET,
+          chainId: L2_MAIN_NETWORK.chainId,
+          decimals: 6,
+          geckoId: 'usd-coin'
+        },
         ...storedTokensWithItems
       ]
     case L3_MAIN_NETWORK.chainId:
@@ -217,17 +216,17 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           chainId: L3_MAIN_NETWORK.chainId,
           geckoId: 'G7T'
         },
-        // {
-        //   name: 'USDC',
-        //   symbol: 'USDC',
-        //   address: '0x401eCb1D350407f13ba348573E5630B83638E30D',
-        //   Icon: IconUSDC,
-        //   rpc: L3_MAIN_NETWORK.rpcs[0],
-        //   tokenAddressMap: USDC_MAINNET,
-        //   chainId: L3_MAIN_NETWORK.chainId,
-        //   decimals: 6,
-        //   geckoId: 'usd-coin'
-        // },
+        {
+          name: 'USDC',
+          symbol: 'USDC',
+          address: '0x401eCb1D350407f13ba348573E5630B83638E30D',
+          Icon: IconUSDC,
+          rpc: L3_MAIN_NETWORK.rpcs[0],
+          tokenAddressMap: USDC_MAINNET,
+          chainId: L3_MAIN_NETWORK.chainId,
+          decimals: 6,
+          geckoId: 'usd-coin'
+        },
         ...storedTokensWithItems
       ]
     default:

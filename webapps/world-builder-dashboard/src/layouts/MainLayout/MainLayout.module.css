@@ -5,6 +5,7 @@
   width: 100vw;
   position: relative;
   font-family: Inter, sans-serif;
+  background: url('../../../src/assets/background.jpeg') lightgray 0px -1.156px / 100% 100.23% no-repeat;
 }
 
 .sideBar {
@@ -18,6 +19,7 @@
   min-width: 280px;
   border-right: 1px solid var(--Gray-200, #eaecf0);
   background: var(--Base-White, #fff);
+  backdrop-filter: blur(2px);
 }
 
 .sideBarTop {
@@ -76,7 +78,8 @@
   font-size: 16px;
   font-style: normal;
   font-weight: 600;
-  line-height: 24px; /* 150% */
+  line-height: 24px;
+  /* 150% */
 
   text-transform: capitalize;
 }
@@ -119,7 +122,8 @@
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
-  line-height: 20px; /* 142.857% */
+  line-height: 20px;
+  /* 142.857% */
 }
 
 .iconButton {
@@ -138,6 +142,7 @@
     flex-direction: column;
     min-width: 100vw;
   }
+
   .logoContainer {
     padding: 0;
   }
@@ -166,7 +171,8 @@
   font-size: 14px;
   font-style: normal;
   font-weight: 600;
-  line-height: 20px; /* 142.857% */
+  line-height: 20px;
+  /* 142.857% */
 }
 
 .connectingWalletText {
@@ -176,7 +182,8 @@
   font-size: 14px;
   font-style: normal;
   font-weight: 600;
-  line-height: 20px; /* 142.857% */
+  line-height: 20px;
+  /* 142.857% */
 }
 
 .icon {

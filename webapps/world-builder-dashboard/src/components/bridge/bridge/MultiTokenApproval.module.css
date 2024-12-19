@@ -1,0 +1,219 @@
+.modal {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background: #0b0b0b;
+}
+
+.modalHeader {
+    display: flex;
+    padding: 24px 24px 0px 24px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    align-self: stretch;
+    background-color: #0b0b0b;
+}
+
+.modalTitle {
+    align-self: stretch;
+    color: #fff;
+    font-family: Inter;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 28px;
+}
+
+.modalSubtitle {
+    align-self: stretch;
+    color: #fff;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+    /* 142.857% */
+}
+
+.space {
+    display: flex;
+    height: 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+}
+
+.tokenApprovalBarContainer {
+    display: flex;
+    padding: 0px 24px 16px 24px;
+    flex-direction: column;
+    align-items: center;
+    align-self: stretch;
+    border-bottom: 1px solid #393939;
+}
+
+.barContainer {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    align-self: stretch;
+}
+
+.bar {
+    display: flex;
+    padding-top: 12px;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1 0 0;
+    border-top: 4px solid #393939;
+}
+
+.barApproved {
+    border-top-color: #F04438;
+}
+
+.barTitleContainer {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.barTitle {
+    align-self: stretch;
+    color: #727272;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 20px;
+}
+
+.barTitleApproved {
+    color: #F04438;
+}
+
+.allowanceSection {
+    display: flex;
+    padding: 24px 24px 0px 24px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    align-self: stretch;
+}
+
+.allowanceContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    align-self: stretch;
+}
+
+.allowanceTitle {
+    color: #B9B9B9;
+    /* Text xs/Medium */
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 18px;
+    /* 150% */
+}
+
+.hintText {
+    align-self: stretch;
+    color: #B9B9B9;
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 18px;
+}
+
+.hintBadge {
+    display: flex;
+    padding: 2px 8px;
+    justify-content: center;
+    align-items: center;
+    align-self: stretch;
+    border-radius: 16px;
+    background: #B54708;
+}
+
+.hintBadgeText {
+    color: #FFFAEB;
+    text-align: center;
+
+    /* Text xs/Medium */
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 18px;
+    /* 150% */
+}
+
+.buttonSpacer {
+    display: flex;
+    padding-top: 24px;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+}
+
+.buttonSection {
+    display: flex;
+    padding: 0px 24px 24px 24px;
+    align-items: flex-start;
+    gap: 12px;
+    align-self: stretch;
+}
+
+.button {
+    cursor: pointer;
+    display: flex;
+    padding: 10px 16px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex: 1 0 0;
+    border-radius: 8px;
+    border: 1px solid #F04438;
+    background: #F04438;
+    box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+}
+
+.buttonLoading {
+    cursor: not-allowed;
+}
+
+.buttonText {
+    color: #FFF;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 20px;
+}
+
+.buttonLoadingText {
+    opacity: 0.7;
+}
+
+.titleAndCloseButton {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    align-self: stretch;
+}
+
+.closeButton {
+    cursor: pointer;
+    stroke: #667085;
+    margin-right: 2px;
+}
+
+.closeButton:hover {
+    stroke: #fff;
+}

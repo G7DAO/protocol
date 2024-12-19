@@ -8,7 +8,6 @@ import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { ERC20AllowanceProps } from '@/types'
 import { approve } from '@/utils/bridge/approveERC20'
 import { formatBigNumber } from '@/utils/web3utils'
-
 interface ApproveAllowanceProps {
   onSuccess: () => void
   onClose: () => void
@@ -18,7 +17,7 @@ interface ApproveAllowanceProps {
 }
 const ApproveAllowance: React.FC<ApproveAllowanceProps> = ({ amount, balance, onClose, onSuccess, allowanceProps }) => {
   const [newAllowance, setNewAllowance] = useState(amount)
-  const { getProvider } = useBlockchainContext()
+  const { getProvider, selectedBridgeToken } = useBlockchainContext()
 
   const approveAllowance = useMutation(
     async ({
@@ -54,8 +53,12 @@ const ApproveAllowance: React.FC<ApproveAllowanceProps> = ({ amount, balance, on
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.titleAndCloseButton}>
-          <div className={styles.title}>Approve Allowance</div>
-          <IconClose onClick={onClose} className={styles.closeButton} />
+          <div className={styles.titleAndCloseButtonContainer}>
+            <div className={styles.title}>
+              Approve Allowance
+            </div>
+            <IconClose onClick={onClose} className={styles.closeButton} />
+          </div>
         </div>
         <div className={styles.supportingText}>
           We need permission for token allowances in order to facilitate transactions.
@@ -72,6 +75,7 @@ const ApproveAllowance: React.FC<ApproveAllowanceProps> = ({ amount, balance, on
               onChange={(value) => setNewAllowance(value)}
               allowance={newAllowance}
               disabled={approveAllowance.isLoading}
+              token={selectedBridgeToken}
             />
           </div>
         </div>

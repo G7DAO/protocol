@@ -40,7 +40,7 @@ export const L3_NETWORK: HighNetworkInterface = {
   chainId: 13746,
   name: 'game7Testnet',
   displayName: 'G7 Sepolia',
-  rpcs: ['https://testnet-rpc.game7.io'],
+  rpcs: ['https://x.game7-testnet.nodes.game7.build'],
   blockExplorerUrls: ['https://testnet.game7.io'],
   nativeCurrency: {
     decimals: 18,
@@ -93,7 +93,7 @@ export const L3_MAIN_NETWORK: NetworkInterface = {
   nativeCurrency: {
     decimals: 18,
     name: 'Game7 Token',
-    symbol: 'G7T'
+    symbol: 'G7'
   },
   g7TokenAddress: '0x0000000000000000000000000000000000000000',
   retryableCreationTimeout: 15 * 60,
