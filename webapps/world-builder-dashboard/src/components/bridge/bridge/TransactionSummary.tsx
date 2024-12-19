@@ -3,7 +3,6 @@ import styles from './TransactionSummary.module.css'
 import { Tooltip, useClipboard } from 'summon-ui/mantine'
 import { mantineBreakpoints } from '@/styles/breakpoints'
 import { useMediaQuery } from '@mantine/hooks'
-import { NetworkInterface } from '@/contexts/BlockchainContext'
 
 const formatCurrency = (value: number) => {
   const formatter = new Intl.NumberFormat('en-US', {
@@ -18,36 +17,18 @@ const formatCurrency = (value: number) => {
 interface TransactionSummaryProps {
   address: string | undefined
   transferTime: string
-  fee: number
-  isEstimatingFee: boolean
   value: number
-  nativeBalance: number
   ethRate: number
   tokenRate: number
   tokenSymbol: string
-  gasNativeTokenSymbol: string
-  gasChildNativeTokenSymbol: string
-  direction: 'DEPOSIT' | 'WITHDRAW'
-  selectedLowChain: NetworkInterface
-  selectedHighChain: NetworkInterface
-  childFee: number
 }
 const TransactionSummary: React.FC<TransactionSummaryProps> = ({
-  direction,
-  nativeBalance,
   address,
   transferTime,
-  fee,
-  isEstimatingFee,
   ethRate,
   tokenRate,
   tokenSymbol,
-  gasNativeTokenSymbol,
-  gasChildNativeTokenSymbol,
   value,
-  selectedHighChain,
-  selectedLowChain,
-  childFee
 }) => {
   const clipboard = useClipboard({ timeout: 700 })
 
@@ -92,86 +73,6 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
           <div className={styles.itemName}>Transfer time</div>
           <div className={styles.value}>{transferTime}</div>
         </div>
-        <div className={styles.divider} />
-        {direction === 'DEPOSIT' ? (
-          <>
-            <div className={styles.dataRow}>
-              <div className={styles.itemName}>Estimated gas fee on {selectedLowChain.displayName}</div>
-              {!!fee ? (
-                <div className={styles.valueContainer}>
-                  <div
-                    className={styles.value}
-                    title={`Balance: ${String(nativeBalance)} ${gasNativeTokenSymbol}`}
-                  >{`${fee.toFixed(18).replace(/\.?0+$/, '')} ${gasNativeTokenSymbol}`}</div>
-                  {!!(fee * ethRate) && (
-                    <div className={styles.valueNote}>
-                      {formatCurrency(fee * ethRate)}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className={styles.valueNote}>{isEstimatingFee ? 'Estimating...' : `Can't estimate fee`}</div>
-              )}
-            </div>
-            <div className={styles.dataRow}>
-              <div className={styles.itemName}>Estimated gas fee on {selectedHighChain.displayName}</div>
-              {!!childFee ? (
-                <div className={styles.valueContainer}>
-                  <div
-                    className={styles.value}
-                    title={`Balance: ${String(nativeBalance)} ${gasChildNativeTokenSymbol}`}
-                  >{`${childFee.toFixed(18).replace(/\.?0+$/, '')} ${gasChildNativeTokenSymbol}`}</div>
-                  {!!(childFee * ethRate) && (
-                    <div className={styles.valueNote}>
-                      {formatCurrency(childFee * ethRate)}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className={styles.valueNote}>{isEstimatingFee ? 'Estimating...' : `Can't estimate fee`}</div>
-              )}
-            </div>
-          </>
-        ) : (
-          <>
-            <div className={styles.dataRow}>
-              <div className={styles.itemName}>Estimated gas fee on {selectedHighChain.displayName}</div>
-              {!!childFee ? (
-                <div className={styles.valueContainer}>
-                  <div
-                    className={styles.value}
-                    title={`Balance: ${String(nativeBalance)} ${gasChildNativeTokenSymbol}`}
-                  >{`${childFee.toFixed(18).replace(/\.?0+$/, '')} ${gasChildNativeTokenSymbol}`}</div>
-                  {!!(childFee * ethRate) && (
-                    <div className={styles.valueNote}>
-                      {formatCurrency(childFee * ethRate)}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className={styles.valueNote}>{isEstimatingFee ? 'Estimating...' : `Can't estimate fee`}</div>
-              )}
-            </div>
-            <div className={styles.dataRow}>
-              <div className={styles.itemName}>Estimated gas fee on {selectedLowChain.displayName}</div>
-              {!!fee ? (
-                <div className={styles.valueContainer}>
-                  <div
-                    className={styles.value}
-                    title={`Balance: ${String(nativeBalance)} ${gasNativeTokenSymbol}`}
-                  >{`${fee.toFixed(18).replace(/\.?0+$/, '')} ${gasNativeTokenSymbol}`}</div>
-                  {!!(fee * ethRate) && (
-                    <div className={styles.valueNote}>
-                      {formatCurrency(fee * ethRate)}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className={styles.valueNote}>{isEstimatingFee ? 'Estimating...' : `Can't estimate fee`}</div>
-              )}
-            </div>
-          </>
-        )}
         <div className={styles.divider} />
         <div className={styles.dataRow}>
           <div className={styles.itemName}>You will receive</div>

@@ -59,7 +59,6 @@ const BridgeView = ({
     selectedBridgeToken,
     selectedNetworkType,
     setSelectedNativeToken,
-    selectedNativeToken
   } = useBlockchainContext()
 
   const { isFetching: isFetchingTokenInformation, data: tokenInformation } = useTokenInformation({
@@ -249,17 +248,12 @@ const BridgeView = ({
           />
         )}
       <TransactionSummary
-        direction={direction}
         address={connectedAccount}
-        nativeBalance={Number(nativeTokenInformation?.tokenBalance)}
         transferTime={
           direction === 'DEPOSIT'
             ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
             : `~${Math.floor((selectedHighNetwork.challengePeriod ?? 0) / 60)} min`
         }
-        fee={Number(estimatedFee.data?.parentFee ?? 0)}
-        childFee={Number(estimatedFee.data?.childFee ?? 0)}
-        isEstimatingFee={estimatedFee.isFetching}
         value={Number(value)}
         ethRate={ethRate?.ethereum?.usd ?? 0}
         tokenRate={
@@ -267,17 +261,9 @@ const BridgeView = ({
             ? 1
             : isCoinFetching
               ? 0.0
-              : coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd
+              : coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd ?? 0
         }
         tokenSymbol={tokenInformation?.symbol ?? ''}
-        gasNativeTokenSymbol={
-          selectedNativeToken?.symbol ?? ''
-        }
-        gasChildNativeTokenSymbol={
-          selectedHighNetwork.nativeCurrency?.symbol ?? ''
-        }
-        selectedLowChain={selectedLowNetwork}
-        selectedHighChain={selectedHighNetwork}
       />
       {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
       {direction === 'DEPOSIT' && <div className={styles.manualGasMessageContainer}>
@@ -290,7 +276,7 @@ const BridgeView = ({
           `}
           label=' Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.'
           position='top'
-          className={styles.manualGasMessageTooltip }
+          className={styles.manualGasMessageTooltip}
         >
           <IconAlertCircle stroke='#FFFAEB' height={12} width={12} />
         </Tooltip>

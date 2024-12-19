@@ -27,7 +27,7 @@ interface MultiTokenApprovalProps {
 }
 
 export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showApproval, setShowApproval, bridger, balance, nativeBalance, decimals, tokens, startingTokenIndex, onApprovalComplete, gasFees, amount }) => {
-  const { selectedNetworkType, getProvider, selectedNativeToken } = useBlockchainContext()
+  const { selectedNetworkType, getProvider } = useBlockchainContext()
   const queryClient = useQueryClient()
   const networks = getNetworks(selectedNetworkType)
 
@@ -184,11 +184,6 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
             </div>
             <div className={styles.hintText}>
               Set token limit to allow the bridge contract to perform token transfers on your behalf. It cannot move funds without your permission.
-            </div>
-            <div className={styles.hintBadge}>
-              <div className={styles.hintBadgeText}>
-                ~{gasFees[currentTokenIndex]} {currentTokenIndex === 0 ? selectedNativeToken?.symbol : tokens[currentTokenIndex].symbol} will be used for gas
-              </div>
             </div>
           </div>
         ) : (
