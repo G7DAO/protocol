@@ -177,7 +177,8 @@ export class CctpBridgeTransfer extends BridgeTransfer {
             MessageTransmitterAbi,
             signer
         );
-        return contract.receiveMessage(this.messageBytes, this.signature);
+        const res = await contract.receiveMessage(this.messageBytes, this.signature);
+        return res.wait()
     }
 
     /**
