@@ -208,6 +208,7 @@ export const useBridgeTransfer = () => {
           let transactions = transactionsString ? JSON.parse(transactionsString) : []
           const newTransactions: TransactionRecord[] = transactions.map((t: TransactionRecord) => {
             if (isDeposit ? t.lowNetworkHash === txHash : t.highNetworkHash === txHash) {
+              console.log(res?.transactionHash)
               return {
                 ...t,
                 completionTimestamp:  Date.now() / 1000,

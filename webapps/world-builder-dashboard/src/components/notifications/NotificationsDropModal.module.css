@@ -85,7 +85,7 @@
   background: var(--Warning-100, #fef0c7);
 }
 .iconCloseClaimable {
-  color: var(--Warning-700, #b54708);
+  stroke: #fff;
 }
 .iconCloseClaimable:hover {
   color: var(--Warning-800, #b54708);
