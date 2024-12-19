@@ -1,5 +1,5 @@
 // External Libraries
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 // Constants
@@ -64,13 +64,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   const networks = getNetworks(selectedNetworkType)
   const [showApproval, setShowApproval] = useState(false)
   const [startingTokenIndex, setStartingTokenIndex] = useState(0)
-  const [allowancesVerified, setAllowancesVerified] = useState(false)
 
-
-  useEffect(() => {
-    console.log('bridger changed')
-    setAllowancesVerified(false)
-  }, [bridger])
 
   const checkAllowances = async () => {
     if (!bridger || !connectedAccount) return null
@@ -80,12 +74,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       return false
     }
 
-    console.log('allowancesVerified', allowancesVerified)
 
     const amountBN = ethers.utils.parseUnits(amount, decimals)
-    console.log('amountBN', amountBN.toString())
-    console.log('bridgeAllowance', bridgeAllowance?.toString())
-
     if (bridgeAllowance === null) {
       const gasFeesAmount = gasFees?.[1] ? ethers.utils.parseUnits(gasFees[1], 18) : amountBN
       const needsNativeTokenApproval = nativeAllowance !== null ? nativeAllowance?.lt(gasFeesAmount) : false
@@ -105,8 +95,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         return false
       }
     }
-
-    setAllowancesVerified(true)
     return true
   }
 
@@ -141,8 +129,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       return
     }
     setErrorMessage('')
-
-    setAllowancesVerified(false)
 
     const allowancesOk = await checkAllowances()
     if (allowancesOk) {
@@ -185,7 +171,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           highNetworkChainId: selectedHighNetwork.chainId,
           lowNetworkHash: tx?.hash,
           lowNetworkTimestamp: Date.now() / 1000,
-          completionTimestamp: Date.now() / 1000,
+          completionTimestamp: !isCCTP ? Date.now() / 1000 : null,
           newTransaction: true,
           symbol: symbol,
           status:
@@ -228,14 +214,13 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           if (transactionsString) {
             transactions = JSON.parse(transactionsString)
           }
-          console.log(record)
           transactions.push(record)
           localStorage.setItem(
             `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
             JSON.stringify(transactions)
           )
         } catch (e) {
-          console.log(e)
+          console.error(e)
         }
         queryClient.refetchQueries(['pendingTransactions'])
         queryClient.refetchQueries(['ERC20Balance'])
@@ -246,17 +231,14 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         navigate('/bridge/transactions')
       },
       onError: (e) => {
-        console.log(e)
+        console.error(e)
         setErrorMessage('Transaction failed. Try again, please')
       }
     }
   )
 
   const handleApprovalComplete = () => {
-    console.log('=== ActionButton: handleApprovalComplete ===')
-    console.log('Setting allowancesVerified to true')
     setShowApproval(false)
-    setAllowancesVerified(true)
     transfer.mutate(amount)
   }
 

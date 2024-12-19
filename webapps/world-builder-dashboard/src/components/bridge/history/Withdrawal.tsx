@@ -111,6 +111,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                   <div className={styles.gridItem}>
                     <div className={styles.loading}>Loading</div>
                   </div>
+                  <div className={styles.emptyCell} />
                 </>
               ) : (
                 <>

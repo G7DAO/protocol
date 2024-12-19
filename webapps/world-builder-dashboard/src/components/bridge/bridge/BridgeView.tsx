@@ -103,14 +103,11 @@ const BridgeView = ({
     selectedHighNetwork,
     connectedAccount: connectedAccount ?? ''
   })
-  console.log(allowances)
-
   useEffect(() => {
     if (selectedBridgeToken && connectedAccount && selectedHighNetwork && selectedLowNetwork) {
       const originChainId = direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId
       const destinationChainId = direction === 'DEPOSIT' ? selectedHighNetwork.chainId : selectedLowNetwork.chainId
       const chainIds = Object.keys(selectedBridgeToken.tokenAddressMap)
-      console.log('in use effect')
       if (!chainIds.includes(String(destinationChainId))) {
         return
       }
@@ -130,7 +127,7 @@ const BridgeView = ({
         setBridger(_bridger)
 
       } catch (e) {
-        console.log(e)
+        console.error(e)
         setNetworkErrorMessage('Cannot bridge between these 2 networks')
       }
     }
@@ -262,7 +259,7 @@ const BridgeView = ({
         }
         fee={Number(estimatedFee.data?.parentFee ?? 0)}
         childFee={Number(estimatedFee.data?.childFee ?? 0)}
-        isEstimatingFee={estimatedFee.isLoading}
+        isEstimatingFee={estimatedFee.isFetching}
         value={Number(value)}
         ethRate={ethRate?.ethereum?.usd ?? 0}
         tokenRate={

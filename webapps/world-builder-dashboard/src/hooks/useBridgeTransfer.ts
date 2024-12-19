@@ -201,7 +201,6 @@ export const useBridgeTransfer = () => {
       onSuccess: ({ res, txRecord }) => {
         const isDeposit = txRecord.type === 'DEPOSIT'
         const txHash = isDeposit ? txRecord.lowNetworkHash : txRecord.highNetworkHash
-        console.log('res', res)
         try {
           const transactionsString = localStorage.getItem(
             `bridge-${connectedAccount}-transactions-${selectedNetworkType}`
@@ -211,11 +210,11 @@ export const useBridgeTransfer = () => {
             if (isDeposit ? t.lowNetworkHash === txHash : t.highNetworkHash === txHash) {
               return {
                 ...t,
-                completionTimestamp: isDeposit ? t.completionTimestamp : Date.now() / 1000,
+                completionTimestamp:  Date.now() / 1000,
                 lowNetworkTimestamp: isDeposit ? t.lowNetworkTimestamp : Date.now() / 1000,
                 newTransaction: true,
-                highNetworkHash: isDeposit ? txRecord.isCCTP ? res?.hash : res?.transactionHash : t.highNetworkHash,
-                lowNetworkHash: !isDeposit ? txRecord.isCCTP ? res?.hash : res?.transactionHash : t.lowNetworkHash,
+                highNetworkHash: isDeposit ? res?.transactionHash : t.highNetworkHash,
+                lowNetworkHash: !isDeposit ? res?.transactionHash : t.lowNetworkHash,
                 status: txRecord.isCCTP
                   ? BridgeTransferStatus.CCTP_REDEEMED
                   : !isDeposit ? BridgeTransferStatus.WITHDRAW_EXECUTED : BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED

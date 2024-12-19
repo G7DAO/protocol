@@ -204,13 +204,13 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                       <div className={styles.gridItemChild} title={deposit.lowNetworkHash}>
                         <div className={styles.typeCompleted}>Finalize</div>
                       </div>
-                      <div className={styles.gridItemInitiate}>{timeAgo(deposit?.highNetworkTimestamp)}</div>
+                      <div className={styles.gridItemInitiate}>{timeAgo(deposit?.completionTimestamp)}</div>
                       {transactionInputs?.tokenSymbol ? (
                         <div className={styles.gridItemInitiate}>
                           {`${transactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs.amount, 6) : deposit.amount} ${transactionInputs.tokenSymbol}`}
                         </div>
                       ) : (
-                        <div className={styles.gridItem}>
+                        <div className={styles.gridItemInitiate}>
                           <div className={styles.loading}>Loading</div>
                         </div>
                       )}
