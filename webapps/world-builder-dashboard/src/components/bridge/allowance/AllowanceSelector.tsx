@@ -1,7 +1,6 @@
 import styles from './AllowanceSelector.module.css'
 import { ethers } from 'ethers'
-import { Combobox, Tooltip, useCombobox } from 'summon-ui/mantine'
-import IconAlertCircle from '@/assets/IconChevronDownToggle'
+import { Combobox, useCombobox } from 'summon-ui/mantine'
 import IconCheck from '@/assets/IconCheck'
 import IconChevronDown from '@/assets/IconChevronDown'
 import { Token } from '@/utils/tokens'
@@ -95,12 +94,6 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled, tok
             value={ethers.utils.formatUnits(ethers.constants.MaxUint256, token.decimals)}
           >
             <div className={styles.optionPercent}>Infinite</div>
-            <div className={styles.optionValue}>
-              (Testnet Only)
-              <Tooltip arrowSize={8} radius={'8px'} label={'For developers and testnet purposes only.'} withArrow>
-                <IconAlertCircle className={styles.chevron} />
-              </Tooltip>
-            </div>
 
             {allowance.eq(ethers.constants.MaxUint256) && <IconCheck />}
           </Combobox.Option>

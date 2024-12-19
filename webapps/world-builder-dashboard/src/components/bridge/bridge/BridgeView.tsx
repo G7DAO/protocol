@@ -92,7 +92,6 @@ const BridgeView = ({
     selectedHighNetwork,
     tokenInformation
   })
-  console.log(estimatedFee)
 
   const {
     data: allowances,
@@ -109,7 +108,6 @@ const BridgeView = ({
       const originChainId = direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId
       const destinationChainId = direction === 'DEPOSIT' ? selectedHighNetwork.chainId : selectedLowNetwork.chainId
       const chainIds = Object.keys(selectedBridgeToken.tokenAddressMap)
-      console.log('in use effect')
       if (!chainIds.includes(String(destinationChainId))) {
         return
       }
@@ -129,7 +127,7 @@ const BridgeView = ({
         setBridger(_bridger)
 
       } catch (e) {
-        console.log(e)
+        console.error(e)
         setNetworkErrorMessage('Cannot bridge between these 2 networks')
       }
     }

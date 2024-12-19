@@ -15,7 +15,7 @@ import { FloatingNotification } from '@/components/notifications/NotificationsDr
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 // Hooks
-import { useNotifications } from '@/hooks/useL2ToL1MessageStatus'
+import { useNotifications, usePendingTransactions } from '@/hooks/useL2ToL1MessageStatus'
 import { useMediaQuery } from '@mantine/hooks'
 
 export type DepositDirection = 'DEPOSIT' | 'WITHDRAW'
@@ -33,12 +33,14 @@ const BridgePage = () => {
   const smallView = useMediaQuery('(max-width: 1199px)')
   const queryClient = useQueryClient()
 
+  const pendingTransactions = usePendingTransactions(connectedAccount)
+
   useEffect(() => {
-    if (connectedAccount) {
+    if (pendingTransactions.data && connectedAccount) {
       queryClient.refetchQueries(['incomingMessages'])
       refetchNewNotifications(connectedAccount)
     }
-  }, [connectedAccount])
+  }, [pendingTransactions.data, connectedAccount])
 
   return (
     <div className={styles.container}>
