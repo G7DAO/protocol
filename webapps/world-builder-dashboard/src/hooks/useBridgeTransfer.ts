@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
-import { getNetworks, L1_MAIN_NETWORK, L1_NETWORK, L2_MAIN_NETWORK, L2_NETWORK } from '../../constants'
+import { getNetworks } from '../../constants'
 import { ethers } from 'ethers'
 import { BridgeTransfer, BridgeTransferStatus, getBridgeTransfer } from 'game7-bridge-sdk'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
@@ -154,28 +154,14 @@ export const useBridgeTransfer = () => {
         throw new Error('transaction hash is undefined')
       }
 
-      let targetChain
-      if (selectedNetworkType === 'Testnet') {
-        if (isDeposit && txRecord.isCCTP && txRecord.isCCTP === true) {
-          targetChain = L2_NETWORK
-        } else {
-          targetChain = originChainId === L2_NETWORK.chainId ? L1_NETWORK : L2_NETWORK
-        }
-        console.log('targetChain', targetChain)
-      }
-      else {
-        if (isDeposit && txRecord.isCCTP && txRecord.isCCTP === true) {
-          targetChain = L2_MAIN_NETWORK
-        } else {
-          targetChain = originChainId === L2_MAIN_NETWORK.chainId ? L1_MAIN_NETWORK : L2_MAIN_NETWORK
-        }
-      }
-      console.log(targetChain.chainId)
+      
+      let targetChain = getNetworks(selectedNetworkType)?.find(network => { network.chainId === destinationChainId })
+
       let provider
       if (window.ethereum) {
         provider = new ethers.providers.Web3Provider(window.ethereum)
         const currentChain = await provider.getNetwork()
-        if (currentChain.chainId !== targetChain.chainId) {
+        if (targetChain && currentChain.chainId !== targetChain.chainId) {
           await switchChain(targetChain)
           provider = new ethers.providers.Web3Provider(window.ethereum)
         }
@@ -193,7 +179,7 @@ export const useBridgeTransfer = () => {
         originSignerOrProviderOrRpc: originRpc
       }, txRecord.isCCTP)
 
-      await _bridgeTransfer.getStatus()
+      _bridgeTransfer.isCctp() && await _bridgeTransfer.getStatus()
       const res: any = await _bridgeTransfer?.execute(signer)
       return { res, txRecord }
     },
@@ -208,7 +194,6 @@ export const useBridgeTransfer = () => {
           let transactions = transactionsString ? JSON.parse(transactionsString) : []
           const newTransactions: TransactionRecord[] = transactions.map((t: TransactionRecord) => {
             if (isDeposit ? t.lowNetworkHash === txHash : t.highNetworkHash === txHash) {
-              console.log(res?.transactionHash)
               return {
                 ...t,
                 completionTimestamp:  Date.now() / 1000,

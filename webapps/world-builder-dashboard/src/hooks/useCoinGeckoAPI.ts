@@ -13,7 +13,6 @@ export const useCoinGeckoAPI = () => {
           throw new Error(`Error: ${res.statusText}`)
         }
         const data = await res.json()
-        console.log('data', data)
         return data
       },
       {

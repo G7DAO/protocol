@@ -252,11 +252,15 @@ export const useMessages = (
 
 export const getNotifications = (transactions: TransactionRecord[]) => {
   const completedTransactions = transactions.filter((tx) =>
-    tx.type === 'DEPOSIT' ? tx.status === 6 || tx.status === 9 || tx.status === 11 || tx.status === 12 : tx.completionTimestamp || tx.claimableTimestamp
+    tx.type === 'DEPOSIT' ? tx.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED || tx.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED || tx.status === BridgeTransferStatus.CCTP_COMPLETE || tx.status === BridgeTransferStatus.CCTP_REDEEMED : tx.completionTimestamp || tx.claimableTimestamp
   )
   const notifications: BridgeNotification[] = completedTransactions
     .map((ct) => {
-      const timestamp = ct.type === 'DEPOSIT' ? ct.status === 6 || ct.status === 9 || ct.status === 12 ? ct.highNetworkTimestamp ?? ct.completionTimestamp ?? Date.now() / 1000 : ct.claimableTimestamp ?? Date.now() / 1000 : ct.completionTimestamp ?? ct.claimableTimestamp ?? Date.now() / 1000
+      const timestamp = ct.type === 'DEPOSIT' ?
+        ct.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED || ct.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED || ct.status === BridgeTransferStatus.CCTP_REDEEMED ?
+          ct.highNetworkTimestamp ?? ct.completionTimestamp ?? Date.now() / 1000
+          : ct.claimableTimestamp ?? Date.now() / 1000
+        : ct.completionTimestamp ?? ct.claimableTimestamp ?? Date.now() / 1000
       const amount = ct.transactionInputs?.tokenSymbol === 'USDC'
         ? ethers.utils.formatUnits(ct.transactionInputs?.amount ?? 0, 6)
         : ethers.utils.formatEther(ct?.transactionInputs?.amount ?? 0)

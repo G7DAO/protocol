@@ -1,5 +1,5 @@
 // External Libraries
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 // Constants
@@ -11,7 +11,7 @@ import { Bridger, BridgeTransferStatus } from 'game7-bridge-sdk'
 // Absolute Imports
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
-import { getTokensForNetwork } from '@/utils/tokens'
+import { getTokensForNetwork, Token } from '@/utils/tokens'
 import { ZERO_ADDRESS } from '@/utils/web3utils'
 import { MultiTokenApproval } from './MultiTokenApproval'
 
@@ -21,7 +21,7 @@ interface ActionButtonProps {
   isDisabled: boolean
   L2L3message?: { destination: string; data: string }
   setErrorMessage: (arg0: string) => void
-  bridger?: Bridger
+  bridger?: Bridger | null
   symbol?: string
   decimals?: number
   balance?: string
@@ -64,13 +64,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   const networks = getNetworks(selectedNetworkType)
   const [showApproval, setShowApproval] = useState(false)
   const [startingTokenIndex, setStartingTokenIndex] = useState(0)
-  const [allowancesVerified, setAllowancesVerified] = useState(false)
-
-
-  useEffect(() => {
-    console.log('bridger changed')
-    setAllowancesVerified(false)
-  }, [bridger])
 
   const checkAllowances = async () => {
     if (!bridger || !connectedAccount) return null
@@ -84,7 +77,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     if (bridgeAllowance === null) {
       const gasFeesAmount = gasFees?.[1] ? ethers.utils.parseUnits(gasFees[1], 18) : amountBN
       const needsNativeTokenApproval = nativeAllowance !== null ? nativeAllowance?.lt(gasFeesAmount) : false
-      console.log('needsNativeTokenApproval', needsNativeTokenApproval)
       if (needsNativeTokenApproval) {
         setStartingTokenIndex(0)
         setShowApproval(true)
@@ -94,7 +86,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       const needsBridgeTokenApproval = bridgeAllowance?.lt(amountBN)
       const gasFeesAmount = gasFees?.[1] ? ethers.utils.parseUnits(gasFees[1], 18) : amountBN
       const needsNativeTokenApproval = nativeAllowance !== null ? nativeAllowance?.lt(gasFeesAmount) : false
-      console.log('needsBridgeTokenApproval', needsBridgeTokenApproval)
       if (needsBridgeTokenApproval || needsNativeTokenApproval) {
         setStartingTokenIndex(needsBridgeTokenApproval ? 0 : 1)
         setShowApproval(true)
@@ -102,7 +93,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       }
     }
 
-    setAllowancesVerified(true)
     return true
   }
 
@@ -121,6 +111,9 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       return 'Checking allowances...'
     }
 
+    // if (!allowancesVerified)
+    //   return 'Approve & Submit'
+
     return 'Submit'
   }
 
@@ -137,8 +130,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       return
     }
     setErrorMessage('')
-
-    setAllowancesVerified(false)
 
     const allowancesOk = await checkAllowances()
     if (allowancesOk) {
@@ -160,16 +151,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       )?.address
       const amountToSend = ethers.utils.parseUnits(amount, decimals)
 
-      console.log('Debug Transfer Details:', {
-        tokenAddress: selectedBridgeToken.address,
-        tokenSymbol: selectedBridgeToken.symbol,
-        decimals: decimals,
-        rawAmount: amount,
-        parsedAmount: amountToSend.toString(),
-        fromNetwork: selectedLowNetwork.chainId,
-        toNetwork: selectedHighNetwork.chainId,
-        connectedAccount: connectedAccount
-      })
       if (bridger?.isDeposit) {
         const isCCTP = bridger?.isCctp()
         const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })
@@ -224,7 +205,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           if (transactionsString) {
             transactions = JSON.parse(transactionsString)
           }
-          console.log(record)
           transactions.push(record)
           localStorage.setItem(
             `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
@@ -249,34 +229,31 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   )
 
   const handleApprovalComplete = () => {
-    console.log('=== ActionButton: handleApprovalComplete ===')
-    console.log('Setting allowancesVerified to true')
-    setShowApproval(false)
-    setAllowancesVerified(true)
     transfer.mutate(amount)
   }
 
-  const tokens = (() => {
+  const tokenList = (() => {
     const nativeToken = getTokensForNetwork(
       direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId,
       connectedAccount
     ).find(
-      token => direction === 'DEPOSIT' ?
+      (token) => direction === 'DEPOSIT' ?
         token.symbol === selectedHighNetwork.nativeCurrency?.symbol :
         token.symbol === selectedLowNetwork.nativeCurrency?.symbol
-    )!
+    )
+    
     if (bridgeAllowance === null && nativeAllowance !== null) {
-      return [nativeToken]
+      return [nativeToken].filter((token): token is Token => token !== undefined)
     }
     if (nativeAllowance === null && bridgeAllowance !== null) {
-      return [selectedBridgeToken]
+      return [selectedBridgeToken].filter((token): token is Token => token !== undefined)
     }
 
     if (nativeAllowance === null && bridgeAllowance === null) {
       return []
     }
 
-    return [selectedBridgeToken, nativeToken]
+    return [selectedBridgeToken, nativeToken].filter((token): token is Token => token !== undefined)
   })()
 
   return (
@@ -302,10 +279,10 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           setShowApproval={setShowApproval}
           balance={balance}
           nativeBalance={nativeBalance}
-          bridger={bridger}
+          bridger={bridger ?? null}
           decimals={decimals}
           startingTokenIndex={startingTokenIndex}
-          tokens={tokens}
+          tokens={tokenList}
           amount={amount}
           onApprovalComplete={handleApprovalComplete}
           gasFees={gasFees ?? []}
