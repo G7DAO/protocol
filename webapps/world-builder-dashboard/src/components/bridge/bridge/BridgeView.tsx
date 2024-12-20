@@ -40,7 +40,7 @@ const BridgeView = ({
   direction: DepositDirection
   setDirection: (arg0: DepositDirection) => void
 }) => {
-  const [bridger, setBridger] = useState<Bridger>()
+  const [bridger, setBridger] = useState<Bridger | null>(null)
 
   const [value, setValue] = useState('0')
   const [message, setMessage] = useState<{ destination: string; data: string }>({ destination: '', data: '' })
@@ -59,6 +59,7 @@ const BridgeView = ({
     selectedBridgeToken,
     selectedNetworkType,
     setSelectedNativeToken,
+    selectedNativeToken
   } = useBlockchainContext()
 
   const { isFetching: isFetchingTokenInformation, data: tokenInformation } = useTokenInformation({
@@ -228,7 +229,7 @@ const BridgeView = ({
         errorMessage={inputErrorMessages.value}
         setErrorMessage={(msg) => setInputErrorMessages((prev) => ({ ...prev, value: msg }))}
         selectedChainId={direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId}
-        gasFee={estimatedFee.data?.totalFee ?? ""}
+        gasFee={estimatedFee.data?.parentFee ?? ""}
       />
       {direction === 'DEPOSIT' &&
         selectedLowNetwork.chainId === L2_NETWORK.chainId &&
@@ -248,12 +249,17 @@ const BridgeView = ({
           />
         )}
       <TransactionSummary
+        direction={direction}
         address={connectedAccount}
+        nativeBalance={Number(nativeTokenInformation?.tokenBalance)}
         transferTime={
           direction === 'DEPOSIT'
             ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
             : `~${Math.floor((selectedHighNetwork.challengePeriod ?? 0) / 60)} min`
         }
+        fee={Number(estimatedFee.data?.parentFee ?? 0)}
+        childFee={Number(estimatedFee.data?.childFee ?? 0)}
+        isEstimatingFee={estimatedFee.isFetching}
         value={Number(value)}
         ethRate={ethRate?.ethereum?.usd ?? 0}
         tokenRate={
@@ -264,6 +270,15 @@ const BridgeView = ({
               : coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd ?? 0
         }
         tokenSymbol={tokenInformation?.symbol ?? ''}
+        gasNativeTokenSymbol={
+          selectedNativeToken?.symbol ?? ''
+        }
+        gasChildNativeTokenSymbol={
+          selectedHighNetwork.nativeCurrency?.symbol ?? ''
+        }
+        selectedLowChain={selectedLowNetwork}
+        selectedHighChain={selectedHighNetwork}
+
       />
       {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
       {direction === 'DEPOSIT' && <div className={styles.manualGasMessageContainer}>
@@ -287,7 +302,7 @@ const BridgeView = ({
         isDisabled={!!inputErrorMessages.value || !!inputErrorMessages.destination || !!inputErrorMessages.data}
         setErrorMessage={setNetworkErrorMessage}
         L2L3message={isMessageExpanded ? message : { data: '', destination: '' }}
-        bridger={bridger}
+        bridger={bridger ?? null}
         symbol={tokenInformation?.symbol ?? ''}
         decimals={tokenInformation?.decimalPlaces ?? 18}
         balance={tokenInformation?.tokenBalance}
