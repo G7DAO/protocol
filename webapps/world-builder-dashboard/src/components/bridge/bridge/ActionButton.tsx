@@ -68,7 +68,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 
 
   useEffect(() => {
-    console.log('bridger changed')
     setAllowancesVerified(false)
   }, [bridger])
 
@@ -84,7 +83,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     if (bridgeAllowance === null) {
       const gasFeesAmount = gasFees?.[1] ? ethers.utils.parseUnits(gasFees[1], 18) : amountBN
       const needsNativeTokenApproval = nativeAllowance !== null ? nativeAllowance?.lt(gasFeesAmount) : false
-      console.log('needsNativeTokenApproval', needsNativeTokenApproval)
       if (needsNativeTokenApproval) {
         setStartingTokenIndex(0)
         setShowApproval(true)
@@ -94,7 +92,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       const needsBridgeTokenApproval = bridgeAllowance?.lt(amountBN)
       const gasFeesAmount = gasFees?.[1] ? ethers.utils.parseUnits(gasFees[1], 18) : amountBN
       const needsNativeTokenApproval = nativeAllowance !== null ? nativeAllowance?.lt(gasFeesAmount) : false
-      console.log('needsBridgeTokenApproval', needsBridgeTokenApproval)
       if (needsBridgeTokenApproval || needsNativeTokenApproval) {
         setStartingTokenIndex(needsBridgeTokenApproval ? 0 : 1)
         setShowApproval(true)
@@ -160,16 +157,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       )?.address
       const amountToSend = ethers.utils.parseUnits(amount, decimals)
 
-      console.log('Debug Transfer Details:', {
-        tokenAddress: selectedBridgeToken.address,
-        tokenSymbol: selectedBridgeToken.symbol,
-        decimals: decimals,
-        rawAmount: amount,
-        parsedAmount: amountToSend.toString(),
-        fromNetwork: selectedLowNetwork.chainId,
-        toNetwork: selectedHighNetwork.chainId,
-        connectedAccount: connectedAccount
-      })
       if (bridger?.isDeposit) {
         const isCCTP = bridger?.isCctp()
         const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })
@@ -224,7 +211,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           if (transactionsString) {
             transactions = JSON.parse(transactionsString)
           }
-          console.log(record)
           transactions.push(record)
           localStorage.setItem(
             `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
@@ -249,8 +235,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   )
 
   const handleApprovalComplete = () => {
-    console.log('=== ActionButton: handleApprovalComplete ===')
-    console.log('Setting allowancesVerified to true')
     setShowApproval(false)
     setAllowancesVerified(true)
     transfer.mutate(amount)

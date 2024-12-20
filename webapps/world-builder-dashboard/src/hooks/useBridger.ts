@@ -73,13 +73,6 @@ export const useBridger = () => {
                         return { parentFee: '0', childFee: '0', totalFee: '0' }
                     }
 
-                    console.log("Attempting fee estimation with:", {
-                        parsedValue: parsedValue.toString(),
-                        originProvider,
-                        connectedAccount,
-                        destinationProvider
-                    })
-
                     return await retryWithExponentialBackoff(async () => {
                         const gasAndFee = await bridger.getGasAndFeeEstimation(
                             parsedValue,
@@ -88,8 +81,6 @@ export const useBridger = () => {
                             destinationProvider
                         )
 
-                        console.log("Fee estimation result:", gasAndFee)
-
                         const parentFee = ethers.utils.formatEther(gasAndFee?.estimatedFee ?? '0')
                         const childFee = gasAndFee?.childNetworkEstimation
                             ? ethers.utils.formatEther(gasAndFee.childNetworkEstimation.estimatedFee)
@@ -97,8 +88,7 @@ export const useBridger = () => {
 
                         return {
                             parentFee,
-                            childFee,
-                            totalFee: String(Number(parentFee) + Number(childFee))
+                            childFee
                         }
                     })
                 } catch (e) {
@@ -136,7 +126,6 @@ export const useBridger = () => {
 
                 const bridgeTokenAllowance = await bridger.getAllowance(rpc, connectedAccount)
                 const nativeTokenAllowance = await bridger.getNativeAllowance(rpc, connectedAccount)
-                console.log(bridgeTokenAllowance?.toString(), nativeTokenAllowance?.toString())
 
                 return {
                     bridgeTokenAllowance,
