@@ -383,4 +383,8 @@ export class BridgeTransfer {
     }
   }
 
+  public isCctp() {
+    return false;
+  }
+
 }

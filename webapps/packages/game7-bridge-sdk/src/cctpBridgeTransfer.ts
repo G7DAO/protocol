@@ -189,4 +189,8 @@ export class CctpBridgeTransfer extends BridgeTransfer {
         // TODO: Implement CCTP-specific logic to fetch the deposit status.
         throw new Error('CCTP-specific getDepositStatus method not implemented.');
     }
+
+    public isCctp() {
+        return true;
+    }
 }
