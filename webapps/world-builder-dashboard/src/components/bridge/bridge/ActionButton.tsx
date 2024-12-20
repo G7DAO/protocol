@@ -21,7 +21,7 @@ interface ActionButtonProps {
   isDisabled: boolean
   L2L3message?: { destination: string; data: string }
   setErrorMessage: (arg0: string) => void
-  bridger?: Bridger | null
+  bridger: Bridger
   symbol?: string
   decimals?: number
   balance?: string
@@ -253,7 +253,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       return []
     }
 
-    return [selectedBridgeToken, nativeToken].filter((token): token is Token => token !== undefined)
+    return [selectedBridgeToken, nativeToken].filter(Boolean) as Token[]
   })()
 
   return (
