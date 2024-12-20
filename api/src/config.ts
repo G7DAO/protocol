@@ -82,6 +82,8 @@ export const bridgeConfig: {
     l3Token: string;
     l2Token: string;
     l1Token: string;
+    l1TokenName: string;
+    l2TokenName: string;
     nativeToken: string;
   };
 } = {
@@ -105,7 +107,9 @@ export const bridgeConfig: {
     l2rleationship: { parentNetworkChainId: 11155111, childNetworkChainId: 421614 },
     l3Token: "0x10adBf84548F923577Be12146eAc104C899D1E75", // l3 native token
     l2Token: "0x10adBf84548F923577Be12146eAc104C899D1E75", // l2 l3 token
-    l1Token: "0x0000000000000000000000000000000000000000", // l1 l3 token
+    l1Token: "0xe2ef69e4af84dbefb0a75f8491f27a52bf047b01", // l1 l3 token
+    l1TokenName: "TG7T",
+    l2TokenName: "TG7T",
     nativeToken: "0x0000000000000000000000000000000000000000" // native token
   },
   "game7": {
@@ -128,7 +132,9 @@ export const bridgeConfig: {
     l2rleationship: { parentNetworkChainId: 1, childNetworkChainId: 42161 },
     l3Token: "F18e4466F26B4cA55bbAb890b314a54976E45B17", // l3 native token
     l2Token: "F18e4466F26B4cA55bbAb890b314a54976E45B17", // l2 l3 token
-    l1Token: "0x0000000000000000000000000000000000000000", // l1 l3 token
+    l1Token: "0x12c88a3c30a7aabc1dd7f2c08a97145f5dccd830", // l1 l3 token
+    l1TokenName: "G7",
+    l2TokenName: "G7",
     nativeToken: "0x0000000000000000000000000000000000000000" // native token
   },
 };
