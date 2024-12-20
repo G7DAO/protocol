@@ -21,7 +21,7 @@ interface ActionButtonProps {
   isDisabled: boolean
   L2L3message?: { destination: string; data: string }
   setErrorMessage: (arg0: string) => void
-  bridger: Bridger
+  bridger: Bridger | null
   symbol?: string
   decimals?: number
   balance?: string

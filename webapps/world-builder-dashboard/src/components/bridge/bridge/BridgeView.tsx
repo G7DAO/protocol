@@ -80,10 +80,8 @@ const BridgeView = ({
     setSelectedBridgeToken(token)
   }
   const { getEstimatedFee, useAllowances } = useBridger()
-
-  const originChainId = direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId
-  const destinationChainId = direction === 'DEPOSIT' ? selectedHighNetwork.chainId : selectedLowNetwork.chainId
-  const [bridger, setBridger] = useState<Bridger>(getBridger(originChainId, destinationChainId, selectedBridgeToken.tokenAddressMap))
+  
+  const [bridger, setBridger] = useState<Bridger | null>(null)
 
 
   const estimatedFee = getEstimatedFee({
