@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
-import { getNetworks, L1_MAIN_NETWORK, L1_NETWORK, L2_MAIN_NETWORK, L2_NETWORK } from '../../constants'
+import { getNetworks } from '../../constants'
 import { ethers } from 'ethers'
 import { BridgeTransfer, BridgeTransferStatus, getBridgeTransfer } from 'game7-bridge-sdk'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
@@ -179,7 +179,7 @@ export const useBridgeTransfer = () => {
         originSignerOrProviderOrRpc: originRpc
       }, txRecord.isCCTP)
 
-      txRecord.isCCTP && await _bridgeTransfer.getStatus()
+      _bridgeTransfer.isCctp() && await _bridgeTransfer.getStatus()
       const res: any = await _bridgeTransfer?.execute(signer)
       return { res, txRecord }
     },

@@ -1,5 +1,5 @@
 // External Libraries
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 // Constants
@@ -64,11 +64,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   const networks = getNetworks(selectedNetworkType)
   const [showApproval, setShowApproval] = useState(false)
   const [startingTokenIndex, setStartingTokenIndex] = useState(0)
-  const [allowancesVerified, setAllowancesVerified] = useState(false)
-
-  useEffect(() => {
-    setAllowancesVerified(false)
-  }, [bridger])
 
   const checkAllowances = async () => {
     if (!bridger || !connectedAccount) return null
@@ -98,7 +93,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       }
     }
 
-    setAllowancesVerified(true)
     return true
   }
 
@@ -117,6 +111,9 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       return 'Checking allowances...'
     }
 
+    // if (!allowancesVerified)
+    //   return 'Approve & Submit'
+
     return 'Submit'
   }
 
@@ -133,8 +130,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       return
     }
     setErrorMessage('')
-
-    setAllowancesVerified(false)
 
     const allowancesOk = await checkAllowances()
     if (allowancesOk) {
@@ -234,12 +229,10 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   )
 
   const handleApprovalComplete = () => {
-    setShowApproval(false)
-    setAllowancesVerified(true)
     transfer.mutate(amount)
   }
 
-  const tokens = (() => {
+  const tokenList = (() => {
     const nativeToken = getTokensForNetwork(
       direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId,
       connectedAccount
@@ -249,8 +242,18 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         token.symbol === selectedLowNetwork.nativeCurrency?.symbol
     )
     
-    const tokenList = [selectedBridgeToken, nativeToken].filter((token): token is Token => token !== undefined)
-    return tokenList
+    if (bridgeAllowance === null && nativeAllowance !== null) {
+      return [nativeToken].filter((token): token is Token => token !== undefined)
+    }
+    if (nativeAllowance === null && bridgeAllowance !== null) {
+      return [selectedBridgeToken].filter((token): token is Token => token !== undefined)
+    }
+
+    if (nativeAllowance === null && bridgeAllowance === null) {
+      return []
+    }
+
+    return [selectedBridgeToken, nativeToken].filter((token): token is Token => token !== undefined)
   })()
 
   return (
@@ -279,7 +282,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           bridger={bridger ?? null}
           decimals={decimals}
           startingTokenIndex={startingTokenIndex}
-          tokens={tokens}
+          tokens={tokenList}
           amount={amount}
           onApprovalComplete={handleApprovalComplete}
           gasFees={gasFees ?? []}
