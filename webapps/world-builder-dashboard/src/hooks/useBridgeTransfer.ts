@@ -13,7 +13,7 @@ interface UseTransferDataProps {
 }
 
 export const useBridgeTransfer = () => {
-  const { connectedAccount, selectedNetworkType, switchChain } = useBlockchainContext()
+  const { connectedAccount, selectedNetworkType, getProvider } = useBlockchainContext()
   // Retry function with exponential backoff for handling 429 errors
   const retryWithExponentialBackoff = async (fn: () => Promise<any>, retries = 20, delay = 1000, jitterFactor = 0.5) => {
     let attempt = 0
@@ -155,19 +155,11 @@ export const useBridgeTransfer = () => {
       }
 
       
-      let targetChain = getNetworks(selectedNetworkType)?.find(network => { network.chainId === destinationChainId })
-
-      let provider
-      if (window.ethereum) {
-        provider = new ethers.providers.Web3Provider(window.ethereum)
-        const currentChain = await provider.getNetwork()
-        if (targetChain && currentChain.chainId !== targetChain.chainId) {
-          await switchChain(targetChain)
-          provider = new ethers.providers.Web3Provider(window.ethereum)
-        }
-      } else {
-        throw new Error('Wallet is not installed!')
+      const targetChain = getNetworks(selectedNetworkType)?.find(network => network.chainId === destinationChainId);
+      if (!targetChain) {
+        throw new Error('Target chain is undefined');
       }
+      const provider = await getProvider(targetChain);
       const signer = provider.getSigner()
 
       // Bridge Transfer execute
