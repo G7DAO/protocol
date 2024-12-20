@@ -253,7 +253,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       return []
     }
 
-    return [selectedBridgeToken, nativeToken].filter((token): token is Token => token !== undefined)
+    return [selectedBridgeToken, nativeToken].filter(Boolean) as Token[]
   })()
 
   return (
