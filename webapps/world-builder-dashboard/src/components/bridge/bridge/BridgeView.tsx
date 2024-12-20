@@ -40,8 +40,6 @@ const BridgeView = ({
   direction: DepositDirection
   setDirection: (arg0: DepositDirection) => void
 }) => {
-  const [bridger, setBridger] = useState<Bridger | null>(null)
-
   const [value, setValue] = useState('0')
   const [message, setMessage] = useState<{ destination: string; data: string }>({ destination: '', data: '' })
   const [isMessageExpanded, setIsMessageExpanded] = useState(false)
@@ -81,8 +79,12 @@ const BridgeView = ({
   const handleTokenChange = async (token: Token) => {
     setSelectedBridgeToken(token)
   }
-
   const { getEstimatedFee, useAllowances } = useBridger()
+
+  const originChainId = direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId
+  const destinationChainId = direction === 'DEPOSIT' ? selectedHighNetwork.chainId : selectedLowNetwork.chainId
+  const [bridger, setBridger] = useState<Bridger>(getBridger(originChainId, destinationChainId, selectedBridgeToken.tokenAddressMap))
+
 
   const estimatedFee = getEstimatedFee({
     bridger,
@@ -302,7 +304,7 @@ const BridgeView = ({
         isDisabled={!!inputErrorMessages.value || !!inputErrorMessages.destination || !!inputErrorMessages.data}
         setErrorMessage={setNetworkErrorMessage}
         L2L3message={isMessageExpanded ? message : { data: '', destination: '' }}
-        bridger={bridger ?? null}
+        bridger={bridger}
         symbol={tokenInformation?.symbol ?? ''}
         decimals={tokenInformation?.decimalPlaces ?? 18}
         balance={tokenInformation?.tokenBalance}

@@ -17,7 +17,7 @@ interface MultiTokenApprovalProps {
   setShowApproval: (showApproval: boolean) => void
   balance: string | undefined
   nativeBalance: string | undefined
-  bridger: Bridger | null
+  bridger: Bridger
   decimals: number | undefined
   tokens: Token[]
   startingTokenIndex: number

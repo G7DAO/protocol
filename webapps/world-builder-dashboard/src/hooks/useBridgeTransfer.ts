@@ -2,7 +2,6 @@ import { useMutation, useQueryClient } from 'react-query'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import { getNetworks } from '../../constants'
-import { ethers } from 'ethers'
 import { BridgeTransfer, BridgeTransferStatus, getBridgeTransfer } from 'game7-bridge-sdk'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
@@ -155,7 +154,7 @@ export const useBridgeTransfer = () => {
       }
 
       
-      const targetChain = getNetworks(selectedNetworkType)?.find(network => network.chainId === destinationChainId);
+      const targetChain = getNetworks(selectedNetworkType)?.find((network) => network.chainId === destinationChainId);
       if (!targetChain) {
         throw new Error('Target chain is undefined');
       }

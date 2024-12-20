@@ -42,7 +42,7 @@ export const useBridger = () => {
         selectedHighNetwork,
         tokenInformation
     }: {
-        bridger: Bridger | null
+        bridger: Bridger
         value: string
         direction: 'DEPOSIT' | 'WITHDRAW'
         selectedLowNetwork: NetworkInterface
@@ -111,7 +111,7 @@ export const useBridger = () => {
         selectedHighNetwork,
         connectedAccount
     }: {
-        bridger: Bridger | null
+        bridger: Bridger
         direction: DepositDirection
         selectedLowNetwork: NetworkInterface
         selectedHighNetwork: NetworkInterface
