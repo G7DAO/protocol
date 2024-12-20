@@ -11,7 +11,7 @@ import { Bridger, BridgeTransferStatus } from 'game7-bridge-sdk'
 // Absolute Imports
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
-import { getTokensForNetwork } from '@/utils/tokens'
+import { getTokensForNetwork, Token } from '@/utils/tokens'
 import { ZERO_ADDRESS } from '@/utils/web3utils'
 import { MultiTokenApproval } from './MultiTokenApproval'
 
@@ -21,7 +21,7 @@ interface ActionButtonProps {
   isDisabled: boolean
   L2L3message?: { destination: string; data: string }
   setErrorMessage: (arg0: string) => void
-  bridger?: Bridger
+  bridger?: Bridger | null
   symbol?: string
   decimals?: number
   balance?: string
@@ -65,7 +65,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   const [showApproval, setShowApproval] = useState(false)
   const [startingTokenIndex, setStartingTokenIndex] = useState(0)
   const [allowancesVerified, setAllowancesVerified] = useState(false)
-
 
   useEffect(() => {
     setAllowancesVerified(false)
@@ -245,22 +244,13 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId,
       connectedAccount
     ).find(
-      token => direction === 'DEPOSIT' ?
+      (token) => direction === 'DEPOSIT' ?
         token.symbol === selectedHighNetwork.nativeCurrency?.symbol :
         token.symbol === selectedLowNetwork.nativeCurrency?.symbol
-    )!
-    if (bridgeAllowance === null && nativeAllowance !== null) {
-      return [nativeToken]
-    }
-    if (nativeAllowance === null && bridgeAllowance !== null) {
-      return [selectedBridgeToken]
-    }
-
-    if (nativeAllowance === null && bridgeAllowance === null) {
-      return []
-    }
-
-    return [selectedBridgeToken, nativeToken]
+    )
+    
+    const tokenList = [selectedBridgeToken, nativeToken].filter((token): token is Token => token !== undefined)
+    return tokenList
   })()
 
   return (
@@ -286,7 +276,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           setShowApproval={setShowApproval}
           balance={balance}
           nativeBalance={nativeBalance}
-          bridger={bridger}
+          bridger={bridger ?? null}
           decimals={decimals}
           startingTokenIndex={startingTokenIndex}
           tokens={tokens}

@@ -42,11 +42,11 @@ export const useBridger = () => {
         selectedHighNetwork,
         tokenInformation
     }: {
-        bridger: any
+        bridger: Bridger | null
         value: string
         direction: 'DEPOSIT' | 'WITHDRAW'
-        selectedLowNetwork: any
-        selectedHighNetwork: any
+        selectedLowNetwork: NetworkInterface
+        selectedHighNetwork: NetworkInterface
         tokenInformation?: { decimalPlaces?: number }
     }) => {
         return useQuery(
@@ -70,7 +70,7 @@ export const useBridger = () => {
 
                     if (!originProvider) {
                         console.warn("Missing origin provider, returning zero fees")
-                        return { parentFee: '0', childFee: '0', totalFee: '0' }
+                        return { parentFee: '0', childFee: '0' }
                     }
 
                     return await retryWithExponentialBackoff(async () => {
@@ -111,7 +111,7 @@ export const useBridger = () => {
         selectedHighNetwork,
         connectedAccount
     }: {
-        bridger: Bridger | undefined
+        bridger: Bridger | null
         direction: DepositDirection
         selectedLowNetwork: NetworkInterface
         selectedHighNetwork: NetworkInterface
