@@ -12,6 +12,7 @@ import {
   ChildTransactionReceipt
 } from '@arbitrum/sdk'
 import { ParentContractCallTransactionReceipt } from '@arbitrum/sdk/dist/lib/message/ParentTransaction'
+import { BridgeTransferStatus } from 'game7-bridge-sdk'
 
 const eventABI = [
   {
@@ -251,16 +252,24 @@ export const useMessages = (
 
 export const getNotifications = (transactions: TransactionRecord[]) => {
   const completedTransactions = transactions.filter((tx) =>
-    tx.type === 'DEPOSIT' ? tx.status === 6 || tx.status === 9 : tx.completionTimestamp || tx.claimableTimestamp
+    tx.type === 'DEPOSIT' ? tx.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED || tx.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED || tx.status === BridgeTransferStatus.CCTP_COMPLETE || tx.status === BridgeTransferStatus.CCTP_REDEEMED : tx.completionTimestamp || tx.claimableTimestamp
   )
   const notifications: BridgeNotification[] = completedTransactions
     .map((ct) => {
-      const timestamp = ct.completionTimestamp ?? ct.claimableTimestamp ?? Date.now() / 1000
+      const timestamp = ct.type === 'DEPOSIT' ?
+        ct.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED || ct.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED || ct.status === BridgeTransferStatus.CCTP_REDEEMED ?
+          ct.highNetworkTimestamp ?? ct.completionTimestamp ?? Date.now() / 1000
+          : ct.claimableTimestamp ?? Date.now() / 1000
+        : ct.completionTimestamp ?? ct.claimableTimestamp ?? Date.now() / 1000
+      const amount = ct.transactionInputs?.tokenSymbol === 'USDC'
+        ? ethers.utils.formatUnits(ct.transactionInputs?.amount ?? 0, 6)
+        : ethers.utils.formatEther(ct?.transactionInputs?.amount ?? 0)
+        ?? ct.amount
       return {
         status: ct.isFailed ? 'FAILED' : ct.completionTimestamp ? 'COMPLETED' : 'CLAIMABLE',
         type: ct.type,
+        amount: amount,
         timestamp,
-        amount: ct.amount,
         to: (ct.type === 'WITHDRAWAL' ? ct.lowNetworkChainId : ct.highNetworkChainId) ?? 1,
         seen: !ct.newTransaction,
         tx: ct
@@ -323,42 +332,27 @@ export const usePendingTransactions = (connectedAccount: string | undefined): Us
         if (!Array.isArray(transactions)) {
           return false
         }
-        const pendingTransactions: TransactionRecord[] = transactions.filter(
-          (t: { completionTimestamp: number }) => !t.completionTimestamp
-        )
-        const completedTransactions = transactions.filter((t: { completionTimestamp: number }) => t.completionTimestamp)
-        const newCompletedTransactions: TransactionRecord[] = []
+
+        const updatedTransactions: TransactionRecord[] = []
+
         for (const t of transactions) {
           if (t.type === 'DEPOSIT') {
-            const status = await fetchDepositStatus(t as TransactionRecord, selectedNetworkType)
-            if (status?.highNetworkTimestamp) {
-              newCompletedTransactions.push({
-                ...t,
-                completionTimestamp: status.highNetworkTimestamp,
-                newTransaction: true
-              })
+            if (t.status === BridgeTransferStatus.CCTP_COMPLETE) {
+              updatedTransactions.push({ ...t, claimableTimestamp: Date.now() / 1000, newTransaction: true })
             }
           }
           if (t.type === 'WITHDRAWAL') {
-            const status = await fetchL2ToL1MessageStatus(t as TransactionRecord, selectedNetworkType)
-            if (status?.status === ChildToParentMessageStatus.CONFIRMED) {
-              if (!t.claimableTimestamp) {
-                newCompletedTransactions.push({ ...t, claimableTimestamp: Date.now() / 1000, newTransaction: true })
-              }
-            }
-            if (status?.status === ChildToParentMessageStatus.EXECUTED) {
-              newCompletedTransactions.push({ ...t, completionTimestamp: Date.now() / 1000, newTransaction: true })
+            if (t.status === ChildToParentMessageStatus.CONFIRMED || t.status === BridgeTransferStatus.CCTP_COMPLETE) {
+              updatedTransactions.push({ ...t, claimableTimestamp: Date.now() / 1000, newTransaction: true })
             }
           }
         }
-        if (newCompletedTransactions.length > 0) {
-          const newPendingTransactions = pendingTransactions.filter(
-            (pt) =>
-              !newCompletedTransactions.some((ct) => {
-                return ct.lowNetworkHash === pt.lowNetworkHash && ct.highNetworkHash === pt.highNetworkHash
-              })
-          )
-          const allTransactions = [...completedTransactions, ...newCompletedTransactions, ...newPendingTransactions]
+
+        if (updatedTransactions.length > 0) {
+          const allTransactions = transactions.map((t) => {
+            const updatedTransaction = updatedTransactions.find((ut) => ut.lowNetworkHash === t.lowNetworkHash && ut.highNetworkHash === t.highNetworkHash)
+            return updatedTransaction ? updatedTransaction : t
+          })
           const allTransactionsString = JSON.stringify(allTransactions)
           localStorage.setItem(storageKey, allTransactionsString)
           return true

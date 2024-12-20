@@ -57,7 +57,8 @@
   font-size: 14px;
   font-style: normal;
   font-weight: 600;
-  line-height: 20px; /* 142.857% */
+  line-height: 20px;
+  /* 142.857% */
   /* Shadow/xs */
   box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
   transition: background-color 0.2s ease-in-out;
@@ -92,10 +93,25 @@
 
 .withdrawsGrid {
   display: grid;
-  grid-template-columns: repeat(7, auto);
+  grid-template-columns: repeat(8, auto);
   width: 100%;
+  max-width: 1096px;
   overflow-y: auto;
   max-height: calc(100vh - 282px);
+}
+
+.transactionsHeaderEmpty {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  height: 44px;
+  padding: 12px 24px;
+  align-items: center;
+  gap: 12px;
+  align-self: stretch;
+  background: var(--Gray-60, #f9fafb);
+  color: var(--Gray-600, #475467);
 }
 
 .noTransactions {
@@ -112,7 +128,8 @@
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
-  line-height: 20px; /* 142.857% */
+  line-height: 20px;
+  /* 142.857% */
   grid-column: span 7;
 }
 
@@ -130,7 +147,8 @@
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
-  line-height: 20px; /* 142.857% */
+  line-height: 20px;
+  /* 142.857% */
   border-bottom: 1px solid var(--Gray-200, #eaecf0);
 }
 
@@ -147,7 +165,8 @@
   font-size: 14px;
   font-style: normal;
   font-weight: 600;
-  line-height: 20px; /* 142.857% */
+  line-height: 20px;
+  /* 142.857% */
 }
 
 .gridItemChild {
@@ -163,7 +182,8 @@
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
-  line-height: 20px; /* 142.857% */
+  line-height: 20px;
+  /* 142.857% */
   border-bottom: 1px solid var(--Gray-200, #eaecf0);
 }
 
@@ -211,7 +231,8 @@
   font-size: 12px;
   font-style: normal;
   font-weight: 500;
-  line-height: 18px; /* 150% */
+  line-height: 18px;
+  /* 150% */
 }
 
 .typeWithdrawal {
@@ -231,7 +252,8 @@
   font-size: 12px;
   font-style: normal;
   font-weight: 500;
-  line-height: 18px; /* 150% */
+  line-height: 18px;
+  /* 150% */
 }
 
 .typeCompleted {
@@ -246,7 +268,8 @@
   font-size: 12px;
   font-style: normal;
   font-weight: 500;
-  line-height: 18px; /* 150% */
+  line-height: 18px;
+  /* 150% */
 }
 
 .typeDeposit {
@@ -265,7 +288,8 @@
   font-size: 12px;
   font-style: normal;
   font-weight: 500;
-  line-height: 18px; /* 150% */
+  line-height: 18px;
+  /* 150% */
 }
 
 .pending,
@@ -308,9 +332,11 @@
   0% {
     background-color: #393939;
   }
+
   50% {
     background-color: #4f4f4f;
   }
+
   100% {
     background-color: #393939;
   }
@@ -356,7 +382,8 @@
   font-size: 14px;
   font-style: normal;
   font-weight: 600;
-  line-height: 20px; /* 142.857% */
+  line-height: 20px;
+  /* 142.857% */
   cursor: pointer;
   white-space: nowrap;
   width: 100px;
@@ -370,15 +397,19 @@
   0% {
     transform: rotate(0deg) scale(0.9);
   }
+
   25% {
     transform: rotate(90deg) scale(1.05);
   }
+
   50% {
     transform: rotate(180deg) scale(1.2);
   }
+
   75% {
     transform: rotate(270deg) scale(1.05);
   }
+
   100% {
     transform: rotate(360deg) scale(0.9);
   }
@@ -395,4 +426,23 @@
 
 .arrowUp {
   stroke: var(--Arrow-Up, #fff);
+}
+
+.emptyCell {
+  display: flex;
+  height: 72px;
+  padding: 16px 24px;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--Gray-200, #eaecf0);
+}
+
+.emptyCellInitiate {
+  display: flex;
+  height: 72px;
+  padding: 16px 24px;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--Gray-200, #eaecf0);
+  background-color: var(--Base-White, #fff);
 }

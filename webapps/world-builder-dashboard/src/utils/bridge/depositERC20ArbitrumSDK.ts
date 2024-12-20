@@ -42,6 +42,7 @@ export interface TransactionRecord {
   ETA?: number
   tokenAddress?: string
   transactionInputs?: BridgeTransferInfo
+  isCCTP?: boolean
 }
 
 export const depositERC20ArbitrumSDK = async (

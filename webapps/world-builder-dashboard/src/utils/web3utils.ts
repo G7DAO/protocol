@@ -47,12 +47,14 @@ export const formatBigNumber = (bigNumber: ethers.BigNumber, lengthLimit = 25, u
   if (formattedString.length < lengthLimit) {
     return formattedString
   }
+
+  // For scientific notation, we need to account for the actual decimal places
   const bigNumberString = bigNumber.toString()
   const firstDigit = bigNumberString[0]
   const remainingDigits = bigNumberString.slice(1, 3)
   const exponent = bigNumberString.length - 1 - units
 
-  return `${firstDigit}.${remainingDigits}e+${exponent}`
+  return `${firstDigit}.${remainingDigits}${exponent > 0 ? 'e+' + exponent : ''}`
 }
 
 export const parseUntilDelimiter = (input: any) => {

@@ -26,7 +26,8 @@
   font-size: 18px;
   font-style: normal;
   font-weight: 600;
-  line-height: 28px; /* 155.556% */
+  line-height: 28px;
+  /* 155.556% */
 }
 
 .subtitle {
@@ -34,7 +35,8 @@
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
-  line-height: 20px; /* 142.857% */
+  line-height: 20px;
+  /* 142.857% */
 }
 
 .directionContainer {
@@ -116,7 +118,8 @@
   font-size: 14px;
   font-style: normal;
   font-weight: 500;
-  line-height: 20px; /* 142.857% */
+  line-height: 20px;
+  /* 142.857% */
 }
 
 .valueBlockContainer {
@@ -159,7 +162,8 @@
   font-size: 12px;
   font-style: normal;
   font-weight: 500;
-  line-height: 18px; /* 150% */
+  line-height: 18px;
+  /* 150% */
   transition: all ease-in-out 1s;
 }
 
@@ -190,13 +194,14 @@
 
   /* Shadow/xs */
   box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
-  color:  var(--Gray-700, #344054);
+  color: var(--Gray-700, #344054);
 
   /* Text sm/Semibold */
   font-size: 14px;
   font-style: normal;
   font-weight: 600;
-  line-height: 20px; /* 142.857% */
+  line-height: 20px;
+  /* 142.857% */
 }
 
 .balanceContainer {
@@ -211,7 +216,8 @@
   font-size: 12px;
   font-style: normal;
   font-weight: 500;
-  line-height: 18px; /* 150% */
+  line-height: 18px;
+  /* 150% */
   border: none;
   background: transparent;
   cursor: pointer;
@@ -226,24 +232,56 @@
   font-size: 12px;
   font-style: normal;
   font-weight: 500;
-  line-height: 18px; /* 150% */
+  line-height: 18px;
+  /* 150% */
+}
+
+.manualGasMessageContainer {
+  display: flex;
+  padding: 2px 8px;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  align-self: stretch;
+  border-radius: 16px;
+  background: #B54708;
+}
+
+.manualGasMessageText {
+  color: #FFFAEB;
+  text-align: center;
+
+  /* Text xs/Medium */
+  font-family: Inter;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 18px;
+  /* 150% */
+}
+
+.manualGasMessageTooltip {
+  background: #B54708;
 }
 
 @media (max-width: 1199px) {
-    .container {
-      width: 100%;
-      padding: 15px;
-    }
+  .container {
+    width: 100%;
+    padding: 15px;
+  }
+
   .networksContainer {
     flex-direction: column;
     gap: 20px;
   }
+
   .networkSelect {
     flex-direction: row;
     align-items: center;
     width: 100%;
     gap: 12px
   }
+
   .arrowIcon {
     display: none;
   }

@@ -51,22 +51,32 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
         </div>
       </div>
       <div className={styles.footer}>
-        {connectedAccount ? (
-          <div className={styles.web3AddressContainer}>
-            <div className={styles.web3address}>
-              {`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}
+        <div className={styles.footerContent}>
+          {connectedAccount ? (
+            <div className={styles.web3AddressContainer}>
+              <div className={styles.web3address}>
+                {`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}
+              </div>
+              {isMetaMask && <IconLogout onClick={disconnectWallet} className={styles.iconButton} />}
             </div>
-            {isMetaMask && <IconLogout onClick={disconnectWallet} className={styles.iconButton} />}
+          ) : (
+            <div className={styles.connectWalletButton} onClick={connectWallet}>
+              {isConnecting ? (
+                <div className={styles.connectingWalletText}>{'Connecting Wallet...'}</div>
+              ) : (
+                <div className={styles.connectWalletText}>{'Connect Wallet'}</div>
+              )}
+            </div>
+          )}
+          <div className={styles.linkContainer}>
+            <div className={styles.linkText}>
+              Terms of Service
+            </div>
+            <div className={styles.linkText}>
+              Privacy Policy
+            </div>
           </div>
-        ) : (
-          <div className={styles.connectWalletButton} onClick={connectWallet}>
-            {isConnecting ? (
-              <div className={styles.connectingWalletText}>{'Connecting Wallet...'}</div>
-            ) : (
-              <div className={styles.connectWalletText}>{'Connect Wallet'}</div>
-            )}
-          </div>
-        )}
+        </div>
       </div>
     </div>
   )
