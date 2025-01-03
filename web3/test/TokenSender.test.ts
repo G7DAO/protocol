@@ -127,4 +127,19 @@ describe('TokenSender', function () {
             .to.emit(tokenSenderContract, 'TokensSent')
             .withArgs(executor.address, addr1.address, value);
     });
+
+    it('Should return the correct lastSentTimestamp for a given address', async function () {
+        const tokenSenderContractWithExecutor = tokenSenderContract.connect(executor);
+        const value = 7n;
+
+        const sendTx = await tokenSenderContractWithExecutor.send(addr1.address, { value });
+        const sendTxReceipt = await sendTx.wait();
+        expect(sendTxReceipt).to.not.be.null;
+        const sendBlock = await ethers.provider.getBlock(sendTxReceipt!.blockNumber);
+        expect(sendBlock).to.not.be.null;
+
+        const sendBlockTimestamp = sendBlock!.timestamp;
+
+        expect(await tokenSenderContract.lastSentTimestamp(addr1.address)).to.equal(sendBlockTimestamp);
+    });
 });

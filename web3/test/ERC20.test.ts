@@ -1,4 +1,3 @@
-// Source: https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/test/token/ERC20/ERC20.test.js
 import { ethers } from 'hardhat';
 import { expect } from 'chai';
 import { shouldBehaveLikeERC20, shouldBehaveLikeERC20Transfer, shouldBehaveLikeERC20Approve } from './ERC20.behavior';
@@ -69,6 +68,20 @@ describe('ERC20', function () {
                     await expect(
                         this.token.connect(this.other).transferFrom(this.holder.address, this.other.address, value)
                     ).to.be.revertedWith('ERC20: insufficient allowance');
+                });
+            });
+
+            describe('additional tests', function () {
+                it('should allow transfer of tokens', async function () {
+                    const value = 10n;
+                    await this.token.connect(this.holder).transfer(this.recipient.address, value);
+                    expect(await this.token.balanceOf(this.recipient.address)).to.equal(value);
+                });
+
+                it('should allow approval of tokens', async function () {
+                    const value = 20n;
+                    await this.token.connect(this.holder).approve(this.recipient.address, value);
+                    expect(await this.token.allowance(this.holder.address, this.recipient.address)).to.equal(value);
                 });
             });
         });
