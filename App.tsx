@@ -1,6 +1,3 @@
-Here is the file content with the TODO comment removed:
-
-```tsx
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { RouterProvider } from 'react-router-dom'
 import { FIVE_MINUTES } from '../constants'
@@ -78,4 +75,3 @@ export default function App() {
     </QueryClientProvider>
   )
 }
-Ensure you set the environment variables REACT_APP_TENANT_NAME, REACT_APP_TENANT_LANG, and REACT_APP_TENANT_THEME in your environment configuration.
