@@ -285,3 +285,22 @@
   height: var(--20px, 20px);
   stroke: var(--Selected-Theme-Icon, #fff);
 }
+
+.links {
+  display: flex;
+  padding: 16px;
+  align-items: center;
+  gap: 16px;
+  align-self: stretch;
+  border-top: 1px solid #393939;
+  background: #171717;
+}
+
+.linkTextMobile {
+  color: var(--Gray-true-300, #9C9C9C);
+  font-family: Inter;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 18px;
+}

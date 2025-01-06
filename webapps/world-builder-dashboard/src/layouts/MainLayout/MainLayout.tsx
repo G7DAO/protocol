@@ -13,9 +13,9 @@ import DesktopSidebar from '@/layouts/MainLayout/DesktopSidebar'
 import MobileSidebar from '@/layouts/MainLayout/MobileSidebar'
 import { useMediaQuery } from '@mantine/hooks'
 
-interface MainLayoutProps {}
+interface MainLayoutProps { }
 
-const MainLayout: React.FC<MainLayoutProps> = ({}) => {
+const MainLayout: React.FC<MainLayoutProps> = ({ }) => {
   const location = useLocation()
   const { selectedNetworkType } = useBlockchainContext()
 
@@ -59,6 +59,16 @@ const MainLayout: React.FC<MainLayoutProps> = ({}) => {
         <DesktopSidebar navigationItems={NAVIGATION_ITEMS} />
       )}
       <Outlet />
+      {smallView && (
+        <div className={styles.links}>
+          <div className={styles.linkTextMobile}>
+            Terms
+          </div>
+          <div className={styles.linkTextMobile}>
+            Privacy
+          </div>
+        </div>
+      )}
     </div>
   )
 }
