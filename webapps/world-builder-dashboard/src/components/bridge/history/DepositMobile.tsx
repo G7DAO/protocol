@@ -25,7 +25,6 @@ const DepositMobile: React.FC<DepositMobileProps> = ({
   isLoading,
   selectedNetworkType,
   transactionInputs,
-  highNetworkTimestamp,
   transferStatus,
   claim
 }) => {
@@ -34,7 +33,6 @@ const DepositMobile: React.FC<DepositMobileProps> = ({
     from: getLowNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
     to: getHighNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
   }
-  console.log(deposit.highNetworkTimestamp)
   const smallView = useMediaQuery('(max-width: 1199px)')
   return (
     <>

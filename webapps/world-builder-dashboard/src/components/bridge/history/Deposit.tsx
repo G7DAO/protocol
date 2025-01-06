@@ -33,7 +33,6 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   const finalTransactionInputs = transactionInputs || deposit.transactionInputs
   const [collapseExecuted, setCollapseExecuted] = useState(false)
   const [hovered, setHovered] = useState(false)
-  console.log(transferStatus)
   return (
     <>
       {isLoading && smallView ? (

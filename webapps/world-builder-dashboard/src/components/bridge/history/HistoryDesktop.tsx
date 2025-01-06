@@ -77,8 +77,6 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   useEffect(() => {
     const localTransactions = messages || []
     const formattedApiTransactions = apiTransactions ? apiTransactions.map(apiDataToTransactionRecord) : []
-    console.log(apiTransactions)
-    console.log(formattedApiTransactions)
     const combinedTransactions = mergeTransactions(formattedApiTransactions, localTransactions)
     
     // Check if the combined transactions are different from those in localStorage
