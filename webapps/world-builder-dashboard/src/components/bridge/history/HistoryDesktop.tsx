@@ -45,7 +45,7 @@ const mergeTransactions = (apiData: TransactionRecord[], localData: TransactionR
 }
 
 // Maps API data to the TransactionRecord format
-const mapAPIDataToTransactionRecord = (apiData: any): TransactionRecord => {
+const apiDataToTransactionRecord = (apiData: any): TransactionRecord => {
   const amountFormatted = apiData?.amount ? ethers.utils.formatEther(apiData.amount) : '0.0'
   return {
     type: apiData.type,
@@ -59,7 +59,9 @@ const mapAPIDataToTransactionRecord = (apiData: any): TransactionRecord => {
     completionTimestamp: apiData.completionTimestamp,
     claimableTimestamp: apiData.claimableTimestamp,
     challengePeriod: apiData.challengePeriod,
-    tokenAddress: apiData.token
+    tokenAddress: apiData.token,
+    symbol: apiData.symbol,
+    isCCTP: apiData.isCctp
   }
 }
 
@@ -74,11 +76,11 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   // Merge transations only when API data is updated with new data
   useEffect(() => {
     const localTransactions = messages || []
-    const formattedApiTransactions = apiTransactions ? apiTransactions.map(mapAPIDataToTransactionRecord) : []
-
+    const formattedApiTransactions = apiTransactions ? apiTransactions.map(apiDataToTransactionRecord) : []
+    console.log(apiTransactions)
+    console.log(formattedApiTransactions)
     const combinedTransactions = mergeTransactions(formattedApiTransactions, localTransactions)
-    // Retrieve existing transactions from localStorage
-
+    
     // Check if the combined transactions are different from those in localStorage
     if (
       combinedTransactions.length !== localTransactions.length ||
