@@ -49,6 +49,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
               transactionInputs={transactionInputs}
               highNetworkTimestamp={highNetworkTimestamp}
               transferStatus={transferStatus}
+              claim={claim}
             />
           ) : (
             <>
@@ -78,17 +79,22 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                     }}
                     onMouseEnter={() => setHovered(true)}
                     onMouseLeave={() => setHovered(false)}>{timeAgo(deposit.lowNetworkTimestamp)}</div>
-                  {!isLoadingInputs && finalTransactionInputs?.tokenSymbol ? (
-                    <div className={styles.gridItem} onClick={() => setCollapseExecuted(!collapseExecuted)}
+                  {!isLoadingInputs && (deposit.symbol || finalTransactionInputs?.tokenSymbol) ? (
+                    <div className={styles.gridItem}
+                      onClick={() => setCollapseExecuted(!collapseExecuted)}
                       style={{
                         cursor: 'pointer',
                         backgroundColor: hovered ? '#393939' : 'initial'
                       }}
                       onMouseEnter={() => setHovered(true)}
                       onMouseLeave={() => setHovered(false)}>
-                      {`${finalTransactionInputs.tokenSymbol === 'USDC'
-                        ? ethers.utils.formatUnits(finalTransactionInputs.amount, 6)
-                        : ethers.utils.formatEther(finalTransactionInputs?.amount) ?? deposit.amount} ${finalTransactionInputs.tokenSymbol}`}
+                      {`${deposit.symbol
+                        ? deposit.symbol === 'USDC'
+                          ? ethers.utils.formatUnits(finalTransactionInputs?.amount ?? 0, 6)
+                          : deposit.amount
+                        : finalTransactionInputs?.tokenSymbol === 'USDC'
+                          ? ethers.utils.formatUnits(finalTransactionInputs?.amount ?? 0, 6)
+                          : ethers.utils.formatEther(finalTransactionInputs?.amount ?? 0) ?? deposit.amount} ${deposit.symbol || finalTransactionInputs?.tokenSymbol}`}
                     </div>
                   ) : (
                     <div className={styles.gridItem}
@@ -173,9 +179,13 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                         <div className={styles.typeCompleted}>Initiate</div>
                       </div>
                       <div className={styles.gridItemInitiate}>{timeAgo(deposit?.lowNetworkTimestamp)}</div>
-                      {transactionInputs?.tokenSymbol ? (
+                      {deposit?.symbol ? (
                         <div className={styles.gridItemInitiate}>
-                          {`${transactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs.amount, 6) : deposit.amount} ${transactionInputs.tokenSymbol}`}
+                          {`${deposit.symbol === 'USDC' ? ethers.utils.formatUnits(finalTransactionInputs?.amount ?? 0, 6) : deposit.amount} ${deposit.symbol}`}
+                        </div>
+                      ) : transactionInputs?.tokenSymbol ? (
+                        <div className={styles.gridItemInitiate}>
+                          {`${finalTransactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(finalTransactionInputs?.amount ?? 0, 6) : deposit.amount} ${finalTransactionInputs?.tokenSymbol}`}
                         </div>
                       ) : (
                         <div className={styles.gridItemInitiate}>
@@ -205,9 +215,13 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                         <div className={styles.typeCompleted}>Finalize</div>
                       </div>
                       <div className={styles.gridItemInitiate}>{timeAgo(deposit?.lowNetworkTimestamp)}</div>
-                      {transactionInputs?.tokenSymbol ? (
+                      {deposit?.symbol ? (
                         <div className={styles.gridItemInitiate}>
-                          {`${transactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs.amount, 6) : deposit.amount} ${transactionInputs.tokenSymbol}`}
+                          {`${deposit.symbol === 'USDC' ? ethers.utils.formatUnits(finalTransactionInputs?.amount ?? 0, 6) : deposit.amount} ${deposit.symbol}`}
+                        </div>
+                      ) : transactionInputs?.tokenSymbol ? (
+                        <div className={styles.gridItemInitiate}>
+                          {`${finalTransactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(finalTransactionInputs?.amount ?? 0, 6) : deposit.amount} ${finalTransactionInputs.tokenSymbol}`}
                         </div>
                       ) : (
                         <div className={styles.gridItemInitiate}>
@@ -245,11 +259,15 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                   <div className={styles.gridItem}>
                     {timeAgo(deposit.lowNetworkTimestamp)}
                   </div>
-                  {!isLoadingInputs && finalTransactionInputs?.tokenSymbol ? (
+                  {!isLoadingInputs && (deposit.symbol || finalTransactionInputs?.tokenSymbol) ? (
                     <div className={styles.gridItem}>
-                      {`${finalTransactionInputs.tokenSymbol === 'USDC'
-                        ? ethers.utils.formatUnits(finalTransactionInputs.amount, 6)
-                        : ethers.utils.formatEther(finalTransactionInputs?.amount) ?? deposit.amount} ${finalTransactionInputs.tokenSymbol}`}
+                      {`${deposit.symbol
+                        ? deposit.symbol === 'USDC'
+                          ? ethers.utils.formatUnits(finalTransactionInputs?.amount ?? 0, 6)
+                          : deposit.amount
+                        : finalTransactionInputs.tokenSymbol === 'USDC'
+                          ? ethers.utils.formatUnits(finalTransactionInputs?.amount ?? 0, 6)
+                          : ethers.utils.formatEther(finalTransactionInputs?.amount ?? 0) ?? deposit.amount} ${deposit.symbol || finalTransactionInputs.tokenSymbol}`}
                     </div>
                   ) : (
                     <div className={styles.gridItem}>

@@ -138,7 +138,7 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
             </div>
             <IconClose onClick={() => setShowApproval(false)} className={styles.closeButton} stroke="#fff" />
           </div>
-          <div className={styles.modalSubtitle}>This sets a limit to the amount of tokens that can be processed through the bridge.
+          <div className={styles.modalSubtitle}>Set limit to the token amount that can be processed through the bridge.
           </div>
         </div>
         {tokens.length > 1 && (
@@ -181,9 +181,6 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
                 allowance={newAllowance}
                 disabled={approve.isLoading}
               />
-            </div>
-            <div className={styles.hintText}>
-              Set token limit to allow the bridge contract to perform token transfers on your behalf. It cannot move funds without your permission.
             </div>
           </div>
         ) : (

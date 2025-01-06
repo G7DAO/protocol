@@ -80,7 +80,7 @@ const BridgeView = ({
     setSelectedBridgeToken(token)
   }
   const { getEstimatedFee, useAllowances } = useBridger()
-  
+
   const [bridger, setBridger] = useState<Bridger | null>(null)
 
 
@@ -179,8 +179,7 @@ const BridgeView = ({
   return (
     <div className={styles.container}>
       <div className={styles.headerContainer}>
-        <div className={styles.title}>Transfer Assets</div>
-        <div className={styles.subtitle}>Move your assets between different layers</div>
+        <div className={styles.subtitle}>Move assets between different blockchains</div>
       </div>
       <div className={styles.directionContainer}>
         <button
@@ -283,7 +282,7 @@ const BridgeView = ({
       {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
       {direction === 'DEPOSIT' && <div className={styles.manualGasMessageContainer}>
         <div className={styles.manualGasMessageText}>
-          May need manual gas completion on {selectedHighNetwork.displayName}
+          Claim transaction may be required on {selectedHighNetwork.displayName}
         </div>
         <Tooltip
           content={`
