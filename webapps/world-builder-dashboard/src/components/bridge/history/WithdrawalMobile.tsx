@@ -8,6 +8,7 @@ import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 import { ChildToParentMessageStatus } from '@arbitrum/sdk'
+import { BridgeTransferStatus } from 'game7-bridge-sdk'
 
 interface WithdrawalMobileProps {
   withdrawal: TransactionRecord
@@ -26,6 +27,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
   transactionInputs
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
+  console.log(transferStatus)
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -48,7 +50,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
                 </div>
               </a>
             )}
-            {transferStatus && transferStatus?.status === ChildToParentMessageStatus.CONFIRMED && (
+            {transferStatus && (transferStatus?.status === ChildToParentMessageStatus.CONFIRMED || transferStatus?.status === BridgeTransferStatus.CCTP_COMPLETE) && (
               <a
                 href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId, selectedNetworkType)}/tx/${withdrawal.highNetworkHash}`}
                 target={'_blank'}
@@ -116,7 +118,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
       )}
       <div className={styles.dataRow}>
         <div className={styles.dataText}>Status</div>
-        {transferStatus && transferStatus?.status === ChildToParentMessageStatus.CONFIRMED && (
+        {transferStatus && (transferStatus?.status === ChildToParentMessageStatus.CONFIRMED || transferStatus?.status === BridgeTransferStatus.CCTP_COMPLETE) && (
           <button className={parentStyles.claimButton} onClick={() => claim.mutate(withdrawal)}>
             {claim.isLoading && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}
           </button>

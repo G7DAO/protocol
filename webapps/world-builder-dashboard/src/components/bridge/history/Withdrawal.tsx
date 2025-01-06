@@ -96,13 +96,13 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                   <div className={styles.gridItem}>{timeAgo(withdrawal.highNetworkTimestamp)}</div>
                   {transactionInputs?.tokenSymbol ? (
                     <div className={styles.gridItem}>
-                      ${withdrawal.symbol
+                      {withdrawal.symbol
                         ? withdrawal.symbol === 'USDC'
                           ? ethers.utils.formatUnits(transactionInputs?.amount ?? 0, 6)
                           : withdrawal.amount
                         : transactionInputs?.tokenSymbol === 'USDC'
                           ? ethers.utils.formatUnits(transactionInputs?.amount ?? 0, 6)
-                          : ethers.utils.formatEther(transactionInputs?.amount ?? 0) ?? withdrawal.amount} ${withdrawal.symbol || transactionInputs?.tokenSymbol}`
+                          : ethers.utils.formatEther(transactionInputs?.amount ?? 0) ?? withdrawal.amount} {withdrawal.symbol || transactionInputs?.tokenSymbol}`
                     </div>
                   ) : (
                     <div className={styles.gridItem}>
@@ -256,13 +256,13 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.highNetworkTimestamp)}</div>
                           {transactionInputs?.tokenSymbol ? (
                             <div className={styles.gridItemInitiate}>
-                              ${withdrawal.symbol
+                              {withdrawal.symbol
                                 ? withdrawal.symbol === 'USDC'
                                   ? ethers.utils.formatUnits(transactionInputs?.amount ?? 0, 6)
                                   : withdrawal.amount
                                 : transactionInputs?.tokenSymbol === 'USDC'
                                   ? ethers.utils.formatUnits(transactionInputs?.amount ?? 0, 6)
-                                  : ethers.utils.formatEther(transactionInputs?.amount ?? 0) ?? withdrawal.amount} ${withdrawal.symbol || transactionInputs?.tokenSymbol}`
+                                  : ethers.utils.formatEther(transactionInputs?.amount ?? 0) ?? withdrawal.amount} {withdrawal.symbol || transactionInputs?.tokenSymbol}
                             </div>
                           ) : (
                             <div className={styles.gridItemInitiate}>
@@ -293,13 +293,13 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.completionTimestamp)}</div>
                           {transactionInputs?.tokenSymbol ? (
                             <div className={styles.gridItemInitiate}>
-                              ${withdrawal.symbol
+                              {withdrawal.symbol
                                 ? withdrawal.symbol === 'USDC'
                                   ? ethers.utils.formatUnits(transactionInputs?.amount ?? 0, 6)
                                   : withdrawal.amount
                                 : transactionInputs?.tokenSymbol === 'USDC'
                                   ? ethers.utils.formatUnits(transactionInputs?.amount ?? 0, 6)
-                                  : ethers.utils.formatEther(transactionInputs?.amount ?? 0) ?? withdrawal.amount} ${withdrawal.symbol || transactionInputs?.tokenSymbol}`
+                                  : ethers.utils.formatEther(transactionInputs?.amount ?? 0) ?? withdrawal.amount} {withdrawal.symbol || transactionInputs?.tokenSymbol}
                             </div>
                           ) : (
                             <div className={styles.gridItemInitiate}>
@@ -339,13 +339,13 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       <div className={styles.gridItem}>{timeAgo(status?.data?.timestamp)}</div>
                       {transactionInputs?.tokenSymbol ? (
                         <div className={styles.gridItem}>
-                          ${withdrawal.symbol
+                          {withdrawal.symbol
                             ? withdrawal.symbol === 'USDC'
                               ? ethers.utils.formatUnits(transactionInputs?.amount ?? 0, 6)
                               : withdrawal.amount
                             : transactionInputs?.tokenSymbol === 'USDC'
                               ? ethers.utils.formatUnits(transactionInputs?.amount ?? 0, 6)
-                              : ethers.utils.formatEther(transactionInputs?.amount ?? 0) ?? withdrawal.amount} ${withdrawal.symbol || transactionInputs?.tokenSymbol}`
+                              : ethers.utils.formatEther(transactionInputs?.amount ?? 0) ?? withdrawal.amount} {withdrawal.symbol || transactionInputs?.tokenSymbol}
                         </div>
                       ) : (
                         <div className={styles.gridItem}>
