@@ -27,7 +27,6 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
   transactionInputs
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
-  console.log(transferStatus)
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -75,7 +74,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
               </a>
             )}
           </div>
-          {transferStatus && transferStatus?.status === ChildToParentMessageStatus.EXECUTED && (
+          {transferStatus && (transferStatus?.status === ChildToParentMessageStatus.EXECUTED || transferStatus?.status === BridgeTransferStatus.CCTP_REDEEMED) && (
             <>
               <IconWithdrawalNodeCompletedMobile className={styles.nodeCompleted} />
               <div className={styles.dataRowCompleted}>
@@ -100,7 +99,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
                 >
                   <div className={parentStyles.settled}>
                     Completed
-                    <IconLinkExternal02 stroke={'#fff'} /> 
+                    <IconLinkExternal02 stroke={'#fff'} />
                   </div>
                 </a>
               </div>
@@ -123,7 +122,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
             {claim.isLoading && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}
           </button>
         )}
-        {transferStatus && transferStatus?.status === ChildToParentMessageStatus.EXECUTED && (
+        {transferStatus && (transferStatus?.status === ChildToParentMessageStatus.EXECUTED || transferStatus?.status === BridgeTransferStatus.CCTP_REDEEMED) && (
           <div className={styles.dataTextBold}>{timeAgo(status?.data?.lowNetworkTimeStamp)}</div>
         )}
         {transferStatus && transferStatus?.status === ChildToParentMessageStatus.UNCONFIRMED && (
