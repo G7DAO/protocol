@@ -260,10 +260,6 @@
   /* 150% */
 }
 
-.manualGasMessageTooltip {
-  background: #B54708;
-}
-
 @media (max-width: 1199px) {
   .container {
     width: 100%;
@@ -285,4 +281,13 @@
   .arrowIcon {
     display: none;
   }
+}
+
+.customTooltip {
+  max-width: 200px;
+  padding: 10px;
+  border-radius: 8px;
+  white-space: normal;
+  overflow: hidden;
+  text-align: center;
 }

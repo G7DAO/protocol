@@ -282,14 +282,15 @@ const BridgeView = ({
           Claim transaction may be required on {selectedHighNetwork.displayName}
         </div>
         <Tooltip
-          content={`
-            Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.
-          `}
-          label=' Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.'
-          position='top'
-          className={styles.manualGasMessageTooltip}
+          multiline
+          radius={'8px'}
+          arrowSize={8}
+          withArrow
+          arrowOffset={14}
+          events={{ hover: true, focus: true, touch: true }}
+          label='Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.'
         >
-          <IconAlertCircle stroke='#FFFAEB' height={12} width={12} />
+          <IconAlertCircle stroke='#FFFAEB' height={16} width={16} />
         </Tooltip>
       </div>}
       <ActionButton
