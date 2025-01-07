@@ -176,7 +176,9 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
         <div className={styles.dataRow}>
           <div className={styles.itemName}>You will receive</div>
           <div className={styles.valueContainer}>
-            <div className={styles.value}>{`${value} ${tokenSymbol}`}</div>
+            <div className={styles.value}>
+              {`${value} ${tokenSymbol.startsWith('USDC') ? (tokenSymbol === 'USDC.e' ? 'USDC' : 'USDC.e') : tokenSymbol}`}
+            </div>
             {tokenRate > 0 && <div className={styles.valueNote}>{formatCurrency(value * (tokenSymbol === 'ETH' || tokenSymbol === 'G7' || tokenSymbol === 'TG7T' ? ethRate : tokenRate))}</div>}
           </div>
         </div>

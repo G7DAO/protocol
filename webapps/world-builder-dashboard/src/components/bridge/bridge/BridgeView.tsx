@@ -178,9 +178,6 @@ const BridgeView = ({
 
   return (
     <div className={styles.container}>
-      <div className={styles.headerContainer}>
-        <div className={styles.subtitle}>Move assets between different blockchains</div>
-      </div>
       <div className={styles.directionContainer}>
         <button
           className={direction === 'DEPOSIT' ? styles.selectedDirectionButton : styles.directionButton}
