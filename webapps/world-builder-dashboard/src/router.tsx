@@ -7,6 +7,7 @@ import FaucetPage from '@/pages/FaucetPage/FaucetPage'
 //Pages
 import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage'
 import LandingPage from './pages/LandingPage/LandingPage'
+import LegalPage from './pages/LegalPage/LegalPage'
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,12 @@ const router = createBrowserRouter([
     path: '/',
     errorElement: <ErrorBoundary />
   },
+  {
+    element: <LegalPage />,
+    path: '/terms',
+    errorElement: <ErrorBoundary />
+  },
+  {},
   {
     element: <MainLayout />,
     children: [
