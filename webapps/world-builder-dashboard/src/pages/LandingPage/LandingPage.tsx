@@ -35,7 +35,7 @@ const LandingPage: React.FC = () => {
     navigate('/faucet')
   }
 
- const navigateLink = (item: any) => {
+  const navigateLink = (item: any) => {
     if (item.name === 'Faucet') {
       setSelectedNetworkType('Testnet')
       navigate(`/${item.link}`)
@@ -80,8 +80,7 @@ const LandingPage: React.FC = () => {
                 isSticky={true}
               />
               <div className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}`}
-                style={backgroundStyle ? { background: backgroundStyle } : undefined}
-              >
+                style={backgroundStyle ? { background: backgroundStyle } : undefined}>
                 <MainSection smallView={!!smallView} startBuilding={startBuilding} />
                 <BenefitsSection />
                 <AlliesSection />

@@ -817,7 +817,6 @@ body {
 }
 
 @media (max-width: 750px) {
-
   .navbarSticky {
     position: sticky;
     z-index: 1005;
