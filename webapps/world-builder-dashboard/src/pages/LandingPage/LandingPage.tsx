@@ -11,7 +11,6 @@ import Navbar from '@/components/landing/Navbar'
 import NetworkEssentials from '@/components/landing/NetworksEssentials'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import backgroundImage from "@/assets/G7LandingPageBGDark.jpg";
-import Footer from '@/components/landing/Footer'
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate()
@@ -36,7 +35,7 @@ const LandingPage: React.FC = () => {
     navigate('/faucet')
   }
 
-  const navigateLink = (item: any) => {
+ const navigateLink = (item: any) => {
     if (item.name === 'Faucet') {
       setSelectedNetworkType('Testnet')
       navigate(`/${item.link}`)
@@ -95,7 +94,6 @@ const LandingPage: React.FC = () => {
               )}
             </div>
           </div>
-          <Footer />
         </div>
       </>
       )}

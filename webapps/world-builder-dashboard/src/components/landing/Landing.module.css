@@ -47,7 +47,7 @@ body {
 .navbarSticky {
   position: sticky;
   z-index: 1005;
-  top: 0;
+  top: 24px;
   padding-top: 24px;
   padding: 12px 12px 12px 16px;
   align-items: flex-start;
@@ -802,9 +802,34 @@ body {
     width: 100%;
     min-width: 300px;
   }
+
+  .navbarSticky {
+    position: sticky;
+    z-index: 1005;
+    top: 0;
+    padding-top: 24px;
+    padding: 12px 12px 12px 16px;
+    align-items: flex-start;
+    border-radius: 20px;
+    border: 1px solid var(--gray-500, #737373);
+    background: hsl(0, 0%, 3%);
+  }
 }
 
 @media (max-width: 750px) {
+
+  .navbarSticky {
+    position: sticky;
+    z-index: 1005;
+    top: 0;
+    padding-top: 24px;
+    padding: 12px 12px 12px 16px;
+    align-items: flex-start;
+    border-radius: 20px;
+    border: 1px solid var(--gray-500, #737373);
+    background: hsl(0, 0%, 3%);
+  }
+
   .sectionTitle {
     font-size: 30px;
     line-height: 38px;

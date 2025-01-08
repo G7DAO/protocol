@@ -6,10 +6,12 @@ import IconGitHub from '@/assets/IconGithub'
 import IconLinkedIn from '@/assets/IconLinkedIn'
 import IconForkTheWorld from '@/assets/IconForkTheWorld'
 import { useNavigate } from 'react-router-dom'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
 
 
 const Footer: React.FC = () => {
     const navigate = useNavigate()
+    const { setSelectedNetworkType } = useBlockchainContext()
     const footerIcons = [
         { component: <IconDiscord />, navigate: () => window.open('/discord', '_blank') },
         { component: <IconX />, navigate: () => window.open('https://x.com/g7_dao', '_blank') },
@@ -23,14 +25,14 @@ const Footer: React.FC = () => {
             links: [
                 { name: 'Faucet', url: '/faucet' },
                 { name: 'Bridge', url: '/bridge' },
-                { name: 'Documentation', url: '/documentation' },
-                { name: 'Explorer', url: '/explorer' },
+                { name: 'Documentation', url: 'https://docs.game7.io/' },
+                { name: 'Explorer', url: 'https://mainnet.game7.io/' },
             ],
         },
         {
             header: 'Media',
             links: [
-                { name: 'Community', url: '/community' },
+                { name: 'Community', url: 'https://discord.com/invite/g7dao' },
             ],
         },
         {
@@ -42,6 +44,18 @@ const Footer: React.FC = () => {
         },
     ]
 
+    const navigateLink = (item: any) => {
+        if (item.name === 'Faucet') {
+            setSelectedNetworkType('Testnet')
+            navigate(item.url)
+        } else if (item.name === "Bridge") {
+            setSelectedNetworkType('Mainnet')
+            navigate(item.url)
+        } else {
+            window.open(item.url, '_blank')
+        }
+    }
+
     return (
         <div className={styles.layoutFooter}>
             <div className={styles.footer}>
@@ -52,7 +66,7 @@ const Footer: React.FC = () => {
                             <div className={styles.footerSection} key={index}>
                                 <div className={styles.footerSectionHeader}>{section.header}</div>
                                 {section.links.map((link, linkIndex) => (
-                                    <div onClick={() => navigate(link.url)} className={styles.footerSectionLink} key={linkIndex}>
+                                    <div onClick={() => navigateLink(link)} className={styles.footerSectionLink} key={linkIndex}>
                                         {link.name}
                                     </div>
                                 ))}
