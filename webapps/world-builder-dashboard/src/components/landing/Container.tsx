@@ -41,6 +41,9 @@ const Container: React.FC<ContainerProps> = ({ components, isNavbarOpen, setIsNa
             const progress = window.scrollY / (5000 - window.innerHeight)
             setProgress(progress * 100)
             setPage(Math.min(Math.floor(progress * components.length), components.length - 1));
+            if (progress > 1) {
+
+            }
         };
 
         window.addEventListener('scroll', handleScroll);
@@ -48,6 +51,7 @@ const Container: React.FC<ContainerProps> = ({ components, isNavbarOpen, setIsNa
             window.removeEventListener('scroll', handleScroll);
         };
     }, []);
+
 
 
     useEffect(() => {
@@ -74,6 +78,7 @@ const Container: React.FC<ContainerProps> = ({ components, isNavbarOpen, setIsNa
                             setIsNavbarOpen={setIsNavbarOpen}
                             startBuilding={startBuilding}
                             navigateLink={navigateLink}
+                            isSticky={progress > 1}
                         />
 
                         <div className={`${parentStyles.mainLayout} ${isNavbarOpen ? styles.layoutDarkened : ''}`}
@@ -92,6 +97,7 @@ const Container: React.FC<ContainerProps> = ({ components, isNavbarOpen, setIsNa
                     <div className={styles.progressBar}>
                         <SegmentedProgressBar numberOfSegments={components.length} progress={progress} />
                     </div>
+
                 </div>
             </div>
         </div>

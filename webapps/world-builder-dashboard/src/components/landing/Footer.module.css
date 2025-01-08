@@ -1,0 +1,72 @@
+.footer {
+    display: flex;
+    padding: 40px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    align-self: stretch;
+    border-radius: 12px 12px 0px 0px;
+    border: 1px solid #727272;
+    border-bottom: none;
+    background: url('../../assets/ftwotf.png') lightgray 50% / cover no-repeat;
+}
+
+.footerContent {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    align-self: stretch;
+}
+
+.footerLinks {
+    display: flex;
+    align-items: flex-start;
+    gap: 120px;
+}
+
+.footerSection {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.footerSectionHeader {
+    color: #FFF;
+    /* Text xl Bold */
+    font-family: Inter;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 30px;
+    /* 150% */
+}
+
+.footerSectionLink {
+    cursor: pointer;
+    color: #FFF;
+    /* Text md Regular */
+    font-family: Inter;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+}
+
+.footerIcons {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.footerIcon {
+    cursor: pointer;
+}
+
+.layoutFooter {
+    padding-left: 24px;
+    padding-right: 24px;
+    background: #171717;
+}
