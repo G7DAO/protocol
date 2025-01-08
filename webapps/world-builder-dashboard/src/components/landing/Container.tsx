@@ -78,10 +78,8 @@ const Container: React.FC<ContainerProps> = ({ components, isNavbarOpen, setIsNa
                             navigateLink={navigateLink}
                             isSticky={progress > 100}
                         />
-
                         <div className={`${parentStyles.mainLayout} ${isNavbarOpen ? styles.layoutDarkened : ''}`}
-                            style={backgroundStyle ? { background: backgroundStyle } : undefined}
-                        >
+                            style={backgroundStyle ? { background: backgroundStyle } : undefined}>
                             <div className={isFadingOut ? styles.fadeOut : styles.fadeIn}>
                                 {components[pageToRender]}
                             </div>

@@ -70,3 +70,12 @@
     padding-right: 24px;
     background: #171717;
 }
+
+
+@media (max-width: 750px) {
+    .layoutFooter {
+        padding-left: 16px;
+        padding-right: 16px;
+        background: #171717;
+    }
+}

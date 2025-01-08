@@ -30,7 +30,6 @@ const Navbar: React.FC<NavbarProps> = ({ navbarOpen, smallView, setIsNavbarOpen,
   const navigate = useNavigate()
   return (
     <>
-      {/* Main Navbar */}
       <div className={`${styles.navbarContainer} ${isSticky ? styles.navbarSticky : ''}`}>
         <div className={styles.navbar}>
           <div className={styles.logoWrapper} onClick={() => navigate('/')}>
