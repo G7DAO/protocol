@@ -28,7 +28,6 @@ const NAVBAR_ITEMS = [
 
 const Navbar: React.FC<NavbarProps> = ({ navbarOpen, smallView, setIsNavbarOpen, startBuilding, navigateLink, isSticky }) => {
   const navigate = useNavigate()
-
   return (
     <>
       {/* Main Navbar */}

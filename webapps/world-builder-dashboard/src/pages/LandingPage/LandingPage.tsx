@@ -11,7 +11,6 @@ import Navbar from '@/components/landing/Navbar'
 import NetworkEssentials from '@/components/landing/NetworksEssentials'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import backgroundImage from "@/assets/G7LandingPageBGDark.jpg";
-import Footer from '@/components/landing/Footer'
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate()
@@ -67,7 +66,6 @@ const LandingPage: React.FC = () => {
             startBuilding={startBuilding}
             navigateLink={navigateLink}
           />
-          <Footer />
         </>
       ) : (
         <div className={`${styles.layout} ${navbarOpen && styles.layoutBlur}`}>
