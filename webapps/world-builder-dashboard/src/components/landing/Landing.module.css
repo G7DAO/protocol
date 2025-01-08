@@ -20,8 +20,10 @@ body {
 }
 
 .layout.darkened {
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent dark overlay */
-  pointer-events: none; /* Prevent interactions with the background */
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Semi-transparent dark overlay */
+  pointer-events: none;
+  /* Prevent interactions with the background */
 }
 
 .navbarContainer {
@@ -79,7 +81,8 @@ body {
   font-size: 16px;
   font-style: normal;
   font-weight: 600;
-  line-height: 24px; /* 150% */
+  line-height: 24px;
+  /* 150% */
 }
 
 .navbarCTA {
@@ -302,8 +305,10 @@ body {
 }
 
 .scrollBarFill {
-  width: 100%; /* Full width */
-  height: 0%; /* Start at 0% height */
+  width: 100%;
+  /* Full width */
+  height: 0%;
+  /* Start at 0% height */
   background-color: #f04438;
   border-radius: 100px;
   transition: height 0.25s ease-in-out;
@@ -334,7 +339,8 @@ body {
   font-size: 14px;
   font-style: normal;
   font-weight: 500;
-  line-height: 20px; /* 142.857% */
+  line-height: 20px;
+  /* 142.857% */
 }
 
 .contentContainer {
@@ -357,7 +363,8 @@ body {
   font-size: 48px;
   font-style: normal;
   font-weight: 700;
-  line-height: 60px; /* 125% */
+  line-height: 60px;
+  /* 125% */
   letter-spacing: -0.96px;
 }
 
@@ -394,7 +401,8 @@ body {
   font-size: 24px;
   font-style: normal;
   font-weight: 500;
-  line-height: 32px; /* 133.333% */
+  line-height: 32px;
+  /* 133.333% */
 }
 
 .cardImage {
@@ -429,7 +437,8 @@ body {
   font-size: 18px;
   font-style: normal;
   font-weight: 400;
-  line-height: 28px; /* 155.556% */
+  line-height: 28px;
+  /* 155.556% */
   border-radius: 12px;
   border: 1px solid #727272;
   flex-grow: 1;
@@ -460,8 +469,7 @@ body {
   backdrop-filter: blur(0.6990200281143188px);
 }
 
-.sponsorCard::hover {
-}
+.sponsorCard::hover {}
 
 .sponsorCardImage {
   display: flex;
@@ -565,7 +573,8 @@ body {
   font-size: 24px;
   font-style: normal;
   font-weight: 500;
-  line-height: 32px; /* 133.333% */
+  line-height: 32px;
+  /* 133.333% */
   cursor: url('../../assets/hand.svg'), pointer;
 }
 
@@ -605,6 +614,18 @@ body {
   align-items: center;
   align-self: stretch;
   flex: 1 0 auto;
+}
+
+.footer {
+  display: flex;
+  padding: 40px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  align-self: stretch;
+  border-radius: 12px 12px 0px 0px;
+  border: 1px solid #727272;
+  background: url('../../assets/ftwotf.png') lightgray 50% / cover no-repeat;
 }
 
 @media (max-width: 1199px) {
@@ -682,6 +703,7 @@ body {
     align-items: center;
     align-self: stretch;
   }
+
   .fourthSection {
     display: flex;
     flex-direction: column;
@@ -761,12 +783,15 @@ body {
 
   .navContainer {
     padding-top: 100px;
-    position: fixed; /* Make the menu overlay the entire screen */
+    position: fixed;
+    /* Make the menu overlay the entire screen */
     top: 72px;
     left: 0;
-    width: 100vw; /* Full width */
+    width: 100vw;
+    /* Full width */
     background-color: rgba(0, 0, 0, 0.75);
-    z-index: 1000; /* Ensure it's on top */
+    z-index: 1000;
+    /* Ensure it's on top */
     padding: 24px 24px 24px 24px;
     display: flex;
     flex-direction: column;
@@ -893,6 +918,7 @@ body {
 
 @media(min-width: 1860px) {
   .networkEssentialCards {
-    justify-content: center;  /*cards fit to container */
+    justify-content: center;
+    /*cards fit to container */
   }
 }
