@@ -7,11 +7,30 @@ import FaucetPage from '@/pages/FaucetPage/FaucetPage'
 //Pages
 import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage'
 import LandingPage from './pages/LandingPage/LandingPage'
+import LegalPage from './pages/LegalPage/LegalPage'
+import { LEGAL } from './legal'
+
+console.log(LEGAL)
 
 const router = createBrowserRouter([
   {
     element: <LandingPage />,
     path: '/',
+    errorElement: <ErrorBoundary />
+  },
+  {
+    element: <LegalPage legalContent={LEGAL.terms}/>,
+    path: '/terms',
+    errorElement: <ErrorBoundary />
+  },
+  {
+    element: <LegalPage legalContent={LEGAL.privacy}/>,
+    path: '/privacy',
+    errorElement: <ErrorBoundary />
+  },
+  {
+    element: <LegalPage legalContent={LEGAL.cookie}/>,
+    path: '/cookie',
     errorElement: <ErrorBoundary />
   },
   {
