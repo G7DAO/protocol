@@ -1,6 +1,6 @@
 // Navbar.tsx
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import styles from './Landing.module.css'
 import IconGame7 from '@/assets/IconGame7'
 import IconGame7Logo from '@/assets/IconGame7Logo'
@@ -28,6 +28,7 @@ const NAVBAR_ITEMS = [
 
 const Navbar: React.FC<NavbarProps> = ({ navbarOpen, smallView, setIsNavbarOpen, startBuilding, navigateLink, isSticky }) => {
   const navigate = useNavigate()
+  const location = useLocation()
   return (
     <>
       <div className={`${styles.navbarContainer} ${isSticky ? styles.navbarSticky : ''}`}>
@@ -42,7 +43,7 @@ const Navbar: React.FC<NavbarProps> = ({ navbarOpen, smallView, setIsNavbarOpen,
                 {NAVBAR_ITEMS.map((item, index) => (
                   <div
                     key={index}
-                    className={item.name === 'Home' ? styles.navbarItemHome : styles.navbarItem}
+                    className={((location.pathname === '/' || location.pathname === '') && item.name === 'Home') ? styles.navbarItemHome : styles.navbarItem}
                     onClick={() => {
                       navigateLink(item)
                     }}

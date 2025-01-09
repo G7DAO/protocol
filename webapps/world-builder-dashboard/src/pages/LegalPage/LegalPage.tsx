@@ -50,7 +50,6 @@ const LandingPage: React.FC<LegalPageProps> = ({legalContent}) => {
               navigateLink={navigateLink}
               isSticky={true}
             />
-            {/* <div className={styles.mainLayout}> */}
             <div className={styles.legalHeader}>
               <div className={styles.headerContainer}>
                 <div className={styles.titleHeader}>
@@ -79,7 +78,6 @@ const LandingPage: React.FC<LegalPageProps> = ({legalContent}) => {
           </div>
         </div>
       </div>
-      {/* </div> */}
     </>
   )
 }

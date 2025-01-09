@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styles from './Footer.module.css'
 import IconDiscord from '@/assets/IconDiscord'
 import IconX from '@/assets/IconX'
@@ -7,10 +7,13 @@ import IconLinkedIn from '@/assets/IconLinkedIn'
 import IconForkTheWorld from '@/assets/IconForkTheWorld'
 import { useNavigate } from 'react-router-dom'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
+import { useMediaQuery } from 'summon-ui/mantine'
+import IconChevronDown from '@/assets/IconChevronDown'
 
 
 const Footer: React.FC = () => {
     const navigate = useNavigate()
+    const smallView = useMediaQuery('(max-width: 750px)')
     const { setSelectedNetworkType } = useBlockchainContext()
     const footerIcons = [
         { component: <IconDiscord />, navigate: () => window.open('/discord', '_blank') },
@@ -18,6 +21,11 @@ const Footer: React.FC = () => {
         { component: <IconGitHub />, navigate: () => window.open('https://github.com/G7DAO', '_blank') },
         { component: <IconLinkedIn />, navigate: () => window.open('https://www.linkedin.com/company/g7dao', '_blank') },
     ];
+    const [collapsedSections, setCollapsedSections] = useState<{ [key: number]: boolean }>({ 0: true, 1: true, 2: true })
+
+    const toggleSection = (index: number) => {
+        setCollapsedSections(prev => ({ ...prev, [index]: !prev[index] }))
+    }
 
     const footerSections = [
         {
@@ -58,32 +66,72 @@ const Footer: React.FC = () => {
     }
 
     return (
-        <div className={styles.layoutFooter}>
-            <div className={styles.footer}>
-                <div className={styles.footerContent}>
-                    <IconForkTheWorld />
-                    <div className={styles.footerLinks}>
-                        {footerSections.map((section, index) => (
-                            <div className={styles.footerSection} key={index}>
-                                <div className={styles.footerSectionHeader}>{section.header}</div>
-                                {section.links.map((link, linkIndex) => (
-                                    <div onClick={() => navigateLink(link)} className={styles.footerSectionLink} key={linkIndex}>
-                                        {link.name}
+        <>
+            {!smallView && (
+                <div className={styles.layoutFooter}>
+                    <div className={styles.footer}>
+                        <div className={styles.footerContent}>
+                            <IconForkTheWorld />
+                            <div className={styles.footerLinks}>
+                                {footerSections.map((section, index) => (
+                                    <div className={styles.footerSection} key={index}>
+                                        <div className={styles.footerSectionHeader}>{section.header}</div>
+                                        {section.links.map((link, linkIndex) => (
+                                            <div onClick={() => navigateLink(link)} className={styles.footerSectionLink} key={linkIndex}>
+                                                {link.name}
+                                            </div>
+                                        ))}
                                     </div>
                                 ))}
                             </div>
-                        ))}
-                    </div>
-                    <div className={styles.footerIcons}>
-                        {footerIcons.map((icon, index) => (
-                            <div key={index} onClick={icon.navigate} className={styles.footerIcon}>
-                                {icon.component}
+                            <div className={styles.footerIcons}>
+                                {footerIcons.map((icon, index) => (
+                                    <div key={index} onClick={icon.navigate} className={styles.footerIcon}>
+                                        {icon.component}
+                                    </div>
+                                ))}
                             </div>
-                        ))}
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            )}
+            {smallView && (
+                <div className={styles.layoutFooter}>
+                    <div className={styles.footerMobile}>
+                        <div className={styles.footerContentMobile}>
+                            <IconForkTheWorld />
+                            <div className={styles.footerLinksMobile}>
+                                {footerSections.map((section, index) => (
+                                    <div className={styles.footerSection} key={index}>
+                                        <div className={styles.footerSectionHeaderContainer} onClick={() => toggleSection(index)}>
+                                            <div className={styles.footerSectionHeader}>{section.header}</div>
+                                            <IconChevronDown 
+                                                stroke='white' 
+                                                style={{ transform: collapsedSections[index] ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }} 
+                                            />
+                                        </div>
+                                        {!collapsedSections[index] && ( // Show links only if not collapsed
+                                            section.links.map((link, linkIndex) => (
+                                                <div onClick={() => navigateLink(link)} className={styles.footerSectionLink} key={linkIndex}>
+                                                    {link.name}
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                            <div className={styles.footerIcons}>
+                                {footerIcons.map((icon, index) => (
+                                    <div key={index} onClick={icon.navigate} className={styles.footerIcon}>
+                                        {icon.component}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
     )
 }
 

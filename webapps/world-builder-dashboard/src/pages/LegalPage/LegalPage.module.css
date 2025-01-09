@@ -127,6 +127,7 @@ body {
   height: 100svh;
   padding-left: 24px;
   padding-right: 24px;
+  padding-top: 24px;
   flex-direction: column;
   align-items: center;
   background: #171717;

@@ -47,7 +47,7 @@ body {
 .navbarSticky {
   position: sticky;
   z-index: 1005;
-  top: 24px;
+  top: 0px;
   padding-top: 24px;
   padding: 12px 12px 12px 16px;
   align-items: flex-start;
@@ -807,7 +807,7 @@ body {
   .navbarSticky {
     position: sticky;
     z-index: 1005;
-    top: 0;
+    top: 0px;
     padding-top: 24px;
     padding: 12px 12px 12px 16px;
     align-items: flex-start;
