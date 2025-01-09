@@ -70,6 +70,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   const { data: messages } = useMessages(connectedAccount, selectedNetworkType || 'Testnet')
   const { useHistoryTransactions } = useBridgeAPI()
   const { data: apiTransactions } = useHistoryTransactions(connectedAccount)
+  console.log(apiTransactions)
   const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])
   const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status', '']
 
