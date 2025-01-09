@@ -7,7 +7,11 @@ import Navbar from '@/components/landing/Navbar'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Footer from '@/components/landing/Footer'
 
-const LandingPage: React.FC = () => {
+interface LegalPageProps {
+  legalContent: any
+}
+
+const LandingPage: React.FC<LegalPageProps> = ({legalContent}) => {
   const navigate = useNavigate()
   const { setSelectedNetworkType } = useBlockchainContext()
   const [navbarOpen, setNavBarOpen] = useState<boolean>(false)
@@ -46,48 +50,36 @@ const LandingPage: React.FC = () => {
               navigateLink={navigateLink}
               isSticky={true}
             />
-            <div className={styles.mainLayout}>
-              <div className={styles.legalHeader}>
-                <div className={styles.headerContainer}>
-                  <div className={styles.titleHeader}>
-                    Terms & Conditions
-                  </div>
-                  <div className={styles.lastUpdated}>
-                    Last updated:
-                  </div>
+            {/* <div className={styles.mainLayout}> */}
+            <div className={styles.legalHeader}>
+              <div className={styles.headerContainer}>
+                <div className={styles.titleHeader}>
+                  {legalContent.title}
+                </div>
+                <div className={styles.lastUpdated}>
+                  Last updated: {legalContent.lastUpdated}
                 </div>
               </div>
-              <div className={styles.legalMain}>
-                <div className={styles.legalSection}>
+            </div>
+            <div className={styles.legalMain}>
+              {legalContent.sections.map((section: any, index: number) => (
+                <div key={index} className={styles.legalSection}>
                   <div className={styles.legalTitle}>
-                    First
+                    {section.title}
                   </div>
                   <div className={styles.legalContent}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque sagittis orci ut diam condimentum, vel euismod erat placerat. In iaculis arcu eros, eget tempus orci facilisis id.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi.
+                    {section.content}
                   </div>
                 </div>
-                <div className={styles.legalSection}>
-                  <div className={styles.legalTitle}>
-                    First
-                  </div>
-                  <div className={styles.legalContent}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque sagittis orci ut diam condimentum, vel euismod erat placerat. In iaculis arcu eros, eget tempus orci facilisis id.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi.
-                  </div>
-                </div>
-                <div className={styles.legalSection}>
-                  <div className={styles.legalTitle}>
-                    First
-                  </div>
-                  <div className={styles.legalContent}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque sagittis orci ut diam condimentum, vel euismod erat placerat. In iaculis arcu eros, eget tempus orci facilisis id.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi.
-                  </div>
-                </div>
-              </div>
+              ))}
+            </div>
+            <div style={{ width: 'calc(100% + 24px)' }}>
               <Footer />
             </div>
           </div>
         </div>
       </div>
+      {/* </div> */}
     </>
   )
 }

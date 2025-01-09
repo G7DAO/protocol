@@ -8,6 +8,9 @@ import FaucetPage from '@/pages/FaucetPage/FaucetPage'
 import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage'
 import LandingPage from './pages/LandingPage/LandingPage'
 import LegalPage from './pages/LegalPage/LegalPage'
+import { LEGAL } from './legal'
+
+console.log(LEGAL)
 
 const router = createBrowserRouter([
   {
@@ -16,11 +19,20 @@ const router = createBrowserRouter([
     errorElement: <ErrorBoundary />
   },
   {
-    element: <LegalPage />,
+    element: <LegalPage legalContent={LEGAL.terms}/>,
     path: '/terms',
     errorElement: <ErrorBoundary />
   },
-  {},
+  {
+    element: <LegalPage legalContent={LEGAL.privacy}/>,
+    path: '/privacy',
+    errorElement: <ErrorBoundary />
+  },
+  {
+    element: <LegalPage legalContent={LEGAL.cookie}/>,
+    path: '/cookie',
+    errorElement: <ErrorBoundary />
+  },
   {
     element: <MainLayout />,
     children: [
