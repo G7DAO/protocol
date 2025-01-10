@@ -69,10 +69,11 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   const { data: messages } = useMessages(connectedAccount, selectedNetworkType || 'Testnet')
   const { useHistoryTransactions } = useBridgeAPI()
   const { data: apiTransactions } = useHistoryTransactions(connectedAccount)
-  const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])
   const [visibleTransactions, setVisibleTransactions] = useState<TransactionRecord[]>([])
+  const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])
   const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status', '']
   const bottomRef = useRef<HTMLDivElement | null>(null)
+  const transactionsRef = useRef<HTMLDivElement | null>(null)
 
   // Merge transations only when API data is updated with new data
   useEffect(() => {
@@ -104,47 +105,54 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
         JSON.stringify([...localTransactions, ...newTransactions])
       )
     }
-    setMergedTransactions(combinedTransactions)
+    // sort first
     combinedTransactions.sort((x: TransactionRecord, y: TransactionRecord) => {
       const xTimestamp = x.type === 'DEPOSIT' ? x.lowNetworkTimestamp : x.highNetworkTimestamp
       const yTimestamp = y.type === 'DEPOSIT' ? y.lowNetworkTimestamp : y.highNetworkTimestamp
 
       return (yTimestamp ?? 0) - (xTimestamp ?? 0)
     })
+    setMergedTransactions(combinedTransactions)
     setVisibleTransactions(combinedTransactions.slice(0, 10))
   }, [messages, apiTransactions])
 
   const loadMoreItems = () => {
+    console.log('....loadig?!')
     setVisibleTransactions((prev) => {
       const nextItems = mergedTransactions.slice(prev.length, prev.length + 5)
+      console.log(nextItems)
       return [...prev, ...nextItems]
     })
   }
 
-  // Add scroll event listener
   useEffect(() => {
     const handleScroll = () => {
-      const bottom = window.innerHeight + window.scrollY
-      console.log('Scroll position:', window.scrollY, 'Bottom position:', bottom)
-
-      if (bottomRef.current) {
-        const progress = window.scrollY / (5000 - window.innerHeight)
-        console.log(progress)
-        loadMoreItems()
+      if (transactionsRef.current) {
+        const { scrollTop, scrollHeight, clientHeight } = transactionsRef.current
+        if (scrollTop + clientHeight >= scrollHeight - 10) {
+          loadMoreItems()
+        }
       }
     }
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
+
+    const currentRef = transactionsRef.current
+    if (currentRef) {
+      currentRef.addEventListener('scroll', handleScroll)
     }
-  }, [])
+
+    return () => {
+      if (currentRef) {
+        currentRef.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [visibleTransactions])
 
   return (
     <div className={styles.container}>
       <div className={styles.content}>
         {visibleTransactions && (
           <div className={styles.transactions}>
-            <div className={styles.withdrawsGrid} style={{ overflowY: 'scroll' }}>
+            <div className={styles.withdrawsGrid} ref={transactionsRef}>
               {headers.map((h) => (
                 <div className={h !== '' ? styles.transactionsHeader : styles.transactionsHeaderEmpty} key={h}>
                   {h}
