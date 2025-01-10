@@ -12,7 +12,18 @@ export async function getTransactionHistory(chain: string, address: string, limi
 
   try {
     const query = `
-    WITH 
+    WITH domains(domain, name) AS (
+        VALUES ('0', 'Ethereum'),
+              ('1', 'Avalanche'),
+              ('2', 'OP (Optimism)'),
+              ('3', 'Arbitrum'),
+              ('4', 'Noble'),
+              ('5', 'Solana'),
+              ('6', 'Base'),
+              ('7', 'Polygon PoS'),
+              ('8', 'Sui'),
+              ('9', 'Aptos')
+    ),
     game7_token_info as (
       SELECT DISTINCT '0x' || ENCODE(address, 'hex') as address,
       label_data->'result'->>0 AS symbol
@@ -38,7 +49,9 @@ export async function getTransactionHistory(chain: string, address: string, limi
       SELECT DISTINCT '0x' || ENCODE(address, 'hex') as address,
       label_data->'result'->>0 AS symbol
       FROM ${bridgeConfig[chain].l1TableName}
-      WHERE label_name = 'symbol'
+      WHERE 
+      label = 'view-state-alpha'
+      AND label_name = 'symbol'
       UNION ALL
       SELECT * FROM (
         VALUES ('${bridgeConfig[chain].l1Token}', '${bridgeConfig[chain].l1TokenName}'),
@@ -180,7 +193,7 @@ export async function getTransactionHistory(chain: string, address: string, limi
         UNION ALL
         select 
           'WITHDRAWAL' as type,
-          'dasd' as position,
+          '' as position,
           label_data->'args'->>'amount' as amount,
           ${bridgeConfig[chain].l2rleationship.parentNetworkChainId} AS parentNetworkChainId,
           ${bridgeConfig[chain].l2rleationship.childNetworkChainId} AS childNetworkChainId,
@@ -195,9 +208,10 @@ export async function getTransactionHistory(chain: string, address: string, limi
           label_data->>'status' as status,
           true as isCctp
         from ${bridgeConfig[chain].l2TableName} -- arbitrum_one_labels
+        LEFT JOIN domains ON label_data->'args'->>'destinationDomain' = domains.domain
         where label_name = 'depositForBurn'
         and address = DECODE('${bridgeConfig[chain].AtbitrumCircleTokenMessenger}', 'hex') -- '0x00D2d23DEA90243D4f73cf088ea5666690299465' -- Arbitrum CircleTokenMessenger
-        and label_data->'args'->>'destinationDomain' = '0' -- 0 is the destination domain for the ethereum chain
+        and domains.name = 'Ethereum'
     ), ethereum_claims AS (
         SELECT
             'CLAIM' AS type,
@@ -352,9 +366,10 @@ export async function getTransactionHistory(chain: string, address: string, limi
           true as isCctp,
           block_timestamp
         FROM ${bridgeConfig[chain].l1TableName}
+        LEFT JOIN domains ON label_data->'args'->>'destinationDomain' = domains.domain
         WHERE label_name = 'depositForBurn'
         and address = DECODE('${bridgeConfig[chain].EthereumCircleTokenMessenger}', 'hex')
-        and label_data->'args'->>'destinationDomain' = '1' -- 1 is the destination domain for the arbitrum chain
+        and domains.name = 'Arbitrum'
       ) as a
     ), full_history as (
           SELECT
