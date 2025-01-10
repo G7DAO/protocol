@@ -72,7 +72,6 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   const [visibleTransactions, setVisibleTransactions] = useState<TransactionRecord[]>([])
   const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])
   const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status', '']
-  const bottomRef = useRef<HTMLDivElement | null>(null)
   const transactionsRef = useRef<HTMLDivElement | null>(null)
 
   // Merge transations only when API data is updated with new data
@@ -120,7 +119,6 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
     console.log('....loadig?!')
     setVisibleTransactions((prev) => {
       const nextItems = mergedTransactions.slice(prev.length, prev.length + 5)
-      console.log(nextItems)
       return [...prev, ...nextItems]
     })
   }
@@ -168,7 +166,6 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
                 )}
               {visibleTransactions.filter((tx: TransactionRecord) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL').length === 0 && <div className={styles.noTransactions}> No transactions yet</div>}
             </div>
-            <div ref={bottomRef} />
           </div>
         )}
       </div>
