@@ -37,11 +37,12 @@ const LandingPage: React.FC = () => {
     if (!element) return;
 
     const handleScroll = () => {
-      const isAtBottom = element.scrollHeight - element.scrollTop === element.clientHeight;
+      const isAtBottom = Math.floor(element.scrollHeight - element.scrollTop) === Math.floor(element.clientHeight)
+      console.log(isAtBottom)
       if (isAtBottom) {
-        footerRef.current?.scrollIntoView({ behavior: 'smooth' });
+        footerRef.current?.scrollIntoView({ behavior: 'smooth' })
       }
-    };
+    }
 
     element.addEventListener('scroll', handleScroll);
     return () => element.removeEventListener('scroll', handleScroll);
@@ -111,7 +112,7 @@ const LandingPage: React.FC = () => {
               )}
             </div>
           </div>
-          <div ref={footerRef}  >
+          <div ref={footerRef}>
             <Footer />
           </div>
         </div>
