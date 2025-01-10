@@ -79,6 +79,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
     const localTransactions = messages || []
     const formattedApiTransactions = apiTransactions ? apiTransactions.map(apiDataToTransactionRecord) : []
     const combinedTransactions = mergeTransactions(formattedApiTransactions, localTransactions)
+
     // Check if the combined transactions are different from those in localStorage
     if (
       combinedTransactions.length !== localTransactions.length ||
@@ -104,6 +105,12 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
       )
     }
     setMergedTransactions(combinedTransactions)
+    combinedTransactions.sort((x: TransactionRecord, y: TransactionRecord) => {
+      const xTimestamp = x.type === 'DEPOSIT' ? x.lowNetworkTimestamp : x.highNetworkTimestamp
+      const yTimestamp = y.type === 'DEPOSIT' ? y.lowNetworkTimestamp : y.highNetworkTimestamp
+
+      return (yTimestamp ?? 0) - (xTimestamp ?? 0)
+    })
     setVisibleTransactions(combinedTransactions.slice(0, 10))
   }, [messages, apiTransactions])
 
@@ -117,14 +124,13 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   // Add scroll event listener
   useEffect(() => {
     const handleScroll = () => {
-      console.log('hello shmello')
       const bottom = window.innerHeight + window.scrollY
       console.log('Scroll position:', window.scrollY, 'Bottom position:', bottom)
 
       if (bottomRef.current) {
         const progress = window.scrollY / (5000 - window.innerHeight)
         console.log(progress)
-        // loadMoreItems()
+        loadMoreItems()
       }
     }
     window.addEventListener('scroll', handleScroll);
@@ -145,12 +151,6 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
                 </div>
               ))}
               {visibleTransactions
-                .sort((x: TransactionRecord, y: TransactionRecord) => {
-                  const xTimestamp = x.type === 'DEPOSIT' ? x.lowNetworkTimestamp : x.highNetworkTimestamp
-                  const yTimestamp = y.type === 'DEPOSIT' ? y.lowNetworkTimestamp : y.highNetworkTimestamp
-
-                  return (yTimestamp ?? 0) - (xTimestamp ?? 0)
-                })
                 .map((tx: TransactionRecord, idx: number) =>
                   tx.type === 'WITHDRAWAL' ? (
                     <Withdrawal withdrawal={tx} key={idx} />

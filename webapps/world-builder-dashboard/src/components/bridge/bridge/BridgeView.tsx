@@ -263,8 +263,8 @@ const BridgeView = ({
             ? 1
             : isCoinFetching
               ? 0.0
-              : coinUSDRate[selectedBridgeToken?.geckoId ?? '']
-                ? coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd
+              : coinUSDRate && selectedBridgeToken?.geckoId && coinUSDRate[selectedBridgeToken.geckoId]
+                ? coinUSDRate[selectedBridgeToken.geckoId]?.usd ?? 0
                 : 0
         }
         tokenSymbol={tokenInformation?.symbol ?? ''}
