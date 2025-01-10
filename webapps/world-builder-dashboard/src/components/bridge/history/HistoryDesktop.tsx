@@ -39,7 +39,6 @@ const mergeTransactions = (apiData: TransactionRecord[], localData: TransactionR
     }
   })
   const combinedDataArray = Array.from(combinedData.values())
-  console.log(combinedDataArray)
   return combinedDataArray
 }
 
@@ -116,7 +115,6 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   }, [messages, apiTransactions])
 
   const loadMoreItems = () => {
-    console.log('....loadig?!')
     setVisibleTransactions((prev) => {
       const nextItems = mergedTransactions.slice(prev.length, prev.length + 5)
       return [...prev, ...nextItems]
