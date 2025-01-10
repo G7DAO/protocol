@@ -4,6 +4,7 @@ import { Tooltip, useClipboard } from 'summon-ui/mantine'
 import { mantineBreakpoints } from '@/styles/breakpoints'
 import { useMediaQuery } from '@mantine/hooks'
 import { NetworkInterface } from '@/contexts/BlockchainContext'
+import { returnSymbol } from '@/utils/web3utils'
 
 const formatCurrency = (value: number) => {
   const formatter = new Intl.NumberFormat('en-US', {
@@ -177,7 +178,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
           <div className={styles.itemName}>You will receive</div>
           <div className={styles.valueContainer}>
             <div className={styles.value}>
-              {`${value} ${tokenSymbol.startsWith('USDC') ? (tokenSymbol === 'USDC.e' ? 'USDC' : 'USDC.e') : tokenSymbol}`}
+              {`${value} ${returnSymbol(direction, selectedHighChain, selectedLowChain, tokenSymbol)}`}
             </div>
             {tokenRate > 0 && <div className={styles.valueNote}>{formatCurrency(value * (tokenSymbol === 'ETH' || tokenSymbol === 'G7' || tokenSymbol === 'TG7T' ? ethRate : tokenRate))}</div>}
           </div>

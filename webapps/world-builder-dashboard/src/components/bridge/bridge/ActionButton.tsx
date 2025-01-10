@@ -12,7 +12,7 @@ import { Bridger, BridgeTransferStatus } from 'game7-bridge-sdk'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 import { getTokensForNetwork, Token } from '@/utils/tokens'
-import { ZERO_ADDRESS } from '@/utils/web3utils'
+import { returnSymbol, ZERO_ADDRESS } from '@/utils/web3utils'
 import { MultiTokenApproval } from './MultiTokenApproval'
 
 interface ActionButtonProps {
@@ -72,7 +72,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       setShowApproval(true)
       return false
     }
-    
+
     const amountBN = ethers.utils.parseUnits(amount, decimals)
     if (bridgeAllowance === null) {
       const gasFeesAmount = gasFees?.[1] ? ethers.utils.parseUnits(gasFees[1], 18) : amountBN
@@ -164,7 +164,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           lowNetworkTimestamp: Date.now() / 1000,
           completionTimestamp: Date.now() / 1000,
           newTransaction: true,
-          symbol: symbol,
+          symbol: returnSymbol(direction, selectedHighNetwork, selectedLowNetwork, symbol ?? ''),
           status:
             destinationTokenAddress === ZERO_ADDRESS
               ? BridgeTransferStatus.DEPOSIT_GAS_PENDING
@@ -185,7 +185,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           highNetworkHash: tx?.hash,
           highNetworkTimestamp: Date.now() / 1000,
           challengePeriod: selectedNetworkType === 'Testnet' ? 60 * 60 : 60 * 60 * 24 * 7,
-          symbol: symbol,
+          symbol: returnSymbol(direction, selectedHighNetwork, selectedLowNetwork, symbol ?? ''),
           status:
             isCCTP
               ? BridgeTransferStatus.CCTP_PENDING
@@ -241,7 +241,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         token.symbol === selectedHighNetwork.nativeCurrency?.symbol :
         token.symbol === selectedLowNetwork.nativeCurrency?.symbol
     )
-    
+
     if (bridgeAllowance === null && nativeAllowance !== null) {
       return [nativeToken].filter((token): token is Token => token !== undefined)
     }

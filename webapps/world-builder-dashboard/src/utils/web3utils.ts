@@ -1,6 +1,6 @@
 import { getHighNetworks, getLowNetworks, HIGH_NETWORKS, LOW_NETWORKS } from '../../constants'
 import { ethers } from 'ethers'
-import { NetworkType } from '@/contexts/BlockchainContext'
+import { NetworkInterface, NetworkType } from '@/contexts/BlockchainContext'
 import { providers } from 'ethers'
 
 export const convertToBigNumber = (numberString: string, precision = 18) => {
@@ -92,4 +92,14 @@ export const fetchTransactionTimestamp = async (completionTxHash: string, rpcUrl
 export const getCachedTransactions = (connectedAccount: string, selectedNetworkType: NetworkType) => {
   const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
   return transactionsString ? JSON.parse(transactionsString) : []
+}
+
+export const returnSymbol = (direction: 'DEPOSIT' | 'WITHDRAW', selectedHighChain: NetworkInterface, selectedLowChain: NetworkInterface, tokenSymbol: string) => {
+  if (tokenSymbol.startsWith('USDC')) {
+    if (direction === 'DEPOSIT' && (selectedHighChain.chainId === 13746 || selectedHighChain.chainId === 2187))
+      return 'USDC.e'
+    else if (direction === 'WITHDRAW' && (selectedLowChain.chainId === 421614 || selectedLowChain.chainId === 42161))
+      return 'USDC'
+  }
+  return tokenSymbol
 }

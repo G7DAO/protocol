@@ -74,7 +74,7 @@ const BridgeView = ({
     token: nativeToken
   })
 
-  const { data: coinUSDRate, isFetching: isCoinFetching } = useUSDPriceOfToken(selectedBridgeToken.geckoId ?? '')
+  const { data: coinUSDRate, isFetching: isCoinFetching } = useUSDPriceOfToken(selectedBridgeToken?.geckoId ?? '')
   const { data: ethRate } = useUSDPriceOfToken('ethereum')
   const handleTokenChange = async (token: Token) => {
     setSelectedBridgeToken(token)
@@ -213,7 +213,7 @@ const BridgeView = ({
         onTokenChange={handleTokenChange}
         balance={tokenInformation?.tokenBalance}
         rate={
-          selectedBridgeToken.symbol === 'TG7T' || selectedBridgeToken.symbol === 'G7'
+          selectedBridgeToken?.symbol === 'TG7T' || selectedBridgeToken?.symbol === 'G7'
             ? 1
             : isCoinFetching
               ? 0.0
@@ -259,11 +259,13 @@ const BridgeView = ({
         value={Number(value)}
         ethRate={ethRate?.ethereum?.usd ?? 0}
         tokenRate={
-          selectedBridgeToken.symbol === 'TG7T' || selectedBridgeToken.symbol === 'G7'
+          selectedBridgeToken?.symbol === 'TG7T' || selectedBridgeToken?.symbol === 'G7'
             ? 1
             : isCoinFetching
               ? 0.0
-              : coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd ?? 0
+              : coinUSDRate && selectedBridgeToken?.geckoId && coinUSDRate[selectedBridgeToken.geckoId]
+                ? coinUSDRate[selectedBridgeToken.geckoId]?.usd ?? 0
+                : 0
         }
         tokenSymbol={tokenInformation?.symbol ?? ''}
         gasNativeTokenSymbol={
