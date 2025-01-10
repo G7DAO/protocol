@@ -12,7 +12,7 @@ interface NavbarProps {
   setIsNavbarOpen: React.Dispatch<React.SetStateAction<boolean>>
   startBuilding: () => void
   navigateLink: (item: { name: string; link: string }) => void
-  isSticky: boolean
+  isContainer: boolean
 }
 
 const NAVBAR_ITEMS = [
@@ -26,12 +26,12 @@ const NAVBAR_ITEMS = [
   }
 ]
 
-const Navbar: React.FC<NavbarProps> = ({ navbarOpen, smallView, setIsNavbarOpen, startBuilding, navigateLink, isSticky }) => {
+const Navbar: React.FC<NavbarProps> = ({ navbarOpen, smallView, setIsNavbarOpen, startBuilding, navigateLink, isContainer }) => {
   const navigate = useNavigate()
   const location = useLocation()
   return (
     <>
-      <div className={`${styles.navbarContainer} ${isSticky ? styles.navbarSticky : ''}`}>
+      <div className={`${styles.navbarContainer} ${isContainer ? styles.navbarStickyContainer : styles.navbarSticky}`}>
         <div className={styles.navbar}>
           <div className={styles.logoWrapper} onClick={() => navigate('/')}>
             <IconGame7Logo />

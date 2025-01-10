@@ -6,11 +6,20 @@ body {
   -webkit-scrollbar: none;
 }
 
+
+.sticky {
+  position: sticky;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  z-index: 1000;
+}
+
 .layout {
   display: flex;
   width: 100vw;
-  height: 100svh;
-  padding: 24px;
+  height: calc(100svh);
+  padding: 24px 24px 0px 24px;
   flex-direction: column;
   align-items: center;
   gap: 16px;

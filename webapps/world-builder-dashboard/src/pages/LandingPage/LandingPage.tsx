@@ -1,5 +1,5 @@
 // LandingPage.tsx
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './LandingPage.module.css'
 import { useMediaQuery } from 'summon-ui/mantine'
@@ -19,17 +19,34 @@ const LandingPage: React.FC = () => {
   const [navbarOpen, setNavBarOpen] = useState<boolean>(false)
   const smallView = useMediaQuery('(max-width: 750px)')
   const isLargeView = useMediaQuery('(min-width: 1440px)')
-
+  const mainLayoutRef = useRef<HTMLDivElement>(null);
+  const footerRef = useRef<HTMLDivElement>(null);
   const [backgroundStyle, setBackgroundStyle] = useState<string | undefined>();
 
   useEffect(() => {
-    const img = new Image();
-    img.src = backgroundImage as string;
+    const img = new Image()
+    img.src = backgroundImage as string
 
     img.onload = () => {
-      setBackgroundStyle(`#1b1b1b url(${backgroundImage}) 50% / cover no-repeat`);
+      setBackgroundStyle(`#1b1b1b url(${backgroundImage}) 50% / cover no-repeat`)
+    }
+  }, [])
+
+  useEffect(() => {
+    const element = mainLayoutRef.current;
+    if (!element) return;
+
+    const handleScroll = () => {
+      const isAtBottom = element.scrollHeight - element.scrollTop === element.clientHeight;
+      if (isAtBottom) {
+        footerRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }
     };
+
+    element.addEventListener('scroll', handleScroll);
+    return () => element.removeEventListener('scroll', handleScroll);
   }, []);
+
 
   const startBuilding = () => {
     setSelectedNetworkType('Testnet')
@@ -78,9 +95,9 @@ const LandingPage: React.FC = () => {
                 setIsNavbarOpen={setNavBarOpen}
                 startBuilding={startBuilding}
                 navigateLink={navigateLink}
-                isSticky={true}
+                isContainer={false}
               />
-              <div className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}`}
+              <div ref={mainLayoutRef} className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}`}
                 style={backgroundStyle ? { background: backgroundStyle } : undefined}>
                 <MainSection smallView={!!smallView} startBuilding={startBuilding} />
                 <BenefitsSection />
@@ -94,7 +111,9 @@ const LandingPage: React.FC = () => {
               )}
             </div>
           </div>
-          <Footer />
+          <div ref={footerRef}  >
+            <Footer />
+          </div>
         </div>
       </>
       )}

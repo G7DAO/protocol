@@ -44,11 +44,21 @@ body {
   align-self: stretch;
 }
 
+.navbarStickyContainer {
+  position: sticky;
+  z-index: 1005;
+  top: 24px;
+  padding: 12px 12px 12px 16px;
+  align-items: flex-start;
+  border-radius: 20px;
+  border: 1px solid var(--gray-500, #737373);
+  background: hsl(0, 0%, 3%);
+}
+
 .navbarSticky {
   position: sticky;
   z-index: 1005;
   top: 0px;
-  padding-top: 24px;
   padding: 12px 12px 12px 16px;
   align-items: flex-start;
   border-radius: 20px;
