@@ -75,23 +75,24 @@ const LandingPage: React.FC = () => {
               <Navbar
                 navbarOpen={navbarOpen}
                 smallView={!!smallView}
-                setIsNavbarOpen={setNavBarOpen}
-                startBuilding={startBuilding}
-                navigateLink={navigateLink}
-                isSticky={true}
-              />
-              <div className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}`}
-                style={backgroundStyle ? { background: backgroundStyle } : undefined}>
-                <MainSection smallView={!!smallView} startBuilding={startBuilding} />
-                <BenefitsSection />
+                  setIsNavbarOpen={setNavBarOpen}
+                  startBuilding={startBuilding}
+                  navigateLink={navigateLink}
+                  isContainer={false}
+                />
+                <div ref={mainLayoutRef} className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}`}
+                  style={backgroundStyle ? { background: backgroundStyle } : undefined}>
+                  <MainSection smallView={!!smallView} startBuilding={startBuilding} />
+                  <BenefitsSection />
                 <AlliesSection />
                 <NetworkEssentials smallView={!!smallView} startBuilding={startBuilding} />
               </div>
               {smallView && (
                 <div className={styles.startBuildingCTA} onClick={startBuilding}>
-                  Start building
-                </div>
-              )}
+                    Start building
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           <Footer />
