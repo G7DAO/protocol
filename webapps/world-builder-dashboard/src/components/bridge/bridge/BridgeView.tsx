@@ -279,7 +279,7 @@ const BridgeView = ({
 
       />
       {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
-      {direction === 'DEPOSIT' && <div className={styles.manualGasMessageContainer}>
+      {<div className={styles.manualGasMessageContainer}>
         <div className={styles.manualGasMessageText}>
           Claim transaction may be required on {selectedHighNetwork.displayName}
         </div>

@@ -16,7 +16,7 @@ const Footer: React.FC = () => {
     const smallView = useMediaQuery('(max-width: 750px)')
     const { setSelectedNetworkType } = useBlockchainContext()
     const footerIcons = [
-        { component: <IconDiscord />, navigate: () => window.open('/discord', '_blank') },
+        { component: <IconDiscord />, navigate: () => window.open('https://discord.com/invite/g7dao', '_blank') },
         { component: <IconX />, navigate: () => window.open('https://x.com/g7_dao', '_blank') },
         { component: <IconGitHub />, navigate: () => window.open('https://github.com/G7DAO', '_blank') },
         { component: <IconLinkedIn />, navigate: () => window.open('https://www.linkedin.com/company/g7dao', '_blank') },

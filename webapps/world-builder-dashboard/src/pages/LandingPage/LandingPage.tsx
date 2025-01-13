@@ -38,7 +38,7 @@ const LandingPage: React.FC = () => {
 
     const handleScroll = () => {
       const isAtBottom = Math.floor(element.scrollHeight - element.scrollTop) === Math.floor(element.clientHeight)
-      console.log(isAtBottom)
+      console.log(isAtBottom, Math.floor(element.clientHeight))
       if (isAtBottom) {
         footerRef.current?.scrollIntoView({ behavior: 'smooth' })
       }
