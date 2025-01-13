@@ -113,6 +113,14 @@
     background: #171717;
 }
 
+@media (max-width: 1199px) {
+    .layoutFooter {
+        padding-left: 16px;
+        padding-right: 16px;
+        background: #171717;
+    }
+}
+
 
 @media (max-width: 750px) {
     .layoutFooter {
@@ -121,3 +129,4 @@
         background: #171717;
     }
 }
+
