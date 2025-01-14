@@ -27,7 +27,6 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
   selectedNetworkType,
   transactionInputs
 }) => {
-  console.log(withdrawal)
   const [isCollapsed, setIsCollapsed] = useState(true)
   return (
     <div className={styles.container}>
