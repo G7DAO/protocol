@@ -7,7 +7,7 @@ export const useCoinGeckoAPI = () => {
       async () => {
         const res = await fetch(`https://pro-api.coingecko.com/api/v3/simple/price?ids=${coin}&vs_currencies=usd`, {
           method: 'GET',
-          headers: { accept: 'application/json', 'x-cg-pro-api-key': import.meta.env.VITE_COIN_GECKO_API_KEY }
+          headers: { accept: 'application/json', 'x-cg-pro-api-key': import.meta.env.VITE_COIN_GECKO_KEY }
         })
         if (!res.ok) {
           throw new Error(`Error: ${res.statusText}`)
