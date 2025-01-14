@@ -49,6 +49,7 @@ const LandingPage: React.FC<LegalPageProps> = ({legalContent}) => {
               startBuilding={startBuilding}
               navigateLink={navigateLink}
               isContainer={false}
+              isSticky={false}
             />
             <div className={styles.legalHeader}>
               <div className={styles.headerContainer}>

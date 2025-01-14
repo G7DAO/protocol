@@ -22,6 +22,7 @@ const LandingPage: React.FC = () => {
   const mainLayoutRef = useRef<HTMLDivElement>(null);
   const footerRef = useRef<HTMLDivElement>(null);
   const [backgroundStyle, setBackgroundStyle] = useState<string | undefined>();
+  const [isAtBottom, setIsAtBottom] = useState<boolean>(false)
 
   useEffect(() => {
     const img = new Image()
@@ -38,7 +39,7 @@ const LandingPage: React.FC = () => {
 
     const handleScroll = () => {
       const isAtBottom = Math.floor(element.scrollHeight - element.scrollTop) === Math.floor(element.clientHeight)
-      console.log(isAtBottom, Math.floor(element.clientHeight))
+      setIsAtBottom(isAtBottom)
       if (isAtBottom) {
         footerRef.current?.scrollIntoView({ behavior: 'smooth' })
       }
@@ -97,6 +98,7 @@ const LandingPage: React.FC = () => {
                 startBuilding={startBuilding}
                 navigateLink={navigateLink}
                 isContainer={false}
+                isSticky={!isAtBottom}
               />
               <div ref={mainLayoutRef} className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}`}
                 style={backgroundStyle ? { background: backgroundStyle } : undefined}>

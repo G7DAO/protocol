@@ -4,16 +4,6 @@ body {
   -webkit-overflow-scrolling: auto;
 }
 
-.container {
-  width: 100%;
-  height: 100%;
-}
-
-.viewContainer {
-  position: relative;
-  height: 5000px;
-}
-
 .layout {
   display: flex;
   width: 100vw;
@@ -38,10 +28,12 @@ body {
 .navbarContainer {
   display: flex;
   width: 100%;
-  padding: 12px 12px 12px 16px;
+  padding: 4px 0px;
+  top: 16px;
   flex-direction: column;
   align-items: center;
   align-self: stretch;
+  transition: 0.7s all ease;
 }
 
 .navbarStickyContainer {
@@ -53,6 +45,7 @@ body {
   border-radius: 20px;
   border: 1px solid var(--gray-500, #737373);
   background: hsl(0, 0%, 3%);
+  transition: 0.7s all ease;
 }
 
 .navbarSticky {
