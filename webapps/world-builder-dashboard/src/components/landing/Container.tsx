@@ -77,6 +77,7 @@ const Container: React.FC<ContainerProps> = ({ components, isNavbarOpen, setIsNa
                             startBuilding={startBuilding}
                             navigateLink={navigateLink}
                             isContainer={true}
+                            isSticky={progress > 100}
                         />
                         <div className={`${parentStyles.mainLayout} ${isNavbarOpen ? styles.layoutDarkened : ''}`}
                             style={backgroundStyle ? { background: backgroundStyle } : undefined}>

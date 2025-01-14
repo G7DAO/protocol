@@ -27,18 +27,29 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
   selectedNetworkType,
   transactionInputs
 }) => {
+  console.log(withdrawal)
   const [isCollapsed, setIsCollapsed] = useState(true)
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.title}>Withdraw</div>
-        <div className={styles.amount}>{`${withdrawal.symbol
-          ? withdrawal.symbol === 'USDC'
-            ? ethers.utils.formatUnits(transactionInputs?.amount ?? 0, 6)
-            : withdrawal.amount
-          : transactionInputs?.tokenSymbol === 'USDC'
-            ? ethers.utils.formatUnits(transactionInputs?.amount ?? 0, 6)
-            : ethers.utils.formatEther(transactionInputs?.amount ?? 0) ?? withdrawal.amount} ${withdrawal.symbol || transactionInputs?.tokenSymbol}`}</div>
+        {(withdrawal.symbol || transactionInputs?.tokenSymbol) ? (
+              <div className={styles.amount}>
+                {`${withdrawal.symbol
+                  ? withdrawal.symbol === 'USDC'
+                    ? ethers.utils.formatUnits(transactionInputs?.amount ?? 0, 6)
+                    : withdrawal.amount
+                  : transactionInputs.tokenSymbol === 'USDC'
+                    ? ethers.utils.formatUnits(transactionInputs?.amount ?? 0, 6)
+                    : ethers.utils.formatEther(transactionInputs?.amount ?? 0) ?? withdrawal.amount} ${withdrawal.symbol || transactionInputs.tokenSymbol}`}
+              </div>
+            ) : (
+              <div className={styles.amount}>
+                <div className={parentStyles.loading}>
+                  Loading
+                </div>
+              </div>
+            )}
       </div>
       {!isCollapsed && (
         <>
