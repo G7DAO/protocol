@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { getHighNetworks, getLowNetworks } from '../../../../constants'
 import styles from './DepositMobile.module.css'
 import parentStyles from './WithdrawTransactions.module.css'
+import ethers from 'ethers'
 import { BridgeTransferStatus } from 'game7-bridge-sdk'
 import { Skeleton, useMediaQuery } from 'summon-ui/mantine'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
@@ -52,7 +53,23 @@ const DepositMobile: React.FC<DepositMobileProps> = ({
         <div className={styles.container}>
           <div className={styles.header}>
             <div className={styles.title}>Deposit</div>
-            <div className={styles.amount}>{`${deposit.amount} ${transactionInputs?.tokenSymbol}`}</div>
+            {(deposit.symbol || transactionInputs?.tokenSymbol) ? (
+              <div className={styles.amount}>
+                {`${deposit.symbol
+                  ? deposit.symbol === 'USDC'
+                    ? ethers.utils.formatUnits(transactionInputs?.amount ?? 0, 6)
+                    : deposit.amount
+                  : transactionInputs.tokenSymbol === 'USDC'
+                    ? ethers.utils.formatUnits(transactionInputs?.amount ?? 0, 6)
+                    : ethers.utils.formatEther(transactionInputs?.amount ?? 0) ?? deposit.amount} ${deposit.symbol || transactionInputs.tokenSymbol}`}
+              </div>
+            ) : (
+              <div className={styles.amount}>
+                <div className={parentStyles.loading}>
+                  Loading
+                </div>
+              </div>
+            )}
           </div>
           {!isCollapsed && (
             <>
@@ -151,7 +168,7 @@ const DepositMobile: React.FC<DepositMobileProps> = ({
                 <div className={styles.dataTextBold}>
                   {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
                     transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||
-                    transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD || 
+                    transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ||
                     transferStatus?.status === BridgeTransferStatus.CCTP_REDEEMED ? (
                     <>{timeAgo(deposit?.completionTimestamp)}</>
                   ) : (
