@@ -9,6 +9,7 @@ import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage'
 import LandingPage from './pages/LandingPage/LandingPage'
 import LegalPage from './pages/LegalPage/LegalPage'
 import { LEGAL } from './legal'
+import RelayPage from './pages/RelayPage/RelayPage'
 
 console.log(LEGAL)
 
@@ -48,6 +49,15 @@ const router = createBrowserRouter([
       {
         path: '/faucet/*',
         element: <FaucetPage />
+      }
+    ]
+  },
+  {
+    element: <MainLayout />,
+    children: [
+      {
+        path: '/relay/*',
+        element: <RelayPage />
       }
     ]
   },

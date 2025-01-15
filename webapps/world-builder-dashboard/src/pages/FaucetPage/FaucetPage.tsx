@@ -14,7 +14,7 @@ import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsCon
 // Hooks
 import { useNotifications, usePendingTransactions } from '@/hooks/useL2ToL1MessageStatus'
 
-const BridgePage = () => {
+const FaucetPage = () => {
   const { connectedAccount } = useBlockchainContext()
   const pendingTransacions = usePendingTransactions(connectedAccount)
   const [notificationsOffset] = useState(0)
@@ -48,4 +48,4 @@ const BridgePage = () => {
   )
 }
 
-export default BridgePage
+export default FaucetPage

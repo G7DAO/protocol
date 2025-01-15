@@ -12,6 +12,7 @@ import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import DesktopSidebar from '@/layouts/MainLayout/DesktopSidebar'
 import MobileSidebar from '@/layouts/MainLayout/MobileSidebar'
 import { useMediaQuery } from '@mantine/hooks'
+import IconRelay from '@/assets/IconRelay'
 
 interface MainLayoutProps { }
 
@@ -32,6 +33,16 @@ const MainLayout: React.FC<MainLayoutProps> = ({ }) => {
         <IconWallet04
           className={styles.icomButton}
           stroke={location.pathname.startsWith('/bridge') ? '#fff' : '#B9B9B9'}
+        />
+      )
+    },
+    {
+      name: 'relay bridge',
+      navigateTo: '/relay',
+      icon: (
+        <IconRelay
+          className={styles.icomButton}
+          stroke={location.pathname.startsWith('/relay') ? '#fff' : '#B9B9B9'}
         />
       )
     },
