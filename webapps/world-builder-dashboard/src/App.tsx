@@ -15,6 +15,14 @@ import { AuthProvider } from '@/providers/AuthProvider'
 import router from '@/router'
 import './styles/global.css'
 
+// relay stuff
+import { RelayKitProvider } from '@reservoir0x/relay-kit-ui'
+import { convertViemChainToRelayChain } from '@reservoir0x/relay-sdk'
+import { http, createConfig, WagmiProvider } from 'wagmi'
+import { mainnet } from 'viem/chains'
+import { MAINNET_RELAY_API } from '@reservoir0x/relay-sdk'
+import { theme } from './utils/relayTheme'
+
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
@@ -38,6 +46,15 @@ const queryClient = new QueryClient({
   }
 })
 
+const chains = [convertViemChainToRelayChain(mainnet)]
+
+const wagmiConfig = createConfig({
+  chains: [mainnet],
+  transports: {
+    [mainnet.id]: http(),
+  }
+})
+
 const enMessages = { en }
 
 //@TODO we need to set this dynamically
@@ -51,6 +68,7 @@ const { name, lang, uiTheme } = TENANT_CONFIG
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
+
       <BlockchainProvider>
         <UISettingsProvider>
           <AssetsProvider tenant={name as Tenant}>
@@ -66,7 +84,22 @@ export default function App() {
                 <BridgeNotificationsProvider>
                   <Notifications position='top-right' zIndex={1000} styles={NOTIFICATIONS_STYLES} />
                   <AuthProvider>
-                    <RouterProvider router={router} />
+                    <RelayKitProvider theme={theme} options={{
+                      appName: 'Relay Demo',
+                      appFees: [
+                        {
+                          recipient: '0x0000000000000000000000000000000000000000',
+                          fee: '100' // 1%
+                        }
+                      ],
+                      duneApiKey: "YOUR_DUNE_KEY",
+                      chains,
+                      baseApiUrl: MAINNET_RELAY_API
+                    }}>
+                      <WagmiProvider config={wagmiConfig}>
+                        <RouterProvider router={router} />
+                      </WagmiProvider>
+                    </RelayKitProvider>
                   </AuthProvider>
                 </BridgeNotificationsProvider>
               </ThemeProvider>
@@ -74,6 +107,6 @@ export default function App() {
           </AssetsProvider>
         </UISettingsProvider>
       </BlockchainProvider>
-    </QueryClientProvider>
+    </QueryClientProvider >
   )
 }
