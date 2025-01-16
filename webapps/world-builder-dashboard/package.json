@@ -12,8 +12,11 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@arbitrum/nitro-contracts": "^1.2.1",
+    "@arbitrum/nitro-contracts": "^3.0.0",
     "@arbitrum/sdk": "^4.0.1",
+    "@reservoir0x/relay-kit-ui": "^2.4.0",
+    "@reservoir0x/relay-sdk": "^1.4.8",
+    "@tanstack/react-query": "^5.64.1",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "axios": "^1.6.8",
     "clsx": "^1.2.1",
@@ -24,9 +27,10 @@
     "prettier-plugin-tailwindcss": "^0.6.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-query": "^3.39.3",
     "react-router-dom": "^6.11.2",
-    "summon-ui": "^0.21.0"
+    "summon-ui": "^0.21.0",
+    "viem": "^2.21.54",
+    "wagmi": "^2.14.8"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

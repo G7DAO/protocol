@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import { stakerABI } from '@/web3/ABI/staker'
 import { MULTICALL_ABI } from '@/web3/ABI/Multicall'
 import { L3_NETWORKS } from '@/utils/bridge/l3Networks'
@@ -77,9 +77,11 @@ const fetchPools = async () => {
 }
 
 const usePools = () => {
-    return useQuery('pools', () => fetchPools(), {
+    return useQuery({
+        queryKey: ['pools'],
+        queryFn: () => fetchPools(),
         refetchInterval: 60000
-    });
+    })
 }
 
 export default usePools

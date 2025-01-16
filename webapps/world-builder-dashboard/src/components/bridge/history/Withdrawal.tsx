@@ -94,7 +94,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     </div>
                   </div>
                   <div className={styles.gridItem}>{timeAgo(withdrawal.highNetworkTimestamp)}</div>
-                  {transactionInputs?.tokenSymbol || withdrawal?.symbol ? (
+                  {transactionInputs.tokenSymbol || withdrawal?.symbol ? (
                     <div className={styles.gridItem}>
                       {withdrawal.symbol
                         ? withdrawal.symbol === 'USDC'
@@ -372,10 +372,10 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                             <button
                               className={styles.claimButton}
                               onClick={() => {
-                                claim.mutate(withdrawal)
+                                claim.mutate({txRecord: withdrawal})
                               }}
                             >
-                              {claim.isLoading && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}
+                              {claim.isPending && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}
                             </button>
                           </div>
                           <div className={styles.emptyCell} />

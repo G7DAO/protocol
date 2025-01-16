@@ -1,6 +1,6 @@
 export const LEGAL = {
     terms: {
-        title: 'Terms and Conditions',
+        title: 'Terms & Conditions',
         lastUpdated: 'June 1st, 2023',
         sections: [
             {
