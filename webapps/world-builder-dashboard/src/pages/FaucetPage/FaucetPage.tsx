@@ -1,6 +1,6 @@
 // React and hooks
 import { useEffect, useState } from 'react'
-import { useQueryClient } from 'react-query'
+import { useQueryClient } from '@tanstack/react-query'
 // Styles
 import bridgeStyles from '../BridgePage/BridgePage.module.css'
 import styles from './FaucetPage.module.css'
@@ -27,7 +27,7 @@ const FaucetPage = () => {
 
   useEffect(() => {
     if (pendingTransacions.data && connectedAccount) {
-      queryClient.refetchQueries(['incomingMessages'])
+      queryClient.refetchQueries({ queryKey: ['incomingMessages'] })
       refetchNewNotifications(connectedAccount)
     }
   }, [pendingTransacions.data, connectedAccount])

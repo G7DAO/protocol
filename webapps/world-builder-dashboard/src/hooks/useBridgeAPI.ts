@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import { ethers } from 'ethers'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 

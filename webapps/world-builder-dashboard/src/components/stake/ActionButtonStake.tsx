@@ -1,6 +1,6 @@
 // External Libraries
 import React from 'react'
-import { useMutation, useQueryClient } from 'react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query' 
 import { useNavigate } from 'react-router-dom'
 // Styles
 import styles from '@/components/bridge/bridge/ActionButton.module.css'

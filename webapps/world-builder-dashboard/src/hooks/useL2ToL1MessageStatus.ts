@@ -1,4 +1,4 @@
-import { useQueries, useQuery, UseQueryResult } from 'react-query'
+import { useQueries, useQuery, UseQueryResult } from '@tanstack/react-query'
 import { getHighNetworks, getLowNetworks, L2_NETWORK } from '../../constants'
 import { ethers, providers } from 'ethers'
 import { Transaction } from 'ethers'
@@ -75,7 +75,9 @@ const fetchL2ToL1MessageStatus = async (withdrawal: TransactionRecord, selectedN
 }
 
 export const useL2ToL1MessageStatus = (withdrawal: TransactionRecord, selectedNetworkType: NetworkType) => {
-  return useQuery(['withdrawalStatus', withdrawal], () => fetchL2ToL1MessageStatus(withdrawal, selectedNetworkType), {
+  return useQuery({
+    queryKey: ['withdrawalStatus', withdrawal],
+    queryFn: () => fetchL2ToL1MessageStatus(withdrawal, selectedNetworkType),
     refetchInterval: 60 * 1000
   })
 }
@@ -232,19 +234,19 @@ export const useMessages = (
   networkType: string
 ): UseQueryResult<TransactionRecord[]> => {
   return useQuery(
-    ['incomingMessages', connectedAccount, networkType],
-    () => {
-      if (!connectedAccount) {
-        return []
-      }
-      const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${networkType}`)
-      if (transactionsString) {
-        return JSON.parse(transactionsString).sort(sortTransactions)
-      } else {
-        return []
-      }
-    },
     {
+      queryKey: ['incomingMessages', connectedAccount, networkType],
+      queryFn: () => {
+        if (!connectedAccount) {
+          return []
+        }
+        const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${networkType}`)
+        if (transactionsString) {
+          return JSON.parse(transactionsString).sort(sortTransactions)
+        } else {
+          return []
+        }
+      },
       enabled: !!networkType && !!connectedAccount
     }
   )
@@ -286,28 +288,28 @@ export const useNotifications = (
 ): UseQueryResult<BridgeNotification[]> => {
   const { selectedNetworkType } = useBlockchainContext()
   return useQuery(
-    ['notifications', connectedAccount, offset, limit, selectedNetworkType],
-    async () => {
-      if (!connectedAccount) {
-        return []
-      }
-      const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
-      let transactions
-      if (!transactionsString) {
-        return []
-      }
-      try {
-        transactions = JSON.parse(transactionsString)
-        if (!Array.isArray(transactions)) {
+    {
+      queryKey: ['notifications', connectedAccount, offset, limit, selectedNetworkType],
+      queryFn: async () => {
+        if (!connectedAccount) {
           return []
         }
-        return getNotifications(transactions)
-      } catch (e) {
-        console.log(e)
-        return []
-      }
-    },
-    {
+        const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
+        let transactions
+        if (!transactionsString) {
+          return []
+        }
+        try {
+          transactions = JSON.parse(transactionsString)
+          if (!Array.isArray(transactions)) {
+            return []
+          }
+          return getNotifications(transactions)
+        } catch (e) {
+          console.log(e)
+          return []
+        }
+      },
       refetchInterval: 10 * 1000
     }
   )
@@ -316,53 +318,53 @@ export const useNotifications = (
 export const usePendingTransactions = (connectedAccount: string | undefined): UseQueryResult<boolean> => {
   const { selectedNetworkType } = useBlockchainContext()
   return useQuery(
-    ['pendingTransactions', connectedAccount],
-    async () => {
-      if (!connectedAccount) {
-        return false
-      }
-      const storageKey = `bridge-${connectedAccount}-transactions-${selectedNetworkType}`
-      const transactionsString = localStorage.getItem(storageKey)
-      let transactions
-      if (!transactionsString) {
-        return false
-      }
-      try {
-        transactions = JSON.parse(transactionsString)
-        if (!Array.isArray(transactions)) {
+    {
+      queryKey: ['pendingTransactions', connectedAccount],
+      queryFn: async () => {
+        if (!connectedAccount) {
           return false
         }
+        const storageKey = `bridge-${connectedAccount}-transactions-${selectedNetworkType}`
+        const transactionsString = localStorage.getItem(storageKey)
+        let transactions
+        if (!transactionsString) {
+          return false
+        }
+        try {
+          transactions = JSON.parse(transactionsString)
+          if (!Array.isArray(transactions)) {
+            return false
+          }
 
-        const updatedTransactions: TransactionRecord[] = []
+          const updatedTransactions: TransactionRecord[] = []
 
-        for (const t of transactions) {
-          if (t.type === 'DEPOSIT') {
-            if (t.status === BridgeTransferStatus.CCTP_COMPLETE) {
-              updatedTransactions.push({ ...t, claimableTimestamp: Date.now() / 1000, newTransaction: true })
+          for (const t of transactions) {
+            if (t.type === 'DEPOSIT') {
+              if (t.status === BridgeTransferStatus.CCTP_COMPLETE) {
+                updatedTransactions.push({ ...t, claimableTimestamp: Date.now() / 1000, newTransaction: true })
+              }
+            }
+            if (t.type === 'WITHDRAWAL') {
+              if (t.status === ChildToParentMessageStatus.CONFIRMED || t.status === BridgeTransferStatus.CCTP_COMPLETE) {
+                updatedTransactions.push({ ...t, claimableTimestamp: Date.now() / 1000, newTransaction: true })
+              }
             }
           }
-          if (t.type === 'WITHDRAWAL') {
-            if (t.status === ChildToParentMessageStatus.CONFIRMED || t.status === BridgeTransferStatus.CCTP_COMPLETE) {
-              updatedTransactions.push({ ...t, claimableTimestamp: Date.now() / 1000, newTransaction: true })
-            }
-          }
-        }
 
-        if (updatedTransactions.length > 0) {
-          const allTransactions = transactions.map((t) => {
-            const updatedTransaction = updatedTransactions.find((ut) => ut.lowNetworkHash === t.lowNetworkHash && ut.highNetworkHash === t.highNetworkHash)
-            return updatedTransaction ? updatedTransaction : t
-          })
-          const allTransactionsString = JSON.stringify(allTransactions)
-          localStorage.setItem(storageKey, allTransactionsString)
-          return true
+          if (updatedTransactions.length > 0) {
+            const allTransactions = transactions.map((t) => {
+              const updatedTransaction = updatedTransactions.find((ut) => ut.lowNetworkHash === t.lowNetworkHash && ut.highNetworkHash === t.highNetworkHash)
+              return updatedTransaction ? updatedTransaction : t
+            })
+            const allTransactionsString = JSON.stringify(allTransactions)
+            localStorage.setItem(storageKey, allTransactionsString)
+            return true
+          }
+        } catch (e) {
+          console.log(e)
         }
-      } catch (e) {
-        console.log(e)
-      }
-      return false
-    },
-    {
+        return false
+      },
       refetchInterval: 120 * 1000
     }
   )

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { FAUCET_CHAIN, getNetworks, L3_NATIVE_TOKEN_SYMBOL, L3_NETWORK } from '../../../constants'
 import { AccountType } from '../commonComponents/accountSelector/AccountSelector'
 import AccountSelector from '../commonComponents/accountSelector/AccountSelector'
@@ -14,8 +14,8 @@ import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { timeDifferenceInHoursAndMinutes, timeDifferenceInHoursMinutesAndSeconds } from '@/utils/timeFormat'
 import { useNavigate } from 'react-router-dom'
 
-interface FaucetViewProps {}
-const FaucetView: React.FC<FaucetViewProps> = ({}) => {
+interface FaucetViewProps { }
+const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const [address, setAddress] = useState<string | undefined>('')
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false)
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L3_NETWORK)
@@ -139,10 +139,10 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
           return { faucetTimeInterval: faucetInterval, L3: updatedL3 }
         })
 
-        queryClient.invalidateQueries(['faucetTimestamp', address])
-        queryClient.refetchQueries(['notifications'])
-        queryClient.refetchQueries(['nativeBalance'])
-        queryClient.refetchQueries(['ERC20balance'])
+        queryClient.invalidateQueries({ queryKey: ['faucetTimestamp', address] })
+        queryClient.refetchQueries({ queryKey: ['notifications'] })
+        queryClient.refetchQueries({ queryKey: ['nativeBalance'] })
+        queryClient.refetchQueries({ queryKey: ['ERC20balance'] })
         refetchNewNotifications(address ?? '')
       },
       onError: (error) => {
@@ -179,7 +179,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
       enabled: !!address && !!faucetIntervalQuery.data && !!lastClaimedTimestampQuery.data
     }
   )
-  
+
   useEffect(() => {
     let isButtonDisabled = true
 

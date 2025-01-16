@@ -1,5 +1,5 @@
-import { useMutation, useQueryClient } from 'react-query'
-import { useQuery } from 'react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { getNetworks } from '../../constants'
 import { BridgeTransfer, BridgeTransferStatus, getBridgeTransfer } from 'game7-bridge-sdk'

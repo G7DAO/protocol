@@ -1,6 +1,6 @@
 // External Libraries
 import React, { useState } from 'react'
-import { useMutation, useQueryClient } from 'react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 // Constants
 import { getNetworks } from '../../../../constants'
@@ -100,7 +100,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     if (isConnecting) {
       return 'Connecting wallet...'
     }
-    if (transfer.isLoading) {
+    if (transfer.isPending) {
       return 'Submitting...'
     }
     if (!connectedAccount) {
@@ -118,7 +118,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   }
 
   const handleClick = async () => {
-    if (isConnecting || transfer.isLoading) {
+    if (isConnecting || transfer.isPending) {
       return
     }
     if (typeof window.ethereum === 'undefined') {
@@ -133,13 +133,17 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 
     const allowancesOk = await checkAllowances()
     if (allowancesOk) {
-      transfer.mutate(amount)
+      transfer.mutate({ amount })
     }
   }
 
   const queryClient = useQueryClient()
-  const transfer = useMutation(
-    async (amount: string) => {
+  const transfer = useMutation({
+    mutationFn: async ({
+      amount
+    }: {
+      amount: string
+    }) => {
       const network = networks?.find((n) => n.chainId === bridger?.originNetwork.chainId)!
       const provider = await getProvider(network)
       const signer = provider.getSigner()
@@ -194,42 +198,40 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         }
       }
     },
-    {
-      onSuccess: async (record: any) => {
-        if (!record) return
-        try {
-          const transactionsString = localStorage.getItem(
-            `bridge-${connectedAccount}-transactions-${selectedNetworkType}`
-          )
-          let transactions = []
-          if (transactionsString) {
-            transactions = JSON.parse(transactionsString)
-          }
-          transactions.push(record)
-          localStorage.setItem(
-            `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
-            JSON.stringify(transactions)
-          )
-        } catch (e) {
-          console.log(e)
+    onSuccess: async (record: any) => {
+      if (!record) return
+      try {
+        const transactionsString = localStorage.getItem(
+          `bridge-${connectedAccount}-transactions-${selectedNetworkType}`
+        )
+        let transactions = []
+        if (transactionsString) {
+          transactions = JSON.parse(transactionsString)
         }
-        queryClient.refetchQueries(['pendingTransactions'])
-        queryClient.refetchQueries(['ERC20Balance'])
-        queryClient.refetchQueries(['nativeBalance'])
-        queryClient.refetchQueries(['pendingNotifications'])
-        queryClient.refetchQueries(['incomingMessages'])
-        refetchNewNotifications(connectedAccount ?? '')
-        navigate('/bridge/transactions')
-      },
-      onError: (e) => {
+        transactions.push(record)
+        localStorage.setItem(
+          `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
+          JSON.stringify(transactions)
+        )
+      } catch (e) {
         console.log(e)
-        setErrorMessage('Transaction failed. Try again, please')
       }
+      queryClient.refetchQueries({ queryKey: ['pendingTransactions'] })
+      queryClient.refetchQueries({ queryKey: ['ERC20Balance'] })
+      queryClient.refetchQueries({ queryKey: ['nativeBalance'] })
+      queryClient.refetchQueries({ queryKey: ['pendingNotifications'] })
+      queryClient.refetchQueries({ queryKey: ['incomingMessages'] })
+      refetchNewNotifications(connectedAccount ?? '')
+      navigate('/bridge/transactions')
+    },
+    onError: (e) => {
+      console.log(e)
+      setErrorMessage('Transaction failed. Try again, please')
     }
-  )
+  })
 
   const handleApprovalComplete = () => {
-    transfer.mutate(amount)
+    transfer.mutate({ amount })
   }
 
   const tokenList = (() => {
@@ -269,7 +271,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           isLoadingAllowances
         }
       >
-        <div className={isConnecting || transfer.isLoading ? styles.buttonLabelLoading : styles.buttonLabel}>
+        <div className={isConnecting || transfer.isPending ? styles.buttonLabelLoading : styles.buttonLabel}>
           {getLabel() ?? 'Submit'}
         </div>
       </button>

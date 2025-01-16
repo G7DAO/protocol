@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useMutation } from 'react-query'
+import { useMutation } from '@tanstack/react-query'
 import styles from './ApproveAllowance.module.css'
 import { ethers } from 'ethers'
 import IconClose from '@/assets/IconClose'
@@ -19,8 +19,8 @@ const ApproveAllowance: React.FC<ApproveAllowanceProps> = ({ amount, balance, on
   const [newAllowance, setNewAllowance] = useState(amount)
   const { getProvider, selectedBridgeToken } = useBlockchainContext()
 
-  const approveAllowance = useMutation(
-    async ({
+  const approveAllowance = useMutation({
+    mutationFn: async ({
       newAllowance,
       allowanceProps
     }: {
@@ -31,15 +31,13 @@ const ApproveAllowance: React.FC<ApproveAllowanceProps> = ({ amount, balance, on
       const signer = provider.getSigner()
       return approve(newAllowance, signer, allowanceProps.tokenAddress, allowanceProps.spender)
     },
-    {
-      onSuccess: () => {
-        setTimeout(() => onSuccess(), 2000)
-      },
-      onError: (e: Error) => {
-        console.log(e)
-      }
+    onSuccess: () => {
+      setTimeout(() => onSuccess(), 2000)
+    },
+    onError: (e: Error) => {
+      console.log(e)
     }
-  )
+  })
 
   const handleApprove = () => {
     if (approveAllowance.isSuccess) {
@@ -74,7 +72,7 @@ const ApproveAllowance: React.FC<ApproveAllowanceProps> = ({ amount, balance, on
               amount={amount}
               onChange={(value) => setNewAllowance(value)}
               allowance={newAllowance}
-              disabled={approveAllowance.isLoading}
+              disabled={approveAllowance.isPending}
               token={selectedBridgeToken}
             />
           </div>
@@ -84,9 +82,9 @@ const ApproveAllowance: React.FC<ApproveAllowanceProps> = ({ amount, balance, on
           without your permission.
         </div>
       </div>
-      <button className={styles.approveButton} onClick={handleApprove} disabled={approveAllowance.isLoading}>
-        <div className={approveAllowance.isLoading ? styles.approveButtonLabelLoading : styles.approveButtonLabel}>
-          {approveAllowance.isLoading ? 'Approving...' : approveAllowance.isSuccess ? 'Allowance approved' : 'Approve'}
+      <button className={styles.approveButton} onClick={handleApprove} disabled={approveAllowance.isPending}>
+        <div className={approveAllowance.isPending ? styles.approveButtonLabelLoading : styles.approveButtonLabel}>
+          {approveAllowance.isPending ? 'Approving...' : approveAllowance.isSuccess ? 'Allowance approved' : 'Approve'}
         </div>
       </button>
     </div>

@@ -1,6 +1,6 @@
 // React and hooks
 import { useEffect, useState } from 'react'
-import { useQueryClient } from 'react-query'
+import { useQueryClient } from '@tanstack/react-query'
 // Styles
 import bridgeStyles from '../BridgePage/BridgePage.module.css'
 import styles from './RelayPage.module.css'
@@ -41,7 +41,7 @@ const RelayPage = () => {
 
     useEffect(() => {
         if (pendingTransacions.data && connectedAccount) {
-            queryClient.refetchQueries(['incomingMessages'])
+            queryClient.refetchQueries({ queryKey: ['incomingMessages'] })
             refetchNewNotifications(connectedAccount)
         }
     }, [pendingTransacions.data, connectedAccount])
@@ -64,7 +64,7 @@ const RelayPage = () => {
                         lockFromToken={true}
                         lockToToken={true}
                         lockChainId={XAI.chainId}
-                        defaultToAddress={connectedAccount as Address}
+                        defaultToAddress={'0x0' as Address}
                         supportedWalletVMs={['evm']}
                         onConnectWallet={open}
                         onAnalyticEvent={(eventName, data) => {

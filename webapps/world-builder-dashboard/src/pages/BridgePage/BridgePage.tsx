@@ -1,6 +1,6 @@
 // React and hooks
 import { useEffect, useState } from 'react'
-import { useQueryClient } from 'react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { useLocation, useNavigate } from 'react-router-dom'
 // Styles
 import styles from './BridgePage.module.css'
@@ -37,7 +37,7 @@ const BridgePage = () => {
 
   useEffect(() => {
     if (pendingTransactions.data && connectedAccount) {
-      queryClient.refetchQueries(['incomingMessages'])
+      queryClient.refetchQueries({ queryKey: ['incomingMessages'] })
       refetchNewNotifications(connectedAccount)
     }
   }, [pendingTransactions.data, connectedAccount])
@@ -46,7 +46,7 @@ const BridgePage = () => {
     <div className={styles.container}>
       <div className={styles.top}>
         <div className={styles.headerContainer}>
-          {notifications.data && <FloatingNotification notifications={newNotifications}/>}
+          {notifications.data && <FloatingNotification notifications={newNotifications} />}
           <div className={styles.title}>Bridge</div>
           <NotificationsButton notifications={notifications.data ?? []} />
         </div>

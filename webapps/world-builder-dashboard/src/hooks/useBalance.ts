@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import { ethers } from 'ethers'
 import { BridgeToken } from 'game7-bridge-sdk'
 import { Token } from '@/utils/tokens'

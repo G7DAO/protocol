@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import { ethers } from 'ethers';
 
 const BASE_URL = 'https://api.game7.build'

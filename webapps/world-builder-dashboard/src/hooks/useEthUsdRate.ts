@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query' 
 import { ETH_USD_CONTRACT_ADDRESS, L1_NETWORK } from '../../constants'
 import { ethers } from 'ethers'
 

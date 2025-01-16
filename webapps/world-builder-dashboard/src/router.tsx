@@ -11,8 +11,6 @@ import LegalPage from './pages/LegalPage/LegalPage'
 import { LEGAL } from './legal'
 import RelayPage from './pages/RelayPage/RelayPage'
 
-console.log(LEGAL)
-
 const router = createBrowserRouter([
   {
     element: <LandingPage />,

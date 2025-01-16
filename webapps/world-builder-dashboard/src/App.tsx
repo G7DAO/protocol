@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from 'react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider } from 'react-router-dom'
 import { FIVE_MINUTES } from '../constants'
 import dayjs from 'dayjs'
@@ -68,7 +68,6 @@ const { name, lang, uiTheme } = TENANT_CONFIG
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-
       <BlockchainProvider>
         <UISettingsProvider>
           <AssetsProvider tenant={name as Tenant}>
@@ -84,18 +83,20 @@ export default function App() {
                 <BridgeNotificationsProvider>
                   <Notifications position='top-right' zIndex={1000} styles={NOTIFICATIONS_STYLES} />
                   <AuthProvider>
-                    <RelayKitProvider theme={theme} options={{
-                      appName: 'Relay Demo',
-                      appFees: [
-                        {
-                          recipient: '0x0000000000000000000000000000000000000000',
-                          fee: '100' // 1%
-                        }
-                      ],
-                      duneApiKey: "YOUR_DUNE_KEY",
-                      chains,
-                      baseApiUrl: MAINNET_RELAY_API
-                    }}>
+                    <RelayKitProvider
+                      theme={theme}
+                      options={{
+                        appName: 'Relay Demo',
+                        appFees: [
+                          {
+                            recipient: '0x0000000000000000000000000000000000000000',
+                            fee: '100' // 1%
+                          }
+                        ],
+                        duneApiKey: "YOUR_DUNE_KEY",
+                        chains,
+                        baseApiUrl: MAINNET_RELAY_API
+                      }}>
                       <WagmiProvider config={wagmiConfig}>
                         <RouterProvider router={router} />
                       </WagmiProvider>
