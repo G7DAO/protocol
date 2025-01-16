@@ -88,15 +88,10 @@
 
 .viewContainer {
   display: flex;
-  padding: 0 32px 32px 32px;
+  padding: 0px 32px 32px 32px;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 24px;
-  flex-grow: 0;
-  overflow-y: auto;
-  position: relative;
-  font-family: Inter, sans-serif;
-  width: 100%;
+  align-items: center;
+  gap: 20px;
 }
 
 @media (max-width: 1199px) {

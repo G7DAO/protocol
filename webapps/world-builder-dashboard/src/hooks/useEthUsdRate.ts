@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query' 
+import { useQuery } from '@tanstack/react-query'
 import { ETH_USD_CONTRACT_ADDRESS, L1_NETWORK } from '../../constants'
 import { ethers } from 'ethers'
 
@@ -47,10 +47,12 @@ type LatestRoundData = {
 } & [bigint, bigint, bigint, bigint, bigint]
 
 const useEthUsdRate = () => {
-  return useQuery('ethUsdRate', async () => {
-    const provider = new ethers.providers.JsonRpcProvider(L1_NETWORK.rpcs[0])
-    const contract = new ethers.Contract(ETH_USD_CONTRACT_ADDRESS, ABI, provider)
-    return contract.latestRoundData().then((data: LatestRoundData) => Number(data.answer) / 1e8)
+  return useQuery({
+    queryKey: ['ethUsdRate'], queryFn: async () => {
+      const provider = new ethers.providers.JsonRpcProvider(L1_NETWORK.rpcs[0])
+      const contract = new ethers.Contract(ETH_USD_CONTRACT_ADDRESS, ABI, provider)
+      return contract.latestRoundData().then((data: LatestRoundData) => Number(data.answer) / 1e8)
+    }
   })
 }
 

@@ -150,7 +150,9 @@ const fetchDepositStatus = async (deposit: TransactionRecord, selectedNetworkTyp
 }
 
 export const useDepositStatus = (deposit: TransactionRecord, selectedNetworkType: NetworkType) => {
-  return useQuery(['depositStatus', deposit], () => fetchDepositStatus(deposit, selectedNetworkType), {
+  return useQuery({
+    queryKey: ['depositStatus', deposit],
+    queryFn: () => fetchDepositStatus(deposit, selectedNetworkType),
     refetchInterval: 60000 * 3,
     staleTime: 2 * 60 * 1000
   })
@@ -164,10 +166,10 @@ export interface TransactionType {
 
 export const useL2ToL1MessagesStatus = (transactions: TransactionType[] | undefined) => {
   if (!transactions) {
-    return useQueries([{ queryKey: ['withdrawalStatusEmpty'], queryFn: () => undefined }])
+    return useQuery({ queryKey: ['withdrawalStatusEmpty'], queryFn: () => undefined, })
   }
-  return useQueries(
-    transactions.map(({ txHash, l2RPC, l3RPC }) => ({
+  return useQueries({
+    queries: transactions.map(({ txHash, l2RPC, l3RPC }) => ({
       queryKey: ['withdrawalStatus', txHash, l2RPC, l3RPC],
       queryFn: async () => {
         const l3Provider = new ethers.providers.JsonRpcProvider(l3RPC)
@@ -204,7 +206,7 @@ export const useL2ToL1MessagesStatus = (transactions: TransactionType[] | undefi
       },
       refetchInterval: 60000 * 3
     }))
-  )
+  })
 }
 
 const sortTransactions = (a: TransactionRecord, b: TransactionRecord) => {

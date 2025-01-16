@@ -10,21 +10,21 @@ export const useBridgeAPI = () => {
     const { selectedNetworkType } = useBlockchainContext()
     const uriSnippet = selectedNetworkType === 'Testnet' ? '-testnet' : ''
     return useQuery(
-      ['historyTransactions', address, selectedNetworkType],
-      async () => {
-        const res = await fetch(`${BASE_URL}/bridge/game7${uriSnippet}/${address}/transactions?limit=50&offset=0`, {
-          method: 'GET'
-        })
-        if (!res.ok) {
-          throw new Error(`Error: ${res.statusText}`)
-        }
-        const data = await res.json()
-        return data
-      },
       {
+        queryKey: ['historyTransactions', address, selectedNetworkType],
+        queryFn: async () => {
+          const res = await fetch(`${BASE_URL}/bridge/game7${uriSnippet}/${address}/transactions?limit=50&offset=0`, {
+            method: 'GET'
+          })
+          if (!res.ok) {
+            throw new Error(`Error: ${res.statusText}`)
+          }
+          const data = await res.json()
+          return data
+        },
         enabled: !!address && isValidAddress && !!selectedNetworkType,
         retry: false
-      }
+      },
     )
   }
 

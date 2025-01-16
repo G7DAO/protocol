@@ -1,0 +1,15 @@
+diff --git a/node_modules/@reservoir0x/relay-kit-ui/dist/styles.css b/node_modules/@reservoir0x/relay-kit-ui/dist/styles.css
+index 88bb137..a0afed0 100644
+--- a/node_modules/@reservoir0x/relay-kit-ui/dist/styles.css
++++ b/node_modules/@reservoir0x/relay-kit-ui/dist/styles.css
+@@ -2677,8 +2677,8 @@
+     margin-bottom: 24px;
+ }
+ 
+-.relay-mr_\$2:not(#\#):not(#\#):not(#\#):not(#\#) {
+-    margin-right: $2;
++.relay-mr_2:not(#\#):not(#\#):not(#\#):not(#\#) {
++    margin-right: 2;
+ }
+ 
+ .relay-self_flex-start:not(#\#):not(#\#):not(#\#):not(#\#) {

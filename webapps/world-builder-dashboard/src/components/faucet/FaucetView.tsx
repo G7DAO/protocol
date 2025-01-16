@@ -10,7 +10,6 @@ import { NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainCon
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 import { useUISettings } from '@/contexts/UISettingsContext'
 import { useFaucetAPI } from '@/hooks/useFaucetAPI'
-import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { timeDifferenceInHoursAndMinutes, timeDifferenceInHoursMinutesAndSeconds } from '@/utils/timeFormat'
 import { useNavigate } from 'react-router-dom'
 
@@ -77,8 +76,8 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   }
 
   const queryClient = useQueryClient()
-  const claim = useMutation(
-    async ({ address }: { isL2Target: boolean; address: string | undefined }) => {
+  const claim = useMutation({
+    mutationFn: async ({ address }: { isL2Target: boolean; address: string | undefined }) => {
       const res = await fetch(`https://api.game7.build/faucet/request/${address}`, {
         method: 'POST',
         headers: {
@@ -102,56 +101,53 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
         newTransaction: true
       }
     },
-    {
-      onSuccess: (data: TransactionRecord | undefined, { address }) => {
-        try {
-          const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
-
-          let transactions = []
-          if (transactionsString) {
-            transactions = JSON.parse(transactionsString)
-          }
-          transactions.push({ ...data })
-          localStorage.setItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`, JSON.stringify(transactions))
-        } catch (e) {
-          console.log(e)
+    onSuccess: (data) => {
+      try {
+        const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
+        let transactions = []
+        if (transactionsString) {
+          transactions = JSON.parse(transactionsString)
         }
-        const lastClaimTimestamp = Date.now() / 1000
-        const faucetInterval = faucetIntervalQuery.data ? Number(faucetIntervalQuery.data) : 0
-        const nextClaimL3Timestamp = lastClaimTimestamp + faucetInterval
-
-        const intervalL3 = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimL3Timestamp)
-        const isAvailableL3 = false
-
-        const updatedL3 = {
-          interval: intervalL3,
-          nextClaimTimestamp: nextClaimL3Timestamp,
-          isAvailable: isAvailableL3
-        }
-
-        queryClient.setQueryData(['nextFaucetClaimTimestamp', address], (oldData: any) => {
-          if (oldData) {
-            return {
-              ...oldData,
-              L3: updatedL3 // Update the L3 data
-            }
-          }
-          return { faucetTimeInterval: faucetInterval, L3: updatedL3 }
-        })
-
-        queryClient.invalidateQueries({ queryKey: ['faucetTimestamp', address] })
-        queryClient.refetchQueries({ queryKey: ['notifications'] })
-        queryClient.refetchQueries({ queryKey: ['nativeBalance'] })
-        queryClient.refetchQueries({ queryKey: ['ERC20balance'] })
-        refetchNewNotifications(address ?? '')
-      },
-      onError: (error) => {
-        setNetworkError('Something went wrong')
-        console.log(error)
-        console.error('Error requesting tokens:', error)
+        transactions.push(data)
+        localStorage.setItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`, JSON.stringify(transactions))
+      } catch (e) {
+        console.log(e)
       }
+      const lastClaimTimestamp = Date.now() / 1000
+      const faucetInterval = faucetIntervalQuery.data ? Number(faucetIntervalQuery.data) : 0
+      const nextClaimL3Timestamp = lastClaimTimestamp + faucetInterval
+
+      const intervalL3 = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimL3Timestamp)
+      const isAvailableL3 = false
+
+      const updatedL3 = {
+        interval: intervalL3,
+        nextClaimTimestamp: nextClaimL3Timestamp,
+        isAvailable: isAvailableL3
+      }
+
+      queryClient.setQueryData(['nextFaucetClaimTimestamp', address], (oldData: any) => {
+        if (oldData) {
+          return {
+            ...oldData,
+            L3: updatedL3
+          }
+        }
+        return { faucetTimeInterval: faucetInterval, L3: updatedL3 }
+      })
+
+      queryClient.invalidateQueries({ queryKey: ['faucetTimestamp', address] })
+      queryClient.refetchQueries({ queryKey: ['notifications'] })
+      queryClient.refetchQueries({ queryKey: ['nativeBalance'] })
+      queryClient.refetchQueries({ queryKey: ['ERC20balance'] })
+      refetchNewNotifications(address ?? '')
+    },
+    onError: (error) => {
+      setNetworkError('Something went wrong')
+      console.log(error)
+      console.error('Error requesting tokens:', error)
     }
-  )
+  })
 
   function compareTimestampWithCurrentMoment(unixTimestamp: number): boolean {
     const timestampInMillis = unixTimestamp * 1000
@@ -164,18 +160,18 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const faucetIntervalQuery = useFaucetInterval()
 
   const nextClaimAvailable = useQuery(
-    ['nextFaucetClaimTimestamp', address],
-    async () => {
-      const lastClaimedL3Timestamp = lastClaimedTimestampQuery.data ? Number(lastClaimedTimestampQuery.data) : 0
-      const faucetTimeInterval = Number(faucetIntervalQuery.data)
-      const nextClaimL3Timestamp = lastClaimedL3Timestamp + faucetTimeInterval
-
-      const intervalL3 = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimL3Timestamp)
-      const isAvailableL3 = lastClaimedL3Timestamp === 0 || compareTimestampWithCurrentMoment(nextClaimL3Timestamp)
-      const L3 = { interval: intervalL3, nextClaimTimestamp: nextClaimL3Timestamp, isAvailable: isAvailableL3 }
-      return { faucetTimeInterval, L3 }
-    },
     {
+      queryKey: ['nextFaucetClaimTimestamp', address],
+      queryFn: async () => {
+        const lastClaimedL3Timestamp = lastClaimedTimestampQuery.data ? Number(lastClaimedTimestampQuery.data) : 0
+        const faucetTimeInterval = Number(faucetIntervalQuery.data)
+        const nextClaimL3Timestamp = lastClaimedL3Timestamp + faucetTimeInterval
+
+        const intervalL3 = timeDifferenceInHoursAndMinutes(Date.now() / 1000, nextClaimL3Timestamp)
+        const isAvailableL3 = lastClaimedL3Timestamp === 0 || compareTimestampWithCurrentMoment(nextClaimL3Timestamp)
+        const L3 = { interval: intervalL3, nextClaimTimestamp: nextClaimL3Timestamp, isAvailable: isAvailableL3 }
+        return { faucetTimeInterval, L3 }
+      },
       enabled: !!address && !!faucetIntervalQuery.data && !!lastClaimedTimestampQuery.data
     }
   )
@@ -183,7 +179,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   useEffect(() => {
     let isButtonDisabled = true
 
-    const isNewAccount = nextClaimAvailable.status === 'idle' && lastClaimedTimestampQuery.data === 0
+    const isNewAccount = nextClaimAvailable.status === 'success' && lastClaimedTimestampQuery.data === 0
 
     if (isNewAccount) {
       isButtonDisabled = false
@@ -196,7 +192,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
             nextClaimAvailable.data &&
             !nextClaimAvailable.data.L3.isAvailable) ||
           ((!isValidAddress || address === '') && selectedAccountType === 'External Address') ||
-          claim.isLoading
+          claim.isPending
       }
     }
     setRequestDisabled(isButtonDisabled)
@@ -207,7 +203,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
     isValidAddress,
     address,
     selectedAccountType,
-    claim.isLoading,
+    claim.isPending,
     lastClaimedTimestampQuery.status
   ])
 
@@ -310,7 +306,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
           }}
           disabled={requestDisabled}
         >
-          <div className={styles.requestTokensButtonText}>{claim.isLoading ? `Requesting...` : `Request Tokens`}</div>
+          <div className={styles.requestTokensButtonText}>{claim.isPending ? `Requesting...` : `Request Tokens`}</div>
         </button>
       </div>
     </div>

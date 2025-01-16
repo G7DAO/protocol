@@ -321,10 +321,10 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                             <button
                               className={styles.claimButton}
                               onClick={() => {
-                                claim.mutate(deposit)
+                                claim.mutate({txRecord: deposit})
                               }}
                             >
-                              {claim.isLoading && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}
+                              {claim.isPending && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}
                             </button>
                           </>
                         ) : (
