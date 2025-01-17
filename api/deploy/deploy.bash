@@ -51,7 +51,7 @@ cd "${EXEC_DIR}"
 echo
 echo
 echo -e "${PREFIX_INFO} Install checkenv"
-HOME=/home/ubuntu /usr/local/go/bin/go install github.com/bugout-dev/checkenv@latest
+HOME=/home/ubuntu /usr/local/go/bin/go install github.com/bugout-dev/checkenv@v0.0.4
 
 if [ ! -d "${SECRETS_DIR}" ]; then
   mkdir "${SECRETS_DIR}"
