@@ -90,8 +90,13 @@
   display: flex;
   padding: 0px 32px 32px 32px;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 20px;
+  flex-grow: 0;
+  overflow-y: auto;
+  position: relative;
+  font-family: Inter, sans-serif;
+  width: 100%;
 }
 
 @media (max-width: 1199px) {
