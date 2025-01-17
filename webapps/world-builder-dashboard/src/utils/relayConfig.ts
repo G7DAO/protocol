@@ -2,7 +2,7 @@
 import { SwapWidgetToken } from '@/pages/RelayPage/RelayPage'
 import { convertViemChainToRelayChain } from '@reservoir0x/relay-sdk'
 import { http } from 'viem'
-import { mainnet, arbitrum, base, optimism, polygon, zksync, xai, mantle } from 'viem/chains'
+import { ancient8, apeChain, arbitrumNova, avalanche, b3, bsc, mainnet, arbitrum, base, optimism, polygon, zksync, xai, mantle, zora, superposition } from 'viem/chains'
 import { createConfig } from 'wagmi'
 
 export const chains = [
@@ -14,12 +14,35 @@ export const chains = [
     convertViemChainToRelayChain(zksync),
     convertViemChainToRelayChain(xai),
     convertViemChainToRelayChain(mantle),
+    convertViemChainToRelayChain(ancient8),
+    convertViemChainToRelayChain(apeChain),
+    convertViemChainToRelayChain(arbitrumNova),
+    convertViemChainToRelayChain(avalanche),
+    convertViemChainToRelayChain(b3),
+    convertViemChainToRelayChain(bsc),
+    convertViemChainToRelayChain(zora),
+    convertViemChainToRelayChain(superposition),
 ]
 
 export const wagmiConfig = createConfig({
-    chains: [mainnet],
+    chains: [mainnet, arbitrum, base, optimism, polygon, zksync, xai, mantle],
     transports: {
         [mainnet.id]: http(),
+        [arbitrum.id]: http(),
+        [base.id]: http(),
+        [optimism.id]: http(),
+        [polygon.id]: http(),
+        [zksync.id]: http(),
+        [xai.id]: http(),
+        [mantle.id]: http(),
+        [ancient8.id]: http(),
+        [apeChain.id]: http(),
+        [arbitrumNova.id]: http(),
+        [avalanche.id]: http(),
+        [b3.id]: http(),
+        [bsc.id]: http(),
+        [zora.id]: http(),
+        [superposition.id]: http(),
     }
 })
 

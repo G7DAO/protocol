@@ -34,8 +34,7 @@ const RelayPage = () => {
     const pendingTransacions = usePendingTransactions(connectedAccount)
     const [notificationsOffset] = useState(0)
     const [notificationsLimit] = useState(10)
-    // const [selectedToken, setSelectedToken] = useState<SwapWidgetToken | undefined>(XAI)
-    const [amount] = useState('0.1')
+
     const notifications = useNotifications(connectedAccount, notificationsOffset, notificationsLimit)
     const { newNotifications, refetchNewNotifications } = useBridgeNotificationsContext()
 
@@ -60,7 +59,6 @@ const RelayPage = () => {
             <div className={styles.viewContainer}>
                 <div className={styles.mainContainer}>
                     <SwapWidget
-                        defaultAmount={amount}
                         defaultToToken={XAI}
                         defaultToAddress={connectedAccount as Address}
                         supportedWalletVMs={['evm']}
