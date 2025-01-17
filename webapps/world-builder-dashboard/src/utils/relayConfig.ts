@@ -2,7 +2,7 @@
 import { SwapWidgetToken } from '@/pages/RelayPage/RelayPage'
 import { convertViemChainToRelayChain } from '@reservoir0x/relay-sdk'
 import { http } from 'viem'
-import { mainnet, arbitrum, base, optimism, polygon, zksync, xai } from 'viem/chains'
+import { mainnet, arbitrum, base, optimism, polygon, zksync, xai, mantle } from 'viem/chains'
 import { createConfig } from 'wagmi'
 
 export const chains = [
@@ -13,6 +13,7 @@ export const chains = [
     convertViemChainToRelayChain(polygon),
     convertViemChainToRelayChain(zksync),
     convertViemChainToRelayChain(xai),
+    convertViemChainToRelayChain(mantle),
 ]
 
 export const wagmiConfig = createConfig({
@@ -92,6 +93,15 @@ export const G7_G7 = {
     decimals: 18,
     name: 'G7',
     symbol: 'G7',
+    logoURI: 'https://2248955668-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FhE4weeNpCJSNUXnecN1R%2Ficon%2FgJEa5WUcw0RjBfGqTNof%2Fxai%20symbol%20red%20svg.svg?alt=media&token=9131a0bf-a73d-4052-a957-fd69884aee62'
+}
+
+export const XAI: SwapWidgetToken = {
+    chainId: 660279,
+    address: '0x0000000000000000000000000000000000000000',
+    decimals: 18,
+    name: 'XAI',
+    symbol: 'XAI',
     logoURI: 'https://2248955668-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FhE4weeNpCJSNUXnecN1R%2Ficon%2FgJEa5WUcw0RjBfGqTNof%2Fxai%20symbol%20red%20svg.svg?alt=media&token=9131a0bf-a73d-4052-a957-fd69884aee62'
 }
 

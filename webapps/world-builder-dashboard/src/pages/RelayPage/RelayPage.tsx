@@ -15,8 +15,7 @@ import { useNotifications, usePendingTransactions } from '@/hooks/useL2ToL1Messa
 import { SwapWidget } from '@reservoir0x/relay-kit-ui'
 import { Address } from "viem"
 import { useNavigate } from 'react-router-dom'
-import { ETH, USDC } from '@/utils/relayConfig'
-
+import { XAI } from '@/utils/relayConfig'
 export interface SwapWidgetToken {
     chainId: number;
     address: string;
@@ -61,9 +60,8 @@ const RelayPage = () => {
             <div className={styles.viewContainer}>
                 <div className={styles.mainContainer}>
                     <SwapWidget
-                        defaultFromToken={ETH}
-                        defaultToToken={USDC}
                         defaultAmount={amount}
+                        defaultToToken={XAI}
                         defaultToAddress={connectedAccount as Address}
                         supportedWalletVMs={['evm']}
                         onConnectWallet={connectWallet}
