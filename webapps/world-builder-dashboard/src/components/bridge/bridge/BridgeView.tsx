@@ -315,7 +315,7 @@ const BridgeView = ({
           isLoadingAllowances={isLoadingAllowances}
         />
       </div>
-      <div className={styles.relayLink} onClick={()=>navigate('/relay')}>Bridge with Relay</div>
+      <div className={styles.relayLink} onClick={() => navigate('/relay')}>Bridge with Relay</div>
     </div>
   )
 }

@@ -2,7 +2,10 @@
 import { SwapWidgetToken } from '@/pages/RelayPage/RelayPage'
 import { convertViemChainToRelayChain } from '@reservoir0x/relay-sdk'
 import { http } from 'viem'
-import { ancient8, apeChain, arbitrumNova, avalanche, b3, bsc, mainnet, arbitrum, base, optimism, polygon, zksync, xai, mantle, zora, superposition } from 'viem/chains'
+import {
+    ancient8, apeChain, arbitrumNova, avalanche, b3, bsc, mainnet, arbitrum, base, optimism, polygon, zksync, xai, mantle, zora, superposition, bob, boba, cyber, degen,
+    forma, funkiMainnet, gnosis, gravity, ham, hychain, ink, linea, lisk, mint, mode, polygonZkEvm, redstone, sanko, scroll, sei, shape, worldchain
+} from 'viem/chains'
 import { createConfig } from 'wagmi'
 
 export const chains = [
@@ -22,10 +25,33 @@ export const chains = [
     convertViemChainToRelayChain(bsc),
     convertViemChainToRelayChain(zora),
     convertViemChainToRelayChain(superposition),
+    convertViemChainToRelayChain(bob),
+    convertViemChainToRelayChain(boba),
+    convertViemChainToRelayChain(cyber),
+    convertViemChainToRelayChain(degen),
+    convertViemChainToRelayChain(forma),
+    convertViemChainToRelayChain(funkiMainnet),
+    convertViemChainToRelayChain(gnosis),
+    convertViemChainToRelayChain(gravity),
+    convertViemChainToRelayChain(ham),
+    convertViemChainToRelayChain(hychain),
+    convertViemChainToRelayChain(ink),
+    convertViemChainToRelayChain(linea),
+    convertViemChainToRelayChain(lisk),
+    convertViemChainToRelayChain(mint),
+    convertViemChainToRelayChain(mode),
+    convertViemChainToRelayChain(polygonZkEvm),
+    convertViemChainToRelayChain(redstone),
+    convertViemChainToRelayChain(sanko),
+    convertViemChainToRelayChain(scroll),
+    convertViemChainToRelayChain(sei),
+    convertViemChainToRelayChain(shape),
+    convertViemChainToRelayChain(worldchain),
 ]
 
 export const wagmiConfig = createConfig({
-    chains: [mainnet, arbitrum, base, optimism, polygon, zksync, xai, mantle],
+    chains: [mainnet, ancient8, apeChain, arbitrumNova, avalanche, b3, bsc, zora, arbitrum, base, optimism, polygon, zksync, xai, mantle, superposition, 
+        bob, boba, cyber, degen, forma, funkiMainnet, gnosis, gravity, ham, hychain, ink, linea, lisk, mint, mode, polygonZkEvm, redstone, sanko, scroll, sei, shape, worldchain],
     transports: {
         [mainnet.id]: http(),
         [arbitrum.id]: http(),
@@ -43,6 +69,28 @@ export const wagmiConfig = createConfig({
         [bsc.id]: http(),
         [zora.id]: http(),
         [superposition.id]: http(),
+        [bob.id]: http(),
+        [boba.id]: http(),
+        [cyber.id]: http(),
+        [degen.id]: http(),
+        [forma.id]: http(),
+        [funkiMainnet.id]: http(),
+        [gnosis.id]: http(),
+        [gravity.id]: http(),
+        [ham.id]: http(),
+        [hychain.id]: http(),
+        [ink.id]: http(),
+        [linea.id]: http(),
+        [lisk.id]: http(),
+        [mint.id]: http(),
+        [mode.id]: http(),
+        [polygonZkEvm.id]: http(),
+        [redstone.id]: http(),
+        [sanko.id]: http(),
+        [scroll.id]: http(),
+        [sei.id]: http(),
+        [shape.id]: http(),
+        [worldchain.id]: http(),
     }
 })
 
