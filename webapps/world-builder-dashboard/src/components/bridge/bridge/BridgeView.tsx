@@ -179,7 +179,7 @@ const BridgeView = ({
   }
 
   return (
-    <>
+    <div className={styles.mainContainer}>
       <div className={styles.container}>
         <div className={styles.directionContainer}>
           <button
@@ -316,7 +316,7 @@ const BridgeView = ({
         />
       </div>
       <div className={styles.relayLink} onClick={()=>navigate('/relay')}>Bridge with Relay</div>
-    </>
+    </div>
   )
 }
 
