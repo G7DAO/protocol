@@ -17,9 +17,16 @@ export const chains = [
 ]
 
 export const wagmiConfig = createConfig({
-    chains: [mainnet],
+    chains: [mainnet, arbitrum, base, optimism, polygon, zksync, xai, mantle],
     transports: {
         [mainnet.id]: http(),
+        [arbitrum.id]: http(),
+        [base.id]: http(),
+        [optimism.id]: http(),
+        [polygon.id]: http(),
+        [zksync.id]: http(),
+        [xai.id]: http(),
+        [mantle.id]: http(),
     }
 })
 
