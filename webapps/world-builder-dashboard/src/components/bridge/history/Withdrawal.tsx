@@ -94,7 +94,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     </div>
                   </div>
                   <div className={styles.gridItem}>{timeAgo(withdrawal.highNetworkTimestamp)}</div>
-                  {transactionInputs.tokenSymbol || withdrawal?.symbol ? (
+                  {transactionInputs?.tokenSymbol || withdrawal?.symbol ? (
                     <div className={styles.gridItem}>
                       {withdrawal.symbol
                         ? withdrawal.symbol === 'USDC'

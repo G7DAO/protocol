@@ -79,7 +79,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                     }}
                     onMouseEnter={() => setHovered(true)}
                     onMouseLeave={() => setHovered(false)}>{timeAgo(deposit.lowNetworkTimestamp)}</div>
-                  {!isLoadingInputs && (deposit.symbol || finalTransactionInputs?.tokenSymbol) ? (
+                  {!isLoadingInputs && (deposit?.symbol || finalTransactionInputs?.tokenSymbol) ? (
                     <div className={styles.gridItem}
                       onClick={() => setCollapseExecuted(!collapseExecuted)}
                       style={{
@@ -185,7 +185,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                         </div>
                       ) : transactionInputs?.tokenSymbol ? (
                         <div className={styles.gridItemInitiate}>
-                          {`${finalTransactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(finalTransactionInputs?.amount ?? 0, 6) : deposit.amount} ${finalTransactionInputs?.tokenSymbol}`}
+                          {`${finalTransactionInputs?.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(finalTransactionInputs?.amount ?? 0, 6) : deposit.amount} ${finalTransactionInputs?.tokenSymbol}`}
                         </div>
                       ) : (
                         <div className={styles.gridItemInitiate}>
@@ -221,7 +221,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                         </div>
                       ) : transactionInputs?.tokenSymbol ? (
                         <div className={styles.gridItemInitiate}>
-                          {`${finalTransactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(finalTransactionInputs?.amount ?? 0, 6) : deposit.amount} ${finalTransactionInputs.tokenSymbol}`}
+                          {`${finalTransactionInputs?.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(finalTransactionInputs?.amount ?? 0, 6) : deposit.amount} ${finalTransactionInputs.tokenSymbol}`}
                         </div>
                       ) : (
                         <div className={styles.gridItemInitiate}>
@@ -259,13 +259,13 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                   <div className={styles.gridItem}>
                     {timeAgo(deposit.lowNetworkTimestamp)}
                   </div>
-                  {!isLoadingInputs && (deposit.symbol || finalTransactionInputs?.tokenSymbol) ? (
+                  {!isLoadingInputs && (deposit?.symbol || finalTransactionInputs?.tokenSymbol) ? (
                     <div className={styles.gridItem}>
-                      {`${deposit.symbol
+                      {`${deposit?.symbol
                         ? deposit.symbol === 'USDC'
                           ? ethers.utils.formatUnits(finalTransactionInputs?.amount ?? 0, 6)
                           : deposit.amount
-                        : finalTransactionInputs.tokenSymbol === 'USDC'
+                        : finalTransactionInputs?.tokenSymbol === 'USDC'
                           ? ethers.utils.formatUnits(finalTransactionInputs?.amount ?? 0, 6)
                           : ethers.utils.formatEther(finalTransactionInputs?.amount ?? 0) ?? deposit.amount} ${deposit.symbol || finalTransactionInputs.tokenSymbol}`}
                     </div>

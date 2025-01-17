@@ -225,7 +225,8 @@ export const useBridgeTransfer = () => {
 
     return useQuery(
       {
-        queryKey: ['transactionInputs', txHash], queryFn: async () => {
+        queryKey: ['transactionInputs', txHash], 
+        queryFn: async () => {
           try {
             if (txRecord.transactionInputs) {
               return txRecord.transactionInputs
