@@ -18,12 +18,11 @@ import router from '@/router'
 
 // relay stuff
 import { RelayKitProvider } from '@reservoir0x/relay-kit-ui'
-import { convertViemChainToRelayChain } from '@reservoir0x/relay-sdk'
-import { http, createConfig, WagmiProvider } from 'wagmi'
-import { mainnet, arbitrum, arbitrumSepolia, sepolia, } from 'viem/chains'
+import { WagmiProvider } from 'wagmi'
 import { MAINNET_RELAY_API } from '@reservoir0x/relay-sdk'
 import { theme } from './utils/relayTheme'
 import '@reservoir0x/relay-kit-ui/styles.css'
+import { wagmiConfig, chains } from './utils/relayConfig'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -48,19 +47,8 @@ const queryClient = new QueryClient({
   }
 })
 
-const chains = [
-  convertViemChainToRelayChain(mainnet),
-  convertViemChainToRelayChain(arbitrum),
-  convertViemChainToRelayChain(arbitrumSepolia),
-  convertViemChainToRelayChain(sepolia)
-]
 
-const wagmiConfig = createConfig({
-  chains: [mainnet],
-  transports: {
-    [mainnet.id]: http(),
-  }
-})
+
 
 const enMessages = { en }
 
