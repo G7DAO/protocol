@@ -3,8 +3,7 @@ import { SwapWidgetToken } from '@/pages/RelayPage/RelayPage'
 import { convertViemChainToRelayChain } from '@reservoir0x/relay-sdk'
 import { http } from 'viem'
 import {
-    ancient8, apeChain, arbitrumNova, avalanche, b3, bsc, mainnet, arbitrum, base, optimism, polygon, zksync, xai, mantle, zora, superposition, bob, boba, cyber, degen,
-    forma, funkiMainnet, gnosis, gravity, ham, hychain, ink, linea, lisk, mint, mode, polygonZkEvm, redstone, sanko, scroll, sei, shape, worldchain
+    ancient8, apeChain, arbitrumNova, avalanche, b3, bsc, mainnet, arbitrum, base, optimism, polygon, zksync, xai, mantle, zora, superposition, bob, boba, cyber, degen, forma, funkiMainnet, gnosis, gravity, ham, hychain, ink, linea, lisk, mint, mode, polygonZkEvm, redstone, sanko, scroll, sei, shape, worldchain
 } from 'viem/chains'
 import { createConfig } from 'wagmi'
 
@@ -50,8 +49,7 @@ export const chains = [
 ]
 
 export const wagmiConfig = createConfig({
-    chains: [mainnet, ancient8, apeChain, arbitrumNova, avalanche, b3, bsc, zora, arbitrum, base, optimism, polygon, zksync, xai, mantle, superposition, 
-        bob, boba, cyber, degen, forma, funkiMainnet, gnosis, gravity, ham, hychain, ink, linea, lisk, mint, mode, polygonZkEvm, redstone, sanko, scroll, sei, shape, worldchain],
+    chains: [mainnet, ancient8, apeChain, arbitrumNova, avalanche, b3, bsc, zora, arbitrum, base, optimism, polygon, zksync, xai, mantle, superposition, bob, boba, cyber, degen, forma, funkiMainnet, gnosis, gravity, ham, hychain, ink, linea, lisk, mint, mode, polygonZkEvm, redstone, sanko, scroll, sei, shape, worldchain],
     transports: {
         [mainnet.id]: http(),
         [arbitrum.id]: http(),

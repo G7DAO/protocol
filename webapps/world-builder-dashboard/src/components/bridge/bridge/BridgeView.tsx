@@ -220,9 +220,7 @@ const BridgeView = ({
               ? 1
               : isCoinFetching
                 ? 0.0
-                : coinUSDRate[selectedBridgeToken?.geckoId ?? '']
-                  ? coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd
-                  : 0
+                : (coinUSDRate[selectedBridgeToken?.geckoId ?? '']?.usd ?? 0)
           }
           isFetchingBalance={isFetchingTokenInformation}
           errorMessage={inputErrorMessages.value}
