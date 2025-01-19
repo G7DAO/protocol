@@ -93,7 +93,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
       const type: 'CLAIM' | 'DEPOSIT' | 'WITHDRAWAL' = 'CLAIM'
       return {
         type,
-        amount: '1',
+        amount: '1.0',
         highNetworkChainId: selectedNetwork.chainId,
         lowNetworkChainId: FAUCET_CHAIN.chainId,
         lowNetworkTimestamp: Date.now() / 1000,
