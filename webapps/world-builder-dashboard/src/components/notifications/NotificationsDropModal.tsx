@@ -22,7 +22,7 @@ interface NotificationsDropModalProps {
   notifications: BridgeNotification[]
 }
 
-const copy = (notification: BridgeNotification, selectedNetworkType: NetworkType) => {
+const copy = (notification: BridgeNotification, selectedNetworkType: NetworkType, connectedAccount: string | undefined) => {
   const targetNetwork = getNetwork(notification.to, selectedNetworkType)?.displayName ?? 'unknown chain'
   if (notification.status === 'CLAIMABLE') {
     return `Heads Up: Your ${notification.amount} ${notification.tx.transactionInputs?.tokenSymbol ? notification.tx.transactionInputs?.tokenSymbol : ''} withdrawal is complete and you can now claim your assets`
@@ -83,7 +83,7 @@ const NotificationsDropModal: React.FC<NotificationsDropModalProps> = ({ notific
               </div>
               <div className={styles.headerTime}>{timeAgo(n.timestamp, true)}</div>
             </div>
-            <div className={styles.content}>{copy(n, selectedNetworkType)}</div>
+            <div className={styles.content}>{copy(n, selectedNetworkType, connectedAccount)}</div>
           </div>
         ))}
       <button
@@ -129,7 +129,7 @@ const iconCloseClassName = (status: string) => {
 
 export const FloatingNotification = ({ notifications }: { notifications: BridgeNotification[] }) => {
   const { setIsDropdownOpened } = useBridgeNotificationsContext()
-  const { selectedNetworkType } = useBlockchainContext()
+  const { selectedNetworkType, connectedAccount } = useBlockchainContext()
   const [show, setShow] = useState(false)
   const handleClick = () => {
     setIsDropdownOpened(true)
@@ -163,7 +163,7 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
 
   return (
     <div onClick={handleClick} className={toastClassName(notifications[0].status)}>
-      {copy(notifications[0], selectedNetworkType)}
+      {copy(notifications[0], selectedNetworkType, connectedAccount)}
       <IconCloseSmall className={iconCloseClassName(notifications[0].status)} onClick={handleExit} />
     </div>
   )
@@ -195,7 +195,7 @@ const getTransactionUrl = (notification: BridgeNotification): string | undefined
 }
 
 export const NotificationsModal: React.FC<NotificationsDropModalProps> = ({ notifications }) => {
-  const { selectedNetworkType } = useBlockchainContext()
+  const { selectedNetworkType, connectedAccount } = useBlockchainContext()
   const [page, setPage] = useState(0)
   const { setIsModalOpened } = useBridgeNotificationsContext()
   const LIMIT = 4
@@ -247,7 +247,7 @@ export const NotificationsModal: React.FC<NotificationsDropModalProps> = ({ noti
                 </div>
                 <div className={modalStyles.headerTime}>{timeAgo(n.timestamp, true)}</div>
               </div>
-              <div className={modalStyles.content}>{copy(n, selectedNetworkType)}</div>
+              <div className={modalStyles.content}>{copy(n, selectedNetworkType, connectedAccount)}</div>
             </div>
           ))}
       </div>
