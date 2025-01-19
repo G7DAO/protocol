@@ -129,7 +129,7 @@ const iconCloseClassName = (status: string) => {
 
 export const FloatingNotification = ({ notifications }: { notifications: BridgeNotification[] }) => {
   const { setIsDropdownOpened } = useBridgeNotificationsContext()
-  const { selectedNetworkType, connectedAccount } = useBlockchainContext()
+  const { selectedNetworkType } = useBlockchainContext()
   const [show, setShow] = useState(false)
   const handleClick = () => {
     setIsDropdownOpened(true)
@@ -195,7 +195,7 @@ const getTransactionUrl = (notification: BridgeNotification): string | undefined
 }
 
 export const NotificationsModal: React.FC<NotificationsDropModalProps> = ({ notifications }) => {
-  const { selectedNetworkType, connectedAccount } = useBlockchainContext()
+  const { selectedNetworkType } = useBlockchainContext()
   const [page, setPage] = useState(0)
   const { setIsModalOpened } = useBridgeNotificationsContext()
   const LIMIT = 4
