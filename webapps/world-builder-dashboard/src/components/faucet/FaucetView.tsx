@@ -99,20 +99,21 @@ const FaucetView: React.FC<FaucetViewProps> = ({}) => {
         lowNetworkTimestamp: Date.now() / 1000,
         completionTimestamp: Date.now() / 1000,
         highNetworkHash: data.result,
-        newTransaction: true
+        newTransaction: true,
+        address: address
       }
     },
     {
       onSuccess: (data: TransactionRecord | undefined, { address }) => {
         try {
-          const transactionsString = localStorage.getItem(`bridge-${address}-transactions-${selectedNetworkType}`)
+          const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
 
           let transactions = []
           if (transactionsString) {
             transactions = JSON.parse(transactionsString)
           }
           transactions.push({ ...data })
-          localStorage.setItem(`bridge-${address}-transactions-${selectedNetworkType}`, JSON.stringify(transactions))
+          localStorage.setItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`, JSON.stringify(transactions))
         } catch (e) {
           console.log(e)
         }
