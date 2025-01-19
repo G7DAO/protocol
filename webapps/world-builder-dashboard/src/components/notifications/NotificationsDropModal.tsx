@@ -32,7 +32,7 @@ const copy = (notification: BridgeNotification, selectedNetworkType: NetworkType
       return `${notification.amount} ${notification.tx.transactionInputs?.tokenSymbol ? notification.tx.transactionInputs?.tokenSymbol : ''} deposited to ${targetNetwork}`
     }
     if (notification.type === 'CLAIM') {
-      return `You requested 1.0 ${L3_NATIVE_TOKEN_SYMBOL}`
+      return `You requested 1 ${L3_NATIVE_TOKEN_SYMBOL}`
     }
     return `Your ${notification.amount} ${notification.tx.transactionInputs?.tokenSymbol ? notification.tx.transactionInputs?.tokenSymbol : ''} withdrawal is complete`
   }
