@@ -18,10 +18,10 @@ const NetworkToggle: React.FC<NetworkToggleProps> = () => {
   useEffect(() => {
     const networkType = searchParams.get('network')
     setSelectedNetworkType(
-      networkType ? (networkType as NetworkType) : selectedNetworkType ? selectedNetworkType : 'Mainnet'
+      networkType ? (networkType as NetworkType) : selectedNetworkType ? selectedNetworkType : 'Testnet'
     )
     setSearchParams({
-      network: networkType ? (networkType as string) : selectedNetworkType ? (selectedNetworkType as string) : 'Mainnet'
+      network: networkType ? (networkType as string) : selectedNetworkType ? (selectedNetworkType as string) : 'Testnet'
     })
   }, [selectedNetworkType])
 
