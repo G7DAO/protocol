@@ -161,7 +161,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         await tx?.wait()
         return {
           type: 'DEPOSIT',
-          amount: amount,
+          amount: parseFloat(amount).toString(),
           lowNetworkChainId: selectedLowNetwork.chainId,
           highNetworkChainId: selectedHighNetwork.chainId,
           lowNetworkHash: tx?.hash,
@@ -183,7 +183,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         await tx?.wait()
         return {
           type: 'WITHDRAWAL',
-          amount: amount,
+          amount: parseFloat(amount).toString(),
           lowNetworkChainId: selectedLowNetwork.chainId,
           highNetworkChainId: selectedHighNetwork.chainId,
           highNetworkHash: tx?.hash,
