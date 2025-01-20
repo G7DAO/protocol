@@ -32,7 +32,9 @@ const copy = (notification: BridgeNotification, selectedNetworkType: NetworkType
       return `${notification.amount} ${notification.tx.transactionInputs?.tokenSymbol ? notification.tx.transactionInputs?.tokenSymbol : ''} deposited to ${targetNetwork}`
     }
     if (notification.type === 'CLAIM') {
-      return `You requested ${notification.amount} ${L3_NATIVE_TOKEN_SYMBOL}`
+      return (
+        <>You received 1 {L3_NATIVE_TOKEN_SYMBOL}</>
+      )
     }
     return `Your ${notification.amount} ${notification.tx.transactionInputs?.tokenSymbol ? notification.tx.transactionInputs?.tokenSymbol : ''} withdrawal is complete`
   }
@@ -163,7 +165,9 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
 
   return (
     <div onClick={handleClick} className={toastClassName(notifications[0].status)}>
-      {copy(notifications[0], selectedNetworkType)}
+      <a href={getTransactionUrl(notifications[0])} target="_blank" style={{ color: 'white', textDecoration: 'underline' }}>
+        {copy(notifications[0], selectedNetworkType)}
+      </a>
       <IconCloseSmall className={iconCloseClassName(notifications[0].status)} onClick={handleExit} />
     </div>
   )

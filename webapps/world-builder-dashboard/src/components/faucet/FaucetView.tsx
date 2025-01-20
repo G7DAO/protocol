@@ -98,7 +98,8 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
         lowNetworkTimestamp: Date.now() / 1000,
         completionTimestamp: Date.now() / 1000,
         highNetworkHash: data.result,
-        newTransaction: true
+        newTransaction: true,
+        address: address
       }
     },
     onSuccess: (data) => {
