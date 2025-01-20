@@ -180,7 +180,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   useEffect(() => {
     let isButtonDisabled = true
 
-    const isNewAccount = nextClaimAvailable.status === 'success' && lastClaimedTimestampQuery.data === 0
+    const isNewAccount = nextClaimAvailable.fetchStatus === 'idle' && lastClaimedTimestampQuery.data === 0
 
     if (isNewAccount) {
       isButtonDisabled = false
