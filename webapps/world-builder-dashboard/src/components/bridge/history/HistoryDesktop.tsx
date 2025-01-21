@@ -10,6 +10,7 @@ import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeAPI } from '@/hooks/useBridgeAPI'
 import { useMessages } from '@/hooks/useL2ToL1MessageStatus'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
+import SpyMode from "@/components/bridge/history/SpyMode";
 
 interface HistoryDesktopProps { }
 
@@ -65,9 +66,11 @@ const mapAPIDataToTransactionRecord = (apiData: any): TransactionRecord => {
 
 const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   const { connectedAccount, selectedNetworkType } = useBlockchainContext()
-  const { data: messages } = useMessages(connectedAccount, selectedNetworkType || 'Testnet')
+  const [isSpyMode, setIsSpyMode] = useState(false)
+  const [spyAddress, setSpyAddress] = useState('')
+  const { data: messages } = useMessages(isSpyMode ? spyAddress : connectedAccount, selectedNetworkType || 'Testnet')
   const { useHistoryTransactions } = useBridgeAPI()
-  const { data: apiTransactions } = useHistoryTransactions(connectedAccount)
+  const { data: apiTransactions } = useHistoryTransactions(isSpyMode ? spyAddress : connectedAccount)
   const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])
   const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status', '']
 
@@ -108,6 +111,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
 
   return (
     <div className={styles.container}>
+      <SpyMode isSpyMode={isSpyMode} setIsSpyMode={setIsSpyMode} onSpyAddress={setSpyAddress} />
       <div className={styles.content}>
         {mergedTransactions && (
           <div className={styles.transactions}>
