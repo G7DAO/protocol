@@ -3,8 +3,8 @@ import styles from './MultiTokenApproval.module.css'
 import { Modal } from 'summon-ui/mantine'
 import AllowanceSelector from '../allowance/AllowanceSelector'
 import { ethers } from 'ethers'
-import { useQueryClient } from 'react-query'
-import { useMutation } from 'react-query'
+import { useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { Bridger } from 'game7-bridge-sdk'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { getNetworks } from '../../../../constants'
@@ -72,8 +72,12 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
     }
   }, [currentTokenIndex, tokens, amount, decimals, gasFees, allowanceInitialized])
 
-  const approve = useMutation(
-    async (amount: ethers.BigNumber) => {
+  const approve = useMutation({
+    mutationFn: async ({
+      amount
+    }: {
+      amount: ethers.BigNumber
+    }) => {
       const currentToken = tokens[currentTokenIndex]
       const network = networks?.find((n) => n.chainId === bridger?.originNetwork.chainId)
       if (!network) throw new Error('Network not found')
@@ -83,34 +87,33 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
         ? await bridger?.approve(amount, signer)
         : await bridger?.approveNative(newAllowance, signer)
       await txApprove?.wait()
-      return { tx: txApprove, tokenSymbol: currentToken.symbol }
+      return currentToken.symbol
     },
-    {
-      onSuccess: ({ tokenSymbol }) => {
-        setApprovedTokens(prev => {
-          const newSet = new Set([...prev, tokenSymbol])
-          return newSet
-        })
+    onSuccess: (tokenSymbol: string) => {
+      setApprovedTokens(prev => {
+        const newSet = new Set([...prev, tokenSymbol])
+        return newSet
+      })
 
-        // If there's only one token, complete immediately
-        if (tokens.length === 1) {
-          handleAllApprovalsComplete()
-          return
-        }
-
-        // Otherwise continue with multiple token logic
-        if (currentTokenIndex < tokens.length - 1) {
-          setCurrentTokenIndex(prev => prev + 1)
-        } else {
-          handleAllApprovalsComplete()
-        }
-        queryClient.refetchQueries(['ERC20Balance'])
-      },
-      onError: (e) => {
-        console.error('Approval error:', e)
+      // If there's only one token, complete immediately
+      if (tokens.length === 1) {
+        handleAllApprovalsComplete()
+        return
       }
+
+      // Otherwise continue with multiple token logic
+      if (currentTokenIndex < tokens.length - 1) {
+        setCurrentTokenIndex(prev => prev + 1)
+      } else {
+        handleAllApprovalsComplete()
+      }
+      queryClient.refetchQueries({ queryKey: ['ERC20Balance'] })
+    },
+    onError: (e: any) => {
+      console.error('Approval error:', e)
     }
-  )
+  })
+
 
   const handleAllApprovalsComplete = () => {
     setShowApproval(false)
@@ -138,7 +141,7 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
             </div>
             <IconClose onClick={() => setShowApproval(false)} className={styles.closeButton} stroke="#fff" />
           </div>
-          <div className={styles.modalSubtitle}>This sets a limit to the amount of tokens that can be processed through the bridge.
+          <div className={styles.modalSubtitle}>Set limit to the token amount that can be processed through the bridge.
           </div>
         </div>
         {tokens.length > 1 && (
@@ -157,7 +160,7 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
                       </div>
                       {approvedTokens.has(token.symbol) && <IconCheck stroke="#F04438" />}
                     </div>
-                    {approve.isLoading && currentTokenIndex === tokens.indexOf(token) && (
+                    {approve.isPending && currentTokenIndex === tokens.indexOf(token) && (
                       <div className={styles.loadingBar} />
                     )}
                   </div>
@@ -179,11 +182,8 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
                 amount={ethers.utils.parseUnits(amount || '0', decimals || 18)}
                 onChange={(value) => setNewAllowance(value)}
                 allowance={newAllowance}
-                disabled={approve.isLoading}
+                disabled={approve.isPending}
               />
-            </div>
-            <div className={styles.hintText}>
-              Set token limit to allow the bridge contract to perform token transfers on your behalf. It cannot move funds without your permission.
             </div>
           </div>
         ) : (
@@ -191,9 +191,9 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
         )}
         <div className={styles.buttonSpacer} />
         <div className={styles.buttonSection}>
-          <div onClick={() => approve.mutate(newAllowance)} className={`${styles.button} ${approve.isLoading ? styles.buttonLoading : ''}`}>
-            <div className={`${styles.buttonText} ${approve.isLoading ? styles.buttonLoadingText : ''}`}>
-              {approve.isLoading ? 'Approving...' : 'Approve'}
+          <div onClick={() => approve.mutate({amount: newAllowance})} className={`${styles.button} ${approve.isPending ? styles.buttonLoading : ''}`}>
+            <div className={`${styles.buttonText} ${approve.isPending ? styles.buttonLoadingText : ''}`}>
+              {approve.isPending ? 'Approving...' : 'Approve'}
             </div>
           </div>
         </div>

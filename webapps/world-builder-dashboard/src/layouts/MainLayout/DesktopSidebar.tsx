@@ -69,10 +69,10 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
             </div>
           )}
           <div className={styles.linkContainer}>
-            <div className={styles.linkText}>
+            <div className={styles.linkText} onClick={()=>navigate('/terms')}>
               Terms of Service
             </div>
-            <div className={styles.linkText}>
+            <div className={styles.linkText} onClick={()=>navigate('/privacy')}>
               Privacy Policy
             </div>
           </div>

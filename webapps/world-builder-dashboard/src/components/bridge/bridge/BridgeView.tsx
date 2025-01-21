@@ -32,6 +32,7 @@ import { getTokensForNetwork, Token } from '@/utils/tokens'
 import { useBridger } from '@/hooks/useBridger'
 import IconAlertCircle from '@/assets/IconAlertCircle'
 import { Tooltip } from 'summon-ui/mantine'
+import { useNavigate } from 'react-router-dom'
 
 const BridgeView = ({
   direction,
@@ -40,6 +41,7 @@ const BridgeView = ({
   direction: DepositDirection
   setDirection: (arg0: DepositDirection) => void
 }) => {
+  const navigate = useNavigate()
   const [value, setValue] = useState('0')
   const [message, setMessage] = useState<{ destination: string; data: string }>({ destination: '', data: '' })
   const [isMessageExpanded, setIsMessageExpanded] = useState(false)
@@ -74,13 +76,13 @@ const BridgeView = ({
     token: nativeToken
   })
 
-  const { data: coinUSDRate, isFetching: isCoinFetching } = useUSDPriceOfToken(selectedBridgeToken.geckoId ?? '')
+  const { data: coinUSDRate, isFetching: isCoinFetching } = useUSDPriceOfToken(selectedBridgeToken?.geckoId ?? '')
   const { data: ethRate } = useUSDPriceOfToken('ethereum')
   const handleTokenChange = async (token: Token) => {
     setSelectedBridgeToken(token)
   }
   const { getEstimatedFee, useAllowances } = useBridger()
-  
+
   const [bridger, setBridger] = useState<Bridger | null>(null)
 
 
@@ -177,141 +179,141 @@ const BridgeView = ({
   }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.headerContainer}>
-        <div className={styles.title}>Transfer Assets</div>
-        <div className={styles.subtitle}>Move your assets between different layers</div>
-      </div>
-      <div className={styles.directionContainer}>
-        <button
-          className={direction === 'DEPOSIT' ? styles.selectedDirectionButton : styles.directionButton}
-          onClick={() => setDirection('DEPOSIT')}
-        >
-          Deposit
-        </button>
-        <button
-          className={direction === 'WITHDRAW' ? styles.selectedDirectionButton : styles.directionButton}
-          onClick={() => setDirection('WITHDRAW')}
-        >
-          Withdraw
-        </button>
-      </div>
-      <div className={styles.networksContainer}>
-        <div className={styles.networkSelect}>
-          <label htmlFor='network-select-from' className={styles.label}>
-            From
-          </label>
-          {renderNetworkSelect(true, direction)}
+    <div className={styles.mainContainer}>
+      <div className={styles.container}>
+        <div className={styles.directionContainer}>
+          <button
+            className={direction === 'DEPOSIT' ? styles.selectedDirectionButton : styles.directionButton}
+            onClick={() => setDirection('DEPOSIT')}
+          >
+            Deposit
+          </button>
+          <button
+            className={direction === 'WITHDRAW' ? styles.selectedDirectionButton : styles.directionButton}
+            onClick={() => setDirection('WITHDRAW')}
+          >
+            Withdraw
+          </button>
         </div>
-        <div className={styles.networkSelect}>
-          <label htmlFor='network-select-to' className={styles.label}>
-            To
-          </label>
-          {renderNetworkSelect(false, direction)}
+        <div className={styles.networksContainer}>
+          <div className={styles.networkSelect}>
+            <label htmlFor='network-select-from' className={styles.label}>
+              From
+            </label>
+            {renderNetworkSelect(true, direction)}
+          </div>
+          <div className={styles.networkSelect}>
+            <label htmlFor='network-select-to' className={styles.label}>
+              To
+            </label>
+            {renderNetworkSelect(false, direction)}
+          </div>
         </div>
-      </div>
-      <ValueToBridge
-        symbol={tokenInformation?.symbol ?? ''}
-        value={value}
-        setValue={setValue}
-        onTokenChange={handleTokenChange}
-        balance={tokenInformation?.tokenBalance}
-        rate={
-          selectedBridgeToken.symbol === 'TG7T' || selectedBridgeToken.symbol === 'G7'
-            ? 1
-            : isCoinFetching
-              ? 0.0
-              : coinUSDRate[selectedBridgeToken?.geckoId ?? '']
-                ? coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd
-                : 0
-        }
-        isFetchingBalance={isFetchingTokenInformation}
-        errorMessage={inputErrorMessages.value}
-        setErrorMessage={(msg) => setInputErrorMessages((prev) => ({ ...prev, value: msg }))}
-        selectedChainId={direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId}
-        gasFee={estimatedFee.data?.parentFee ?? ""}
-      />
-      {direction === 'DEPOSIT' &&
-        selectedLowNetwork.chainId === L2_NETWORK.chainId &&
-        isMessagingEnabled &&
-        selectedNetworkType === 'Testnet' && (
-          <BridgeMessage
-            isExpanded={isMessageExpanded}
-            setIsExpanded={setIsMessageExpanded}
-            message={message}
-            setMessage={(newMessage) => {
-              setMessage((prev) => ({ ...prev, ...newMessage }))
-            }}
-            errors={inputErrorMessages}
-            setErrors={(newErrors) => {
-              setInputErrorMessages((prev) => ({ ...prev, ...newErrors }))
-            }}
-          />
-        )}
-      <TransactionSummary
-        direction={direction}
-        address={connectedAccount}
-        nativeBalance={Number(nativeTokenInformation?.tokenBalance)}
-        transferTime={
-          direction === 'DEPOSIT'
-            ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
-            : `~${Math.floor((selectedHighNetwork.challengePeriod ?? 0) / 60)} min`
-        }
-        fee={Number(estimatedFee.data?.parentFee ?? 0)}
-        childFee={Number(estimatedFee.data?.childFee ?? 0)}
-        isEstimatingFee={estimatedFee.isFetching}
-        value={Number(value)}
-        ethRate={ethRate?.ethereum?.usd ?? 0}
-        tokenRate={
-          selectedBridgeToken.symbol === 'TG7T' || selectedBridgeToken.symbol === 'G7'
-            ? 1
-            : isCoinFetching
-              ? 0.0
-              : coinUSDRate[selectedBridgeToken?.geckoId ?? ''].usd ?? 0
-        }
-        tokenSymbol={tokenInformation?.symbol ?? ''}
-        gasNativeTokenSymbol={
-          selectedNativeToken?.symbol ?? ''
-        }
-        gasChildNativeTokenSymbol={
-          selectedHighNetwork.nativeCurrency?.symbol ?? ''
-        }
-        selectedLowChain={selectedLowNetwork}
-        selectedHighChain={selectedHighNetwork}
+        <ValueToBridge
+          symbol={tokenInformation?.symbol ?? ''}
+          value={value}
+          setValue={setValue}
+          onTokenChange={handleTokenChange}
+          balance={tokenInformation?.tokenBalance}
+          rate={
+            selectedBridgeToken?.symbol === 'TG7T' || selectedBridgeToken?.symbol === 'G7'
+              ? 1
+              : isCoinFetching
+                ? 0.0
+                : (coinUSDRate[selectedBridgeToken?.geckoId ?? '']?.usd ?? 0)
+          }
+          isFetchingBalance={isFetchingTokenInformation}
+          errorMessage={inputErrorMessages.value}
+          setErrorMessage={(msg) => setInputErrorMessages((prev) => ({ ...prev, value: msg }))}
+          selectedChainId={direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId}
+          gasFee={estimatedFee.data?.parentFee ?? ""}
+        />
+        {direction === 'DEPOSIT' &&
+          selectedLowNetwork.chainId === L2_NETWORK.chainId &&
+          isMessagingEnabled &&
+          selectedNetworkType === 'Testnet' && (
+            <BridgeMessage
+              isExpanded={isMessageExpanded}
+              setIsExpanded={setIsMessageExpanded}
+              message={message}
+              setMessage={(newMessage) => {
+                setMessage((prev) => ({ ...prev, ...newMessage }))
+              }}
+              errors={inputErrorMessages}
+              setErrors={(newErrors) => {
+                setInputErrorMessages((prev) => ({ ...prev, ...newErrors }))
+              }}
+            />
+          )}
+        <TransactionSummary
+          direction={direction}
+          address={connectedAccount}
+          nativeBalance={Number(nativeTokenInformation?.tokenBalance)}
+          transferTime={
+            direction === 'DEPOSIT'
+              ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
+              : `~${Math.floor((selectedHighNetwork.challengePeriod ?? 0) / 60)} min`
+          }
+          fee={Number(estimatedFee.data?.parentFee ?? 0)}
+          childFee={Number(estimatedFee.data?.childFee ?? 0)}
+          isEstimatingFee={estimatedFee.isFetching}
+          value={Number(value)}
+          ethRate={ethRate?.ethereum?.usd ?? 0}
+          tokenRate={
+            selectedBridgeToken?.symbol === 'TG7T' || selectedBridgeToken?.symbol === 'G7'
+              ? 1
+              : isCoinFetching
+                ? 0.0
+                : coinUSDRate && selectedBridgeToken?.geckoId && coinUSDRate[selectedBridgeToken.geckoId]
+                  ? coinUSDRate[selectedBridgeToken.geckoId]?.usd ?? 0
+                  : 0
+          }
+          tokenSymbol={tokenInformation?.symbol ?? ''}
+          gasNativeTokenSymbol={
+            selectedNativeToken?.symbol ?? ''
+          }
+          gasChildNativeTokenSymbol={
+            selectedHighNetwork.nativeCurrency?.symbol ?? ''
+          }
+          selectedLowChain={selectedLowNetwork}
+          selectedHighChain={selectedHighNetwork}
 
-      />
-      {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
-      {direction === 'DEPOSIT' && <div className={styles.manualGasMessageContainer}>
-        <div className={styles.manualGasMessageText}>
-          May need manual gas completion on {selectedHighNetwork.displayName}
-        </div>
-        <Tooltip
-          content={`
-            Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.
-          `}
-          label=' Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.'
-          position='top'
-          className={styles.manualGasMessageTooltip}
-        >
-          <IconAlertCircle stroke='#FFFAEB' height={12} width={12} />
-        </Tooltip>
-      </div>}
-      <ActionButton
-        direction={direction}
-        amount={value ?? '0'}
-        isDisabled={!!inputErrorMessages.value || !!inputErrorMessages.destination || !!inputErrorMessages.data}
-        setErrorMessage={setNetworkErrorMessage}
-        L2L3message={isMessageExpanded ? message : { data: '', destination: '' }}
-        bridger={bridger}
-        symbol={tokenInformation?.symbol ?? ''}
-        decimals={tokenInformation?.decimalPlaces ?? 18}
-        balance={tokenInformation?.tokenBalance}
-        nativeBalance={nativeTokenInformation?.tokenBalance}
-        gasFees={[estimatedFee.data?.parentFee ?? '', estimatedFee.data?.childFee ?? '']}
-        bridgeAllowance={allowances?.bridgeTokenAllowance ?? null}
-        nativeAllowance={allowances?.nativeTokenAllowance ?? null}
-        isLoadingAllowances={isLoadingAllowances}
-      />
+        />
+        {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
+        {<div className={styles.manualGasMessageContainer}>
+          <div className={styles.manualGasMessageText}>
+            Claim transaction may be required on {selectedHighNetwork.displayName}
+          </div>
+          <Tooltip
+            multiline
+            radius={'8px'}
+            arrowSize={8}
+            withArrow
+            arrowOffset={14}
+            events={{ hover: true, focus: true, touch: true }}
+            label='Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.'
+          >
+            <IconAlertCircle stroke='#FFFAEB' height={16} width={16} />
+          </Tooltip>
+        </div>}
+        <ActionButton
+          direction={direction}
+          amount={value ?? '0'}
+          isDisabled={!!inputErrorMessages.value || !!inputErrorMessages.destination || !!inputErrorMessages.data}
+          setErrorMessage={setNetworkErrorMessage}
+          L2L3message={isMessageExpanded ? message : { data: '', destination: '' }}
+          bridger={bridger}
+          symbol={tokenInformation?.symbol ?? ''}
+          decimals={tokenInformation?.decimalPlaces ?? 18}
+          balance={tokenInformation?.tokenBalance}
+          nativeBalance={nativeTokenInformation?.tokenBalance}
+          gasFees={[estimatedFee.data?.parentFee ?? '', estimatedFee.data?.childFee ?? '']}
+          bridgeAllowance={allowances?.bridgeTokenAllowance ?? null}
+          nativeAllowance={allowances?.nativeTokenAllowance ?? null}
+          isLoadingAllowances={isLoadingAllowances}
+        />
+      </div>
+      <div className={styles.relayLink} onClick={() => navigate('/relay')}>Bridge with Relay</div>
     </div>
   )
 }

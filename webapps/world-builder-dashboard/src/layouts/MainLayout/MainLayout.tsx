@@ -12,10 +12,11 @@ import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import DesktopSidebar from '@/layouts/MainLayout/DesktopSidebar'
 import MobileSidebar from '@/layouts/MainLayout/MobileSidebar'
 import { useMediaQuery } from '@mantine/hooks'
+import IconRelay from '@/assets/IconRelay'
 
-interface MainLayoutProps {}
+interface MainLayoutProps { }
 
-const MainLayout: React.FC<MainLayoutProps> = ({}) => {
+const MainLayout: React.FC<MainLayoutProps> = ({ }) => {
   const location = useLocation()
   const { selectedNetworkType } = useBlockchainContext()
 
@@ -32,6 +33,16 @@ const MainLayout: React.FC<MainLayoutProps> = ({}) => {
         <IconWallet04
           className={styles.icomButton}
           stroke={location.pathname.startsWith('/bridge') ? '#fff' : '#B9B9B9'}
+        />
+      )
+    },
+    {
+      name: 'relay bridge',
+      navigateTo: '/relay',
+      icon: (
+        <IconRelay
+          className={styles.icomButton}
+          stroke={location.pathname.startsWith('/relay') ? '#fff' : '#B9B9B9'}
         />
       )
     },
@@ -59,6 +70,16 @@ const MainLayout: React.FC<MainLayoutProps> = ({}) => {
         <DesktopSidebar navigationItems={NAVIGATION_ITEMS} />
       )}
       <Outlet />
+      {smallView && (
+        <div className={styles.links}>
+          <div className={styles.linkTextMobile}>
+            Terms
+          </div>
+          <div className={styles.linkTextMobile}>
+            Privacy
+          </div>
+        </div>
+      )}
     </div>
   )
 }

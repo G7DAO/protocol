@@ -25,7 +25,7 @@ interface NotificationsDropModalProps {
 const copy = (notification: BridgeNotification, selectedNetworkType: NetworkType) => {
   const targetNetwork = getNetwork(notification.to, selectedNetworkType)?.displayName ?? 'unknown chain'
   if (notification.status === 'CLAIMABLE') {
-    return `Heads Up: Your ${notification.amount} ${notification.tx.transactionInputs?.tokenSymbol ? notification.tx.transactionInputs?.tokenSymbol : ''} withdrawal is complete and you can now claim your assets`
+    return `Your ${notification.amount} ${notification.tx.transactionInputs?.tokenSymbol ? notification.tx.transactionInputs?.tokenSymbol : ''} withdrawal is ready to complete. Claim your token in Activity.`
   }
   if (notification.status === 'COMPLETED') {
     if (notification.type === 'DEPOSIT') {

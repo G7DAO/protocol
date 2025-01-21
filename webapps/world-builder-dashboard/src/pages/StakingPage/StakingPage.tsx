@@ -1,6 +1,6 @@
 // React and hooks
 import { useEffect, useState } from 'react'
-import { useQueryClient } from 'react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 // Styles
@@ -34,7 +34,7 @@ const StakingPage = () => {
 
   useEffect(() => {
     if (pendingTransactions.data && connectedAccount) {
-      queryClient.refetchQueries(['incomingMessages'])
+      queryClient.refetchQueries({ queryKey: ['incomingMessages'] })
       refetchNewNotifications(connectedAccount)
     }
   }, [pendingTransactions.data, connectedAccount])

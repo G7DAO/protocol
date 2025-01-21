@@ -1,4 +1,6 @@
-import { QueryClient, QueryClientProvider } from 'react-query'
+import '@reservoir0x/relay-kit-ui/styles.css'
+import './styles/global.css'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider } from 'react-router-dom'
 import { FIVE_MINUTES } from '../constants'
 import dayjs from 'dayjs'
@@ -13,7 +15,14 @@ import { UISettingsProvider } from '@/contexts/UISettingsContext'
 import en from '@/lang/en.json'
 import { AuthProvider } from '@/providers/AuthProvider'
 import router from '@/router'
-import './styles/global.css'
+
+// relay stuff
+import { RelayKitProvider } from '@reservoir0x/relay-kit-ui'
+import { WagmiProvider } from 'wagmi'
+import { MAINNET_RELAY_API } from '@reservoir0x/relay-sdk'
+import { theme } from './utils/relayTheme'
+import '@reservoir0x/relay-kit-ui/styles.css'
+import { wagmiConfig, chains } from './utils/relayConfig'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -37,6 +46,9 @@ const queryClient = new QueryClient({
     }
   }
 })
+
+
+
 
 const enMessages = { en }
 
@@ -66,7 +78,24 @@ export default function App() {
                 <BridgeNotificationsProvider>
                   <Notifications position='top-right' zIndex={1000} styles={NOTIFICATIONS_STYLES} />
                   <AuthProvider>
-                    <RouterProvider router={router} />
+                    <RelayKitProvider
+                      theme={theme}
+                      options={{
+                        appName: 'Relay Demo',
+                        appFees: [
+                          {
+                            recipient: '0x0000000000000000000000000000000000000000',
+                            fee: '100' // 1%
+                          }
+                        ],
+                        duneApiKey: "YOUR_DUNE_KEY",
+                        chains,
+                        baseApiUrl: MAINNET_RELAY_API
+                      }}>
+                      <WagmiProvider config={wagmiConfig}>
+                        <RouterProvider router={router} />
+                      </WagmiProvider>
+                    </RelayKitProvider>
                   </AuthProvider>
                 </BridgeNotificationsProvider>
               </ThemeProvider>
@@ -74,6 +103,6 @@ export default function App() {
           </AssetsProvider>
         </UISettingsProvider>
       </BlockchainProvider>
-    </QueryClientProvider>
+    </QueryClientProvider >
   )
 }
