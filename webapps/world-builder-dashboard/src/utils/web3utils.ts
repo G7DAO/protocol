@@ -124,7 +124,7 @@ export const getTokenSymbol = (
   const tokens = getTokensForNetwork(chainId, connectedAccount)
   const token = tokens.find(t => t.address.toLowerCase() === tx?.tokenAddress?.toLowerCase())
   // console.log({ txTokenAddress: tx?.tokenAddress, token: token, chainId, tx, symbol:  token?.symbol || 'UNKNOWN'})
-  return token?.symbol || 'UNKNOWN'
+  return token?.symbol || 'N/A'
 }
 
 export const isUSDC = (tokenAddress: string): boolean => {

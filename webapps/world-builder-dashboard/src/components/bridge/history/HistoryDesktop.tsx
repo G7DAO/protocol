@@ -81,6 +81,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
 
   // Merge transations only when API data is updated with new data
   useEffect(() => {
+    if (mergedTransactions.length > 0) return
     const localTransactions = messages || []
     const formattedApiTransactions = apiTransactions ? apiTransactions.map(apiDataToTransactionRecord) : []
     const combinedTransactions = mergeTransactions(formattedApiTransactions, localTransactions)
@@ -131,7 +132,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
     const handleScroll = () => {
       if (transactionsRef.current) {
         const { scrollTop, scrollHeight, clientHeight } = transactionsRef.current
-        if (scrollTop + clientHeight >= scrollHeight - 10) {
+        if (scrollTop + clientHeight >= scrollHeight) {
           loadMoreItems()
         }
       }

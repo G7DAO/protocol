@@ -44,11 +44,8 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
     }
   }, [deposit.lowNetworkHash, rpc])
 
-  const displayAmount = deposit.symbol === 'USDC'
-    ? deposit.amount
-    : deposit.symbol !== 'ETH'
-      ? deposit.amount
-      : amountValue
+  const displayAmount = deposit.amount ?? amountValue
+
 
 
   const symbol = getTokenSymbol(deposit, connectedAccount ?? '')
@@ -178,7 +175,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                       </div>
                       <div className={styles.gridItemInitiate}>{timeAgo(deposit?.lowNetworkTimestamp)}</div>
                       <div className={styles.gridItemInitiate}>
-                        {displayAmount} {deposit.symbol ?? symbol} 
+                        {displayAmount} {deposit.symbol ?? symbol}
                       </div>
                       <div className={styles.gridItemInitiate}>{depositInfo.from ?? ''}</div>
                       <div className={styles.gridItemInitiate}>{depositInfo.to ?? ''}</div>
@@ -285,7 +282,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                             <button
                               className={styles.claimButton}
                               onClick={() => {
-                                claim.mutate({txRecord: deposit})
+                                claim.mutate({ txRecord: deposit })
                               }}
                             >
                               {claim.isPending && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}

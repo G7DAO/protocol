@@ -79,11 +79,8 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   }, [withdrawal.highNetworkHash, rpc])
 
   // Update the display logic to use amountValue
-  const displayAmount = (withdrawal.symbol && withdrawal.symbol === 'USDC') || (withdrawal.transactionInputs && withdrawal.transactionInputs?.tokenSymbol === 'USDC')
-    ? withdrawal.amount
-    : withdrawal.symbol !== 'ETH'
-      ? withdrawal.amount
-      : amountValue
+  const displayAmount = withdrawal.amount ?? amountValue
+
 
   const symbol = getTokenSymbol(withdrawal, connectedAccount ?? '')
 
