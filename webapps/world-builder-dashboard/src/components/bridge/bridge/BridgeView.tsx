@@ -80,7 +80,7 @@ const BridgeView = ({
     setSelectedBridgeToken(token)
   }
   const { getEstimatedFee, useAllowances } = useBridger()
-  
+
   const [bridger, setBridger] = useState<Bridger | null>(null)
 
 
@@ -207,6 +207,7 @@ const BridgeView = ({
           <label htmlFor='network-select-to' className={styles.label}>
             To
           </label>
+          {renderNetworkSelect(true, direction)}
         </div>
       </div>
       <ValueToBridge
