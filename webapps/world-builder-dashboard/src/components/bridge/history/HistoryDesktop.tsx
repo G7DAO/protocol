@@ -177,7 +177,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
                     <Fragment key={idx}>{tx.lowNetworkHash && <Deposit deposit={tx} />}</Fragment>
                   )
                 }
-                delay={1000} // Delay in ms between rendering items
+                delay={500} // Delay in ms between rendering items
               />
               {visibleTransactions.filter((tx) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL').length === 0 && (
                 <div className={styles.noTransactions}>No transactions yet</div>
