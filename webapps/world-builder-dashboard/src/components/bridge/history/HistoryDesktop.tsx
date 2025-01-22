@@ -1,5 +1,5 @@
 // External Libraries
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useState, useRef } from 'react'
 // Styles
 import styles from './WithdrawTransactions.module.css'
 import { ethers } from 'ethers'
@@ -72,6 +72,8 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   const { useHistoryTransactions } = useBridgeAPI()
   const { data: apiTransactions } = useHistoryTransactions(connectedAccount)
   const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])
+  const [visibleTransactions, setVisibleTransactions] = useState<TransactionRecord[]>([])
+  const transactionsRef = useRef<HTMLDivElement | null>(null)
   const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status', '']
 
   // Merge transations only when API data is updated with new data
@@ -81,8 +83,6 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
 
     const combinedTransactions = mergeTransactions(formattedApiTransactions, localTransactions)
     // Retrieve existing transactions from localStorage
-
-    // Check if the combined transactions are different from those in localStorage
     if (
       combinedTransactions.length !== localTransactions.length ||
       !combinedTransactions.every((tx, index) =>
@@ -106,18 +106,60 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
         JSON.stringify([...localTransactions, ...newTransactions])
       )
     }
+    combinedTransactions.sort((x: TransactionRecord, y: TransactionRecord) => {
+      const xTimestamp = x.type === 'DEPOSIT' ? x.lowNetworkTimestamp : x.highNetworkTimestamp
+      const yTimestamp = y.type === 'DEPOSIT' ? y.lowNetworkTimestamp : y.highNetworkTimestamp
+
+      return (yTimestamp ?? 0) - (xTimestamp ?? 0)
+    })
     setMergedTransactions(combinedTransactions)
     console.log(localTransactions)
     console.log(formattedApiTransactions)
     console.log(combinedTransactions)
+    setVisibleTransactions(combinedTransactions.slice(0, 10))
   }, [messages, apiTransactions])
+
+
+  const loadMoreItems = () => {
+    setVisibleTransactions((prev) => {
+      const startIndex = prev.length;
+      const nextItems = mergedTransactions.slice(startIndex, startIndex + 5);
+      console.log("Current Length:", prev.length);
+      console.log("Next Items:", nextItems);
+      return [...prev, ...nextItems];
+    });
+  };
+  
+
+  // Add scroll event listener
+  useEffect(() => {
+    const handleScroll = () => {
+      if (transactionsRef.current) {
+        const { scrollTop, scrollHeight, clientHeight } = transactionsRef.current
+        if (scrollTop + clientHeight >= scrollHeight - 10) {
+          loadMoreItems()
+        }
+      }
+    }
+
+    const currentRef = transactionsRef.current
+    if (currentRef) {
+      currentRef.addEventListener('scroll', handleScroll)
+    }
+
+    return () => {
+      if (currentRef) {
+        currentRef.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [visibleTransactions])
 
   return (
     <div className={styles.container}>
       <div className={styles.content}>
-        {mergedTransactions && (
+        {visibleTransactions && (
           <div className={styles.transactions}>
-            <div className={styles.withdrawsGrid}>
+            <div className={styles.withdrawsGrid} ref={transactionsRef}>
               {headers.map((h) => (
                 <div
                   className={h !== '' ? styles.transactionsHeader : styles.transactionsHeaderEmpty}
@@ -127,12 +169,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
                 </div>
               ))}
               <LinearRenderer
-                items={mergedTransactions
-                  .sort((x, y) => {
-                    const xTimestamp = x.type === 'DEPOSIT' ? x.lowNetworkTimestamp : x.highNetworkTimestamp;
-                    const yTimestamp = y.type === 'DEPOSIT' ? y.lowNetworkTimestamp : y.highNetworkTimestamp;
-                    return (yTimestamp ?? 0) - (xTimestamp ?? 0);
-                  })}
+                items={visibleTransactions}
                 renderItem={(tx, idx) =>
                   tx.type === 'WITHDRAWAL' ? (
                     <Withdrawal withdrawal={tx} key={idx} />
@@ -140,9 +177,9 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
                     <Fragment key={idx}>{tx.lowNetworkHash && <Deposit deposit={tx} />}</Fragment>
                   )
                 }
-                delay={200} // Delay in ms between rendering items
+                delay={1000} // Delay in ms between rendering items
               />
-              {mergedTransactions.filter((tx) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL').length === 0 && (
+              {visibleTransactions.filter((tx) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL').length === 0 && (
                 <div className={styles.noTransactions}>No transactions yet</div>
               )}
             </div>
