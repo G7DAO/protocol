@@ -34,8 +34,6 @@ const mergeTransactions = (apiData: TransactionRecord[], localData: TransactionR
         combinedData.set(hashKey, apiTx)
       } else if (apiTx.type === 'DEPOSIT' && !apiTx.symbol && existingTx.symbol) {
         combinedData.set(hashKey, existingTx)
-      } else if (apiTx.type === 'DEPOSIT' && !apiTx.symbol && existingTx.symbol) {
-        combinedData.set(hashKey, apiTx)
       }
     } else {
       combinedData.set(hashKey, apiTx)
@@ -174,7 +172,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
                     <Fragment key={idx}>{tx.lowNetworkHash && <Deposit deposit={tx} />}</Fragment>
                   )
                 }
-                delay={500} // Delay in ms between rendering items
+                delay={200} // Delay in ms between rendering items
               />
               {visibleTransactions.filter((tx) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL').length === 0 && (
                 <div className={styles.noTransactions}>No transactions yet</div>
