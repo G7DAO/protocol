@@ -102,7 +102,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
       )
 
       localStorage.setItem(
-        `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
+        `bridge-${isSpyMode ? spyAddress : connectedAccount}-transactions-${selectedNetworkType}`,
         JSON.stringify([...localTransactions, ...newTransactions])
       )
     }
