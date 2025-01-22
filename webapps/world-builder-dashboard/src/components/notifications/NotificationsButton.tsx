@@ -15,6 +15,7 @@ export interface BridgeNotification {
   to: number
   seen: boolean
   tx: TransactionRecord
+  symbol: string
 }
 
 interface NotificationsButtonProps {
