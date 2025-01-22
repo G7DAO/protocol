@@ -11,6 +11,8 @@ import { useBridgeAPI } from '@/hooks/useBridgeAPI'
 import { useMessages } from '@/hooks/useL2ToL1MessageStatus'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import SpyMode from "@/components/bridge/history/SpyMode";
+import LinearRenderer from './LinearRenderer'
+import { isUSDC } from '@/utils/web3utils'
 
 interface HistoryDesktopProps { }
 
@@ -45,7 +47,7 @@ const mergeTransactions = (apiData: TransactionRecord[], localData: TransactionR
 
 // Maps API data to the TransactionRecord format
 const apiDataToTransactionRecord = (apiData: any): TransactionRecord => {
-  const amountFormatted = apiData?.amount ? ethers.utils.formatEther(apiData.amount) : '0.0'
+  const amountFormatted = apiData?.amount ? isUSDC(apiData.token) ? ethers.utils.formatUnits(apiData.amount, 6) : ethers.utils.formatEther(apiData.amount) : '0.0'
   return {
     type: apiData.type,
     amount: amountFormatted,
@@ -64,6 +66,7 @@ const apiDataToTransactionRecord = (apiData: any): TransactionRecord => {
   }
 }
 
+
 const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   const { connectedAccount, selectedNetworkType } = useBlockchainContext()
   const [isSpyMode, setIsSpyMode] = useState(false)
@@ -78,6 +81,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
 
   // Merge transations only when API data is updated with new data
   useEffect(() => {
+    if (mergedTransactions.length > 0) return
     const localTransactions = messages || []
     const formattedApiTransactions = apiTransactions ? apiTransactions.map(apiDataToTransactionRecord) : []
     const combinedTransactions = mergeTransactions(formattedApiTransactions, localTransactions)
@@ -128,7 +132,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
     const handleScroll = () => {
       if (transactionsRef.current) {
         const { scrollTop, scrollHeight, clientHeight } = transactionsRef.current
-        if (scrollTop + clientHeight >= scrollHeight - 10) {
+        if (scrollTop + clientHeight >= scrollHeight) {
           loadMoreItems()
         }
       }
@@ -148,31 +152,39 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
 
   return (
     <div className={styles.container}>
-      <SpyMode isSpyMode={isSpyMode} setIsSpyMode={setIsSpyMode} onSpyAddress={setSpyAddress} networkType={selectedNetworkType}/>
+      <SpyMode isSpyMode={isSpyMode} setIsSpyMode={setIsSpyMode} onSpyAddress={setSpyAddress} networkType={selectedNetworkType} />
       <div className={styles.content}>
         {visibleTransactions && (
           <div className={styles.transactions}>
             <div className={styles.withdrawsGrid} ref={transactionsRef}>
               {headers.map((h) => (
-                <div className={h !== '' ? styles.transactionsHeader : styles.transactionsHeaderEmpty} key={h}>
+                <div
+                  className={h !== '' ? styles.transactionsHeader : styles.transactionsHeaderEmpty}
+                  key={h}
+                >
                   {h}
                 </div>
               ))}
-              {visibleTransactions
-                .map((tx: TransactionRecord, idx: number) =>
+              <LinearRenderer
+                items={visibleTransactions}
+                renderItem={(tx, idx) =>
                   tx.type === 'WITHDRAWAL' ? (
                     <Withdrawal withdrawal={tx} key={idx} />
                   ) : (
                     <Fragment key={idx}>{tx.lowNetworkHash && <Deposit deposit={tx} />}</Fragment>
                   )
-                )}
-              {visibleTransactions.filter((tx: TransactionRecord) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL').length === 0 && <div className={styles.noTransactions}> No transactions yet</div>}
+                }
+                delay={500} // Delay in ms between rendering items
+              />
+              {visibleTransactions.filter((tx) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL').length === 0 && (
+                <div className={styles.noTransactions}>No transactions yet</div>
+              )}
             </div>
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }
 
 export default HistoryDesktop

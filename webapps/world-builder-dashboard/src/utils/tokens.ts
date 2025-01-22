@@ -64,7 +64,7 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
         {
           name: 'USDC',
           symbol: 'USDC',
-          address: '0xf2B58E3519C5b977a254993A4A6EaD581A8989A0',
+          address: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
           Icon: IconUSDC,
           rpc: L1_NETWORK.rpcs[0],
           tokenAddressMap: USDC,
@@ -99,7 +99,7 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
         {
           name: 'USDC',
           symbol: 'USDC',
-          address: '0x119f0E6303BEc7021B295EcaB27A4a1A5b37ECf0',
+          address: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d',
           Icon: IconUSDC,
           rpc: L2_NETWORK.rpcs[0],
           tokenAddressMap: USDC,
@@ -124,7 +124,7 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
         {
           name: 'USDC',
           symbol: 'USDC',
-          address: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
+          address: '0xf2B58E3519C5b977a254993A4A6EaD581A8989A0',
           Icon: IconUSDC,
           rpc: L3_NETWORK.rpcs[0],
           tokenAddressMap: USDC,

@@ -361,7 +361,7 @@ export async function getTransactionHistory(chain: string, address: string, limi
           block_timestamp AS completionTimestamp,
           '0x' || ENCODE(origin_address, 'hex') AS from_address,
           '0x' || ENCODE(origin_address, 'hex') AS to_address,
-          '${bridgeConfig[chain].nativeToken}' AS token,
+          label_data->'args'->>'burnToken' as token,
           true AS isDeposit,
           true as isCctp,
           block_timestamp

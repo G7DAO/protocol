@@ -9,7 +9,6 @@ import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 import { ChildToParentMessageStatus } from '@arbitrum/sdk'
 import { BridgeTransferStatus } from 'game7-bridge-sdk'
-import { ethers } from 'ethers'
 
 interface WithdrawalMobileProps {
   withdrawal: TransactionRecord
@@ -17,7 +16,7 @@ interface WithdrawalMobileProps {
   status: any
   transferStatus: any
   selectedNetworkType: NetworkType
-  transactionInputs: any
+  symbol: any
 }
 const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
   withdrawal,
@@ -25,30 +24,14 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
   status,
   transferStatus,
   selectedNetworkType,
-  transactionInputs
+  symbol
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.title}>Withdraw</div>
-        {(withdrawal.symbol || transactionInputs?.tokenSymbol) ? (
-              <div className={styles.amount}>
-                {`${withdrawal.symbol
-                  ? withdrawal.symbol === 'USDC'
-                    ? ethers.utils.formatUnits(transactionInputs?.amount ?? 0, 6)
-                    : withdrawal.amount
-                  : transactionInputs.tokenSymbol === 'USDC'
-                    ? ethers.utils.formatUnits(transactionInputs?.amount ?? 0, 6)
-                    : ethers.utils.formatEther(transactionInputs?.amount ?? 0) ?? withdrawal.amount} ${withdrawal.symbol || transactionInputs.tokenSymbol}`}
-              </div>
-            ) : (
-              <div className={styles.amount}>
-                <div className={parentStyles.loading}>
-                  Loading
-                </div>
-              </div>
-            )}
+        <div className={styles.amount}>{`${withdrawal.amount} ${symbol}`}</div>
       </div>
       {!isCollapsed && (
         <>

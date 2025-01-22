@@ -1,7 +1,9 @@
-import { getHighNetworks, getLowNetworks, HIGH_NETWORKS, LOW_NETWORKS } from '../../constants'
+import { getHighNetworks, getLowNetworks, HIGH_NETWORKS, LOW_NETWORKS, USDC } from '../../constants'
 import { ethers } from 'ethers'
 import { NetworkInterface, NetworkType } from '@/contexts/BlockchainContext'
 import { providers } from 'ethers'
+import { TransactionRecord } from './bridge/depositERC20ArbitrumSDK'
+import { getTokensForNetwork } from './tokens'
 
 export const convertToBigNumber = (numberString: string, precision = 18) => {
   const [integerPart, decimalPart] = numberString.split('.')
@@ -48,7 +50,6 @@ export const formatBigNumber = (bigNumber: ethers.BigNumber, lengthLimit = 25, u
     return formattedString
   }
 
-  // For scientific notation, we need to account for the actual decimal places
   const bigNumberString = bigNumber.toString()
   const firstDigit = bigNumberString[0]
   const remainingDigits = bigNumberString.slice(1, 3)
@@ -93,6 +94,47 @@ export const getCachedTransactions = (connectedAccount: string, selectedNetworkT
   const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
   return transactionsString ? JSON.parse(transactionsString) : []
 }
+
+export const getAmount = async (transactionHash: string, rpcUrl: string) => {
+  const provider = new providers.JsonRpcProvider(rpcUrl)
+  try {
+    // Retrieve the transaction details
+    const transaction = await provider.getTransaction(transactionHash)
+
+    if (!transaction) {
+      console.log('Transaction not found')
+      return null
+    }
+
+    const amount = ethers.utils.formatEther(transaction.value)
+    console.log(`Transaction Amount: ${amount} ETH`)
+
+    return amount
+  } catch (error) {
+    console.error('Error retrieving transaction:', error)
+    return null
+  }
+}
+
+export const getTokenSymbol = (
+  tx: TransactionRecord,
+  connectedAccount: string
+): string => {
+  const chainId = tx.type === 'DEPOSIT' ? tx.lowNetworkChainId : tx.highNetworkChainId
+  const tokens = getTokensForNetwork(chainId, connectedAccount)
+  const token = tokens.find(t => t.address.toLowerCase() === tx?.tokenAddress?.toLowerCase())
+  // console.log({ txTokenAddress: tx?.tokenAddress, token: token, chainId, tx, symbol:  token?.symbol || 'UNKNOWN'})
+  return token?.symbol || 'N/A'
+}
+
+export const isUSDC = (tokenAddress: string): boolean => {
+  const normalizedTokenAddress = tokenAddress.toLowerCase()
+  const addressToChainId = Object.fromEntries(
+    Object.entries(USDC).map(([chainId, address]) => [address.toLowerCase(), chainId])
+  )
+
+  return !!addressToChainId[normalizedTokenAddress]
+};
 
 export const returnSymbol = (direction: 'DEPOSIT' | 'WITHDRAW', selectedHighChain: NetworkInterface, selectedLowChain: NetworkInterface, tokenSymbol: string) => {
   if (tokenSymbol.startsWith('USDC')) {
