@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { getHighNetworks, getLowNetworks } from '../../../../constants'
 import styles from './DepositMobile.module.css'
 import parentStyles from './WithdrawTransactions.module.css'
-import { ethers } from 'ethers'
 import { BridgeTransferStatus } from 'game7-bridge-sdk'
 import { Skeleton, useMediaQuery } from 'summon-ui/mantine'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
@@ -16,17 +15,17 @@ interface DepositMobileProps {
   deposit: TransactionRecord
   isLoading: boolean
   selectedNetworkType: NetworkType
-  transactionInputs: any
   highNetworkTimestamp: number
   transferStatus: any
+  symbol: any
   claim: any
 }
 const DepositMobile: React.FC<DepositMobileProps> = ({
   deposit,
   isLoading,
   selectedNetworkType,
-  transactionInputs,
-  transferStatus,
+  transferStatus, 
+  symbol,
   claim
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
@@ -53,23 +52,7 @@ const DepositMobile: React.FC<DepositMobileProps> = ({
         <div className={styles.container}>
           <div className={styles.header}>
             <div className={styles.title}>Deposit</div>
-            {(deposit.symbol || transactionInputs?.tokenSymbol) ? (
-              <div className={styles.amount}>
-                {`${deposit.symbol
-                  ? deposit.symbol === 'USDC'
-                    ? ethers.utils.formatUnits(transactionInputs?.amount ?? 0, 6)
-                    : deposit.amount
-                  : transactionInputs.tokenSymbol === 'USDC'
-                    ? ethers.utils.formatUnits(transactionInputs?.amount ?? 0, 6)
-                    : ethers.utils.formatEther(transactionInputs?.amount ?? 0) ?? deposit.amount} ${deposit.symbol || transactionInputs.tokenSymbol}`}
-              </div>
-            ) : (
-              <div className={styles.amount}>
-                <div className={parentStyles.loading}>
-                  Loading
-                </div>
-              </div>
-            )}
+            <div className={styles.amount}>{`${deposit.amount} ${symbol}`}</div>
           </div>
           {!isCollapsed && (
             <>

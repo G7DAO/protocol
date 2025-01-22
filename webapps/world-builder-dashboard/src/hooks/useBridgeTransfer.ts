@@ -52,7 +52,7 @@ export const useBridgeTransfer = () => {
 
     // Update shouldFetchStatus to prevent refetching for completed transactions
     const shouldFetchStatus = (cachedTransaction: any) => {
-      const isCompleted = [1, 2, 6, 9].includes(cachedTransaction?.status)
+      const isCompleted = [1, 2, 6, 9, 11, 12].includes(cachedTransaction?.status)
       if (isCompleted) return false
       const timeSinceLastUpdate = Date.now() - (cachedTransaction?.lastUpdated || 0)
       return timeSinceLastUpdate > 1 * 60 * 1000
@@ -115,7 +115,7 @@ export const useBridgeTransfer = () => {
           const cachedTransaction = transactions.find((t: any) =>
             isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
           )
-
+    
           if (cachedTransaction && cachedTransaction.status !== undefined) {
             status = cachedTransaction.status
             return { status }
@@ -125,14 +125,15 @@ export const useBridgeTransfer = () => {
         refetchInterval: () => {
           const cachedTx = getCachedTransactions(connectedAccount ?? '', selectedNetworkType).find((t: any) =>
             t.type === 'DEPOSIT' ? t.lowNetworkHash === txHash : t.highNetworkHash === txHash
-          )
-
+          );
+    
           return shouldFetchStatus(cachedTx) ? 1 * 60 * 1000 : false
         },
         refetchOnWindowFocus: false,
-        enabled: !!txRecord
+        enabled: !!txRecord,
       }
     )
+    
   }
 
   // Mutate function
