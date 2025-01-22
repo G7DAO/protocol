@@ -148,7 +148,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
 
   return (
     <div className={styles.container}>
-      <SpyMode isSpyMode={isSpyMode} setIsSpyMode={setIsSpyMode} onSpyAddress={setSpyAddress} />
+      <SpyMode isSpyMode={isSpyMode} setIsSpyMode={setIsSpyMode} onSpyAddress={setSpyAddress} networkType={selectedNetworkType}/>
       <div className={styles.content}>
         {visibleTransactions && (
           <div className={styles.transactions}>
