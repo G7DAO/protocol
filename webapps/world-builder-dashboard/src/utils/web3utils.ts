@@ -120,11 +120,11 @@ export const getTokenSymbol = (
   tx: TransactionRecord,
   connectedAccount: string
 ): string => {
-  const chainId = tx.type === 'DEPOSIT' ? tx.lowNetworkChainId : tx.highNetworkChainId;
-  const tokens = getTokensForNetwork(chainId, connectedAccount);
-  const token = tokens.find(t => t.address.toLowerCase() === tx?.tokenAddress?.toLowerCase() ?? '');
+  const chainId = tx.type === 'DEPOSIT' ? tx.lowNetworkChainId : tx.highNetworkChainId
+  const tokens = getTokensForNetwork(chainId, connectedAccount)
+  const token = tokens.find(t => t.address.toLowerCase() === tx?.tokenAddress?.toLowerCase())
   // console.log({ txTokenAddress: tx?.tokenAddress, token: token, chainId, tx, symbol:  token?.symbol || 'UNKNOWN'})
-  return token?.symbol || 'UNKNOWN';
+  return token?.symbol || 'UNKNOWN'
 }
 
 export const isUSDC = (tokenAddress: string): boolean => {
