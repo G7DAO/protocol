@@ -11,6 +11,7 @@ import { useBridgeAPI } from '@/hooks/useBridgeAPI'
 import { useMessages } from '@/hooks/useL2ToL1MessageStatus'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { isUSDC } from '@/utils/web3utils'
+import LinearRenderer from './LinearRenderer'
 
 interface HistoryDesktopProps { }
 
@@ -118,32 +119,38 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
           <div className={styles.transactions}>
             <div className={styles.withdrawsGrid}>
               {headers.map((h) => (
-                <div className={h !== '' ? styles.transactionsHeader : styles.transactionsHeaderEmpty} key={h}>
+                <div
+                  className={h !== '' ? styles.transactionsHeader : styles.transactionsHeaderEmpty}
+                  key={h}
+                >
                   {h}
                 </div>
               ))}
-              {mergedTransactions
-                .sort((x: TransactionRecord, y: TransactionRecord) => {
-                  const xTimestamp = x.type === 'DEPOSIT' ? x.lowNetworkTimestamp : x.highNetworkTimestamp
-                  const yTimestamp = y.type === 'DEPOSIT' ? y.lowNetworkTimestamp : y.highNetworkTimestamp
-
-                  return (yTimestamp ?? 0) - (xTimestamp ?? 0)
-                })
-                .map((tx: TransactionRecord, idx: number) =>
+              <LinearRenderer
+                items={mergedTransactions
+                  .sort((x, y) => {
+                    const xTimestamp = x.type === 'DEPOSIT' ? x.lowNetworkTimestamp : x.highNetworkTimestamp;
+                    const yTimestamp = y.type === 'DEPOSIT' ? y.lowNetworkTimestamp : y.highNetworkTimestamp;
+                    return (yTimestamp ?? 0) - (xTimestamp ?? 0);
+                  })}
+                renderItem={(tx, idx) =>
                   tx.type === 'WITHDRAWAL' ? (
                     <Withdrawal withdrawal={tx} key={idx} />
                   ) : (
                     <Fragment key={idx}>{tx.lowNetworkHash && <Deposit deposit={tx} />}</Fragment>
                   )
-                )}
-              {mergedTransactions.filter((tx: TransactionRecord) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL')
-                .length === 0 && <div className={styles.noTransactions}> No transactions yet</div>}
+                }
+                delay={200} // Delay in ms between rendering items
+              />
+              {mergedTransactions.filter((tx) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL').length === 0 && (
+                <div className={styles.noTransactions}>No transactions yet</div>
+              )}
             </div>
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }
 
 export default HistoryDesktop

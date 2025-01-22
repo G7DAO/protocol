@@ -52,7 +52,7 @@ export const useBridgeTransfer = () => {
 
     // Update shouldFetchStatus to prevent refetching for completed transactions
     const shouldFetchStatus = (cachedTransaction: any) => {
-      const isCompleted = [1, 2, 6, 9].includes(cachedTransaction?.status)
+      const isCompleted = [1, 2, 6, 9, 11, 12].includes(cachedTransaction?.status)
       if (isCompleted) return false
       const timeSinceLastUpdate = Date.now() - (cachedTransaction?.lastUpdated || 0)
       return timeSinceLastUpdate > 1 * 60 * 1000
@@ -63,49 +63,58 @@ export const useBridgeTransfer = () => {
     return useQuery(
       ['transferData', txHash],
       async () => {
-
+        const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType);
+        const cachedTransaction = transactions.find((t: any) =>
+          isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
+        );
+    
+        if (cachedTransaction && [1, 2, 6, 9, 11, 12].includes(cachedTransaction.status)) {
+          return { status: cachedTransaction.status }
+        }
+    
         try {
           const _bridgeTransfer: BridgeTransfer = await getBridgeTransfer({
             txHash: txHash ?? '',
             destinationNetworkChainId: destinationChainId ?? 0,
             originNetworkChainId: originChainId ?? 0,
             destinationSignerOrProviderOrRpc: destinationRpc,
-            originSignerOrProviderOrRpc: originRpc
+            originSignerOrProviderOrRpc: originRpc,
           }, txRecord.isCCTP)
-
+    
           // Fetch status with retry logic
           status = await retryWithExponentialBackoff(async () => await _bridgeTransfer.getStatus())
-          const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
-
+    
           // Update the cache with the latest status
           const newTransactions = transactions.map((t: any) => {
             const isSameHash = isDeposit
               ? t.lowNetworkHash === txRecord.lowNetworkHash
-              : t.highNetworkHash === txRecord.highNetworkHash
-
+              : t.highNetworkHash === txRecord.highNetworkHash;
+    
             return isSameHash ? { ...t, status: status?.status, lastUpdated: Date.now() } : t
-          })
-
+          });
+    
           localStorage.setItem(
             `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
             JSON.stringify(newTransactions)
-          )
-
-          return status
+          );
+    
+          return status;
         } catch (error) {
-          console.log('Error fetching status:', error, originChainId, destinationChainId, txRecord.tokenAddress, txHash)
-
-          // Fallback to cached status if available
-          const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType)
-          const cachedTransaction = transactions.find((t: any) =>
-            isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
+          console.log(
+            'Error fetching status:',
+            error,
+            originChainId,
+            destinationChainId,
+            txRecord.tokenAddress,
+            txHash
           )
-
+    
+          // Fallback to cached status if available
           if (cachedTransaction && cachedTransaction.status !== undefined) {
-            status = cachedTransaction.status
-            return { status } // Return cached status
+            status = cachedTransaction.status;
+            return { status }; // Return cached status
           }
-
+    
           throw error // Re-throw error if no cache
         }
       },
@@ -116,7 +125,7 @@ export const useBridgeTransfer = () => {
           const cachedTransaction = transactions.find((t: any) =>
             isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
           )
-
+    
           if (cachedTransaction && cachedTransaction.status !== undefined) {
             status = cachedTransaction.status
             return { status }
@@ -126,14 +135,15 @@ export const useBridgeTransfer = () => {
         refetchInterval: () => {
           const cachedTx = getCachedTransactions(connectedAccount ?? '', selectedNetworkType).find((t: any) =>
             t.type === 'DEPOSIT' ? t.lowNetworkHash === txHash : t.highNetworkHash === txHash
-          )
-
+          );
+    
           return shouldFetchStatus(cachedTx) ? 1 * 60 * 1000 : false
         },
         refetchOnWindowFocus: false,
-        enabled: !!txRecord
+        enabled: !!txRecord,
       }
     )
+    
   }
 
   // Mutate function

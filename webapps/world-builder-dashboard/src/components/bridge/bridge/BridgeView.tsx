@@ -207,7 +207,6 @@ const BridgeView = ({
           <label htmlFor='network-select-to' className={styles.label}>
             To
           </label>
-          {renderNetworkSelect(false, direction)}
         </div>
       </div>
       <ValueToBridge
