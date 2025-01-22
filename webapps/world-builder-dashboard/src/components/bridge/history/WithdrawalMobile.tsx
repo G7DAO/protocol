@@ -15,7 +15,7 @@ interface WithdrawalMobileProps {
   status: any
   transferStatus: any
   selectedNetworkType: NetworkType
-  transactionInputs: any
+  symbol: any
 }
 const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
   withdrawal,
@@ -23,14 +23,14 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
   status,
   transferStatus,
   selectedNetworkType,
-  transactionInputs
+  symbol
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.title}>Withdraw</div>
-        <div className={styles.amount}>{`${withdrawal.amount} ${transactionInputs?.tokenSymbol}`}</div>
+        <div className={styles.amount}>{`${withdrawal.amount} ${symbol}`}</div>
       </div>
       {!isCollapsed && (
         <>

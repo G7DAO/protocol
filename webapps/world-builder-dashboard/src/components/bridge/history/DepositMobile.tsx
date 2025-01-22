@@ -14,17 +14,17 @@ interface DepositMobileProps {
   deposit: TransactionRecord
   isLoading: boolean
   selectedNetworkType: NetworkType
-  transactionInputs: any
   highNetworkTimestamp: number
   transferStatus: any
+  symbol: any
 }
 const DepositMobile: React.FC<DepositMobileProps> = ({
   deposit,
   isLoading,
   selectedNetworkType,
-  transactionInputs,
   highNetworkTimestamp,
-  transferStatus
+  transferStatus, 
+  symbol
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
   const depositInfo = {
@@ -51,7 +51,7 @@ const DepositMobile: React.FC<DepositMobileProps> = ({
         <div className={styles.container}>
           <div className={styles.header}>
             <div className={styles.title}>Deposit</div>
-            <div className={styles.amount}>{`${deposit.amount} ${transactionInputs?.tokenSymbol}`}</div>
+            <div className={styles.amount}>{`${deposit.amount} ${symbol}`}</div>
           </div>
           {!isCollapsed && (
             <>

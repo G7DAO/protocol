@@ -1,8 +1,7 @@
-import React, { useState } from 'react'
-import { getHighNetworks, getLowNetworks } from '../../../../constants'
+import React, { useEffect, useState } from 'react'
+import { getHighNetworks, getLowNetworks, getNetworks } from '../../../../constants'
 import DepositMobile from './DepositMobile'
 import styles from './WithdrawTransactions.module.css'
-import { ethers } from 'ethers'
 import { BridgeTransferStatus } from 'game7-bridge-sdk'
 import { useMediaQuery } from 'summon-ui/mantine'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
@@ -10,7 +9,7 @@ import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeTransfer } from '@/hooks/useBridgeTransfer'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
-import { getBlockExplorerUrl } from '@/utils/web3utils'
+import { getAmount, getBlockExplorerUrl, getTokenSymbol } from '@/utils/web3utils'
 import IconChevronDown from '@/assets/IconChevronDown'
 import IconChevronUp from '@/assets/IconChevronUp'
 import IconWithdrawalNodeCompleted from '@/assets/IconWithdrawalNodeCompleted'
@@ -20,19 +19,40 @@ interface DepositProps {
 }
 
 const Deposit: React.FC<DepositProps> = ({ deposit }) => {
-  const { selectedNetworkType } = useBlockchainContext()
+  const { selectedNetworkType, connectedAccount } = useBlockchainContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
   const depositInfo = {
     from: getLowNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.lowNetworkChainId)?.displayName ?? '',
     to: getHighNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
   }
-  const { returnTransferData, getTransactionInputs, getHighNetworkTimestamp, claim } = useBridgeTransfer()
+  const { returnTransferData, getHighNetworkTimestamp, claim } = useBridgeTransfer()
   const { data: transferStatus, isLoading } = returnTransferData({ txRecord: deposit })
   const { data: highNetworkTimestamp } = getHighNetworkTimestamp({ txRecord: deposit, transferStatus: transferStatus })
-  const { data: transactionInputs, isLoading: isLoadingInputs } = getTransactionInputs({ txRecord: deposit })
-  const finalTransactionInputs = transactionInputs || deposit.transactionInputs
   const [collapseExecuted, setCollapseExecuted] = useState(false)
   const [hovered, setHovered] = useState(false)
+  const [amountValue, setAmountValue] = useState<string>('')
+  const rpc = getNetworks(selectedNetworkType)?.find(n => n.chainId === deposit.highNetworkChainId)?.rpcs[0]
+
+  const fetchAmount = async () => {
+    const value = await getAmount(deposit.highNetworkHash ?? '', rpc ?? '')
+    setAmountValue(value ?? '')
+  }
+
+  useEffect(() => {
+    if (deposit.symbol === 'ETH') {
+      fetchAmount()
+    }
+  }, [deposit.lowNetworkHash, rpc])
+
+  const displayAmount = deposit.symbol === 'USDC'
+    ? deposit.amount
+    : deposit.symbol !== 'ETH'
+      ? deposit.amount
+      : amountValue
+
+
+  const symbol = getTokenSymbol(deposit, connectedAccount ?? '')
+
   return (
     <>
       {isLoading && smallView ? (
@@ -46,9 +66,9 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
               deposit={deposit}
               isLoading={isLoading}
               selectedNetworkType={selectedNetworkType}
-              transactionInputs={transactionInputs}
               highNetworkTimestamp={highNetworkTimestamp}
               transferStatus={transferStatus}
+              symbol={symbol}
             />
           ) : (
             <>
@@ -78,32 +98,15 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                     }}
                     onMouseEnter={() => setHovered(true)}
                     onMouseLeave={() => setHovered(false)}>{timeAgo(deposit.lowNetworkTimestamp)}</div>
-                  {!isLoadingInputs && finalTransactionInputs?.tokenSymbol ? (
-                    <div className={styles.gridItem} onClick={() => setCollapseExecuted(!collapseExecuted)}
-                      style={{
-                        cursor: 'pointer',
-                        backgroundColor: hovered ? '#393939' : 'initial'
-                      }}
-                      onMouseEnter={() => setHovered(true)}
-                      onMouseLeave={() => setHovered(false)}>
-                      {`${finalTransactionInputs.tokenSymbol === 'USDC'
-                        ? ethers.utils.formatUnits(finalTransactionInputs.amount, 6)
-                        : ethers.utils.formatEther(finalTransactionInputs?.amount) ?? deposit.amount} ${finalTransactionInputs.tokenSymbol}`}
-                    </div>
-                  ) : (
-                    <div className={styles.gridItem}
-                      onClick={() => setCollapseExecuted(!collapseExecuted)}
-                      style={{
-                        cursor: 'pointer',
-                        backgroundColor: hovered ? '#393939' : 'initial'
-                      }}
-                      onMouseEnter={() => setHovered(true)}
-                      onMouseLeave={() => setHovered(false)}>
-                      <div className={styles.loading}>
-                        Loading
-                      </div>
-                    </div>
-                  )}
+                  <div className={styles.gridItem} onClick={() => setCollapseExecuted(!collapseExecuted)}
+                    style={{
+                      cursor: 'pointer',
+                      backgroundColor: hovered ? '#393939' : 'initial'
+                    }}
+                    onMouseEnter={() => setHovered(true)}
+                    onMouseLeave={() => setHovered(false)}>
+                    {displayAmount} {deposit.symbol ?? symbol}
+                  </div>
                   <div
                     className={styles.gridItem}
                     onClick={() => setCollapseExecuted(!collapseExecuted)}
@@ -173,15 +176,9 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                         <div className={styles.typeCompleted}>Initiate</div>
                       </div>
                       <div className={styles.gridItemInitiate}>{timeAgo(deposit?.lowNetworkTimestamp)}</div>
-                      {transactionInputs?.tokenSymbol ? (
-                        <div className={styles.gridItemInitiate}>
-                          {`${transactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs.amount, 6) : deposit.amount} ${transactionInputs.tokenSymbol}`}
-                        </div>
-                      ) : (
-                        <div className={styles.gridItemInitiate}>
-                          <div className={styles.loading}>Loading</div>
-                        </div>
-                      )}
+                      <div className={styles.gridItemInitiate}>
+                        {displayAmount} {deposit.symbol ?? symbol} 
+                      </div>
                       <div className={styles.gridItemInitiate}>{depositInfo.from ?? ''}</div>
                       <div className={styles.gridItemInitiate}>{depositInfo.to ?? ''}</div>
                       <div className={styles.gridItemInitiate}>
@@ -205,15 +202,9 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                         <div className={styles.typeCompleted}>Finalize</div>
                       </div>
                       <div className={styles.gridItemInitiate}>{timeAgo(deposit?.lowNetworkTimestamp)}</div>
-                      {transactionInputs?.tokenSymbol ? (
-                        <div className={styles.gridItemInitiate}>
-                          {`${transactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs.amount, 6) : deposit.amount} ${transactionInputs.tokenSymbol}`}
-                        </div>
-                      ) : (
-                        <div className={styles.gridItemInitiate}>
-                          <div className={styles.loading}>Loading</div>
-                        </div>
-                      )}
+                      <div className={styles.gridItemInitiate}>
+                        {displayAmount} {deposit.symbol ?? symbol}
+                      </div>
                       <div className={styles.gridItemInitiate}>{depositInfo.from ?? ''}</div>
                       <div className={styles.gridItemInitiate}>{depositInfo.to ?? ''}</div>
                       <div className={styles.gridItemInitiate}>
@@ -245,19 +236,9 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                   <div className={styles.gridItem}>
                     {timeAgo(deposit.lowNetworkTimestamp)}
                   </div>
-                  {!isLoadingInputs && finalTransactionInputs?.tokenSymbol ? (
-                    <div className={styles.gridItem}>
-                      {`${finalTransactionInputs.tokenSymbol === 'USDC'
-                        ? ethers.utils.formatUnits(finalTransactionInputs.amount, 6)
-                        : ethers.utils.formatEther(finalTransactionInputs?.amount) ?? deposit.amount} ${finalTransactionInputs.tokenSymbol}`}
-                    </div>
-                  ) : (
-                    <div className={styles.gridItem}>
-                      <div className={styles.loading}>
-                        Loading
-                      </div>
-                    </div>
-                  )}
+                  <div className={styles.gridItem}>
+                    {displayAmount} {deposit.symbol ?? symbol}
+                  </div>
                   <div className={styles.gridItem}>{depositInfo.from}</div>
                   <div className={styles.gridItem}>{depositInfo.to}</div>
                   <>

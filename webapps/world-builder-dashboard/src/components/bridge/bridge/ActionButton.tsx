@@ -67,11 +67,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 
   const checkAllowances = async () => {
     if (!bridger || !connectedAccount) return null
-    if (amount === '0.01') {
-      setStartingTokenIndex(0)
-      setShowApproval(true)
-      return false
-    }
     
     const amountBN = ethers.utils.parseUnits(amount, decimals)
     if (bridgeAllowance === null) {

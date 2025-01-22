@@ -10,6 +10,7 @@ import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeAPI } from '@/hooks/useBridgeAPI'
 import { useMessages } from '@/hooks/useL2ToL1MessageStatus'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
+import { isUSDC } from '@/utils/web3utils'
 
 interface HistoryDesktopProps { }
 
@@ -46,7 +47,7 @@ const mergeTransactions = (apiData: TransactionRecord[], localData: TransactionR
 
 // Maps API data to the TransactionRecord format
 const mapAPIDataToTransactionRecord = (apiData: any): TransactionRecord => {
-  const amountFormatted = apiData?.amount ? ethers.utils.formatEther(apiData.amount) : '0.0'
+  const amountFormatted = apiData?.amount ? isUSDC(apiData.token) ? ethers.utils.formatUnits(apiData.amount, 6) : ethers.utils.formatEther(apiData.amount) : '0.0'
   return {
     type: apiData.type,
     amount: amountFormatted,
@@ -62,6 +63,7 @@ const mapAPIDataToTransactionRecord = (apiData: any): TransactionRecord => {
     tokenAddress: apiData.token
   }
 }
+
 
 const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
   const { connectedAccount, selectedNetworkType } = useBlockchainContext()
@@ -104,6 +106,9 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = () => {
       )
     }
     setMergedTransactions(combinedTransactions)
+    console.log(localTransactions)
+    console.log(formattedApiTransactions)
+    console.log(combinedTransactions)
   }, [messages, apiTransactions])
 
   return (

@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
-import { getHighNetworks, getLowNetworks, HIGH_NETWORKS, LOW_NETWORKS } from '../../../../constants'
+import { getHighNetworks, getLowNetworks, getNetworks, HIGH_NETWORKS, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
-import { ethers } from 'ethers'
 import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import IconWithdrawalNodeCompleted from '@/assets/IconWithdrawalNodeCompleted'
@@ -10,7 +9,7 @@ import { NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainCon
 import { useBridgeTransfer } from '@/hooks/useBridgeTransfer'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
-import { getBlockExplorerUrl } from '@/utils/web3utils'
+import { getAmount, getBlockExplorerUrl, getTokenSymbol } from '@/utils/web3utils'
 import { ChildToParentMessageStatus } from '@arbitrum/sdk'
 import { useMediaQuery } from '@mantine/hooks'
 import { BridgeTransferStatus } from 'game7-bridge-sdk'
@@ -56,16 +55,38 @@ export const getStatus = (
   }
 }
 const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
-  const { selectedNetworkType } = useBlockchainContext()
+  const { selectedNetworkType, connectedAccount } = useBlockchainContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
-  const { claim, returnTransferData, getTransactionInputs } = useBridgeTransfer()
+  const { claim, returnTransferData } = useBridgeTransfer()
   const [collapseExecuted, setCollapseExecuted] = useState(false)
   const [hovered, setHovered] = useState(false)
   const lowNetworks = getLowNetworks(selectedNetworkType) || LOW_NETWORKS
   const highNetworks = getHighNetworks(selectedNetworkType) || HIGH_NETWORKS
   const status = getStatus(withdrawal, lowNetworks, highNetworks)
   const { data: transferStatus, isLoading } = returnTransferData({ txRecord: withdrawal })
-  const { data: transactionInputs } = getTransactionInputs({ txRecord: withdrawal })
+  const [amountValue, setAmountValue] = useState<string>('')
+  const rpc = getNetworks(selectedNetworkType)?.find(n => n.chainId === withdrawal.highNetworkChainId)?.rpcs[0]
+
+  const fetchAmount = async () => {
+    const value = await getAmount(withdrawal.highNetworkHash ?? '', rpc ?? '')
+    setAmountValue(value ?? '')
+  }
+
+  React.useEffect(() => {
+    if (withdrawal.symbol === 'ETH') {
+      fetchAmount()
+    }
+  }, [withdrawal.highNetworkHash, rpc])
+
+  // Update the display logic to use amountValue
+  const displayAmount = (withdrawal.symbol && withdrawal.symbol === 'USDC') || (withdrawal.transactionInputs && withdrawal.transactionInputs?.tokenSymbol === 'USDC')
+    ? withdrawal.amount
+    : withdrawal.symbol !== 'ETH'
+      ? withdrawal.amount
+      : amountValue
+
+  const symbol = getTokenSymbol(withdrawal, connectedAccount ?? '')
+
   return (
     <>
       {status?.isLoading && smallView ? (
@@ -81,7 +102,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
               status={status}
               transferStatus={transferStatus}
               selectedNetworkType={selectedNetworkType}
-              transactionInputs={transactionInputs}
+              symbol={symbol}
             />
           ) : (
             <>
@@ -94,15 +115,9 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                     </div>
                   </div>
                   <div className={styles.gridItem}>{timeAgo(withdrawal.highNetworkTimestamp)}</div>
-                  {transactionInputs?.tokenSymbol ? (
-                    <div className={styles.gridItem}>
-                      {`${transactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs.amount, 6) : withdrawal.amount} ${transactionInputs.tokenSymbol}`}
-                    </div>
-                  ) : (
-                    <div className={styles.gridItem}>
-                      <div className={styles.loading}>Loading</div>
-                    </div>
-                  )}
+                  <div className={styles.gridItem}>
+                    {`${displayAmount} ${withdrawal.symbol ?? symbol}`}
+                  </div>
                   <div className={styles.gridItem}>{status?.data?.from ?? ''}</div>
                   <div className={styles.gridItem}>{status?.data?.to ?? ''}</div>
                   <div className={styles.gridItem}>
@@ -146,30 +161,17 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       >
                         {timeAgo(withdrawal?.highNetworkTimestamp)}
                       </div>
-                      {transactionInputs?.tokenSymbol ? (
-                        <div
-                          className={styles.gridItem}
-                          onClick={() => setCollapseExecuted(!collapseExecuted)}
-                          style={{
-                            cursor: 'pointer',
-                            backgroundColor: hovered ? '#393939' : 'initial'
-                          }}
-                          onMouseEnter={() => setHovered(true)}
-                          onMouseLeave={() => setHovered(false)}
-                        >{`${transactionInputs?.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs?.amount, 6) : withdrawal.amount} ${transactionInputs?.tokenSymbol}`}</div>) : (
-                        <div
-                          className={styles.gridItem}
-                          onClick={() => setCollapseExecuted(!collapseExecuted)}
-                          style={{
-                            cursor: 'pointer',
-                            backgroundColor: hovered ? '#393939' : 'initial'
-                          }}
-                          onMouseEnter={() => setHovered(true)}
-                          onMouseLeave={() => setHovered(false)}
-                        >
-                          <div className={styles.loading}>Loading</div>
-                        </div>
-                      )}
+
+                      <div
+                        className={styles.gridItem}
+                        onClick={() => setCollapseExecuted(!collapseExecuted)}
+                        style={{
+                          cursor: 'pointer',
+                          backgroundColor: hovered ? '#393939' : 'initial'
+                        }}
+                        onMouseEnter={() => setHovered(true)}
+                        onMouseLeave={() => setHovered(false)}
+                      >  {`${displayAmount} ${withdrawal.symbol ?? symbol}`}</div>
                       <div
                         className={styles.gridItem}
                         onClick={() => setCollapseExecuted(!collapseExecuted)}
@@ -244,15 +246,9 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                             <div className={styles.typeCompleted}>Initiate</div>
                           </div>
                           <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.highNetworkTimestamp)}</div>
-                          {transactionInputs?.tokenSymbol ? (
-                            <div className={styles.gridItemInitiate}>
-                              {`${transactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs.amount, 6) : withdrawal.amount} ${transactionInputs.tokenSymbol}`}
-                            </div>
-                          ) : (
-                            <div className={styles.gridItemInitiate}>
-                              <div className={styles.loading}>Loading</div>
-                            </div>
-                          )}
+                          <div className={styles.gridItemInitiate}>
+                            {`${displayAmount} ${withdrawal.symbol ?? symbol}`}
+                          </div>
                           <div className={styles.gridItemInitiate}>{status?.data?.from ?? ''}</div>
                           <div className={styles.gridItemInitiate}>{status?.data?.to ?? ''}</div>
                           <div className={styles.gridItemInitiate}>
@@ -275,15 +271,9 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                             <div className={styles.typeCompleted}>Finalize</div>
                           </div>
                           <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.completionTimestamp)}</div>
-                          {transactionInputs?.tokenSymbol ? (
-                            <div className={styles.gridItemInitiate}>
-                              {`${transactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs.amount, 6) : withdrawal.amount} ${transactionInputs.tokenSymbol}`}
-                            </div>
-                          ) : (
-                            <div className={styles.gridItemInitiate}>
-                              <div className={styles.loading}>Loading</div>
-                            </div>
-                          )}
+                          <div className={styles.gridItemInitiate}>
+                            {`${displayAmount} ${withdrawal.symbol ?? symbol}`}
+                          </div>
                           <div className={styles.gridItemInitiate}>{status?.data?.from ?? ''}</div>
                           <div className={styles.gridItemInitiate}>{status?.data?.to ?? ''}</div>
                           <div className={styles.gridItemInitiate}>
@@ -315,15 +305,9 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         </div>
                       </div>
                       <div className={styles.gridItem}>{timeAgo(status?.data?.timestamp)}</div>
-                      {transactionInputs?.tokenSymbol ? (
-                        <div className={styles.gridItem}>
-                          {`${transactionInputs.tokenSymbol === 'USDC' ? ethers.utils.formatUnits(transactionInputs.amount, 6) : withdrawal.amount} ${transactionInputs.tokenSymbol}`}
-                        </div>
-                      ) : (
-                        <div className={styles.gridItem}>
-                          <div className={styles.loading}>Loading</div>
-                        </div>
-                      )}
+                      <div className={styles.gridItem}>
+                        {`${displayAmount} ${withdrawal.symbol ?? symbol}`}
+                      </div>
                       <div className={styles.gridItem}>{status?.data?.from ?? ''}</div>
                       <div className={styles.gridItem}>{status?.data?.to ?? ''}</div>
                       {transferStatus && (transferStatus?.status === ChildToParentMessageStatus.CONFIRMED || transferStatus?.status === BridgeTransferStatus.CCTP_COMPLETE) && (
