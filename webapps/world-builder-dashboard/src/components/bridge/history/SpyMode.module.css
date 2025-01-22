@@ -39,3 +39,24 @@
     outline: none;
     box-shadow: none;
 }
+
+.button {
+    background: transparent;
+    border: 1px solid #919191; /* Optional: subtle border */
+    border-radius: 4px;
+    color: #c0bfbf; /* Text color */
+    padding: 3px 10px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.button:hover {
+    background: rgba(0, 0, 0, 0.05); /* Slight background on hover */
+    color: #ecebeb;
+}
+
+.button:focus {
+    outline: none;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3); /* Focus style */
+}
