@@ -11,6 +11,7 @@ const mergeTransactions = (apiData: TransactionRecord[], localData: TransactionR
         const hashKey = localTx.type === 'DEPOSIT' ? (localTx.lowNetworkHash ?? '') : (localTx.highNetworkHash ?? '')
         combinedData.set(hashKey, localTx)
     })
+    console.log(localData)
 
     // Merge API data, prioritizing latest withdrawal completionTimestamp
     apiData.forEach((apiTx) => {

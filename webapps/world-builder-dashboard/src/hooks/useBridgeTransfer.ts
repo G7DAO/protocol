@@ -6,40 +6,68 @@ import { BridgeTransfer, BridgeTransferStatus, getBridgeTransfer } from 'game7-b
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
-import { fetchTransactionTimestamp, getCachedTransactions } from '@/utils/web3utils'
+import { fetchTransactionTimestamp, getCachedTransactions, saveCachedTransactions } from '@/utils/web3utils'
+import { useRequestQueue } from './useQueueRequests'
+
 interface UseTransferDataProps {
   txRecord: TransactionRecord
 }
 
 export const useBridgeTransfer = () => {
+  const { queueRequest } = useRequestQueue()
   const { connectedAccount, selectedNetworkType, getProvider } = useBlockchainContext()
+  const LOCK_TIMEOUT = 5000; // 5 seconds timeout for lock
+
+  // Helper functions to manage locks
+  const acquireLock = (lockKey: string): boolean => {
+    const now = Date.now()
+    const lockValue = localStorage.getItem(lockKey)
+
+    if (lockValue) {
+      const lockTime = parseInt(lockValue);
+      if (now - lockTime < LOCK_TIMEOUT) {
+        return false
+      }
+    }
+
+    localStorage.setItem(lockKey, now.toString())
+    return true
+  }
+
+  const releaseLock = (lockKey: string) => {
+    localStorage.removeItem(lockKey)
+  }
+
   // Retry function with exponential backoff for handling 429 errors
   const retryWithExponentialBackoff = async (fn: () => Promise<any>, retries = 20, delay = 1000, jitterFactor = 0.5) => {
     let attempt = 0
 
-    while (attempt < retries) {
-      try {
-        return await fn()
-      } catch (error: any) {
-        // Add network failure errors to retryable conditions
-        const isNetworkError = error.message?.includes('net::ERR_FAILED') ||
-          error.message?.includes('Network Error') ||
-          error.code === 'ECONNABORTED' ||
-          !error.response;
-        const retryableStatusCodes = [429, 503, 502, 500];
+    const executeWithRetry = async () => {
+      while (attempt < retries) {
+        try {
+          return await fn()
+        } catch (error: any) {
+          const isNetworkError = error.message?.includes('net::ERR_FAILED') ||
+            error.message?.includes('Network Error') ||
+            error.code === 'ECONNABORTED' ||
+            !error.response;
+          const retryableStatusCodes = [429, 503, 502, 500];
 
-        if ((isNetworkError || retryableStatusCodes.includes(error?.response?.status)) && attempt < retries - 1) {
-          const baseDelay = delay * 2 ** attempt
-          const jitter = baseDelay * (Math.random() * jitterFactor * 2 - jitterFactor)
-          const retryDelay = Math.max(baseDelay + jitter, 0)
-          console.warn(`Retry attempt ${attempt + 1}/${retries} after ${retryDelay}ms due to:`, error.message)
-          await new Promise((resolve) => setTimeout(resolve, retryDelay))
-          attempt++
-        } else {
-          throw error // Rethrow error if not 429 or max retries reached
+          if ((isNetworkError || retryableStatusCodes.includes(error?.response?.status)) && attempt < retries - 1) {
+            const baseDelay = delay * 2 ** attempt
+            const jitter = baseDelay * (Math.random() * jitterFactor * 2 - jitterFactor)
+            const retryDelay = Math.max(baseDelay + jitter, 0)
+            console.warn(`Retry attempt ${attempt + 1}/${retries} after ${retryDelay}ms due to:`, error.message)
+            await new Promise((resolve) => setTimeout(resolve, retryDelay))
+            attempt++
+          } else {
+            throw error
+          }
         }
       }
     }
+
+    return queueRequest(executeWithRetry)
   }
 
   const returnTransferData = ({ txRecord }: UseTransferDataProps) => {
@@ -52,6 +80,7 @@ export const useBridgeTransfer = () => {
 
     // Update shouldFetchStatus to prevent refetching for completed transactions
     const shouldFetchStatus = (cachedTransaction: any) => {
+      console.log(cachedTransaction?.status)
       const isCompleted = [1, 2, 6, 9, 11, 12].includes(cachedTransaction?.status)
       if (isCompleted) return false
       const timeSinceLastUpdate = Date.now() - (cachedTransaction?.lastUpdated || 0)
@@ -83,24 +112,48 @@ export const useBridgeTransfer = () => {
                 originSignerOrProviderOrRpc: originRpc,
               }, txRecord.isCCTP)
 
-              // Fetch status with retry logic
               status = await retryWithExponentialBackoff(async () => await _bridgeTransfer.getStatus())
 
-              // Update the cache with the latest status
-              const newTransactions = transactions.map((t: any) => {
-                const isSameHash = isDeposit
-                  ? t.lowNetworkHash === txRecord.lowNetworkHash
-                  : t.highNetworkHash === txRecord.highNetworkHash
+              if (status?.status === undefined) {
+                console.warn('Status is undefined, skipping cache update')
+                return status
+              }
 
-                return isSameHash ? { ...t, status: status?.status, lastUpdated: Date.now() } : t
-              })
+              const lockKey = `bridge-${connectedAccount}-lock-${selectedNetworkType}`;
 
-              localStorage.setItem(
-                `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
-                JSON.stringify(newTransactions)
-              )
+              // Try to acquire lock
+              let lockAcquired = false;
+              for (let i = 0; i < 3; i++) { // Try 3 times to acquire lock
+                lockAcquired = acquireLock(lockKey);
+                if (lockAcquired) break;
+                await new Promise(resolve => setTimeout(resolve, 100)); // Wait 100ms between attempts
+              }
 
-              return status
+              if (!lockAcquired) {
+                console.warn('Could not acquire lock for transaction update, skipping cache update');
+                return status;
+              }
+
+              try {
+                // Get fresh transactions data after acquiring lock
+                const currentTransactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType);
+
+                const newTransactions = currentTransactions.map((t: any) => {
+                  const isSameHash = isDeposit
+                    ? t.lowNetworkHash === txRecord.lowNetworkHash
+                    : t.highNetworkHash === txRecord.highNetworkHash
+
+                  return isSameHash ? { ...t, status: status.status, lastUpdated: Date.now() } : t
+                });
+
+                saveCachedTransactions(connectedAccount ?? '', selectedNetworkType, newTransactions);
+                console.log('Successfully updated localStorage with new status:', status.status);
+              } finally {
+                // Always release the lock
+                releaseLock(lockKey);
+              }
+
+              return status;
             } catch (error) {
               console.log(
                 'Error fetching status:',
@@ -136,8 +189,7 @@ export const useBridgeTransfer = () => {
         refetchInterval: () => {
           const cachedTx = getCachedTransactions(connectedAccount ?? '', selectedNetworkType).find((t: any) =>
             t.type === 'DEPOSIT' ? t.lowNetworkHash === txHash : t.highNetworkHash === txHash
-          );
-
+          )
           return shouldFetchStatus(cachedTx) ? 1 * 60 * 1000 : false
         },
         refetchOnWindowFocus: false,
@@ -207,10 +259,8 @@ export const useBridgeTransfer = () => {
           }
           return { ...t }
         })
-        localStorage.setItem(
-          `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
-          JSON.stringify(newTransactions)
-        )
+        saveCachedTransactions(connectedAccount ?? '', selectedNetworkType, newTransactions)
+
       } catch (e) {
         console.log(e)
       }
@@ -265,10 +315,8 @@ export const useBridgeTransfer = () => {
               return isSameHash ? { ...t, transactionInputs: transactionInputs } : t
             })
 
-            localStorage.setItem(
-              `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
-              JSON.stringify(newTransactions)
-            )
+            saveCachedTransactions(connectedAccount ?? '', selectedNetworkType, newTransactions)
+
             return transactionInputs
           } catch (error) {
             // Return cached transaction if an error occurs
@@ -336,10 +384,7 @@ export const useBridgeTransfer = () => {
             return isSameHash ? { ...t, highNetworkTimestamp: timestamp, lastUpdated: Date.now() } : t
           })
 
-          localStorage.setItem(
-            `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
-            JSON.stringify(updatedTransactions)
-          )
+          saveCachedTransactions(connectedAccount ?? '', selectedNetworkType, updatedTransactions)
 
           return timestamp
         },
@@ -363,3 +408,10 @@ export const useBridgeTransfer = () => {
     claim
   }
 }
+
+
+/**
+ * 
+ * // Modify the existing code where we update transactions
+
+ */

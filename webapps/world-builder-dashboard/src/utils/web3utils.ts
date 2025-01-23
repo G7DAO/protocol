@@ -95,6 +95,13 @@ export const getCachedTransactions = (connectedAccount: string, selectedNetworkT
   return transactionsString ? JSON.parse(transactionsString) : []
 }
 
+export const saveCachedTransactions = (connectedAccount: string, selectedNetworkType: NetworkType, transactions: TransactionRecord[]) => {
+  localStorage.setItem(
+    `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
+    JSON.stringify(transactions)
+  )
+}
+
 export const getAmount = async (transactionHash: string, rpcUrl: string) => {
   const provider = new providers.JsonRpcProvider(rpcUrl)
   try {
