@@ -85,9 +85,9 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = ({ transactions }) => {
                 </div>
               ))}
               {allTransactionComponents.slice(0, visibleCount)}
-              {allTransactionComponents.filter((tx) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL').length === 0 && (
+              {/* {allTransactionComponents.filter((tx) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL').length === 0 && (
                 <div className={styles.noTransactions}>No transactions yet</div>
-              )}
+              )} */}
             </div>
           </div>
         )}
