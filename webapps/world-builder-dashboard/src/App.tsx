@@ -12,6 +12,7 @@ import { Notifications } from 'summon-ui/mantine'
 import { BlockchainProvider } from '@/contexts/BlockchainContext'
 import { BridgeNotificationsProvider } from '@/contexts/BridgeNotificationsContext'
 import { UISettingsProvider } from '@/contexts/UISettingsContext'
+import { TransactionProvider } from './contexts/TransactionsContext'
 import en from '@/lang/en.json'
 import { AuthProvider } from '@/providers/AuthProvider'
 import router from '@/router'
@@ -77,26 +78,28 @@ export default function App() {
               <ThemeProvider uiTheme={uiTheme}>
                 <BridgeNotificationsProvider>
                   <Notifications position='top-right' zIndex={1000} styles={NOTIFICATIONS_STYLES} />
-                  <AuthProvider>
-                    <RelayKitProvider
-                      theme={theme}
-                      options={{
-                        appName: 'Relay Demo',
-                        appFees: [
-                          {
-                            recipient: '0x0000000000000000000000000000000000000000',
-                            fee: '100' // 1%
-                          }
-                        ],
-                        duneApiKey: "YOUR_DUNE_KEY",
-                        chains,
-                        baseApiUrl: MAINNET_RELAY_API
-                      }}>
-                      <WagmiProvider config={wagmiConfig}>
-                        <RouterProvider router={router} />
-                      </WagmiProvider>
-                    </RelayKitProvider>
-                  </AuthProvider>
+                  <TransactionProvider>
+                    <AuthProvider>
+                      <RelayKitProvider
+                        theme={theme}
+                        options={{
+                          appName: 'Relay Demo',
+                          appFees: [
+                            {
+                              recipient: '0x0000000000000000000000000000000000000000',
+                              fee: '100' // 1%
+                            }
+                          ],
+                          duneApiKey: "YOUR_DUNE_KEY",
+                          chains,
+                          baseApiUrl: MAINNET_RELAY_API
+                        }}>
+                        <WagmiProvider config={wagmiConfig}>
+                          <RouterProvider router={router} />
+                        </WagmiProvider>
+                      </RelayKitProvider>
+                    </AuthProvider>
+                  </TransactionProvider>
                 </BridgeNotificationsProvider>
               </ThemeProvider>
             </IntlProvider>

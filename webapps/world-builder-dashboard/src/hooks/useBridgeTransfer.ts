@@ -66,11 +66,13 @@ export const useBridgeTransfer = () => {
         queryFn:
           async () => {
             const transactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType);
+            console.log(transactions)
             const cachedTransaction = transactions.find((t: any) =>
               isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
             )
-
+            console.log(cachedTransaction)
             if (cachedTransaction && [1, 2, 6, 9, 11, 12].includes(cachedTransaction.status)) {
+              console.log(cachedTransaction.status)
               return { status: cachedTransaction.status }
             }
 
