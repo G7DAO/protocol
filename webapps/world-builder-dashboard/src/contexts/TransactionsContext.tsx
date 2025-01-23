@@ -7,6 +7,10 @@ interface TransactionsContextType {
   transactions: TransactionRecord[]
   setTransactions: (transactionRecords: TransactionRecord[]) => void
   loading: boolean
+  isSpyMode: boolean
+  setIsSpyMode: (isSpymode: boolean) => void
+  spyAddress: string
+  setSpyAddress: (spyAddress: string) => void
 }
 
 const TransactionContext = createContext<TransactionsContextType | undefined>(undefined)
@@ -18,10 +22,13 @@ interface TransactionProviderProps {
 export const TransactionProvider: React.FC<TransactionProviderProps> = ({ children }) => {
   const { connectedAccount, selectedNetworkType } = useBlockchainContext() // Ensure these are available
   const [transactions, setTransactions] = useState<TransactionRecord[]>([])
+  const [isSpyMode, setIsSpyMode] = useState(false)
+  const [spyAddress, setSpyAddress] = useState('')
+
   const [loading, setLoading] = useState<boolean>(true)
 
   // Fetch transactions using the custom hook
-  const { mergedTransactions } = useTransactions(connectedAccount, selectedNetworkType || 'Testnet')
+  const { mergedTransactions } = useTransactions(isSpyMode ? spyAddress : connectedAccount, selectedNetworkType || 'Testnet')
 
   useEffect(() => {
     if (mergedTransactions) {
@@ -36,6 +43,10 @@ export const TransactionProvider: React.FC<TransactionProviderProps> = ({ childr
         transactions,
         setTransactions,
         loading,
+        isSpyMode,
+        setIsSpyMode,
+        spyAddress,
+        setSpyAddress
       }}
     >
       {children}

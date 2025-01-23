@@ -6,20 +6,21 @@ import styles from './WithdrawTransactions.module.css'
 import Deposit from '@/components/bridge/history/Deposit'
 import Withdrawal from '@/components/bridge/history/Withdrawal'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
-import { useBridgeAPI } from '@/hooks/useBridgeAPI'
-import { useMessages } from '@/hooks/useL2ToL1MessageStatus'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import SpyMode from "@/components/bridge/history/SpyMode";
-import LinearRenderer from './LinearRenderer'
 import { useTransactionContext } from '@/contexts/TransactionsContext'
-interface HistoryDesktopProps { transactions: TransactionRecord[] }
 
-const HistoryDesktop: React.FC<HistoryDesktopProps> = ({ transactions }) => {
-  const { connectedAccount, selectedNetworkType } = useBlockchainContext()
-  const [isSpyMode, setIsSpyMode] = useState(false)
-  const [spyAddress, setSpyAddress] = useState('')
+interface HistoryDesktopProps {
+  transactions: TransactionRecord[]
+}
+
+const HistoryDesktop: React.FC<HistoryDesktopProps> = ({
+  transactions,
+
+}) => {
+  const { selectedNetworkType } = useBlockchainContext()
+  const { isSpyMode, setIsSpyMode, setSpyAddress } = useTransactionContext()
   const [visibleCount, setVisibleCount] = useState(10)
-  console.log(visibleCount)
 
   const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status', '']
   const transactionsRef = useRef<HTMLDivElement | null>(null)
@@ -38,14 +39,6 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = ({ transactions }) => {
   const loadMoreItems = () => {
     setVisibleCount(prev => Math.min(prev + 5, transactions.length))
   }
-
-
-  // const loadMoreItems = () => {
-  //   setVisibleTransactions((prev) => {
-  //     const nextItems = transactions.slice(prev.length, prev.length + 5)
-  //     return [...prev, ...nextItems]
-  //   })
-  // }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -84,10 +77,10 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = ({ transactions }) => {
                   {h}
                 </div>
               ))}
-              {allTransactionComponents.slice(0, visibleCount)}
-              {/* {allTransactionComponents.filter((tx) => tx.type === 'DEPOSIT' || tx.type === 'WITHDRAWAL').length === 0 && (
+              {allTransactionComponents.length !== 0 && allTransactionComponents.slice(0, visibleCount)}
+              {allTransactionComponents.length === 0 && (
                 <div className={styles.noTransactions}>No transactions yet</div>
-              )} */}
+              )}
             </div>
           </div>
         )}

@@ -9,6 +9,17 @@
   align-self: stretch;
 }
 
+.containerMobile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  height: 100%;
+  width: 100%;
+  flex-grow: 0;
+  overflow-y: auto;
+}
+
 .top {
   display: flex;
   padding: 0 32px 31px 32px;

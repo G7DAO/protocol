@@ -35,7 +35,6 @@ const BridgePage = () => {
   const queryClient = useQueryClient()
   const { transactions } = useTransactionContext()
   const pendingTransactions = usePendingTransactions(connectedAccount)
-
   useEffect(() => {
     if (pendingTransactions.data && connectedAccount) {
       queryClient.refetchQueries({ queryKey: ['incomingMessages'] })
@@ -74,8 +73,11 @@ const BridgePage = () => {
       </div>
       <div className={styles.viewContainer}>
         {location.pathname === '/bridge' && <BridgeView direction={direction} setDirection={setDirection} />}
-        <div style={{ display: location.pathname === '/bridge/transactions' ? 'block' : 'none' }}>
-          {!smallView ? <HistoryDesktop transactions={transactions} /> : <HistoryMobile />}
+        <div className={styles.containerMobile} style={{ display: location.pathname === '/bridge/transactions' ? 'block' : 'none' }}>
+          {!smallView ?
+            <HistoryDesktop
+              transactions={transactions}
+            /> : <HistoryMobile />}
         </div>
         {location.pathname === '/bridge/settings' && <SettingsView />}
       </div>
