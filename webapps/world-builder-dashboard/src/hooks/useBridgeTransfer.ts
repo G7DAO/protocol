@@ -16,6 +16,28 @@ interface UseTransferDataProps {
 export const useBridgeTransfer = () => {
   const { queueRequest } = useRequestQueue()
   const { connectedAccount, selectedNetworkType, getProvider } = useBlockchainContext()
+  const LOCK_TIMEOUT = 5000; // 5 seconds timeout for lock
+
+  // Helper functions to manage locks
+  const acquireLock = (lockKey: string): boolean => {
+    const now = Date.now()
+    const lockValue = localStorage.getItem(lockKey)
+
+    if (lockValue) {
+      const lockTime = parseInt(lockValue);
+      if (now - lockTime < LOCK_TIMEOUT) {
+        return false
+      }
+    }
+
+    localStorage.setItem(lockKey, now.toString())
+    return true
+  }
+
+  const releaseLock = (lockKey: string) => {
+    localStorage.removeItem(lockKey)
+  }
+
   // Retry function with exponential backoff for handling 429 errors
   const retryWithExponentialBackoff = async (fn: () => Promise<any>, retries = 20, delay = 1000, jitterFactor = 0.5) => {
     let attempt = 0
@@ -58,6 +80,7 @@ export const useBridgeTransfer = () => {
 
     // Update shouldFetchStatus to prevent refetching for completed transactions
     const shouldFetchStatus = (cachedTransaction: any) => {
+      console.log(cachedTransaction?.status)
       const isCompleted = [1, 2, 6, 9, 11, 12].includes(cachedTransaction?.status)
       if (isCompleted) return false
       const timeSinceLastUpdate = Date.now() - (cachedTransaction?.lastUpdated || 0)
@@ -89,25 +112,48 @@ export const useBridgeTransfer = () => {
                 originSignerOrProviderOrRpc: originRpc,
               }, txRecord.isCCTP)
 
-              // Fetch status with retry logic
               status = await retryWithExponentialBackoff(async () => await _bridgeTransfer.getStatus())
-              console.log(status?.status)
-              // Update the cache with the latest status
-              const newTransactions = transactions.map((t: any) => {
-                const isSameHash = isDeposit
-                  ? t.lowNetworkHash === txRecord.lowNetworkHash
-                  : t.highNetworkHash === txRecord.highNetworkHash
 
-                return isSameHash ? { ...t, status: status?.status, lastUpdated: Date.now() } : t
-              })
-              try {
-                saveCachedTransactions(connectedAccount ?? '', selectedNetworkType, newTransactions)
-                console.log('Successfully updated localStorage with new status')
-              } catch (error) {
-                console.error('Failed to update localStorage:', error)
+              if (status?.status === undefined) {
+                console.warn('Status is undefined, skipping cache update')
+                return status
               }
 
-              return status
+              const lockKey = `bridge-${connectedAccount}-lock-${selectedNetworkType}`;
+
+              // Try to acquire lock
+              let lockAcquired = false;
+              for (let i = 0; i < 3; i++) { // Try 3 times to acquire lock
+                lockAcquired = acquireLock(lockKey);
+                if (lockAcquired) break;
+                await new Promise(resolve => setTimeout(resolve, 100)); // Wait 100ms between attempts
+              }
+
+              if (!lockAcquired) {
+                console.warn('Could not acquire lock for transaction update, skipping cache update');
+                return status;
+              }
+
+              try {
+                // Get fresh transactions data after acquiring lock
+                const currentTransactions = getCachedTransactions(connectedAccount ?? '', selectedNetworkType);
+
+                const newTransactions = currentTransactions.map((t: any) => {
+                  const isSameHash = isDeposit
+                    ? t.lowNetworkHash === txRecord.lowNetworkHash
+                    : t.highNetworkHash === txRecord.highNetworkHash
+
+                  return isSameHash ? { ...t, status: status.status, lastUpdated: Date.now() } : t
+                });
+
+                saveCachedTransactions(connectedAccount ?? '', selectedNetworkType, newTransactions);
+                console.log('Successfully updated localStorage with new status:', status.status);
+              } finally {
+                // Always release the lock
+                releaseLock(lockKey);
+              }
+
+              return status;
             } catch (error) {
               console.log(
                 'Error fetching status:',
@@ -143,8 +189,7 @@ export const useBridgeTransfer = () => {
         refetchInterval: () => {
           const cachedTx = getCachedTransactions(connectedAccount ?? '', selectedNetworkType).find((t: any) =>
             t.type === 'DEPOSIT' ? t.lowNetworkHash === txHash : t.highNetworkHash === txHash
-          );
-          console.log(cachedTx)
+          )
           return shouldFetchStatus(cachedTx) ? 1 * 60 * 1000 : false
         },
         refetchOnWindowFocus: false,
@@ -363,3 +408,10 @@ export const useBridgeTransfer = () => {
     claim
   }
 }
+
+
+/**
+ * 
+ * // Modify the existing code where we update transactions
+
+ */
