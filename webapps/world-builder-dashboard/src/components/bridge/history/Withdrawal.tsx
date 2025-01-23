@@ -81,7 +81,6 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   // Update the display logic to use amountValue
   const displayAmount = withdrawal.amount ?? amountValue
 
-
   const symbol = getTokenSymbol(withdrawal, connectedAccount ?? '')
 
   return (
@@ -285,7 +284,8 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                             </a>
                           </div>
                           <div className={styles.gridItemInitiate}>
-                            <div className={styles.timeCenter}>{timeAgo(withdrawal?.completionTimestamp)}</div>
+                            {withdrawal?.completionTimestamp ? (
+                              <div className={styles.timeCenter}>{timeAgo(withdrawal?.completionTimestamp)}</div>) : (<div className={styles.loading}>Loading</div>)}
                           </div>
                           <div className={styles.emptyCellInitiate} />
                         </>
@@ -324,7 +324,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                             <button
                               className={styles.claimButton}
                               onClick={() => {
-                                claim.mutate({txRecord: withdrawal})
+                                claim.mutate({ txRecord: withdrawal })
                               }}
                             >
                               {claim.isPending && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}

@@ -17,6 +17,7 @@ import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsCon
 // Hooks
 import { useNotifications, usePendingTransactions } from '@/hooks/useL2ToL1MessageStatus'
 import { useMediaQuery } from '@mantine/hooks'
+import { useTransactionContext } from '@/contexts/TransactionsContext'
 
 export type DepositDirection = 'DEPOSIT' | 'WITHDRAW'
 
@@ -32,9 +33,8 @@ const BridgePage = () => {
   const { newNotifications, refetchNewNotifications } = useBridgeNotificationsContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
   const queryClient = useQueryClient()
-
+  const { transactions } = useTransactionContext()
   const pendingTransactions = usePendingTransactions(connectedAccount)
-
   useEffect(() => {
     if (pendingTransactions.data && connectedAccount) {
       queryClient.refetchQueries({ queryKey: ['incomingMessages'] })
@@ -73,7 +73,12 @@ const BridgePage = () => {
       </div>
       <div className={styles.viewContainer}>
         {location.pathname === '/bridge' && <BridgeView direction={direction} setDirection={setDirection} />}
-        {location.pathname === '/bridge/transactions' && (!smallView ? <HistoryDesktop /> : <HistoryMobile />)}
+        <div className={styles.containerMobile} style={{ display: location.pathname === '/bridge/transactions' ? 'block' : 'none' }}>
+          {!smallView ?
+            <HistoryDesktop
+              transactions={transactions}
+            /> : <HistoryMobile />}
+        </div>
         {location.pathname === '/bridge/settings' && <SettingsView />}
       </div>
     </div>

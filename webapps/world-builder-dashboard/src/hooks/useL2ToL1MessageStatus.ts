@@ -13,6 +13,7 @@ import {
 } from '@arbitrum/sdk'
 import { ParentContractCallTransactionReceipt } from '@arbitrum/sdk/dist/lib/message/ParentTransaction'
 import { BridgeTransferStatus } from 'game7-bridge-sdk'
+import { getTokenSymbol } from '@/utils/web3utils'
 
 const eventABI = [
   {
@@ -265,10 +266,8 @@ export const getNotifications = (transactions: TransactionRecord[]) => {
           ct.highNetworkTimestamp ?? ct.completionTimestamp ?? Date.now() / 1000
           : ct.claimableTimestamp ?? Date.now() / 1000
         : ct.completionTimestamp ?? ct.claimableTimestamp ?? Date.now() / 1000
-      const amount = ct.transactionInputs?.tokenSymbol === 'USDC'
-        ? ethers.utils.formatUnits(ct.transactionInputs?.amount ?? 0, 6)
-        : ethers.utils.formatEther(ct?.transactionInputs?.amount ?? 0)
-        ?? ct.amount
+      const amount = ct.amount
+      const symbol = getTokenSymbol(ct, '')
       return {
         status: ct.isFailed ? 'FAILED' : ct.completionTimestamp ? 'COMPLETED' : 'CLAIMABLE',
         type: ct.type,
@@ -276,6 +275,7 @@ export const getNotifications = (transactions: TransactionRecord[]) => {
         timestamp,
         to: (ct.type === 'WITHDRAWAL' ? ct.lowNetworkChainId : ct.highNetworkChainId) ?? 1,
         seen: !ct.newTransaction,
+        symbol: symbol,
         tx: ct
       }
     })

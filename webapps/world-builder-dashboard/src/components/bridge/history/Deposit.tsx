@@ -289,7 +289,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                             </button>
                           </>
                         ) : (
-                          transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
+                            transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
                             transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||
                             transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ? (
                             <>{timeAgo(highNetworkTimestamp)}</>
