@@ -37,6 +37,29 @@ const MainLayout: React.FC<MainLayoutProps> = ({ }) => {
       )
     },
     {
+      name: 'explorer',
+      navigateTo: selectedNetworkType === 'Testnet' ? `https://testnet.game7.io/` : `https://mainnet.game7.io`,
+      icon: <IconExplorer stroke={'#B9B9B9'} />
+    },
+    {
+      name: 'documentation',
+      navigateTo: 'https://docs.game7.io/',
+      icon: <IconDocumentation stroke={'#B9B9B9'} />
+    }
+  ]
+
+  const MAINNET_NAVIGATION_ITEMS = [
+    {
+      name: 'bridge',
+      navigateTo: '/bridge',
+      icon: (
+        <IconWallet04
+          className={styles.icomButton}
+          stroke={location.pathname.startsWith('/bridge') ? '#fff' : '#B9B9B9'}
+        />
+      )
+    },
+    {
       name: 'relay bridge',
       navigateTo: '/relay',
       icon: (
@@ -57,8 +80,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ }) => {
       icon: <IconDocumentation stroke={'#B9B9B9'} />
     }
   ]
-
-  const MAINNET_NAVIGATION_ITEMS = TESTNET_NAVIGATION_ITEMS.slice(1, TESTNET_NAVIGATION_ITEMS.length)
   const NAVIGATION_ITEMS = selectedNetworkType === 'Testnet' ? TESTNET_NAVIGATION_ITEMS : MAINNET_NAVIGATION_ITEMS
 
   const smallView = useMediaQuery('(max-width: 1199px)')
