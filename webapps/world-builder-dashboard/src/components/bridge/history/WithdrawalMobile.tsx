@@ -27,7 +27,6 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
   symbol
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
-  console.log(symbol)
   return (
     <div className={styles.container}>
       <div className={styles.header}>

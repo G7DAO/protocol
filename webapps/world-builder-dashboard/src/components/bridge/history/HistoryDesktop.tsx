@@ -41,14 +41,27 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = ({
   }
 
   useEffect(() => {
-    const handleScroll = () => {
+    const checkAndLoadMore = () => {
       if (transactionsRef.current) {
-        const { scrollTop, scrollHeight, clientHeight } = transactionsRef.current
-        if (scrollTop + clientHeight >= scrollHeight) {
+        const { scrollHeight, clientHeight } = transactionsRef.current
+        // If there's no overflow (scrollHeight <= clientHeight) and we have more items to load
+        if (scrollHeight <= clientHeight && visibleCount < transactions.length) {
           loadMoreItems()
         }
       }
     }
+
+    const handleScroll = () => {
+      if (transactionsRef.current) {
+        const { scrollTop, scrollHeight, clientHeight } = transactionsRef.current
+        if (Math.ceil(scrollTop + clientHeight + 1) >= Math.floor(scrollHeight)) {
+          loadMoreItems()
+        }
+      }
+    }
+
+    // Check immediately when component mounts or updates
+    checkAndLoadMore()
 
     const currentRef = transactionsRef.current
     if (currentRef) {
