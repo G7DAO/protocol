@@ -222,7 +222,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         onMouseEnter={() => setHovered(true)}
                         onMouseLeave={() => setHovered(false)}
                       >
-                        <div>{timeAgo(withdrawal?.completionTimestamp)}</div>
+                        <div>{timeAgo(status?.data?.lowNetworkTimeStamp ?? 0)}</div>
                       </div>
                       <div className={styles.emptyCell}
                         onClick={() => setCollapseExecuted(!collapseExecuted)}
@@ -259,13 +259,13 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                             </a>
                           </div>
                           <div className={styles.gridItemInitiate}>
-                            <div className={styles.timeCenter}>{timeAgo(withdrawal?.completionTimestamp)}</div>
+                            <div className={styles.timeCenter}>{timeAgo(status?.data?.lowNetworkTimeStamp ?? 0)}</div>
                           </div>
                           <div className={styles.emptyCellInitiate} />
                           <div className={styles.gridItemChild} title={withdrawal.highNetworkHash}>
                             <div className={styles.typeCompleted}>Finalize</div>
                           </div>
-                          <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.completionTimestamp)}</div>
+                          <div className={styles.gridItemInitiate}>{timeAgo(status?.data?.lowNetworkTimeStamp ?? 0)}</div>
                           <div className={styles.gridItemInitiate}>
                             {`${displayAmount} ${withdrawal.symbol ?? symbol}`}
                           </div>
@@ -284,8 +284,8 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                             </a>
                           </div>
                           <div className={styles.gridItemInitiate}>
-                            {withdrawal?.completionTimestamp ? (
-                              <div className={styles.timeCenter}>{timeAgo(withdrawal?.completionTimestamp)}</div>) : (<div className={styles.loading}>Loading</div>)}
+                            {status?.data?.lowNetworkTimeStamp ? (
+                              <div className={styles.timeCenter}>{timeAgo(status?.data?.lowNetworkTimeStamp ?? 0)}</div>) : (<div className={styles.loading}>Loading</div>)}
                           </div>
                           <div className={styles.emptyCellInitiate} />
                         </>
