@@ -22,6 +22,14 @@ const mergeTransactions = (apiData: TransactionRecord[], localData: TransactionR
                 combinedData.set(hashKey, existingTx)
             } else if (apiTx.type === 'WITHDRAWAL' && apiTx.completionTimestamp && !existingTx.completionTimestamp) {
                 combinedData.set(hashKey, apiTx)
+            } else if (apiTx.type === 'WITHDRAWAL' && apiTx.completionTimestamp && existingTx.completionTimestamp) {
+                combinedData.set(hashKey, existingTx)
+            }  else if (apiTx.type === 'DEPOSIT' && !apiTx.completionTimestamp && existingTx.completionTimestamp) {
+                combinedData.set(hashKey, existingTx)
+            } else if (apiTx.type === 'DEPOSIT' && apiTx.completionTimestamp && !existingTx.completionTimestamp) {
+                combinedData.set(hashKey, apiTx)
+            } else if (apiTx.type === 'DEPOSIT' && apiTx.completionTimestamp && existingTx.completionTimestamp) {
+                combinedData.set(hashKey, existingTx)
             } else if (apiTx.type === 'DEPOSIT' && !apiTx.symbol && existingTx.symbol) {
                 combinedData.set(hashKey, existingTx)
             }
@@ -63,7 +71,7 @@ export const useTransactions = (account: string | undefined, networkType: string
 
     useEffect(() => {
         if (!messages && !apiTransactions) return
-        console.log('new api transactions')
+        console.log('new api transactions', apiTransactions)
         const localTransactions = messages || []
         const formattedApiTransactions = apiTransactions
             ? apiTransactions.map(apiDataToTransactionRecord)
