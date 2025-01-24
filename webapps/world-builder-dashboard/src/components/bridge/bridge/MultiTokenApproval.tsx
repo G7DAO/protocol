@@ -3,7 +3,7 @@ import styles from './MultiTokenApproval.module.css'
 import { Modal } from 'summon-ui/mantine'
 import AllowanceSelector from '../allowance/AllowanceSelector'
 import { ethers } from 'ethers'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueryClient, UseQueryResult } from '@tanstack/react-query'
 import { useMutation } from '@tanstack/react-query'
 import { Bridger } from 'game7-bridge-sdk'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
@@ -24,9 +24,13 @@ interface MultiTokenApprovalProps {
   onApprovalComplete: () => void
   gasFees: string[]
   amount: string
+  allowances: UseQueryResult<{
+    bridgeTokenAllowance: ethers.BigNumber | null | undefined;
+    nativeTokenAllowance: ethers.BigNumber | null | undefined;
+} | null, Error>
 }
 
-export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showApproval, setShowApproval, bridger, balance, nativeBalance, decimals, tokens, startingTokenIndex, onApprovalComplete, gasFees, amount }) => {
+export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showApproval, setShowApproval, bridger, balance, nativeBalance, decimals, tokens, startingTokenIndex, onApprovalComplete, gasFees, amount, allowances }) => {
   const { selectedNetworkType, getProvider } = useBlockchainContext()
   const queryClient = useQueryClient()
   const networks = getNetworks(selectedNetworkType)
@@ -89,7 +93,7 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
       await txApprove?.wait()
       return currentToken.symbol
     },
-    onSuccess: (tokenSymbol: string) => {
+    onSuccess: async (tokenSymbol: string) => {
       setApprovedTokens(prev => {
         const newSet = new Set([...prev, tokenSymbol])
         return newSet
@@ -107,6 +111,7 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
       } else {
         handleAllApprovalsComplete()
       }
+      await allowances.refetch()
       queryClient.refetchQueries({ queryKey: ['ERC20Balance'] })
     },
     onError: (e: any) => {
