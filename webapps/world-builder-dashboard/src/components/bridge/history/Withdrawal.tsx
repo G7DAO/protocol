@@ -82,7 +82,6 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const displayAmount = withdrawal.amount ?? amountValue
 
   const symbol = getTokenSymbol(withdrawal, connectedAccount ?? '')
-
   return (
     <>
       {status?.isLoading && smallView ? (
