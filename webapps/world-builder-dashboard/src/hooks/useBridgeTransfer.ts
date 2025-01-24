@@ -80,7 +80,6 @@ export const useBridgeTransfer = () => {
 
     // Update shouldFetchStatus to prevent refetching for completed transactions
     const shouldFetchStatus = (cachedTransaction: any) => {
-      console.log(cachedTransaction?.status)
       const isCompleted = [1, 2, 6, 9, 11, 12].includes(cachedTransaction?.status)
       if (isCompleted) return false
       const timeSinceLastUpdate = Date.now() - (cachedTransaction?.lastUpdated || 0)
@@ -353,8 +352,6 @@ export const useBridgeTransfer = () => {
     txRecord: any
     transferStatus: any
   }) => {
-
-
     return useQuery(
       {
         queryKey: ['highNetworkTimestamp', txRecord?.lowNetworkHash], queryFn: async () => {
@@ -393,7 +390,7 @@ export const useBridgeTransfer = () => {
           const cachedTransaction = transactions.find((t: any) => t.lowNetworkHash === txRecord?.lowNetworkHash)
           return cachedTransaction?.highNetworkTimestamp
         },
-        staleTime: 1 * 60 * 1000,
+        staleTime: Infinity,
         refetchInterval: false,
         refetchOnWindowFocus: false,
         enabled: !!txRecord && !!transferStatus?.completionTxHash // Run query only if data is valid
@@ -408,10 +405,3 @@ export const useBridgeTransfer = () => {
     claim
   }
 }
-
-
-/**
- * 
- * // Modify the existing code where we update transactions
-
- */
