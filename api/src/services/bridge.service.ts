@@ -31,7 +31,7 @@ export async function getTransactionHistory(chain: string, address: string, limi
       WHERE label_name = 'symbol'
       UNION ALL
       SELECT * FROM (
-        VALUES ('${bridgeConfig[chain].nativeToken}', 'ETH')
+        VALUES ('${bridgeConfig[chain].nativeToken}', '${bridgeConfig[chain].G7nativeTokenName}')
       ) as t(address, symbol)
     ),
     arbitrum_token_info as (
@@ -58,10 +58,34 @@ export async function getTransactionHistory(chain: string, address: string, limi
         ('${bridgeConfig[chain].nativeToken}', 'ETH')
       ) as t(address, symbol)
     ),
+    game7_l1_to_l2_tokens(l1_token, l2_token) as (
+      select
+          label_data -> 'inputs' ->> 0 as l1_token,
+          label_data -> 'result' ->> 0 as l2_token
+      from
+          ${bridgeConfig[chain].l3TableName}
+      where
+          label = 'view-state-alpha'
+          AND address = DECODE('${bridgeConfig[chain].addressL3GatewayRouter}', 'hex')
+          AND label_name = 'calculateL2TokenAddress'
+    ),
+    arbitrum_l1_to_l2_tokens(l1_token, l2_token) as (
+      select
+          label_data -> 'inputs' ->> 0 as l1_token,
+          label_data -> 'result' ->> 0 as l2_token
+      from
+          ${bridgeConfig[chain].l2TableName}
+      where
+          label = 'view-state-alpha'
+          AND address = DECODE('${bridgeConfig[chain].addressL2GatewayRouter}', 'hex')
+          AND label_name = 'calculateL2TokenAddress'
+    ),
     game7_withdrawal_calls AS (
         SELECT
             transaction_hash,
-            COALESCE(label_data -> 'args' ->> '_l1Token', '${bridgeConfig[chain].l3Token}') AS token,
+            COALESCE((select l2_token from arbitrum_l1_to_l2_tokens where l1_token = label_data->'args'->>'_l1Token'), '${bridgeConfig[chain].nativeToken}') as token,
+            COALESCE((select l2_token from arbitrum_l1_to_l2_tokens where l1_token = label_data->'args'->>'_l1Token'), '${bridgeConfig[chain].nativeToken}') as origin_token,
+            COALESCE(label_data->'args'->>'_l1Token', '${bridgeConfig[chain].l2Token}') as destination_token,
             '0x' || encode(origin_address, 'hex') AS from_address,
             label_data -> 'args' ->> '_amount' AS amount,
             block_timestamp,
@@ -99,6 +123,8 @@ export async function getTransactionHistory(chain: string, address: string, limi
           (wc.block_timestamp + 3600) AS claimableTimestamp,
           wc.block_timestamp AS block_timestamp,
           wc.token AS token,
+          wc.origin_token AS origin_token,
+          wc.destination_token AS destination_token,
           wc.status AS status
       FROM
           game7_withdrawal_calls wc
@@ -136,6 +162,8 @@ export async function getTransactionHistory(chain: string, address: string, limi
           game7_withdrawal.challengePeriod AS challengePeriod,
           game7_withdrawal.claimableTimestamp AS claimableTimestamp,
           game7_withdrawal.token as token,
+          game7_withdrawal.origin_token AS origin_token,
+          game7_withdrawal.destination_token AS destination_token,
           arbirtrum_claims.block_timestamp AS completionTimestamp,
           arbirtrum_claims.block_timestamp AS parentNetworkTimestamp,
           arbirtrum_claims.transaction_hash AS parentNetworkHash,
@@ -147,7 +175,9 @@ export async function getTransactionHistory(chain: string, address: string, limi
     ), withdrawal_calls_arbitrum AS (
         SELECT
             transaction_hash,
-            COALESCE(label_data -> 'args' ->> '_l1Token', '${bridgeConfig[chain].nativeToken}') AS token,
+            COALESCE((select l2_token from arbitrum_l1_to_l2_tokens where l1_token = label_data->'args'->>'_l1Token'), '${bridgeConfig[chain].nativeToken}') as token,
+            COALESCE((select l2_token from arbitrum_l1_to_l2_tokens where l1_token = label_data->'args'->>'_l1Token'), '${bridgeConfig[chain].nativeToken}') as origin_token,
+            COALESCE(label_data->'args'->>'_l1Token', '${bridgeConfig[chain].l1Token}') as destination_token,
             '0x' || encode(origin_address, 'hex') AS from_address,
             label_data -> 'args' ->> '_amount' AS amount,
             block_timestamp,
@@ -185,6 +215,8 @@ export async function getTransactionHistory(chain: string, address: string, limi
             (wc.block_timestamp + 3600) AS claimableTimestamp,
             wc.block_timestamp AS block_timestamp,
             wc.token AS token,
+            wc.origin_token AS origin_token,
+            wc.destination_token AS destination_token,
             wc.status AS status,
             false as isCctp
         FROM
@@ -200,11 +232,13 @@ export async function getTransactionHistory(chain: string, address: string, limi
           transaction_hash AS childNetworkHash,
           block_timestamp AS childNetworkTimestamp,
           '0x' || ENCODE(origin_address, 'hex') as to_address,
-          '0x' || ENCODE(origin_address, 'hex') AS from_address, 
+          '0x' || ENCODE(origin_address, 'hex') AS from_address,
           3600 AS challengePeriod,
           (block_timestamp + 3600) AS claimableTimestamp,
           block_timestamp as block_timestamp,
           label_data->'args'->>'burnToken' as token,
+          label_data->'args'->>'burnToken' as origin_token,
+          NULL as destination_token,
           label_data->>'status' as status,
           true as isCctp
         from ${bridgeConfig[chain].l2TableName} -- arbitrum_one_labels
@@ -237,6 +271,8 @@ export async function getTransactionHistory(chain: string, address: string, limi
             aw.challengePeriod AS challengePeriod,
             aw.claimableTimestamp AS claimableTimestamp,
             aw.token AS token,
+            aw.origin_token AS origin_token,
+            aw.destination_token AS destination_token,
             ec.block_timestamp AS completionTimestamp,
             ec.block_timestamp AS parentNetworkTimestamp,
             ec.transaction_hash AS parentNetworkHash,
@@ -260,6 +296,8 @@ export async function getTransactionHistory(chain: string, address: string, limi
               '0x' || ENCODE(origin_address, 'hex') AS from_address,
               '0x' || ENCODE(origin_address, 'hex') AS to_address,
               '${bridgeConfig[chain].l3Token}' AS token,
+              '${bridgeConfig[chain].l3Token}' as origin_token,
+              NULL as destination_token,
               CASE
                     WHEN label_data ->> 'status' = '1' THEN true
                     ELSE false
@@ -274,7 +312,7 @@ export async function getTransactionHistory(chain: string, address: string, limi
               AND label_name = 'depositERC20'
               AND address = DECODE('${bridgeConfig[chain].addressERC20Inbox}', 'hex') -- e6470bb72291c39073aed67a30ff93b69c1f47de -- Arbitrum addressERC20Inbox
         UNION ALL
-               SELECT
+        SELECT
               'DEPOSIT' AS type,
               label_data -> 'args' ->> '_amount' AS amount,
               ${bridgeConfig[chain].l2rleationship.parentNetworkChainId} AS parentNetworkChainId,
@@ -285,6 +323,8 @@ export async function getTransactionHistory(chain: string, address: string, limi
               '0x' || ENCODE(origin_address, 'hex') AS from_address,
               label_data ->'args'->> '_to' AS to_address,
               label_data ->'args' ->> '_token' AS token,
+              '${bridgeConfig[chain].l3Token}' as origin_token,
+              NULL as destination_token,
               CASE
                     WHEN label_data ->> 'status' = '1' THEN true
                     ELSE false
@@ -297,8 +337,7 @@ export async function getTransactionHistory(chain: string, address: string, limi
               label = 'seer'
               AND label_type = 'tx_call'
               AND label_name = 'outboundTransfer'
-              AND ADDRESS = DECODE('${bridgeConfig[chain].addressL1GatewayRouter}', 'hex') -- cE18836b233C83325Cc8848CA4487e94C6288264 -- Ethereum addressDeposit
-        
+              AND ADDRESS = DECODE('${bridgeConfig[chain].addressL1GatewayRouter}', 'hex') -- cE18836b233C83325Cc8848CA4487e94C6288264 -- Ethereum addressDeposit        
     ), l1_to_l2_deposit as (
         select * from ( 
        SELECT
@@ -312,6 +351,8 @@ export async function getTransactionHistory(chain: string, address: string, limi
               '0x' || ENCODE(origin_address, 'hex') AS from_address,
               label_data ->'args'->> '_to' AS to_address,
               label_data ->'args' ->> '_token' AS token,
+              label_data ->'args' ->> '_token' as origin_token,
+              NULL as destination_token,
               CASE
                     WHEN label_data ->> 'status' = '1' THEN true
                     ELSE false
@@ -337,6 +378,8 @@ export async function getTransactionHistory(chain: string, address: string, limi
           '0x' || ENCODE(origin_address, 'hex') AS from_address,
           '0x' || ENCODE(origin_address, 'hex') AS to_address,
           '${bridgeConfig[chain].nativeToken}' AS token,
+          '${bridgeConfig[chain].nativeToken}' AS origin_token,
+          NULL as destination_token,
           CASE
             WHEN label_data ->> 'status' = '1' THEN true
             ELSE false
@@ -362,6 +405,8 @@ export async function getTransactionHistory(chain: string, address: string, limi
           '0x' || ENCODE(origin_address, 'hex') AS from_address,
           '0x' || ENCODE(origin_address, 'hex') AS to_address,
           label_data->'args'->>'burnToken' as token,
+          label_data->'args'->>'burnToken' as origin_token,
+          NULL as destination_token,
           true AS isDeposit,
           true as isCctp,
           block_timestamp
@@ -384,6 +429,8 @@ export async function getTransactionHistory(chain: string, address: string, limi
                           'from_address', from_address,
                           'to_address', to_address,
                           'token', token,
+                          'origin_token', origin_token,
+                          'destination_token', destination_token,
                           'isDeposit', isDeposit,
                           'isCctp', isCctp,
                           'symbol', symbol
@@ -408,6 +455,8 @@ export async function getTransactionHistory(chain: string, address: string, limi
                           'from_address', from_address,
                           'to_address', to_address,
                           'token', token,
+                          'origin_token', origin_token,
+                          'destination_token', destination_token,
                           'isDeposit', isDeposit,
                           'isCctp', isCctp,
                           'symbol', symbol
@@ -432,10 +481,12 @@ export async function getTransactionHistory(chain: string, address: string, limi
                           'childNetworkTimestamp', childNetworkTimestamp,
                           'completionTimestamp', completionTimestamp,
                           'from_address', from_address,
-                          'to_address', to_address,
+                          'to_address', to_address, 
                           'challengePeriod', challengePeriod,
                           'claimableTimestamp', claimableTimestamp,
                           'token', token,
+                          'origin_token', origin_token,
+                          'destination_token', destination_token,
                           'status', status,
                           'symbol', symbol,
                           'isCctp', isCctp
@@ -464,6 +515,8 @@ export async function getTransactionHistory(chain: string, address: string, limi
                           'challengePeriod', challengePeriod,
                           'claimableTimestamp', claimableTimestamp,
                           'token', token,
+                          'origin_token', origin_token,
+                          'destination_token', destination_token,
                           'status', status,
                           'symbol', symbol,
                           'isCctp', false
@@ -489,6 +542,7 @@ export async function getTransactionHistory(chain: string, address: string, limi
       OFFSET $2
       LIMIT $3
   `;
+
     const result = await pool.query(query, [
       address, offset, limit]
     )

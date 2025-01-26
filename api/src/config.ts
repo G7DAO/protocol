@@ -85,6 +85,7 @@ export const bridgeConfig: {
     l1TokenName: string;
     l2TokenName: string;
     nativeToken: string;
+    G7nativeTokenName: string;
   };
 } = {
   "game7-testnet": {
@@ -110,7 +111,8 @@ export const bridgeConfig: {
     l1Token: "0xe2ef69e4af84dbefb0a75f8491f27a52bf047b01", // l1 l3 token
     l1TokenName: "TG7T",
     l2TokenName: "TG7T",
-    nativeToken: "0x0000000000000000000000000000000000000000" // native token
+    nativeToken: "0x0000000000000000000000000000000000000000", // native token
+    G7nativeTokenName: "TG7T"
   },
   "game7": {
     addressERC20Inbox: "B1146A7eb098ECF46e8AAf695f4A960A963948d6", // Arbitrum Deposit contract address
@@ -118,7 +120,7 @@ export const bridgeConfig: {
     addressL2ERC20Gateway: "096760F208390250649E3e8763348E783AEF5562", // Arbitrum L2ERC20Gateway address L1OrbitERC20Gateway 
     addressL2GatewayRouter: "5288c571Fd7aD117beA99bF60FE0846C4E84F933", // Arbitrum L2ERC20Gateway address L1OrbitGatewayRouter
     addressL1GatewayRouter: "72Ce9c846789fdB6fC1f34aC4AD25Dd9ef7031ef", // Ethereum deposit address
-    addressL3GatewayRouter: "0000000000000000000000000000000000000000", // L3 Gateway Router address
+    addressL3GatewayRouter: "7Ca9c81d2AdD8bff46CEE9813d52bD84d94901DD", // L3 Gateway Router address
     addressArbitrumOutBox: "fbe537816d181888fAbE52338a5D921eE131E9Db", // Arbitrum outbox address ??
     addressArbOS: "0000000000000000000000000000000000000064", // Game7 ArbOS L2 address
     addressL1Inbox: "4Dbd4fc535Ac27206064B68FfCf827b0A60BAB3f", // Ethereum inbox address
@@ -135,7 +137,9 @@ export const bridgeConfig: {
     l1Token: "0x12c88a3c30a7aabc1dd7f2c08a97145f5dccd830", // l1 l3 token
     l1TokenName: "G7",
     l2TokenName: "G7",
-    nativeToken: "0x0000000000000000000000000000000000000000" // native token
+    nativeToken: "0x0000000000000000000000000000000000000000", // native token
+    G7nativeTokenName: "G7"
   },
 };
+
 
