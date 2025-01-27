@@ -300,7 +300,7 @@ const BridgeView = ({
           gasFees={[estimatedFee.data?.parentFee ?? '', estimatedFee.data?.childFee ?? '']}
         />
       </div>
-      <div className={styles.relayLink} onClick={() => navigate('/relay')}>Bridge with Relay</div>
+      {selectedNetworkType === 'Mainnet' && <div className={styles.relayLink} onClick={() => navigate('/relay')}>Bridge with Relay</div>}
     </div>
   )
 }

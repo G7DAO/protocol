@@ -29,7 +29,7 @@ export interface SwapWidgetToken {
 
 
 const RelayPage = () => {
-    const { connectedAccount, connectWallet } = useBlockchainContext()
+    const { connectedAccount, connectWallet, selectedNetworkType } = useBlockchainContext()
     const navigate = useNavigate()
     const pendingTransacions = usePendingTransactions(connectedAccount)
     const [notificationsOffset] = useState(0)
@@ -39,6 +39,11 @@ const RelayPage = () => {
     const { newNotifications, refetchNewNotifications } = useBridgeNotificationsContext()
 
     const queryClient = useQueryClient()
+
+    if (selectedNetworkType === 'Testnet') {
+        navigate('/faucet')
+      }
+    
 
     useEffect(() => {
         if (pendingTransacions.data && connectedAccount) {
