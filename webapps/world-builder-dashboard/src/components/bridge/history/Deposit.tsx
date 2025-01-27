@@ -63,7 +63,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
               deposit={deposit}
               isLoading={isLoading}
               selectedNetworkType={selectedNetworkType}
-              highNetworkTimestamp={highNetworkTimestamp}
+              highNetworkTimestamp={highNetworkTimestamp ?? deposit.completionTimestamp}
               transferStatus={transferStatus}
               symbol={symbol}
               claim={claim}
@@ -271,7 +271,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                         </div>
                       </a>
                     )}
-                    {isLoading || transferStatus?.status === undefined && !highNetworkTimestamp ? (
+                    {isLoading || transferStatus?.status === undefined && (!highNetworkTimestamp ?? !deposit.completionTimestamp) ? (
                       <div className={styles.gridItem}>
                         <div className={styles.loading}>Loading</div>
                       </div>
@@ -289,10 +289,10 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                             </button>
                           </>
                         ) : (
-                            transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
+                          transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
                             transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||
                             transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ? (
-                            <>{timeAgo(highNetworkTimestamp)}</>
+                            <>{timeAgo(highNetworkTimestamp ?? deposit.completionTimestamp)}</>
                           ) : (
                             <>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)}</>
                           )
