@@ -69,8 +69,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     connectedAccount: connectedAccount ?? ''
   })
 
-  const checkAllowances = async () => {
-    if (!bridger || !connectedAccount) return null
+  const checkAllowances = async (): Promise<boolean> => {
+    if (!bridger || !connectedAccount) return false
 
     const amountBN = ethers.utils.parseUnits(amount, decimals)
     if (allowances?.data?.bridgeTokenAllowance === null) {
@@ -81,6 +81,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         setShowApproval(true)
         return false
       }
+      return true
     } else {
       const needsBridgeTokenApproval = allowances?.data?.bridgeTokenAllowance?.lt(amountBN)
       const gasFeesAmount = gasFees?.[1] ? ethers.utils.parseUnits(gasFees[1], 18) : amountBN
@@ -122,6 +123,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     if (isConnecting || transfer.isPending) {
       return
     }
+
     if (typeof window.ethereum === 'undefined') {
       setErrorMessage("Wallet isn't installed")
       return
@@ -130,11 +132,12 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       await connectWallet()
       return
     }
+
     setErrorMessage('')
-    const allowancesOk = await checkAllowances()
-    if (allowancesOk) {
+    const allowances = await checkAllowances()
+
+    if (allowances)
       transfer.mutate({ amount })
-    }
   }
 
   const queryClient = useQueryClient()
@@ -179,6 +182,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         }
       } else {
         const isCCTP = bridger?.isCctp()
+        console.log('what is going on,.')
         const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })
         await tx?.wait()
         return {
