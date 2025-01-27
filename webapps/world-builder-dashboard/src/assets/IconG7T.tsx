@@ -1,16 +1,18 @@
 import React from 'react'
 
 const IconG7T: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 20 20' fill='none' {...props}>
-    <path
-      d='M20 10C20 15.5228 15.5228 20 10 20C4.47715 20 0 15.5228 0 10C0 4.47715 4.47715 0 10 0C15.5228 0 20 4.47715 20 10Z'
-      fill='#FE7071'
-    />
-    <path
-      d='M4.33333 6.16667L6.62944 9.76822H9.60412L8.92848 8.70799H11.0727L8.51324 12.7238L10 15.0556L15.6667 6.16667H4.33333Z'
-      fill='#1B1B1B'
-    />
-  </svg>
+<svg width="24" height="24" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+<path d="M800 400C800 620.914 620.914 800 400 800C179.086 800 0 620.914 0 400C0 179.086 179.086 0 400 0C620.914 0 800 179.086 800 400Z" fill="#FE2C2E"/>
+<g clip-path="url(#clip0_9275_15174)">
+<path d="M174.664 251.429L266.022 391.208H384.379L357.497 350.059H442.811L340.975 505.914L400.13 596.413L625.595 251.429H174.664Z" fill="white"/>
+</g>
+<defs>
+<clipPath id="clip0_9275_15174">
+<rect width="451.429" height="345.143" fill="white" transform="translate(174.285 251.429)"/>
+</clipPath>
+</defs>
+</svg>
+
 )
 
 export default IconG7T
