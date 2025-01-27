@@ -98,7 +98,6 @@ export const useBridgeTransfer = () => {
               isDeposit ? t.lowNetworkHash === txRecord.lowNetworkHash : t.highNetworkHash === txRecord.highNetworkHash
             )
             if (cachedTransaction && [1, 2, 6, 9, 11, 12].includes(cachedTransaction.status)) {
-              console.log(cachedTransaction.status)
               return { status: cachedTransaction.status }
             }
 
@@ -145,8 +144,7 @@ export const useBridgeTransfer = () => {
                   return isSameHash ? { ...t, status: status.status, lastUpdated: Date.now() } : t
                 });
 
-                saveCachedTransactions(connectedAccount ?? '', selectedNetworkType, newTransactions);
-                console.log('Successfully updated localStorage with new status:', status.status);
+                saveCachedTransactions(connectedAccount ?? '', selectedNetworkType, newTransactions)
               } finally {
                 // Always release the lock
                 releaseLock(lockKey);
@@ -368,7 +366,6 @@ export const useBridgeTransfer = () => {
             ?.rpcs[0]
 
           if (!transferStatus?.completionTxHash) {
-            console.log('No completion transaction hash found')
             throw new Error('Completion transaction hash is missing.')
           }
 
