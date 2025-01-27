@@ -67,10 +67,13 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
 
     if (!allowanceInitialized && currentTokenIndex === 1) {
       const currentToken = tokens[currentTokenIndex]
-      const gasFeeAmount = ethers.utils.parseUnits(
-        (gasFees[1] === '0' ? amount : gasFees[1]) || amount,
-        currentToken.decimals || 18
-      )
+      const calculatedAmount = ethers.utils.parseUnits(nativeBalance || '0', tokens[currentTokenIndex].decimals || 18)
+        .mul(ethers.BigNumber.from(25))
+        .div(ethers.BigNumber.from(100))
+      const gasFeeAmount = gasFees[1] === ''
+        ? calculatedAmount
+        : ethers.utils.parseUnits(gasFees[1] || '0', currentToken.decimals || 18)
+
       setNewAllowance(gasFeeAmount)
       setAllowanceInitialized(true)
     }
