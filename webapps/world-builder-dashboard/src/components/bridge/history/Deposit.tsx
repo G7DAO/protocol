@@ -271,7 +271,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                         </div>
                       </a>
                     )}
-                    {isLoading || transferStatus?.status === undefined && (!highNetworkTimestamp ?? !deposit.completionTimestamp) ? (
+                    {isLoading || (transferStatus?.status === undefined && (!highNetworkTimestamp || !deposit.completionTimestamp)) ? (
                       <div className={styles.gridItem}>
                         <div className={styles.loading}>Loading</div>
                       </div>
