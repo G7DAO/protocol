@@ -182,7 +182,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         }
       } else {
         const isCCTP = bridger?.isCctp()
-        console.log('what is going on,.')
         const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })
         await tx?.wait()
         return {
