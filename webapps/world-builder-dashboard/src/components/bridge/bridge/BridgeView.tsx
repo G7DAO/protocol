@@ -81,7 +81,7 @@ const BridgeView = ({
   const handleTokenChange = async (token: Token) => {
     setSelectedBridgeToken(token)
   }
-  const { getEstimatedFee, useAllowances } = useBridger()
+  const { getEstimatedFee } = useBridger()
 
   const [bridger, setBridger] = useState<Bridger | null>(null)
 
@@ -95,16 +95,6 @@ const BridgeView = ({
     tokenInformation
   })
 
-  const {
-    data: allowances,
-    isLoading: isLoadingAllowances
-  } = useAllowances({
-    bridger,
-    direction,
-    selectedLowNetwork,
-    selectedHighNetwork,
-    connectedAccount: connectedAccount ?? ''
-  })
   useEffect(() => {
     if (selectedBridgeToken && connectedAccount && selectedHighNetwork && selectedLowNetwork) {
       const originChainId = direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId
@@ -308,12 +298,9 @@ const BridgeView = ({
           balance={tokenInformation?.tokenBalance}
           nativeBalance={nativeTokenInformation?.tokenBalance}
           gasFees={[estimatedFee.data?.parentFee ?? '', estimatedFee.data?.childFee ?? '']}
-          bridgeAllowance={allowances?.bridgeTokenAllowance ?? null}
-          nativeAllowance={allowances?.nativeTokenAllowance ?? null}
-          isLoadingAllowances={isLoadingAllowances}
         />
       </div>
-      <div className={styles.relayLink} onClick={() => navigate('/relay')}>Bridge with Relay</div>
+      {selectedNetworkType === 'Mainnet' && <div className={styles.relayLink} onClick={() => navigate('/relay')}>Bridge with Relay</div>}
     </div>
   )
 }
