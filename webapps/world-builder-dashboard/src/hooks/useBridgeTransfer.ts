@@ -80,7 +80,7 @@ export const useBridgeTransfer = () => {
 
     // Update shouldFetchStatus to prevent refetching for completed transactions
     const shouldFetchStatus = (cachedTransaction: any) => {
-      const isCompleted = [1, 2, 6, 9, 11, 12].includes(cachedTransaction?.status)
+      const isCompleted = [2, 6, 9, 12].includes(cachedTransaction?.status)
       if (isCompleted) return false
       const timeSinceLastUpdate = Date.now() - (cachedTransaction?.lastUpdated || 0)
       return timeSinceLastUpdate > 1 * 60 * 1000
