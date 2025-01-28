@@ -272,7 +272,7 @@ const BridgeView = ({
         {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
         {<div className={styles.manualGasMessageContainer}>
           <div className={styles.manualGasMessageText}>
-            Claim transaction may be required on {selectedHighNetwork.displayName}
+            Claim transaction may be required on {direction === 'DEPOSIT' ? selectedHighNetwork.displayName : selectedLowNetwork.displayName}
           </div>
           <Tooltip
             multiline
