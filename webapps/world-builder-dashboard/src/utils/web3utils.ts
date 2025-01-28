@@ -114,7 +114,6 @@ export const getAmount = async (transactionHash: string, rpcUrl: string) => {
     }
 
     const amount = ethers.utils.formatEther(transaction.value)
-    console.log(`Transaction Amount: ${amount} ETH`)
 
     return amount
   } catch (error) {

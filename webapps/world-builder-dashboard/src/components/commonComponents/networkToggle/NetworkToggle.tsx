@@ -6,7 +6,7 @@ import { NetworkType, useBlockchainContext } from '@/contexts/BlockchainContext'
 
 const NETWORK_OPTIONS: NetworkType[] = ['Testnet', 'Mainnet']
 
-interface NetworkToggleProps {}
+interface NetworkToggleProps { }
 
 const NetworkToggle: React.FC<NetworkToggleProps> = () => {
   const { selectedNetworkType, setSelectedNetworkType } = useBlockchainContext()
@@ -18,10 +18,10 @@ const NetworkToggle: React.FC<NetworkToggleProps> = () => {
   useEffect(() => {
     const networkType = searchParams.get('network')
     setSelectedNetworkType(
-      networkType ? (networkType as NetworkType) : selectedNetworkType ? selectedNetworkType : 'Mainnet'
+      networkType ? (networkType as NetworkType) : selectedNetworkType ? selectedNetworkType : localStorage.getItem('selectedNetworkType') as NetworkType ?? 'Mainnet'
     )
     setSearchParams({
-      network: networkType ? (networkType as string) : selectedNetworkType ? (selectedNetworkType as string) : 'Mainnet'
+      network: networkType ? (networkType as string) : selectedNetworkType ? selectedNetworkType : localStorage.getItem('selectedNetworkType') as NetworkType ?? 'Mainnet'
     })
   }, [selectedNetworkType])
 
