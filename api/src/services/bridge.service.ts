@@ -83,15 +83,16 @@ export async function getTransactionHistory(chain: string, address: string, limi
     game7_withdrawal_calls AS (
         SELECT
             transaction_hash,
-            COALESCE((select l2_token from arbitrum_l1_to_l2_tokens where l1_token = label_data->'args'->>'_l1Token'), '${bridgeConfig[chain].nativeToken}') as token,
-            COALESCE((select l2_token from arbitrum_l1_to_l2_tokens where l1_token = label_data->'args'->>'_l1Token'), '${bridgeConfig[chain].nativeToken}') as origin_token,
-            COALESCE(label_data->'args'->>'_l1Token', '${bridgeConfig[chain].l2Token}') as destination_token,
+            COALESCE(l2_token, '${bridgeConfig[chain].nativeToken}') as token,
+            COALESCE(l2_token, '${bridgeConfig[chain].nativeToken}') as origin_token,
+            COALESCE(l1_token, '${bridgeConfig[chain].l2Token}') as destination_token,
             '0x' || encode(origin_address, 'hex') AS from_address,
             label_data -> 'args' ->> '_amount' AS amount,
             block_timestamp,
             label_data ->> 'status' AS status
         FROM
             ${bridgeConfig[chain].l3TableName} AS labels
+            left join game7_l1_to_l2_tokens on labels.label_data->'args'->>'_l1Token' = game7_l1_to_l2_tokens.l1_token
         WHERE
             (address, label_name) IN (
                 (DECODE('${bridgeConfig[chain].addressArbOS}', 'hex'), 'withdrawEth'),
@@ -129,7 +130,7 @@ export async function getTransactionHistory(chain: string, address: string, limi
       FROM
           game7_withdrawal_calls wc
           LEFT JOIN game7_withdrawal_events we ON we.transaction_hash = wc.transaction_hash
-    ),arbirtrum_claims as (
+    ), arbirtrum_claims as (
       SELECT
           'CLAIM' AS type,
           transaction_hash,
@@ -145,9 +146,8 @@ export async function getTransactionHistory(chain: string, address: string, limi
       FROM ${bridgeConfig[chain].l2TableName}
       WHERE
           label = 'seer' AND
-          label_type = 'event' AND
-          label_name = 'OutBoxTransactionExecuted' AND
-          address = DECODE('${bridgeConfig[chain].addressArbitrumOutBox}', 'hex') -- '64105c6C3D494469D5F21323F0E917563489d9f5' -- Arbitrum outbox address
+          address = DECODE('${bridgeConfig[chain].addressArbitrumOutBox}', 'hex') AND
+          label_name = 'OutBoxTransactionExecuted'
     ), withdrawal_l3_l2 as (
       SELECT
           'WITHDRAWAL' AS type,
@@ -175,21 +175,41 @@ export async function getTransactionHistory(chain: string, address: string, limi
     ), withdrawal_calls_arbitrum AS (
         SELECT
             transaction_hash,
-            COALESCE((select l2_token from arbitrum_l1_to_l2_tokens where l1_token = label_data->'args'->>'_l1Token'), '${bridgeConfig[chain].nativeToken}') as token,
-            COALESCE((select l2_token from arbitrum_l1_to_l2_tokens where l1_token = label_data->'args'->>'_l1Token'), '${bridgeConfig[chain].nativeToken}') as origin_token,
-            COALESCE(label_data->'args'->>'_l1Token', '${bridgeConfig[chain].l1Token}') as destination_token,
+            COALESCE(l2_token, '${bridgeConfig[chain].nativeToken}') as token,
+            COALESCE(l2_token, '${bridgeConfig[chain].nativeToken}') as origin_token,
+            COALESCE(l1_token, '${bridgeConfig[chain].l2Token}') as destination_token,
             '0x' || encode(origin_address, 'hex') AS from_address,
             label_data -> 'args' ->> '_amount' AS amount,
             block_timestamp,
             label_data ->> 'status' AS status
         FROM
             ${bridgeConfig[chain].l2TableName} AS labels
+            left join arbitrum_l1_to_l2_tokens on labels.label_data->'args'->>'_l1Token' = arbitrum_l1_to_l2_tokens.l1_token
         WHERE
-            (address, label_name) IN (
-                (DECODE('${bridgeConfig[chain].addressArbOS}', 'hex'), 'withdrawEth'),
-                (DECODE('${bridgeConfig[chain].addressL2GatewayRouter}', 'hex'), 'outboundTransfer')
-            )
-    ), withdrawal_events_arbitrum  AS (
+            label='seer'
+            AND label_type = 'tx_call'
+            AND address = DECODE('${bridgeConfig[chain].addressL2GatewayRouter}', 'hex')
+            AND label_name = 'outboundTransfer'
+        UNION ALL
+        SELECT
+            transaction_hash,
+            COALESCE(l2_token, '${bridgeConfig[chain].nativeToken}') as token,
+            COALESCE(l2_token, '${bridgeConfig[chain].nativeToken}') as origin_token,
+            COALESCE(l1_token, '${bridgeConfig[chain].l2Token}') as destination_token,
+            '0x' || encode(origin_address, 'hex') AS from_address,
+            label_data -> 'args' ->> '_amount' AS amount,
+            block_timestamp,
+            label_data ->> 'status' AS status
+        FROM
+            ${bridgeConfig[chain].l2TableName} AS labels
+            left join arbitrum_l1_to_l2_tokens on labels.label_data->'args'->>'_l1Token' = arbitrum_l1_to_l2_tokens.l1_token
+        WHERE
+            label='seer'
+            AND label_type = 'tx_call'
+            AND address = DECODE('${bridgeConfig[chain].addressArbOS}', 'hex')
+            AND label_name = 'L2ToL1Tx'
+    ),
+    withdrawal_events_arbitrum  AS (
         SELECT
             transaction_hash,
             label_data -> 'args' ->> 'position' AS position,
@@ -198,8 +218,20 @@ export async function getTransactionHistory(chain: string, address: string, limi
         FROM
             ${bridgeConfig[chain].l2TableName}
         WHERE
-            address = DECODE('${bridgeConfig[chain].addressArbOS}', 'hex')
+            label='seer'
+            AND address = DECODE('${bridgeConfig[chain].addressArbOS}', 'hex')
             AND label_name = 'L2ToL1Tx'
+    ),
+    arbitrum_circle_withdrawal_events as (
+      SELECT
+        transaction_hash,
+        label_data -> 'args' ->> 'message' AS message
+      FROM
+        ${bridgeConfig[chain].l2TableName}
+      WHERE
+        label='seer'
+        AND address = DECODE('${bridgeConfig[chain].arbitrumCircleTransmitter}', 'hex')
+        AND label_name = 'MessageSent'
     ), arbitrum_withdraw AS (
         SELECT
             'WITHDRAWAL' AS type,
@@ -221,15 +253,15 @@ export async function getTransactionHistory(chain: string, address: string, limi
             false as isCctp
         FROM
             withdrawal_calls_arbitrum  wc
-            JOIN withdrawal_events_arbitrum we ON we.transaction_hash = wc.transaction_hash
-        UNION ALL
+            LEFT JOIN withdrawal_events_arbitrum we ON we.transaction_hash = wc.transaction_hash
+          UNION ALL
         select 
           'WITHDRAWAL' as type,
-          '' as position,
+          message as position,
           label_data->'args'->>'amount' as amount,
           ${bridgeConfig[chain].l2rleationship.parentNetworkChainId} AS parentNetworkChainId,
           ${bridgeConfig[chain].l2rleationship.childNetworkChainId} AS childNetworkChainId,
-          transaction_hash AS childNetworkHash,
+          labels.transaction_hash AS childNetworkHash,
           block_timestamp AS childNetworkTimestamp,
           '0x' || ENCODE(origin_address, 'hex') as to_address,
           '0x' || ENCODE(origin_address, 'hex') AS from_address,
@@ -241,22 +273,38 @@ export async function getTransactionHistory(chain: string, address: string, limi
           NULL as destination_token,
           label_data->>'status' as status,
           true as isCctp
-        from ${bridgeConfig[chain].l2TableName} -- arbitrum_one_labels
-        LEFT JOIN domains ON label_data->'args'->>'destinationDomain' = domains.domain
-        where label_name = 'depositForBurn'
-        and address = DECODE('${bridgeConfig[chain].AtbitrumCircleTokenMessenger}', 'hex') -- '0x00D2d23DEA90243D4f73cf088ea5666690299465' -- Arbitrum CircleTokenMessenger
-        and domains.name = 'Ethereum'
+        from ${bridgeConfig[chain].l2TableName} as labels
+        LEFT JOIN arbitrum_circle_withdrawal_events ON arbitrum_circle_withdrawal_events.transaction_hash = labels.transaction_hash
+        where 
+          label='seer'
+          AND address = DECODE('${bridgeConfig[chain].AtbitrumCircleTokenMessenger}', 'hex') -- '0x00D2d23DEA90243D4f73cf088ea5666690299465' -- Arbitrum CircleTokenMessenger
+          AND label_name = 'depositForBurn'
+          and label_data->'args'->>'destinationDomain' = (
+            select domain from domains where name = 'Ethereum'
+          )
     ), ethereum_claims AS (
         SELECT
-            'CLAIM' AS type,
+            -- 'CLAIM' AS type,
             label_data -> 'args' ->> 'transactionIndex' AS position,
             transaction_hash,
             block_timestamp
         FROM
             ${bridgeConfig[chain].l1TableName}
         WHERE
-            label_name = 'OutBoxTransactionExecuted'
-            AND address = DECODE('${bridgeConfig[chain].addressEthereumOutbox}', 'hex')
+            address = DECODE('${bridgeConfig[chain].addressEthereumOutbox}', 'hex')
+            AND label_name = 'OutBoxTransactionExecuted'
+        UNION ALL
+        SELECT
+            -- 'CLAIM' AS type,
+            label_data -> 'args' ->> 'message' AS position,
+            transaction_hash,
+            block_timestamp
+        FROM
+            ${bridgeConfig[chain].l1TableName}
+        WHERE
+            address = DECODE('${bridgeConfig[chain].ethereumCircleTransmitter}', 'hex')
+            AND label_name = 'receiveMessage'
+            AND label_data->>'status' = '1'
     ), l2_to_l1_withdraw AS (
         SELECT
             'WITHDRAWAL' AS type,
@@ -308,9 +356,8 @@ export async function getTransactionHistory(chain: string, address: string, limi
               ${bridgeConfig[chain].l2TableName}
         WHERE
               label = 'seer'
-              AND label_type = 'tx_call'
-              AND label_name = 'depositERC20'
               AND address = DECODE('${bridgeConfig[chain].addressERC20Inbox}', 'hex') -- e6470bb72291c39073aed67a30ff93b69c1f47de -- Arbitrum addressERC20Inbox
+              AND label_name = 'depositERC20'
         UNION ALL
         SELECT
               'DEPOSIT' AS type,
@@ -335,13 +382,40 @@ export async function getTransactionHistory(chain: string, address: string, limi
             ${bridgeConfig[chain].l2TableName}
         WHERE
               label = 'seer'
-              AND label_type = 'tx_call'
+              AND address = DECODE('${bridgeConfig[chain].addressL1GatewayRouter}', 'hex') -- cE18836b233C83325Cc8848CA4487e94C6288264 -- Ethereum addressDeposit
               AND label_name = 'outboundTransfer'
-              AND ADDRESS = DECODE('${bridgeConfig[chain].addressL1GatewayRouter}', 'hex') -- cE18836b233C83325Cc8848CA4487e94C6288264 -- Ethereum addressDeposit        
-    ), l1_to_l2_deposit as (
+        
+    ),
+    ethereum_circle_deposit_events as (
+      SELECT
+        transaction_hash,
+        label_data -> 'args' ->> 'message' AS message
+      FROM
+        ${bridgeConfig[chain].l1TableName}
+      WHERE
+        label='seer'
+        AND address = DECODE('${bridgeConfig[chain].ethereumCircleTransmitter}', 'hex')
+        AND label_name = 'MessageSent'
+    ),
+    arbitrum_circle_claims as (
+      SELECT
+        'CLAIM' AS type,
+        label_data -> 'args' ->> 'message' AS position,
+        transaction_hash,
+        block_timestamp
+      FROM
+        ${bridgeConfig[chain].l2TableName}
+      WHERE
+        label='seer'
+        AND address = DECODE('${bridgeConfig[chain].arbitrumCircleTransmitter}', 'hex')
+        AND label_name = 'receiveMessage'
+        AND label_data->>'status' = '1'
+    ),
+    l1_to_l2_deposit as (
         select * from ( 
        SELECT
               'DEPOSIT' AS type,
+              '' as position,
               label_data -> 'args' ->> '_amount' AS amount,
               ${bridgeConfig[chain].l2rleationship.parentNetworkChainId} AS parentNetworkChainId,
               ${bridgeConfig[chain].l2rleationship.childNetworkChainId} AS childNetworkChainId,
@@ -363,12 +437,12 @@ export async function getTransactionHistory(chain: string, address: string, limi
             ${bridgeConfig[chain].l1TableName}
         WHERE
               label = 'seer'
-              AND label_type = 'tx_call'
+              AND address = DECODE('${bridgeConfig[chain].addressL1GatewayRouter}', 'hex') -- cE18836b233C83325Cc8848CA4487e94C6288264 -- Ethereum addressDeposit
               AND label_name = 'outboundTransfer'
-              AND ADDRESS = DECODE('${bridgeConfig[chain].addressL1GatewayRouter}', 'hex') -- cE18836b233C83325Cc8848CA4487e94C6288264 -- Ethereum addressDeposit
         UNION ALL
         SELECT
           'DEPOSIT' AS type,
+          '' as position,
           NULL AS amount,
           ${bridgeConfig[chain].l2rleationship.parentNetworkChainId} AS parentNetworkChainId,
           ${bridgeConfig[chain].l2rleationship.childNetworkChainId} AS childNetworkChainId,
@@ -390,18 +464,18 @@ export async function getTransactionHistory(chain: string, address: string, limi
           ${bridgeConfig[chain].l1TableName}
         WHERE
           label = 'seer'
-          AND label_type = 'tx_call'
+          AND address = DECODE('${bridgeConfig[chain].addressL1GatewayRouter}', 'hex') -- cE18836b233C83325Cc8848CA4487e94C6288264 -- Ethereum addressDeposit
           AND label_name = 'depositEth'
-          AND ADDRESS = DECODE('${bridgeConfig[chain].addressL1GatewayRouter}', 'hex') -- cE18836b233C83325Cc8848CA4487e94C6288264 -- Ethereum addressDeposit
         UNION ALL
         SELECT
           'DEPOSIT' AS type,
+          message as position,
           label_data->'args'->>'amount' as amount,
           ${bridgeConfig[chain].l2rleationship.parentNetworkChainId} AS parentNetworkChainId,
           ${bridgeConfig[chain].l2rleationship.childNetworkChainId} AS childNetworkChainId,
-          transaction_hash AS parentNetworkHash,
-          block_timestamp AS parentNetworkTimestamp,
-          block_timestamp AS completionTimestamp,
+          labels.transaction_hash AS parentNetworkHash,
+          labels.block_timestamp AS parentNetworkTimestamp,
+          labels.block_timestamp AS completionTimestamp,
           '0x' || ENCODE(origin_address, 'hex') AS from_address,
           '0x' || ENCODE(origin_address, 'hex') AS to_address,
           label_data->'args'->>'burnToken' as token,
@@ -410,13 +484,26 @@ export async function getTransactionHistory(chain: string, address: string, limi
           true AS isDeposit,
           true as isCctp,
           block_timestamp
-        FROM ${bridgeConfig[chain].l1TableName}
-        LEFT JOIN domains ON label_data->'args'->>'destinationDomain' = domains.domain
-        WHERE label_name = 'depositForBurn'
-        and address = DECODE('${bridgeConfig[chain].EthereumCircleTokenMessenger}', 'hex')
-        and domains.name = 'Arbitrum'
+        FROM ${bridgeConfig[chain].l1TableName} as labels
+        left join ethereum_circle_deposit_events on ethereum_circle_deposit_events.transaction_hash = labels.transaction_hash
+        WHERE  
+        labels.label='seer'
+        AND labels.address = DECODE('${bridgeConfig[chain].EthereumCircleTokenMessenger}', 'hex')
+        AND labels.label_name = 'depositForBurn'
+        AND label_data->'args'->>'destinationDomain' = (
+          select domain from domains where name = 'Arbitrum'
+        )
       ) as a
-    ), full_history as (
+    ),
+    l1_to_l2_deposit_with_claims as (
+      select 
+        l1_to_l2_deposit.*, 
+        claims.transaction_hash as childNetworkHash, 
+        claims.block_timestamp as childNetworkTimestamp
+      from l1_to_l2_deposit
+      left join arbitrum_circle_claims as claims on l1_to_l2_deposit.position = claims.position
+    ),  
+    full_history as (
           SELECT
                   json_build_object(
                           'type', type,
@@ -447,10 +534,13 @@ export async function getTransactionHistory(chain: string, address: string, limi
                   json_build_object(
                           'type', type,
                           'amount', amount,
+                          'position', position,
                           'parentNetworkChainId', parentNetworkChainId,
                           'childNetworkChainId', childNetworkChainId,
                           'parentNetworkHash', parentNetworkHash,
+                          'childNetworkHash', childNetworkHash,
                           'parentNetworkTimestamp', parentNetworkTimestamp,
+                          'childNetworkTimestamp', childNetworkTimestamp,
                           'completionTimestamp', completionTimestamp,
                           'from_address', from_address,
                           'to_address', to_address,
@@ -465,8 +555,8 @@ export async function getTransactionHistory(chain: string, address: string, limi
                   from_address,
                   to_address
           FROM
-                  l1_to_l2_deposit
-                  left join ethereum_token_info on l1_to_l2_deposit.token = ethereum_token_info.address
+                  l1_to_l2_deposit_with_claims
+                  left join ethereum_token_info on l1_to_l2_deposit_with_claims.token = ethereum_token_info.address
           UNION ALL
           SELECT
                   json_build_object(

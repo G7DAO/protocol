@@ -86,6 +86,8 @@ export const bridgeConfig: {
     l2TokenName: string;
     nativeToken: string;
     G7nativeTokenName: string;
+    arbitrumCircleTransmitter: string;
+    ethereumCircleTransmitter: string;
   };
 } = {
   "game7-testnet": {
@@ -101,6 +103,8 @@ export const bridgeConfig: {
     L2OrbitGatewayRouter: "73EeAEEC11473534a2249c851e4b245E61Da8732", // L1 Orbit Gateway Router address
     AtbitrumCircleTokenMessenger: "9f3B8679c73C2Fef8b59B4f3444d4e156fb70AA5", // Arbitrum Circle Token Messenger address
     EthereumCircleTokenMessenger: "9f3B8679c73C2Fef8b59B4f3444d4e156fb70AA5", // Ethereum Circle Token Messenger address
+    arbitrumCircleTransmitter: "acf1ceef35caac005e15888ddb8a3515c41b4872", // Arbitrum Circle Transmitter address
+    ethereumCircleTransmitter: "7865fafc2db2093669d92c0f33aeef291086befd", // Ethereum Circle Transmitter address
     l3TableName: "game7_testnet_labels",
     l2TableName: "arbitrum_sepolia_labels",
     l1TableName: "sepolia_labels",
@@ -127,6 +131,8 @@ export const bridgeConfig: {
     L2OrbitGatewayRouter: "73EeAEEC11473534a2249c851e4b245E61Da8732", // L1 Orbit Gateway Router Deposit
     AtbitrumCircleTokenMessenger: "19330d10D9Cc8751218eaf51E8885D058642E08A", // Arbitrum Circle Token Messenger address
     EthereumCircleTokenMessenger: "Bd3fa81B58Ba92a82136038B25aDec7066af3155", // Ethereum Circle Token Messenger address
+    arbitrumCircleTransmitter: "C30362313FBBA5cf9163F0bb16a0e01f01A896ca", // Arbitrum Circle Transmitter address
+    ethereumCircleTransmitter: "0a992d191DEeC32aFe36203Ad87D7d289a738F81", // Ethereum Circle Transmitter address
     l3TableName: "game7_labels",
     l2TableName: "arbitrum_one_labels",
     l1TableName: "ethereum_labels",
