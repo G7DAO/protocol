@@ -10,6 +10,7 @@ import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 import IconWithdrawalNodeCompletedMobile from '@/assets/IconWithdrawalNodeCompletedMobile'
+import { UseMutationResult } from '@tanstack/react-query'
 
 interface DepositMobileProps {
   deposit: TransactionRecord
@@ -18,7 +19,12 @@ interface DepositMobileProps {
   highNetworkTimestamp: number
   transferStatus: any
   symbol: any
-  claim: any
+  claim: UseMutationResult<{
+    res: any;
+    txRecord: TransactionRecord;
+  }, Error, {
+    txRecord: TransactionRecord;
+  }, unknown>
 }
 const DepositMobile: React.FC<DepositMobileProps> = ({
   deposit,
@@ -143,8 +149,8 @@ const DepositMobile: React.FC<DepositMobileProps> = ({
           <div className={styles.dataRow}>
             <div className={styles.dataText}>Status</div>
             {transferStatus && transferStatus?.status === BridgeTransferStatus.CCTP_COMPLETE ? (
-              <button className={parentStyles.claimButton} onClick={() => claim.mutate(deposit)}>
-                {claim.isLoading && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}
+              <button className={parentStyles.claimButton} onClick={() => claim.mutate({txRecord: deposit})}>
+                {claim.status === 'pending' && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}
               </button>
             ) : (
               <>

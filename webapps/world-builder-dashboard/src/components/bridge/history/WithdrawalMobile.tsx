@@ -9,10 +9,16 @@ import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
 import { ChildToParentMessageStatus } from '@arbitrum/sdk'
 import { BridgeTransferStatus } from 'game7-bridge-sdk'
+import { UseMutationResult } from '@tanstack/react-query'
 
 interface WithdrawalMobileProps {
   withdrawal: TransactionRecord
-  claim: any
+  claim: UseMutationResult<{
+    res: any;
+    txRecord: TransactionRecord;
+  }, Error, {
+    txRecord: TransactionRecord;
+  }, unknown>
   status: any
   transferStatus: any
   selectedNetworkType: NetworkType
@@ -27,6 +33,14 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
   symbol
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
+
+  const handleClaim = () => {
+    if (!withdrawal) {
+      console.error('Withdrawal data not available')
+      return
+    }
+    claim.mutate({txRecord: withdrawal})
+  }
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -118,8 +132,8 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
       <div className={styles.dataRow}>
         <div className={styles.dataText}>Status</div>
         {transferStatus && (transferStatus?.status === ChildToParentMessageStatus.CONFIRMED || transferStatus?.status === BridgeTransferStatus.CCTP_COMPLETE) && (
-          <button className={parentStyles.claimButton} onClick={() => claim.mutate(withdrawal)}>
-            {claim.isLoading && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}
+          <button className={parentStyles.claimButton} onClick={() => handleClaim()}>
+            {claim.status === 'pending' && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}
           </button>
         )}
         {transferStatus && (transferStatus?.status === ChildToParentMessageStatus.EXECUTED || transferStatus?.status === BridgeTransferStatus.CCTP_REDEEMED) && (
