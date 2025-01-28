@@ -15,8 +15,7 @@ interface HistoryDesktopProps {
 }
 
 const HistoryDesktop: React.FC<HistoryDesktopProps> = ({
-  transactions,
-
+  transactions
 }) => {
   const { selectedNetworkType } = useBlockchainContext()
   const { isSpyMode, setIsSpyMode, setSpyAddress } = useTransactionContext()
@@ -39,6 +38,8 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = ({
   const loadMoreItems = () => {
     setVisibleCount(prev => Math.min(prev + 5, transactions.length))
   }
+
+
 
   useEffect(() => {
     const checkAndLoadMore = () => {

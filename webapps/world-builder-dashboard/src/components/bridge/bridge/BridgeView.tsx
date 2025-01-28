@@ -62,7 +62,7 @@ const BridgeView = ({
     selectedNativeToken
   } = useBlockchainContext()
 
-  const { isFetching: isFetchingTokenInformation, data: tokenInformation } = useTokenInformation({
+  const { isFetching: isFetchingTokenInformation, data: tokenInformation, refetch: refetchToken } = useTokenInformation({
     account: connectedAccount,
     token: selectedBridgeToken
   })
@@ -71,7 +71,7 @@ const BridgeView = ({
     (token) => token.symbol === selectedHighNetwork.nativeCurrency?.symbol
   ) ?? null
 
-  const { data: nativeTokenInformation } = useTokenInformation({
+  const { data: nativeTokenInformation, refetch: refetchNativeToken } = useTokenInformation({
     account: connectedAccount,
     token: nativeToken
   })
@@ -298,6 +298,8 @@ const BridgeView = ({
           balance={tokenInformation?.tokenBalance}
           nativeBalance={nativeTokenInformation?.tokenBalance}
           gasFees={[estimatedFee.data?.parentFee ?? '', estimatedFee.data?.childFee ?? '']}
+          refetchToken={refetchToken}
+          refetchNativeToken={refetchNativeToken}
         />
       </div>
       {selectedNetworkType === 'Mainnet' && <div className={styles.relayLink} onClick={() => navigate('/relay')}>Bridge with Relay</div>}

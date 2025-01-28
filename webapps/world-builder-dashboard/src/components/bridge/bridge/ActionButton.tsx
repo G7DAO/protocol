@@ -28,6 +28,8 @@ interface ActionButtonProps {
   balance?: string
   nativeBalance?: string
   gasFees?: string[]
+  refetchToken?: any
+  refetchNativeToken?: any
 }
 
 const ActionButton: React.FC<ActionButtonProps> = ({
@@ -42,6 +44,9 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   balance,
   nativeBalance,
   gasFees,
+  refetchToken,
+  refetchNativeToken
+  
 }) => {
   const {
     connectedAccount,
@@ -219,6 +224,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       } catch (e) {
         console.log(e)
       }
+      refetchToken()
+      refetchNativeToken()
       queryClient.refetchQueries({ queryKey: ['pendingTransactions'] })
       queryClient.refetchQueries({ queryKey: ['ERC20Balance'] })
       queryClient.refetchQueries({ queryKey: ['nativeBalance'] })
