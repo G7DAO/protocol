@@ -22,8 +22,11 @@ export const useBridgeAPI = () => {
           const data = await res.json()
           return data
         },
+
         enabled: !!address && isValidAddress && !!selectedNetworkType,
-        retry: false
+        retry: false,
+        refetchInterval: 600000,
+        refetchIntervalInBackground: true
       },
     )
   }
