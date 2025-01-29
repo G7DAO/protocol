@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useMessages } from '@/hooks/useL2ToL1MessageStatus'
 import { useBridgeAPI } from '@/hooks/useBridgeAPI'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
-import { getTokenSymbol, isUSDC } from '@/utils/web3utils'
+import { isUSDC } from '@/utils/web3utils'
 import { ethers } from 'ethers'
 
 const mergeTransactions = (apiData: TransactionRecord[], localData: TransactionRecord[]): TransactionRecord[] => {
@@ -11,8 +11,7 @@ const mergeTransactions = (apiData: TransactionRecord[], localData: TransactionR
         const hashKey = localTx.type === 'DEPOSIT' ? (localTx.lowNetworkHash ?? '') : (localTx.highNetworkHash ?? '')
         combinedData.set(hashKey, localTx)
     })
-    console.log(localData)
-
+    
     // Merge API data, prioritizing latest withdrawal completionTimestamp
     apiData.forEach((apiTx) => {
         const hashKey = apiTx.type === 'DEPOSIT' ? (apiTx.lowNetworkHash ?? '') : (apiTx.highNetworkHash ?? '')
