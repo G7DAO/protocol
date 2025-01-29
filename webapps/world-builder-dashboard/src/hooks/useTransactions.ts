@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useMessages } from '@/hooks/useL2ToL1MessageStatus'
 import { useBridgeAPI } from '@/hooks/useBridgeAPI'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
-import { isUSDC } from '@/utils/web3utils'
+import { getTokenSymbol, isUSDC } from '@/utils/web3utils'
 import { ethers } from 'ethers'
 
 const mergeTransactions = (apiData: TransactionRecord[], localData: TransactionRecord[]): TransactionRecord[] => {
@@ -51,7 +51,7 @@ const mergeTransactions = (apiData: TransactionRecord[], localData: TransactionR
 
 // Maps API data to the TransactionRecord format
 const apiDataToTransactionRecord = (apiData: any): TransactionRecord => {
-    const amountFormatted = apiData?.amount ? isUSDC(apiData.token) ? ethers.utils.formatUnits(apiData.amount, 6) : ethers.utils.formatEther(apiData.amount) : '0.0'
+    const amountFormatted = apiData?.amount ? isUSDC(apiData.destination_token ?? apiData.origin_token) ? ethers.utils.formatUnits(apiData.amount, 6) : ethers.utils.formatEther(apiData.amount) : '0.0'
     return {
         type: apiData.type,
         amount: amountFormatted,

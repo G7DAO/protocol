@@ -134,7 +134,6 @@ export const getTokenSymbol = (
     let tokens = getTokensForNetwork(chainId, connectedAccount)
     token = tokens.find(t => t.address.toLowerCase() === tx?.destinationTokenAddress?.toLowerCase())
   }
-  console.log({ token, address: tx?.tokenAddress, destinationAddress: tx?.destinationTokenAddress })
   return token?.symbol || tx?.symbol || 'N/A'
 }
 
