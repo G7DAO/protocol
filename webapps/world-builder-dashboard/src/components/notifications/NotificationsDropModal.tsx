@@ -16,16 +16,16 @@ import { NetworkType, useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 // Utilities
 import { timeAgo } from '@/utils/timeFormat'
-import { getBlockExplorerUrl, getNetwork } from '@/utils/web3utils'
+import { getBlockExplorerUrl, getNetwork, getTokenSymbol } from '@/utils/web3utils'
 
 interface NotificationsDropModalProps {
   notifications: BridgeNotification[]
 }
 
-const copy = (notification: BridgeNotification, selectedNetworkType: NetworkType) => {
+const copy = (notification: BridgeNotification, selectedNetworkType: NetworkType, connectedAccount: string) => {
   const targetNetwork = getNetwork(notification.to, selectedNetworkType)?.displayName ?? 'unknown chain'
   if (notification.status === 'CLAIMABLE') {
-    return `Your ${notification.amount} ${notification.tx.symbol ?? notification.tx.transactionInputs?.tokenSymbol} withdrawal is ready to complete. Claim your token in Activity.`
+    return `Your ${notification.amount} ${getTokenSymbol(notification.tx, connectedAccount) ?? notification.tx.symbol ?? notification.tx.transactionInputs?.tokenSymbol} withdrawal is ready to complete. Claim your token in Activity.`
   }
   if (notification.status === 'COMPLETED') {
     if (notification.type === 'DEPOSIT') {
@@ -85,7 +85,7 @@ const NotificationsDropModal: React.FC<NotificationsDropModalProps> = ({ notific
               </div>
               <div className={styles.headerTime}>{timeAgo(n.timestamp, true)}</div>
             </div>
-            <div className={styles.content}>{copy(n, selectedNetworkType)}</div>
+            <div className={styles.content}>{copy(n, selectedNetworkType, connectedAccount ?? '')}</div>
           </div>
         ))}
       <button
@@ -131,7 +131,7 @@ const iconCloseClassName = (status: string) => {
 
 export const FloatingNotification = ({ notifications }: { notifications: BridgeNotification[] }) => {
   const { setIsDropdownOpened } = useBridgeNotificationsContext()
-  const { selectedNetworkType } = useBlockchainContext()
+  const { selectedNetworkType, connectedAccount } = useBlockchainContext()
   const [show, setShow] = useState(false)
   const handleClick = () => {
     setIsDropdownOpened(true)
@@ -166,7 +166,7 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
   return (
     <div onClick={handleClick} className={toastClassName(notifications[0].status)}>
       <a href={getTransactionUrl(notifications[0])} target="_blank" style={{ color: 'white', textDecoration: 'underline' }}>
-        {copy(notifications[0], selectedNetworkType)}
+        {copy(notifications[0], selectedNetworkType, connectedAccount ?? '')}
       </a>
       <IconCloseSmall className={iconCloseClassName(notifications[0].status)} onClick={handleExit} />
     </div>
@@ -199,7 +199,7 @@ const getTransactionUrl = (notification: BridgeNotification): string | undefined
 }
 
 export const NotificationsModal: React.FC<NotificationsDropModalProps> = ({ notifications }) => {
-  const { selectedNetworkType } = useBlockchainContext()
+  const { selectedNetworkType, connectedAccount } = useBlockchainContext()
   const [page, setPage] = useState(0)
   const { setIsModalOpened } = useBridgeNotificationsContext()
   const LIMIT = 4
@@ -251,7 +251,7 @@ export const NotificationsModal: React.FC<NotificationsDropModalProps> = ({ noti
                 </div>
                 <div className={modalStyles.headerTime}>{timeAgo(n.timestamp, true)}</div>
               </div>
-              <div className={modalStyles.content}>{copy(n, selectedNetworkType)}</div>
+              <div className={modalStyles.content}>{copy(n, selectedNetworkType, connectedAccount ?? '')}</div>
             </div>
           ))}
       </div>
