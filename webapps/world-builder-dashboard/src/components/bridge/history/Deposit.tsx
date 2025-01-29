@@ -39,15 +39,12 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   }
 
   useEffect(() => {
-    if (deposit.symbol === 'ETH') {
+    if (symbol === 'ETH') {
       fetchAmount()
     }
   }, [deposit.lowNetworkHash, rpc])
 
   const displayAmount = deposit.amount ?? amountValue
-
-
-
   const symbol = getTokenSymbol(deposit, connectedAccount ?? '')
 
   return (
@@ -103,7 +100,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                     }}
                     onMouseEnter={() => setHovered(true)}
                     onMouseLeave={() => setHovered(false)}>
-                    {displayAmount} {deposit.symbol ?? symbol}
+                    {displayAmount} {symbol ?? deposit.symbol}
                   </div>
                   <div
                     className={styles.gridItem}
@@ -175,7 +172,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                       </div>
                       <div className={styles.gridItemInitiate}>{timeAgo(deposit?.lowNetworkTimestamp)}</div>
                       <div className={styles.gridItemInitiate}>
-                        {displayAmount} {deposit.symbol ?? symbol}
+                        {displayAmount} {symbol ?? deposit.symbol }
                       </div>
                       <div className={styles.gridItemInitiate}>{depositInfo.from ?? ''}</div>
                       <div className={styles.gridItemInitiate}>{depositInfo.to ?? ''}</div>
@@ -201,7 +198,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                       </div>
                       <div className={styles.gridItemInitiate}>{timeAgo(deposit?.lowNetworkTimestamp)}</div>
                       <div className={styles.gridItemInitiate}>
-                        {displayAmount} {deposit.symbol ?? symbol}
+                        {displayAmount} {symbol ?? deposit.symbol}
                       </div>
                       <div className={styles.gridItemInitiate}>{depositInfo.from ?? ''}</div>
                       <div className={styles.gridItemInitiate}>{depositInfo.to ?? ''}</div>
@@ -235,7 +232,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                     {timeAgo(deposit.lowNetworkTimestamp)}
                   </div>
                   <div className={styles.gridItem}>
-                    {displayAmount} {deposit.symbol ?? symbol}
+                    {displayAmount} {symbol ?? deposit.symbol}
                   </div>
                   <div className={styles.gridItem}>{depositInfo.from}</div>
                   <div className={styles.gridItem}>{depositInfo.to}</div>

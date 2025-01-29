@@ -65,6 +65,7 @@ const apiDataToTransactionRecord = (apiData: any): TransactionRecord => {
         claimableTimestamp: apiData.claimableTimestamp,
         challengePeriod: apiData.challengePeriod,
         tokenAddress: apiData.token,
+        destinationTokenAddress: apiData.destination_token,
         symbol: apiData.symbol,
         isCCTP: apiData.isCctp
     }

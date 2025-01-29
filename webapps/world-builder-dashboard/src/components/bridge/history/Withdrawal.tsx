@@ -73,14 +73,13 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   }
 
   React.useEffect(() => {
-    if (withdrawal.symbol === 'ETH') {
+    if (symbol === 'ETH') {
       fetchAmount()
     }
   }, [withdrawal.highNetworkHash, rpc])
 
   // Update the display logic to use amountValue
   const displayAmount = withdrawal.amount ?? amountValue
-
   const symbol = getTokenSymbol(withdrawal, connectedAccount ?? '')
   return (
     <>
@@ -111,7 +110,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                   </div>
                   <div className={styles.gridItem}>{timeAgo(withdrawal.highNetworkTimestamp)}</div>
                   <div className={styles.gridItem}>
-                    {`${displayAmount} ${withdrawal.symbol ?? symbol}`}
+                    {`${displayAmount} ${symbol ?? withdrawal.symbol}`}
                   </div>
                   <div className={styles.gridItem}>{status?.data?.from ?? ''}</div>
                   <div className={styles.gridItem}>{status?.data?.to ?? ''}</div>
@@ -165,7 +164,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                         }}
                         onMouseEnter={() => setHovered(true)}
                         onMouseLeave={() => setHovered(false)}
-                      >  {`${displayAmount} ${withdrawal.symbol ?? symbol}`}</div>
+                      >  {`${displayAmount} ${symbol ?? withdrawal.symbol}`}</div>
                       <div
                         className={styles.gridItem}
                         onClick={() => setCollapseExecuted(!collapseExecuted)}
@@ -241,7 +240,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           </div>
                           <div className={styles.gridItemInitiate}>{timeAgo(withdrawal?.highNetworkTimestamp)}</div>
                           <div className={styles.gridItemInitiate}>
-                            {`${displayAmount} ${withdrawal.symbol ?? symbol}`}
+                            {`${displayAmount} ${symbol ?? withdrawal.symbol}`}
                           </div>
                           <div className={styles.gridItemInitiate}>{status?.data?.from ?? ''}</div>
                           <div className={styles.gridItemInitiate}>{status?.data?.to ?? ''}</div>
@@ -266,7 +265,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           </div>
                           <div className={styles.gridItemInitiate}>{timeAgo(status?.data?.lowNetworkTimeStamp ?? 0)}</div>
                           <div className={styles.gridItemInitiate}>
-                            {`${displayAmount} ${withdrawal.symbol ?? symbol}`}
+                            {`${displayAmount} ${symbol ?? withdrawal.symbol}`}
                           </div>
                           <div className={styles.gridItemInitiate}>{status?.data?.from ?? ''}</div>
                           <div className={styles.gridItemInitiate}>{status?.data?.to ?? ''}</div>
@@ -301,7 +300,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       </div>
                       <div className={styles.gridItem}>{timeAgo(status?.data?.timestamp)}</div>
                       <div className={styles.gridItem}>
-                        {`${displayAmount} ${withdrawal.symbol ?? symbol}`}
+                        {`${displayAmount} ${symbol ?? withdrawal.symbol}`}
                       </div>
                       <div className={styles.gridItem}>{status?.data?.from ?? ''}</div>
                       <div className={styles.gridItem}>{status?.data?.to ?? ''}</div>
