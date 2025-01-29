@@ -84,7 +84,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const symbol = getTokenSymbol(withdrawal, connectedAccount ?? '')
   return (
     <>
-      {status?.isLoading && smallView ? (
+      {isLoading && smallView ? (
         <div className={styles.gridItem}>
           <div className={styles.loading}>Loading</div>
         </div>
@@ -101,7 +101,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
             />
           ) : (
             <>
-              {status?.isLoading || isLoading || transferStatus === undefined ? (
+              {isLoading || transferStatus === undefined ? (
                 <>
                   <div className={styles.gridItem} title={withdrawal.highNetworkHash}>
                     <div className={styles.typeWithdrawal}>

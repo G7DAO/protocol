@@ -24,13 +24,21 @@ const mergeTransactions = (apiData: TransactionRecord[], localData: TransactionR
                 combinedData.set(hashKey, apiTx)
             } else if (apiTx.type === 'WITHDRAWAL' && apiTx.completionTimestamp && existingTx.completionTimestamp) {
                 combinedData.set(hashKey, existingTx)
-            }  else if (apiTx.type === 'DEPOSIT' && !apiTx.completionTimestamp && existingTx.completionTimestamp) {
+            } else if (apiTx.type === 'WITHDRAWAL' && apiTx.highNetworkHash && !existingTx.highNetworkHash) {
+                combinedData.set(hashKey, existingTx)
+            } else if (apiTx.type === 'WITHDRAWAL' && apiTx.lowNetworkHash && !existingTx.lowNetworkHash) {
+                combinedData.set(hashKey, existingTx)
+            } else if (apiTx.type === 'DEPOSIT' && !apiTx.completionTimestamp && existingTx.completionTimestamp) {
                 combinedData.set(hashKey, existingTx)
             } else if (apiTx.type === 'DEPOSIT' && apiTx.completionTimestamp && !existingTx.completionTimestamp) {
                 combinedData.set(hashKey, apiTx)
             } else if (apiTx.type === 'DEPOSIT' && apiTx.completionTimestamp && existingTx.completionTimestamp) {
                 combinedData.set(hashKey, existingTx)
             } else if (apiTx.type === 'DEPOSIT' && !apiTx.symbol && existingTx.symbol) {
+                combinedData.set(hashKey, existingTx)
+            } else if (apiTx.type === 'DEPOSIT' && apiTx.highNetworkHash && !existingTx.highNetworkHash) {
+                combinedData.set(hashKey, existingTx)
+            } else if (apiTx.type === 'DEPOSIT' && apiTx.lowNetworkHash && !existingTx.lowNetworkHash) {
                 combinedData.set(hashKey, existingTx)
             }
         } else {
@@ -90,7 +98,7 @@ export const useTransactions = (account: string | undefined, networkType: string
                 JSON.stringify(combinedTransactions)
             )
         }
-        
+
         console.log(combinedTransactions)
         setMergedTransactions(combinedTransactions)
     }, [messages, apiTransactions])
