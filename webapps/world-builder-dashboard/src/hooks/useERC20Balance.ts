@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import { ethers } from 'ethers'
 import { ERC20_ABI } from '@/web3/ABI/erc20_abi'
 
@@ -10,24 +10,24 @@ interface UseERC20BalanceProps {
 
 const useERC20Balance = ({ tokenAddress, account, rpc }: UseERC20BalanceProps) => {
   return useQuery(
-    ['ERC20Balance', tokenAddress, account, rpc],
-    async () => {
-      if (!account || tokenAddress === ethers.constants.AddressZero) {
-        return { formatted: '0', raw: ethers.BigNumber.from('0') }
-      }
-      const provider = new ethers.providers.JsonRpcProvider(rpc)
-      const ERC20Contract = new ethers.Contract(tokenAddress, ERC20_ABI, provider)
-
-      const balance = await ERC20Contract.balanceOf(account)
-      return {
-        formatted: ethers.utils.formatEther(balance),
-        raw: balance // BigNumber
-      }
-    },
     {
+      queryKey: ['ERC20Balance', tokenAddress, account, rpc],
+      queryFn: async () => {
+        if (!account || tokenAddress === ethers.constants.AddressZero) {
+          return { formatted: '0', raw: ethers.BigNumber.from('0') }
+        }
+        const provider = new ethers.providers.JsonRpcProvider(rpc)
+        const ERC20Contract = new ethers.Contract(tokenAddress, ERC20_ABI, provider)
+
+        const balance = await ERC20Contract.balanceOf(account)
+        return {
+          formatted: ethers.utils.formatEther(balance),
+          raw: balance // BigNumber
+        }
+      },
       refetchInterval: 50000,
       enabled: !!account
-    }
+    },
   )
 }
 
@@ -40,12 +40,12 @@ interface UseERC20AllowanceProps {
 
 export const useERC20Allowance = ({ tokenAddress, owner, spender, rpc }: UseERC20AllowanceProps) => {
   return useQuery(
-    ['ERC20Allowance', tokenAddress, owner, spender, rpc],
-    () => fetchERC20Allowance({ tokenAddress, owner, spender, rpc }),
     {
+      queryKey: ['ERC20Allowance', tokenAddress, owner, spender, rpc],
+      queryFn: () => fetchERC20Allowance({ tokenAddress, owner, spender, rpc }),
       refetchInterval: 50000,
       enabled: !!owner
-    }
+    },
   )
 }
 

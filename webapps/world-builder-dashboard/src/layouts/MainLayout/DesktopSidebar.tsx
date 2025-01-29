@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import styles from './MainLayout.module.css'
 import IconExternalLink from '@/assets/IconExternalLink'
 import IconLogout from '@/assets/IconLogout'
-// import NetworkToggle from '@/components/commonComponents/networkToggle/NetworkToggle'
+import NetworkToggle from '@/components/commonComponents/networkToggle/NetworkToggle'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
 
@@ -20,7 +20,7 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
     <div className={styles.sideBar}>
       <div className={styles.sideBarTop}>
         <Game7Logo />
-        {/* <NetworkToggle /> */}
+        <NetworkToggle />
         <div className={styles.navigation}>
           {navigationItems.map((item) => (
             <div
@@ -69,10 +69,10 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
             </div>
           )}
           <div className={styles.linkContainer}>
-            <div className={styles.linkText}>
+            <div className={styles.linkText} onClick={()=>navigate('/terms')}>
               Terms of Service
             </div>
-            <div className={styles.linkText}>
+            <div className={styles.linkText} onClick={()=>navigate('/privacy')}>
               Privacy Policy
             </div>
           </div>

@@ -1,6 +1,6 @@
 // External Libraries
 import React, { useState } from 'react'
-import { useMutation, useQueryClient } from 'react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 // Constants
 import { getNetworks } from '../../../../constants'
@@ -12,8 +12,9 @@ import { Bridger, BridgeTransferStatus } from 'game7-bridge-sdk'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 import { getTokensForNetwork, Token } from '@/utils/tokens'
-import { ZERO_ADDRESS } from '@/utils/web3utils'
+import { returnSymbol, ZERO_ADDRESS } from '@/utils/web3utils'
 import { MultiTokenApproval } from './MultiTokenApproval'
+import { useBridger } from '@/hooks/useBridger'
 
 interface ActionButtonProps {
   direction: 'DEPOSIT' | 'WITHDRAW'
@@ -27,9 +28,8 @@ interface ActionButtonProps {
   balance?: string
   nativeBalance?: string
   gasFees?: string[]
-  bridgeAllowance?: ethers.BigNumber | null
-  nativeAllowance?: ethers.BigNumber | null
-  isLoadingAllowances?: boolean
+  refetchToken?: any
+  refetchNativeToken?: any
 }
 
 const ActionButton: React.FC<ActionButtonProps> = ({
@@ -44,9 +44,9 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   balance,
   nativeBalance,
   gasFees,
-  bridgeAllowance,
-  nativeAllowance,
-  isLoadingAllowances
+  refetchToken,
+  refetchNativeToken
+  
 }) => {
   const {
     connectedAccount,
@@ -60,49 +60,61 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   } = useBlockchainContext()
 
   const { refetchNewNotifications } = useBridgeNotificationsContext()
+  const { useAllowances } = useBridger()
   const navigate = useNavigate()
   const networks = getNetworks(selectedNetworkType)
   const [showApproval, setShowApproval] = useState(false)
   const [startingTokenIndex, setStartingTokenIndex] = useState(0)
 
-  const checkAllowances = async () => {
-    if (!bridger || !connectedAccount) return null
-    
+  const allowances = useAllowances({
+    bridger,
+    direction,
+    selectedLowNetwork,
+    selectedHighNetwork,
+    connectedAccount: connectedAccount ?? ''
+  })
+
+  const checkAllowances = async (): Promise<boolean> => {
+    if (!bridger || !connectedAccount) return false
+
     const amountBN = ethers.utils.parseUnits(amount, decimals)
-    if (bridgeAllowance === null) {
+    if (allowances?.data?.bridgeTokenAllowance === null) {
       const gasFeesAmount = gasFees?.[1] ? ethers.utils.parseUnits(gasFees[1], 18) : amountBN
-      const needsNativeTokenApproval = nativeAllowance !== null ? nativeAllowance?.lt(gasFeesAmount) : false
+      const needsNativeTokenApproval = allowances?.data?.nativeTokenAllowance !== null ? allowances?.data?.nativeTokenAllowance?.lt(gasFeesAmount) : false
       if (needsNativeTokenApproval) {
         setStartingTokenIndex(0)
         setShowApproval(true)
         return false
       }
+      return true
     } else {
-      const needsBridgeTokenApproval = bridgeAllowance?.lt(amountBN)
+      const needsBridgeTokenApproval = allowances?.data?.bridgeTokenAllowance?.lt(amountBN)
       const gasFeesAmount = gasFees?.[1] ? ethers.utils.parseUnits(gasFees[1], 18) : amountBN
-      const needsNativeTokenApproval = nativeAllowance !== null ? nativeAllowance?.lt(gasFeesAmount) : false
+      const needsNativeTokenApproval = allowances?.data?.nativeTokenAllowance !== null ? allowances?.data?.nativeTokenAllowance?.lt(gasFeesAmount) : false
       if (needsBridgeTokenApproval || needsNativeTokenApproval) {
         setStartingTokenIndex(needsBridgeTokenApproval ? 0 : 1)
         setShowApproval(true)
+        if (!needsBridgeTokenApproval && !needsNativeTokenApproval) {
+          return true
+        }
         return false
       }
+      return true
     }
-
-    return true
   }
 
   const getLabel = (): String | undefined => {
     if (isConnecting) {
       return 'Connecting wallet...'
     }
-    if (transfer.isLoading) {
+    if (transfer.isPending) {
       return 'Submitting...'
     }
     if (!connectedAccount) {
       return 'Connect wallet'
     }
 
-    if (isLoadingAllowances) {
+    if (allowances?.isLoading) {
       return 'Checking allowances...'
     }
 
@@ -113,9 +125,10 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   }
 
   const handleClick = async () => {
-    if (isConnecting || transfer.isLoading) {
+    if (isConnecting || transfer.isPending) {
       return
     }
+
     if (typeof window.ethereum === 'undefined') {
       setErrorMessage("Wallet isn't installed")
       return
@@ -124,17 +137,21 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       await connectWallet()
       return
     }
-    setErrorMessage('')
 
-    const allowancesOk = await checkAllowances()
-    if (allowancesOk) {
-      transfer.mutate(amount)
-    }
+    setErrorMessage('')
+    const allowances = await checkAllowances()
+
+    if (allowances)
+      transfer.mutate({ amount })
   }
 
   const queryClient = useQueryClient()
-  const transfer = useMutation(
-    async (amount: string) => {
+  const transfer = useMutation({
+    mutationFn: async ({
+      amount
+    }: {
+      amount: string
+    }) => {
       const network = networks?.find((n) => n.chainId === bridger?.originNetwork.chainId)!
       const provider = await getProvider(network)
       const signer = provider.getSigner()
@@ -159,7 +176,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           lowNetworkTimestamp: Date.now() / 1000,
           completionTimestamp: Date.now() / 1000,
           newTransaction: true,
-          symbol: symbol,
+          symbol: returnSymbol(direction, selectedHighNetwork, selectedLowNetwork, symbol ?? ''),
           status:
             destinationTokenAddress === ZERO_ADDRESS
               ? BridgeTransferStatus.DEPOSIT_GAS_PENDING
@@ -180,7 +197,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           highNetworkHash: tx?.hash,
           highNetworkTimestamp: Date.now() / 1000,
           challengePeriod: selectedNetworkType === 'Testnet' ? 60 * 60 : 60 * 60 * 24 * 7,
-          symbol: symbol,
+          symbol: returnSymbol(direction, selectedHighNetwork, selectedLowNetwork, symbol ?? ''),
           status:
             isCCTP
               ? BridgeTransferStatus.CCTP_PENDING
@@ -189,42 +206,43 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         }
       }
     },
-    {
-      onSuccess: async (record: any) => {
-        if (!record) return
-        try {
-          const transactionsString = localStorage.getItem(
-            `bridge-${connectedAccount}-transactions-${selectedNetworkType}`
-          )
-          let transactions = []
-          if (transactionsString) {
-            transactions = JSON.parse(transactionsString)
-          }
-          transactions.push(record)
-          localStorage.setItem(
-            `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
-            JSON.stringify(transactions)
-          )
-        } catch (e) {
-          console.log(e)
+    onSuccess: async (record: any) => {
+      if (!record) return
+      try {
+        const transactionsString = localStorage.getItem(
+          `bridge-${connectedAccount}-transactions-${selectedNetworkType}`
+        )
+        let transactions = []
+        if (transactionsString) {
+          transactions = JSON.parse(transactionsString)
         }
-        queryClient.refetchQueries(['pendingTransactions'])
-        queryClient.refetchQueries(['ERC20Balance'])
-        queryClient.refetchQueries(['nativeBalance'])
-        queryClient.refetchQueries(['pendingNotifications'])
-        queryClient.refetchQueries(['incomingMessages'])
-        refetchNewNotifications(connectedAccount ?? '')
-        navigate('/bridge/transactions')
-      },
-      onError: (e) => {
+        transactions.push(record)
+        localStorage.setItem(
+          `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
+          JSON.stringify(transactions)
+        )
+      } catch (e) {
         console.log(e)
-        setErrorMessage('Transaction failed. Try again, please')
       }
+      refetchToken()
+      refetchNativeToken()
+      queryClient.refetchQueries({ queryKey: ['pendingTransactions'] })
+      queryClient.refetchQueries({ queryKey: ['ERC20Balance'] })
+      queryClient.refetchQueries({ queryKey: ['nativeBalance'] })
+      queryClient.refetchQueries({ queryKey: ['pendingNotifications'] })
+      queryClient.refetchQueries({ queryKey: ['incomingMessages'] })
+      refetchNewNotifications(connectedAccount ?? '')
+      navigate('/bridge/transactions')
+    },
+    onError: (e) => {
+      console.log(e)
+      setErrorMessage('Transaction failed. Try again, please')
     }
-  )
+  })
 
-  const handleApprovalComplete = () => {
-    transfer.mutate(amount)
+  const handleApprovalComplete = async () => {
+    await allowances.refetch()
+    transfer.mutate({ amount })
   }
 
   const tokenList = (() => {
@@ -236,15 +254,15 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         token.symbol === selectedHighNetwork.nativeCurrency?.symbol :
         token.symbol === selectedLowNetwork.nativeCurrency?.symbol
     )
-    
-    if (bridgeAllowance === null && nativeAllowance !== null) {
+
+    if (allowances?.data?.bridgeTokenAllowance === null && allowances?.data?.nativeTokenAllowance !== null) {
       return [nativeToken].filter((token): token is Token => token !== undefined)
     }
-    if (nativeAllowance === null && bridgeAllowance !== null) {
+    if (allowances?.data?.nativeTokenAllowance === null && allowances?.data?.bridgeTokenAllowance !== null) {
       return [selectedBridgeToken].filter((token): token is Token => token !== undefined)
     }
 
-    if (nativeAllowance === null && bridgeAllowance === null) {
+    if (allowances?.data?.nativeTokenAllowance === null && allowances?.data?.bridgeTokenAllowance === null) {
       return []
     }
 
@@ -261,10 +279,10 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           (isDisabled ||
             Number(amount) < 0 ||
             ((!L2L3message?.destination || !L2L3message.data) && Number(amount) === 0)) ||
-          isLoadingAllowances
+          allowances?.isLoading
         }
       >
-        <div className={isConnecting || transfer.isLoading ? styles.buttonLabelLoading : styles.buttonLabel}>
+        <div className={isConnecting || transfer.isPending ? styles.buttonLabelLoading : styles.buttonLabel}>
           {getLabel() ?? 'Submit'}
         </div>
       </button>
@@ -281,6 +299,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           amount={amount}
           onApprovalComplete={handleApprovalComplete}
           gasFees={gasFees ?? []}
+          allowances={allowances}
         />
       }
     </>

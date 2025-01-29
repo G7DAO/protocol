@@ -9,22 +9,30 @@ import { NetworkType } from '@/contexts/BlockchainContext'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
+import IconWithdrawalNodeCompletedMobile from '@/assets/IconWithdrawalNodeCompletedMobile'
+import { UseMutationResult } from '@tanstack/react-query'
 
 interface DepositMobileProps {
   deposit: TransactionRecord
   isLoading: boolean
   selectedNetworkType: NetworkType
-  transactionInputs: any
   highNetworkTimestamp: number
   transferStatus: any
+  symbol: any
+  claim: UseMutationResult<{
+    res: any;
+    txRecord: TransactionRecord;
+  }, Error, {
+    txRecord: TransactionRecord;
+  }, unknown>
 }
 const DepositMobile: React.FC<DepositMobileProps> = ({
   deposit,
   isLoading,
   selectedNetworkType,
-  transactionInputs,
-  highNetworkTimestamp,
-  transferStatus
+  transferStatus, 
+  symbol,
+  claim
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
   const depositInfo = {
@@ -32,7 +40,6 @@ const DepositMobile: React.FC<DepositMobileProps> = ({
     to: getHighNetworks(selectedNetworkType)?.find((n) => n.chainId === deposit.highNetworkChainId)?.displayName ?? ''
   }
   const smallView = useMediaQuery('(max-width: 1199px)')
-
   return (
     <>
       {isLoading ? (
@@ -51,32 +58,84 @@ const DepositMobile: React.FC<DepositMobileProps> = ({
         <div className={styles.container}>
           <div className={styles.header}>
             <div className={styles.title}>Deposit</div>
-            <div className={styles.amount}>{`${deposit.amount} ${transactionInputs?.tokenSymbol}`}</div>
+            <div className={styles.amount}>{`${deposit.amount} ${deposit.symbol ?? symbol}`}</div>
           </div>
           {!isCollapsed && (
             <>
               <div className={styles.dataRow}>
-                <div className={styles.dataText}> Transaction</div>
-                <a
-                  href={`${getBlockExplorerUrl(deposit.lowNetworkChainId, selectedNetworkType)}/tx/${deposit.lowNetworkHash}`}
-                  target={'_blank'}
-                  className={styles.explorerLink}
-                >
-                  {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
-                  transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||
-                  transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ? (
-                    <div className={parentStyles.settled}>
-                      Completed
-                      <IconLinkExternal02 stroke={'#fff'} />
-                    </div>
-                  ) : (
-                    <div className={parentStyles.pending}>
-                      Pending
-                      <IconLinkExternal02 stroke={'#fff'} />
-                    </div>
+                <div className={styles.dataText}>Transaction</div>
+                {transferStatus && (transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
+                  transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED) && (
+                    <a
+                      href={`${getBlockExplorerUrl(deposit.highNetworkChainId, selectedNetworkType)}/tx/${deposit.highNetworkHash}`}
+                      target={'_blank'}
+                      className={parentStyles.explorerLink}
+                    >
+                      <div className={parentStyles.settled}>
+                        Completed
+                        <IconLinkExternal02 stroke={'#fff'} />
+                      </div>
+                    </a>
                   )}
-                </a>
+                {transferStatus && (transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD || transferStatus?.status === BridgeTransferStatus.CCTP_COMPLETE) && (
+                  <a
+                    href={`${getBlockExplorerUrl(deposit.lowNetworkChainId, selectedNetworkType)}/tx/${deposit.lowNetworkHash}`}
+                    target={'_blank'}
+                    className={parentStyles.explorerLink}
+                  >
+                    <div className={parentStyles.claimable}>
+                      Claimable
+                      <IconLinkExternal02 stroke={'#fff'} />
+                    </div>
+                  </a>
+                )}
+                {transferStatus && (
+                  transferStatus?.status === BridgeTransferStatus.CCTP_PENDING
+                  || transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_PENDING
+                  || transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_NOT_YET_CREATED) && (
+                    <a
+                      href={`${getBlockExplorerUrl(deposit.lowNetworkChainId, selectedNetworkType)}/tx/${deposit.lowNetworkHash}`}
+                      target={'_blank'}
+                      className={parentStyles.explorerLink}
+                    >
+                      <div className={parentStyles.pending}>
+                        Pending
+                        <IconLinkExternal02 stroke={'#fff'} />
+                      </div>
+                    </a>
+                  )}
               </div>
+              {transferStatus && (transferStatus?.status === BridgeTransferStatus.CCTP_REDEEMED) && (
+                <>
+                  <IconWithdrawalNodeCompletedMobile className={styles.nodeCompleted} />
+                  <div className={styles.dataRowCompleted}>
+                    <div className={styles.dataText}>Initiate</div>
+                    <a
+                      href={`${getBlockExplorerUrl(deposit.lowNetworkChainId, selectedNetworkType)}/tx/${deposit.lowNetworkHash}`}
+                      target={'_blank'}
+                      className={parentStyles.explorerLink}
+                    >
+                      <div className={parentStyles.settled}>
+                        Completed
+                        <IconLinkExternal02 stroke={'#fff'} />
+                      </div>
+                    </a>
+                  </div>
+                  <div className={styles.dataRowCompleted}>
+                    <div className={styles.dataText}>Finalize</div>
+                    <a
+                      href={`${getBlockExplorerUrl(deposit.highNetworkChainId, selectedNetworkType)}/tx/${deposit.highNetworkHash}`}
+                      target={'_blank'}
+                      className={parentStyles.explorerLink}
+                    >
+                      <div className={parentStyles.settled}>
+                        Completed
+                        <IconLinkExternal02 stroke={'#fff'} />
+                      </div>
+                    </a>
+                  </div>
+                </>
+              )}
               <div className={styles.dataRow}>
                 <div className={styles.dataText}>From</div>
                 <div className={styles.dataText}>{depositInfo.from}</div>
@@ -88,16 +147,25 @@ const DepositMobile: React.FC<DepositMobileProps> = ({
             </>
           )}
           <div className={styles.dataRow}>
-            <div className={styles.dataText}> Status</div>
-            <div className={styles.dataTextBold}>
-              {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
-              transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||
-              transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ? (
-                <div>{timeAgo(highNetworkTimestamp)}</div>
-              ) : (
-                <div>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)}</div>
-              )}
-            </div>
+            <div className={styles.dataText}>Status</div>
+            {transferStatus && transferStatus?.status === BridgeTransferStatus.CCTP_COMPLETE ? (
+              <button className={parentStyles.claimButton} onClick={() => claim.mutate({txRecord: deposit})}>
+                {claim.status === 'pending' && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}
+              </button>
+            ) : (
+              <>
+                <div className={styles.dataTextBold}>
+                  {transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
+                    transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||
+                    transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ||
+                    transferStatus?.status === BridgeTransferStatus.CCTP_REDEEMED ? (
+                    <>{timeAgo(deposit?.completionTimestamp)}</>
+                  ) : (
+                    <>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)}</>
+                  )}
+                </div>
+              </>
+            )}
           </div>
           <div className={styles.button} onClick={() => setIsCollapsed(!isCollapsed)}>
             {isCollapsed ? 'View more' : 'View less'}

@@ -14,7 +14,8 @@ export const L1_NETWORK: NetworkInterface = {
   },
   g7TokenAddress: '0xe2ef69e4af84dbefb0a75f8491f27a52bf047b01',
   routerSpender: '0x902b3e5f8f19571859f4ab1003b960a5df693aff',
-  retryableCreationTimeout: 15 * 60
+  retryableCreationTimeout: 15 * 60,
+  challengePeriod: 60 * 60
 }
 
 export const L2_NETWORK: HighNetworkInterface = {
@@ -40,7 +41,7 @@ export const L3_NETWORK: HighNetworkInterface = {
   chainId: 13746,
   name: 'game7Testnet',
   displayName: 'G7 Sepolia',
-  rpcs: ['https://x.game7-testnet.nodes.game7.build'],
+  rpcs: ['https://testnet-rpc.game7.io'],
   blockExplorerUrls: ['https://testnet.game7.io'],
   nativeCurrency: {
     decimals: 18,
@@ -66,7 +67,8 @@ export const L1_MAIN_NETWORK: NetworkInterface = {
   },
   g7TokenAddress: '0x12c88a3C30A7AaBC1dd7f2c08a97145F5DCcD830',
   routerSpender: '0x902b3e5f8f19571859f4ab1003b960a5df693aff',
-  retryableCreationTimeout: 15 * 60
+  retryableCreationTimeout: 15 * 60,
+  challengePeriod: 60 * 60
 }
 
 export const L2_MAIN_NETWORK: NetworkInterface = {
@@ -81,7 +83,8 @@ export const L2_MAIN_NETWORK: NetworkInterface = {
     symbol: 'ETH'
   },
   g7TokenAddress: '0xF18e4466F26B4cA55bbAb890b314a54976E45B17',
-  retryableCreationTimeout: 15 * 60
+  retryableCreationTimeout: 15 * 60,
+  challengePeriod: 60 * 60
 }
 
 export const L3_MAIN_NETWORK: NetworkInterface = {
@@ -97,7 +100,8 @@ export const L3_MAIN_NETWORK: NetworkInterface = {
   },
   g7TokenAddress: '0x0000000000000000000000000000000000000000',
   retryableCreationTimeout: 15 * 60,
-  wrappedG7TokenAddress: '0xfa3ed70386b9255fC04aA008A8ad1B0CDa816Fac'
+  wrappedG7TokenAddress: '0xfa3ed70386b9255fC04aA008A8ad1B0CDa816Fac',
+  challengePeriod: 60 * 60
 }
 
 export const ALL_TESTNET_NETWORKS = [L1_NETWORK, L2_NETWORK, L3_NETWORK]
