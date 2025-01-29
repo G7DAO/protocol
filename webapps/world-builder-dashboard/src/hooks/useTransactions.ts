@@ -11,7 +11,7 @@ const mergeTransactions = (apiData: TransactionRecord[], localData: TransactionR
         const hashKey = localTx.type === 'DEPOSIT' ? (localTx.lowNetworkHash ?? '') : (localTx.highNetworkHash ?? '')
         combinedData.set(hashKey, localTx)
     })
-    
+
     // Merge API data, prioritizing latest withdrawal completionTimestamp
     apiData.forEach((apiTx) => {
         const hashKey = apiTx.type === 'DEPOSIT' ? (apiTx.lowNetworkHash ?? '') : (apiTx.highNetworkHash ?? '')
@@ -79,7 +79,6 @@ export const useTransactions = (account: string | undefined, networkType: string
 
     useEffect(() => {
         if (!messages && !apiTransactions) return
-        console.log('new api transactions', apiTransactions)
         const localTransactions = messages || []
         const formattedApiTransactions = apiTransactions
             ? apiTransactions.map(apiDataToTransactionRecord)
@@ -99,7 +98,6 @@ export const useTransactions = (account: string | undefined, networkType: string
             )
         }
 
-        console.log(combinedTransactions)
         setMergedTransactions(combinedTransactions)
     }, [messages, apiTransactions])
 
