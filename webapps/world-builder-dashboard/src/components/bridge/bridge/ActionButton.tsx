@@ -46,7 +46,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   gasFees,
   refetchToken,
   refetchNativeToken
-  
+
 }) => {
   const {
     connectedAccount,
@@ -90,14 +90,14 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     } else {
       const needsBridgeTokenApproval = allowances?.data?.bridgeTokenAllowance?.lt(amountBN)
       const gasFeesAmount = gasFees?.[1] ? ethers.utils.parseUnits(gasFees[1], 18) : amountBN
-      const needsNativeTokenApproval = allowances?.data?.nativeTokenAllowance !== null ? allowances?.data?.nativeTokenAllowance?.lt(gasFeesAmount) : false
+      const needsNativeTokenApproval = allowances?.data?.nativeTokenAllowance?.lt(gasFeesAmount) || false
       if (needsBridgeTokenApproval || needsNativeTokenApproval) {
         setStartingTokenIndex(needsBridgeTokenApproval ? 0 : 1)
         setShowApproval(true)
-        if (!needsBridgeTokenApproval && !needsNativeTokenApproval) {
-          return true
-        }
         return false
+      }
+      else if (!needsBridgeTokenApproval && !needsNativeTokenApproval) {
+        return true
       }
       return true
     }
@@ -152,7 +152,13 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     }: {
       amount: string
     }) => {
-      const network = networks?.find((n) => n.chainId === bridger?.originNetwork.chainId)!
+      const network = networks?.find((n) => n.chainId === bridger?.originNetwork.chainId)
+
+      if (!network) {
+        console.error('Network not found!')
+        return
+      }
+
       const provider = await getProvider(network)
       const signer = provider.getSigner()
       const destinationChain = direction === 'DEPOSIT' ? selectedHighNetwork : selectedLowNetwork

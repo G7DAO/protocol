@@ -18,7 +18,7 @@ interface DepositMobileProps {
   selectedNetworkType: NetworkType
   highNetworkTimestamp: number
   transferStatus: any
-  symbol: any
+  symbol: string
   claim: UseMutationResult<{
     res: any;
     txRecord: TransactionRecord;

@@ -32,20 +32,20 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   const [hovered, setHovered] = useState(false)
   const [amountValue, setAmountValue] = useState<string>('')
   const rpc = getNetworks(selectedNetworkType)?.find(n => n.chainId === deposit.highNetworkChainId)?.rpcs[0]
-
-  const fetchAmount = async () => {
-    const value = await getAmount(deposit.highNetworkHash ?? '', rpc ?? '')
-    setAmountValue(value ?? '')
-  }
-
+  const symbol = getTokenSymbol(deposit, connectedAccount ?? '')
+  
   useEffect(() => {
+    const fetchAmount = async () => {
+      const value = await getAmount(deposit.highNetworkHash ?? '', rpc ?? '')
+      setAmountValue(value ?? '')
+    }
+
     if (symbol === 'ETH') {
       fetchAmount()
     }
-  }, [deposit.lowNetworkHash, rpc])
+  }, [deposit.highNetworkHash, rpc, symbol])
 
   const displayAmount = deposit.amount ?? amountValue
-  const symbol = getTokenSymbol(deposit, connectedAccount ?? '')
 
   return (
     <>

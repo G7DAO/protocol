@@ -90,7 +90,6 @@ export default function App() {
                               fee: '100' // 1%
                             }
                           ],
-                          duneApiKey: "YOUR_DUNE_KEY",
                           chains,
                           baseApiUrl: MAINNET_RELAY_API
                         }}>

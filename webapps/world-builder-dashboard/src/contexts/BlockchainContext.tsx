@@ -155,7 +155,6 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
 
   useEffect(() => {
     if (selectedNetworkType) {
-      console.log(selectedNetworkType)
       localStorage.setItem('selectedNetworkType', selectedNetworkType)
     }
     if (selectedNetworkType === 'Testnet') {

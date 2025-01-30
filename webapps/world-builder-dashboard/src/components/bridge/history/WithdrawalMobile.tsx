@@ -22,7 +22,7 @@ interface WithdrawalMobileProps {
   status: any
   transferStatus: any
   selectedNetworkType: NetworkType
-  symbol: any
+  symbol: string
 }
 const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
   withdrawal,

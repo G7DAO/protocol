@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { getHighNetworks, getLowNetworks, getNetworks, HIGH_NETWORKS, LOW_NETWORKS } from '../../../../constants'
 import styles from './WithdrawTransactions.module.css'
 import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
@@ -66,21 +66,20 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const { data: transferStatus, isLoading } = returnTransferData({ txRecord: withdrawal })
   const [amountValue, setAmountValue] = useState<string>('')
   const rpc = getNetworks(selectedNetworkType)?.find(n => n.chainId === withdrawal.highNetworkChainId)?.rpcs[0]
-
-  const fetchAmount = async () => {
-    const value = await getAmount(withdrawal.highNetworkHash ?? '', rpc ?? '')
-    setAmountValue(value ?? '')
-  }
-
-  React.useEffect(() => {
+  const symbol = getTokenSymbol(withdrawal, connectedAccount ?? '')
+  
+  useEffect(() => {
+    const fetchAmount = async () => {
+      const value = await getAmount(withdrawal.highNetworkHash ?? '', rpc ?? '')
+      setAmountValue(value ?? '')
+    }
     if (symbol === 'ETH') {
       fetchAmount()
     }
-  }, [withdrawal.highNetworkHash, rpc])
+  }, [withdrawal.highNetworkHash, rpc, symbol])
 
   // Update the display logic to use amountValue
   const displayAmount = withdrawal.amount ?? amountValue
-  const symbol = getTokenSymbol(withdrawal, connectedAccount ?? '')
   return (
     <>
       {isLoading && smallView ? (
