@@ -22,6 +22,7 @@ import (
 	"github.com/G7DAO/protocol/bindings/PositionMetadata"
 	"github.com/G7DAO/protocol/bindings/Staker"
 	"github.com/G7DAO/protocol/bindings/TokenFaucet"
+	"github.com/G7DAO/protocol/bindings/USDCOrbitBridger"
 	"github.com/G7DAO/protocol/bindings/WrappedNativeToken"
 	"github.com/G7DAO/protocol/bridge"
 	terminus "github.com/G7DAO/protocol/cmd/game7/diamondLaunch"
@@ -90,7 +91,9 @@ func CreateRootCommand() *cobra.Command {
 
 	terminusCMD := terminus.CreateTerminusDeployCommand()
 
-	rootCmd.AddCommand(completionCmd, versionCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd, accountsCmd, wrappedNativeTokenCmd, stakerCmd, mockCmd, positionMetadataCmd, tokenSenderCmd, metronomeCmd, terminusCMD)
+	usdcOrbitBridgerCmd := USDCOrbitBridger.CreateUSDCOrbitBridgerCommand()
+
+	rootCmd.AddCommand(completionCmd, versionCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd, accountsCmd, wrappedNativeTokenCmd, stakerCmd, mockCmd, positionMetadataCmd, tokenSenderCmd, metronomeCmd, terminusCMD, usdcOrbitBridgerCmd)
 
 	// By default, cobra Command objects write to stderr. We have to forcibly set them to output to
 	// stdout.
