@@ -41,6 +41,7 @@ export interface TransactionRecord {
   status?: number
   ETA?: number
   tokenAddress?: string
+  destinationTokenAddress?: string
   transactionInputs?: BridgeTransferInfo
   isCCTP?: boolean
   address?: string

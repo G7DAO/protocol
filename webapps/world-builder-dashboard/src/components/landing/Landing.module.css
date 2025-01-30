@@ -14,23 +14,49 @@ body {
   gap: 16px;
   background: #171717;
   cursor: url('../../assets/cursor.svg'), auto;
-  overflow: hidden;
+  /* overflow: hidden; */
+  scrollbar-width: 0px;
   overscroll-behavior: none;
   -webkit-overflow-scrolling: auto;
 }
 
 .layout.darkened {
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent dark overlay */
-  pointer-events: none; /* Prevent interactions with the background */
+  background-color: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
 }
 
 .navbarContainer {
   display: flex;
   width: 100%;
   padding: 4px 0px;
+  top: 16px;
   flex-direction: column;
   align-items: center;
   align-self: stretch;
+  transition: 0.7s all ease;
+}
+
+.navbarStickyContainer {
+  position: sticky;
+  z-index: 1005;
+  top: 24px;
+  padding: 12px 12px 12px 16px;
+  align-items: flex-start;
+  border-radius: 20px;
+  border: 1px solid var(--gray-500, #737373);
+  background: hsl(0, 0%, 3%);
+  transition: 0.7s all ease;
+}
+
+.navbarSticky {
+  position: sticky;
+  z-index: 1005;
+  top: 0px;
+  padding: 12px 12px 12px 16px;
+  align-items: flex-start;
+  border-radius: 20px;
+  border: 1px solid var(--gray-500, #737373);
+  background: hsl(0, 0%, 3%);
 }
 
 .navbar {
@@ -79,7 +105,8 @@ body {
   font-size: 16px;
   font-style: normal;
   font-weight: 600;
-  line-height: 24px; /* 150% */
+  line-height: 24px;
+  /* 150% */
 }
 
 .navbarCTA {
@@ -302,8 +329,10 @@ body {
 }
 
 .scrollBarFill {
-  width: 100%; /* Full width */
-  height: 0%; /* Start at 0% height */
+  width: 100%;
+  /* Full width */
+  height: 0%;
+  /* Start at 0% height */
   background-color: #f04438;
   border-radius: 100px;
   transition: height 0.25s ease-in-out;
@@ -334,7 +363,8 @@ body {
   font-size: 14px;
   font-style: normal;
   font-weight: 500;
-  line-height: 20px; /* 142.857% */
+  line-height: 20px;
+  /* 142.857% */
 }
 
 .contentContainer {
@@ -357,7 +387,8 @@ body {
   font-size: 48px;
   font-style: normal;
   font-weight: 700;
-  line-height: 60px; /* 125% */
+  line-height: 60px;
+  /* 125% */
   letter-spacing: -0.96px;
 }
 
@@ -394,7 +425,8 @@ body {
   font-size: 24px;
   font-style: normal;
   font-weight: 500;
-  line-height: 32px; /* 133.333% */
+  line-height: 32px;
+  /* 133.333% */
 }
 
 .cardImage {
@@ -429,7 +461,8 @@ body {
   font-size: 18px;
   font-style: normal;
   font-weight: 400;
-  line-height: 28px; /* 155.556% */
+  line-height: 28px;
+  /* 155.556% */
   border-radius: 12px;
   border: 1px solid #727272;
   flex-grow: 1;
@@ -458,9 +491,6 @@ body {
   border: 1px solid #727272;
   background: #171717;
   backdrop-filter: blur(0.6990200281143188px);
-}
-
-.sponsorCard::hover {
 }
 
 .sponsorCardImage {
@@ -565,7 +595,8 @@ body {
   font-size: 24px;
   font-style: normal;
   font-weight: 500;
-  line-height: 32px; /* 133.333% */
+  line-height: 32px;
+  /* 133.333% */
   cursor: url('../../assets/hand.svg'), pointer;
 }
 
@@ -607,6 +638,80 @@ body {
   flex: 1 0 auto;
 }
 
+.footer {
+  display: flex;
+  padding: 40px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  align-self: stretch;
+  border-radius: 12px 12px 0px 0px;
+  border: 1px solid #727272;
+  background: url('../../assets/ftwotf.png') lightgray 50% / cover no-repeat;
+}
+
+.footerContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  align-self: stretch;
+}
+
+.footerLinks {
+  display: flex;
+  align-items: flex-start;
+  gap: 120px;
+}
+
+.footerSection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.footerSectionHeader {
+  color: #FFF;
+  /* Text xl Bold */
+  font-family: Inter;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 30px;
+  /* 150% */
+}
+
+.footerSectionLink {
+  color: #FFF;
+  /* Text md Regular */
+  font-family: Inter;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px;
+  /* 150% */
+}
+
+.footerIcons {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.layoutFooter {
+  padding: 24px;
+  background: #171717;
+}
+
+.layoutNavbar {
+  padding: 24px 24px 0px 24px;
+  background: #171717;
+}
+
+
+/* Tablet */
 @media (max-width: 1199px) {
   .layout {
     display: flex;
@@ -682,6 +787,7 @@ body {
     align-items: center;
     align-self: stretch;
   }
+
   .fourthSection {
     display: flex;
     flex-direction: column;
@@ -700,9 +806,34 @@ body {
     width: 100%;
     min-width: 300px;
   }
+
+  .navbarSticky {
+    position: sticky;
+    z-index: 1005;
+    top: 0px;
+    padding-top: 24px;
+    padding: 12px 12px 12px 16px;
+    align-items: flex-start;
+    border-radius: 20px;
+    border: 1px solid var(--gray-500, #737373);
+    background: hsl(0, 0%, 3%);
+  }
 }
 
+/* Mobile */
 @media (max-width: 750px) {
+  .navbarSticky {
+    position: sticky;
+    z-index: 1005;
+    top: 0px;
+    padding-top: 24px;
+    padding: 12px 12px 12px 16px;
+    align-items: flex-start;
+    border-radius: 20px;
+    border: 1px solid var(--gray-500, #737373);
+    background: hsl(0, 0%, 3%);
+  }
+
   .sectionTitle {
     font-size: 30px;
     line-height: 38px;
@@ -761,12 +892,15 @@ body {
 
   .navContainer {
     padding-top: 100px;
-    position: fixed; /* Make the menu overlay the entire screen */
+    position: fixed;
+    /* Make the menu overlay the entire screen */
     top: 72px;
     left: 0;
-    width: 100vw; /* Full width */
+    width: 100vw;
+    /* Full width */
     background-color: rgba(0, 0, 0, 0.75);
-    z-index: 1000; /* Ensure it's on top */
+    z-index: 1000;
+    /* Ensure it's on top */
     padding: 24px 24px 24px 24px;
     display: flex;
     flex-direction: column;
@@ -870,6 +1004,7 @@ body {
   }
 }
 
+
 @media (min-width: 1440px) {
   .networkEssentialCards {
     display: flex;
@@ -893,6 +1028,7 @@ body {
 
 @media(min-width: 1860px) {
   .networkEssentialCards {
-    justify-content: center;  /*cards fit to container */
+    justify-content: center;
+    /*cards fit to container */
   }
 }

@@ -77,7 +77,7 @@ interface BlockchainProviderProps {
 
 export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children }) => {
   const [walletProvider, setWalletProvider] = useState<ethers.providers.Web3Provider>()
-  const [selectedNetworkType, setSelectedNetworkType] = useState<NetworkType>(undefined)
+  const [selectedNetworkType, setSelectedNetworkType] = useState<NetworkType>('Testnet')
   const [selectedLowNetwork, _setSelectedLowNetwork] = useState<NetworkInterface>(
     selectedNetworkType === 'Testnet' ? DEFAULT_LOW_NETWORK : DEFAULT_LOW_MAINNET_NETWORK
   )
@@ -119,15 +119,6 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   }
 
   useEffect(() => {
-    const _selectedNetworkType = localStorage.getItem('selectedNetworkType')
-    if (_selectedNetworkType) {
-      setSelectedNetworkType(_selectedNetworkType as NetworkType)
-    } else {
-      setSelectedNetworkType('Testnet')
-    }
-  }, [])
-
-  useEffect(() => {
     const ethereum = window.ethereum
     if (ethereum) {
       const provider = new ethers.providers.Web3Provider(ethereum)
@@ -152,6 +143,16 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     handleAccountsChanged()
   }, [walletProvider])
 
+  // useEffect(() => {
+  //   const _selectedNetworkType = localStorage.getItem('selectedNetworkType')
+  //   if (_selectedNetworkType === 'Testnet' || _selectedNetworkType === 'Mainnet') {
+  //     console.log('Selecting ', _selectedNetworkType)
+  //     setSelectedNetworkType(_selectedNetworkType as NetworkType)
+  //   } else {
+  //     setSelectedNetworkType('Mainnet')
+  //   }
+  // }, [])
+
   useEffect(() => {
     if (selectedNetworkType) {
       localStorage.setItem('selectedNetworkType', selectedNetworkType)
@@ -162,12 +163,6 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     } else {
       setSelectedLowNetwork(DEFAULT_LOW_MAINNET_NETWORK)
       setSelectedHighNetwork(DEFAULT_HIGH_MAINNET_NETWORK)
-    }
-  }, [selectedNetworkType])
-
-  useEffect(() => {
-    if (selectedNetworkType) {
-      localStorage.setItem('selectedNetworkType', selectedNetworkType)
     }
   }, [selectedNetworkType])
 

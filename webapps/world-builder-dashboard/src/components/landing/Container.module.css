@@ -19,9 +19,9 @@
 .progressBar {
     position: absolute;
     right: 34px;
-    top: 102px;
+    top: 118px;
     z-index: 1001;
-    height: calc(100% - 102px - 16px - 20px);
+    height: calc(100% - 118px - 16px - 20px);
 }
 
 

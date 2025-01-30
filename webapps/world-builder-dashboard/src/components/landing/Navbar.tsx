@@ -1,6 +1,6 @@
 // Navbar.tsx
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import styles from './Landing.module.css'
 import IconGame7 from '@/assets/IconGame7'
 import IconGame7Logo from '@/assets/IconGame7Logo'
@@ -12,6 +12,8 @@ interface NavbarProps {
   setIsNavbarOpen: React.Dispatch<React.SetStateAction<boolean>>
   startBuilding: () => void
   navigateLink: (item: { name: string; link: string }) => void
+  isContainer: boolean
+  isSticky: boolean
 }
 
 const NAVBAR_ITEMS = [
@@ -25,13 +27,14 @@ const NAVBAR_ITEMS = [
   }
 ]
 
-const Navbar: React.FC<NavbarProps> = ({ navbarOpen, smallView, setIsNavbarOpen, startBuilding, navigateLink }) => {
+const Navbar: React.FC<NavbarProps> = ({ navbarOpen, smallView, setIsNavbarOpen, startBuilding, navigateLink, isContainer, isSticky }) => {
   const navigate = useNavigate()
-
+  const location = useLocation()
   return (
     <>
-      {/* Main Navbar */}
-      <div className={styles.navbarContainer}>
+      <div className={`${styles.navbarContainer} 
+        ${isContainer ? (isSticky ? styles.navbarStickyContainer : '') : (isSticky ? '' : styles.navbarStickyContainer)}`}
+      >
         <div className={styles.navbar}>
           <div className={styles.logoWrapper} onClick={() => navigate('/')}>
             <IconGame7Logo />
@@ -43,7 +46,7 @@ const Navbar: React.FC<NavbarProps> = ({ navbarOpen, smallView, setIsNavbarOpen,
                 {NAVBAR_ITEMS.map((item, index) => (
                   <div
                     key={index}
-                    className={item.name === 'Home' ? styles.navbarItemHome : styles.navbarItem}
+                    className={((location.pathname === '/' || location.pathname === '') && item.name === 'Home') ? styles.navbarItemHome : styles.navbarItem}
                     onClick={() => {
                       navigateLink(item)
                     }}

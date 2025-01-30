@@ -1,7 +1,9 @@
-import { getHighNetworks, getLowNetworks, HIGH_NETWORKS, LOW_NETWORKS } from '../../constants'
+import { getHighNetworks, getLowNetworks, HIGH_NETWORKS, LOW_NETWORKS, USDC, USDC_MAINNET } from '../../constants'
 import { ethers } from 'ethers'
-import { NetworkType } from '@/contexts/BlockchainContext'
+import { NetworkInterface, NetworkType } from '@/contexts/BlockchainContext'
 import { providers } from 'ethers'
+import { TransactionRecord } from './bridge/depositERC20ArbitrumSDK'
+import { getTokensForNetwork } from './tokens'
 
 export const convertToBigNumber = (numberString: string, precision = 18) => {
   const [integerPart, decimalPart] = numberString.split('.')
@@ -48,7 +50,6 @@ export const formatBigNumber = (bigNumber: ethers.BigNumber, lengthLimit = 25, u
     return formattedString
   }
 
-  // For scientific notation, we need to account for the actual decimal places
   const bigNumberString = bigNumber.toString()
   const firstDigit = bigNumberString[0]
   const remainingDigits = bigNumberString.slice(1, 3)
@@ -92,4 +93,67 @@ export const fetchTransactionTimestamp = async (completionTxHash: string, rpcUrl
 export const getCachedTransactions = (connectedAccount: string, selectedNetworkType: NetworkType) => {
   const transactionsString = localStorage.getItem(`bridge-${connectedAccount}-transactions-${selectedNetworkType}`)
   return transactionsString ? JSON.parse(transactionsString) : []
+}
+
+export const saveCachedTransactions = (connectedAccount: string, selectedNetworkType: NetworkType, transactions: TransactionRecord[]) => {
+  localStorage.setItem(
+    `bridge-${connectedAccount}-transactions-${selectedNetworkType}`,
+    JSON.stringify(transactions)
+  )
+}
+
+export const getAmount = async (transactionHash: string, rpcUrl: string) => {
+  const provider = new providers.JsonRpcProvider(rpcUrl)
+  try {
+    // Retrieve the transaction details
+    const transaction = await provider.getTransaction(transactionHash)
+
+    if (!transaction) {
+      console.log('Transaction not found')
+      return null
+    }
+
+    const amount = ethers.utils.formatEther(transaction.value)
+
+    return amount
+  } catch (error) {
+    console.error('Error retrieving transaction:', error)
+    return null
+  }
+}
+
+export const getTokenSymbol = (
+  tx: TransactionRecord,
+  connectedAccount: string
+): string => {
+  let chainId = tx.type === 'DEPOSIT' ? tx.lowNetworkChainId : tx.highNetworkChainId
+  let tokens = getTokensForNetwork(chainId, connectedAccount)
+  let token = tokens.find(t => t.address.toLowerCase() === tx?.tokenAddress?.toLowerCase())
+  if (token === undefined) {
+    let chainId = tx.type === 'DEPOSIT' ? tx.highNetworkChainId : tx.lowNetworkChainId
+    let tokens = getTokensForNetwork(chainId, connectedAccount)
+    token = tokens.find(t => t.address.toLowerCase() === tx?.destinationTokenAddress?.toLowerCase())
+  }
+  return token?.symbol || tx?.symbol || 'N/A'
+}
+
+export const isUSDC = (tokenAddress: string): boolean => {
+  const normalizedTokenAddress = tokenAddress.toLowerCase()
+  const addressToChainId = Object.fromEntries([
+    ...Object.entries(USDC).map(([chainId, address]) => [address.toLowerCase(), chainId]),
+    ...Object.entries(USDC_MAINNET).map(([chainId, address]) => [address.toLowerCase(), chainId])
+  ])
+
+
+  return !!addressToChainId[normalizedTokenAddress]
+}
+
+export const returnSymbol = (direction: 'DEPOSIT' | 'WITHDRAW', selectedHighChain: NetworkInterface, selectedLowChain: NetworkInterface, tokenSymbol: string) => {
+  if (tokenSymbol.startsWith('USDC')) {
+    if (direction === 'DEPOSIT' && (selectedHighChain.chainId === 13746 || selectedHighChain.chainId === 2187))
+      return 'USDC.e'
+    else if (direction === 'WITHDRAW' && (selectedLowChain.chainId === 421614 || selectedLowChain.chainId === 42161))
+      return 'USDC'
+  }
+  return tokenSymbol
 }

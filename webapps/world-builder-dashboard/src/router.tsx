@@ -7,11 +7,29 @@ import FaucetPage from '@/pages/FaucetPage/FaucetPage'
 //Pages
 import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage'
 import LandingPage from './pages/LandingPage/LandingPage'
+import LegalPage from './pages/LegalPage/LegalPage'
+import { LEGAL } from './legal'
+import RelayPage from './pages/RelayPage/RelayPage'
 
 const router = createBrowserRouter([
   {
     element: <LandingPage />,
     path: '/',
+    errorElement: <ErrorBoundary />
+  },
+  {
+    element: <LegalPage legalContent={LEGAL.terms}/>,
+    path: '/terms',
+    errorElement: <ErrorBoundary />
+  },
+  {
+    element: <LegalPage legalContent={LEGAL.privacy}/>,
+    path: '/privacy',
+    errorElement: <ErrorBoundary />
+  },
+  {
+    element: <LegalPage legalContent={LEGAL.cookie}/>,
+    path: '/cookie',
     errorElement: <ErrorBoundary />
   },
   {
@@ -29,6 +47,15 @@ const router = createBrowserRouter([
       {
         path: '/faucet/*',
         element: <FaucetPage />
+      }
+    ]
+  },
+  {
+    element: <MainLayout />,
+    children: [
+      {
+        path: '/relay/*',
+        element: <RelayPage />
       }
     ]
   },

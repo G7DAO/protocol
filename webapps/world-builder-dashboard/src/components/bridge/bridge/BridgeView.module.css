@@ -260,10 +260,6 @@
   /* 150% */
 }
 
-.manualGasMessageTooltip {
-  background: #B54708;
-}
-
 @media (max-width: 1199px) {
   .container {
     width: 100%;
@@ -285,4 +281,34 @@
   .arrowIcon {
     display: none;
   }
+}
+
+.customTooltip {
+  max-width: 200px;
+  padding: 10px;
+  border-radius: 8px;
+  white-space: normal;
+  overflow: hidden;
+  text-align: center;
+}
+
+.relayLink {
+  color: #B9B9B9;
+  font-family: Inter;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.relayLink:hover {
+  cursor: pointer;
+  color: #fff;
+}
+
+.mainContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
 }
