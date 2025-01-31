@@ -15,6 +15,7 @@ import (
 
 	"github.com/G7DAO/protocol/bindings/ERC20"
 	"github.com/G7DAO/protocol/bindings/ERC20Inbox"
+	"github.com/G7DAO/protocol/bindings/ERC20OrbitBridger"
 	"github.com/G7DAO/protocol/bindings/Metronome"
 	"github.com/G7DAO/protocol/bindings/MockERC1155"
 	"github.com/G7DAO/protocol/bindings/MockERC20"
@@ -93,7 +94,9 @@ func CreateRootCommand() *cobra.Command {
 
 	usdcOrbitBridgerCmd := USDCOrbitBridger.CreateUSDCOrbitBridgerCommand()
 
-	rootCmd.AddCommand(completionCmd, versionCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd, accountsCmd, wrappedNativeTokenCmd, stakerCmd, mockCmd, positionMetadataCmd, tokenSenderCmd, metronomeCmd, terminusCMD, usdcOrbitBridgerCmd)
+	erc20OrbitBridgerCmd := ERC20OrbitBridger.CreateERC20OrbitBridgerCommand()
+
+	rootCmd.AddCommand(completionCmd, versionCmd, tokenCmd, arbitrumL1OrbitCustomGatewayCmd, arbitrumL2CustomGatewayCmd, arbitrumUpgradeExecutorCmd, arbitrumL1OrbitGatewayRouterCmd, arbSysCmd, erc20InboxCmd, bridgeCmd, faucetCmd, accountsCmd, wrappedNativeTokenCmd, stakerCmd, mockCmd, positionMetadataCmd, tokenSenderCmd, metronomeCmd, terminusCMD, usdcOrbitBridgerCmd, erc20OrbitBridgerCmd)
 
 	// By default, cobra Command objects write to stderr. We have to forcibly set them to output to
 	// stdout.
