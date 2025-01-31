@@ -146,17 +146,14 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   useEffect(() => {
     const _selectedNetworkType = localStorage.getItem('selectedNetworkType')
     if (_selectedNetworkType === 'Testnet' || _selectedNetworkType === 'Mainnet') {
-      console.log('Selecting ', _selectedNetworkType)
       setSelectedNetworkType(_selectedNetworkType as NetworkType)
     } else {
-      console.log('Setting default to Mainnet')
       setSelectedNetworkType('Mainnet')
     }
   }, [])
 
   useEffect(() => {
     if (selectedNetworkType) {
-      console.log(selectedNetworkType)
       localStorage.setItem('selectedNetworkType', selectedNetworkType)
     }
     if (selectedNetworkType === 'Testnet') {

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useMessages } from '@/hooks/useL2ToL1MessageStatus'
 import { useBridgeAPI } from '@/hooks/useBridgeAPI'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
-import { getTokenSymbol, isUSDC } from '@/utils/web3utils'
+import { isUSDC } from '@/utils/web3utils'
 import { ethers } from 'ethers'
 
 const mergeTransactions = (apiData: TransactionRecord[], localData: TransactionRecord[]): TransactionRecord[] => {
