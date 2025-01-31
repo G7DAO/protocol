@@ -1,5 +1,5 @@
 # Staker
-[Git Source](https://github.com/G7DAO/protocol/blob/0d286772d26e7f355ea5f6d3e0323d2491e1ebca/contracts/staking/Staker.sol)
+[Git Source](https://github.com/G7DAO/protocol/blob/874893f46ced0a2b968b4e0f586d9ae4b81435ce/contracts/staking/Staker.sol)
 
 **Inherits:**
 ERC721Enumerable, ReentrancyGuard
@@ -168,7 +168,8 @@ function createPool(
     uint256 tokenID,
     bool transferable,
     uint256 lockupSeconds,
-    uint256 cooldownSeconds
+    uint256 cooldownSeconds,
+    address administrator
 ) external;
 ```
 
@@ -196,7 +197,7 @@ function updatePoolConfiguration(
 |----|----|-----------|
 |`poolID`|`uint256`|The ID of the staking pool to update configuration of.|
 |`changeTransferability`|`bool`|Specifies whether the current call is updating the transferability of the pool or not. If this is false, then the value of the `transferable` argument will be ignored.|
-|`transferable`|`bool`|Whether or not the pool should be transferable. This argument is only applied if `changeTransferabiliy` is `true`.|
+|`transferable`|`bool`|Whether or not the pool should be transferable. This argument is only applied if `changeTransferability` is `true`.|
 |`changeLockup`|`bool`|Specifies whether the current call is updating the `lockupSeconds` configuration of the pool or not. If this is false, then the value of the `lockupSeconds` argument will be ignored.|
 |`lockupSeconds`|`uint256`|The new value for the `lockupSeconds` member of the pool.  This argument is only applied if `changeLockup` is `true`.|
 |`changeCooldown`|`bool`|Specifies whether the current call is updating the `cooldownSeconds` configuration of the pool or not. If this is false, then the value of the `cooldownSeconds` argument will be ignored.|
@@ -220,7 +221,11 @@ Allows anyone to open a position under a staking pool for native tokens.
 
 
 ```solidity
-function stakeNative(uint256 poolID) external payable nonReentrant returns (uint256 positionTokenID);
+function stakeNative(address positionHolder, uint256 poolID)
+    external
+    payable
+    nonReentrant
+    returns (uint256 positionTokenID);
 ```
 
 ### stakeERC20
@@ -236,7 +241,10 @@ ERC20 contract.*
 
 
 ```solidity
-function stakeERC20(uint256 poolID, uint256 amount) external nonReentrant returns (uint256 positionTokenID);
+function stakeERC20(address positionHolder, uint256 poolID, uint256 amount)
+    external
+    nonReentrant
+    returns (uint256 positionTokenID);
 ```
 
 ### stakeERC721
@@ -251,7 +259,10 @@ or `setApprovalForAll` methods on the ERC721 contract.*
 
 
 ```solidity
-function stakeERC721(uint256 poolID, uint256 tokenID) external nonReentrant returns (uint256 positionTokenID);
+function stakeERC721(address positionHolder, uint256 poolID, uint256 tokenID)
+    external
+    nonReentrant
+    returns (uint256 positionTokenID);
 ```
 
 ### stakeERC1155
@@ -264,7 +275,10 @@ the `setApprovalForAll` method on the ERC1155 contract.*
 
 
 ```solidity
-function stakeERC1155(uint256 poolID, uint256 amount) external nonReentrant returns (uint256 positionTokenID);
+function stakeERC1155(address positionHolder, uint256 poolID, uint256 amount)
+    external
+    nonReentrant
+    returns (uint256 positionTokenID);
 ```
 
 ### initiateUnstake
