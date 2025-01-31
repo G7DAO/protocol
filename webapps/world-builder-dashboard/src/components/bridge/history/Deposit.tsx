@@ -33,7 +33,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
   const [amountValue, setAmountValue] = useState<string>('')
   const rpc = getNetworks(selectedNetworkType)?.find(n => n.chainId === deposit.highNetworkChainId)?.rpcs[0]
   const symbol = getTokenSymbol(deposit, connectedAccount ?? '')
-  
+
   useEffect(() => {
     const fetchAmount = async () => {
       const value = await getAmount(deposit.highNetworkHash ?? '', rpc ?? '')
@@ -172,7 +172,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                       </div>
                       <div className={styles.gridItemInitiate}>{timeAgo(deposit?.lowNetworkTimestamp)}</div>
                       <div className={styles.gridItemInitiate}>
-                        {displayAmount} {symbol ?? deposit.symbol }
+                        {displayAmount} {symbol ?? deposit.symbol}
                       </div>
                       <div className={styles.gridItemInitiate}>{depositInfo.from ?? ''}</div>
                       <div className={styles.gridItemInitiate}>{depositInfo.to ?? ''}</div>
@@ -252,11 +252,17 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                             transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ? (
                             <div className={styles.settled}>
                               Completed
-                              <IconLinkExternal02 stroke='#fff' />
+                              <IconLinkExternal02 stroke="#fff" />
                             </div>
-                          ) : transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD || transferStatus?.status === BridgeTransferStatus.CCTP_COMPLETE ? (
+                          ) : transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ||
+                            transferStatus?.status === BridgeTransferStatus.CCTP_COMPLETE ? (
                             <div className={styles.claimable}>
                               Claimable
+                              <IconLinkExternal02 className={styles.arrowUp} />
+                            </div>
+                          ) : transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_CREATION_FAILED ? (
+                            <div className={styles.failed}>
+                              Failed
                               <IconLinkExternal02 className={styles.arrowUp} />
                             </div>
                           ) : (

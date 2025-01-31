@@ -47,6 +47,8 @@ export const useBridgeTransfer = () => {
         try {
           return await fn()
         } catch (error: any) {
+          if (error.message === "Can't get Child Transaction receipt")
+            return { status: BridgeTransferStatus.DEPOSIT_ERC20_CREATION_FAILED }
           const isNetworkError = error.message?.includes('net::ERR_FAILED') ||
             error.message?.includes('Network Error') ||
             error.code === 'ECONNABORTED' ||

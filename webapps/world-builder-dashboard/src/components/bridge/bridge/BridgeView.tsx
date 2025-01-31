@@ -298,6 +298,7 @@ const BridgeView = ({
           balance={tokenInformation?.tokenBalance}
           nativeBalance={nativeTokenInformation?.tokenBalance}
           gasFees={[estimatedFee.data?.parentFee ?? '', estimatedFee.data?.childFee ?? '']}
+          isFetchingGasFee={estimatedFee.isFetching}
           refetchToken={refetchToken}
           refetchNativeToken={refetchNativeToken}
         />

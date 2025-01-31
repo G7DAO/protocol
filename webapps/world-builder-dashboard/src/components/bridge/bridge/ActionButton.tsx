@@ -28,6 +28,7 @@ interface ActionButtonProps {
   balance?: string
   nativeBalance?: string
   gasFees?: string[]
+  isFetchingGasFee?: boolean
   refetchToken?: any
   refetchNativeToken?: any
 }
@@ -44,6 +45,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   balance,
   nativeBalance,
   gasFees,
+  isFetchingGasFee,
   refetchToken,
   refetchNativeToken
 
@@ -116,6 +118,10 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 
     if (allowances?.isLoading) {
       return 'Checking allowances...'
+    }
+
+    if (isFetchingGasFee) {
+      return 'Estimating fee...'
     }
 
     // if (!allowancesVerified)
@@ -285,7 +291,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           (isDisabled ||
             Number(amount) < 0 ||
             ((!L2L3message?.destination || !L2L3message.data) && Number(amount) === 0)) ||
-          allowances?.isLoading
+          allowances?.isLoading || isFetchingGasFee
         }
       >
         <div className={isConnecting || transfer.isPending ? styles.buttonLabelLoading : styles.buttonLabel}>
