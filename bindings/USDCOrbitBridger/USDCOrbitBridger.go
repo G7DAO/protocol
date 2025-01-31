@@ -56,8 +56,8 @@ var (
 )
 
 var USDCOrbitBridgerMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_standardGateway\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_router\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_usdc\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_customNativeToken\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"DEFAULT_GAS_LIMIT\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"DEFAULT_SUBMISSION_FEE_PERCENT_INCREASE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_receiver\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"bridgeUSDC\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"_calldata\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"_baseFee\",\"type\":\"uint256\"}],\"name\":\"calculateRetryableSubmissionFee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"customNativeToken\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"router\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"standardGateway\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"usdc\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
-	Bin: "0x608060405234801561001057600080fd5b50604051610b7f380380610b7f83398101604081905261002f9161009e565b600080546001600160a01b039586166001600160a01b03199182161790915560018054948616948216949094179093556003805492851692841692909217909155600280549190931691161790556100f2565b80516001600160a01b038116811461009957600080fd5b919050565b600080600080608085870312156100b457600080fd5b6100bd85610082565b93506100cb60208601610082565b92506100d960408601610082565b91506100e760608601610082565b905092959194509250565b610a7e806101016000396000f3fe608060405234801561001057600080fd5b50600436106100885760003560e01c80638a6189ae1161005b5780638a6189ae14610123578063a65fd60014610136578063d6be695a14610156578063f887ea401461016057600080fd5b806313b1a7fe1461008d5780632629955e146100a25780633e413bee146100be57806377775b8914610103575b600080fd5b6100a061009b3660046106c5565b610180565b005b6100ab61012c81565b6040519081526020015b60405180910390f35b6003546100de9073ffffffffffffffffffffffffffffffffffffffff1681565b60405173ffffffffffffffffffffffffffffffffffffffff90911681526020016100b5565b6000546100de9073ffffffffffffffffffffffffffffffffffffffff1681565b6100ab6101313660046107ce565b610668565b6002546100de9073ffffffffffffffffffffffffffffffffffffffff1681565b6100ab620493e081565b6001546100de9073ffffffffffffffffffffffffffffffffffffffff1681565b6003546040517f23b872dd0000000000000000000000000000000000000000000000000000000081523360048201523060248201526044810183905273ffffffffffffffffffffffffffffffffffffffff909116906323b872dd906064016020604051808303816000875af11580156101fd573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102219190610850565b506003546000546040517f095ea7b300000000000000000000000000000000000000000000000000000000815273ffffffffffffffffffffffffffffffffffffffff91821660048201526024810184905291169063095ea7b3906044016020604051808303816000875af115801561029d573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102c19190610850565b506001546003546040517fa0c76a9600000000000000000000000000000000000000000000000000000000815273ffffffffffffffffffffffffffffffffffffffff918216600482015230602482015284821660448201526064810184905260a06084820152600060a4820181905292919091169063a0c76a969060c401600060405180830381865afa15801561035c573d6000803e3d6000fd5b505050506040513d6000823e601f3d9081017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe01682016040526103a2919081019061089d565b90504860006103b18383610668565b905060006103c283620493e0610943565b905060006103d0828461095a565b9050600083826040516020016103ff929190918252606060208301819052600090830152604082015260800190565b604080517fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe081840301815291905260025490915073ffffffffffffffffffffffffffffffffffffffff1615610591576002546040517f23b872dd0000000000000000000000000000000000000000000000000000000081523360048201523060248201526044810184905273ffffffffffffffffffffffffffffffffffffffff909116906323b872dd906064016020604051808303816000875af11580156104cb573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906104ef9190610850565b506002546000546040517f095ea7b300000000000000000000000000000000000000000000000000000000815273ffffffffffffffffffffffffffffffffffffffff91821660048201526024810185905291169063095ea7b3906044016020604051808303816000875af115801561056b573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061058f9190610850565b505b6001546003546040517fd2ce7d6500000000000000000000000000000000000000000000000000000000815273ffffffffffffffffffffffffffffffffffffffff9283169263d2ce7d65926105f8929116908c908c90620493e0908c90899060040161096d565b6000604051808303816000875af1158015610617573d6000803e3d6000fd5b505050506040513d6000823e601f3d9081017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe016820160405261065d919081019061089d565b505050505050505050565b600080835160066106799190610943565b6106859061057861095a565b905060006106938483610943565b9050600060646106a561012c8261095a565b6106af9084610943565b6106b99190610a0d565b93505050505b92915050565b600080604083850312156106d857600080fd5b823573ffffffffffffffffffffffffffffffffffffffff811681146106fc57600080fd5b946020939093013593505050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b604051601f82017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe016810167ffffffffffffffff811182821017156107805761078061070a565b604052919050565b600067ffffffffffffffff8211156107a2576107a261070a565b50601f017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe01660200190565b600080604083850312156107e157600080fd5b823567ffffffffffffffff8111156107f857600080fd5b8301601f8101851361080957600080fd5b803561081c61081782610788565b610739565b81815286602083850101111561083157600080fd5b8160208401602083013760006020928201830152969401359450505050565b60006020828403121561086257600080fd5b8151801515811461087257600080fd5b9392505050565b60005b8381101561089457818101518382015260200161087c565b50506000910152565b6000602082840312156108af57600080fd5b815167ffffffffffffffff8111156108c657600080fd5b8201601f810184136108d757600080fd5b80516108e561081782610788565b8181528560208385010111156108fa57600080fd5b61090b826020830160208601610879565b95945050505050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b80820281158282048414176106bf576106bf610914565b808201808211156106bf576106bf610914565b73ffffffffffffffffffffffffffffffffffffffff8716815273ffffffffffffffffffffffffffffffffffffffff8616602082015284604082015283606082015282608082015260c060a0820152600082518060c08401526109d68160e0850160208701610879565b601f017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0169190910160e001979650505050505050565b600082610a43577f4e487b7100000000000000000000000000000000000000000000000000000000600052601260045260246000fd5b50049056fea2646970667358221220bc56082b4af079e09f10ae2f8093f0bc4296f99790d87d2696791cc04f5c5a6764736f6c634300081c0033",
+	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_gateway\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_router\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_usdc\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_customNativeToken\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"DEFAULT_GAS_LIMIT\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"DEFAULT_SUBMISSION_FEE_PERCENT_INCREASE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_receiver\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"bridgeUSDC\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"_calldata\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"_baseFee\",\"type\":\"uint256\"}],\"name\":\"calculateRetryableSubmissionFee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"customNativeToken\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"gateway\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"router\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"usdc\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
+	Bin: "0x608060405234801561001057600080fd5b50604051610b7f380380610b7f83398101604081905261002f9161009e565b600080546001600160a01b039586166001600160a01b03199182161790915560018054948616948216949094179093556003805492851692841692909217909155600280549190931691161790556100f2565b80516001600160a01b038116811461009957600080fd5b919050565b600080600080608085870312156100b457600080fd5b6100bd85610082565b93506100cb60208601610082565b92506100d960408601610082565b91506100e760608601610082565b905092959194509250565b610a7e806101016000396000f3fe608060405234801561001057600080fd5b50600436106100885760003560e01c80638a6189ae1161005b5780638a6189ae14610123578063a65fd60014610136578063d6be695a14610156578063f887ea401461016057600080fd5b8063116191b61461008d57806313b1a7fe146100d75780632629955e146100ec5780633e413bee14610103575b600080fd5b6000546100ad9073ffffffffffffffffffffffffffffffffffffffff1681565b60405173ffffffffffffffffffffffffffffffffffffffff90911681526020015b60405180910390f35b6100ea6100e53660046106c5565b610180565b005b6100f561012c81565b6040519081526020016100ce565b6003546100ad9073ffffffffffffffffffffffffffffffffffffffff1681565b6100f56101313660046107ce565b610668565b6002546100ad9073ffffffffffffffffffffffffffffffffffffffff1681565b6100f5620493e081565b6001546100ad9073ffffffffffffffffffffffffffffffffffffffff1681565b6003546040517f23b872dd0000000000000000000000000000000000000000000000000000000081523360048201523060248201526044810183905273ffffffffffffffffffffffffffffffffffffffff909116906323b872dd906064016020604051808303816000875af11580156101fd573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102219190610850565b506003546000546040517f095ea7b300000000000000000000000000000000000000000000000000000000815273ffffffffffffffffffffffffffffffffffffffff91821660048201526024810184905291169063095ea7b3906044016020604051808303816000875af115801561029d573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102c19190610850565b506001546003546040517fa0c76a9600000000000000000000000000000000000000000000000000000000815273ffffffffffffffffffffffffffffffffffffffff918216600482015230602482015284821660448201526064810184905260a06084820152600060a4820181905292919091169063a0c76a969060c401600060405180830381865afa15801561035c573d6000803e3d6000fd5b505050506040513d6000823e601f3d9081017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe01682016040526103a2919081019061089d565b90504860006103b18383610668565b905060006103c283620493e0610943565b905060006103d0828461095a565b9050600083826040516020016103ff929190918252606060208301819052600090830152604082015260800190565b604080517fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe081840301815291905260025490915073ffffffffffffffffffffffffffffffffffffffff1615610591576002546040517f23b872dd0000000000000000000000000000000000000000000000000000000081523360048201523060248201526044810184905273ffffffffffffffffffffffffffffffffffffffff909116906323b872dd906064016020604051808303816000875af11580156104cb573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906104ef9190610850565b506002546000546040517f095ea7b300000000000000000000000000000000000000000000000000000000815273ffffffffffffffffffffffffffffffffffffffff91821660048201526024810185905291169063095ea7b3906044016020604051808303816000875af115801561056b573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061058f9190610850565b505b6001546003546040517fd2ce7d6500000000000000000000000000000000000000000000000000000000815273ffffffffffffffffffffffffffffffffffffffff9283169263d2ce7d65926105f8929116908c908c90620493e0908c90899060040161096d565b6000604051808303816000875af1158015610617573d6000803e3d6000fd5b505050506040513d6000823e601f3d9081017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe016820160405261065d919081019061089d565b505050505050505050565b600080835160066106799190610943565b6106859061057861095a565b905060006106938483610943565b9050600060646106a561012c8261095a565b6106af9084610943565b6106b99190610a0d565b93505050505b92915050565b600080604083850312156106d857600080fd5b823573ffffffffffffffffffffffffffffffffffffffff811681146106fc57600080fd5b946020939093013593505050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b604051601f82017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe016810167ffffffffffffffff811182821017156107805761078061070a565b604052919050565b600067ffffffffffffffff8211156107a2576107a261070a565b50601f017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe01660200190565b600080604083850312156107e157600080fd5b823567ffffffffffffffff8111156107f857600080fd5b8301601f8101851361080957600080fd5b803561081c61081782610788565b610739565b81815286602083850101111561083157600080fd5b8160208401602083013760006020928201830152969401359450505050565b60006020828403121561086257600080fd5b8151801515811461087257600080fd5b9392505050565b60005b8381101561089457818101518382015260200161087c565b50506000910152565b6000602082840312156108af57600080fd5b815167ffffffffffffffff8111156108c657600080fd5b8201601f810184136108d757600080fd5b80516108e561081782610788565b8181528560208385010111156108fa57600080fd5b61090b826020830160208601610879565b95945050505050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b80820281158282048414176106bf576106bf610914565b808201808211156106bf576106bf610914565b73ffffffffffffffffffffffffffffffffffffffff8716815273ffffffffffffffffffffffffffffffffffffffff8616602082015284604082015283606082015282608082015260c060a0820152600082518060c08401526109d68160e0850160208701610879565b601f017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0169190910160e001979650505050505050565b600082610a43577f4e487b7100000000000000000000000000000000000000000000000000000000600052601260045260246000fd5b50049056fea264697066735822122013996fc195ef0d427bbc3d0e7bf470d231c79dba9f170f9b73be4b37c0fe720364736f6c634300081c0033",
 }
 
 // USDCOrbitBridgerABI is the input ABI used to generate the binding from.
@@ -69,7 +69,7 @@ var USDCOrbitBridgerABI = USDCOrbitBridgerMetaData.ABI
 var USDCOrbitBridgerBin = USDCOrbitBridgerMetaData.Bin
 
 // DeployUSDCOrbitBridger deploys a new Ethereum contract, binding an instance of USDCOrbitBridger to it.
-func DeployUSDCOrbitBridger(auth *bind.TransactOpts, backend bind.ContractBackend, _standardGateway common.Address, _router common.Address, _usdc common.Address, _customNativeToken common.Address) (common.Address, *types.Transaction, *USDCOrbitBridger, error) {
+func DeployUSDCOrbitBridger(auth *bind.TransactOpts, backend bind.ContractBackend, _gateway common.Address, _router common.Address, _usdc common.Address, _customNativeToken common.Address) (common.Address, *types.Transaction, *USDCOrbitBridger, error) {
 	parsed, err := USDCOrbitBridgerMetaData.GetAbi()
 	if err != nil {
 		return common.Address{}, nil, nil, err
@@ -78,7 +78,7 @@ func DeployUSDCOrbitBridger(auth *bind.TransactOpts, backend bind.ContractBacken
 		return common.Address{}, nil, nil, errors.New("GetABI returned nil")
 	}
 
-	address, tx, contract, err := bind.DeployContract(auth, *parsed, common.FromHex(USDCOrbitBridgerBin), backend, _standardGateway, _router, _usdc, _customNativeToken)
+	address, tx, contract, err := bind.DeployContract(auth, *parsed, common.FromHex(USDCOrbitBridgerBin), backend, _gateway, _router, _usdc, _customNativeToken)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
@@ -351,6 +351,37 @@ func (_USDCOrbitBridger *USDCOrbitBridgerCallerSession) CustomNativeToken() (com
 	return _USDCOrbitBridger.Contract.CustomNativeToken(&_USDCOrbitBridger.CallOpts)
 }
 
+// Gateway is a free data retrieval call binding the contract method 0x116191b6.
+//
+// Solidity: function gateway() view returns(address)
+func (_USDCOrbitBridger *USDCOrbitBridgerCaller) Gateway(opts *bind.CallOpts) (common.Address, error) {
+	var out []interface{}
+	err := _USDCOrbitBridger.contract.Call(opts, &out, "gateway")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
+}
+
+// Gateway is a free data retrieval call binding the contract method 0x116191b6.
+//
+// Solidity: function gateway() view returns(address)
+func (_USDCOrbitBridger *USDCOrbitBridgerSession) Gateway() (common.Address, error) {
+	return _USDCOrbitBridger.Contract.Gateway(&_USDCOrbitBridger.CallOpts)
+}
+
+// Gateway is a free data retrieval call binding the contract method 0x116191b6.
+//
+// Solidity: function gateway() view returns(address)
+func (_USDCOrbitBridger *USDCOrbitBridgerCallerSession) Gateway() (common.Address, error) {
+	return _USDCOrbitBridger.Contract.Gateway(&_USDCOrbitBridger.CallOpts)
+}
+
 // Router is a free data retrieval call binding the contract method 0xf887ea40.
 //
 // Solidity: function router() view returns(address)
@@ -380,37 +411,6 @@ func (_USDCOrbitBridger *USDCOrbitBridgerSession) Router() (common.Address, erro
 // Solidity: function router() view returns(address)
 func (_USDCOrbitBridger *USDCOrbitBridgerCallerSession) Router() (common.Address, error) {
 	return _USDCOrbitBridger.Contract.Router(&_USDCOrbitBridger.CallOpts)
-}
-
-// StandardGateway is a free data retrieval call binding the contract method 0x77775b89.
-//
-// Solidity: function standardGateway() view returns(address)
-func (_USDCOrbitBridger *USDCOrbitBridgerCaller) StandardGateway(opts *bind.CallOpts) (common.Address, error) {
-	var out []interface{}
-	err := _USDCOrbitBridger.contract.Call(opts, &out, "standardGateway")
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
-}
-
-// StandardGateway is a free data retrieval call binding the contract method 0x77775b89.
-//
-// Solidity: function standardGateway() view returns(address)
-func (_USDCOrbitBridger *USDCOrbitBridgerSession) StandardGateway() (common.Address, error) {
-	return _USDCOrbitBridger.Contract.StandardGateway(&_USDCOrbitBridger.CallOpts)
-}
-
-// StandardGateway is a free data retrieval call binding the contract method 0x77775b89.
-//
-// Solidity: function standardGateway() view returns(address)
-func (_USDCOrbitBridger *USDCOrbitBridgerCallerSession) StandardGateway() (common.Address, error) {
-	return _USDCOrbitBridger.Contract.StandardGateway(&_USDCOrbitBridger.CallOpts)
 }
 
 // Usdc is a free data retrieval call binding the contract method 0x3e413bee.
@@ -477,8 +477,8 @@ func CreateUSDCOrbitBridgerDeploymentCommand() *cobra.Command {
 	var safeNonce *big.Int
 	var calldata bool
 
-	var standardGateway common.Address
-	var standardGatewayRaw string
+	var gateway common.Address
+	var gatewayRaw string
 	var router common.Address
 	var routerRaw string
 	var usdc common.Address
@@ -561,12 +561,12 @@ func CreateUSDCOrbitBridgerDeploymentCommand() *cobra.Command {
 				}
 			}
 
-			if standardGatewayRaw == "" {
-				return fmt.Errorf("--standard-gateway argument not specified")
-			} else if !common.IsHexAddress(standardGatewayRaw) {
-				return fmt.Errorf("--standard-gateway argument is not a valid Ethereum address")
+			if gatewayRaw == "" {
+				return fmt.Errorf("--gateway argument not specified")
+			} else if !common.IsHexAddress(gatewayRaw) {
+				return fmt.Errorf("--gateway argument is not a valid Ethereum address")
 			}
-			standardGateway = common.HexToAddress(standardGatewayRaw)
+			gateway = common.HexToAddress(gatewayRaw)
 
 			if routerRaw == "" {
 				return fmt.Errorf("--router argument not specified")
@@ -594,7 +594,7 @@ func CreateUSDCOrbitBridgerDeploymentCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Generate deploy bytecode with constructor arguments
 			deployCalldata, err := generateUSDCOrbitBridgerDeployBytecode(
-				standardGateway,
+				gateway,
 				router,
 				usdc,
 				customNativeToken,
@@ -666,7 +666,7 @@ func CreateUSDCOrbitBridgerDeploymentCommand() *cobra.Command {
 			address, deploymentTransaction, _, deploymentErr := DeployUSDCOrbitBridger(
 				transactionOpts,
 				client,
-				standardGateway,
+				gateway,
 				router,
 				usdc,
 				customNativeToken,
@@ -725,7 +725,7 @@ func CreateUSDCOrbitBridgerDeploymentCommand() *cobra.Command {
 	cmd.Flags().StringVar(&safeNonceRaw, "safe-nonce", "", "Safe nonce overrider for the transaction (optional)")
 	cmd.Flags().BoolVar(&calldata, "calldata", false, "Set this flag if want to return the calldata instead of sending the transaction")
 
-	cmd.Flags().StringVar(&standardGatewayRaw, "standard-gateway", "", "standard-gateway argument (common.Address)")
+	cmd.Flags().StringVar(&gatewayRaw, "gateway", "", "gateway argument (common.Address)")
 	cmd.Flags().StringVar(&routerRaw, "router", "", "router argument (common.Address)")
 	cmd.Flags().StringVar(&usdcRaw, "usdc", "", "usdc argument (common.Address)")
 	cmd.Flags().StringVar(&customNativeTokenRaw, "custom-native-token", "", "custom-native-token argument (common.Address)")
@@ -734,7 +734,7 @@ func CreateUSDCOrbitBridgerDeploymentCommand() *cobra.Command {
 }
 
 func generateUSDCOrbitBridgerDeployBytecode(
-	standardGateway common.Address,
+	gateway common.Address,
 	router common.Address,
 	usdc common.Address,
 	customNativeToken common.Address,
@@ -745,7 +745,7 @@ func generateUSDCOrbitBridgerDeployBytecode(
 	}
 
 	constructorArguments, err := abiPacked.Pack("",
-		standardGateway,
+		gateway,
 		router,
 		usdc,
 		customNativeToken,
@@ -1037,6 +1037,69 @@ func CreateDefaultsubmissionfeepercentincreaseCommand() *cobra.Command {
 
 	return cmd
 }
+func CreateGatewayCommand() *cobra.Command {
+	var contractAddressRaw, rpc string
+	var contractAddress common.Address
+	var timeout uint
+
+	var blockNumberRaw, fromAddressRaw string
+	var pending bool
+
+	var capture0 common.Address
+
+	cmd := &cobra.Command{
+		Use:   "gateway",
+		Short: "Call the Gateway view method on a USDCOrbitBridger contract",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if contractAddressRaw == "" {
+				return fmt.Errorf("--contract not specified")
+			} else if !common.IsHexAddress(contractAddressRaw) {
+				return fmt.Errorf("--contract is not a valid Ethereum address")
+			}
+			contractAddress = common.HexToAddress(contractAddressRaw)
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, clientErr := NewClient(rpc)
+			if clientErr != nil {
+				return clientErr
+			}
+
+			contract, contractErr := NewUSDCOrbitBridger(contractAddress, client)
+			if contractErr != nil {
+				return contractErr
+			}
+
+			callOpts := bind.CallOpts{}
+			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
+
+			session := USDCOrbitBridgerCallerSession{
+				Contract: &contract.USDCOrbitBridgerCaller,
+				CallOpts: callOpts,
+			}
+
+			var callErr error
+			capture0, callErr = session.Gateway()
+			if callErr != nil {
+				return callErr
+			}
+
+			cmd.Printf("0: %s\n", capture0.Hex())
+
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
+	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
+	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
+	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
+	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
+	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
+
+	return cmd
+}
 func CreateRouterCommand() *cobra.Command {
 	var contractAddressRaw, rpc string
 	var contractAddress common.Address
@@ -1081,69 +1144,6 @@ func CreateRouterCommand() *cobra.Command {
 
 			var callErr error
 			capture0, callErr = session.Router()
-			if callErr != nil {
-				return callErr
-			}
-
-			cmd.Printf("0: %s\n", capture0.Hex())
-
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVar(&rpc, "rpc", "", "URL of the JSONRPC API to use")
-	cmd.Flags().StringVar(&blockNumberRaw, "block", "", "Block number at which to call the view method")
-	cmd.Flags().BoolVar(&pending, "pending", false, "Set this flag if it's ok to call the view method against pending state")
-	cmd.Flags().UintVar(&timeout, "timeout", 60, "Timeout (in seconds) for interactions with the JSONRPC API")
-	cmd.Flags().StringVar(&contractAddressRaw, "contract", "", "Address of the contract to interact with")
-	cmd.Flags().StringVar(&fromAddressRaw, "from", "", "Optional address for caller of the view method")
-
-	return cmd
-}
-func CreateStandardGatewayCommand() *cobra.Command {
-	var contractAddressRaw, rpc string
-	var contractAddress common.Address
-	var timeout uint
-
-	var blockNumberRaw, fromAddressRaw string
-	var pending bool
-
-	var capture0 common.Address
-
-	cmd := &cobra.Command{
-		Use:   "standard-gateway",
-		Short: "Call the StandardGateway view method on a USDCOrbitBridger contract",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if contractAddressRaw == "" {
-				return fmt.Errorf("--contract not specified")
-			} else if !common.IsHexAddress(contractAddressRaw) {
-				return fmt.Errorf("--contract is not a valid Ethereum address")
-			}
-			contractAddress = common.HexToAddress(contractAddressRaw)
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, clientErr := NewClient(rpc)
-			if clientErr != nil {
-				return clientErr
-			}
-
-			contract, contractErr := NewUSDCOrbitBridger(contractAddress, client)
-			if contractErr != nil {
-				return contractErr
-			}
-
-			callOpts := bind.CallOpts{}
-			SetCallParametersFromArgs(&callOpts, pending, fromAddressRaw, blockNumberRaw)
-
-			session := USDCOrbitBridgerCallerSession{
-				Contract: &contract.USDCOrbitBridgerCaller,
-				CallOpts: callOpts,
-			}
-
-			var callErr error
-			capture0, callErr = session.StandardGateway()
 			if callErr != nil {
 				return callErr
 			}
@@ -1601,12 +1601,12 @@ func CreateUSDCOrbitBridgerCommand() *cobra.Command {
 	cmdViewDEFAULTSUBMISSIONFEEPERCENTINCREASE := CreateDefaultsubmissionfeepercentincreaseCommand()
 	cmdViewDEFAULTSUBMISSIONFEEPERCENTINCREASE.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewDEFAULTSUBMISSIONFEEPERCENTINCREASE)
+	cmdViewGateway := CreateGatewayCommand()
+	cmdViewGateway.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewGateway)
 	cmdViewRouter := CreateRouterCommand()
 	cmdViewRouter.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewRouter)
-	cmdViewStandardGateway := CreateStandardGatewayCommand()
-	cmdViewStandardGateway.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewStandardGateway)
 	cmdViewUsdc := CreateUsdcCommand()
 	cmdViewUsdc.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewUsdc)
