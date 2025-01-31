@@ -360,7 +360,7 @@
 }
 
 .claimable:hover {
-  background: var(--Warning-100, #fffaeb);
+  background: #93370D;
 }
 
 .settled:hover {
