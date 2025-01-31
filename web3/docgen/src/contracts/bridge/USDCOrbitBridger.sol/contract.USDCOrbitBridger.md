@@ -1,10 +1,10 @@
 # USDCOrbitBridger
-[Git Source](https://github.com/G7DAO/protocol/blob/1e1f8f95881a2f3fd7dca8655f2c3270ce027c4e/contracts/bridge/USDCOrbitBridger.sol)
+[Git Source](https://github.com/G7DAO/protocol/blob/f0f83a37294cdf00eb87c0478d9db8879b5b60dc/contracts/bridge/USDCOrbitBridger.sol)
 
 **Author:**
 Game7 Engineering - worldbuilder@game7.io
 
-This contract is used to bridge any ERC20 token to Orbit Chains in a single transaction.
+This contract is used to bridge a single ERC20 token to Orbit Chain
 
 *This contract should not hold any funds.*
 

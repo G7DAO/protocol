@@ -8,7 +8,7 @@ import { IERC20 } from "../interfaces/IERC20.sol";
 /**
  * @title USDCBridger
  * @author Game7 Engineering - worldbuilder@game7.io
- * @notice This contract is used to bridge any ERC20 token to Orbit Chains in a single transaction.
+ * @notice This contract is used to bridge a single ERC20 token to Orbit Chain
  * @dev This contract should not hold any funds.
  */
 contract USDCOrbitBridger {

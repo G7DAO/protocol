@@ -1,5 +1,5 @@
 # Position
-[Git Source](https://github.com/G7DAO/protocol/blob/1e1f8f95881a2f3fd7dca8655f2c3270ce027c4e/contracts/staking/data.sol)
+[Git Source](https://github.com/G7DAO/protocol/blob/f0f83a37294cdf00eb87c0478d9db8879b5b60dc/contracts/staking/data.sol)
 
 Position represents the parameters of a staking position:
 - the staking pool ID under which the deposit was made
