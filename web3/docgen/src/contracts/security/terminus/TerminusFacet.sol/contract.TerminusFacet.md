@@ -1,5 +1,5 @@
 # TerminusFacet
-[Git Source](https://github.com/G7DAO/protocol/blob/ef7b24f4a26e9671edc818362f455c3e2801e1d7/contracts/security/terminus/TerminusFacet.sol)
+[Git Source](https://github.com/G7DAO/protocol/blob/874893f46ced0a2b968b4e0f586d9ae4b81435ce/contracts/security/terminus/TerminusFacet.sol)
 
 **Inherits:**
 [ERC1155WithTerminusStorage](/contracts/security/terminus/ERC1155WithTerminusStorage.sol/contract.ERC1155WithTerminusStorage.md), [TerminusInitializer](/contracts/security/terminus/TerminusInitializer.sol/contract.TerminusInitializer.md)

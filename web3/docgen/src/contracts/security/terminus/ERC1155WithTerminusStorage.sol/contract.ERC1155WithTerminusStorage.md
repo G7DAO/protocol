@@ -1,5 +1,5 @@
 # ERC1155WithTerminusStorage
-[Git Source](https://github.com/G7DAO/protocol/blob/ef7b24f4a26e9671edc818362f455c3e2801e1d7/contracts/security/terminus/ERC1155WithTerminusStorage.sol)
+[Git Source](https://github.com/G7DAO/protocol/blob/874893f46ced0a2b968b4e0f586d9ae4b81435ce/contracts/security/terminus/ERC1155WithTerminusStorage.sol)
 
 **Inherits:**
 Context, ERC165, IERC1155, IERC1155MetadataURI

@@ -1,5 +1,5 @@
 # IGatewayRouter
-[Git Source](https://github.com/G7DAO/protocol/blob/ef7b24f4a26e9671edc818362f455c3e2801e1d7/contracts/interfaces/IGatewayRouter.sol)
+[Git Source](https://github.com/G7DAO/protocol/blob/874893f46ced0a2b968b4e0f586d9ae4b81435ce/contracts/interfaces/IGatewayRouter.sol)
 
 **Inherits:**
 [ITokenGateway](/contracts/interfaces/ITokenGateway.sol/interface.ITokenGateway.md)
