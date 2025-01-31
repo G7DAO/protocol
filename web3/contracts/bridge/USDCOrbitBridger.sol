@@ -8,7 +8,7 @@ import { IERC20 } from "../interfaces/IERC20.sol";
 /**
  * @title USDCBridger
  * @author Game7 Engineering - worldbuilder@game7.io
- * @notice This contract is used to bridge USDC to Orbit Chains in a single transaction.
+ * @notice This contract is used to bridge any ERC20 token to Orbit Chains in a single transaction.
  */
 contract USDCOrbitBridger {
     uint256 public constant DEFAULT_SUBMISSION_FEE_PERCENT_INCREASE = 300;
