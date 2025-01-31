@@ -1,11 +1,11 @@
 # ERC20
-[Git Source](https://github.com/G7DAO/protocol/blob/0d286772d26e7f355ea5f6d3e0323d2491e1ebca/contracts/token/ERC20.sol)
+[Git Source](https://github.com/G7DAO/protocol/blob/1e1f8f95881a2f3fd7dca8655f2c3270ce027c4e/contracts/token/ERC20.sol)
 
 **Inherits:**
 [IERC20](/contracts/interfaces/IERC20.sol/interface.IERC20.md)
 
 **Author:**
-Game7 Engineering Team - engineering@game7.io
+Game7 Engineering Team - worldbuilder@game7.io
 
 *Adapted from WETH9: https://etherscan.io/address/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2#code*
 

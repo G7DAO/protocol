@@ -9,25 +9,39 @@ import { IERC20 } from "../interfaces/IERC20.sol";
  * @title USDCBridger
  * @author Game7 Engineering - worldbuilder@game7.io
  * @notice This contract is used to bridge any ERC20 token to Orbit Chains in a single transaction.
+ * @dev This contract should not hold any funds.
  */
 contract USDCOrbitBridger {
     uint256 public constant DEFAULT_SUBMISSION_FEE_PERCENT_INCREASE = 300;
     uint256 public constant DEFAULT_GAS_LIMIT = 300_000;
 
-    address public standardGateway;
+    address public gateway;
     address public router;
     address public customNativeToken;
     address public usdc;
-    constructor(address _standardGateway, address _router, address _usdc, address _customNativeToken) {
-        standardGateway = _standardGateway;
+
+    /**
+     * @notice Constructor
+     * @param _gateway Address of the token gateway
+     * @param _router Address of the router
+     * @param _usdc Address of the USDC token
+     * @param _customNativeToken Address of the custom native token
+     */
+    constructor(address _gateway, address _router, address _usdc, address _customNativeToken) {
+        gateway = _gateway;
         router = _router;
         usdc = _usdc;
         customNativeToken = _customNativeToken;
     }
 
+    /**
+     * @notice Bridge USDC to Orbit Chain
+     * @param _receiver Address of the recipient on the destination chain
+     * @param _amount Amount of USDC to bridge
+     */
     function bridgeUSDC(address _receiver, uint256 _amount) external {
         IERC20(usdc).transferFrom(msg.sender, address(this), _amount);
-        IERC20(usdc).approve(standardGateway, _amount);
+        IERC20(usdc).approve(gateway, _amount);
 
         bytes memory outboundCalldata = ITokenGateway(router).getOutboundCalldata(
             usdc,
@@ -44,7 +58,7 @@ contract USDCOrbitBridger {
 
         if (customNativeToken != address(0)) {
             IERC20(customNativeToken).transferFrom(msg.sender, address(this), tokenTotalFeeAmount);
-            IERC20(customNativeToken).approve(standardGateway, tokenTotalFeeAmount);
+            IERC20(customNativeToken).approve(gateway, tokenTotalFeeAmount);
         }
 
         ITokenGateway(router).outboundTransfer(
@@ -57,6 +71,11 @@ contract USDCOrbitBridger {
         );
     }
 
+    /**
+     * @notice Calculate the retryable submission fee
+     * @param _calldata Calldata of the message to be sent
+     * @param _baseFee Base fee of the chain
+     */
     function calculateRetryableSubmissionFee(bytes memory _calldata, uint256 _baseFee) public pure returns (uint256) {
         uint256 multiplier = 1400 + (6 * _calldata.length);
         uint256 submissionFee = multiplier * _baseFee;
