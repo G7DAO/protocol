@@ -1,5 +1,5 @@
 # LibTerminus
-[Git Source](https://github.com/G7DAO/protocol/blob/f0f83a37294cdf00eb87c0478d9db8879b5b60dc/contracts/security/terminus/LibTerminus.sol)
+[Git Source](https://github.com/G7DAO/protocol/blob/ef7b24f4a26e9671edc818362f455c3e2801e1d7/contracts/security/terminus/LibTerminus.sol)
 
 Authors: Moonstream Engineering (engineering@moonstream.to)
 GitHub: https://github.com/bugout-dev/dao
