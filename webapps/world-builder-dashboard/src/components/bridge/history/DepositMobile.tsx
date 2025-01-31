@@ -58,7 +58,7 @@ const DepositMobile: React.FC<DepositMobileProps> = ({
         <div className={styles.container}>
           <div className={styles.header}>
             <div className={styles.title}>Deposit</div>
-            <div className={styles.amount}>{`${deposit.amount} ${deposit.symbol ?? symbol}`}</div>
+            <div className={styles.amount}>{`${deposit.amount} ${symbol}`}</div>
           </div>
           {!isCollapsed && (
             <>

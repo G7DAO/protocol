@@ -62,7 +62,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
               selectedNetworkType={selectedNetworkType}
               highNetworkTimestamp={highNetworkTimestamp ?? deposit.completionTimestamp}
               transferStatus={transferStatus}
-              symbol={symbol}
+              symbol={symbol ?? deposit.symbol}
               claim={claim}
             />
           ) : (

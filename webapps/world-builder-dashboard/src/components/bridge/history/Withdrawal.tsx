@@ -95,7 +95,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
               status={status}
               transferStatus={transferStatus}
               selectedNetworkType={selectedNetworkType}
-              symbol={symbol}
+              symbol={symbol ?? withdrawal.symbol}
             />
           ) : (
             <>
