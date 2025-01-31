@@ -94,6 +94,20 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
     setTokens(_tokens)
   }
 
+  const preventNumberChange = (e: any) => {
+    // Prevent number change
+    e.target.blur()
+
+    // Prevent scroll
+    e.stopPropagation()
+
+    // Refocus on element after scroll
+    setTimeout(() => {
+      e.target.focus()
+    }, 0)
+  }
+
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -108,6 +122,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
           disabled={!connectedAccount}
           placeholder={'0'}
           type='number'
+          onWheel={preventNumberChange}
         />
         <button
           className={styles.maxButton}
