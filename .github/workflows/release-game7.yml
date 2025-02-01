@@ -6,7 +6,7 @@ on:
             - "game7-v*"
 
 jobs:
-    release-game7:
+    create_release:
         runs-on: ubuntu-20.04
         steps:
             - uses: actions/create-release@v1
@@ -24,7 +24,7 @@ jobs:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
     upload_assets:
         runs-on: ubuntu-20.04
-        needs: release-game7
+        needs: create_release
         strategy:
             fail-fast: true
             matrix:
