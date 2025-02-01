@@ -5,7 +5,7 @@ go 1.23.0
 toolchain go1.23.5
 
 require (
-	github.com/G7DAO/seer v0.3.0
+	github.com/G7DAO/seer v0.3.15
 	github.com/ethereum/go-ethereum v1.14.10
 	github.com/google/uuid v1.6.0
 	github.com/spf13/cobra v1.8.0
