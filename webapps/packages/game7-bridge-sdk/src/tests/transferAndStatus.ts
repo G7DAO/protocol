@@ -13,6 +13,21 @@ async function transfer(_amount: string, _transfers: Array<{destinationNetworkCh
     const from = '0x4eD919172bD08D74831f2914aAAe8edA690d08Ab'
     const key = process.env.KEY
     const failedTransactions = []
+    const uniqueTokens = Array.from(new Set(_transfers.map(d => d.token)))
+
+
+    console.log('=== Initial Balances ===')
+    for (const token of uniqueTokens) {
+        for(const _chainId of Object.keys(token)) {
+            const chainId = parseInt(_chainId)
+            const provider = new ethers.providers.JsonRpcProvider(rpcs[chainId])
+            const bridgeToken = new BridgeToken(token, chainId);
+            const decimals = await bridgeToken.getDecimals(provider)
+            const tokenSymbol = await bridgeToken.getSymbol(provider)
+            await logBalance(token, chainId, provider, from, decimals, `${tokenSymbol} (${networks[chainId].name}) balance: `)
+        }
+    }
+    console.log('=====================')
 
     const transactions = _transfers.filter((t) => t.txHash).map((t) => (
         {
@@ -49,8 +64,8 @@ async function transfer(_amount: string, _transfers: Array<{destinationNetworkCh
 
         console.log(`${originNetwork.name} -> ${destinationNetwork.name} ${ethers.utils.formatUnits(amount, decimals)} ${tokenSymbol}`)
 
-        await logBalance(token, destinationNetworkChainId, destinationProvider, from, decimals, `${destinationNetwork.name} balance: `)
-        await logBalance(token, originNetworkChainId, originProvider, from, decimals, `${originNetwork.name} balance: `)
+        await logBalance(token, destinationNetworkChainId, destinationProvider, from, decimals, `${tokenSymbol} ${destinationNetwork.name} balance: `)
+        await logBalance(token, originNetworkChainId, originProvider, from, decimals, `${tokenSymbol} ${originNetwork.name} balance: `)
 
         const g7Bridger = getBridger(originNetworkChainId, destinationNetworkChainId, token) //bridgerFactory(originNetworkChainId, destinationNetworkChainId, token)
         console.log(g7Bridger.isDeposit ? 'DEPOSIT' : 'WITHDRAWAL')
@@ -128,8 +143,8 @@ async function transfer(_amount: string, _transfers: Array<{destinationNetworkCh
                     completedTime: undefined,
                     executableTime: undefined,
                 })
-                await logBalance(token, originNetworkChainId, originProvider, from, decimals, `${originNetwork.name} balance: `)
-                await logBalance(token, destinationNetworkChainId, destinationProvider, from, decimals, `${destinationNetwork.name} balance: `)
+                await logBalance(token, originNetworkChainId, originProvider, from, decimals, `${tokenSymbol} ${originNetwork.name} balance: `)
+                await logBalance(token, destinationNetworkChainId, destinationProvider, from, decimals, `${tokenSymbol} ${destinationNetwork.name} balance: `)
             } catch (e) {
                 failedTransactions.push({
                     originNetworkChainId,
@@ -149,15 +164,13 @@ async function transfer(_amount: string, _transfers: Array<{destinationNetworkCh
         }
 
     }
-    let completed
     do {
-        completed = true
         console.log('!!!!------------------!!!!!')
         console.log('!!!!------------------!!!!!')
 
         for (const tx of transactions) {
             if (tx.completedTime) {
-                break;
+                continue;
             }
             try {
                 console.log('------------------')
@@ -232,17 +245,30 @@ async function transfer(_amount: string, _transfers: Array<{destinationNetworkCh
                     await logBalance(tx.token, tx.destinationNetworkChainId, destinationProvider, info.to, tx.decimals, 'New balance: ')
                 }
 
-                completed = completed && !pendingStatuses.includes(status);
             } catch (error) {
                 console.error(`Failed to process transaction ${tx.txHash}:`, error);
-                completed = false
             }
         }
         const delay = (ms: number): Promise<void> => {
             return new Promise(resolve => setTimeout(resolve, ms));
         };
         await delay(15 * 1000)
-    } while (!completed)
+    } while (transactions.some((t) => !t.completedTime))
+
+    console.log('=== Final Balances ===')
+
+    for (const token of uniqueTokens) {
+        for(const _chainId of Object.keys(token)) {
+            const chainId = parseInt(_chainId)
+            const provider = new ethers.providers.JsonRpcProvider(rpcs[chainId])
+            const bridgeToken = new BridgeToken(token, chainId);
+            const decimals = await bridgeToken.getDecimals(provider)
+            const tokenSymbol = await bridgeToken.getSymbol(provider)
+            await logBalance(token, chainId, provider, from, decimals, `${tokenSymbol} (${networks[chainId].name}) balance: `)
+        }
+    }
+    console.log('=====================')
+
     console.log('Failed transactions: ', failedTransactions);
     console.log('Transactions: ', transactions);
 }
@@ -266,12 +292,16 @@ const erc20Deposits = [
     { originNetworkChainId: 11155111, destinationNetworkChainId: 421614, token: USDC },
 ]
 
+const failedTransactions = [
+    { originNetworkChainId: 11155111, destinationNetworkChainId: 421614, token: TG7T, txHash: '0x48c5c8b4fa8b8e80a914542ee45babcea75c7c2d615bceb815397a3147064e06' },
+]
+
 const testnetWithdrawals = testnetDeposits.map((t) => ({...t, originNetworkChainId: t.destinationNetworkChainId, destinationNetworkChainId: t.originNetworkChainId}))
 
 
 const hundredWithdrawals = testnetWithdrawals.flatMap(transfer => Array(5).fill(transfer));
 
-const hundred = erc20Deposits.flatMap(transfer => Array(25).fill(transfer));
+const batch = erc20Deposits.flatMap(transfer => Array(1).fill(transfer));
 
 // const transfers = [
 //     { originNetworkChainId: 11155111, destinationNetworkChainId: 421614, token: TG7T, txHash: '0x4e4ea691c7367546dd47bcb389c2f178f59b6b35dbf0c9f9c7b91bd0eb48556a' },
@@ -281,6 +311,6 @@ const hundred = erc20Deposits.flatMap(transfer => Array(25).fill(transfer));
 // Run the script
 // transfer('0.004444', testnetDeposits, {send: true});
 
-transfer('0.000012', hundred, {send: true});
+transfer('0.000012', failedTransactions, {send: true});
 
 
