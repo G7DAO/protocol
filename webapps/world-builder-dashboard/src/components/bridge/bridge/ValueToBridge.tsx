@@ -23,7 +23,6 @@ interface ValueToBridgeProps {
   isFetchingBalance?: boolean
   errorMessage: string
   setErrorMessage: (arg0: string) => void
-  onTokenChange: (token: Token) => void
   selectedChainId: number
   gasFee?: string | undefined
 }
@@ -36,12 +35,11 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   isFetchingBalance,
   errorMessage,
   setErrorMessage,
-  onTokenChange,
   selectedChainId,
   gasFee,
 }) => {
   const [tokens, setTokens] = useState<Token[]>([])
-  const { connectedAccount, selectedBridgeToken, selectedHighNetwork, selectedLowNetwork } = useBlockchainContext()
+  const { connectedAccount, selectedBridgeToken, selectedHighNetwork, selectedLowNetwork, setSelectedBridgeToken } = useBlockchainContext()
 
   const getTokens = () => {
     const highNetworkChainId = String(selectedHighNetwork.chainId)
@@ -89,7 +87,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
 
 
   const handleTokenChange = (token: Token) => {
-    onTokenChange(token)
+    setSelectedBridgeToken(token)
     const _tokens = getTokensForNetwork(selectedChainId, connectedAccount)
     setTokens(_tokens)
   }

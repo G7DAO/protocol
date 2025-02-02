@@ -28,7 +28,7 @@ import { useCoinGeckoAPI } from '@/hooks/useCoinGeckoAPI'
 // Hooks and Constants
 import { DepositDirection } from '@/pages/BridgePage/BridgePage'
 import { getStakeNativeTxData } from '@/utils/bridge/stakeContractInfo'
-import { getTokensForNetwork, Token } from '@/utils/tokens'
+import { getTokensForNetwork } from '@/utils/tokens'
 import { useBridger } from '@/hooks/useBridger'
 import IconAlertCircle from '@/assets/IconAlertCircle'
 import { Tooltip } from 'summon-ui/mantine'
@@ -55,7 +55,6 @@ const BridgeView = ({
     setSelectedLowNetwork,
     selectedHighNetwork,
     setSelectedHighNetwork,
-    setSelectedBridgeToken,
     selectedBridgeToken,
     selectedNetworkType,
     setSelectedNativeToken,
@@ -78,9 +77,7 @@ const BridgeView = ({
 
   const { data: coinUSDRate, isFetching: isCoinFetching } = useUSDPriceOfToken(selectedBridgeToken?.geckoId ?? '')
   const { data: ethRate } = useUSDPriceOfToken('ethereum')
-  const handleTokenChange = async (token: Token) => {
-    setSelectedBridgeToken(token)
-  }
+
   const { getEstimatedFee } = useBridger()
 
   const [bridger, setBridger] = useState<Bridger | null>(null)
@@ -96,6 +93,9 @@ const BridgeView = ({
   })
 
   useEffect(() => {
+    if (!selectedBridgeToken && !connectedAccount && !selectedHighNetwork && selectedLowNetwork)
+      return
+
     if (selectedBridgeToken && connectedAccount && selectedHighNetwork && selectedLowNetwork) {
       const originChainId = direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId
       const destinationChainId = direction === 'DEPOSIT' ? selectedHighNetwork.chainId : selectedLowNetwork.chainId
@@ -203,7 +203,6 @@ const BridgeView = ({
           symbol={tokenInformation?.symbol ?? ''}
           value={value}
           setValue={setValue}
-          onTokenChange={handleTokenChange}
           balance={tokenInformation?.tokenBalance}
           rate={
             selectedBridgeToken?.symbol === 'TG7T' || selectedBridgeToken?.symbol === 'G7'
