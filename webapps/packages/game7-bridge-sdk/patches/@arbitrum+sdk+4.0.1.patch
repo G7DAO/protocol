@@ -91,6 +91,46 @@ index 97fcda5..0e55cc5 100644
  };
  /**
   * Determines if a chain is a parent of *any* other chain. Could be an L1 or an L2 chain.
+diff --git a/node_modules/@arbitrum/sdk/dist/lib/message/ChildToParentMessageClassic.js b/node_modules/@arbitrum/sdk/dist/lib/message/ChildToParentMessageClassic.js
+index 970d2fa..010f947 100644
+--- a/node_modules/@arbitrum/sdk/dist/lib/message/ChildToParentMessageClassic.js
++++ b/node_modules/@arbitrum/sdk/dist/lib/message/ChildToParentMessageClassic.js
+@@ -232,10 +232,11 @@ class ChildToParentMessageWriterClassic extends ChildToParentMessageReaderClassi
+      * @returns
+      */
+     async execute(childProvider, overrides) {
+-        const status = await this.status(childProvider);
+-        if (status !== message_1.ChildToParentMessageStatus.CONFIRMED) {
+-            throw new errors_1.ArbSdkError(`Cannot execute message. Status is: ${status} but must be ${message_1.ChildToParentMessageStatus.CONFIRMED}.`);
+-        }
++        // turning this check off because it should be done by the client
++        // const status = await this.status(childProvider);
++        // if (status !== message_1.ChildToParentMessageStatus.CONFIRMED) {
++        //     throw new errors_1.ArbSdkError(`Cannot execute message. Status is: ${status} but must be ${message_1.ChildToParentMessageStatus.CONFIRMED}.`);
++        // }
+         const proofInfo = await this.tryGetProof(childProvider);
+         if (!(0, lib_1.isDefined)(proofInfo)) {
+             throw new errors_1.ArbSdkError(`Unexpected missing proof: ${this.batchNumber.toString()} ${this.indexInBatch.toString()}}`);
+diff --git a/node_modules/@arbitrum/sdk/dist/lib/message/ChildToParentMessageNitro.js b/node_modules/@arbitrum/sdk/dist/lib/message/ChildToParentMessageNitro.js
+index b202bb6..6d14c0e 100644
+--- a/node_modules/@arbitrum/sdk/dist/lib/message/ChildToParentMessageNitro.js
++++ b/node_modules/@arbitrum/sdk/dist/lib/message/ChildToParentMessageNitro.js
+@@ -462,10 +462,11 @@ class ChildToParentMessageWriterNitro extends ChildToParentMessageReaderNitro {
+      * @returns
+      */
+     async execute(childProvider, overrides) {
+-        const status = await this.status(childProvider);
+-        if (status !== message_1.ChildToParentMessageStatus.CONFIRMED) {
+-            throw new errors_1.ArbSdkError(`Cannot execute message. Status is: ${status} but must be ${message_1.ChildToParentMessageStatus.CONFIRMED}.`);
+-        }
++        // turning this check off because it should be done by the client
++        // const status = await this.status(childProvider);
++        // if (status !== message_1.ChildToParentMessageStatus.CONFIRMED) {
++        //     throw new errors_1.ArbSdkError(`Cannot execute message. Status is: ${status} but must be ${message_1.ChildToParentMessageStatus.CONFIRMED}.`);
++        // }
+         const proof = await this.getOutboxProof(childProvider);
+         const childChain = await (0, networks_1.getArbitrumNetwork)(childProvider);
+         const outbox = Outbox__factory_1.Outbox__factory.connect(childChain.ethBridge.outbox, this.parentSigner);
 diff --git a/node_modules/@arbitrum/sdk/dist/lib/message/ParentToChildMessageGasEstimator.js b/node_modules/@arbitrum/sdk/dist/lib/message/ParentToChildMessageGasEstimator.js
 index 636937d..ab521ac 100644
 --- a/node_modules/@arbitrum/sdk/dist/lib/message/ParentToChildMessageGasEstimator.js
