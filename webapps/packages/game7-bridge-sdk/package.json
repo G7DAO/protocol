@@ -1,15 +1,16 @@
 {
   "name": "game7-bridge-sdk",
-  "version": "0.0.49",
+  "version": "0.0.79",
   "description": "A SDK for bridging tokens across different networks with Game7 infrastructure.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf dist && tsc",
     "watch": "tsc --watch",
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write 'src/**/*.ts'",
-    "postinstall": "node ./run-patch.js"
+    "postinstall": "node ./run-patch.js",
+    "patch-arb": "npx patch-package @arbitrum/sdk"
   },
   "keywords": [
     "sdk",

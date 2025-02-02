@@ -13,6 +13,7 @@ import { TokenAddressMap } from './types';
 
 // Internal Modules - Networks
 import { networks } from './networks';
+import {UnsupportedNetworkError} from "./errors";
 
 /**
  * Represents a token within a blockchain network that can be used in bridging operations.
@@ -147,12 +148,19 @@ export class BridgeToken {
       }
 
       try {
-        const bridger = new Bridger(
-          this.chainId, // originNetworkChainId
-          chainId, // destinationNetworkChainId
-          this.tokenAddresses, // token mapping
-        );
-        bridgers.push(bridger);
+        const originNetwork = networks[this.chainId];
+        const destinationNetwork = networks[chainId];
+        if (originNetwork && destinationNetwork && (
+            originNetwork.parentChainId === destinationNetwork.chainId ||
+            destinationNetwork.parentChainId === originNetwork.chainId
+        )) {
+          const bridger = new Bridger(
+            this.chainId, // originNetworkChainId
+            chainId, // destinationNetworkChainId
+            this.tokenAddresses, // token mapping
+          );
+          bridgers.push(bridger);
+        }
       } catch (error: any) {
         console.warn(`Could not create Bridger for chainId ${chainId}: ${error.message}`);
       }
