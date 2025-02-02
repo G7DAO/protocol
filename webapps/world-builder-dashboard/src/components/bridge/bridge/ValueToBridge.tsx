@@ -58,7 +58,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
         ? _tokens.find((token) => token.name === selectedBridgeToken.name) || _tokens[0]
         : _tokens[0]
 
-    handleTokenChange(selectedToken)
+    setSelectedBridgeToken(selectedToken)
     setTokens(_tokens)
   }
 
@@ -84,13 +84,6 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
       setValue('')
     }
   }, [connectedAccount])
-
-
-  const handleTokenChange = (token: Token) => {
-    setSelectedBridgeToken(token)
-    const _tokens = getTokensForNetwork(selectedChainId, connectedAccount)
-    setTokens(_tokens)
-  }
 
   const preventNumberChange = (e: any) => {
     // Prevent number change
@@ -133,7 +126,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
           <TokenSelector
             tokens={tokens}
             selectedToken={selectedBridgeToken}
-            onChange={(token: Token) => handleTokenChange(token)}
+            onChange={(token: Token) => setSelectedBridgeToken(token)}
             onTokenAdded={getTokens}
             selectedChainId={selectedChainId}
           />
