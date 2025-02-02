@@ -372,8 +372,10 @@ export class BridgeTransfer {
         console.error(e)
         if (e.message?.includes("Timed out waiting to retrieve retryable creation receipt")) {
           return {status: BridgeTransferStatus.DEPOSIT_ERC20_NOT_YET_CREATED, ETA}
+        } else if (e.message?.includes("Unexpected missing Parent-to-child message")) {
+          return {status: BridgeTransferStatus.DEPOSIT_ERC20_CREATION_FAILED, ETA: undefined}
         } else {
-          throw new Error("Can't get Child Transaction receipt")
+          throw new Error("Unexpected error getting Parent-to child message");
         }
       }
       const childTxReceipt = (res as any).childTxReceipt
