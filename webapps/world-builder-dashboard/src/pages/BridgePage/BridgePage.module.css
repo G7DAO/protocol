@@ -69,7 +69,7 @@
 }
 
 .disabledNavigationButton{
-  cursor: default;
+  cursor: not-allowed;
 }
 
 .selectedNavigationButton {
