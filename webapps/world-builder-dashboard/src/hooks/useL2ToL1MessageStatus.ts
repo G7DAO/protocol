@@ -271,18 +271,36 @@ export const getNotifications = (transactions: TransactionRecord[]) => {
         ) {
           timestamp = ct.highNetworkTimestamp ?? ct.completionTimestamp ?? Date.now() / 1000
         } else if (ct.status === BridgeTransferStatus.CCTP_COMPLETE) {
-          timestamp = ct.claimableTimestamp ?? 0
+          timestamp = ct.completionTimestamp ?? Date.now() / 1000
+          // timestamp = ct.claimableTimestamp
         } else {
-          timestamp =  17000000
+          timestamp = ct.completionTimestamp ?? Date.now() / 1000
+        }
+
+      } else if (ct.type === 'WITHDRAWAL') {
+        timestamp = ct.claimableTimestamp ?? Date.now() / 1000
+      } else {
+        timestamp = ct.completionTimestamp ?? Date.now() / 1000
+      }
+
+      let status
+
+      if (ct.isFailed) {
+        status = 'FAILED'
+      } else if (ct.completionTimestamp) {
+        if (ct.type === 'DEPOSIT' && ct.status === BridgeTransferStatus.CCTP_COMPLETE) {
+          status = 'CLAIMABLE'
+        } else {
+          status = 'COMPLETED'
         }
       } else {
-        timestamp = ct.claimableTimestamp ?? Date.now() / 1000
+        status = 'CLAIMABLE'
       }
 
       const amount = ct.amount
       const symbol = getTokenSymbol(ct, '')
       return {
-        status: ct.isFailed ? 'FAILED' : ct.completionTimestamp ? 'COMPLETED' : 'CLAIMABLE',
+        status,
         type: ct.type,
         amount: amount,
         timestamp,
@@ -356,7 +374,7 @@ export const usePendingTransactions = (connectedAccount: string | undefined): Us
           for (const t of transactions) {
             if (t.type === 'DEPOSIT') {
               if (t.status === BridgeTransferStatus.CCTP_COMPLETE) {
-                updatedTransactions.push({ ...t, claimableTimestamp: t.claimableTimestamp})
+                updatedTransactions.push({ ...t, claimableTimestamp: t.claimableTimestamp })
               }
             }
             if (t.type === 'WITHDRAWAL') {
