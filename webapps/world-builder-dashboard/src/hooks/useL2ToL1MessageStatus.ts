@@ -261,11 +261,24 @@ export const getNotifications = (transactions: TransactionRecord[]) => {
   )
   const notifications: BridgeNotification[] = completedTransactions
     .map((ct) => {
-      const timestamp = ct.type === 'DEPOSIT' ?
-        ct.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED || ct.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED || ct.status === BridgeTransferStatus.CCTP_REDEEMED ?
-          ct.highNetworkTimestamp ?? ct.completionTimestamp ?? Date.now() / 1000
-          : ct.claimableTimestamp ?? Date.now() / 1000
-        : ct.completionTimestamp ?? ct.claimableTimestamp ?? Date.now() / 1000
+      let timestamp
+
+      if (ct.type === 'DEPOSIT') {
+        if (
+          ct.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
+          ct.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||
+          ct.status === BridgeTransferStatus.CCTP_REDEEMED
+        ) {
+          timestamp = ct.highNetworkTimestamp ?? ct.completionTimestamp ?? Date.now() / 1000
+        } else if (ct.status === BridgeTransferStatus.CCTP_COMPLETE) {
+          timestamp = ct.claimableTimestamp ?? 0
+        } else {
+          timestamp =  17000000
+        }
+      } else {
+        timestamp = ct.claimableTimestamp ?? Date.now() / 1000
+      }
+
       const amount = ct.amount
       const symbol = getTokenSymbol(ct, '')
       return {
@@ -343,12 +356,12 @@ export const usePendingTransactions = (connectedAccount: string | undefined): Us
           for (const t of transactions) {
             if (t.type === 'DEPOSIT') {
               if (t.status === BridgeTransferStatus.CCTP_COMPLETE) {
-                updatedTransactions.push({ ...t, claimableTimestamp: Date.now() / 1000, newTransaction: true })
+                updatedTransactions.push({ ...t, claimableTimestamp: t.claimableTimestamp})
               }
             }
             if (t.type === 'WITHDRAWAL') {
               if (t.status === ChildToParentMessageStatus.CONFIRMED || t.status === BridgeTransferStatus.CCTP_COMPLETE) {
-                updatedTransactions.push({ ...t, claimableTimestamp: Date.now() / 1000, newTransaction: true })
+                updatedTransactions.push({ ...t, claimableTimestamp: t.claimableTimestamp })
               }
             }
           }
