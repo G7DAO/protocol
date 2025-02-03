@@ -56,7 +56,7 @@ export const useBridger = () => {
                     if (!bridger || !value || !tokenInformation) {
                         return null
                     }
-                    const FALLBACK_PARENT_FEE =  ethers.utils.formatEther(ethers.utils.parseEther('0.01'))
+                    const FALLBACK_PARENT_FEE = ethers.utils.formatEther(ethers.utils.parseEther('0.01'))
                     const FALLBACK_CHILD_FEE = ethers.utils.formatEther(ethers.utils.parseEther('0.005'))
 
                     try {
@@ -76,24 +76,33 @@ export const useBridger = () => {
                             return { parentFee: '0', childFee: '0' }
                         }
 
-                        return await retryWithExponentialBackoff(async () => {
-                            const gasAndFee = await bridger.getGasAndFeeEstimation(
-                                parsedValue,
-                                originProvider,
-                                connectedAccount ?? '',
-                                destinationProvider
-                            )
+                        try {
+                            return await retryWithExponentialBackoff(async () => {
+                                const gasAndFee = await bridger.getGasAndFeeEstimation(
+                                    parsedValue,
+                                    originProvider,
+                                    connectedAccount ?? '',
+                                    destinationProvider
+                                )
 
-                            const parentFee = ethers.utils.formatEther(gasAndFee?.estimatedFee ?? '0')
-                            const childFee = gasAndFee?.childNetworkEstimation
-                                ? ethers.utils.formatEther(gasAndFee.childNetworkEstimation.estimatedFee)
-                                : '0'
+                                const parentFee = ethers.utils.formatEther(gasAndFee?.estimatedFee ?? '0')
+                                const childFee = gasAndFee?.childNetworkEstimation
+                                    ? ethers.utils.formatEther(gasAndFee.childNetworkEstimation.estimatedFee)
+                                    : '0'
 
+                                return {
+                                    parentFee,
+                                    childFee
+                                }
+                            })
+                        } catch (e) {
+                            console.error('Fee estimation failed:', e)
                             return {
-                                parentFee,
-                                childFee
+                                parentFee: FALLBACK_PARENT_FEE,
+                                childFee: FALLBACK_CHILD_FEE
                             }
-                        })
+                        }
+
                     } catch (e) {
                         console.error('Fee estimation failed:', e)
                         return {

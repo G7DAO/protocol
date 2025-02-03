@@ -170,7 +170,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                       <div className={styles.gridItemChild} title={deposit.lowNetworkHash}>
                         <div className={styles.typeCompleted}>Initiate</div>
                       </div>
-                      <div className={styles.gridItemInitiate}>{timeAgo(deposit?.lowNetworkTimestamp)}</div>
+                      <div className={styles.gridItemInitiate}>{timeAgo(deposit.lowNetworkTimestamp)}</div>
                       <div className={styles.gridItemInitiate}>
                         {displayAmount} {symbol ?? deposit.symbol}
                       </div>
@@ -189,14 +189,14 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                         </a>
                       </div>
                       <div className={styles.gridItemInitiate}>
-                        <div className={styles.timeCenter}>{timeAgo(deposit?.completionTimestamp)}</div>
+                        <div className={styles.timeCenter}>{timeAgo(deposit?.lowNetworkTimestamp)}</div>
                       </div>
                       <div className={styles.emptyCellInitiate} />
                       {/* FINALIZE */}
                       <div className={styles.gridItemChild} title={deposit.lowNetworkHash}>
                         <div className={styles.typeCompleted}>Finalize</div>
                       </div>
-                      <div className={styles.gridItemInitiate}>{timeAgo(deposit?.lowNetworkTimestamp)}</div>
+                      <div className={styles.gridItemInitiate}>{timeAgo(deposit?.completionTimestamp)}</div>
                       <div className={styles.gridItemInitiate}>
                         {displayAmount} {symbol ?? deposit.symbol}
                       </div>
