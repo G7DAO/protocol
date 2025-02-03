@@ -25,7 +25,11 @@ interface NotificationsDropModalProps {
 const copy = (notification: BridgeNotification, selectedNetworkType: NetworkType, connectedAccount: string) => {
   const targetNetwork = getNetwork(notification.to, selectedNetworkType)?.displayName ?? 'unknown chain'
   if (notification.status === 'CLAIMABLE') {
-    return `Your ${notification.amount} ${getTokenSymbol(notification.tx, connectedAccount) ?? notification.tx.symbol ?? notification.tx.transactionInputs?.tokenSymbol} withdrawal is ready to complete. Claim your token in Activity.`
+    if (notification.type === 'WITHDRAWAL')
+      return `Your ${notification.amount} ${getTokenSymbol(notification.tx, connectedAccount) ?? notification.tx.symbol ?? notification.tx.transactionInputs?.tokenSymbol} withdrawal is ready to complete. Claim your token in Activity.`
+    else
+      if (notification.type === 'DEPOSIT')
+        return `Your ${notification.amount} ${getTokenSymbol(notification.tx, connectedAccount) ?? notification.tx.symbol ?? notification.tx.transactionInputs?.tokenSymbol} deposit is ready to complete. Claim your token in Activity.`
   }
   if (notification.status === 'COMPLETED') {
     if (notification.type === 'DEPOSIT') {
@@ -165,9 +169,7 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
 
   return (
     <div onClick={handleClick} className={toastClassName(notifications[0].status)}>
-      <a href={getTransactionUrl(notifications[0])} target="_blank" style={{ color: 'white', textDecoration: 'underline' }}>
-        {copy(notifications[0], selectedNetworkType, connectedAccount ?? '')}
-      </a>
+      {copy(notifications[0], selectedNetworkType, connectedAccount ?? '')}
       <IconCloseSmall className={iconCloseClassName(notifications[0].status)} onClick={handleExit} />
     </div>
   )
