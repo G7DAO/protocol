@@ -356,12 +356,12 @@ export const usePendingTransactions = (connectedAccount: string | undefined): Us
           for (const t of transactions) {
             if (t.type === 'DEPOSIT') {
               if (t.status === BridgeTransferStatus.CCTP_COMPLETE) {
-                updatedTransactions.push({ ...t, claimableTimestamp: t.claimableTimestamp, newTransaction: true })
+                updatedTransactions.push({ ...t, claimableTimestamp: t.claimableTimestamp})
               }
             }
             if (t.type === 'WITHDRAWAL') {
               if (t.status === ChildToParentMessageStatus.CONFIRMED || t.status === BridgeTransferStatus.CCTP_COMPLETE) {
-                updatedTransactions.push({ ...t, claimableTimestamp: t.claimableTimestamp, newTransaction: true })
+                updatedTransactions.push({ ...t, claimableTimestamp: t.claimableTimestamp })
               }
             }
           }
