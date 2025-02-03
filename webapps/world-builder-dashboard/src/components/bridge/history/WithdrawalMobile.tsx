@@ -22,7 +22,7 @@ interface WithdrawalMobileProps {
   status: any
   transferStatus: any
   selectedNetworkType: NetworkType
-  symbol: any
+  symbol: string
 }
 const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
   withdrawal,
@@ -45,7 +45,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.title}>Withdraw</div>
-        <div className={styles.amount}>{`${withdrawal.amount} ${withdrawal.symbol ?? symbol}`}</div>
+        <div className={styles.amount}>{`${withdrawal.amount} ${symbol}`}</div>
       </div>
       {!isCollapsed && (
         <>

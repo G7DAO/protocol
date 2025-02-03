@@ -1,7 +1,7 @@
-// LandingPage.tsx
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './LegalPage.module.css'
+import parentStyles from '../LandingPage/LandingPage.module.css'
 import { useMediaQuery } from 'summon-ui/mantine'
 import Navbar from '@/components/landing/Navbar'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
@@ -11,7 +11,7 @@ interface LegalPageProps {
   legalContent: any
 }
 
-const LandingPage: React.FC<LegalPageProps> = ({legalContent}) => {
+const LegalPage: React.FC<LegalPageProps> = ({legalContent}) => {
   const navigate = useNavigate()
   const { setSelectedNetworkType } = useBlockchainContext()
   const [navbarOpen, setNavBarOpen] = useState<boolean>(false)
@@ -29,7 +29,7 @@ const LandingPage: React.FC<LegalPageProps> = ({legalContent}) => {
       setSelectedNetworkType('Testnet')
       navigate(`/${item.link}`)
     } else if (item.name === "Bridge") {
-      setSelectedNetworkType('Mainnet')
+      setSelectedNetworkType('Testnet')
       navigate(`/${item.link}`)
     } else {
       window.open(item.link, '_blank')
@@ -41,7 +41,7 @@ const LandingPage: React.FC<LegalPageProps> = ({legalContent}) => {
     <>
       <div className={styles.container}>
         <div className={styles.viewContainer}>
-          <div className={`${styles.layout} ${navbarOpen && styles.layoutBlur}`}>
+          <div className={`${styles.layout} ${navbarOpen && parentStyles.layoutBlur}`}>
             <Navbar
               navbarOpen={navbarOpen}
               smallView={!!smallView}
@@ -83,4 +83,4 @@ const LandingPage: React.FC<LegalPageProps> = ({legalContent}) => {
   )
 }
 
-export default LandingPage
+export default LegalPage
