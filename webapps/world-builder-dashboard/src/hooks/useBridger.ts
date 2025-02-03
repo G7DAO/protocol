@@ -5,7 +5,7 @@ import { DepositDirection } from '@/pages/BridgePage/BridgePage'
 import { Bridger } from 'game7-bridge-sdk'
 
 export const useBridger = () => {
-    const { connectedAccount } = useBlockchainContext()
+    const { connectedAccount, selectedBridgeToken } = useBlockchainContext()
 
     // Retry function with exponential backoff
     const retryWithExponentialBackoff = async (fn: () => Promise<any>, retries = 3, delay = 1000, jitterFactor = 0.5) => {
@@ -51,11 +51,13 @@ export const useBridger = () => {
     }) => {
         return useQuery(
             {
-                queryKey: ['estimatedFee', value, direction, selectedLowNetwork.chainId, selectedHighNetwork.chainId],
+                queryKey: ['estimatedFee', value, direction, selectedLowNetwork.chainId, selectedHighNetwork.chainId, selectedBridgeToken],
                 queryFn: async () => {
                     if (!bridger || !value || !tokenInformation) {
                         return null
                     }
+                    const FALLBACK_PARENT_FEE =  ethers.utils.formatEther(ethers.utils.parseEther('0.01'))
+                    const FALLBACK_CHILD_FEE = ethers.utils.formatEther(ethers.utils.parseEther('0.005'))
 
                     try {
                         const decimals = tokenInformation?.decimalPlaces ?? 18
@@ -94,7 +96,10 @@ export const useBridger = () => {
                         })
                     } catch (e) {
                         console.error('Fee estimation failed:', e)
-                        return null
+                        return {
+                            parentFee: FALLBACK_PARENT_FEE,
+                            childFee: FALLBACK_CHILD_FEE
+                        }
                     }
                 },
                 enabled: !!connectedAccount && !!selectedLowNetwork && !!selectedHighNetwork && !!value && !!bridger,

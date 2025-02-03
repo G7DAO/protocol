@@ -16,7 +16,6 @@ const HistoryMobile: React.FC<HistoryMobileProps> = ({ transactions, containerRe
   useEffect(() => {
     const scrollToTop = () => {
       if (containerRef.current) {
-        console.log('going up the scrolltop')
         containerRef.current.scrollTop = 0
       }
     }

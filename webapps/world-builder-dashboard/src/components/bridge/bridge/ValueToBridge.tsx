@@ -23,7 +23,6 @@ interface ValueToBridgeProps {
   isFetchingBalance?: boolean
   errorMessage: string
   setErrorMessage: (arg0: string) => void
-  onTokenChange: (token: Token) => void
   selectedChainId: number
   gasFee?: string | undefined
 }
@@ -36,12 +35,11 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   isFetchingBalance,
   errorMessage,
   setErrorMessage,
-  onTokenChange,
   selectedChainId,
   gasFee,
 }) => {
   const [tokens, setTokens] = useState<Token[]>([])
-  const { connectedAccount, selectedBridgeToken, selectedHighNetwork, selectedLowNetwork } = useBlockchainContext()
+  const { connectedAccount, selectedBridgeToken, selectedHighNetwork, selectedLowNetwork, setSelectedBridgeToken } = useBlockchainContext()
 
   const getTokens = () => {
     const highNetworkChainId = String(selectedHighNetwork.chainId)
@@ -60,7 +58,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
         ? _tokens.find((token) => token.name === selectedBridgeToken.name) || _tokens[0]
         : _tokens[0]
 
-    handleTokenChange(selectedToken)
+    setSelectedBridgeToken(selectedToken)
     setTokens(_tokens)
   }
 
@@ -87,13 +85,6 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
     }
   }, [connectedAccount])
 
-
-  const handleTokenChange = (token: Token) => {
-    onTokenChange(token)
-    const _tokens = getTokensForNetwork(selectedChainId, connectedAccount)
-    setTokens(_tokens)
-  }
-
   const preventNumberChange = (e: any) => {
     // Prevent number change
     e.target.blur()
@@ -106,6 +97,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
       e.target.focus()
     }, 0)
   }
+
 
   return (
     <div className={styles.container}>
@@ -134,7 +126,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
           <TokenSelector
             tokens={tokens}
             selectedToken={selectedBridgeToken}
-            onChange={(token: Token) => handleTokenChange(token)}
+            onChange={(token: Token) => setSelectedBridgeToken(token)}
             onTokenAdded={getTokens}
             selectedChainId={selectedChainId}
           />
