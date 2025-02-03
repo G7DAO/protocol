@@ -58,9 +58,18 @@
 }
 
 .selectedNavigationButton,
-.unselectedNavigationButton {
+.unselectedNavigationButton,
+.disabledNavigationButton {
   border: none;
+}
+
+.selectedNavigationButton,
+.unselectedNavigationButton {
   cursor: pointer;
+}
+
+.disabledNavigationButton{
+  cursor: default;
 }
 
 .selectedNavigationButton {
@@ -81,7 +90,8 @@
   /* 150% */
 }
 
-.unselectedNavigationButton {
+.unselectedNavigationButton,
+.disabledNavigationButton {
   display: flex;
   padding: 8px 12px;
   align-items: center;
@@ -89,7 +99,6 @@
 
   border-radius: 6px;
   background: var(--Gray-25, #fcfcfd);
-  color: var(--Gray-700, #344054);
 
   /* Text md/Semibold */
   font-size: 16px;
@@ -97,6 +106,14 @@
   font-weight: 600;
   line-height: 24px;
   /* 150% */
+}
+
+.unselectedNavigationButton {
+  color: var(--Gray-700, #344054);
+}
+
+.disabledNavigationButton {
+  color: var(--Gray-400, #727272);
 }
 
 .viewContainer {
