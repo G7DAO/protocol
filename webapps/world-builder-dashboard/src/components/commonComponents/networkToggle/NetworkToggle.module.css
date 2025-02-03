@@ -45,7 +45,8 @@
   font-size: 14px;
   font-style: normal;
   font-weight: 500;
-  line-height: 20px; /* 142.857% */
+  line-height: 20px;
+  /* 142.857% */
 }
 
 .testnetType {
@@ -54,7 +55,8 @@
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
-  line-height: 20px; /* 142.857% */
+  line-height: 20px;
+  /* 142.857% */
 }
 
 .testnetTypeColor {
@@ -111,4 +113,23 @@
   justify-content: space-between;
   align-items: center;
   flex: 1 0 0;
+}
+
+.comingSoonBadge {
+  display: flex;
+  padding: 2px 6px;
+  align-items: center;
+  gap: 4px;
+  border-radius: 16px;
+  background: #FDA29B;
+  color: var(--Error-900, #7A271A);
+  text-align: center;
+
+  /* Text xs/Medium */
+  font-family: Inter;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 18px;
+  /* 150% */
 }

@@ -1,35 +1,34 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
 import styles from './NetworkToggle.module.css'
 import IconChevronDownToggle from '@/assets/IconChevronDownToggle'
-import { NetworkType, useBlockchainContext } from '@/contexts/BlockchainContext'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
 
-const NETWORK_OPTIONS: NetworkType[] = ['Testnet', 'Mainnet']
+// const NETWORK_OPTIONS: NetworkType[] = ['Testnet', 'Mainnet']
 
 interface NetworkToggleProps { }
 
 const NetworkToggle: React.FC<NetworkToggleProps> = () => {
-  const { selectedNetworkType, setSelectedNetworkType } = useBlockchainContext()
+  const { selectedNetworkType } = useBlockchainContext()
   const [isDropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement | null>(null)
-  const [searchParams, setSearchParams] = useSearchParams()
+  // const [searchParams, setSearchParams] = useSearchParams()
   const toggleDropdown = () => setDropdownOpen((prev) => !prev)
 
-  useEffect(() => {
-    const networkType = searchParams.get('network')
-    setSelectedNetworkType(
-      networkType ? (networkType as NetworkType) : selectedNetworkType ? selectedNetworkType : localStorage.getItem('selectedNetworkType') as NetworkType ?? 'Mainnet'
-    )
-    setSearchParams({
-      network: networkType ? (networkType as string) : selectedNetworkType ? selectedNetworkType : localStorage.getItem('selectedNetworkType') as NetworkType ?? 'Mainnet'
-    })
-  }, [selectedNetworkType])
+  // useEffect(() => {
+  //   const networkType = searchParams.get('network')
+  //   setSelectedNetworkType(
+  //     networkType ? (networkType as NetworkType) : selectedNetworkType ? selectedNetworkType : localStorage.getItem('selectedNetworkType') as NetworkType ?? 'Mainnet'
+  //   )
+  //   setSearchParams({
+  //     network: networkType ? (networkType as string) : selectedNetworkType ? selectedNetworkType : localStorage.getItem('selectedNetworkType') as NetworkType ?? 'Mainnet'
+  //   })
+  // }, [selectedNetworkType])
 
-  const handleNetworkSelect = (network: NetworkType) => {
-    setSelectedNetworkType(network as NetworkType)
-    setDropdownOpen(!isDropdownOpen)
-    setSearchParams({ network: network as string })
-  }
+  // const handleNetworkSelect = (network: NetworkType) => {
+  //   setSelectedNetworkType(network as NetworkType)
+  //   setDropdownOpen(!isDropdownOpen)
+  //   setSearchParams({ network: network as string })
+  // }
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -57,7 +56,7 @@ const NetworkToggle: React.FC<NetworkToggleProps> = () => {
         <IconChevronDownToggle color='#fff' />
         {isDropdownOpen && (
           <div className={styles.dropdownContainer}>
-            {NETWORK_OPTIONS.filter((network: NetworkType) => network !== selectedNetworkType).map(
+            {/* {NETWORK_OPTIONS.filter((network: NetworkType) => network !== selectedNetworkType).map(
               (network: NetworkType) => (
                 <div key={network} className={styles.dropdownOption} onClick={() => handleNetworkSelect(network)}>
                   <div className={styles.dropdownNetworkContainer}>
@@ -73,7 +72,23 @@ const NetworkToggle: React.FC<NetworkToggleProps> = () => {
                   </div>
                 </div>
               )
-            )}
+            )} */}
+            <div key={'MAINNET'} className={styles.dropdownOption} style={{ cursor: 'not-allowed' }}>
+              <div className={styles.dropdownNetworkContainer}>
+                <div className={styles.dropdownNetworkInformation}>
+                  <div className={styles.dropdownTestnetContainer}>
+                    <div
+                      className={`${styles.testnetType} ${styles.mainnetTypeColor}`}
+                    >
+                      Mainnet
+                    </div>
+                    <div className={styles.comingSoonBadge}>
+                      Coming Soon
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>
