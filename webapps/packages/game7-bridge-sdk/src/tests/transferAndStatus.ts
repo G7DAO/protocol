@@ -1,5 +1,5 @@
 import {TokenAddressMap} from '../types';
-import {BigNumber, ethers} from 'ethers';
+import {ethers} from 'ethers';
 import {networks} from '../networks';
 import {BridgeToken} from '../bridgeToken';
 import {BridgeTransferStatus} from "../bridgeTransfer";
@@ -10,12 +10,12 @@ import {BridgeTransferStatusToString, ETH, getTypeMessage, logBalance, rpcs, TG7
 
 
 async function transfer(_amount: string, _transfers: Array<{destinationNetworkChainId: number; originNetworkChainId: number; token: TokenAddressMap; txHash?: string, isCCTP?: boolean, decimals?: number }>, params: {send: boolean} = {send: true }) {
-    const from = '0x4eD919172bD08D74831f2914aAAe8edA690d08Ab'
+    const from = process.env.FROM
     const key = process.env.KEY
     const failedTransactions = []
     const uniqueTokens = Array.from(new Set(_transfers.map(d => d.token)))
 
-
+    const startBalances = []
     console.log('=== Initial Balances ===')
     for (const token of uniqueTokens) {
         for(const _chainId of Object.keys(token)) {
@@ -24,7 +24,8 @@ async function transfer(_amount: string, _transfers: Array<{destinationNetworkCh
             const bridgeToken = new BridgeToken(token, chainId);
             const decimals = await bridgeToken.getDecimals(provider)
             const tokenSymbol = await bridgeToken.getSymbol(provider)
-            await logBalance(token, chainId, provider, from, decimals, `${tokenSymbol} (${networks[chainId].name}) balance: `)
+            const balance = await logBalance(token, chainId, provider, from, decimals, `${tokenSymbol} (${networks[chainId].name}) balance: `)
+            startBalances.push(balance, chainId, tokenSymbol)
         }
     }
     console.log('=====================')
@@ -57,15 +58,19 @@ async function transfer(_amount: string, _transfers: Array<{destinationNetworkCh
         const signer = new ethers.Wallet(key ?? '', originProvider);
 
 
-        const bridgeToken = new BridgeToken(token, originNetworkChainId)
+
+        const filteredTokenMap = Object.fromEntries(
+            Object.entries(token).filter(
+                ([chainId, _]: [string, string]) =>
+                    Number(chainId) === originNetworkChainId || Number(chainId) === destinationNetworkChainId
+            )
+        );
+        const bridgeToken = new BridgeToken(filteredTokenMap, originNetworkChainId)
         const tokenSymbol = await bridgeToken.getSymbol(originProvider)
         const decimals = await bridgeToken.getDecimals(originProvider)
         const amount = ethers.utils.parseUnits(_amount, decimals)
 
         console.log(`${originNetwork.name} -> ${destinationNetwork.name} ${ethers.utils.formatUnits(amount, decimals)} ${tokenSymbol}`)
-
-        await logBalance(token, destinationNetworkChainId, destinationProvider, from, decimals, `${tokenSymbol} ${destinationNetwork.name} balance: `)
-        await logBalance(token, originNetworkChainId, originProvider, from, decimals, `${tokenSymbol} ${originNetwork.name} balance: `)
 
         const g7Bridger = getBridger(originNetworkChainId, destinationNetworkChainId, token) //bridgerFactory(originNetworkChainId, destinationNetworkChainId, token)
         console.log(g7Bridger.isDeposit ? 'DEPOSIT' : 'WITHDRAWAL')
@@ -128,7 +133,6 @@ async function transfer(_amount: string, _transfers: Array<{destinationNetworkCh
                 const res = await g7Bridger.transfer({amount, signer, destinationProvider})
                 console.log('waiting...')
                 const mined = await res.wait()
-                // const fee = await getTransactionFee(mined.transactionHash, originProvider)
                 console.log('Sent: ', mined.transactionHash)
                 transactions.push({
                     originNetworkChainId,
@@ -143,8 +147,6 @@ async function transfer(_amount: string, _transfers: Array<{destinationNetworkCh
                     completedTime: undefined,
                     executableTime: undefined,
                 })
-                await logBalance(token, originNetworkChainId, originProvider, from, decimals, `${tokenSymbol} ${originNetwork.name} balance: `)
-                await logBalance(token, destinationNetworkChainId, destinationProvider, from, decimals, `${tokenSymbol} ${destinationNetwork.name} balance: `)
             } catch (e) {
                 failedTransactions.push({
                     originNetworkChainId,
@@ -153,14 +155,6 @@ async function transfer(_amount: string, _transfers: Array<{destinationNetworkCh
                 })
                 console.error("Sending error: ", e)
             }
-        }
-
-
-        const  percentIncrease = (
-            num: BigNumber,
-            increase: BigNumber
-        ): BigNumber => {
-            return num.add(num.mul(increase).div(100))
         }
 
     }
@@ -192,9 +186,6 @@ async function transfer(_amount: string, _transfers: Array<{destinationNetworkCh
                 console.log(`${getTypeMessage(info.transferType)} ${info.originName} -> ${info.destinationName} ${info.tokenSymbol} ${info.amount ? ethers.utils.formatUnits(info.amount, tx.decimals) : info.amount}`)
 
                 const destinationProvider = new ethers.providers.JsonRpcProvider(rpcs[tx.destinationNetworkChainId])
-                const tokenAddress = tx.token[tx.destinationNetworkChainId]
-
-                await logBalance(tx.token, tx.destinationNetworkChainId, destinationProvider, info.to, tx.decimals, 'Balance: ')
 
                 const fullStatus = await bridgeTransfer.getStatus();
                 if (!fullStatus) {
@@ -241,19 +232,18 @@ async function transfer(_amount: string, _transfers: Array<{destinationNetworkCh
                     console.log('Executing...')
                     const res = await bridgeTransfer.execute(signer)
                     console.log('Mined: ', res.transactionHash)
-
-                    await logBalance(tx.token, tx.destinationNetworkChainId, destinationProvider, info.to, tx.decimals, 'New balance: ')
                 }
 
             } catch (error) {
                 console.error(`Failed to process transaction ${tx.txHash}:`, error);
             }
         }
-        const delay = (ms: number): Promise<void> => {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        };
-        await delay(15 * 1000)
     } while (transactions.some((t) => !t.completedTime))
+
+    console.log('===initial balances===')
+    for (const record of startBalances) {
+        console.log(record)
+    }
 
     console.log('=== Final Balances ===')
 
@@ -270,7 +260,7 @@ async function transfer(_amount: string, _transfers: Array<{destinationNetworkCh
     console.log('=====================')
 
     console.log('Failed transactions: ', failedTransactions);
-    console.log('Transactions: ', transactions);
+    // console.log('Transactions: ', transactions);
 }
 
 
@@ -292,6 +282,14 @@ const erc20Deposits = [
     { originNetworkChainId: 11155111, destinationNetworkChainId: 421614, token: USDC },
 ]
 
+
+const testnetEth = [
+    { originNetworkChainId: 11155111, destinationNetworkChainId: 421614, token: ETH },
+    { originNetworkChainId: 421614, destinationNetworkChainId: 11155111, token: ETH },
+]
+
+
+
 const failedTransactions = [
     { originNetworkChainId: 11155111, destinationNetworkChainId: 421614, token: TG7T, txHash: '0x48c5c8b4fa8b8e80a914542ee45babcea75c7c2d615bceb815397a3147064e06' },
 ]
@@ -299,18 +297,17 @@ const failedTransactions = [
 const testnetWithdrawals = testnetDeposits.map((t) => ({...t, originNetworkChainId: t.destinationNetworkChainId, destinationNetworkChainId: t.originNetworkChainId}))
 
 
-const hundredWithdrawals = testnetWithdrawals.flatMap(transfer => Array(5).fill(transfer));
+const erc20Withdrawals = erc20Deposits.map((t) => ({...t, originNetworkChainId: t.destinationNetworkChainId, destinationNetworkChainId: t.originNetworkChainId}))
 
-const batch = erc20Deposits.flatMap(transfer => Array(1).fill(transfer));
 
-// const transfers = [
-//     { originNetworkChainId: 11155111, destinationNetworkChainId: 421614, token: TG7T, txHash: '0x4e4ea691c7367546dd47bcb389c2f178f59b6b35dbf0c9f9c7b91bd0eb48556a' },
-// ]
+const hundredWithdrawals = testnetWithdrawals.flatMap(transfer => Array(25).fill(transfer));
+
+const batch = erc20Deposits.flatMap(transfer => Array(25).fill(transfer));
 
 
 // Run the script
-// transfer('0.004444', testnetDeposits, {send: true});
 
-transfer('0.000012', failedTransactions, {send: true});
+transfer('0.000001', batch, {send: true});
+
 
 
