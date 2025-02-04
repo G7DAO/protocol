@@ -29,16 +29,18 @@ export const BridgeTransferStatusToString: { [key in BridgeTransferStatus]: stri
     [BridgeTransferStatus.CCTP_REDEEMED]: "CCTP Redeemed"
 };
 
-export const logBalance = async (token: TokenAddressMap, chainId: number, provider: ethers.providers.Provider, from, decimals: number, label: string) => {
+export const logBalance = async (token: TokenAddressMap, chainId: number, provider: ethers.providers.Provider, from: string, decimals: number, label: string) => {
     const tokenAddress = token[chainId]
 
     if (tokenAddress === ethers.constants.AddressZero) {
         const balance = await provider.getBalance(from);
         console.log(label, ethers.utils.formatUnits(balance, decimals))
+        return ethers.utils.formatUnits(balance, decimals)
     } else {
         const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
         const balance = await tokenContract.balanceOf(from);
         console.log(label, ethers.utils.formatUnits(balance, decimals))
+        return ethers.utils.formatUnits(balance, decimals)
     }
 }
 
@@ -83,10 +85,10 @@ export const USDC: TokenAddressMap = {
 }
 
 export const rpcs: { [key: number]: string } = {
-    42161: "https://nb.moonstream.to/nb/arbitrum-one/jsonrpc/7d3d4cb1-1228-48da-b5b6-ea3f37a43c90",
+    42161: `${process.env.NB_JSON_RPC_URI}/arbitrum-one/jsonrpc/${process.env.NB_WB_DASHBOARD_ACCESS_ID}`,
     1: "https://mainnet.infura.io/v3/0eddb9de2a4043c4b6728e160cfc7fa1",
     2187: "https://mainnet-rpc.game7.io",
-    13746: "https://nb.moonstream.to/nb/game7-testnet/jsonrpc/7d3d4cb1-1228-48da-b5b6-ea3f37a43c90",
+    13746: `${process.env.NB_JSON_RPC_URI}/game7-testnet/jsonrpc/${process.env.NB_WB_DASHBOARD_ACCESS_ID}`,
     11155111: "https://ethereum-sepolia-rpc.publicnode.com",
     421614: `${process.env.NB_JSON_RPC_URI}/arbitrum-sepolia/jsonrpc/${process.env.NB_WB_DASHBOARD_ACCESS_ID}`,
 };
