@@ -94,6 +94,24 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
     setTokens(_tokens)
   }
 
+  const sanitize = (input: string): string => {
+    let result = input.replace(/[^\d.]/g, '');
+    result = result.replace(/\.(?=.*\.)/g, '');
+    if (!result) {
+      return '';
+    }
+    const hasDot = result.includes('.');
+    const [intPartRaw, fractionPartRaw = ''] = result.split('.');
+    let intPart = intPartRaw.replace(/^0+/, '');
+    if (intPart === '') {
+      intPart = '0';
+    }
+    if (hasDot) {
+      return intPart + '.' + fractionPartRaw;
+    }
+    return intPart;
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -103,11 +121,20 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
       <div className={errorMessage ? styles.inputWithError : styles.inputGroup}>
         <input
           className={styles.input}
+          type="text"
           value={value}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => {
+            setValue(sanitize(e.target.value));
+          }}
+          onPaste={(e) => {
+            e.preventDefault();
+            const pasted = e.clipboardData.getData('text');
+            setValue(sanitize(pasted));
+          }}
+          placeholder="0"
           disabled={!connectedAccount}
-          placeholder={'0'}
-          type='number'
+          inputMode="decimal"
+          pattern="^(0(\.\d*)?|[1-9]\d*(\.\d*)?)$"
         />
         <button
           className={styles.maxButton}
