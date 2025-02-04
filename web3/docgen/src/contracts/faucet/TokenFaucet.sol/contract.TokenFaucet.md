@@ -1,5 +1,5 @@
 # TokenFaucet
-[Git Source](https://github.com/G7DAO/protocol/blob/0d286772d26e7f355ea5f6d3e0323d2491e1ebca/contracts/faucet/TokenFaucet.sol)
+[Git Source](https://github.com/G7DAO/protocol/blob/874893f46ced0a2b968b4e0f586d9ae4b81435ce/contracts/faucet/TokenFaucet.sol)
 
 **Inherits:**
 Ownable
@@ -44,21 +44,21 @@ uint256 public DEFAULT_GAS_LIMIT = 21000;
 ```
 
 
-### lastClaimedTimestamp
+### lastClaimedL2Timestamp
 
 ```solidity
-mapping(address => uint256) public lastClaimedTimestamp;
+mapping(address => uint256) public lastClaimedL2Timestamp;
+```
+
+
+### lastClaimedL3Timestamp
+
+```solidity
+mapping(address => uint256) public lastClaimedL3Timestamp;
 ```
 
 
 ## Functions
-### timeInterval
-
-
-```solidity
-modifier timeInterval();
-```
-
 ### constructor
 
 
@@ -78,7 +78,7 @@ Claim tokens from the faucet
 
 
 ```solidity
-function claim() public timeInterval;
+function claim() public;
 ```
 
 ### claimL3
@@ -87,7 +87,7 @@ Claim tokens from the faucet on L3
 
 
 ```solidity
-function claimL3() public timeInterval;
+function claimL3() public;
 ```
 
 ### setFaucetTimeInterval

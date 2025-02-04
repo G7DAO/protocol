@@ -62,16 +62,24 @@ const BridgePage = () => {
           >
             Transfer
           </button>
-          <button
-            className={
-              location.pathname === '/bridge/transactions'
-                ? styles.selectedNavigationButton
-                : styles.unselectedNavigationButton
-            }
-            onClick={() => navigate('/bridge/transactions')}
-          >
-            Activity
-          </button>
+          {connectedAccount ? (
+            <button
+              className={
+                location.pathname === '/bridge/transactions'
+                  ? styles.selectedNavigationButton
+                  : styles.unselectedNavigationButton
+              }
+              onClick={() => navigate('/bridge/transactions')}
+            >
+              Activity
+            </button>
+          ) : (
+            <button
+              className={styles.disabledNavigationButton}
+            >
+              Activity
+            </button>
+          )}
         </div>
       </div>
       <div className={styles.viewContainer} ref={historyContainerRef}>
