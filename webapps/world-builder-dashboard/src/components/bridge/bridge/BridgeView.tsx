@@ -69,12 +69,23 @@ const BridgeView = ({
   })
 
   const nativeToken = getTokensForNetwork(direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId, connectedAccount).find(
-    (token) => direction === 'DEPOSIT' ? token.symbol === selectedHighNetwork.nativeCurrency?.symbol : token.symbol === selectedLowNetwork.nativeCurrency?.symbol
+    (token) => direction === 'DEPOSIT' ? token.symbol === selectedLowNetwork.nativeCurrency?.symbol : token.symbol === selectedHighNetwork.nativeCurrency?.symbol
   ) ?? null
 
   const { data: nativeTokenInformation, refetch: refetchNativeToken } = useTokenInformation({
     account: connectedAccount,
     token: nativeToken,
+    selectedLowNetwork,
+    selectedHighNetwork
+  })
+
+  const destinationNative = getTokensForNetwork(direction === 'DEPOSIT' ? selectedHighNetwork.chainId : selectedLowNetwork.chainId, connectedAccount).find(
+    (token) => direction === 'DEPOSIT' ? token.symbol === selectedHighNetwork.nativeCurrency?.symbol : token.symbol === selectedLowNetwork.nativeCurrency?.symbol
+  ) ?? null
+
+  const { data: destinationNativeTokenInformation } = useTokenInformation({
+    account: connectedAccount,
+    token: destinationNative,
     selectedLowNetwork,
     selectedHighNetwork
   })
@@ -132,6 +143,32 @@ const BridgeView = ({
   useEffect(() => {
     setNetworkErrorMessage('')
   }, [selectedHighNetwork, selectedLowNetwork, value])
+
+  useEffect(() => {
+    const parentFee = Number(estimatedFee.data?.parentFee)
+    const childFee = Number(estimatedFee.data?.childFee)
+    const parentBalance = Number(nativeTokenInformation?.tokenBalance ?? '0')
+    const childBalance = Number(destinationNativeTokenInformation?.tokenBalance ?? '0')
+
+    if (parentFee > parentBalance && childFee > childBalance) {
+      setNetworkErrorMessage(
+        `Insufficient funds: You need more ${nativeTokenInformation?.symbol} and ${destinationNativeTokenInformation?.symbol} for transaction fees.`
+      )
+    } else if (parentFee > parentBalance) {
+      setNetworkErrorMessage(
+        `Insufficient ${nativeTokenInformation?.symbol}: You need more to cover transaction fees on ${direction === 'WITHDRAW' ? selectedHighNetwork.displayName : selectedLowNetwork.displayName}.`
+      )
+    } else if (childFee > childBalance) {
+      setNetworkErrorMessage(
+        `Insufficient ${destinationNativeTokenInformation?.symbol}: You need more to cover transaction fees on ${direction === 'WITHDRAW' ? selectedLowNetwork.displayName : selectedHighNetwork.displayName}.`
+      )
+    }
+  }, [
+    estimatedFee.data?.parentFee,
+    estimatedFee.data?.childFee,
+    nativeTokenInformation,
+    tokenInformation,
+  ])
 
   useEffect(() => {
     if (message.data === 'stake') {
@@ -273,22 +310,25 @@ const BridgeView = ({
 
         />
         {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
-        {<div className={styles.manualGasMessageContainer}>
-          <div className={styles.manualGasMessageText}>
-            Claim transaction may be required on {direction === 'DEPOSIT' ? selectedHighNetwork.displayName : selectedLowNetwork.displayName}
+        {!(direction === 'DEPOSIT' && (selectedHighNetwork.chainId === 13746 || selectedHighNetwork.chainId === 2187)) && (
+          <div className={styles.manualGasMessageContainer}>
+            <div className={styles.manualGasMessageText}>
+              Claim transaction may be required on {direction === 'DEPOSIT' ? selectedHighNetwork.displayName : selectedLowNetwork.displayName}
+            </div>
+            <Tooltip
+              multiline
+              radius={'8px'}
+              arrowSize={8}
+              withArrow
+              arrowOffset={14}
+              events={{ hover: true, focus: true, touch: true }}
+              label='Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.'
+            >
+              <IconAlertCircle stroke='#FFFAEB' height={16} width={16} />
+            </Tooltip>
           </div>
-          <Tooltip
-            multiline
-            radius={'8px'}
-            arrowSize={8}
-            withArrow
-            arrowOffset={14}
-            events={{ hover: true, focus: true, touch: true }}
-            label='Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.'
-          >
-            <IconAlertCircle stroke='#FFFAEB' height={16} width={16} />
-          </Tooltip>
-        </div>}
+        )}
+
         <ActionButton
           direction={direction}
           amount={value ?? '0'}

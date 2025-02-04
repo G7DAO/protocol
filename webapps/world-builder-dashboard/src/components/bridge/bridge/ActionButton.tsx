@@ -1,5 +1,5 @@
 // External Libraries
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 // Constants
@@ -76,19 +76,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     selectedHighNetwork,
     connectedAccount: connectedAccount ?? ''
   })
-
-
-  useEffect(() => {
-    console.log({
-      label: getLabel() === 'Submit',
-      isDisabled: isDisabled,
-      amount: Number(amount) < 0,
-      l2l3message: (!L2L3message?.destination || !L2L3message.data),
-      isfetching: isFetchingGasFee,
-      gasFeesBalance: Number(gasFees?.[1]) > Number(nativeBalance),
-      allowances: allowances.isLoading
-    })
-  }, [isDisabled, amount, L2L3message, L2L3message, allowances, isFetchingGasFee, gasFees, nativeBalance])
 
   const checkAllowances = async (): Promise<boolean> => {
     if (!bridger || !connectedAccount) return false
@@ -305,7 +292,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           (isDisabled ||
             Number(amount) < 0 ||
             ((!L2L3message?.destination || !L2L3message.data) && Number(amount) === 0)) ||
-          allowances?.isLoading || isFetchingGasFee || Number(gasFees?.[1]) < Number(nativeBalance)
+          allowances?.isLoading || isFetchingGasFee || Number(gasFees?.[1]) > Number(nativeBalance)
         }
       >
         <div className={isConnecting || transfer.isPending ? styles.buttonLabelLoading : styles.buttonLabel}>
