@@ -1,18 +1,21 @@
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { RouterProvider } from 'react-router-dom'
-import { FIVE_MINUTES } from '../constants'
 import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
+
 import { ThemeProvider, AssetsProvider, Tenant } from 'summon-ui'
 import { IntlProvider } from 'summon-ui/intl'
 import { Notifications } from 'summon-ui/mantine'
+
 import { BlockchainProvider } from '@/contexts/BlockchainContext'
 import { BridgeNotificationsProvider } from '@/contexts/BridgeNotificationsContext'
 import { UISettingsProvider } from '@/contexts/UISettingsContext'
 import en from '@/lang/en.json'
 import { AuthProvider } from '@/providers/AuthProvider'
 import router from '@/router'
+
+import { FIVE_MINUTES } from '../constants'
 import './styles/global.css'
 
 dayjs.extend(utc)
@@ -40,11 +43,11 @@ const queryClient = new QueryClient({
 
 const enMessages = { en }
 
-//@TODO we need to set this dynamically
+// Tenant configuration using environment variables
 const TENANT_CONFIG = {
-  name: 'Game7',
-  lang: 'en',
-  uiTheme: 'light'
+  name: process.env.REACT_APP_TENANT_NAME || 'Game7',
+  lang: process.env.REACT_APP_TENANT_LANG || 'en',
+  uiTheme: process.env.REACT_APP_TENANT_THEME || 'light'
 }
 const { name, lang, uiTheme } = TENANT_CONFIG
 
