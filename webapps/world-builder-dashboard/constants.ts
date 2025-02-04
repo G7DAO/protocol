@@ -6,8 +6,6 @@ export const L1_NETWORK: NetworkInterface = {
   name: 'sepolia',
   displayName: 'Sepolia',
   rpcs: [`${import.meta.env.VITE_NB_JSON_RPC_URI}/sepolia/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`],
-  // THROW AWAY API KEY, ONLY TO BE USED FOR EXPERIMENT. IF EXPERIMENT IS SUCCESSFUL, WE WILL USE ANOTHER KEY!
-  // rpcs: ['https://eth-sepolia.g.alchemy.com/v2/TwPJGMIl1pr92XDzAWHrScgqXVSFC2Hd'],
   blockExplorerUrls: ['https://sepolia.etherscan.io'],
   nativeCurrency: {
     decimals: 18,
@@ -25,8 +23,6 @@ export const L2_NETWORK: HighNetworkInterface = {
   name: 'arbitrumSepolia',
   displayName: 'Arbitrum Sepolia',
   rpcs: [`${import.meta.env.VITE_NB_JSON_RPC_URI}/arbitrum-sepolia/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`],
-  // THROW AWAY API KEY, ONLY TO BE USED FOR EXPERIMENT. IF EXPERIMENT IS SUCCESSFUL, WE WILL USE ANOTHER KEY!
-  // rpcs: ['https://arb-sepolia.g.alchemy.com/v2/TwPJGMIl1pr92XDzAWHrScgqXVSFC2Hd'],
   blockExplorerUrls: ['https://sepolia.arbiscan.io'],
   nativeCurrency: {
     decimals: 18,
@@ -63,8 +59,6 @@ export const L1_MAIN_NETWORK: NetworkInterface = {
   name: 'ethereum',
   displayName: 'Ethereum',
   rpcs: [`${import.meta.env.VITE_NB_JSON_RPC_URI}/ethereum/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`],
-  // THROW AWAY API KEY, ONLY TO BE USED FOR EXPERIMENT. IF EXPERIMENT IS SUCCESSFUL, WE WILL USE ANOTHER KEY!
-  // rpcs: ['https://eth-mainnet.g.alchemy.com/v2/TwPJGMIl1pr92XDzAWHrScgqXVSFC2Hd'],
   blockExplorerUrls: ['https://etherscan.io'],
   nativeCurrency: {
     decimals: 18,
@@ -81,8 +75,6 @@ export const L2_MAIN_NETWORK: NetworkInterface = {
   chainId: 42161,
   name: 'arbitrumOne',
   displayName: 'Arbitrum One',
-  // THROW AWAY API KEY, ONLY TO BE USED FOR EXPERIMENT. IF EXPERIMENT IS SUCCESSFUL, WE WILL USE ANOTHER KEY!
-  // rpcs: ['https://arb-mainnet.g.alchemy.com/v2/TwPJGMIl1pr92XDzAWHrScgqXVSFC2Hd'],
   rpcs: [`${import.meta.env.VITE_NB_JSON_RPC_URI}/arbitrum-one/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`],
   blockExplorerUrls: ['https://arbiscan.io'],
   nativeCurrency: {
