@@ -87,7 +87,7 @@ export default function App() {
                           appFees: [
                             {
                               recipient: '0xE2f669A23f83Aaa69Cc8C918bF4397E4eddA4B01',
-                              fee: '175' // 1%
+                              fee: '100' // 1.75%
                             }
                           ],
                           chains,

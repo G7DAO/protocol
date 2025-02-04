@@ -93,7 +93,7 @@ const BridgeView = ({
   })
 
   useEffect(() => {
-    if (!selectedBridgeToken && !connectedAccount && !selectedHighNetwork && selectedLowNetwork)
+    if (!selectedBridgeToken && !connectedAccount && !selectedHighNetwork && !selectedLowNetwork)
       return
 
     if (selectedBridgeToken && connectedAccount && selectedHighNetwork && selectedLowNetwork) {
