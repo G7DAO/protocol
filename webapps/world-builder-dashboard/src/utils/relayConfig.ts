@@ -26,7 +26,7 @@ const g7Mainnet = defineChain({
     blockExplorers: {
       default: {
         name: 'Explorer',
-        url: 'https://mainnet.game7.io.game7.io'
+        url: 'https://mainnet.game7.io'
       },
     },
     contracts: {

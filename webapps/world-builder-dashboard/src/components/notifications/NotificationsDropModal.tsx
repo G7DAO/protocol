@@ -144,6 +144,7 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
 
   const handleExit = () => {
     setShow(!show)
+    setIsDropdownOpened(false)
   }
 
   if (!notifications || notifications.length === 0) {
@@ -156,7 +157,7 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
         <div onClick={handleClick} className={styles.toastMultiple}>
           {`You have ${notifications.length} new notifications. Click here to view`}
           <IconCloseSmall
-            onClick={(e) => {
+            onMouseDown={(e) => {
               e.stopPropagation()
               handleExit()
             }}
@@ -168,10 +169,18 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
   }
 
   return (
-    <div onClick={handleClick} className={toastClassName(notifications[0].status)}>
-      {copy(notifications[0], selectedNetworkType, connectedAccount ?? '')}
-      <IconCloseSmall className={iconCloseClassName(notifications[0].status)} onClick={handleExit} />
-    </div>
+    show && (
+      <div onMouseDown={handleClick} className={toastClassName(notifications[0].status)}>
+        {copy(notifications[0], selectedNetworkType, connectedAccount ?? '')}
+        <IconCloseSmall
+          className={iconCloseClassName(notifications[0].status)}
+          onMouseDown={(e) => {
+            e.stopPropagation()
+            handleExit()
+          }}
+        />
+      </div>)
+
   )
 }
 const getTransactionUrl = (notification: BridgeNotification): string | undefined => {
