@@ -153,7 +153,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
                 <div className={styles.valueNote}>{isEstimatingFee ? 'Estimating...' : `Can't estimate fee`}</div>
               )}
             </div>
-            <div className={styles.dataRow}>
+            {/* <div className={styles.dataRow}>
               <div className={styles.itemName}>Estimated gas fee on {selectedLowChain.displayName}</div>
               {!!fee ? (
                 <div className={styles.valueContainer}>
@@ -170,7 +170,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
               ) : (
                 <div className={styles.valueNote}>{isEstimatingFee ? 'Estimating...' : `Can't estimate fee`}</div>
               )}
-            </div>
+            </div> */}
           </>
         )}
         <div className={styles.divider} />

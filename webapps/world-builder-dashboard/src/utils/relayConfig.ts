@@ -1,11 +1,37 @@
 
 import { SwapWidgetToken } from '@/pages/RelayPage/RelayPage'
 import { convertViemChainToRelayChain } from '@reservoir0x/relay-sdk'
-import { http } from 'viem'
+import { defineChain, http } from 'viem'
 import {
     ancient8, apeChain, arbitrumNova, avalanche, b3, bsc, mainnet, arbitrum, base, optimism, polygon, zksync, xai, mantle, zora, superposition, bob, boba, cyber, degen, forma, funkiMainnet, gnosis, gravity, ham, hychain, ink, linea, lisk, mint, mode, polygonZkEvm, redstone, sanko, scroll, sei, shape, worldchain
 } from 'viem/chains'
 import { createConfig } from 'wagmi'
+
+const g7Mainnet = defineChain({
+    id: 2187,
+    caipNetworkId: 'eip155:13746',
+    chainNamespace: 'eip155',
+    name: 'G7',
+    nativeCurrency: {
+      decimals: 18,
+      name: 'Game7 Token',
+      symbol: 'G7T',
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://mainnet-rpc.game7.io'],
+        webSocket: ['wss://rpc.game7.io'],
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Explorer',
+        url: 'https://mainnet.game7.io.game7.io'
+      },
+    },
+    contracts: {
+    },
+  });
 
 export const chains = [
     convertViemChainToRelayChain(mainnet),
@@ -46,6 +72,7 @@ export const chains = [
     convertViemChainToRelayChain(sei),
     convertViemChainToRelayChain(shape),
     convertViemChainToRelayChain(worldchain),
+    convertViemChainToRelayChain(g7Mainnet)
 ]
 
 export const wagmiConfig = createConfig({
@@ -89,6 +116,7 @@ export const wagmiConfig = createConfig({
         [sei.id]: http(),
         [shape.id]: http(),
         [worldchain.id]: http(),
+        [g7Mainnet.id]: http()
     }
 })
 
@@ -116,7 +144,7 @@ export const USDC: SwapWidgetToken = {
     decimals: 6,
     name: 'USDC',
     symbol: 'USDC',
-    logoURI: 'https://2248955668-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FhE4weeNpCJSNUXnecN1R%2Ficon%2FgJEa5WUcw0RjBfGqTNof%2Fxai%20symbol%20red%20svg.svg?alt=media&token=9131a0bf-a73d-4052-a957-fd69884aee62'
+    logoURI: 'https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694'
 }
 
 export const USDC_ARB: SwapWidgetToken = {
@@ -125,7 +153,7 @@ export const USDC_ARB: SwapWidgetToken = {
     decimals: 6,
     name: 'USDC',
     symbol: 'USDC',
-    logoURI: 'https://2248955668-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FhE4weeNpCJSNUXnecN1R%2Ficon%2FgJEa5WUcw0RjBfGqTNof%2Fxai%20symbol%20red%20svg.svg?alt=media&token=9131a0bf-a73d-4052-a957-fd69884aee62'
+    logoURI: 'https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694'
 }
 
 export const USDC_G7: SwapWidgetToken = {
@@ -134,7 +162,7 @@ export const USDC_G7: SwapWidgetToken = {
     decimals: 6,
     name: 'USDC',
     symbol: 'USDC',
-    logoURI: 'https://2248955668-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FhE4weeNpCJSNUXnecN1R%2Ficon%2FgJEa5WUcw0RjBfGqTNof%2Fxai%20symbol%20red%20svg.svg?alt=media&token=9131a0bf-a73d-4052-a957-fd69884aee62'
+    logoURI: 'https://assets.relay.link/icons/currencies/g7.png'
 }
 
 // G7
@@ -153,7 +181,7 @@ export const G7_ARB = {
     decimals: 18,
     name: 'G7',
     symbol: 'G7',
-    logoURI: 'https://2248955668-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FhE4weeNpCJSNUXnecN1R%2Ficon%2FgJEa5WUcw0RjBfGqTNof%2Fxai%20symbol%20red%20svg.svg?alt=media&token=9131a0bf-a73d-4052-a957-fd69884aee62'
+    logoURI: 'https://assets.relay.link/icons/currencies/g7.png'
 }
 
 export const G7_G7 = {
@@ -162,7 +190,7 @@ export const G7_G7 = {
     decimals: 18,
     name: 'G7',
     symbol: 'G7',
-    logoURI: 'https://2248955668-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FhE4weeNpCJSNUXnecN1R%2Ficon%2FgJEa5WUcw0RjBfGqTNof%2Fxai%20symbol%20red%20svg.svg?alt=media&token=9131a0bf-a73d-4052-a957-fd69884aee62'
+    logoURI: 'https://assets.relay.link/icons/currencies/g7.png'
 }
 
 export const XAI: SwapWidgetToken = {

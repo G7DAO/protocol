@@ -295,7 +295,8 @@
 .pending,
 .claimable,
 .settled,
-.loading {
+.loading,
+.failed {
   display: inline-flex;
   padding: 2px 6px 2px 8px;
   align-items: center;
@@ -328,6 +329,11 @@
   color: var(--Success-700, #027a48);
 }
 
+.failed {
+  border-radius: 16px;
+  background: #B42318;
+}
+
 @keyframes blink {
   0% {
     background-color: #393939;
@@ -354,11 +360,15 @@
 }
 
 .claimable:hover {
-  background: var(--Warning-100, #fffaeb);
+  background: #93370D;
 }
 
 .settled:hover {
   background: var(--Success-50, #ecfdf3);
+}
+
+.failed:hover {
+  background: #912018;
 }
 
 .claimButton {
