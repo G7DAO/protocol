@@ -375,11 +375,15 @@ export const usePendingTransactions = (connectedAccount: string | undefined): Us
             if (t.type === 'DEPOSIT') {
               if (t.status === BridgeTransferStatus.CCTP_COMPLETE) {
                 updatedTransactions.push({ ...t, claimableTimestamp: t.claimableTimestamp })
+              } else if (t.status === BridgeTransferStatus.DEPOSIT_GAS_PENDING || t.status === BridgeTransferStatus.CCTP_PENDING || t.status === BridgeTransferStatus.DEPOSIT_GAS_PENDING) {
+                updatedTransactions.push({ ...t, completionTimestamp: t.completionTimestamp })
               }
             }
             if (t.type === 'WITHDRAWAL') {
               if (t.status === ChildToParentMessageStatus.CONFIRMED || t.status === BridgeTransferStatus.CCTP_COMPLETE) {
                 updatedTransactions.push({ ...t, claimableTimestamp: t.claimableTimestamp })
+              } else if (t.status === BridgeTransferStatus.CCTP_PENDING) {
+                updatedTransactions.push({...t, highNetworkTimestamp: t.highNetworkTimestamp})
               }
             }
           }
