@@ -75,8 +75,14 @@
 }
 
 .minButton:disabled {
-    background: var(--Gray-600, #475467);
+    background: var(--Error-500, #F04438);
     cursor: not-allowed;
+}
+
+.minButtonText { }
+
+.minButtonTextDisabled {
+    opacity: 0.7;
 }
 
 .chevron {
