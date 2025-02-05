@@ -61,7 +61,9 @@ const AllowanceSelector = ({ balance, onChange, allowance, amount, disabled, tok
             }}
             disabled={disabled}
           >
-            MIN
+            <span className={disabled ? styles.minButtonTextDisabled : styles.minButtonText} >
+              MIN
+            </span>
           </button>
 
           <IconChevronDown className={styles.chevron} />
