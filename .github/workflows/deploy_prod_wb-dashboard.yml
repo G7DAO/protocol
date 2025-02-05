@@ -28,7 +28,6 @@ jobs:
               env:
                   VITE_NB_JSON_RPC_URI: ${{ secrets.VITE_NB_JSON_RPC_URI }}
                   VITE_NB_WB_DASHBOARD_ACCESS_ID: ${{ secrets.VITE_NB_WB_DASHBOARD_ACCESS_ID }}
-                  VITE_COIN_GECKO_KEY: ${{ secrets.VITE_COIN_GECKO_KEY_PROD }}
               run: |
                   npm install
                   npm run build
