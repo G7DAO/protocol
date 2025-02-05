@@ -55,7 +55,6 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
       <div className={styles.header}>Transaction Summary</div>
       <div className={styles.divider} />
       <div className={styles.dataRowContainer}>
-
         <div className={styles.dataRow}>
           <div className={styles.itemName}>To address</div>
           <Tooltip

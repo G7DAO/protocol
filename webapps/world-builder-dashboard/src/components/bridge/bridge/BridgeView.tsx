@@ -300,7 +300,10 @@ const BridgeView = ({
               withArrow
               arrowOffset={14}
               events={{ hover: true, focus: true, touch: true }}
-              label='Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.'
+              label={selectedLowNetwork.chainId === 421614 || selectedLowNetwork.chainId === 42161 ?
+                'A small amount of G7 (or TG7T for testnet) is required on Arbitrum to deposit on G7 Network (G7 Sepolia for testnet)' :
+                'Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.'
+              }
             >
               <IconAlertCircle stroke='#FFFAEB' height={16} width={16} />
             </Tooltip>
