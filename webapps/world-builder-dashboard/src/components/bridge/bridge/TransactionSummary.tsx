@@ -4,8 +4,6 @@ import { Tooltip, useClipboard } from 'summon-ui/mantine'
 import { mantineBreakpoints } from '@/styles/breakpoints'
 import { useMediaQuery } from '@mantine/hooks'
 import { NetworkInterface } from '@/contexts/BlockchainContext'
-import { returnSymbol } from '@/utils/web3utils'
-
 interface TransactionSummaryProps {
   address: string | undefined
   transferTime: string
@@ -13,13 +11,14 @@ interface TransactionSummaryProps {
   isEstimatingFee: boolean
   value: number
   nativeBalance: number
-  tokenSymbol: string
+  tokenSymbol?: string
   gasNativeTokenSymbol: string
   gasChildNativeTokenSymbol: string
   direction: 'DEPOSIT' | 'WITHDRAW'
   selectedLowChain: NetworkInterface
   selectedHighChain: NetworkInterface
   childFee: number
+  selectedBridgeTokenSymbol: string
 }
 const TransactionSummary: React.FC<TransactionSummaryProps> = ({
   direction,
@@ -28,13 +27,13 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
   transferTime,
   fee,
   isEstimatingFee,
-  tokenSymbol,
   gasNativeTokenSymbol,
   gasChildNativeTokenSymbol,
   value,
   selectedHighChain,
   selectedLowChain,
-  childFee
+  childFee,
+  selectedBridgeTokenSymbol
 }) => {
   const clipboard = useClipboard({ timeout: 700 })
 
@@ -149,7 +148,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
           <div className={styles.itemName}>You will receive</div>
           <div className={styles.valueContainer}>
             <div className={styles.value}>
-              {`${value} ${returnSymbol(direction, selectedHighChain, selectedLowChain, tokenSymbol)}`}
+              {`${value} ${selectedBridgeTokenSymbol}`}
             </div>
           </div>
         </div>
