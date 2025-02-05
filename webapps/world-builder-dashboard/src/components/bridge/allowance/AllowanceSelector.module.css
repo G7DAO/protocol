@@ -75,7 +75,7 @@
 }
 
 .minButton:disabled {
-    background: var(--Error-500, #F04438);
+    background: #F04438;
     cursor: not-allowed;
 }
 
