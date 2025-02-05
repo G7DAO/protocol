@@ -24,7 +24,6 @@ import ValueToBridge from '@/components/bridge/bridge/ValueToBridge'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useUISettings } from '@/contexts/UISettingsContext'
 import useTokenInformation from '@/hooks/useBalance'
-import { useCoinGeckoAPI } from '@/hooks/useCoinGeckoAPI'
 // Hooks and Constants
 import { DepositDirection } from '@/pages/BridgePage/BridgePage'
 import { getStakeNativeTxData } from '@/utils/bridge/stakeContractInfo'
@@ -48,7 +47,6 @@ const BridgeView = ({
   const [inputErrorMessages, setInputErrorMessages] = useState({ value: '', data: '', destination: '' })
   const [networkErrorMessage, setNetworkErrorMessage] = useState('')
   const { isMessagingEnabled } = useUISettings()
-  const { useUSDPriceOfToken } = useCoinGeckoAPI()
   const {
     connectedAccount,
     selectedLowNetwork,
@@ -78,9 +76,6 @@ const BridgeView = ({
     selectedLowNetwork,
     selectedHighNetwork
   })
-
-  const { data: coinUSDRate, isFetching: isCoinFetching } = useUSDPriceOfToken(selectedBridgeToken?.geckoId ?? '')
-  const { data: ethRate } = useUSDPriceOfToken('ethereum')
 
   const { getEstimatedFee } = useBridger()
 
@@ -208,13 +203,6 @@ const BridgeView = ({
           value={value}
           setValue={setValue}
           balance={tokenInformation?.tokenBalance}
-          rate={
-            selectedBridgeToken?.symbol === 'TG7T' || selectedBridgeToken?.symbol === 'G7'
-              ? 1
-              : isCoinFetching
-                ? 0.0
-                : (coinUSDRate[selectedBridgeToken?.geckoId ?? '']?.usd ?? 0)
-          }
           isFetchingBalance={isFetchingTokenInformation}
           errorMessage={inputErrorMessages.value}
           setErrorMessage={(msg) => setInputErrorMessages((prev) => ({ ...prev, value: msg }))}
@@ -251,16 +239,6 @@ const BridgeView = ({
           childFee={Number(estimatedFee.data?.childFee ?? 0)}
           isEstimatingFee={estimatedFee.isFetching}
           value={Number(value)}
-          ethRate={ethRate?.ethereum?.usd ?? 0}
-          tokenRate={
-            selectedBridgeToken?.symbol === 'TG7T' || selectedBridgeToken?.symbol === 'G7'
-              ? 1
-              : isCoinFetching
-                ? 0.0
-                : coinUSDRate && selectedBridgeToken?.geckoId && coinUSDRate[selectedBridgeToken.geckoId]
-                  ? coinUSDRate[selectedBridgeToken.geckoId]?.usd ?? 0
-                  : 0
-          }
           tokenSymbol={tokenInformation?.symbol ?? ''}
           gasNativeTokenSymbol={
             selectedNativeToken?.symbol ?? ''
