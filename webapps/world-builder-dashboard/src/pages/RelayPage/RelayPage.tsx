@@ -52,6 +52,10 @@ const RelayPage = () => {
         }
     }, [pendingTransacions.data, connectedAccount])
 
+    useEffect(() => {
+        console.log(connectedAccount)
+    }, [connectedAccount])
+
     return (
         <div className={bridgeStyles.container}>
             <div className={bridgeStyles.top}>
@@ -64,6 +68,7 @@ const RelayPage = () => {
             <div className={styles.viewContainer}>
                 <div className={styles.mainContainer}>
                     <SwapWidget
+                        key={connectedAccount}
                         defaultFromToken={USDC_ARB}
                         defaultToToken={G7_G7}
                         defaultToAddress={connectedAccount as Address}
