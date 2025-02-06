@@ -24,6 +24,7 @@ import { MAINNET_RELAY_API } from '@reservoir0x/relay-sdk'
 import { theme } from './utils/relayTheme'
 import '@reservoir0x/relay-kit-ui/styles.css'
 import { wagmiConfig, chains } from './utils/relayConfig'
+import { ThirdwebProvider } from "thirdweb/react";
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -63,48 +64,51 @@ const { name, lang, uiTheme } = TENANT_CONFIG
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <BlockchainProvider>
-        <UISettingsProvider>
-          <AssetsProvider tenant={name as Tenant}>
-            <IntlProvider
-              intlConf={{
-                currentLang: lang as LangKey,
-                messagesConf: {
-                  ...enMessages
-                }
-              }}
-            >
-              <ThemeProvider uiTheme={uiTheme}>
-                <BridgeNotificationsProvider>
-                  <Notifications position='top-right' zIndex={1000} styles={NOTIFICATIONS_STYLES} />
-                  <TransactionProvider>
-                    <AuthProvider>
-                      <RelayKitProvider
-                        theme={theme}
-                        options={{
-                          appName: 'Relay Demo',
-                          appFees: [
-                            {
-                              recipient: '0xE2f669A23f83Aaa69Cc8C918bF4397E4eddA4B01',
-                              fee: '175' // 1%
-                            }
-                          ],
-                          chains,
-                          baseApiUrl: MAINNET_RELAY_API
-                        }}>
-                        <WagmiProvider config={wagmiConfig}>
-                          <RouterProvider router={router} />
-                        </WagmiProvider>
-                      </RelayKitProvider>
-                    </AuthProvider>
-                  </TransactionProvider>
-                </BridgeNotificationsProvider>
-              </ThemeProvider>
-            </IntlProvider>
-          </AssetsProvider>
-        </UISettingsProvider>
-      </BlockchainProvider>
-    </QueryClientProvider >
+    <ThirdwebProvider>
+      <QueryClientProvider client={queryClient}>
+        <BlockchainProvider>
+          <UISettingsProvider>
+            <AssetsProvider tenant={name as Tenant}>
+              <IntlProvider
+                intlConf={{
+                  currentLang: lang as LangKey,
+                  messagesConf: {
+                    ...enMessages
+                  }
+                }}
+              >
+                <ThemeProvider uiTheme={uiTheme}>
+                  <BridgeNotificationsProvider>
+                    <Notifications position='top-right' zIndex={1000} styles={NOTIFICATIONS_STYLES} />
+                    <TransactionProvider>
+                      <AuthProvider>
+                        <RelayKitProvider
+                          theme={theme}
+                          options={{
+                            appName: 'Relay Demo',
+                            appFees: [
+                              {
+                                recipient: '0xE2f669A23f83Aaa69Cc8C918bF4397E4eddA4B01',
+                                fee: '175' // 1%
+                              }
+                            ],
+                            chains,
+                            baseApiUrl: MAINNET_RELAY_API
+                          }}>
+
+                          <WagmiProvider config={wagmiConfig}>
+                            <RouterProvider router={router} />
+                          </WagmiProvider>
+                        </RelayKitProvider>
+                      </AuthProvider>
+                    </TransactionProvider>
+                  </BridgeNotificationsProvider>
+                </ThemeProvider>
+              </IntlProvider>
+            </AssetsProvider>
+          </UISettingsProvider>
+        </BlockchainProvider>
+      </QueryClientProvider >
+    </ThirdwebProvider>
   )
 }

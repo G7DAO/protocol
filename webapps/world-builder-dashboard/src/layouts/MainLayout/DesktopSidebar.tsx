@@ -6,11 +6,34 @@ import IconLogout from '@/assets/IconLogout'
 import NetworkToggle from '@/components/commonComponents/networkToggle/NetworkToggle'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
+import { createThirdwebClient } from "thirdweb"
+import { ConnectButton } from "thirdweb/react"
 
+
+import { createWallet } from "thirdweb/wallets"
 interface DesktopSidebarProps {
   navigationItems: { name: string; navigateTo: string; icon: ReactNode }[]
 }
 const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
+
+
+  const client = createThirdwebClient({
+    clientId: "....",
+  });
+
+  const wallets = [
+    createWallet("io.metamask"),
+    createWallet("com.coinbase.wallet"),
+    createWallet("me.rainbow"),
+    createWallet("io.rabby"),
+    createWallet("io.zerion.wallet"),
+    createWallet("com.trustwallet.app"),
+    createWallet("com.bitget.web3"),
+    createWallet("org.uniswap"),
+    createWallet("com.okex.wallet"),
+    createWallet("com.binance"),
+  ]
+
   const location = useLocation()
   const navigate = useNavigate()
   const { connectedAccount, isMetaMask, connectWallet, disconnectWallet, isConnecting, selectedNetworkType } =
@@ -59,20 +82,17 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
               </div>
               {isMetaMask && <IconLogout onClick={disconnectWallet} className={styles.iconButton} />}
             </div>
-          ) : (
-            <div className={styles.connectWalletButton} onClick={connectWallet}>
-              {isConnecting ? (
-                <div className={styles.connectingWalletText}>{'Connecting Wallet...'}</div>
-              ) : (
-                <div className={styles.connectWalletText}>{'Connect Wallet'}</div>
-              )}
-            </div>
-          )}
+          ) : <ConnectButton
+            client={client}
+            wallets={wallets}
+            connectButton={{ label: "Connect Wallet" }}
+            connectModal={{ size: "compact" }}
+          />}
           <div className={styles.linkContainer}>
-            <div className={styles.linkText} onClick={()=>navigate('/terms')}>
+            <div className={styles.linkText} onClick={() => navigate('/terms')}>
               Terms of Service
             </div>
-            <div className={styles.linkText} onClick={()=>navigate('/privacy')}>
+            <div className={styles.linkText} onClick={() => navigate('/privacy')}>
               Privacy Policy
             </div>
           </div>
