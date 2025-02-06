@@ -44,7 +44,7 @@ const BridgeView = ({
   const [value, setValue] = useState('0')
   const [message, setMessage] = useState<{ destination: string; data: string }>({ destination: '', data: '' })
   const [isMessageExpanded, setIsMessageExpanded] = useState(false)
-  const [inputErrorMessages, setInputErrorMessages] = useState({ value: '', data: '', destination: '' })
+  const [inputErrorMessages, setInputErrorMessages] = useState({ value: '', data: '', destination: '', })
   const [networkErrorMessage, setNetworkErrorMessage] = useState('')
   const { isMessagingEnabled } = useUISettings()
   const {
@@ -147,7 +147,7 @@ const BridgeView = ({
 
     if (parentFee > parentBalance && childFee > childBalance) {
       setNetworkErrorMessage(
-        `Insufficient funds: You need more ${nativeTokenInformation?.symbol} and ${destinationNativeTokenInformation?.symbol} for transaction fees.`
+        `Insufficient funds: You need more ${nativeTokenInformation?.symbol} on ${direction === 'WITHDRAW' ? selectedHighNetwork.displayName : selectedLowNetwork.displayName} and ${destinationNativeTokenInformation?.symbol} on ${direction === 'WITHDRAW' ? selectedLowNetwork.displayName : selectedHighNetwork.displayName} for transaction fees. `
       )
     } else if (parentFee > parentBalance) {
       setNetworkErrorMessage(
@@ -287,24 +287,33 @@ const BridgeView = ({
           selectedHighChain={selectedHighNetwork}
 
         />
-        {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
-        {!(direction === 'DEPOSIT' && (selectedHighNetwork.chainId === 13746 || selectedHighNetwork.chainId === 2187)) && (
-          <div className={styles.manualGasMessageContainer}>
+        {networkErrorMessage && estimatedFee.isFetched ? (
+          <div className={styles.manualGasMessageContainerError}>
             <div className={styles.manualGasMessageText}>
-              Claim transaction may be required on {direction === 'DEPOSIT' ? selectedHighNetwork.displayName : selectedLowNetwork.displayName}
+              {networkErrorMessage}
             </div>
-            <Tooltip
-              multiline
-              radius={'8px'}
-              arrowSize={8}
-              withArrow
-              arrowOffset={14}
-              events={{ hover: true, focus: true, touch: true }}
-              label='Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.'
-            >
-              <IconAlertCircle stroke='#FFFAEB' height={16} width={16} />
-            </Tooltip>
           </div>
+        ) : (
+          !(direction === 'DEPOSIT' && (selectedHighNetwork.chainId === 13746 || selectedHighNetwork.chainId === 2187)) && (
+            <div className={styles.manualGasMessageContainer}>
+              <div className={styles.manualGasMessageText}>
+                Claim transaction may be required on {direction === 'DEPOSIT' ? selectedHighNetwork.displayName : selectedLowNetwork.displayName}
+              </div>
+              {!(estimatedFee.isFetched && networkErrorMessage !== '') && (
+                <Tooltip
+                  multiline
+                  radius={'8px'}
+                  arrowSize={8}
+                  withArrow
+                  arrowOffset={14}
+                  events={{ hover: true, focus: true, touch: true }}
+                  label="Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates."
+                >
+                  <IconAlertCircle stroke="#FFFAEB" height={16} width={16} />
+                </Tooltip>
+              )}
+            </div>
+          )
         )}
 
         <ActionButton
