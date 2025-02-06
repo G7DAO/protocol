@@ -58,7 +58,7 @@ const Footer: React.FC = () => {
             setSelectedNetworkType('Testnet')
             navigate(item.url)
         } else if (item.name === "Bridge") {
-            setSelectedNetworkType('Testnet')
+            setSelectedNetworkType('Mainnet')
             navigate(item.url)
         } else {
             window.open(item.url, '_blank')

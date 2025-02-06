@@ -1,11 +1,37 @@
 
 import { SwapWidgetToken } from '@/pages/RelayPage/RelayPage'
 import { convertViemChainToRelayChain } from '@reservoir0x/relay-sdk'
-import { http } from 'viem'
+import { defineChain, http } from 'viem'
 import {
     ancient8, apeChain, arbitrumNova, avalanche, b3, bsc, mainnet, arbitrum, base, optimism, polygon, zksync, xai, mantle, zora, superposition, bob, boba, cyber, degen, forma, funkiMainnet, gnosis, gravity, ham, hychain, ink, linea, lisk, mint, mode, polygonZkEvm, redstone, sanko, scroll, sei, shape, worldchain
 } from 'viem/chains'
 import { createConfig } from 'wagmi'
+
+const g7Mainnet = defineChain({
+    id: 2187,
+    caipNetworkId: 'eip155:13746',
+    chainNamespace: 'eip155',
+    name: 'G7',
+    nativeCurrency: {
+      decimals: 18,
+      name: 'Game7 Token',
+      symbol: 'G7T',
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://mainnet-rpc.game7.io'],
+        webSocket: ['wss://rpc.game7.io'],
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Explorer',
+        url: 'https://mainnet.game7.io'
+      },
+    },
+    contracts: {
+    },
+  });
 
 export const chains = [
     convertViemChainToRelayChain(mainnet),
@@ -46,6 +72,7 @@ export const chains = [
     convertViemChainToRelayChain(sei),
     convertViemChainToRelayChain(shape),
     convertViemChainToRelayChain(worldchain),
+    convertViemChainToRelayChain(g7Mainnet)
 ]
 
 export const wagmiConfig = createConfig({
@@ -89,6 +116,7 @@ export const wagmiConfig = createConfig({
         [sei.id]: http(),
         [shape.id]: http(),
         [worldchain.id]: http(),
+        [g7Mainnet.id]: http()
     }
 })
 
@@ -110,13 +138,104 @@ export const ETH_ARB: SwapWidgetToken = {
     logoURI: 'https://2248955668-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FhE4weeNpCJSNUXnecN1R%2Ficon%2FgJEa5WUcw0RjBfGqTNof%2Fxai%20symbol%20red%20svg.svg?alt=media&token=9131a0bf-a73d-4052-a957-fd69884aee62'
 }
 
+export const USDT: SwapWidgetToken = {
+    chainId: 1,
+    address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+    decimals: 6,
+    name: 'USDT',
+    symbol: 'USDT', 
+    logoURI: 'https://etherscan.io/token/images/tethernew_32.svg'
+}
+
+export const USDT_ARB: SwapWidgetToken = {
+    chainId: 42161,
+    address: '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9',
+    decimals: 6,
+    name: 'USDT',
+    symbol: 'USDT', 
+    logoURI: 'https://etherscan.io/token/images/tethernew_32.svg'
+}
+
+export const WETH: SwapWidgetToken = {
+    chainId: 1,
+    address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+    decimals: 18,
+    name: 'WETH',
+    symbol: 'WETH', 
+    logoURI: 'https://etherscan.io/token/images/weth_28.png?v=2'
+}
+
+export const WETH_ARB: SwapWidgetToken = {
+    chainId: 42161,
+    address: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
+    decimals: 18,
+    name: 'WETH',
+    symbol: 'WETH', 
+    logoURI: 'https://etherscan.io/token/images/weth_28.png?v=2'
+}
+
+export const DAI: SwapWidgetToken = {
+    chainId: 1,
+    address: '0x6b175474e89094c44da98b954eedeac495271d0f',
+    decimals: 18,
+    name: 'DAI',
+    symbol: 'DAI', 
+    logoURI: 'https://etherscan.io/token/images/dairplce_32.svg'
+}
+
+export const DAI_ARB: SwapWidgetToken = {
+    chainId: 42161,
+    address: '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1',
+    decimals: 18,
+    name: 'DAI',
+    symbol: 'DAI', 
+    logoURI: 'https://etherscan.io/token/images/dairplce_32.svg'
+}
+
+export const MNT: SwapWidgetToken = {
+    chainId: 1,
+    address: '0x3c3a81e81dc49a522a592e7622a7e711c06bf354',
+    decimals: 18,
+    name: 'MNT',
+    symbol: 'MNT', 
+    logoURI: 'https://etherscan.io/token/images/mantle_32.svg'
+}
+
+export const MNT_ARB: SwapWidgetToken = {
+    chainId: 42161,
+    address: '0x3c3a81e81dc49a522a592e7622a7e711c06bf354',
+    decimals: 18,
+    name: 'MNT',
+    symbol: 'MNT', 
+    logoURI: 'https://etherscan.io/token/images/mantle_32.svg'
+}
+
+export const WBTC: SwapWidgetToken = {
+    chainId: 1,
+    address: '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599',
+    decimals: 8,
+    name: 'WBTC',
+    symbol: 'WBTC', 
+    logoURI: 'https://etherscan.io/token/images/wrappedbtc_ofc_32.svg'
+}
+
+export const WBTC_ARB: SwapWidgetToken = {
+    chainId: 42161,
+    address: '0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f',
+    decimals: 8,
+    name: 'WBTC',
+    symbol: 'WBTC', 
+    logoURI: 'https://etherscan.io/token/images/wrappedbtc_ofc_32.svg'
+}
+
+
 export const USDC: SwapWidgetToken = {
     chainId: 1,
     address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
     decimals: 6,
     name: 'USDC',
     symbol: 'USDC',
-    logoURI: 'https://2248955668-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FhE4weeNpCJSNUXnecN1R%2Ficon%2FgJEa5WUcw0RjBfGqTNof%2Fxai%20symbol%20red%20svg.svg?alt=media&token=9131a0bf-a73d-4052-a957-fd69884aee62'
+    logoURI: 'https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694'
 }
 
 export const USDC_ARB: SwapWidgetToken = {
@@ -125,7 +244,7 @@ export const USDC_ARB: SwapWidgetToken = {
     decimals: 6,
     name: 'USDC',
     symbol: 'USDC',
-    logoURI: 'https://2248955668-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FhE4weeNpCJSNUXnecN1R%2Ficon%2FgJEa5WUcw0RjBfGqTNof%2Fxai%20symbol%20red%20svg.svg?alt=media&token=9131a0bf-a73d-4052-a957-fd69884aee62'
+    logoURI: 'https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694'
 }
 
 export const USDC_G7: SwapWidgetToken = {
@@ -134,7 +253,7 @@ export const USDC_G7: SwapWidgetToken = {
     decimals: 6,
     name: 'USDC',
     symbol: 'USDC',
-    logoURI: 'https://2248955668-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FhE4weeNpCJSNUXnecN1R%2Ficon%2FgJEa5WUcw0RjBfGqTNof%2Fxai%20symbol%20red%20svg.svg?alt=media&token=9131a0bf-a73d-4052-a957-fd69884aee62'
+    logoURI: 'https://assets.relay.link/icons/currencies/g7.png'
 }
 
 // G7
@@ -153,7 +272,7 @@ export const G7_ARB = {
     decimals: 18,
     name: 'G7',
     symbol: 'G7',
-    logoURI: 'https://2248955668-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FhE4weeNpCJSNUXnecN1R%2Ficon%2FgJEa5WUcw0RjBfGqTNof%2Fxai%20symbol%20red%20svg.svg?alt=media&token=9131a0bf-a73d-4052-a957-fd69884aee62'
+    logoURI: 'https://assets.relay.link/icons/currencies/g7.png'
 }
 
 export const G7_G7 = {
@@ -162,7 +281,7 @@ export const G7_G7 = {
     decimals: 18,
     name: 'G7',
     symbol: 'G7',
-    logoURI: 'https://2248955668-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FhE4weeNpCJSNUXnecN1R%2Ficon%2FgJEa5WUcw0RjBfGqTNof%2Fxai%20symbol%20red%20svg.svg?alt=media&token=9131a0bf-a73d-4052-a957-fd69884aee62'
+    logoURI: 'https://assets.relay.link/icons/currencies/g7.png'
 }
 
 export const XAI: SwapWidgetToken = {
@@ -175,4 +294,4 @@ export const XAI: SwapWidgetToken = {
 }
 
 
-export const TOKENS = [ETH, ETH_ARB, USDC, USDC_ARB, USDC_G7, G7, G7_ARB, G7_G7]
+export const TOKENS = [ETH, ETH_ARB, USDC, USDC_ARB, USDC_G7, G7, G7_ARB, G7_G7, WBTC, WBTC_ARB, DAI, DAI_ARB, MNT, MNT_ARB, USDT, USDT_ARB, WETH, WETH_ARB]
