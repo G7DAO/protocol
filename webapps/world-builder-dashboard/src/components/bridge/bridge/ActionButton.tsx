@@ -249,7 +249,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     },
     onError: (e) => {
       console.log(e)
-      setErrorMessage('Transaction failed. Try again, please')
+      setErrorMessage('Transaction failed. Try again, please.')
     }
   })
 
