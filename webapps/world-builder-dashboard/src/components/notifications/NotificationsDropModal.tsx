@@ -26,10 +26,10 @@ const copy = (notification: BridgeNotification, selectedNetworkType: NetworkType
   const targetNetwork = getNetwork(notification.to, selectedNetworkType)?.displayName ?? 'unknown chain'
   if (notification.status === 'CLAIMABLE') {
     if (notification.type === 'WITHDRAWAL')
-      return `Your ${notification.amount} ${getTokenSymbol(notification.tx, connectedAccount) ?? notification.tx.symbol ?? notification.tx.transactionInputs?.tokenSymbol} withdrawal is ready to complete. Claim your token in Activity.`
+      return `Your ${notification.amount} ${getTokenSymbol(notification.tx, connectedAccount ?? '') ?? notification.tx.symbol} withdrawal is ready to complete. Claim your token in Activity.`
     else
       if (notification.type === 'DEPOSIT')
-        return `Your ${notification.amount} ${getTokenSymbol(notification.tx, connectedAccount) ?? notification.tx.symbol ?? notification.tx.transactionInputs?.tokenSymbol} deposit is ready to complete. Claim your token in Activity.`
+        return `Your ${notification.amount} ${getTokenSymbol(notification.tx, connectedAccount ?? '') ?? notification.tx.symbol} deposit is ready to complete. Claim your token in Activity.`
   }
   if (notification.status === 'COMPLETED') {
     if (notification.type === 'DEPOSIT') {
@@ -40,7 +40,7 @@ const copy = (notification: BridgeNotification, selectedNetworkType: NetworkType
         <>You received 1 {L3_NATIVE_TOKEN_SYMBOL}</>
       )
     }
-    return `Your ${notification.amount} ${notification.tx.symbol ?? notification.tx.transactionInputs?.tokenSymbol} withdrawal is complete`
+    return `Your ${notification.amount} ${getTokenSymbol(notification.tx, connectedAccount ?? '') ?? notification.tx.symbol} withdrawal is complete`
   }
 }
 
@@ -144,6 +144,7 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
 
   const handleExit = () => {
     setShow(!show)
+    setIsDropdownOpened(false)
   }
 
   if (!notifications || notifications.length === 0) {
@@ -156,7 +157,7 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
         <div onClick={handleClick} className={styles.toastMultiple}>
           {`You have ${notifications.length} new notifications. Click here to view`}
           <IconCloseSmall
-            onClick={(e) => {
+            onMouseDown={(e) => {
               e.stopPropagation()
               handleExit()
             }}
@@ -168,10 +169,18 @@ export const FloatingNotification = ({ notifications }: { notifications: BridgeN
   }
 
   return (
-    <div onClick={handleClick} className={toastClassName(notifications[0].status)}>
-      {copy(notifications[0], selectedNetworkType, connectedAccount ?? '')}
-      <IconCloseSmall className={iconCloseClassName(notifications[0].status)} onClick={handleExit} />
-    </div>
+    show && (
+      <div onMouseDown={handleClick} className={toastClassName(notifications[0].status)}>
+        {copy(notifications[0], selectedNetworkType, connectedAccount ?? '')}
+        <IconCloseSmall
+          className={iconCloseClassName(notifications[0].status)}
+          onMouseDown={(e) => {
+            e.stopPropagation()
+            handleExit()
+          }}
+        />
+      </div>)
+
   )
 }
 const getTransactionUrl = (notification: BridgeNotification): string | undefined => {

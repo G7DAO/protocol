@@ -257,7 +257,9 @@ export const useMessages = (
 
 export const getNotifications = (transactions: TransactionRecord[]) => {
   const completedTransactions = transactions.filter((tx) =>
-    tx.type === 'DEPOSIT' ? tx.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED || tx.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED || tx.status === BridgeTransferStatus.CCTP_COMPLETE || tx.status === BridgeTransferStatus.CCTP_REDEEMED : tx.completionTimestamp || tx.claimableTimestamp
+    tx.type === 'DEPOSIT' ?
+      tx.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED || tx.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED || tx.status === BridgeTransferStatus.CCTP_COMPLETE || tx.status === BridgeTransferStatus.CCTP_REDEEMED :
+      tx.completionTimestamp || tx.claimableTimestamp
   )
   const notifications: BridgeNotification[] = completedTransactions
     .map((ct) => {
@@ -278,7 +280,11 @@ export const getNotifications = (transactions: TransactionRecord[]) => {
         }
 
       } else if (ct.type === 'WITHDRAWAL') {
-        timestamp = ct.claimableTimestamp ?? Date.now() / 1000
+        if (ct.status === BridgeTransferStatus.CCTP_REDEEMED || ct.status === BridgeTransferStatus.WITHDRAW_EXECUTED) {
+          timestamp = ct.lowNetworkTimestamp ?? ct.highNetworkTimestamp
+        } else {
+          timestamp = ct.claimableTimestamp ?? Date.now() / 1000
+        }
       } else {
         timestamp = ct.completionTimestamp ?? Date.now() / 1000
       }
@@ -303,7 +309,7 @@ export const getNotifications = (transactions: TransactionRecord[]) => {
         status,
         type: ct.type,
         amount: amount,
-        timestamp,
+        timestamp: timestamp ?? 0,
         to: (ct.type === 'WITHDRAWAL' ? ct.lowNetworkChainId : ct.highNetworkChainId) ?? 1,
         seen: !ct.newTransaction,
         symbol: symbol,
@@ -375,11 +381,17 @@ export const usePendingTransactions = (connectedAccount: string | undefined): Us
             if (t.type === 'DEPOSIT') {
               if (t.status === BridgeTransferStatus.CCTP_COMPLETE) {
                 updatedTransactions.push({ ...t, claimableTimestamp: t.claimableTimestamp })
+              } else if (t.status === BridgeTransferStatus.DEPOSIT_GAS_PENDING || t.status === BridgeTransferStatus.CCTP_PENDING || t.status === BridgeTransferStatus.DEPOSIT_GAS_PENDING) {
+                updatedTransactions.push({ ...t, completionTimestamp: t.completionTimestamp })
               }
             }
             if (t.type === 'WITHDRAWAL') {
               if (t.status === ChildToParentMessageStatus.CONFIRMED || t.status === BridgeTransferStatus.CCTP_COMPLETE) {
                 updatedTransactions.push({ ...t, claimableTimestamp: t.claimableTimestamp })
+              } else if (t.status === BridgeTransferStatus.CCTP_PENDING) {
+                updatedTransactions.push({ ...t, highNetworkTimestamp: t.highNetworkTimestamp })
+              } else if (t.status === BridgeTransferStatus.CCTP_REDEEMED) {
+                updatedTransactions.push({ ...t, lowNetworkTimestamp: t.lowNetworkTimestamp })
               }
             }
           }
@@ -398,7 +410,7 @@ export const usePendingTransactions = (connectedAccount: string | undefined): Us
         }
         return false
       },
-      refetchInterval: 120 * 1000
+      refetchInterval: 1 * 1000
     }
   )
 }
