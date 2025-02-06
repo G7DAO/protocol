@@ -13,6 +13,8 @@ import DesktopSidebar from '@/layouts/MainLayout/DesktopSidebar'
 import MobileSidebar from '@/layouts/MainLayout/MobileSidebar'
 import { useMediaQuery } from '@mantine/hooks'
 import IconRelay from '@/assets/IconRelay'
+import IconCamelot from '@/assets/IconCamelot'
+import IconSafe from '@/assets/IconSafe'
 
 interface MainLayoutProps { }
 
@@ -45,6 +47,16 @@ const MainLayout: React.FC<MainLayoutProps> = ({ }) => {
       name: 'documentation',
       navigateTo: 'https://docs.game7.io/',
       icon: <IconDocumentation stroke={'#B9B9B9'} />
+    },
+    {
+      name: 'safe',
+      navigateTo: 'https://safe.game7.io/welcome/accounts',
+      icon: <IconSafe stroke={'#B9B9B9'} />
+    },
+    {
+      name: 'camelot',
+      navigateTo: 'https://app.camelot.exchange/',
+      icon: <IconCamelot stroke={'#B9B9B9'} />
     }
   ]
 
@@ -78,6 +90,16 @@ const MainLayout: React.FC<MainLayoutProps> = ({ }) => {
       name: 'documentation',
       navigateTo: 'https://docs.game7.io/',
       icon: <IconDocumentation stroke={'#B9B9B9'} />
+    },
+    {
+      name: 'safe',
+      navigateTo: 'https://safe.game7.io/welcome/accounts',
+      icon: <IconSafe stroke={'#B9B9B9'} />
+    },
+    {
+      name: 'camelot',
+      navigateTo: 'https://app.camelot.exchange/',
+      icon: <IconCamelot stroke={'#B9B9B9'} />
     }
   ]
   const NAVIGATION_ITEMS = selectedNetworkType === 'Testnet' ? TESTNET_NAVIGATION_ITEMS : MAINNET_NAVIGATION_ITEMS
