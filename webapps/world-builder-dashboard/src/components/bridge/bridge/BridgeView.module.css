@@ -243,8 +243,12 @@
   align-items: center;
   gap: 4px;
   align-self: stretch;
-  border-radius: 16px;
+  border-radius: 8px;
   background: #B54708;
+}
+
+.manualGasMessageContainerError.multiline {
+  border-radius: 8px;
 }
 
 .manualGasMessageContainerError {
