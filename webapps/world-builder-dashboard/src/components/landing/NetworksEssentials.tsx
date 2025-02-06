@@ -23,7 +23,7 @@ const essentials = [
     description: 'Bridge tokens between Ethereum, Arbitrum and the G7 network',
     imageClass: styles.networkEssentialBridge,
     onClick: (navigate: (path: string) => void, setSelectedNetworkType: (type: NetworkType) => void) => {
-      setSelectedNetworkType('Testnet')
+      setSelectedNetworkType('Mainnet')
       navigate('/bridge')
     }
   },
