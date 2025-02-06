@@ -247,6 +247,17 @@
   background: #B54708;
 }
 
+.manualGasMessageContainerError {
+  display: flex;
+  padding: 2px 8px;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  align-self: stretch;
+  border-radius: 16px;
+  background: #B42318;
+}
+
 .manualGasMessageText {
   color: #FFFAEB;
   text-align: center;
