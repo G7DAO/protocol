@@ -128,5 +128,13 @@
         padding-right: 16px;
         background: #171717;
     }
+    .footerContentMobile {
+        width: 100%;
+    }
+
+    .footerSection {
+        width: 100%;
+    }
 }
+
 

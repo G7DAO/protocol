@@ -4,3 +4,7 @@ export { default as ArbitrumLogo } from './ArbitrumLogo';
 export { default as ConduitLogo } from './ConduitLogo';
 export { default as MarketWarsLogo } from './MarketWarsLogo';
 export { default as SummonTextLogo } from './SummonTextLogo';
+export { default as ReservoirLogo } from './ReservoirLogo'
+export { default as SafeLogo } from './SafeLogo'
+export { default as RelayLogo } from './RelayLogo'
+export { default as CamelotLogo } from './CamelotLogo'

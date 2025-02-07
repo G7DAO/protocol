@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import React, { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import styles from './MainLayout.module.css'
 import IconExternalLink from '@/assets/IconExternalLink'
@@ -8,9 +8,10 @@ import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
 
 interface DesktopSidebarProps {
-  navigationItems: { name: string; navigateTo: string; icon: ReactNode }[]
+  navigationItems: { name: string; navigateTo: string; Icon: React.FC<{isHovered?: boolean}> }[]
 }
 const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
+  const [isHoveredElement, setIsHovereredElement] = useState('');
   const location = useLocation()
   const navigate = useNavigate()
   const { connectedAccount, isMetaMask, connectWallet, disconnectWallet, isConnecting, selectedNetworkType } =
@@ -22,8 +23,10 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
         <Game7Logo />
         <NetworkToggle />
         <div className={styles.navigation}>
-          {navigationItems.map((item) => (
+          {navigationItems.map(({Icon, ...item}) => (
             <div
+              onMouseEnter={() => setIsHovereredElement(item.name)}
+              onMouseLeave={() => setIsHovereredElement('')}
               aria-disabled={item.name === 'faucet' && selectedNetworkType === 'Mainnet'}
               className={location.pathname.startsWith(item.navigateTo) ? styles.selectedNavButton : styles.navButton}
               onClick={() => {
@@ -36,7 +39,7 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
               key={item.name}
             >
               <div className={styles.navBeginning}>
-                {item.icon}
+                <Icon isHovered={isHoveredElement === item.name}/>
                 {item.name}
               </div>
               <div style={{ display: 'flex' }}>

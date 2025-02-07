@@ -20,9 +20,11 @@ const LandingPage: React.FC = () => {
   const smallView = useMediaQuery('(max-width: 750px)')
   const isLargeView = useMediaQuery('(min-width: 1440px)')
   const mainLayoutRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
   const footerRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
   const [backgroundStyle, setBackgroundStyle] = useState<string | undefined>();
-  const [isAtBottom, setIsAtBottom] = useState<boolean>(false)
+  const [isHeaderSticky, setIsHeaderSticky] = useState<boolean>(false)
 
   useEffect(() => {
     const img = new Image()
@@ -34,14 +36,36 @@ const LandingPage: React.FC = () => {
   }, [])
 
   useEffect(() => {
+    observerRef.current = new IntersectionObserver(([element])=>{
+      setIsHeaderSticky(element.isIntersecting)
+    }, {root: null, rootMargin: '0px', threshold: 1.0})
+  }, [observerRef])
+
+  useEffect(() => {
+    if (observerRef?.current && headerRef?.current) {
+      observerRef.current.observe(headerRef.current);
+    }
+
+    return () => {
+      if (observerRef?.current) {
+        observerRef?.current?.disconnect();
+      }
+    };
+  }, [observerRef, headerRef]);
+
+  useEffect(() => {
     const element = mainLayoutRef.current;
     if (!element) return;
 
     const handleScroll = () => {
-      const isAtBottom = Math.floor(element.scrollHeight - element.scrollTop) === Math.floor(element.clientHeight)
-      setIsAtBottom(isAtBottom)
+      const isAtTop = element.scrollTop < 1
+      const isAtBottom = element.scrollHeight - element.scrollTop - element.clientHeight <= 1
       if (isAtBottom) {
         footerRef.current?.scrollIntoView({ behavior: 'smooth' })
+      }
+
+      if (isAtTop) {
+        headerRef.current?.scrollIntoView({ behavior: 'smooth' })
       }
     }
 
@@ -90,7 +114,7 @@ const LandingPage: React.FC = () => {
       ) : (<>
         <div className={styles.container}>
           <div className={styles.viewContainer}>
-            <div className={`${styles.layout} ${navbarOpen && styles.layoutBlur}`}>
+            <div className={`${styles.layout} ${navbarOpen && styles.layoutBlur}`} ref={headerRef}>
               <Navbar
                 navbarOpen={navbarOpen}
                 smallView={!!smallView}
@@ -98,14 +122,14 @@ const LandingPage: React.FC = () => {
                 startBuilding={startBuilding}
                 navigateLink={navigateLink}
                 isContainer={false}
-                isSticky={!isAtBottom}
+                isSticky={isHeaderSticky}
               />
               <div ref={mainLayoutRef} className={`${styles.mainLayout} ${navbarOpen ? styles.layoutDarkened : ''}`}
                 style={backgroundStyle ? { background: backgroundStyle } : undefined}>
                 <MainSection smallView={!!smallView} startBuilding={startBuilding} />
                 <BenefitsSection />
                 <AlliesSection />
-                <NetworkEssentials smallView={!!smallView} startBuilding={startBuilding} />
+                <NetworkEssentials smallView={!!smallView} startBuilding={startBuilding}/>
               </div>
               {smallView && (
                 <div className={styles.startBuildingCTA} onClick={startBuilding}>

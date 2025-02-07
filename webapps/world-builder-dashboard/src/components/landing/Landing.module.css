@@ -579,6 +579,25 @@ body {
   background: url('../../assets/G7DiscordCardDark.jpg') 50% / cover no-repeat;
   background-size: contain;
 }
+.networkEssentialReservoir {
+  background: url('../../assets/G7ReservoirCardDark.jpg') 50% / cover no-repeat;
+  background-size: contain;
+}
+
+.networkEssentialSafe {
+  background: url('../../assets/G7SafeCardDark.jpg') 50% / cover no-repeat;
+  background-size: contain;
+}
+
+.networkEssentialDappRadar {
+  background: url('../../assets/G7DappRadarCardDark.jpg') 50% / cover no-repeat;
+  background-size: contain;
+}
+
+.networkEssentialCamelot {
+  background: url('../../assets/G7CamelotCardDark.jpg') 50% / cover no-repeat;
+  background-size: contain;
+}
 
 .networkEssentialCardText {
   display: flex;
@@ -672,7 +691,7 @@ body {
 }
 
 .footerSectionHeader {
-  color: #FFF;
+  color: #fff;
   /* Text xl Bold */
   font-family: Inter;
   font-size: 20px;
@@ -683,7 +702,7 @@ body {
 }
 
 .footerSectionLink {
-  color: #FFF;
+  color: #fff;
   /* Text md Regular */
   font-family: Inter;
   font-size: 16px;
@@ -822,6 +841,10 @@ body {
 
 /* Mobile */
 @media (max-width: 750px) {
+  .networkEssentialCardImage {
+    background-size: cover
+  }
+
   .navbarSticky {
     position: sticky;
     z-index: 1005;
@@ -1004,7 +1027,6 @@ body {
   }
 }
 
-
 @media (min-width: 1440px) {
   .networkEssentialCards {
     display: flex;
@@ -1023,12 +1045,5 @@ body {
 
   .networkEssentialCard {
     min-width: 340px;
-  }
-}
-
-@media(min-width: 1860px) {
-  .networkEssentialCards {
-    justify-content: center;
-    /*cards fit to container */
   }
 }
