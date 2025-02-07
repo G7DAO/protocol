@@ -80,25 +80,26 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
               </div>
               {isMetaMask && <IconLogout onClick={() => disconnectWallet()} className={styles.iconButton} />}
             </div>
-          ) : <ConnectButton
-            client={client}
-            wallets={wallets}
-            theme={darkTheme({
-              colors: {
-                danger: "hsl(358, 76%, 47%)",
-                success: "hsl(151, 55%, 42%)",
-                tooltipBg: "hsl(240, 6%, 94%)",
-                modalBg: "hsl(228, 12%, 8%)",
-                separatorLine: "hsl(228, 12%, 17%)",
-                borderColor: "hsl(228, 12%, 17%)",
-                primaryButtonBg: "hsl(4, 86%, 58%)",
-                primaryButtonText: "hsl(0, 0%, 100%)"
-              },
-            })}
-            connectButton={{ label: "Connect Wallet", style: { height: '40px', width: '100%' } }}
-            onConnect={(wallet) => { setConnectedAccount(wallet.getAccount()?.address ?? ''); setWallet(wallet) }}
-            connectModal={{ size: "compact" }}
-          />}
+          ) :
+            <ConnectButton
+              client={client}
+              wallets={wallets}
+              theme={darkTheme({
+                colors: {
+                  danger: "hsl(358, 76%, 47%)",
+                  success: "hsl(151, 55%, 42%)",
+                  tooltipBg: "hsl(240, 6%, 94%)",
+                  modalBg: "hsl(228, 12%, 8%)",
+                  separatorLine: "hsl(228, 12%, 17%)",
+                  borderColor: "hsl(228, 12%, 17%)",
+                  primaryButtonBg: "hsl(4, 86%, 58%)",
+                  primaryButtonText: "hsl(0, 0%, 100%)"
+                },
+              })}
+              connectButton={{ label: "Connect Wallet", style: { height: '40px', width: '100%' } }}
+              onConnect={(wallet) => { setConnectedAccount(wallet.getAccount()?.address ?? ''); setWallet(wallet) }}
+              connectModal={{ size: "compact" }}
+            />}
           <div className={styles.linkContainer}>
             <div className={styles.linkText} onClick={() => navigate('/terms')}>
               Terms of Service
