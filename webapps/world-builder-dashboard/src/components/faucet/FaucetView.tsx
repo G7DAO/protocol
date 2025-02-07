@@ -12,6 +12,8 @@ import { useUISettings } from '@/contexts/UISettingsContext'
 import { useFaucetAPI } from '@/hooks/useFaucetAPI'
 import { timeDifferenceInHoursAndMinutes, timeDifferenceInHoursMinutesAndSeconds } from '@/utils/timeFormat'
 import { useNavigate } from 'react-router-dom'
+import { createThirdwebClient } from 'thirdweb'
+import { useConnectModal } from 'thirdweb/react'
 
 interface FaucetViewProps { }
 const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
@@ -19,7 +21,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false)
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L3_NETWORK)
   const { useFaucetInterval, useFaucetTimestamp } = useFaucetAPI()
-  const { connectedAccount, connectWallet, chainId, selectedNetworkType } = useBlockchainContext()
+  const { connectedAccount, chainId, selectedNetworkType, setWallet, setConnectedAccount } = useBlockchainContext()
   const [animatedInterval, setAnimatedInterval] = useState('')
   const [nextClaimTimestamp, setNextClaimTimestamp] = useState(0)
   const [networkError, setNetworkError] = useState('')
@@ -32,6 +34,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
 
   const values: AccountType[] = [`External Address`, `Connected Account`]
   const networks = getNetworks(selectedNetworkType)
+  const {connect} = useConnectModal()
 
   if (selectedNetworkType === 'Mainnet') {
     navigate('/bridge')
@@ -65,7 +68,15 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   }, [connectedAccount])
 
   const handleConnect = async () => {
-    if (!connectedAccount) connectWallet()
+    if (!connectedAccount) {
+      // instantiate wallet       
+      const client = createThirdwebClient({
+        clientId: '6410e98bc50f9521823ca83e255e279d'
+      })
+      const wallet = await connect({ client })
+      setConnectedAccount(wallet.getAccount()?.address ?? ''); setWallet(wallet)
+      return
+    }
   }
 
   const handleSelectAccountType = (selectedAccountType: AccountType) => {

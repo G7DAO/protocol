@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 // Constants
-import { getNetworks } from '../../../../constants'
+import { getNetworksThirdWeb } from '../../../../constants'
 // Styles
 import styles from './ActionButton.module.css'
 import { ethers } from 'ethers'
@@ -15,6 +15,10 @@ import { getTokensForNetwork, Token } from '@/utils/tokens'
 import { returnSymbol, ZERO_ADDRESS } from '@/utils/web3utils'
 import { MultiTokenApproval } from './MultiTokenApproval'
 import { useBridger } from '@/hooks/useBridger'
+import { useConnectModal, useActiveAccount, useActiveWalletChain, darkTheme, ConnectButton } from 'thirdweb/react'
+import { ethers5Adapter } from "thirdweb/adapters/ethers5";
+import { createThirdwebClient, } from 'thirdweb'
+import { createWallet } from 'thirdweb/wallets'
 
 interface ActionButtonProps {
   direction: 'DEPOSIT' | 'WITHDRAW'
@@ -55,19 +59,38 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     isConnecting,
     selectedHighNetwork,
     selectedLowNetwork,
-    connectWallet,
-    getProvider,
     selectedBridgeToken,
-    selectedNetworkType
+    selectedNetworkType,
+    setConnectedAccount,
+    setWallet
   } = useBlockchainContext()
+
+  const wallets = [
+    createWallet("io.metamask"),
+    createWallet("com.coinbase.wallet"),
+    createWallet("me.rainbow"),
+    createWallet("io.rabby"),
+    createWallet("io.zerion.wallet"),
+    createWallet("com.trustwallet.app"),
+    createWallet("com.bitget.web3"),
+    createWallet("org.uniswap"),
+    createWallet("com.okex.wallet"),
+    createWallet("com.binance"),
+    createWallet("global.safe"),
+  ]
 
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const { useAllowances } = useBridger()
   const navigate = useNavigate()
-  const networks = getNetworks(selectedNetworkType)
+  const networks = getNetworksThirdWeb(selectedNetworkType)
   const [showApproval, setShowApproval] = useState(false)
   const [startingTokenIndex, setStartingTokenIndex] = useState(0)
-
+  const { connect } = useConnectModal()
+  const account = useActiveAccount()
+  const client = createThirdwebClient({
+    clientId: '6410e98bc50f9521823ca83e255e279d'
+  })
+  const chain = useActiveWalletChain()
 
   const allowances = useAllowances({
     bridger,
@@ -107,12 +130,15 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   }
 
   const getLabel = (): String | undefined => {
+
     if (isConnecting) {
       return 'Connecting wallet...'
     }
+
     if (transfer.isPending) {
       return 'Submitting...'
     }
+
     if (!connectedAccount) {
       return 'Connect wallet'
     }
@@ -141,7 +167,12 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       return
     }
     if (!connectedAccount) {
-      await connectWallet()
+      // instantiate wallet       
+      const client = createThirdwebClient({
+        clientId: '6410e98bc50f9521823ca83e255e279d'
+      })
+      const wallet = await connect({ client })
+      setConnectedAccount(wallet.getAccount()?.address ?? ''); setWallet(wallet)
       return
     }
 
@@ -159,15 +190,14 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     }: {
       amount: string
     }) => {
-      const network = networks?.find((n) => n.chainId === bridger?.originNetwork.chainId)
-
+      const network = networks?.find((n) => n.id === bridger?.originNetwork.chainId)
       if (!network) {
         console.error('Network not found!')
         return
       }
 
-      const provider = await getProvider(network)
-      const signer = provider.getSigner()
+      if (!account || !chain) return
+      const signer = await ethers5Adapter.signer.toEthers({ client, chain: network, account })
       const destinationChain = direction === 'DEPOSIT' ? selectedHighNetwork : selectedLowNetwork
       const destinationRPC = destinationChain.rpcs[0]
       const destinationProvider = new ethers.providers.JsonRpcProvider(destinationRPC) as ethers.providers.Provider
@@ -284,21 +314,45 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 
   return (
     <>
-      <button
-        className={styles.container}
-        onClick={handleClick}
-        disabled={
-          getLabel() === 'Submit' &&
-          (isDisabled ||
-            Number(amount) < 0 ||
-            ((!L2L3message?.destination || !L2L3message.data) && Number(amount) === 0)) ||
-          allowances?.isLoading || isFetchingGasFee || Number(gasFees?.[1]) > Number(nativeBalance)
-        }
-      >
-        <div className={isConnecting || transfer.isPending ? styles.buttonLabelLoading : styles.buttonLabel}>
-          {getLabel() ?? 'Submit'}
-        </div>
-      </button>
+      {!connectedAccount ? (
+        <ConnectButton
+          client={client}
+          wallets={wallets}
+          theme={darkTheme({
+            colors: {
+              danger: "hsl(358, 76%, 47%)",
+              success: "hsl(151, 55%, 42%)",
+              tooltipBg: "hsl(240, 6%, 94%)",
+              modalBg: "hsl(228, 12%, 8%)",
+              separatorLine: "hsl(228, 12%, 17%)",
+              borderColor: "hsl(228, 12%, 17%)",
+              primaryButtonBg: "hsl(4, 86%, 58%)",
+              primaryButtonText: "hsl(0, 0%, 100%)"
+            },
+          })}
+          connectButton={{ label: "Connect Wallet", style: { height: '40px', width: '100%' } }}
+          onConnect={(wallet) => { setConnectedAccount(wallet.getAccount()?.address ?? ''); setWallet(wallet) }}
+          connectModal={{
+            size: "compact",
+            showThirdwebBranding: false,
+          }}
+        />
+      ) : (
+        <button
+          className={styles.container}
+          onClick={handleClick}
+          disabled={
+            getLabel() === 'Submit' &&
+            (isDisabled ||
+              Number(amount) < 0 ||
+              ((!L2L3message?.destination || !L2L3message.data) && Number(amount) === 0)) ||
+            allowances?.isLoading || isFetchingGasFee || Number(gasFees?.[1]) > Number(nativeBalance)
+          }
+        >
+          <div className={isConnecting || transfer.isPending ? styles.buttonLabelLoading : styles.buttonLabel}>
+            {getLabel() ?? 'Submit'}
+          </div>
+        </button>)}
       {showApproval &&
         <MultiTokenApproval
           showApproval={showApproval}
