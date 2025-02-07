@@ -7,15 +7,12 @@ import NetworkToggle from '@/components/commonComponents/networkToggle/NetworkTo
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
 import { createThirdwebClient } from "thirdweb"
-import { ConnectButton } from "thirdweb/react"
-
-
+import { ConnectButton, darkTheme } from "thirdweb/react"
 import { createWallet } from "thirdweb/wallets"
 interface DesktopSidebarProps {
   navigationItems: { name: string; navigateTo: string; icon: ReactNode }[]
 }
 const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
-
 
   const client = createThirdwebClient({
     clientId: "....",
@@ -36,7 +33,7 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
 
   const location = useLocation()
   const navigate = useNavigate()
-  const { connectedAccount, isMetaMask, connectWallet, disconnectWallet, isConnecting, selectedNetworkType } =
+  const { connectedAccount, isMetaMask, disconnectWallet, selectedNetworkType, setConnectedAccount, wallet, setWallet } =
     useBlockchainContext()
 
   return (
@@ -80,12 +77,25 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
               <div className={styles.web3address}>
                 {`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}
               </div>
-              {isMetaMask && <IconLogout onClick={disconnectWallet} className={styles.iconButton} />}
+              {isMetaMask && <IconLogout onClick={() => disconnectWallet()} className={styles.iconButton} />}
             </div>
           ) : <ConnectButton
             client={client}
             wallets={wallets}
-            connectButton={{ label: "Connect Wallet" }}
+            theme={darkTheme({
+              colors: {
+                danger: "hsl(358, 76%, 47%)",
+                success: "hsl(151, 55%, 42%)",
+                tooltipBg: "hsl(240, 6%, 94%)",
+                modalBg: "hsl(228, 12%, 8%)",
+                separatorLine: "hsl(228, 12%, 17%)",
+                borderColor: "hsl(228, 12%, 17%)",
+                primaryButtonBg: "hsl(4, 86%, 58%)",
+                primaryButtonText: "hsl(0, 0%, 100%)"
+              },
+            })}
+            connectButton={{ label: "Connect Wallet", style: { height: '40px', width: '100%' } }}
+            onConnect={(wallet) => { setConnectedAccount(wallet.getAccount()?.address ?? ''); setWallet(wallet) }}
             connectModal={{ size: "compact" }}
           />}
           <div className={styles.linkContainer}>
