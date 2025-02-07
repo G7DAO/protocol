@@ -98,7 +98,10 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
               })}
               connectButton={{ label: "Connect Wallet", style: { height: '40px', width: '100%' } }}
               onConnect={(wallet) => { setConnectedAccount(wallet.getAccount()?.address ?? ''); setWallet(wallet) }}
-              connectModal={{ size: "compact" }}
+              connectModal={{
+                size: "compact",
+                showThirdwebBranding: false,
+              }}
             />}
           <div className={styles.linkContainer}>
             <div className={styles.linkText} onClick={() => navigate('/terms')}>
