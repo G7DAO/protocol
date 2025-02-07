@@ -15,7 +15,7 @@ import { getTokensForNetwork, Token } from '@/utils/tokens'
 import { returnSymbol, ZERO_ADDRESS } from '@/utils/web3utils'
 import { MultiTokenApproval } from './MultiTokenApproval'
 import { useBridger } from '@/hooks/useBridger'
-import { useConnectModal, useActiveAccount, useActiveWalletChain, darkTheme, ConnectButton } from 'thirdweb/react'
+import { useConnectModal, useActiveAccount, darkTheme, ConnectButton } from 'thirdweb/react'
 import { ethers5Adapter } from "thirdweb/adapters/ethers5";
 import { createThirdwebClient, } from 'thirdweb'
 import { createWallet } from 'thirdweb/wallets'
@@ -90,7 +90,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   const client = createThirdwebClient({
     clientId: '6410e98bc50f9521823ca83e255e279d'
   })
-  const chain = useActiveWalletChain()
 
   const allowances = useAllowances({
     bridger,
@@ -196,7 +195,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         return
       }
 
-      if (!account || !chain) return
+      if (!account) return
       const signer = await ethers5Adapter.signer.toEthers({ client, chain: network, account })
       const destinationChain = direction === 'DEPOSIT' ? selectedHighNetwork : selectedLowNetwork
       const destinationRPC = destinationChain.rpcs[0]
