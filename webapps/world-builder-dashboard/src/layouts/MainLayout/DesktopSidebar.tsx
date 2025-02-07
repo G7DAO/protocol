@@ -33,7 +33,7 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
 
   const location = useLocation()
   const navigate = useNavigate()
-  const { connectedAccount, isMetaMask, disconnectWallet, selectedNetworkType, setConnectedAccount, wallet, setWallet } =
+  const { connectedAccount, isMetaMask, disconnectWallet, selectedNetworkType, setConnectedAccount, setWallet } =
     useBlockchainContext()
 
   return (
