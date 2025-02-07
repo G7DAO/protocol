@@ -13,7 +13,7 @@ import { useFaucetAPI } from '@/hooks/useFaucetAPI'
 import { timeDifferenceInHoursAndMinutes, timeDifferenceInHoursMinutesAndSeconds } from '@/utils/timeFormat'
 import { useNavigate } from 'react-router-dom'
 import { createThirdwebClient } from 'thirdweb'
-import { ConnectButton, darkTheme, useConnectModal } from 'thirdweb/react'
+import { ConnectButton, darkTheme } from 'thirdweb/react'
 import { createWallet } from 'thirdweb/wallets'
 
 interface FaucetViewProps { }
@@ -35,7 +35,6 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
 
   const values: AccountType[] = [`External Address`, `Connected Account`]
   const networks = getNetworks(selectedNetworkType)
-  const { connect } = useConnectModal()
 
   if (selectedNetworkType === 'Mainnet') {
     navigate('/bridge')
