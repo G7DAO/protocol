@@ -15,6 +15,8 @@ import { getTokensForNetwork, Token } from '@/utils/tokens'
 import { returnSymbol, ZERO_ADDRESS } from '@/utils/web3utils'
 import { MultiTokenApproval } from './MultiTokenApproval'
 import { useBridger } from '@/hooks/useBridger'
+import { useConnectModal } from 'thirdweb/react'
+import { createThirdwebClient, } from 'thirdweb'
 
 interface ActionButtonProps {
   direction: 'DEPOSIT' | 'WITHDRAW'
@@ -55,10 +57,12 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     isConnecting,
     selectedHighNetwork,
     selectedLowNetwork,
-    connectWallet,
     getProvider,
     selectedBridgeToken,
-    selectedNetworkType
+    selectedNetworkType,
+    wallet,
+    setConnectedAccount,
+    setWallet
   } = useBlockchainContext()
 
   const { refetchNewNotifications } = useBridgeNotificationsContext()
@@ -67,6 +71,9 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   const networks = getNetworks(selectedNetworkType)
   const [showApproval, setShowApproval] = useState(false)
   const [startingTokenIndex, setStartingTokenIndex] = useState(0)
+  const { connect } = useConnectModal()
+
+
 
 
   const allowances = useAllowances({
@@ -107,13 +114,16 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   }
 
   const getLabel = (): String | undefined => {
+
     if (isConnecting) {
       return 'Connecting wallet...'
     }
+
     if (transfer.isPending) {
       return 'Submitting...'
     }
-    if (!connectedAccount) {
+
+    if (!connectedAccount && !wallet) {
       return 'Connect wallet'
     }
 
@@ -140,8 +150,13 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       setErrorMessage("Wallet isn't installed")
       return
     }
-    if (!connectedAccount) {
-      await connectWallet()
+    if (!connectedAccount && !wallet) {
+      // instantiate wallet       
+      const client = createThirdwebClient({
+        clientId: '6410e98bc50f9521823ca83e255e279d'
+      })
+      const wallet = await connect({ client })
+      setConnectedAccount(wallet.getAccount()?.address ?? ''); setWallet(wallet)
       return
     }
 

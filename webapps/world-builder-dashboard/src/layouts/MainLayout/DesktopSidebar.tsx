@@ -15,8 +15,8 @@ interface DesktopSidebarProps {
 const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
 
   const client = createThirdwebClient({
-    clientId: "....",
-  });
+    clientId: '6410e98bc50f9521823ca83e255e279d'
+  })
 
   const wallets = [
     createWallet("io.metamask"),
@@ -29,13 +29,13 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
     createWallet("org.uniswap"),
     createWallet("com.okex.wallet"),
     createWallet("com.binance"),
+    createWallet("global.safe"),
   ]
 
   const location = useLocation()
   const navigate = useNavigate()
   const { connectedAccount, isMetaMask, disconnectWallet, selectedNetworkType, setConnectedAccount, setWallet, wallet } =
     useBlockchainContext()
-  console.log(connectedAccount)
 
   return (
     <div className={styles.sideBar}>
