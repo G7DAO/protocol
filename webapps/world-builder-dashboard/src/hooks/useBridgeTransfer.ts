@@ -208,8 +208,6 @@ export const useBridgeTransfer = () => {
     clientId: '6410e98bc50f9521823ca83e255e279d'
   })
 
-
-
   const claim = useMutation({
     mutationFn: async ({ txRecord }: { txRecord: TransactionRecord }) => {
       const isDeposit = txRecord.type === 'DEPOSIT'

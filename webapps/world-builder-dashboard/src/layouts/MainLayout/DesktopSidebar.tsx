@@ -34,7 +34,7 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
 
   const location = useLocation()
   const navigate = useNavigate()
-  const { connectedAccount, isMetaMask, disconnectWallet, selectedNetworkType, setConnectedAccount, setWallet, wallet } =
+  const { connectedAccount, disconnectWallet, selectedNetworkType, setConnectedAccount, setWallet, wallet } =
     useBlockchainContext()
 
   return (
@@ -78,7 +78,7 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
               <div className={styles.web3address}>
                 {`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}
               </div>
-              {isMetaMask && <IconLogout onClick={() => disconnectWallet()} className={styles.iconButton} />}
+              {<IconLogout onClick={() => disconnectWallet()} className={styles.iconButton} />}
             </div>
           ) :
             <ConnectButton
