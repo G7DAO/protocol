@@ -7,10 +7,13 @@ import { useQueryClient, UseQueryResult } from '@tanstack/react-query'
 import { useMutation } from '@tanstack/react-query'
 import { Bridger } from 'game7-bridge-sdk'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
-import { getNetworks } from '../../../../constants'
+import { getNetworksThirdWeb } from '../../../../constants'
 import { Token } from '@/utils/tokens'
 import IconCheck from '@/assets/IconCheck'
 import IconClose from '@/assets/IconClose'
+import { ethers5Adapter } from 'thirdweb/adapters/ethers5'
+import { createThirdwebClient } from 'thirdweb'
+import { useActiveAccount } from 'thirdweb/react'
 
 interface MultiTokenApprovalProps {
   showApproval: boolean
@@ -27,13 +30,18 @@ interface MultiTokenApprovalProps {
   allowances: UseQueryResult<{
     bridgeTokenAllowance: ethers.BigNumber | null | undefined;
     nativeTokenAllowance: ethers.BigNumber | null | undefined;
-} | null, Error>
+  } | null, Error>
 }
 
 export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showApproval, setShowApproval, bridger, balance, nativeBalance, decimals, tokens, startingTokenIndex, onApprovalComplete, gasFees, amount, allowances }) => {
-  const { selectedNetworkType, getProvider } = useBlockchainContext()
+  const { selectedNetworkType } = useBlockchainContext()
   const queryClient = useQueryClient()
-  const networks = getNetworks(selectedNetworkType)
+  const networks = getNetworksThirdWeb(selectedNetworkType)
+  const client = createThirdwebClient({
+    clientId: '6410e98bc50f9521823ca83e255e279d'
+  })
+  const account = useActiveAccount()
+
 
   // Initialize approvedTokens with already approved tokens
   const initialApprovedTokens = new Set(
@@ -85,11 +93,14 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
     }: {
       amount: ethers.BigNumber
     }) => {
+      if (!account) return ''
+      const network = networks?.find((n) => n.id === bridger?.originNetwork.chainId)
+      if (!network) {
+        console.error('Network not found!')
+        return ''
+      }
       const currentToken = tokens[currentTokenIndex]
-      const network = networks?.find((n) => n.chainId === bridger?.originNetwork.chainId)
-      if (!network) throw new Error('Network not found')
-      const provider = await getProvider(network)
-      const signer = provider.getSigner()
+      const signer = await ethers5Adapter.signer.toEthers({ client, chain: network, account })
       const txApprove = currentTokenIndex === 0
         ? await bridger?.approve(amount, signer)
         : await bridger?.approveNative(newAllowance, signer)
@@ -199,7 +210,7 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
         )}
         <div className={styles.buttonSpacer} />
         <div className={styles.buttonSection}>
-          <div onClick={() => approve.mutate({amount: newAllowance})} className={`${styles.button} ${approve.isPending ? styles.buttonLoading : ''}`}>
+          <div onClick={() => approve.mutate({ amount: newAllowance })} className={`${styles.button} ${approve.isPending ? styles.buttonLoading : ''}`}>
             <div className={`${styles.buttonText} ${approve.isPending ? styles.buttonLoadingText : ''}`}>
               {approve.isPending ? 'Approving...' : 'Approve'}
             </div>

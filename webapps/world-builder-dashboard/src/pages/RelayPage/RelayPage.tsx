@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router-dom'
 import { G7_G7, TOKENS, USDC_ARB } from '@/utils/relayConfig'
 import { createThirdwebClient } from 'thirdweb'
 import { useConnectModal } from 'thirdweb/react'
+import { createWallet } from 'thirdweb/wallets'
 export interface SwapWidgetToken {
     chainId: number;
     address: string;
@@ -32,7 +33,7 @@ export interface SwapWidgetToken {
 
 const RelayPage = () => {
     const { connectedAccount, selectedNetworkType, setConnectedAccount, setWallet } = useBlockchainContext()
-    const {connect} = useConnectModal()
+    const { connect } = useConnectModal()
     const navigate = useNavigate()
     const pendingTransacions = usePendingTransactions(connectedAccount)
     const [notificationsOffset] = useState(0)
@@ -47,11 +48,25 @@ const RelayPage = () => {
         navigate('/faucet')
     }
 
+    const wallets = [
+        createWallet("io.metamask"),
+        createWallet("com.coinbase.wallet"),
+        createWallet("me.rainbow"),
+        createWallet("io.rabby"),
+        createWallet("io.zerion.wallet"),
+        createWallet("com.trustwallet.app"),
+        createWallet("com.bitget.web3"),
+        createWallet("org.uniswap"),
+        createWallet("com.okex.wallet"),
+        createWallet("com.binance"),
+        createWallet("global.safe"),
+    ]
+
     const connectWallet = async () => {
         const client = createThirdwebClient({
             clientId: '6410e98bc50f9521823ca83e255e279d'
         })
-        const wallet = await connect({ client })
+        const wallet = await connect({ client, wallets })
         setConnectedAccount(wallet.getAccount()?.address ?? ''); setWallet(wallet)
     }
 
