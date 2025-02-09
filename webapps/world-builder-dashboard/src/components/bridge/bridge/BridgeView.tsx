@@ -64,7 +64,9 @@ const BridgeView = ({
 
   const { isFetching: isFetchingTokenInformation, data: tokenInformation, refetch: refetchToken } = useTokenInformation({
     account: connectedAccount,
-    token: selectedBridgeToken
+    token: selectedBridgeToken,
+    selectedLowNetwork,
+    selectedHighNetwork
   })
 
   const nativeToken = getTokensForNetwork(selectedLowNetwork.chainId, connectedAccount).find(
@@ -73,7 +75,9 @@ const BridgeView = ({
 
   const { data: nativeTokenInformation, refetch: refetchNativeToken } = useTokenInformation({
     account: connectedAccount,
-    token: nativeToken
+    token: nativeToken,
+    selectedLowNetwork,
+    selectedHighNetwork
   })
 
   const { data: coinUSDRate, isFetching: isCoinFetching } = useUSDPriceOfToken(selectedBridgeToken?.geckoId ?? '')

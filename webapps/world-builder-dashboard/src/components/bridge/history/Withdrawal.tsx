@@ -67,7 +67,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
   const [amountValue, setAmountValue] = useState<string>('')
   const rpc = getNetworks(selectedNetworkType)?.find(n => n.chainId === withdrawal.highNetworkChainId)?.rpcs[0]
   const symbol = getTokenSymbol(withdrawal, connectedAccount ?? '')
-  
+
   useEffect(() => {
     const fetchAmount = async () => {
       const value = await getAmount(withdrawal.highNetworkHash ?? '', rpc ?? '')
