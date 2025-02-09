@@ -16,8 +16,6 @@ import { SwapWidget } from '@reservoir0x/relay-kit-ui'
 import { Address } from "viem"
 import { useNavigate } from 'react-router-dom'
 import { G7_G7, TOKENS, USDC_ARB } from '@/utils/relayConfig'
-import { createThirdwebClient } from 'thirdweb'
-import { useConnectModal } from 'thirdweb/react'
 export interface SwapWidgetToken {
     chainId: number;
     address: string;
@@ -31,8 +29,7 @@ export interface SwapWidgetToken {
 
 
 const RelayPage = () => {
-    const { connectedAccount, selectedNetworkType, setConnectedAccount, setWallet } = useBlockchainContext()
-    const {connect} = useConnectModal()
+    const { connectedAccount, connectWallet, selectedNetworkType } = useBlockchainContext()
     const navigate = useNavigate()
     const pendingTransacions = usePendingTransactions(connectedAccount)
     const [notificationsOffset] = useState(0)
@@ -45,14 +42,6 @@ const RelayPage = () => {
 
     if (selectedNetworkType === 'Testnet') {
         navigate('/faucet')
-    }
-
-    const connectWallet = async () => {
-        const client = createThirdwebClient({
-            clientId: '6410e98bc50f9521823ca83e255e279d'
-        })
-        const wallet = await connect({ client })
-        setConnectedAccount(wallet.getAccount()?.address ?? ''); setWallet(wallet)
     }
 
 
