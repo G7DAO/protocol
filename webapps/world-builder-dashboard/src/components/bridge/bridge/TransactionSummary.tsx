@@ -13,8 +13,6 @@ interface TransactionSummaryProps {
   isEstimatingFee: boolean
   value: number
   nativeBalance: number
-  ethRate: number
-  tokenRate: number
   tokenSymbol: string
   gasNativeTokenSymbol: string
   gasChildNativeTokenSymbol: string

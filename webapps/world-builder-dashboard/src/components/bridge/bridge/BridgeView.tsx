@@ -24,11 +24,10 @@ import ValueToBridge from '@/components/bridge/bridge/ValueToBridge'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useUISettings } from '@/contexts/UISettingsContext'
 import useTokenInformation from '@/hooks/useBalance'
-import { useCoinGeckoAPI } from '@/hooks/useCoinGeckoAPI'
 // Hooks and Constants
 import { DepositDirection } from '@/pages/BridgePage/BridgePage'
 import { getStakeNativeTxData } from '@/utils/bridge/stakeContractInfo'
-import { getTokensForNetwork, Token } from '@/utils/tokens'
+import { getTokensForNetwork } from '@/utils/tokens'
 import { useBridger } from '@/hooks/useBridger'
 import IconAlertCircle from '@/assets/IconAlertCircle'
 import { Tooltip } from 'summon-ui/mantine'
@@ -54,7 +53,6 @@ const BridgeView = ({
     setSelectedLowNetwork,
     selectedHighNetwork,
     setSelectedHighNetwork,
-    setSelectedBridgeToken,
     selectedBridgeToken,
     selectedNetworkType,
     setSelectedNativeToken,
@@ -91,9 +89,6 @@ const BridgeView = ({
   })
 
 
-  const handleTokenChange = async (token: Token) => {
-    setSelectedBridgeToken(token)
-  }
   const { getEstimatedFee } = useBridger()
 
   const [bridger, setBridger] = useState<Bridger | null>(null)
