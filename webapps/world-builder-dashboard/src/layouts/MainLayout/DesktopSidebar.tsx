@@ -33,9 +33,8 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
 
   const location = useLocation()
   const navigate = useNavigate()
-  const { connectedAccount, isMetaMask, disconnectWallet, selectedNetworkType, setConnectedAccount, setWallet, wallet } =
+  const { connectedAccount, isMetaMask, disconnectWallet, selectedNetworkType, setConnectedAccount, setWallet } =
     useBlockchainContext()
-  console.log(connectedAccount)
 
   return (
     <div className={styles.sideBar}>
@@ -73,7 +72,7 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
       </div>
       <div className={styles.footer}>
         <div className={styles.footerContent}>
-          {connectedAccount && wallet ? (
+          {connectedAccount ? (
             <div className={styles.web3AddressContainer}>
               <div className={styles.web3address}>
                 {`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}
