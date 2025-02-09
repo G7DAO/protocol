@@ -62,8 +62,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     selectedBridgeToken,
     selectedNetworkType,
     setConnectedAccount,
-    setWallet,
-    wallet
+    setWallet
   } = useBlockchainContext()
 
   const wallets = [
@@ -86,8 +85,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   const networks = getNetworksThirdWeb(selectedNetworkType)
   const [showApproval, setShowApproval] = useState(false)
   const [startingTokenIndex, setStartingTokenIndex] = useState(0)
-
-  // Third web
+  const { connect } = useConnectModal()
   const account = useActiveAccount()
   const client = createThirdwebClient({
     clientId: '6410e98bc50f9521823ca83e255e279d'
@@ -164,6 +162,20 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       return
     }
 
+    if (typeof window.ethereum === 'undefined') {
+      setErrorMessage("Wallet isn't installed")
+      return
+    }
+    if (!connectedAccount) {
+      // instantiate wallet       
+      const client = createThirdwebClient({
+        clientId: '6410e98bc50f9521823ca83e255e279d'
+      })
+      const wallet = await connect({ client })
+      setConnectedAccount(wallet.getAccount()?.address ?? ''); setWallet(wallet)
+      return
+    }
+
     setErrorMessage('')
     const allowances = await checkAllowances()
 
@@ -187,18 +199,13 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       if (!account || !chain) return
       const signer = await ethers5Adapter.signer.toEthers({ client, chain: network, account })
       const destinationChain = direction === 'DEPOSIT' ? selectedHighNetwork : selectedLowNetwork
-      const originChain = direction === 'DEPOSIT' ? selectedLowNetwork : selectedHighNetwork
       const destinationRPC = destinationChain.rpcs[0]
       const destinationProvider = new ethers.providers.JsonRpcProvider(destinationRPC) as ethers.providers.Provider
       const destinationTokenAddress = getTokensForNetwork(destinationChain.chainId, connectedAccount).find(
         (token) => token.symbol === selectedBridgeToken.symbol
       )?.address
-      const targetChain = getNetworksThirdWeb(selectedNetworkType)?.find((network) => network.id === originChain.chainId);
-      if (!targetChain || !account) {
-        throw new Error('Target chain is undefined');
-      }
       const amountToSend = ethers.utils.parseUnits(amount, decimals)
-      await wallet?.switchChain(targetChain)
+
       if (bridger?.isDeposit) {
         const isCCTP = bridger?.isCctp()
         const tx = await bridger?.transfer({ amount: amountToSend, signer, destinationProvider })

@@ -18,7 +18,7 @@ interface MobileSidebarProps {
 const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { connectedAccount, disconnectWallet, wallet, selectedNetworkType, setConnectedAccount, setWallet } =
+  const { connectedAccount, isMetaMask, disconnectWallet, wallet, selectedNetworkType, setConnectedAccount, setWallet } =
     useBlockchainContext()
   const [isExpanded, setIsExpanded] = useState(false)
   const client = createThirdwebClient({
@@ -98,7 +98,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
                 <div className={parentStyles.web3address}>
                   {`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}
                 </div>
-                {<IconLogoutLarge onClick={() => disconnectWallet()} className={parentStyles.iconButton} />}
+                {isMetaMask && <IconLogoutLarge onClick={() => disconnectWallet()} className={parentStyles.iconButton} />}
               </div>
             ) :
               <ConnectButton
