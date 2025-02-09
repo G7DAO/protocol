@@ -1,16 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { getNetworks, getNetworksThirdWeb } from '../../constants'
+import { getNetworks } from '../../constants'
 import { BridgeTransfer, BridgeTransferStatus, getBridgeTransfer } from 'game7-bridge-sdk'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { fetchTransactionTimestamp, getCachedTransactions, saveCachedTransactions } from '@/utils/web3utils'
 import { useRequestQueue } from './useQueueRequests'
-import { useActiveAccount } from 'thirdweb/react'
-import { createThirdwebClient } from 'thirdweb'
-import { ethers5Adapter } from 'thirdweb/adapters/ethers5'
 
 interface UseTransferDataProps {
   txRecord: TransactionRecord
@@ -18,7 +15,7 @@ interface UseTransferDataProps {
 
 export const useBridgeTransfer = () => {
   const { queueRequest } = useRequestQueue()
-  const { connectedAccount, selectedNetworkType, wallet } = useBlockchainContext()
+  const { connectedAccount, selectedNetworkType, getProvider } = useBlockchainContext()
   const LOCK_TIMEOUT = 5000; // 5 seconds timeout for lock
 
   // Helper functions to manage locks
@@ -203,10 +200,6 @@ export const useBridgeTransfer = () => {
   const navigate = useNavigate()
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const queryClient = useQueryClient()
-  const account = useActiveAccount()
-  const client = createThirdwebClient({
-    clientId: '6410e98bc50f9521823ca83e255e279d'
-  })
 
   const claim = useMutation({
     mutationFn: async ({ txRecord }: { txRecord: TransactionRecord }) => {
@@ -219,13 +212,12 @@ export const useBridgeTransfer = () => {
       if (!txRecord) {
         throw new Error('transaction hash is undefined')
       }
-      const targetChain = getNetworksThirdWeb(selectedNetworkType)?.find((network) => network.id === destinationChainId);
-      if (!targetChain || !account) {
+      const targetChain = getNetworks(selectedNetworkType)?.find((network) => network.chainId === destinationChainId);
+      if (!targetChain) {
         throw new Error('Target chain is undefined');
       }
-      const signer = await ethers5Adapter.signer.toEthers({ client, chain: targetChain, account })
-      
-      await wallet?.switchChain(targetChain)
+      const provider = await getProvider(targetChain);
+      const signer = provider.getSigner()
 
       // Bridge Transfer execute
       const _bridgeTransfer: BridgeTransfer = await getBridgeTransfer({
@@ -237,9 +229,7 @@ export const useBridgeTransfer = () => {
       }, txRecord.isCCTP)
 
       _bridgeTransfer.isCctp() && await _bridgeTransfer.getStatus()
-      console.log('making tx')
       const res: any = await _bridgeTransfer?.execute(signer)
-      console.log(res)
       return { res, txRecord }
     },
     onSuccess: ({ res, txRecord }) => {
