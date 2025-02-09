@@ -257,22 +257,42 @@ export const useMessages = (
 
 export const getNotifications = (transactions: TransactionRecord[]) => {
   const completedTransactions = transactions.filter((tx) =>
-    tx.type === 'DEPOSIT' ? tx.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED || tx.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED || tx.status === BridgeTransferStatus.CCTP_COMPLETE || tx.status === BridgeTransferStatus.CCTP_REDEEMED : tx.completionTimestamp || tx.claimableTimestamp
+    tx.type === 'DEPOSIT' ?
+      tx.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED || tx.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED || tx.status === BridgeTransferStatus.CCTP_COMPLETE || tx.status === BridgeTransferStatus.CCTP_REDEEMED :
+      tx.completionTimestamp || tx.claimableTimestamp
   )
   const notifications: BridgeNotification[] = completedTransactions
     .map((ct) => {
-      const timestamp = ct.type === 'DEPOSIT' ?
-        ct.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED || ct.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED || ct.status === BridgeTransferStatus.CCTP_REDEEMED ?
-          ct.highNetworkTimestamp ?? ct.completionTimestamp ?? Date.now() / 1000
-          : ct.claimableTimestamp ?? Date.now() / 1000
-        : ct.completionTimestamp ?? ct.claimableTimestamp ?? Date.now() / 1000
+      let timestamp
+
+      if (ct.type === 'DEPOSIT') {
+        if (
+          ct.status === BridgeTransferStatus.DEPOSIT_ERC20_REDEEMED ||
+          ct.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ||
+          ct.status === BridgeTransferStatus.CCTP_REDEEMED
+        ) {
+          timestamp = ct.highNetworkTimestamp ?? ct.completionTimestamp ?? Date.now() / 1000
+        } else if (ct.status === BridgeTransferStatus.CCTP_COMPLETE) {
+          timestamp = ct.claimableTimestamp ?? 0
+        } else {
+          timestamp = 17000000
+        }
+      } else if (ct.type === 'WITHDRAWAL') {
+        if (ct.status === BridgeTransferStatus.CCTP_REDEEMED || ct.status === BridgeTransferStatus.WITHDRAW_EXECUTED) {
+          timestamp = ct.lowNetworkTimestamp ?? ct.highNetworkTimestamp
+        } else {
+          timestamp = ct.claimableTimestamp ?? Date.now() / 1000
+        }
+      } else {
+        timestamp = ct.completionTimestamp ?? Date.now() / 1000
+      }
       const amount = ct.amount
       const symbol = getTokenSymbol(ct, '')
       return {
         status: ct.isFailed ? 'FAILED' : ct.completionTimestamp ? 'COMPLETED' : 'CLAIMABLE',
         type: ct.type,
         amount: amount,
-        timestamp,
+        timestamp: timestamp ?? 0,
         to: (ct.type === 'WITHDRAWAL' ? ct.lowNetworkChainId : ct.highNetworkChainId) ?? 1,
         seen: !ct.newTransaction,
         symbol: symbol,
@@ -343,12 +363,18 @@ export const usePendingTransactions = (connectedAccount: string | undefined): Us
           for (const t of transactions) {
             if (t.type === 'DEPOSIT') {
               if (t.status === BridgeTransferStatus.CCTP_COMPLETE) {
-                updatedTransactions.push({ ...t, claimableTimestamp: Date.now() / 1000, newTransaction: true })
+                updatedTransactions.push({ ...t, claimableTimestamp: t.claimableTimestamp })
+              } else if (t.status === BridgeTransferStatus.DEPOSIT_GAS_PENDING || t.status === BridgeTransferStatus.CCTP_PENDING || t.status === BridgeTransferStatus.DEPOSIT_GAS_PENDING) {
+                updatedTransactions.push({ ...t, completionTimestamp: t.completionTimestamp })
               }
             }
             if (t.type === 'WITHDRAWAL') {
               if (t.status === ChildToParentMessageStatus.CONFIRMED || t.status === BridgeTransferStatus.CCTP_COMPLETE) {
-                updatedTransactions.push({ ...t, claimableTimestamp: Date.now() / 1000, newTransaction: true })
+                updatedTransactions.push({ ...t, claimableTimestamp: t.claimableTimestamp })
+              } else if (t.status === BridgeTransferStatus.CCTP_PENDING) {
+                updatedTransactions.push({ ...t, highNetworkTimestamp: t.highNetworkTimestamp })
+              } else if (t.status === BridgeTransferStatus.CCTP_REDEEMED) {
+                updatedTransactions.push({ ...t, lowNetworkTimestamp: t.lowNetworkTimestamp })
               }
             }
           }
@@ -367,7 +393,7 @@ export const usePendingTransactions = (connectedAccount: string | undefined): Us
         }
         return false
       },
-      refetchInterval: 120 * 1000
+      refetchInterval: 1 * 1000
     }
   )
 }
