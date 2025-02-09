@@ -13,8 +13,7 @@ import { useFaucetAPI } from '@/hooks/useFaucetAPI'
 import { timeDifferenceInHoursAndMinutes, timeDifferenceInHoursMinutesAndSeconds } from '@/utils/timeFormat'
 import { useNavigate } from 'react-router-dom'
 import { createThirdwebClient } from 'thirdweb'
-import { ConnectButton, darkTheme } from 'thirdweb/react'
-import { createWallet } from 'thirdweb/wallets'
+import { useConnectModal } from 'thirdweb/react'
 
 interface FaucetViewProps { }
 const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
@@ -35,15 +34,12 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
 
   const values: AccountType[] = [`External Address`, `Connected Account`]
   const networks = getNetworks(selectedNetworkType)
+  const {connect} = useConnectModal()
 
   if (selectedNetworkType === 'Mainnet') {
     navigate('/bridge')
   }
 
-
-  const client = createThirdwebClient({
-    clientId: '6410e98bc50f9521823ca83e255e279d'
-  })
 
   useEffect(() => {
     const targetNetwork = networks?.find((n) => n.chainId === faucetTargetChainId)
@@ -71,31 +67,17 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
     if (!connectedAccount) setSelectedAccountType('External Address')
   }, [connectedAccount])
 
-  const wallets = [
-    createWallet("io.metamask"),
-    createWallet("com.coinbase.wallet"),
-    createWallet("me.rainbow"),
-    createWallet("io.rabby"),
-    createWallet("io.zerion.wallet"),
-    createWallet("com.trustwallet.app"),
-    createWallet("com.bitget.web3"),
-    createWallet("org.uniswap"),
-    createWallet("com.okex.wallet"),
-    createWallet("com.binance"),
-    createWallet("global.safe"),
-  ]
-
-  // const handleConnect = async () => {
-  //   if (!connectedAccount) {
-  //     // instantiate wallet       
-  //     const client = createThirdwebClient({
-  //       clientId: '6410e98bc50f9521823ca83e255e279d'
-  //     })
-  //     const wallet = await connect({ client })
-  //     setConnectedAccount(wallet.getAccount()?.address ?? ''); setWallet(wallet)
-  //     return
-  //   }
-  // }
+  const handleConnect = async () => {
+    if (!connectedAccount) {
+      // instantiate wallet       
+      const client = createThirdwebClient({
+        clientId: '6410e98bc50f9521823ca83e255e279d'
+      })
+      const wallet = await connect({ client })
+      setConnectedAccount(wallet.getAccount()?.address ?? ''); setWallet(wallet)
+      return
+    }
+  }
 
   const handleSelectAccountType = (selectedAccountType: AccountType) => {
     if (selectedAccountType === 'External Address') setAddress('')
@@ -297,28 +279,14 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
                   'Or'
                 )}
               </div>
-              <ConnectButton
-                client={client}
-                wallets={wallets}
-                theme={darkTheme({
-                  colors: {
-                    danger: "hsl(358, 76%, 47%)",
-                    success: "hsl(151, 55%, 42%)",
-                    tooltipBg: "hsl(240, 6%, 94%)",
-                    modalBg: "hsl(228, 12%, 8%)",
-                    separatorLine: "hsl(228, 12%, 17%)",
-                    borderColor: "hsl(228, 12%, 17%)",
-                    primaryButtonBg: "hsl(4, 96%, 80%)",
-                    primaryButtonText: "hsl(4, 72%, 33%)",
-                  },
-                })}
-                connectButton={{ label: "Connect Wallet", style: { height: '36px' } }}
-                onConnect={(wallet) => { setConnectedAccount(wallet.getAccount()?.address ?? ''); setWallet(wallet) }}
-                connectModal={{
-                  size: "compact",
-                  showThirdwebBranding: false,
+              <div
+                className={styles.connectWalletButton}
+                onClick={() => {
+                  handleConnect()
                 }}
-              />
+              >
+                <div className={styles.connectWalletText}>Connect Wallet</div>
+              </div>
             </>
           ) : (
             <div className={styles.selectorContainer}>
