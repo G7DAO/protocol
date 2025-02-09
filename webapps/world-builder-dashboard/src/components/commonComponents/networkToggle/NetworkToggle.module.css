@@ -45,7 +45,8 @@
   font-size: 14px;
   font-style: normal;
   font-weight: 500;
-  line-height: 20px; /* 142.857% */
+  line-height: 20px;
+  /* 142.857% */
 }
 
 .testnetType {
@@ -54,7 +55,8 @@
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
-  line-height: 20px; /* 142.857% */
+  line-height: 20px;
+  /* 142.857% */
 }
 
 .testnetTypeColor {
@@ -66,6 +68,7 @@
 }
 
 .dropdownContainer {
+  cursor: pointer;
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
@@ -83,6 +86,7 @@
 }
 
 .dropdownOption {
+  cursor: pointer;
   display: flex;
   padding: 2px 6px;
   align-items: center;
@@ -90,6 +94,7 @@
 }
 
 .dropdownNetworkContainer {
+  cursor: pointer;
   display: flex;
   padding: 10px 10px 10px 8px;
   flex-direction: column;
@@ -100,6 +105,7 @@
 }
 
 .dropdownNetworkInformation {
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -107,6 +113,7 @@
 }
 
 .dropdownTestnetContainer {
+  cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
