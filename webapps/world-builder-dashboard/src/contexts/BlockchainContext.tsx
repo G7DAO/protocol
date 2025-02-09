@@ -143,15 +143,15 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     handleAccountsChanged()
   }, [walletProvider])
 
-  // useEffect(() => {
-  //   const _selectedNetworkType = localStorage.getItem('selectedNetworkType')
-  //   if (_selectedNetworkType === 'Testnet' || _selectedNetworkType === 'Mainnet') {
-  //     console.log('Selecting ', _selectedNetworkType)
-  //     setSelectedNetworkType(_selectedNetworkType as NetworkType)
-  //   } else {
-  //     setSelectedNetworkType('Mainnet')
-  //   }
-  // }, [])
+  useEffect(() => {
+    const _selectedNetworkType = localStorage.getItem('selectedNetworkType')
+    if (_selectedNetworkType === 'Testnet' || _selectedNetworkType === 'Mainnet') {
+      console.log('Selecting ', _selectedNetworkType)
+      setSelectedNetworkType(_selectedNetworkType as NetworkType)
+    } else {
+      setSelectedNetworkType('Mainnet')
+    }
+  }, [])
 
   useEffect(() => {
     if (selectedNetworkType) {
