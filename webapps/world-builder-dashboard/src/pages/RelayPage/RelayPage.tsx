@@ -15,10 +15,7 @@ import { useNotifications, usePendingTransactions } from '@/hooks/useL2ToL1Messa
 import { SwapWidget } from '@reservoir0x/relay-kit-ui'
 import { Address } from "viem"
 import { useNavigate } from 'react-router-dom'
-import { G7_G7, TOKENS, USDC_ARB } from '@/utils/relayConfig'
-import { createThirdwebClient } from 'thirdweb'
-import { useConnectModal } from 'thirdweb/react'
-import { createWallet } from 'thirdweb/wallets'
+import { XAI } from '@/utils/relayConfig'
 export interface SwapWidgetToken {
     chainId: number;
     address: string;
@@ -32,8 +29,7 @@ export interface SwapWidgetToken {
 
 
 const RelayPage = () => {
-    const { connectedAccount, selectedNetworkType, setConnectedAccount, setWallet } = useBlockchainContext()
-    const { connect } = useConnectModal()
+    const { connectedAccount, connectWallet, selectedNetworkType } = useBlockchainContext()
     const navigate = useNavigate()
     const pendingTransacions = usePendingTransactions(connectedAccount)
     const [notificationsOffset] = useState(0)
@@ -46,30 +42,8 @@ const RelayPage = () => {
 
     if (selectedNetworkType === 'Testnet') {
         navigate('/faucet')
-    }
-
-    const wallets = [
-        createWallet("io.metamask"),
-        createWallet("com.coinbase.wallet"),
-        createWallet("me.rainbow"),
-        createWallet("io.rabby"),
-        createWallet("io.zerion.wallet"),
-        createWallet("com.trustwallet.app"),
-        createWallet("com.bitget.web3"),
-        createWallet("org.uniswap"),
-        createWallet("com.okex.wallet"),
-        createWallet("com.binance"),
-        createWallet("global.safe"),
-    ]
-
-    const connectWallet = async () => {
-        const client = createThirdwebClient({
-            clientId: '6410e98bc50f9521823ca83e255e279d'
-        })
-        const wallet = await connect({ client, wallets })
-        setConnectedAccount(wallet.getAccount()?.address ?? ''); setWallet(wallet)
-    }
-
+      }
+    
 
     useEffect(() => {
         if (pendingTransacions.data && connectedAccount) {
@@ -90,16 +64,13 @@ const RelayPage = () => {
             <div className={styles.viewContainer}>
                 <div className={styles.mainContainer}>
                     <SwapWidget
-                        key={connectedAccount}
-                        defaultFromToken={USDC_ARB}
-                        defaultToToken={G7_G7}
+                        defaultToToken={XAI}
                         defaultToAddress={connectedAccount as Address}
                         supportedWalletVMs={['evm']}
                         onConnectWallet={connectWallet}
                         onAnalyticEvent={(eventName, data) => {
                             console.log('Analytic Event', eventName, data)
                         }}
-                        tokens={TOKENS}
                     />
                     <div className={styles.canonicalLink} onClick={() => navigate('/bridge')}>
                         Bridge with Canonical

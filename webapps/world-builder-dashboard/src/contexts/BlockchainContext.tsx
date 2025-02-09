@@ -14,15 +14,10 @@ import {
 } from '../../constants'
 import { ethers } from 'ethers'
 import { getTokensForNetwork, Token } from '@/utils/tokens'
-import { useDisconnect } from "thirdweb/react";
-import { Wallet, WalletId } from 'thirdweb/wallets';
 
 interface BlockchainContextType {
   walletProvider?: ethers.providers.Web3Provider
   connectedAccount?: string
-  setConnectedAccount: (connectedAccount: string) => void
-  setWallet: (wallet: Wallet) => void
-  wallet: Wallet<WalletId> | undefined
   connectWallet: () => Promise<void>
   switchChain: (chain: NetworkInterface) => Promise<void>
   disconnectWallet: () => void
@@ -82,14 +77,14 @@ interface BlockchainProviderProps {
 
 export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children }) => {
   const [walletProvider, setWalletProvider] = useState<ethers.providers.Web3Provider>()
-  const [selectedNetworkType, setSelectedNetworkType] = useState<NetworkType>(undefined)
+  const [selectedNetworkType, setSelectedNetworkType] = useState<NetworkType>('Testnet')
   const [selectedLowNetwork, _setSelectedLowNetwork] = useState<NetworkInterface>(
     selectedNetworkType === 'Testnet' ? DEFAULT_LOW_NETWORK : DEFAULT_LOW_MAINNET_NETWORK
   )
   const [selectedHighNetwork, _setSelectedHighNetwork] = useState<NetworkInterface>(
     selectedNetworkType === 'Testnet' ? DEFAULT_HIGH_NETWORK : DEFAULT_HIGH_MAINNET_NETWORK
   )
-  const [isMetaMask] = useState(false)
+  const [isMetaMask, setIsMetaMask] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
   const [chainId, setChainId] = useState<number | undefined>(undefined)
   const [connectedAccount, setConnectedAccount] = useState<string>()
@@ -97,14 +92,13 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   const [selectedBridgeToken, setSelectedBridgeToken] = useState<Token>(
     getTokensForNetwork(DEFAULT_LOW_NETWORK.chainId, connectedAccount)[0]
   )
-  const [wallet, setWallet] = useState<Wallet<WalletId> | undefined>()
   const [selectedNativeToken, setSelectedNativeToken] = useState<Token | null>(
     getTokensForNetwork(DEFAULT_LOW_NETWORK.chainId, connectedAccount).find(
       (token) => token.symbol === DEFAULT_LOW_NETWORK.nativeCurrency?.symbol
     ) ?? null
   )
+
   const tokenAddress = '0x5f88d811246222F6CB54266C42cc1310510b9feA'
-  const { disconnect } = useDisconnect()
 
   const setSelectedLowNetwork = (network: NetworkInterface) => {
     if (network === L1_NETWORK || network === L1_MAIN_NETWORK) {
@@ -149,15 +143,15 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     handleAccountsChanged()
   }, [walletProvider])
 
-  useEffect(() => {
-    const _selectedNetworkType = localStorage.getItem('selectedNetworkType')
-    if (_selectedNetworkType === 'Testnet' || _selectedNetworkType === 'Mainnet') {
-      console.log('Selecting ', _selectedNetworkType)
-      setSelectedNetworkType(_selectedNetworkType as NetworkType)
-    } else {
-      setSelectedNetworkType('Mainnet')
-    }
-  }, [])
+  // useEffect(() => {
+  //   const _selectedNetworkType = localStorage.getItem('selectedNetworkType')
+  //   if (_selectedNetworkType === 'Testnet' || _selectedNetworkType === 'Mainnet') {
+  //     console.log('Selecting ', _selectedNetworkType)
+  //     setSelectedNetworkType(_selectedNetworkType as NetworkType)
+  //   } else {
+  //     setSelectedNetworkType('Mainnet')
+  //   }
+  // }, [])
 
   useEffect(() => {
     if (selectedNetworkType) {
@@ -183,21 +177,19 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   }
 
   const handleAccountsChanged = async () => {
-    return
-    // const ethereum = window.ethereum
-    
-    // if (ethereum) {
-    //   const provider = new ethers.providers.Web3Provider(ethereum)
-    //   // @ts-ignore
-    //   setIsMetaMask(window.ethereum?.isMetaMask && !window.ethereum?.overrideIsMetaMask)
-    //   const accounts = await provider.listAccounts()
-    //   setAccounts(accounts)
-    //   if (accounts.length > 0) {
-    //     setConnectedAccount(accounts[0])
-    //   } else {
-    //     setConnectedAccount(undefined)
-    //   }
-    // }
+    const ethereum = window.ethereum
+    if (ethereum) {
+      const provider = new ethers.providers.Web3Provider(ethereum)
+      // @ts-ignore
+      setIsMetaMask(window.ethereum?.isMetaMask && !window.ethereum?.overrideIsMetaMask)
+      const accounts = await provider.listAccounts()
+      setAccounts(accounts)
+      if (accounts.length > 0) {
+        setConnectedAccount(accounts[0])
+      } else {
+        setConnectedAccount(undefined)
+      }
+    }
   }
 
   const connectWallet = async () => {
@@ -285,25 +277,22 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   }
 
   const disconnectWallet = async () => {
-    if (!wallet) return
-    disconnect(wallet)
-    setConnectedAccount(undefined)
-    // if (window.ethereum) {
-    //   const provider = new ethers.providers.Web3Provider(window.ethereum)
-    //   const ethereum = window.ethereum ?? null
-    //   // @ts-ignore
-    //   if (ethereum && provider.connection.url === 'metamask' && !window.ethereum?.overrideIsMetaMask) {
-    //     // @ts-ignore
-    //     await ethereum.request({
-    //       method: 'wallet_revokePermissions',
-    //       params: [
-    //         {
-    //           eth_accounts: {}
-    //         }
-    //       ]
-    //     })
-    //   }
-    // }
+    if (window.ethereum) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const ethereum = window.ethereum ?? null
+      // @ts-ignore
+      if (ethereum && provider.connection.url === 'metamask' && !window.ethereum?.overrideIsMetaMask) {
+        // @ts-ignore
+        await ethereum.request({
+          method: 'wallet_revokePermissions',
+          params: [
+            {
+              eth_accounts: {}
+            }
+          ]
+        })
+      }
+    }
   }
 
   return (
@@ -311,7 +300,6 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
       value={{
         walletProvider,
         connectedAccount,
-        setConnectedAccount,
         connectWallet,
         tokenAddress,
         switchChain,
@@ -331,9 +319,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
         selectedNetworkType,
         setSelectedNetworkType,
         setSelectedNativeToken,
-        selectedNativeToken,
-        setWallet,
-        wallet
+        selectedNativeToken
       }}
     >
       {children}

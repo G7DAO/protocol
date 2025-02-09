@@ -29,7 +29,7 @@ const LegalPage: React.FC<LegalPageProps> = ({legalContent}) => {
       setSelectedNetworkType('Testnet')
       navigate(`/${item.link}`)
     } else if (item.name === "Bridge") {
-      setSelectedNetworkType('Mainnet')
+      setSelectedNetworkType('Testnet')
       navigate(`/${item.link}`)
     } else {
       window.open(item.link, '_blank')
