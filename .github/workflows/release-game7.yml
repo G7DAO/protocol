@@ -6,7 +6,7 @@ on:
             - "game7-v*"
 
 jobs:
-    create_release:
+    release-game7:
         runs-on: ubuntu-20.04
         steps:
             - uses: actions/create-release@v1
@@ -39,8 +39,6 @@ jobs:
                       arch: "arm"
         steps:
             - uses: actions/checkout@v3
-              with:
-                  submodules: recursive
             - name: Install Node.js
               uses: actions/setup-node@v3
               with:
