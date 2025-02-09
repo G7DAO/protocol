@@ -77,7 +77,7 @@ interface BlockchainProviderProps {
 
 export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children }) => {
   const [walletProvider, setWalletProvider] = useState<ethers.providers.Web3Provider>()
-  const [selectedNetworkType, setSelectedNetworkType] = useState<NetworkType>('Testnet')
+  const [selectedNetworkType, setSelectedNetworkType] = useState<NetworkType>(undefined )
   const [selectedLowNetwork, _setSelectedLowNetwork] = useState<NetworkInterface>(
     selectedNetworkType === 'Testnet' ? DEFAULT_LOW_NETWORK : DEFAULT_LOW_MAINNET_NETWORK
   )
