@@ -86,8 +86,8 @@ export default function App() {
                           appName: 'Relay Demo',
                           appFees: [
                             {
-                              recipient: '0xE2f669A23f83Aaa69Cc8C918bF4397E4eddA4B01',
-                              fee: '175' // 1%
+                              recipient: '0x0000000000000000000000000000000000000000',
+                              fee: '100' // 1%
                             }
                           ],
                           chains,

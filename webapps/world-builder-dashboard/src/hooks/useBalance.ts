@@ -2,29 +2,20 @@ import { useQuery } from '@tanstack/react-query'
 import { ethers } from 'ethers'
 import { BridgeToken } from 'game7-bridge-sdk'
 import { Token } from '@/utils/tokens'
-import { NetworkInterface } from '@/contexts/BlockchainContext'
 
 interface UseBalanceProps {
   account: string | undefined
   token: Token | null
-  selectedLowNetwork?: NetworkInterface
-  selectedHighNetwork?: NetworkInterface
 }
 
-const useTokenInformation = ({ account, token, selectedLowNetwork, selectedHighNetwork }: UseBalanceProps) => {
+const useTokenInformation = ({ account, token }: UseBalanceProps) => {
   return useQuery(
     {
-      queryKey: ['balance', account, token, selectedLowNetwork, selectedHighNetwork], queryFn: async () => {
+      queryKey: ['balance', account, token], queryFn: async () => {
         if (!account || !token) {
           return { tokenBalance: '0', symbol: '' }
         }
-        const filteredTokenMap = Object.fromEntries(
-          Object.entries(token.tokenAddressMap).filter(
-            ([chainId, _]: [string, string]) =>
-              Number(chainId) === token.chainId
-          )
-        )
-        const bridgeToken: BridgeToken = new BridgeToken(filteredTokenMap, token.chainId)
+        const bridgeToken: BridgeToken = new BridgeToken(token.tokenAddressMap, token.chainId)
         let tokenBalance
         if (token.decimals) {
           tokenBalance = String(

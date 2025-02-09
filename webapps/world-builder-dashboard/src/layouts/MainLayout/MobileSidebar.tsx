@@ -5,7 +5,7 @@ import styles from './MobileSidebar.module.css'
 import IconExternalLink from '@/assets/IconExternalLink'
 import IconHamburgerLanding from '@/assets/IconHamburgerLanding'
 import IconLogoutLarge from '@/assets/IconLogoutLarge'
-import NetworkToggle from '@/components/commonComponents/networkToggle/NetworkToggle'
+// import NetworkToggle from '@/components/commonComponents/networkToggle/NetworkToggle'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
 
@@ -39,7 +39,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
       {isExpanded && (
         <div className={styles.expanded}>
           <div className={styles.spacer} />
-          <NetworkToggle />
+          {/* <NetworkToggle /> */}
           <div className={styles.navigation}>
             {navigationItems.map((item) => (
               <div

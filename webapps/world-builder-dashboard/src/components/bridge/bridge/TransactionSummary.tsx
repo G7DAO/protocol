@@ -6,6 +6,16 @@ import { useMediaQuery } from '@mantine/hooks'
 import { NetworkInterface } from '@/contexts/BlockchainContext'
 import { returnSymbol } from '@/utils/web3utils'
 
+const formatCurrency = (value: number) => {
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  })
+  return formatter.format(value)
+}
+
 interface TransactionSummaryProps {
   address: string | undefined
   transferTime: string
@@ -13,6 +23,8 @@ interface TransactionSummaryProps {
   isEstimatingFee: boolean
   value: number
   nativeBalance: number
+  ethRate: number
+  tokenRate: number
   tokenSymbol: string
   gasNativeTokenSymbol: string
   gasChildNativeTokenSymbol: string
@@ -28,6 +40,8 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
   transferTime,
   fee,
   isEstimatingFee,
+  ethRate,
+  tokenRate,
   tokenSymbol,
   gasNativeTokenSymbol,
   gasChildNativeTokenSymbol,
@@ -90,6 +104,11 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
                     className={styles.value}
                     title={`Balance: ${String(nativeBalance)} ${gasNativeTokenSymbol}`}
                   >{`${fee.toFixed(8).replace(/\.?0+$/, '')} ${gasNativeTokenSymbol}`}</div>
+                  {!!(fee * ethRate) && (
+                    <div className={styles.valueNote}>
+                      {formatCurrency(fee * ethRate)}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className={styles.valueNote}>{isEstimatingFee ? 'Estimating...' : `Can't estimate fee`}</div>
@@ -103,6 +122,11 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
                     className={styles.value}
                     title={`Balance: ${String(nativeBalance)} ${gasChildNativeTokenSymbol}`}
                   >{`${childFee.toFixed(8).replace(/\.?0+$/, '')} ${gasChildNativeTokenSymbol}`}</div>
+                  {!!(childFee * ethRate) && (
+                    <div className={styles.valueNote}>
+                      {formatCurrency(childFee * ethRate)}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className={styles.valueNote}>{isEstimatingFee ? 'Estimating...' : `Can't estimate fee`}</div>
@@ -119,12 +143,17 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
                     className={styles.value}
                     title={`Balance: ${String(nativeBalance)} ${gasChildNativeTokenSymbol}`}
                   >{`${childFee.toFixed(8).replace(/\.?0+$/, '')} ${gasChildNativeTokenSymbol}`}</div>
+                  {!!(childFee * ethRate) && (
+                    <div className={styles.valueNote}>
+                      {formatCurrency(childFee * ethRate)}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className={styles.valueNote}>{isEstimatingFee ? 'Estimating...' : `Can't estimate fee`}</div>
               )}
             </div>
-            {/* <div className={styles.dataRow}>
+            <div className={styles.dataRow}>
               <div className={styles.itemName}>Estimated gas fee on {selectedLowChain.displayName}</div>
               {!!fee ? (
                 <div className={styles.valueContainer}>
@@ -141,7 +170,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
               ) : (
                 <div className={styles.valueNote}>{isEstimatingFee ? 'Estimating...' : `Can't estimate fee`}</div>
               )}
-            </div> */}
+            </div>
           </>
         )}
         <div className={styles.divider} />
@@ -151,6 +180,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
             <div className={styles.value}>
               {`${value} ${returnSymbol(direction, selectedHighChain, selectedLowChain, tokenSymbol)}`}
             </div>
+            {tokenRate > 0 && <div className={styles.valueNote}>{formatCurrency(value * (tokenSymbol === 'ETH' || tokenSymbol === 'G7' || tokenSymbol === 'TG7T' ? ethRate : tokenRate))}</div>}
           </div>
         </div>
       </div>

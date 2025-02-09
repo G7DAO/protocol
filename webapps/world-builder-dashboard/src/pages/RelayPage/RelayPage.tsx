@@ -15,7 +15,7 @@ import { useNotifications, usePendingTransactions } from '@/hooks/useL2ToL1Messa
 import { SwapWidget } from '@reservoir0x/relay-kit-ui'
 import { Address } from "viem"
 import { useNavigate } from 'react-router-dom'
-import { G7_G7, TOKENS, USDC_ARB } from '@/utils/relayConfig'
+import { XAI } from '@/utils/relayConfig'
 export interface SwapWidgetToken {
     chainId: number;
     address: string;
@@ -42,8 +42,8 @@ const RelayPage = () => {
 
     if (selectedNetworkType === 'Testnet') {
         navigate('/faucet')
-    }
-
+      }
+    
 
     useEffect(() => {
         if (pendingTransacions.data && connectedAccount) {
@@ -64,16 +64,13 @@ const RelayPage = () => {
             <div className={styles.viewContainer}>
                 <div className={styles.mainContainer}>
                     <SwapWidget
-                        key={connectedAccount}
-                        defaultFromToken={USDC_ARB}
-                        defaultToToken={G7_G7}
+                        defaultToToken={XAI}
                         defaultToAddress={connectedAccount as Address}
                         supportedWalletVMs={['evm']}
                         onConnectWallet={connectWallet}
                         onAnalyticEvent={(eventName, data) => {
                             console.log('Analytic Event', eventName, data)
                         }}
-                        tokens={TOKENS}
                     />
                     <div className={styles.canonicalLink} onClick={() => navigate('/bridge')}>
                         Bridge with Canonical
