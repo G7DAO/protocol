@@ -57,6 +57,25 @@ export const useBridger = () => {
                         return null
                     }
 
+                    let FALLBACK_PARENT_FEE
+                    let FALLBACK_CHILD_FEE
+
+                    if (direction === 'DEPOSIT') {
+                        if (selectedLowNetwork.chainId === 11155111 || selectedLowNetwork.chainId === 1) {
+                            FALLBACK_PARENT_FEE = ethers.utils.formatEther(ethers.utils.parseEther('0.005'))
+                        } else {
+                            FALLBACK_PARENT_FEE = ethers.utils.formatEther(ethers.utils.parseEther('0.0005'))
+                            FALLBACK_CHILD_FEE = ethers.utils.formatEther(ethers.utils.parseEther('0.00005'))
+                        }
+                    } else if (direction === 'WITHDRAW') {
+                        if (selectedHighNetwork.chainId === 421614 || selectedHighNetwork.chainId === 42161) {
+                            FALLBACK_PARENT_FEE = ethers.utils.formatEther(ethers.utils.parseEther('0.001'))
+                        } else {
+                            FALLBACK_PARENT_FEE = ethers.utils.formatEther(ethers.utils.parseEther('0.0001'))
+                        }
+                    }
+
+
                     try {
                         const decimals = tokenInformation?.decimalPlaces ?? 18
                         const parsedValue = value ? ethers.utils.parseUnits(value, decimals) : ethers.utils.parseEther('0')
@@ -74,27 +93,39 @@ export const useBridger = () => {
                             return { parentFee: '0', childFee: '0' }
                         }
 
-                        return await retryWithExponentialBackoff(async () => {
-                            const gasAndFee = await bridger.getGasAndFeeEstimation(
-                                parsedValue,
-                                originProvider,
-                                connectedAccount ?? '',
-                                destinationProvider
-                            )
+                        try {
+                            return await retryWithExponentialBackoff(async () => {
+                                const gasAndFee = await bridger.getGasAndFeeEstimation(
+                                    parsedValue,
+                                    originProvider,
+                                    connectedAccount ?? '',
+                                    destinationProvider
+                                )
 
-                            const parentFee = ethers.utils.formatEther(gasAndFee?.estimatedFee ?? '0')
-                            const childFee = gasAndFee?.childNetworkEstimation
-                                ? ethers.utils.formatEther(gasAndFee.childNetworkEstimation.estimatedFee)
-                                : '0'
+                                const parentFee = ethers.utils.formatEther(gasAndFee?.estimatedFee ?? '0')
+                                const childFee = gasAndFee?.childNetworkEstimation
+                                    ? ethers.utils.formatEther(gasAndFee.childNetworkEstimation.estimatedFee)
+                                    : '0'
 
+                                return {
+                                    parentFee,
+                                    childFee
+                                }
+                            })
+                        } catch (e) {
+                            console.error('Fee estimation failed:', e)
                             return {
-                                parentFee,
-                                childFee
+                                parentFee: FALLBACK_PARENT_FEE,
+                                childFee: FALLBACK_CHILD_FEE
                             }
-                        })
+                        }
+
                     } catch (e) {
                         console.error('Fee estimation failed:', e)
-                        return null
+                        return {
+                            parentFee: FALLBACK_PARENT_FEE,
+                            childFee: FALLBACK_CHILD_FEE
+                        }
                     }
                 },
                 enabled: !!connectedAccount && !!selectedLowNetwork && !!selectedHighNetwork && !!value && !!bridger,

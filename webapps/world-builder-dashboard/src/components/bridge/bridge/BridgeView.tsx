@@ -24,11 +24,10 @@ import ValueToBridge from '@/components/bridge/bridge/ValueToBridge'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useUISettings } from '@/contexts/UISettingsContext'
 import useTokenInformation from '@/hooks/useBalance'
-import { useCoinGeckoAPI } from '@/hooks/useCoinGeckoAPI'
 // Hooks and Constants
 import { DepositDirection } from '@/pages/BridgePage/BridgePage'
 import { getStakeNativeTxData } from '@/utils/bridge/stakeContractInfo'
-import { getTokensForNetwork, Token } from '@/utils/tokens'
+import { getTokensForNetwork } from '@/utils/tokens'
 import { useBridger } from '@/hooks/useBridger'
 import IconAlertCircle from '@/assets/IconAlertCircle'
 import { Tooltip } from 'summon-ui/mantine'
@@ -48,14 +47,12 @@ const BridgeView = ({
   const [inputErrorMessages, setInputErrorMessages] = useState({ value: '', data: '', destination: '' })
   const [networkErrorMessage, setNetworkErrorMessage] = useState('')
   const { isMessagingEnabled } = useUISettings()
-  const { useUSDPriceOfToken } = useCoinGeckoAPI()
   const {
     connectedAccount,
     selectedLowNetwork,
     setSelectedLowNetwork,
     selectedHighNetwork,
     setSelectedHighNetwork,
-    setSelectedBridgeToken,
     selectedBridgeToken,
     selectedNetworkType,
     setSelectedNativeToken,
@@ -64,23 +61,34 @@ const BridgeView = ({
 
   const { isFetching: isFetchingTokenInformation, data: tokenInformation, refetch: refetchToken } = useTokenInformation({
     account: connectedAccount,
-    token: selectedBridgeToken
+    token: selectedBridgeToken,
+    selectedLowNetwork,
+    selectedHighNetwork
   })
 
-  const nativeToken = getTokensForNetwork(selectedLowNetwork.chainId, connectedAccount).find(
-    (token) => token.symbol === selectedHighNetwork.nativeCurrency?.symbol
+  const nativeToken = getTokensForNetwork(direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId, connectedAccount).find(
+    (token) => direction === 'DEPOSIT' ? token.symbol === selectedLowNetwork.nativeCurrency?.symbol : token.symbol === selectedHighNetwork.nativeCurrency?.symbol
   ) ?? null
 
   const { data: nativeTokenInformation, refetch: refetchNativeToken } = useTokenInformation({
     account: connectedAccount,
-    token: nativeToken
+    token: nativeToken,
+    selectedLowNetwork,
+    selectedHighNetwork
   })
 
-  const { data: coinUSDRate, isFetching: isCoinFetching } = useUSDPriceOfToken(selectedBridgeToken?.geckoId ?? '')
-  const { data: ethRate } = useUSDPriceOfToken('ethereum')
-  const handleTokenChange = async (token: Token) => {
-    setSelectedBridgeToken(token)
-  }
+  const destinationNative = getTokensForNetwork(direction === 'DEPOSIT' ? selectedHighNetwork.chainId : selectedLowNetwork.chainId, connectedAccount).find(
+    (token) => direction === 'DEPOSIT' ? token.symbol === selectedHighNetwork.nativeCurrency?.symbol : token.symbol === selectedLowNetwork.nativeCurrency?.symbol
+  ) ?? null
+
+  const { data: destinationNativeTokenInformation } = useTokenInformation({
+    account: connectedAccount,
+    token: destinationNative,
+    selectedLowNetwork,
+    selectedHighNetwork
+  })
+
+
   const { getEstimatedFee } = useBridger()
 
   const [bridger, setBridger] = useState<Bridger | null>(null)
@@ -96,6 +104,9 @@ const BridgeView = ({
   })
 
   useEffect(() => {
+    if (!selectedBridgeToken && !connectedAccount && !selectedHighNetwork && !selectedLowNetwork)
+      return
+
     if (selectedBridgeToken && connectedAccount && selectedHighNetwork && selectedLowNetwork) {
       const originChainId = direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId
       const destinationChainId = direction === 'DEPOSIT' ? selectedHighNetwork.chainId : selectedLowNetwork.chainId
@@ -128,6 +139,36 @@ const BridgeView = ({
   useEffect(() => {
     setNetworkErrorMessage('')
   }, [selectedHighNetwork, selectedLowNetwork, value])
+
+
+
+  useEffect(() => {
+    const parentFee = Number(estimatedFee.data?.parentFee)
+    const childFee = Number(estimatedFee.data?.childFee)
+    const parentBalance = Number(nativeTokenInformation?.tokenBalance ?? '0')
+    const childBalance = Number(destinationNativeTokenInformation?.tokenBalance ?? '0')
+
+    if (parentFee > parentBalance && childFee > childBalance) {
+      setNetworkErrorMessage(
+        `Insufficient funds for gas: You need more ${nativeTokenInformation?.symbol} on ${direction === 'WITHDRAW' ? selectedHighNetwork.displayName : selectedLowNetwork.displayName} and ${destinationNativeTokenInformation?.symbol} on ${direction === 'WITHDRAW' ? selectedLowNetwork.displayName : selectedHighNetwork.displayName} for transaction fees. `
+      )
+    } else if (parentFee > parentBalance) {
+      setNetworkErrorMessage(
+        `Insufficient ${nativeTokenInformation?.symbol} for gas: You need more to cover transaction fees on ${direction === 'WITHDRAW' ? selectedHighNetwork.displayName : selectedLowNetwork.displayName}.`
+      )
+    } else if (childFee > childBalance) {
+      setNetworkErrorMessage(
+        `Insufficient ${destinationNativeTokenInformation?.symbol} for gas: You need more to cover transaction fees on ${direction === 'WITHDRAW' ? selectedLowNetwork.displayName : selectedHighNetwork.displayName}.`
+      )
+    }
+  }, [
+    estimatedFee.data?.parentFee,
+    estimatedFee.data?.childFee,
+    nativeTokenInformation,
+    tokenInformation,
+  ])
+
+
 
   useEffect(() => {
     if (message.data === 'stake') {
@@ -203,15 +244,7 @@ const BridgeView = ({
           symbol={tokenInformation?.symbol ?? ''}
           value={value}
           setValue={setValue}
-          onTokenChange={handleTokenChange}
           balance={tokenInformation?.tokenBalance}
-          rate={
-            selectedBridgeToken?.symbol === 'TG7T' || selectedBridgeToken?.symbol === 'G7'
-              ? 1
-              : isCoinFetching
-                ? 0.0
-                : (coinUSDRate[selectedBridgeToken?.geckoId ?? '']?.usd ?? 0)
-          }
           isFetchingBalance={isFetchingTokenInformation}
           errorMessage={inputErrorMessages.value}
           setErrorMessage={(msg) => setInputErrorMessages((prev) => ({ ...prev, value: msg }))}
@@ -248,16 +281,6 @@ const BridgeView = ({
           childFee={Number(estimatedFee.data?.childFee ?? 0)}
           isEstimatingFee={estimatedFee.isFetching}
           value={Number(value)}
-          ethRate={ethRate?.ethereum?.usd ?? 0}
-          tokenRate={
-            selectedBridgeToken?.symbol === 'TG7T' || selectedBridgeToken?.symbol === 'G7'
-              ? 1
-              : isCoinFetching
-                ? 0.0
-                : coinUSDRate && selectedBridgeToken?.geckoId && coinUSDRate[selectedBridgeToken.geckoId]
-                  ? coinUSDRate[selectedBridgeToken.geckoId]?.usd ?? 0
-                  : 0
-          }
           tokenSymbol={tokenInformation?.symbol ?? ''}
           gasNativeTokenSymbol={
             selectedNativeToken?.symbol ?? ''
@@ -267,7 +290,6 @@ const BridgeView = ({
           }
           selectedLowChain={selectedLowNetwork}
           selectedHighChain={selectedHighNetwork}
-
         />
         {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
         {<div className={styles.manualGasMessageContainer}>
@@ -300,6 +322,7 @@ const BridgeView = ({
           gasFees={[estimatedFee.data?.parentFee ?? '', estimatedFee.data?.childFee ?? '']}
           refetchToken={refetchToken}
           refetchNativeToken={refetchNativeToken}
+          isFetchingGasFee={estimatedFee?.isFetching}
         />
       </div>
       {selectedNetworkType === 'Mainnet' && <div className={styles.relayLink} onClick={() => navigate('/relay')}>Bridge with Relay</div>}
