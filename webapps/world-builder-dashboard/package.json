@@ -29,7 +29,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.11.2",
     "summon-ui": "^0.21.0",
-    "viem": "^2.21.54",
+    "viem": "^2.23.0",
     "wagmi": "^2.14.8"
   },
   "devDependencies": {

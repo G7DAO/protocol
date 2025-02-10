@@ -32,6 +32,7 @@ import { useBridger } from '@/hooks/useBridger'
 import IconAlertCircle from '@/assets/IconAlertCircle'
 import { Tooltip } from 'summon-ui/mantine'
 import { useNavigate } from 'react-router-dom'
+import { useMoonstreamPricesAPI } from '@/hooks/useCoinGeckoAPI'
 
 const BridgeView = ({
   direction,
@@ -56,7 +57,7 @@ const BridgeView = ({
     selectedBridgeToken,
     selectedNetworkType,
     setSelectedNativeToken,
-    selectedNativeToken
+    selectedNativeToken,
   } = useBlockchainContext()
 
   const { isFetching: isFetchingTokenInformation, data: tokenInformation, refetch: refetchToken } = useTokenInformation({
@@ -80,6 +81,11 @@ const BridgeView = ({
   const destinationNative = getTokensForNetwork(direction === 'DEPOSIT' ? selectedHighNetwork.chainId : selectedLowNetwork.chainId, connectedAccount).find(
     (token) => direction === 'DEPOSIT' ? token.symbol === selectedHighNetwork.nativeCurrency?.symbol : token.symbol === selectedLowNetwork.nativeCurrency?.symbol
   ) ?? null
+
+  const {useUSDPriceOfToken} = useMoonstreamPricesAPI()
+  const { data: coinUSDRate, isFetching: isCoinFetching } = useUSDPriceOfToken(selectedBridgeToken?.geckoId ?? '')
+  const { data: ethRate } = useUSDPriceOfToken('ethereum')
+
 
   const { data: destinationNativeTokenInformation } = useTokenInformation({
     account: connectedAccount,
