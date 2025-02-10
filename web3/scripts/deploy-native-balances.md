@@ -7,7 +7,7 @@
 
 ## Deployment
 
-- [ ] Deploy Game7 Token Faucet contract
+- [ ] Deploy Game7 Native Balances contract
 
 ```bash
 bin/game7 native-balances deploy \

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 contract NativeBalances {
-    function getSingleNaitveBalance(address user) public view returns (uint256) {
+    function getSingleNativeBalance(address user) public view returns (uint256) {
         return user.balance;
     }
 
