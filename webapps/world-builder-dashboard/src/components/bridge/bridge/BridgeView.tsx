@@ -86,7 +86,6 @@ const BridgeView = ({
   const { data: coinUSDRate, isFetching: isCoinFetching } = useUSDPriceOfToken(selectedBridgeToken?.geckoId ?? '')
   const { data: ethRate } = useUSDPriceOfToken('ethereum')
 
-
   const { data: destinationNativeTokenInformation } = useTokenInformation({
     account: connectedAccount,
     token: destinationNative,
@@ -306,7 +305,7 @@ const BridgeView = ({
           gasNativeTokenSymbol={
             selectedNativeToken?.symbol ?? ''
           }
-          ethRate={ethRate?.ethereum ?? 0}
+          ethRate={ethRate?.ethereum?.usd ?? 0}
           tokenRate={
             selectedBridgeToken?.symbol === 'TG7T' || selectedBridgeToken?.symbol === 'G7' || selectedBridgeToken?.symbol === 'USDC' || selectedBridgeToken?.symbol === 'USDC.e'
               ? 1
@@ -316,7 +315,7 @@ const BridgeView = ({
                   ? coinUSDRate[selectedBridgeToken.geckoId]?.usd ?? 0
                   : 0
           }
-          gasChildNativeTokenSymbol={
+          gasChildNativeTokenSymbol={ 
             selectedHighNetwork.nativeCurrency?.symbol ?? ''
           }
           selectedLowChain={selectedLowNetwork}
