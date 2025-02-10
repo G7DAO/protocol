@@ -56,8 +56,8 @@ var (
 )
 
 var NativeBalancesMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"users\",\"type\":\"address[]\"}],\"name\":\"getMultipleNativeBalances\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"getSingleNaitveBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
-	Bin: "0x6080604052348015600f57600080fd5b506102e08061001f6000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c806344dfcc151461003b578063cacf496514610076575b600080fd5b610063610049366004610155565b73ffffffffffffffffffffffffffffffffffffffff163190565b6040519081526020015b60405180910390f35b610089610084366004610192565b610096565b60405161006d9190610209565b606060008267ffffffffffffffff8111156100b3576100b361024c565b6040519080825280602002602001820160405280156100dc578160200160208202803683370190505b50905060005b8381101561014d578484828181106100fc576100fc61027b565b90506020020160208101906101119190610155565b73ffffffffffffffffffffffffffffffffffffffff163182828151811061013a5761013a61027b565b60209081029190910101526001016100e2565b509392505050565b60006020828403121561016757600080fd5b813573ffffffffffffffffffffffffffffffffffffffff8116811461018b57600080fd5b9392505050565b600080602083850312156101a557600080fd5b823567ffffffffffffffff8111156101bc57600080fd5b8301601f810185136101cd57600080fd5b803567ffffffffffffffff8111156101e457600080fd5b8560208260051b84010111156101f957600080fd5b6020919091019590945092505050565b602080825282518282018190526000918401906040840190835b81811015610241578351835260209384019390920191600101610223565b509095945050505050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b7f4e487b7100000000000000000000000000000000000000000000000000000000600052603260045260246000fdfea264697066735822122088c3db2c4da56b0284d017d2c573395a4cf351d9fd21594918b971bb401890a664736f6c634300081c0033",
+	ABI: "[{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"users\",\"type\":\"address[]\"}],\"name\":\"getMultipleNativeBalances\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"getSingleNativeBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
+	Bin: "0x6080604052348015600f57600080fd5b506102e48061001f6000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c8063cacf49651461003b578063d67809b614610064575b600080fd5b61004e610049366004610159565b61009a565b60405161005b91906101d0565b60405180910390f35b61008c610072366004610213565b73ffffffffffffffffffffffffffffffffffffffff163190565b60405190815260200161005b565b606060008267ffffffffffffffff8111156100b7576100b7610250565b6040519080825280602002602001820160405280156100e0578160200160208202803683370190505b50905060005b83811015610151578484828181106101005761010061027f565b90506020020160208101906101159190610213565b73ffffffffffffffffffffffffffffffffffffffff163182828151811061013e5761013e61027f565b60209081029190910101526001016100e6565b509392505050565b6000806020838503121561016c57600080fd5b823567ffffffffffffffff81111561018357600080fd5b8301601f8101851361019457600080fd5b803567ffffffffffffffff8111156101ab57600080fd5b8560208260051b84010111156101c057600080fd5b6020919091019590945092505050565b602080825282518282018190526000918401906040840190835b818110156102085783518352602093840193909201916001016101ea565b509095945050505050565b60006020828403121561022557600080fd5b813573ffffffffffffffffffffffffffffffffffffffff8116811461024957600080fd5b9392505050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b7f4e487b7100000000000000000000000000000000000000000000000000000000600052603260045260246000fdfea2646970667358221220b2f57a7f8392b2fe1569a8800fd5c16f5f5f991430d9cbe96bc16431d5dc4e7e64736f6c634300081c0033",
 }
 
 // NativeBalancesABI is the input ABI used to generate the binding from.
@@ -258,12 +258,12 @@ func (_NativeBalances *NativeBalancesCallerSession) GetMultipleNativeBalances(us
 	return _NativeBalances.Contract.GetMultipleNativeBalances(&_NativeBalances.CallOpts, users)
 }
 
-// GetSingleNaitveBalance is a free data retrieval call binding the contract method 0x44dfcc15.
+// GetSingleNativeBalance is a free data retrieval call binding the contract method 0xd67809b6.
 //
-// Solidity: function getSingleNaitveBalance(address user) view returns(uint256)
-func (_NativeBalances *NativeBalancesCaller) GetSingleNaitveBalance(opts *bind.CallOpts, user common.Address) (*big.Int, error) {
+// Solidity: function getSingleNativeBalance(address user) view returns(uint256)
+func (_NativeBalances *NativeBalancesCaller) GetSingleNativeBalance(opts *bind.CallOpts, user common.Address) (*big.Int, error) {
 	var out []interface{}
-	err := _NativeBalances.contract.Call(opts, &out, "getSingleNaitveBalance", user)
+	err := _NativeBalances.contract.Call(opts, &out, "getSingleNativeBalance", user)
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -275,18 +275,18 @@ func (_NativeBalances *NativeBalancesCaller) GetSingleNaitveBalance(opts *bind.C
 
 }
 
-// GetSingleNaitveBalance is a free data retrieval call binding the contract method 0x44dfcc15.
+// GetSingleNativeBalance is a free data retrieval call binding the contract method 0xd67809b6.
 //
-// Solidity: function getSingleNaitveBalance(address user) view returns(uint256)
-func (_NativeBalances *NativeBalancesSession) GetSingleNaitveBalance(user common.Address) (*big.Int, error) {
-	return _NativeBalances.Contract.GetSingleNaitveBalance(&_NativeBalances.CallOpts, user)
+// Solidity: function getSingleNativeBalance(address user) view returns(uint256)
+func (_NativeBalances *NativeBalancesSession) GetSingleNativeBalance(user common.Address) (*big.Int, error) {
+	return _NativeBalances.Contract.GetSingleNativeBalance(&_NativeBalances.CallOpts, user)
 }
 
-// GetSingleNaitveBalance is a free data retrieval call binding the contract method 0x44dfcc15.
+// GetSingleNativeBalance is a free data retrieval call binding the contract method 0xd67809b6.
 //
-// Solidity: function getSingleNaitveBalance(address user) view returns(uint256)
-func (_NativeBalances *NativeBalancesCallerSession) GetSingleNaitveBalance(user common.Address) (*big.Int, error) {
-	return _NativeBalances.Contract.GetSingleNaitveBalance(&_NativeBalances.CallOpts, user)
+// Solidity: function getSingleNativeBalance(address user) view returns(uint256)
+func (_NativeBalances *NativeBalancesCallerSession) GetSingleNativeBalance(user common.Address) (*big.Int, error) {
+	return _NativeBalances.Contract.GetSingleNativeBalance(&_NativeBalances.CallOpts, user)
 }
 
 func CreateNativeBalancesDeploymentCommand() *cobra.Command {
@@ -610,7 +610,7 @@ func CreateGetMultipleNativeBalancesCommand() *cobra.Command {
 
 	return cmd
 }
-func CreateGetSingleNaitveBalanceCommand() *cobra.Command {
+func CreateGetSingleNativeBalanceCommand() *cobra.Command {
 	var contractAddressRaw, rpc string
 	var contractAddress common.Address
 	var timeout uint
@@ -624,8 +624,8 @@ func CreateGetSingleNaitveBalanceCommand() *cobra.Command {
 	var capture0 *big.Int
 
 	cmd := &cobra.Command{
-		Use:   "get-single-naitve-balance",
-		Short: "Call the GetSingleNaitveBalance view method on a NativeBalances contract",
+		Use:   "get-single-native-balance",
+		Short: "Call the GetSingleNativeBalance view method on a NativeBalances contract",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			if contractAddressRaw == "" {
 				return fmt.Errorf("--contract not specified")
@@ -663,7 +663,7 @@ func CreateGetSingleNaitveBalanceCommand() *cobra.Command {
 			}
 
 			var callErr error
-			capture0, callErr = session.GetSingleNaitveBalance(
+			capture0, callErr = session.GetSingleNativeBalance(
 				user,
 			)
 			if callErr != nil {
@@ -825,9 +825,9 @@ func CreateNativeBalancesCommand() *cobra.Command {
 	cmdViewGetMultipleNativeBalances := CreateGetMultipleNativeBalancesCommand()
 	cmdViewGetMultipleNativeBalances.GroupID = ViewGroup.ID
 	cmd.AddCommand(cmdViewGetMultipleNativeBalances)
-	cmdViewGetSingleNaitveBalance := CreateGetSingleNaitveBalanceCommand()
-	cmdViewGetSingleNaitveBalance.GroupID = ViewGroup.ID
-	cmd.AddCommand(cmdViewGetSingleNaitveBalance)
+	cmdViewGetSingleNativeBalance := CreateGetSingleNativeBalanceCommand()
+	cmdViewGetSingleNativeBalance.GroupID = ViewGroup.ID
+	cmd.AddCommand(cmdViewGetSingleNativeBalance)
 
 	return cmd
 }
