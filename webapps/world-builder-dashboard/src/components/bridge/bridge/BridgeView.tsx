@@ -100,7 +100,8 @@ const BridgeView = ({
     direction,
     selectedLowNetwork,
     selectedHighNetwork,
-    tokenInformation
+    tokenInformation,
+    selectedNetworkType
   })
 
   useEffect(() => {
@@ -150,15 +151,15 @@ const BridgeView = ({
 
     if (parentFee > parentBalance && childFee > childBalance) {
       setNetworkErrorMessage(
-        `Insufficient funds for gas: You need more ${nativeTokenInformation?.symbol} on ${direction === 'WITHDRAW' ? selectedHighNetwork.displayName : selectedLowNetwork.displayName} and ${destinationNativeTokenInformation?.symbol} on ${direction === 'WITHDRAW' ? selectedLowNetwork.displayName : selectedHighNetwork.displayName} for transaction fees. `
+        `Insufficient funds: You need more ${nativeTokenInformation?.symbol} and ${destinationNativeTokenInformation?.symbol} on ${direction === 'WITHDRAW' ? selectedHighNetwork.displayName : selectedLowNetwork.displayName} to cover gas fees on both networks. `
       )
     } else if (parentFee > parentBalance) {
       setNetworkErrorMessage(
-        `Insufficient ${nativeTokenInformation?.symbol} for gas: You need more to cover transaction fees on ${direction === 'WITHDRAW' ? selectedHighNetwork.displayName : selectedLowNetwork.displayName}.`
+        `Insufficient funds: You need more ${nativeTokenInformation?.symbol} to cover transaction fees on ${direction === 'WITHDRAW' ? selectedHighNetwork.displayName : selectedLowNetwork.displayName}.`
       )
     } else if (childFee > childBalance) {
       setNetworkErrorMessage(
-        `Insufficient ${destinationNativeTokenInformation?.symbol} for gas: You need more to cover transaction fees on ${direction === 'WITHDRAW' ? selectedLowNetwork.displayName : selectedHighNetwork.displayName}.`
+        `Insufficient funds: You need more ${destinationNativeTokenInformation?.symbol} to cover transaction fees on ${direction === 'WITHDRAW' ? selectedLowNetwork.displayName : selectedHighNetwork.displayName}.`
       )
     }
   }, [
