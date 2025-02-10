@@ -94,9 +94,9 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
                     className={styles.value}
                     title={`Balance: ${String(nativeBalance)} ${gasNativeTokenSymbol}`}
                   >{`${fee.toFixed(8).replace(/\.?0+$/, '')} ${gasNativeTokenSymbol}`}</div>
-                  {!!(fee * tokenRate) && (
+                  {!!(fee * ethRate) && (
                     <div className={styles.valueNote}>
-                      {formatCurrency(fee * tokenRate)}
+                      {formatCurrency(fee * ethRate)}
                     </div>
                   )}
                 </div>
@@ -112,9 +112,9 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
                     className={styles.value}
                     title={`Balance: ${String(nativeBalance)} ${gasChildNativeTokenSymbol}`}
                   >{`${childFee.toFixed(8).replace(/\.?0+$/, '')} ${gasChildNativeTokenSymbol}`}</div>
-                  {!!(childFee * tokenRate) && (
+                  {!!(childFee * ethRate) && (
                     <div className={styles.valueNote}>
-                      {formatCurrency(childFee * tokenRate)}
+                      {formatCurrency(childFee * ethRate)}
                     </div>
                   )}
                 </div>
@@ -136,24 +136,6 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
                   {!!(childFee * tokenRate) && (
                     <div className={styles.valueNote}>
                       {formatCurrency(childFee * tokenRate)}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className={styles.valueNote}>{isEstimatingFee ? 'Estimating...' : `Can't estimate fee`}</div>
-              )}
-            </div>
-            <div className={styles.dataRow}>
-              <div className={styles.itemName}>Estimated gas fee on {selectedLowChain.displayName}</div>
-              {!!fee ? (
-                <div className={styles.valueContainer}>
-                  <div
-                    className={styles.value}
-                    title={`Balance: ${String(nativeBalance)} ${gasNativeTokenSymbol}`}
-                  >{`${fee.toFixed(8).replace(/\.?0+$/, '')} ${gasNativeTokenSymbol}`}</div>
-                  {!!(fee * tokenRate) && (
-                    <div className={styles.valueNote}>
-                      {formatCurrency(fee * tokenRate)}
                     </div>
                   )}
                 </div>

@@ -3,6 +3,7 @@ import styles from './ValueToBridge.module.css'
 import TokenSelector from '@/components/commonComponents/tokenSelector/TokenSelector'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { getTokensForNetwork, Token } from '@/utils/tokens'
+import { formatCurrency } from '@/utils/web3utils'
 
 
 interface ValueToBridgeProps {
@@ -10,7 +11,7 @@ interface ValueToBridgeProps {
   value: string
   setValue: (value: string) => void
   balance: string | undefined
-  rate?: number
+  rate: number
   isFetchingBalance?: boolean
   errorMessage: string
   setErrorMessage: (arg0: string) => void
@@ -21,6 +22,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   setValue,
   value,
   balance,
+  rate,
   symbol,
   isFetchingBalance,
   errorMessage,
@@ -107,56 +109,57 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   }
 
 
-    return (
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <div className={styles.label}>Amount</div>
-          <div className={styles.errorMessage}>{errorMessage}</div>
-        </div>
-        <div className={errorMessage ? styles.inputWithError : styles.inputGroup}>
-          <input
-            className={styles.input}
-            value={value}
-            disabled={!connectedAccount}
-            placeholder={'0'}
-            type="text"
-            onChange={(e) => {
-              setValue(sanitize(e.target.value));
-            }}
-            onPaste={(e) => {
-              e.preventDefault();
-              const pasted = e.clipboardData.getData('text');
-              setValue(sanitize(pasted));
-            }}
-            inputMode="decimal"
-            pattern="^(0(\.\d*)?|[1-9]\d*(\.\d*)?)$"
-            onWheel={preventNumberChange}    
+  return (
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <div className={styles.label}>Amount</div>
+        <div className={styles.errorMessage}>{errorMessage}</div>
+      </div>
+      <div className={errorMessage ? styles.inputWithError : styles.inputGroup}>
+        <input
+          className={styles.input}
+          value={value}
+          disabled={!connectedAccount}
+          placeholder={'0'}
+          type="text"
+          onChange={(e) => {
+            setValue(sanitize(e.target.value));
+          }}
+          onPaste={(e) => {
+            e.preventDefault();
+            const pasted = e.clipboardData.getData('text');
+            setValue(sanitize(pasted));
+          }}
+          inputMode="decimal"
+          pattern="^(0(\.\d*)?|[1-9]\d*(\.\d*)?)$"
+          onWheel={preventNumberChange}
+        />
+        <button
+          className={styles.maxButton}
+          onClick={() => setValue(String(Number(balance) - 0.0025))}
+          disabled={!connectedAccount}
+        >
+          MAX
+        </button>
+        {tokens.length > 0 && selectedBridgeToken && (
+          <TokenSelector
+            tokens={tokens}
+            selectedToken={selectedBridgeToken}
+            onChange={(token: Token) => setSelectedBridgeToken(token)}
+            onTokenAdded={getTokens}
+            selectedChainId={selectedChainId}
           />
-          <button
-            className={styles.maxButton}
-            onClick={() => setValue(String(Number(balance) - 0.0025))}
-            disabled={!connectedAccount}
-          >
-            MAX
-          </button>
-          {tokens.length > 0 && selectedBridgeToken && (
-            <TokenSelector
-              tokens={tokens}
-              selectedToken={selectedBridgeToken}
-              onChange={(token: Token) => setSelectedBridgeToken(token)}
-              onTokenAdded={getTokens}
-              selectedChainId={selectedChainId}
-            />
-          )}
-        </div>
-        <div className={styles.header}>
-          <div className={styles.available}>
-            <div className={`${styles.label} ${isFetchingBalance ? styles.blink : ''}`}>{balance ?? '0'}</div>{' '}
-            <div className={styles.label}>{`${symbol} Available`}</div>
-          </div>
+        )}
+      </div>
+      <div className={styles.header}>
+        <div className={styles.label}>{rate > 0 ? formatCurrency(Number(value) * rate) : ' '}</div>
+        <div className={styles.available}>
+          <div className={`${styles.label} ${isFetchingBalance ? styles.blink : ''}`}>{balance ?? '0'}</div>{' '}
+          <div className={styles.label}>{`${symbol} Available`}</div>
         </div>
       </div>
-    )
-  }
+    </div>
+  )
+}
 
-  export default ValueToBridge
+export default ValueToBridge
