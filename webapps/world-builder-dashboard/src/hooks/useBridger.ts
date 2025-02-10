@@ -3,6 +3,7 @@ import { ethers } from 'ethers'
 import { NetworkInterface, NetworkType, useBlockchainContext } from '@/contexts/BlockchainContext'
 import { DepositDirection } from '@/pages/BridgePage/BridgePage'
 import { Bridger } from 'game7-bridge-sdk'
+import { Token } from '@reservoir0x/relay-kit-ui/_types/src/types'
 
 export const useBridger = () => {
     const { connectedAccount } = useBlockchainContext()
@@ -41,7 +42,8 @@ export const useBridger = () => {
         selectedLowNetwork,
         selectedHighNetwork,
         tokenInformation,
-        selectedNetworkType
+        selectedNetworkType,
+        selectedBridgeToken
     }: {
         bridger: Bridger | null
         value: string
@@ -50,6 +52,7 @@ export const useBridger = () => {
         selectedHighNetwork: NetworkInterface
         tokenInformation?: { decimalPlaces?: number }
         selectedNetworkType?: NetworkType
+        selectedBridgeToken?: Token
     }) => {
         return useQuery(
             {
@@ -131,7 +134,7 @@ export const useBridger = () => {
                         }
                     }
                 },
-                enabled: !!connectedAccount && !!selectedLowNetwork && !!selectedHighNetwork && !!value && !!bridger && !!selectedNetworkType,
+                enabled: !!connectedAccount && !!selectedLowNetwork && !!selectedHighNetwork && !!value && !!bridger && !!selectedNetworkType && !!selectedBridgeToken,
                 retry: 2,
             }
         )
