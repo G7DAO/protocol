@@ -38,17 +38,6 @@ interface UseERC20AllowanceProps {
   rpc: string
 }
 
-export const useERC20Allowance = ({ tokenAddress, owner, spender, rpc }: UseERC20AllowanceProps) => {
-  return useQuery(
-    {
-      queryKey: ['ERC20Allowance', tokenAddress, owner, spender, rpc],
-      queryFn: () => fetchERC20Allowance({ tokenAddress, owner, spender, rpc }),
-      refetchInterval: 50000,
-      enabled: !!owner
-    },
-  )
-}
-
 export const fetchERC20Allowance = async ({ tokenAddress, owner, spender, rpc }: UseERC20AllowanceProps) => {
   if (!owner || !spender || tokenAddress === ethers.constants.AddressZero) {
     return { formatted: '0', raw: ethers.BigNumber.from('0') }
