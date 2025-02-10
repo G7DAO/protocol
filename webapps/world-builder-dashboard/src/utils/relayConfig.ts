@@ -77,7 +77,7 @@ export const chains = [
 ]
 
 export const wagmiConfig = createConfig({
-    chains: [mainnet, ancient8, apeChain, arbitrumNova, avalanche, b3, bsc, zora, arbitrum, base, optimism, polygon, zksync, xai, mantle, superposition, bob, boba, cyber, degen, forma, funkiMainnet, gnosis, gravity, ham, hychain, ink, linea, lisk, mint, mode, polygonZkEvm, redstone, sanko, scroll, sei, shape, worldchain],
+    chains: [mainnet, ancient8, apeChain, arbitrumNova, avalanche, b3, bsc, zora, arbitrum, base, optimism, polygon, zksync, xai, mantle, superposition, bob, boba, cyber, degen, forma, funkiMainnet, gnosis, gravity, ham, hychain, ink, linea, lisk, mint, mode, polygonZkEvm, redstone, sanko, scroll, sei, shape, worldchain, g7Mainnet],
     transports: {
         [mainnet.id]: http(),
         [arbitrum.id]: http(),

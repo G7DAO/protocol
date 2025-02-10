@@ -49,7 +49,7 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           tokenAddressMap: TG7T,
           rpc: L1_NETWORK.rpcs[0],
           chainId: L1_NETWORK.chainId,
-          geckoId: 'G7T'
+          geckoId: 'game7'
         },
         {
           name: 'Ethereum',
