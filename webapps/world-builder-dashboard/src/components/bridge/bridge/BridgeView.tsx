@@ -82,7 +82,7 @@ const BridgeView = ({
     (token) => direction === 'DEPOSIT' ? token.symbol === selectedHighNetwork.nativeCurrency?.symbol : token.symbol === selectedLowNetwork.nativeCurrency?.symbol
   ) ?? null
 
-  const {useUSDPriceOfToken} = useMoonstreamPricesAPI()
+  const { useUSDPriceOfToken } = useMoonstreamPricesAPI()
   const { data: coinUSDRate, isFetching: isCoinFetching } = useUSDPriceOfToken(selectedBridgeToken?.geckoId ?? '')
   const { data: ethRate } = useUSDPriceOfToken('ethereum')
 
@@ -257,6 +257,15 @@ const BridgeView = ({
           setErrorMessage={(msg) => setInputErrorMessages((prev) => ({ ...prev, value: msg }))}
           selectedChainId={direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId}
           gasFee={estimatedFee.data?.parentFee ?? ""}
+          rate={
+            selectedBridgeToken?.symbol === 'TG7T' || selectedBridgeToken?.symbol === 'G7' || selectedBridgeToken?.symbol === 'USDC' || selectedBridgeToken?.symbol === 'USDC.e'
+              ? 1
+              : isCoinFetching
+                ? 0.0
+                : coinUSDRate && selectedBridgeToken?.geckoId && coinUSDRate[selectedBridgeToken.geckoId]
+                  ? coinUSDRate[selectedBridgeToken.geckoId]?.usd ?? 0
+                  : 0
+          }
         />
         {direction === 'DEPOSIT' &&
           selectedLowNetwork.chainId === L2_NETWORK.chainId &&
@@ -296,6 +305,16 @@ const BridgeView = ({
           tokenSymbol={tokenInformation?.symbol ?? ''}
           gasNativeTokenSymbol={
             selectedNativeToken?.symbol ?? ''
+          }
+          ethRate={ethRate?.ethereum ?? 0}
+          tokenRate={
+            selectedBridgeToken?.symbol === 'TG7T' || selectedBridgeToken?.symbol === 'G7' || selectedBridgeToken?.symbol === 'USDC' || selectedBridgeToken?.symbol === 'USDC.e'
+              ? 1
+              : isCoinFetching
+                ? 0.0
+                : coinUSDRate && selectedBridgeToken?.geckoId && coinUSDRate[selectedBridgeToken.geckoId]
+                  ? coinUSDRate[selectedBridgeToken.geckoId]?.usd ?? 0
+                  : 0
           }
           gasChildNativeTokenSymbol={
             selectedHighNetwork.nativeCurrency?.symbol ?? ''
