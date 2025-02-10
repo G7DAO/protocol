@@ -54,24 +54,20 @@ const LegalPage: React.FC<LegalPageProps> = ({legalContent}) => {
             <div className={styles.legalHeader}>
               <div className={styles.headerContainer}>
                 <div className={styles.titleHeader}>
-                  {legalContent.title}
-                </div>
-                <div className={styles.lastUpdated}>
-                  Last updated: {legalContent.lastUpdated}
+                  Status
                 </div>
               </div>
             </div>
+
             <div className={styles.legalMain}>
-              {legalContent.sections.map((section: any, index: number) => (
-                <div key={index} className={styles.legalSection}>
-                  <div className={styles.legalTitle}>
-                    {section.title}
-                  </div>
+                <div className={styles.legalSection}>
                   <div className={styles.legalContent}>
-                    {section.content}
+
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+
+
                   </div>
                 </div>
-              ))}
             </div>
             <div style={{ width: 'calc(100% + 24px)' }}>
               <Footer />
