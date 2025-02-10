@@ -296,7 +296,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                             transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ? (
                             <>{timeAgo(highNetworkTimestamp ?? deposit.completionTimestamp)}</>
                           ) : (
-                            <>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)}</>
+                            <>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)} left</>
                           )
                         )}
                       </div>
