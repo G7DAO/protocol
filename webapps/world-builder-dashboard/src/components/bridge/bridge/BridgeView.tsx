@@ -291,23 +291,36 @@ const BridgeView = ({
           selectedLowChain={selectedLowNetwork}
           selectedHighChain={selectedHighNetwork}
         />
-        {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
-        {<div className={styles.manualGasMessageContainer}>
-          <div className={styles.manualGasMessageText}>
-            Claim transaction may be required on {direction === 'DEPOSIT' ? selectedHighNetwork.displayName : selectedLowNetwork.displayName}
-          </div>
-          <Tooltip
-            multiline
-            radius={'8px'}
-            arrowSize={8}
-            withArrow
-            arrowOffset={14}
-            events={{ hover: true, focus: true, touch: true }}
-            label='Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.'
+        {networkErrorMessage && estimatedFee.isFetched ? (
+          <div
+            className={`${styles.manualGasMessageContainerError}`}
           >
-            <IconAlertCircle stroke='#FFFAEB' height={16} width={16} />
-          </Tooltip>
-        </div>}
+            <div className={styles.manualGasMessageText}>{networkErrorMessage}</div>
+          </div>
+        )
+          :
+          (
+            <div className={styles.manualGasMessageContainer}>
+              <div className={styles.manualGasMessageText}>
+                {direction === 'DEPOSIT' ? `Claim transaction may be required on ${selectedHighNetwork.displayName}` :
+                  selectedBridgeToken.symbol === 'USDC' ? `Claim transaction available in 15 minutes on ${selectedLowNetwork.displayName}` : `Claim transaction available in 7 days on ${selectedLowNetwork.displayName}`
+                }
+              </div>
+              <Tooltip
+                multiline
+                radius={'8px'}
+                arrowSize={8}
+                withArrow
+                arrowOffset={14}
+                events={{ hover: true, focus: true, touch: true }}
+                label={direction === 'DEPOSIT' ? `Claim transaction may be required on ${selectedHighNetwork.displayName}` :
+                selectedBridgeToken.symbol === 'USDC' ? `Withdrawals unlock in 15 minutes in accordance with the CCTP protocol. Claim via the Activity tab once available.` : `Withdrawals unlock in 7 days due to the challenge period for security. Claim via the Activity tab once available.`
+              }
+              >
+                <IconAlertCircle stroke='#FFFAEB' height={16} width={16} />
+              </Tooltip>
+            </div>
+          )}
         <ActionButton
           direction={direction}
           amount={value ?? '0'}
