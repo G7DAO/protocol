@@ -313,7 +313,7 @@ const BridgeView = ({
                 withArrow
                 arrowOffset={14}
                 events={{ hover: true, focus: true, touch: true }}
-                label={direction === 'DEPOSIT' ? `Claim transaction may be required on ${selectedHighNetwork.displayName}` :
+                label={direction === 'DEPOSIT' ? `Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.` :
                 selectedBridgeToken.symbol === 'USDC' ? `Withdrawals unlock in 15 minutes in accordance with the CCTP protocol. Claim via the Activity tab once available.` : `Withdrawals unlock in 7 days due to the challenge period for security. Claim via the Activity tab once available.`
               }
               >
@@ -338,7 +338,7 @@ const BridgeView = ({
           isFetchingGasFee={estimatedFee?.isFetching}
         />
       </div>
-      {selectedNetworkType === 'Mainnet' && <div className={styles.relayLink} onClick={() => navigate('/relay')}>Bridge with Relay</div>}
+      {selectedNetworkType === 'Mainnet' && <div className={styles.relayLink} onClick={() => navigate('/relay')}>Faster transaction with Relay</div>}
     </div>
   )
 }
