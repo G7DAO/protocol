@@ -1,7 +1,7 @@
 github.com/DataDog/zstd v1.4.5 h1:EndNeuB0l9syBZhut0wns3gV1hL8zX8LIu6ZiVHWLIQ=
 github.com/DataDog/zstd v1.4.5/go.mod h1:1jcaCB/ufaK+sKp1NBhlGmpz41jOoPQ35bpF36t7BBo=
-github.com/G7DAO/seer v0.3.15 h1:EO0Q/dD1fSPvQVMpewxFuowI+n95x40j1iJ+sJWrE5M=
-github.com/G7DAO/seer v0.3.15/go.mod h1:JVdBWa8ma30x4xCiAVljKczYpl0To7gMWBTFsPSEA/A=
+github.com/G7DAO/seer v0.3.0 h1:q4jbb2y8iiBdeYkkMoX/jRkMbACaJeEQ+gAQZmTSgz4=
+github.com/G7DAO/seer v0.3.0/go.mod h1:JVdBWa8ma30x4xCiAVljKczYpl0To7gMWBTFsPSEA/A=
 github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERoyfY=
 github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
 github.com/StackExchange/wmi v1.2.1 h1:VIkavFPXSjcnS+O8yTq7NI32k0R5Aj+v39y29VYDOSA=

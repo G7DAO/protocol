@@ -3,6 +3,8 @@ import styles from './ValueToBridge.module.css'
 import TokenSelector from '@/components/commonComponents/tokenSelector/TokenSelector'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { getTokensForNetwork, Token } from '@/utils/tokens'
+import { formatCurrency } from '@/utils/web3utils'
+
 
 interface ValueToBridgeProps {
   symbol: string
@@ -14,11 +16,13 @@ interface ValueToBridgeProps {
   setErrorMessage: (arg0: string) => void
   selectedChainId: number
   gasFee?: string | undefined
+  rate: number
 }
 const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   setValue,
   value,
   balance,
+  rate,
   symbol,
   isFetchingBalance,
   errorMessage,
@@ -103,6 +107,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
     }
     return intPart;
   }
+
 
   return (
     <div className={styles.container}>
