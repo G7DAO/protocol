@@ -333,7 +333,7 @@ const BridgeView = ({
             <div className={styles.manualGasMessageContainer}>
               <div className={styles.manualGasMessageText}>
                 {direction === 'DEPOSIT' ? `Claim transaction may be required on ${selectedHighNetwork.displayName}` :
-                  selectedBridgeToken.symbol === 'USDC' ? `Claim transaction available in 15 minutes on ${selectedLowNetwork.displayName}` : `Claim transaction available in 7 days on ${selectedLowNetwork.displayName}`
+                  selectedBridgeToken.symbol === 'USDC' ? `Withdrawal will be available to claim on {destinationChain} in ~15 mins` : `Withdrawal will be available to claim on {destinationChain} in ~7 days`
                 }
               </div>
               <Tooltip
@@ -344,7 +344,7 @@ const BridgeView = ({
                 arrowOffset={14}
                 events={{ hover: true, focus: true, touch: true }}
                 label={direction === 'DEPOSIT' ? `Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.` :
-                  selectedBridgeToken.symbol === 'USDC' ? `Withdrawals unlock in 15 minutes in accordance with the CCTP protocol. Claim via the Activity tab once available.` : `Withdrawals unlock in 7 days due to the challenge period for security. Claim via the Activity tab once available.`
+                  selectedBridgeToken.symbol === 'USDC' ? `Withdrawals available in 15 minutes under the CCTP protocol. Return to claim tokens via the Activity tab once available.` : `Withdrawals available in 7 days due to the challenge period for security. Return to claim tokens via the Activity tab once available.`
                 }
               >
                 <IconAlertCircle stroke='#FFFAEB' height={16} width={16} />
