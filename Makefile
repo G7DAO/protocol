@@ -91,7 +91,11 @@ bindings/ERC20OrbitBridger/ERC20OrbitBridger.go: hardhat
 	mkdir -p bindings/ERC20OrbitBridger
 	seer evm generate --package ERC20OrbitBridger --output bindings/ERC20OrbitBridger/ERC20OrbitBridger.go --hardhat web3/artifacts/contracts/bridge/ERC20OrbitBridger.sol/ERC20OrbitBridger.json --cli --struct ERC20OrbitBridger
 
-bindings: bindings/ERC20/ERC20.go bindings/TokenFaucet/TokenFaucet.go bindings/WrappedNativeToken/WrappedNativeToken.go bindings/Staker/Staker.go bindings/MockERC20/MockERC20.go bindings/MockERC721/MockERC721.go bindings/MockERC1155/MockERC1155.go bindings/PositionMetadata/PositionMetadata.go bindings/Metronome/Metronome.go bindings/TokenSender/TokenSender.go bindings/utils/diamonds/Diamonds.go bindings/utils/security/Terminus.go bindings/ETHOrbitBridger/ETHOrbitBridger.go bindings/USDCOrbitBridger/USDCOrbitBridger.go bindings/ERC20OrbitBridger/ERC20OrbitBridger.go
+bindings/utils/NativeBalances.go: hardhat
+	mkdir -p bindings/utils/NativeBalances
+	seer evm generate --package NativeBalances --output bindings/utils/NativeBalances/NativeBalances.go --hardhat web3/artifacts/contracts/utils/NativeBalances.sol/NativeBalances.json --cli --struct NativeBalances
+
+bindings: bindings/ERC20/ERC20.go bindings/TokenFaucet/TokenFaucet.go bindings/WrappedNativeToken/WrappedNativeToken.go bindings/Staker/Staker.go bindings/MockERC20/MockERC20.go bindings/MockERC721/MockERC721.go bindings/MockERC1155/MockERC1155.go bindings/PositionMetadata/PositionMetadata.go bindings/Metronome/Metronome.go bindings/TokenSender/TokenSender.go bindings/utils/diamonds/Diamonds.go bindings/utils/security/Terminus.go bindings/ETHOrbitBridger/ETHOrbitBridger.go bindings/USDCOrbitBridger/USDCOrbitBridger.go bindings/ERC20OrbitBridger/ERC20OrbitBridger.go bindings/utils/NativeBalances.go
 
 test-web3:
 	cd web3 && npx hardhat test
