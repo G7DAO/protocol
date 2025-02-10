@@ -80,10 +80,9 @@
 
       const onWheel = (e: WheelEvent) => {
         if (e.deltaY === 0) return;
-        e.preventDefault();
         if (containerRef?.current) {
           containerRef.current.scrollTo({
-            left: containerRef.current.scrollLeft + e.deltaY * 4.5,
+            left: containerRef.current.scrollLeft + e.deltaY * 400,
             behavior: 'smooth',
             });
         }
@@ -99,7 +98,7 @@
     
 
       return (
-        <div className={styles.contentContainer} onWheel={onWheel}>
+        <div className={styles.contentContainer}>
           <div className={styles.sectionTitle}>Start building with the network essentials</div>
           <div className={styles.networkEssentialCards} ref={containerRef}>
             {essentials.map((essential, index) => (

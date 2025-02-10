@@ -25,6 +25,7 @@ const LandingPage: React.FC = () => {
   const observerRef = useRef<IntersectionObserver | null>(null);
   const [backgroundStyle, setBackgroundStyle] = useState<string | undefined>();
   const [isHeaderSticky, setIsHeaderSticky] = useState<boolean>(false)
+  const [wasAtBottom, setWasAtBottom] = useState<boolean>(false)
 
   useEffect(() => {
     const img = new Image()
@@ -56,12 +57,28 @@ const LandingPage: React.FC = () => {
   useEffect(() => {
     const element = mainLayoutRef.current;
     if (!element) return;
-
+    const initIsAtBottom = element.scrollHeight - element.scrollTop - element.clientHeight <= 1
+    if (initIsAtBottom) {
+      setWasAtBottom(true)
+    }
+    
+    let lastScrollTop = element.scrollTop;
     const handleScroll = () => {
+      const currentScrollTop = element.scrollTop;
+      const isScrollingUp = Math.round(currentScrollTop) - Math.round(lastScrollTop) <= 0
+      lastScrollTop = currentScrollTop;
       const isAtTop = element.scrollTop < 1
       const isAtBottom = element.scrollHeight - element.scrollTop - element.clientHeight <= 1
-      if (isAtBottom) {
+
+      if (wasAtBottom && !isAtBottom) {
+        headerRef.current?.scrollIntoView({ behavior: 'smooth' })
+      }
+
+      if (isAtBottom && !isScrollingUp) {
         footerRef.current?.scrollIntoView({ behavior: 'smooth' })
+        setWasAtBottom(true)
+      } else {
+        setWasAtBottom(false)
       }
 
       if (isAtTop) {
@@ -71,7 +88,7 @@ const LandingPage: React.FC = () => {
 
     element.addEventListener('scroll', handleScroll);
     return () => element.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [wasAtBottom]);
 
 
   const startBuilding = () => {

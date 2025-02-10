@@ -8,6 +8,7 @@ import IconLogoutLarge from '@/assets/IconLogoutLarge'
 import NetworkToggle from '@/components/commonComponents/networkToggle/NetworkToggle'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
+import IconClosedHamburgerLanding from '@/assets/IconClosedHamburgerLanding'
 
 interface MobileSidebarProps {
   navigationItems: { name: string; navigateTo: string; icon: ReactNode }[]
@@ -32,7 +33,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
             </div>
           )}
           <div className={styles.iconContainer}>
-            <IconHamburgerLanding className={parentStyles.iconButton} />
+            {isExpanded ? <IconClosedHamburgerLanding /> : <IconHamburgerLanding />}
           </div>
         </div>
       </div>

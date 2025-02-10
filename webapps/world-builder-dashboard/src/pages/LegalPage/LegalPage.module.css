@@ -119,6 +119,34 @@ body {
   font-weight: 400;
   line-height: 30px;
   /* 150% */
+
+  a {
+    color: rgb(220, 38, 38);
+    cursor: url('../../assets/hand.svg'), pointer;
+  }
+
+  table {
+    border-style: solid;
+    text-indent: 0;
+    margin-bottom: 1.25rem;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: .25rem .25rem;
+    border-radius: .25rem;
+    border-width: 1px;
+    padding: .5rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-color: rgb(152, 162, 179);
+
+    p {
+      margin: 0;
+      padding-top: .5rem;
+      padding-bottom: .5rem;
+      font-size: 1rem;
+      line-height: 1.5rem;
+    }
+  }
 }
 
 .layout {

@@ -86,7 +86,7 @@
 }
 
 .footerSectionLink {
-    cursor: pointer;
+    cursor: url('../../assets/hand.svg'), pointer;
     color: #FFF;
     /* Text md Regular */
     font-family: Inter;
