@@ -15,7 +15,7 @@ const g7Mainnet = defineChain({
     nativeCurrency: {
       decimals: 18,
       name: 'Game7 Token',
-      symbol: 'G7T',
+      symbol: 'G7',
     },
     rpcUrls: {
       default: {
