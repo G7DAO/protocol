@@ -273,9 +273,14 @@ const BridgeView = ({
           address={connectedAccount}
           nativeBalance={Number(nativeTokenInformation?.tokenBalance)}
           transferTime={
-            direction === 'DEPOSIT'
-              ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
-              : `~${Math.floor((selectedHighNetwork.challengePeriod ?? 0) / 60)} min`
+            selectedNetworkType === 'Mainnet' ?
+              direction === 'DEPOSIT'
+                ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
+                : `~${selectedBridgeToken.symbol === 'USDC' && selectedLowNetwork.chainId === 1 ? '15 min' : '7 days'}` :
+              direction === 'DEPOSIT'
+                ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
+                : `~${selectedBridgeToken.symbol === 'USDC' && selectedLowNetwork.chainId === 1 ? '15 min' : '60 min'}`
+
           }
           fee={Number(estimatedFee.data?.parentFee ?? 0)}
           childFee={Number(estimatedFee.data?.childFee ?? 0)}
@@ -314,8 +319,8 @@ const BridgeView = ({
                 arrowOffset={14}
                 events={{ hover: true, focus: true, touch: true }}
                 label={direction === 'DEPOSIT' ? `Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.` :
-                selectedBridgeToken.symbol === 'USDC' ? `Withdrawals unlock in 15 minutes in accordance with the CCTP protocol. Claim via the Activity tab once available.` : `Withdrawals unlock in 7 days due to the challenge period for security. Claim via the Activity tab once available.`
-              }
+                  selectedBridgeToken.symbol === 'USDC' ? `Withdrawals unlock in 15 minutes in accordance with the CCTP protocol. Claim via the Activity tab once available.` : `Withdrawals unlock in 7 days due to the challenge period for security. Claim via the Activity tab once available.`
+                }
               >
                 <IconAlertCircle stroke='#FFFAEB' height={16} width={16} />
               </Tooltip>
