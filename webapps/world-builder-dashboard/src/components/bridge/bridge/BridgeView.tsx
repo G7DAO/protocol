@@ -284,7 +284,7 @@ const BridgeView = ({
           refetchNativeToken={refetchNativeToken}
         />
       </div>
-      {selectedNetworkType === 'Mainnet' && <div className={styles.relayLink} onClick={() => navigate('/relay')}>Bridge with Relay</div>}
+      {selectedNetworkType === 'Mainnet' && <div className={styles.relayLink} onClick={() => navigate('/relay')}>Faster transaction with Relay</div>}
     </div>
   )
 }
