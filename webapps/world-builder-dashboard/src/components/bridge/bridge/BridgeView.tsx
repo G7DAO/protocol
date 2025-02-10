@@ -100,7 +100,8 @@ const BridgeView = ({
     direction,
     selectedLowNetwork,
     selectedHighNetwork,
-    tokenInformation
+    tokenInformation,
+    selectedNetworkType
   })
 
   useEffect(() => {
@@ -150,15 +151,15 @@ const BridgeView = ({
 
     if (parentFee > parentBalance && childFee > childBalance) {
       setNetworkErrorMessage(
-        `Insufficient funds for gas: You need more ${nativeTokenInformation?.symbol} on ${direction === 'WITHDRAW' ? selectedHighNetwork.displayName : selectedLowNetwork.displayName} and ${destinationNativeTokenInformation?.symbol} on ${direction === 'WITHDRAW' ? selectedLowNetwork.displayName : selectedHighNetwork.displayName} for transaction fees. `
+        `Insufficient funds: You need more ${nativeTokenInformation?.symbol} and ${destinationNativeTokenInformation?.symbol} on ${direction === 'WITHDRAW' ? selectedHighNetwork.displayName : selectedLowNetwork.displayName} to cover gas fees on both networks. `
       )
     } else if (parentFee > parentBalance) {
       setNetworkErrorMessage(
-        `Insufficient ${nativeTokenInformation?.symbol} for gas: You need more to cover transaction fees on ${direction === 'WITHDRAW' ? selectedHighNetwork.displayName : selectedLowNetwork.displayName}.`
+        `Insufficient funds: You need more ${nativeTokenInformation?.symbol} to cover transaction fees on ${direction === 'WITHDRAW' ? selectedHighNetwork.displayName : selectedLowNetwork.displayName}.`
       )
     } else if (childFee > childBalance) {
       setNetworkErrorMessage(
-        `Insufficient ${destinationNativeTokenInformation?.symbol} for gas: You need more to cover transaction fees on ${direction === 'WITHDRAW' ? selectedLowNetwork.displayName : selectedHighNetwork.displayName}.`
+        `Insufficient funds: You need more ${destinationNativeTokenInformation?.symbol} to cover transaction fees on ${direction === 'WITHDRAW' ? selectedLowNetwork.displayName : selectedHighNetwork.displayName}.`
       )
     }
   }, [
@@ -273,9 +274,14 @@ const BridgeView = ({
           address={connectedAccount}
           nativeBalance={Number(nativeTokenInformation?.tokenBalance)}
           transferTime={
-            direction === 'DEPOSIT'
-              ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
-              : `~${Math.floor((selectedHighNetwork.challengePeriod ?? 0) / 60)} min`
+            selectedNetworkType === 'Mainnet' ?
+              direction === 'DEPOSIT'
+                ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
+                : `~${selectedBridgeToken.symbol === 'USDC' && selectedLowNetwork.chainId === 1 ? '15 min' : '7 days'}` :
+              direction === 'DEPOSIT'
+                ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
+                : `~${selectedBridgeToken.symbol === 'USDC' && selectedLowNetwork.chainId === 1 ? '15 min' : '60 min'}`
+
           }
           fee={Number(estimatedFee.data?.parentFee ?? 0)}
           childFee={Number(estimatedFee.data?.childFee ?? 0)}
@@ -291,23 +297,36 @@ const BridgeView = ({
           selectedLowChain={selectedLowNetwork}
           selectedHighChain={selectedHighNetwork}
         />
-        {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
-        {<div className={styles.manualGasMessageContainer}>
-          <div className={styles.manualGasMessageText}>
-            Claim transaction may be required on {direction === 'DEPOSIT' ? selectedHighNetwork.displayName : selectedLowNetwork.displayName}
-          </div>
-          <Tooltip
-            multiline
-            radius={'8px'}
-            arrowSize={8}
-            withArrow
-            arrowOffset={14}
-            events={{ hover: true, focus: true, touch: true }}
-            label='Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.'
+        {networkErrorMessage && estimatedFee.isFetched ? (
+          <div
+            className={`${styles.manualGasMessageContainerError}`}
           >
-            <IconAlertCircle stroke='#FFFAEB' height={16} width={16} />
-          </Tooltip>
-        </div>}
+            <div className={styles.manualGasMessageText}>{networkErrorMessage}</div>
+          </div>
+        )
+          :
+          (
+            <div className={styles.manualGasMessageContainer}>
+              <div className={styles.manualGasMessageText}>
+                {direction === 'DEPOSIT' ? `Claim transaction may be required on ${selectedHighNetwork.displayName}` :
+                  selectedBridgeToken.symbol === 'USDC' ? `Claim transaction available in 15 minutes on ${selectedLowNetwork.displayName}` : `Claim transaction available in 7 days on ${selectedLowNetwork.displayName}`
+                }
+              </div>
+              <Tooltip
+                multiline
+                radius={'8px'}
+                arrowSize={8}
+                withArrow
+                arrowOffset={14}
+                events={{ hover: true, focus: true, touch: true }}
+                label={direction === 'DEPOSIT' ? `Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.` :
+                  selectedBridgeToken.symbol === 'USDC' ? `Withdrawals unlock in 15 minutes in accordance with the CCTP protocol. Claim via the Activity tab once available.` : `Withdrawals unlock in 7 days due to the challenge period for security. Claim via the Activity tab once available.`
+                }
+              >
+                <IconAlertCircle stroke='#FFFAEB' height={16} width={16} />
+              </Tooltip>
+            </div>
+          )}
         <ActionButton
           direction={direction}
           amount={value ?? '0'}
@@ -325,7 +344,7 @@ const BridgeView = ({
           isFetchingGasFee={estimatedFee?.isFetching}
         />
       </div>
-      {selectedNetworkType === 'Mainnet' && <div className={styles.relayLink} onClick={() => navigate('/relay')}>Bridge with Relay</div>}
+      {selectedNetworkType === 'Mainnet' && <div className={styles.relayLink} onClick={() => navigate('/relay')}>Faster transaction with Relay</div>}
     </div>
   )
 }

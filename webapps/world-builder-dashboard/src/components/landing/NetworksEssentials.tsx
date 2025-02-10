@@ -24,7 +24,7 @@ const essentials = [
     imageClass: styles.networkEssentialBridge,
     onClick: (navigate: (path: string) => void, setSelectedNetworkType: (type: NetworkType) => void) => {
       setSelectedNetworkType('Mainnet')
-      navigate('/bridge')
+      navigate('/relay')
     }
   },
   {
