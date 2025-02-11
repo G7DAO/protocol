@@ -94,9 +94,9 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
                     className={styles.value}
                     title={`Balance: ${String(nativeBalance)} ${gasNativeTokenSymbol}`}
                   >{`${fee.toFixed(8).replace(/\.?0+$/, '')} ${gasNativeTokenSymbol}`}</div>
-                  {!!(childFee * ethRate) && (
+                  {!!(fee * ethRate) && (
                     <div className={styles.valueNote}>
-                      {formatCurrency(childFee * ethRate)}
+                      {formatCurrency(fee * ethRate)}
                     </div>
                   )}
                 </div>
@@ -127,13 +127,13 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
           <>
             <div className={styles.dataRow}>
               <div className={styles.itemName}>Estimated gas fee on {selectedHighChain.displayName}</div>
-              {!!childFee ? (
+              {!!fee ? (
                 <div className={styles.valueContainer}>
                   <div
                     className={styles.value}
                     title={`Balance: ${String(nativeBalance)} ${gasChildNativeTokenSymbol}`}
-                  >{`${childFee.toFixed(8).replace(/\.?0+$/, '')} ${gasChildNativeTokenSymbol}`}</div>
-                  {!!(childFee * tokenRate) && (
+                  >{`${fee.toFixed(8).replace(/\.?0+$/, '')} ${gasChildNativeTokenSymbol}`}</div>
+                  {!!(fee * tokenRate) && (
                     <div className={styles.valueNote}>
                       {formatCurrency(childFee * tokenRate)}
                     </div>
