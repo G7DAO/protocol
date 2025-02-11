@@ -5,6 +5,7 @@ import styles from './Landing.module.css'
 import IconGame7 from '@/assets/IconGame7'
 import IconGame7Logo from '@/assets/IconGame7Logo'
 import IconHamburgerLanding from '@/assets/IconHamburgerLanding'
+import IconClosedHamburgerLanding from '@/assets/IconClosedHamburgerLanding'
 
 interface NavbarProps {
   navbarOpen: boolean
@@ -19,7 +20,7 @@ interface NavbarProps {
 const NAVBAR_ITEMS = [
   { name: 'Home', link: '/' },
   { name: 'Faucet', link: 'faucet' },
-  { name: 'Bridge', link: 'bridge' },
+  { name: 'Bridge', link: 'relay' },
   { name: 'Community', link: 'https://discord.com/invite/g7dao' },
   {
     name: 'Docs',
@@ -60,7 +61,7 @@ const Navbar: React.FC<NavbarProps> = ({ navbarOpen, smallView, setIsNavbarOpen,
               </div>
             ) : (
               <div className={styles.navbarItem}>
-                <IconHamburgerLanding onClick={() => setIsNavbarOpen(!navbarOpen)} />
+                {navbarOpen ? <IconClosedHamburgerLanding onClick={() => setIsNavbarOpen(false)} /> : <IconHamburgerLanding onClick={() => setIsNavbarOpen(true)} />}
               </div>
             )}
           </div>

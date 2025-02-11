@@ -29,7 +29,7 @@ const LegalPage: React.FC<LegalPageProps> = ({legalContent}) => {
       setSelectedNetworkType('Testnet')
       navigate(`/${item.link}`)
     } else if (item.name === "Bridge") {
-      setSelectedNetworkType('Testnet')
+      setSelectedNetworkType('Mainnet')
       navigate(`/${item.link}`)
     } else {
       window.open(item.link, '_blank')
@@ -68,7 +68,7 @@ const LegalPage: React.FC<LegalPageProps> = ({legalContent}) => {
                     {section.title}
                   </div>
                   <div className={styles.legalContent}>
-                    {section.content}
+                    <div dangerouslySetInnerHTML={{ __html: section.content }} />
                   </div>
                 </div>
               ))}

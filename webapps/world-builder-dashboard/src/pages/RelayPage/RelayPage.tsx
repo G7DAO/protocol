@@ -34,6 +34,12 @@ const RelayPage = () => {
     const pendingTransacions = usePendingTransactions(connectedAccount)
     const [notificationsOffset] = useState(0)
     const [notificationsLimit] = useState(10)
+    const [key, setKey] = useState(0) // Add this line
+
+    useEffect(() => {
+        setKey(prev => prev + 1)
+    }, [connectedAccount])
+    
 
     const notifications = useNotifications(connectedAccount, notificationsOffset, notificationsLimit)
     const { newNotifications, refetchNewNotifications } = useBridgeNotificationsContext()
@@ -42,8 +48,8 @@ const RelayPage = () => {
 
     if (selectedNetworkType === 'Testnet') {
         navigate('/faucet')
-    }
-
+      }
+    
 
     useEffect(() => {
         if (pendingTransacions.data && connectedAccount) {
@@ -64,6 +70,7 @@ const RelayPage = () => {
             <div className={styles.viewContainer}>
                 <div className={styles.mainContainer}>
                     <SwapWidget
+                        key={key}
                         defaultFromToken={USDC_ARB}
                         defaultToToken={G7_G7}
                         defaultToAddress={connectedAccount as Address}

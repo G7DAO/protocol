@@ -1,11 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { ethers } from 'ethers'
-import { NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
+import { NetworkInterface, NetworkType, useBlockchainContext } from '@/contexts/BlockchainContext'
 import { DepositDirection } from '@/pages/BridgePage/BridgePage'
 import { Bridger } from 'game7-bridge-sdk'
+import { Token } from '@reservoir0x/relay-kit-ui/_types/src/types'
 
 export const useBridger = () => {
-    const { connectedAccount, selectedBridgeToken } = useBlockchainContext()
+    const { connectedAccount } = useBlockchainContext()
 
     // Retry function with exponential backoff
     const retryWithExponentialBackoff = async (fn: () => Promise<any>, retries = 3, delay = 1000, jitterFactor = 0.5) => {
@@ -40,7 +41,9 @@ export const useBridger = () => {
         direction,
         selectedLowNetwork,
         selectedHighNetwork,
-        tokenInformation
+        tokenInformation,
+        selectedNetworkType,
+        selectedBridgeToken
     }: {
         bridger: Bridger | null
         value: string
@@ -48,6 +51,8 @@ export const useBridger = () => {
         selectedLowNetwork: NetworkInterface
         selectedHighNetwork: NetworkInterface
         tokenInformation?: { decimalPlaces?: number }
+        selectedNetworkType?: NetworkType
+        selectedBridgeToken?: Token
     }) => {
         return useQuery(
             {
@@ -56,23 +61,26 @@ export const useBridger = () => {
                     if (!bridger || !value || !tokenInformation) {
                         return null
                     }
+
                     let FALLBACK_PARENT_FEE
                     let FALLBACK_CHILD_FEE
-                    
+
                     if (direction === 'DEPOSIT') {
                         if (selectedLowNetwork.chainId === 11155111 || selectedLowNetwork.chainId === 1) {
                             FALLBACK_PARENT_FEE = ethers.utils.formatEther(ethers.utils.parseEther('0.005'))
+                            FALLBACK_CHILD_FEE = ethers.utils.formatEther(ethers.utils.parseEther('0.0005'))
                         } else {
                             FALLBACK_PARENT_FEE = ethers.utils.formatEther(ethers.utils.parseEther('0.0005'))
-                            FALLBACK_CHILD_FEE = ethers.utils.formatEther(ethers.utils.parseEther('0.00005'))
+                            FALLBACK_CHILD_FEE = ethers.utils.formatEther(ethers.utils.parseEther('0.000001'))
                         }
                     } else if (direction === 'WITHDRAW') {
                         if (selectedHighNetwork.chainId === 421614 || selectedHighNetwork.chainId === 42161) {
-                            FALLBACK_PARENT_FEE = ethers.utils.formatEther(ethers.utils.parseEther('0.001'))
+                            FALLBACK_PARENT_FEE = ethers.utils.formatEther(ethers.utils.parseEther('0.0005'))
                         } else {
-                            FALLBACK_PARENT_FEE = ethers.utils.formatEther(ethers.utils.parseEther('0.0001'))
+                            FALLBACK_PARENT_FEE = ethers.utils.formatEther(ethers.utils.parseEther('0.000001'))
                         }
                     }
+
 
                     try {
                         const decimals = tokenInformation?.decimalPlaces ?? 18
@@ -126,7 +134,7 @@ export const useBridger = () => {
                         }
                     }
                 },
-                enabled: !!connectedAccount && !!selectedLowNetwork && !!selectedHighNetwork && !!value && !!bridger && !!tokenInformation,
+                enabled: !!connectedAccount && !!selectedLowNetwork && !!selectedHighNetwork && !!value && !!bridger && !!selectedNetworkType && !!selectedBridgeToken,
                 retry: 2,
             }
         )

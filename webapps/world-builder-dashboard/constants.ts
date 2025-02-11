@@ -33,7 +33,7 @@ export const L2_NETWORK: HighNetworkInterface = {
   g7TokenAddress: '0x10adbf84548f923577be12146eac104c899d1e75',
   l1GatewayRouter: '0xcE18836b233C83325Cc8848CA4487e94C6288264',
   routerSpender: '0xE6470bb72291c39073AEd67a30ff93B69c1f47De',
-  retryableCreationTimeout: 60,
+  retryableCreationTimeout: 15 * 60,
   challengePeriod: 60 * 60
 }
 
@@ -84,7 +84,7 @@ export const L2_MAIN_NETWORK: NetworkInterface = {
   },
   g7TokenAddress: '0xF18e4466F26B4cA55bbAb890b314a54976E45B17',
   retryableCreationTimeout: 15 * 60,
-  challengePeriod: 60 * 60
+  challengePeriod: 60 * 60 * 24 * 7
 }
 
 export const L3_MAIN_NETWORK: NetworkInterface = {
@@ -101,7 +101,7 @@ export const L3_MAIN_NETWORK: NetworkInterface = {
   g7TokenAddress: '0x0000000000000000000000000000000000000000',
   retryableCreationTimeout: 15 * 60,
   wrappedG7TokenAddress: '0xfa3ed70386b9255fC04aA008A8ad1B0CDa816Fac',
-  challengePeriod: 60 * 60
+  challengePeriod: 60 * 60 * 24 * 7
 }
 
 export const ALL_TESTNET_NETWORKS = [L1_NETWORK, L2_NETWORK, L3_NETWORK]
@@ -112,10 +112,10 @@ export const ALL_HIGH_MAINNET_NETWORKS = [L2_MAIN_NETWORK, L3_MAIN_NETWORK]
 export const ALL_LOW_MAINNET_NETWORKS = [L1_MAIN_NETWORK, L2_MAIN_NETWORK]
 
 export const L3_NATIVE_TOKEN_SYMBOL = 'TG7T'
-export const DEFAULT_LOW_NETWORK = L1_NETWORK
-export const DEFAULT_HIGH_NETWORK = L2_NETWORK
-export const DEFAULT_LOW_MAINNET_NETWORK = L1_MAIN_NETWORK
-export const DEFAULT_HIGH_MAINNET_NETWORK = L2_MAIN_NETWORK
+export const DEFAULT_LOW_NETWORK = L2_NETWORK
+export const DEFAULT_HIGH_NETWORK = L3_NETWORK
+export const DEFAULT_LOW_MAINNET_NETWORK = L2_MAIN_NETWORK
+export const DEFAULT_HIGH_MAINNET_NETWORK = L3_MAIN_NETWORK
 
 export const LOW_NETWORKS = [L1_NETWORK, L2_NETWORK]
 export const HIGH_NETWORKS = [L2_NETWORK, L3_NETWORK]

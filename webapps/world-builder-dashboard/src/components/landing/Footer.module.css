@@ -86,7 +86,7 @@
 }
 
 .footerSectionLink {
-    cursor: pointer;
+    cursor: url('../../assets/hand.svg'), pointer;
     color: #FFF;
     /* Text md Regular */
     font-family: Inter;
@@ -128,5 +128,13 @@
         padding-right: 16px;
         background: #171717;
     }
+    .footerContentMobile {
+        width: 100%;
+    }
+
+    .footerSection {
+        width: 100%;
+    }
 }
+
 

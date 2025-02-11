@@ -3,12 +3,15 @@ import styles from './ValueToBridge.module.css'
 import TokenSelector from '@/components/commonComponents/tokenSelector/TokenSelector'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { getTokensForNetwork, Token } from '@/utils/tokens'
+import { formatCurrency } from '@/utils/web3utils'
+
 
 interface ValueToBridgeProps {
   symbol: string
   value: string
   setValue: (value: string) => void
   balance: string | undefined
+  rate: number
   isFetchingBalance?: boolean
   errorMessage: string
   setErrorMessage: (arg0: string) => void
@@ -19,6 +22,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
   setValue,
   value,
   balance,
+  rate,
   symbol,
   isFetchingBalance,
   errorMessage,
@@ -104,6 +108,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
     return intPart;
   }
 
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -113,8 +118,10 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
       <div className={errorMessage ? styles.inputWithError : styles.inputGroup}>
         <input
           className={styles.input}
-          type="text"
           value={value}
+          disabled={!connectedAccount}
+          placeholder={'0'}
+          type="text"
           onChange={(e) => {
             setValue(sanitize(e.target.value));
           }}
@@ -123,8 +130,6 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
             const pasted = e.clipboardData.getData('text');
             setValue(sanitize(pasted));
           }}
-          placeholder="0"
-          disabled={!connectedAccount}
           inputMode="decimal"
           pattern="^(0(\.\d*)?|[1-9]\d*(\.\d*)?)$"
           onWheel={preventNumberChange}
@@ -147,6 +152,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
         )}
       </div>
       <div className={styles.header}>
+        <div className={styles.label}>{rate > 0 ? formatCurrency(Number(value) * rate) : ' '}</div>
         <div className={styles.available}>
           <div className={`${styles.label} ${isFetchingBalance ? styles.blink : ''}`}>{balance ?? '0'}</div>{' '}
           <div className={styles.label}>{`${symbol} Available`}</div>

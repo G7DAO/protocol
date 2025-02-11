@@ -170,7 +170,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                       <div className={styles.gridItemChild} title={deposit.lowNetworkHash}>
                         <div className={styles.typeCompleted}>Initiate</div>
                       </div>
-                      <div className={styles.gridItemInitiate}>{timeAgo(deposit.lowNetworkTimestamp)}</div>
+                      <div className={styles.gridItemInitiate}>{timeAgo(deposit?.lowNetworkTimestamp)}</div>
                       <div className={styles.gridItemInitiate}>
                         {displayAmount} {symbol ?? deposit.symbol}
                       </div>
@@ -252,10 +252,9 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                             transferStatus?.status === BridgeTransferStatus.DEPOSIT_GAS_DEPOSITED ? (
                             <div className={styles.settled}>
                               Completed
-                              <IconLinkExternal02 stroke="#fff" />
+                              <IconLinkExternal02 stroke='#fff' />
                             </div>
-                          ) : transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ||
-                            transferStatus?.status === BridgeTransferStatus.CCTP_COMPLETE ? (
+                          ) : transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD || transferStatus?.status === BridgeTransferStatus.CCTP_COMPLETE ? (
                             <div className={styles.claimable}>
                               Claimable
                               <IconLinkExternal02 className={styles.arrowUp} />
@@ -297,7 +296,7 @@ const Deposit: React.FC<DepositProps> = ({ deposit }) => {
                             transferStatus?.status === BridgeTransferStatus.DEPOSIT_ERC20_FUNDS_DEPOSITED_ON_CHILD ? (
                             <>{timeAgo(highNetworkTimestamp ?? deposit.completionTimestamp)}</>
                           ) : (
-                            <>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)}</>
+                            <>{ETA(deposit.lowNetworkTimestamp, deposit.retryableCreationTimeout ?? 15 * 60)} left</>
                           )
                         )}
                       </div>

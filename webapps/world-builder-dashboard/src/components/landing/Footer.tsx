@@ -32,7 +32,7 @@ const Footer: React.FC = () => {
             header: 'DevHub',
             links: [
                 { name: 'Faucet', url: '/faucet' },
-                { name: 'Bridge', url: '/bridge' },
+                { name: 'Bridge', url: '/relay' },
                 { name: 'Documentation', url: 'https://docs.game7.io/' },
                 { name: 'Explorer', url: 'https://mainnet.game7.io/' },
             ],
@@ -58,7 +58,7 @@ const Footer: React.FC = () => {
             setSelectedNetworkType('Testnet')
             navigate(item.url)
         } else if (item.name === "Bridge") {
-            setSelectedNetworkType('Testnet')
+            setSelectedNetworkType('Mainnet')
             navigate(item.url)
         } else {
             window.open(item.url, '_blank')
