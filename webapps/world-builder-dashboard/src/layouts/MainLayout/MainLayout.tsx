@@ -74,7 +74,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ }) => {
     },
     {
       name: 'camelot',
-      navigateTo: 'https://app.camelot.exchange/',
+      navigateTo: 'https://app.camelot.exchange/?token1=0xfa3ed70386b9255fC04aA008A8ad1B0CDa816Fac&token2=0x401eCb1D350407f13ba348573E5630B83638E30D&chainId=2187',
       Icon: ({ isHovered }: { isHovered?: boolean }) => (
         <IconCamelot stroke={'#B9B9B9'} isHovered={isHovered} />
       )
@@ -126,7 +126,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ }) => {
     },
     {
       name: 'camelot',
-      navigateTo: 'https://app.camelot.exchange/',
+      navigateTo: 'https://app.camelot.exchange/?token1=0xfa3ed70386b9255fC04aA008A8ad1B0CDa816Fac&token2=0x401eCb1D350407f13ba348573E5630B83638E30D&chainId=2187',
       Icon: ({ isHovered }: { isHovered?: boolean }) => (
         <IconCamelot stroke={'#B9B9B9'} isHovered={isHovered} />
       )
