@@ -9,6 +9,7 @@ import swaggerjsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
 const app = express();
+app.disable('x-powered-by');
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(corsMiddleware);
