@@ -10,7 +10,6 @@ async function fetchChainData() {
     try {
         const response = await fetch('https://api.relay.link/chains') // Replace with actual API endpoint
         const chainsData = await response.json()
-        console.log(chainsData)
         return chainsData
     } catch (error) {
         console.error('Failed to fetch chain data:', error)
