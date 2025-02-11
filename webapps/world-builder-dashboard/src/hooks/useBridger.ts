@@ -3,7 +3,7 @@ import { ethers } from 'ethers'
 import { NetworkInterface, NetworkType, useBlockchainContext } from '@/contexts/BlockchainContext'
 import { DepositDirection } from '@/pages/BridgePage/BridgePage'
 import { Bridger } from 'game7-bridge-sdk'
-import { Token } from '@reservoir0x/relay-kit-ui/_types/src/types'
+import { Token } from '@/utils/tokens'
 
 export const useBridger = () => {
     const { connectedAccount } = useBlockchainContext()
