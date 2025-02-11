@@ -199,7 +199,7 @@ const BridgeView = ({
           </div>
         </div>
         <ValueToBridge
-          symbol={tokenInformation?.symbol ?? ''}
+          symbol={selectedBridgeToken?.symbol}
           value={value}
           setValue={setValue}
           balance={tokenInformation?.tokenBalance}
@@ -239,7 +239,6 @@ const BridgeView = ({
           childFee={Number(estimatedFee.data?.childFee ?? 0)}
           isEstimatingFee={estimatedFee.isFetching}
           value={Number(value)}
-          tokenSymbol={tokenInformation?.symbol ?? ''}
           gasNativeTokenSymbol={
             selectedNativeToken?.symbol ?? ''
           }
@@ -248,7 +247,7 @@ const BridgeView = ({
           }
           selectedLowChain={selectedLowNetwork}
           selectedHighChain={selectedHighNetwork}
-
+          selectedBridgeTokenSymbol={selectedBridgeToken.symbol}
         />
         {networkErrorMessage && <div className={styles.networkErrorMessage}>{networkErrorMessage}</div>}
         {<div className={styles.manualGasMessageContainer}>
