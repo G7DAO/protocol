@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import styles from './LegalPage.module.css'
 import parentStyles from '../LandingPage/LandingPage.module.css'
 import { useMediaQuery } from 'summon-ui/mantine'
 import Navbar from '@/components/landing/Navbar'
-import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Footer from '@/components/landing/Footer'
 import axios from 'axios'
 
@@ -29,8 +27,6 @@ const GAME7_STATUS_URL = 'https://game7.monitoring.moonstream.to/status'
 const SEER_STATUS_URL = 'https://seer.monitoring.moonstream.to/status'
 
 const LegalPage: React.FC = () => {
-  const navigate = useNavigate()
-  const { setSelectedNetworkType } = useBlockchainContext()
   const [navbarOpen, setNavBarOpen] = useState<boolean>(false)
   const smallView = useMediaQuery('(max-width: 750px)')
   const [nodes, setNodes] = useState<NodeStatus[]>([])
@@ -42,7 +38,6 @@ const LegalPage: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Запрос к API
         const [nodesResponse, game7Response, seerResponse] = await Promise.all([
           axios.get<NodeStatus[]>(`${CORS_PROXY}${NODE_STATUS_URL}`),
           axios.get<NodeStatus[]>(`${CORS_PROXY}${GAME7_STATUS_URL}`),
@@ -51,13 +46,11 @@ const LegalPage: React.FC = () => {
 
         setNodes(nodesResponse.data)
 
-        // Фильтруем только нужные данные из game7 API
         const filteredGame7Statuses = game7Response.data.filter((item) =>
           item.name === 'faucetbalanace' || item.name === 'protocolapi'
         )
         setGame7Statuses(filteredGame7Statuses)
 
-        // Ищем timestamp_delays в Seer API
         const timestampData = seerResponse.data.find((item) => item.name === 'mdb_v3_database')?.response.timestamp_delays
         if (timestampData) {
           setTimestampDelays(timestampData)
@@ -73,6 +66,7 @@ const LegalPage: React.FC = () => {
     fetchData()
   }, [])
 
+  // @ts-ignore
   return (
     <>
       <div className={styles.container}>
