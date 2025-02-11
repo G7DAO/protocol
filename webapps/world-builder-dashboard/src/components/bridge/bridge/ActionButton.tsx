@@ -47,7 +47,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   gasFees,
   refetchToken,
   refetchNativeToken,
-  isFetchingGasFee
+  isFetchingGasFee,
 }) => {
   const {
     connectedAccount,
