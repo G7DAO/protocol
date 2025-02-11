@@ -589,11 +589,6 @@ body {
   background-size: contain;
 }
 
-.networkEssentialDappRadar {
-  background: url('../../assets/G7DappRadarCardDark.jpg') 50% / cover no-repeat;
-  background-size: contain;
-}
-
 .networkEssentialCamelot {
   background: url('../../assets/G7CamelotCardDark.jpg') 50% / cover no-repeat;
   background-size: contain;

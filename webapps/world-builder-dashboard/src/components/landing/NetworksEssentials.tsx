@@ -62,13 +62,7 @@
           description: 'Secure your smart contracts with Safe, the leading multi-sig wallet for asset management, powered by Protofire',
           imageClass: styles.networkEssentialSafe,
           onClick: () => window.open('https://app.safe.global/', '_blank')
-      },
-      {
-          title: 'DappRadar',
-          description: 'Increase the discoverability and visibility of your application built on the G7 Network',
-          imageClass: styles.networkEssentialDappRadar,
-          onClick: () => window.open('https://dappradar.com/', '_blank')
-      },
+      }
     ]
 
 
