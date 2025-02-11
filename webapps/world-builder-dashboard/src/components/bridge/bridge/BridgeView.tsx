@@ -98,7 +98,6 @@ const BridgeView = ({
 
   const [bridger, setBridger] = useState<Bridger | null>(null)
 
-
   const estimatedFee = getEstimatedFee({
     bridger,
     value,
@@ -106,7 +105,8 @@ const BridgeView = ({
     selectedLowNetwork,
     selectedHighNetwork,
     tokenInformation,
-    selectedNetworkType
+    selectedNetworkType,
+    selectedBridgeToken
   })
 
   useEffect(() => {
