@@ -6,10 +6,12 @@ import IconLogout from '@/assets/IconLogout'
 import NetworkToggle from '@/components/commonComponents/networkToggle/NetworkToggle'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
+import { NavigationItem } from './MainLayout'
 
 interface DesktopSidebarProps {
-  navigationItems: { name: string; navigateTo: string; Icon: React.FC<{isHovered?: boolean}> }[]
+  navigationItems: NavigationItem[]
 }
+
 const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
   const [isHoveredElement, setIsHovereredElement] = useState('');
   const location = useLocation()
