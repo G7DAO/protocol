@@ -41,7 +41,7 @@ const allies = [
   },
   {
     logo: <CamelotLogo />,
-    link: 'https://app.camelot.exchange/'
+    link: 'https://camelot.exchange/'
   }
 ]
 

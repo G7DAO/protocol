@@ -49,7 +49,7 @@
           title: 'Camelot',
           description: 'Power your token swaps and liquidity provisioning with Camelot, the native DEX for the G7 Network',
           imageClass: styles.networkEssentialCamelot,
-          onClick: () => window.open('https://app.camelot.exchange/', '_blank')
+          onClick: () => window.open('https://app.camelot.exchange/?token1=0xfa3ed70386b9255fC04aA008A8ad1B0CDa816Fac&token2=0x401eCb1D350407f13ba348573E5630B83638E30D&chainId=2187', '_blank')
       },
       {
           title: 'Reservoir',
