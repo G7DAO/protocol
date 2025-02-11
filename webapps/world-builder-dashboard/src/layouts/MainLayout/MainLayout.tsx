@@ -1,6 +1,6 @@
 // React and related libraries
 import React from 'react'
-import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 // Styles
 import styles from './MainLayout.module.css'
 import IconDocumentation from '@/assets/IconDocumentation'
@@ -26,7 +26,6 @@ export interface NavigationItem {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ }) => {
   const location = useLocation()
-  const navigate = useNavigate()
   const { selectedNetworkType } = useBlockchainContext()
 
   const TESTNET_NAVIGATION_ITEMS: NavigationItem[] = [
