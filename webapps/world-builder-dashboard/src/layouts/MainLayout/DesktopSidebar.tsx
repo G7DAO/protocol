@@ -74,12 +74,12 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
             </div>
           )}
           <div className={styles.linkContainer}>
-            <div className={styles.linkText} onClick={()=>navigate('/terms')}>
+            <a href="https://game7.io/terms" target="_blank" className={styles.linkText} rel="noreferrer">
               Terms of Service
-            </div>
-            <div className={styles.linkText} onClick={()=>navigate('/privacy')}>
+            </a>
+            <a href="https://game7.io/privacy" target="_blank" className={styles.linkText} rel="noreferrer">
               Privacy Policy
-            </div>
+            </a>
           </div>
         </div>
       </div>
