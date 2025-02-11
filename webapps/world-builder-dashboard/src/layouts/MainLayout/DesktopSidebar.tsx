@@ -27,7 +27,7 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
               aria-disabled={item.name === 'faucet' && selectedNetworkType === 'Mainnet'}
               className={location.pathname.startsWith(item.navigateTo) ? styles.selectedNavButton : styles.navButton}
               onClick={() => {
-                if (item.name === 'documentation' || item.name === 'explorer') {
+                if (item.name === 'documentation' || item.name === 'explorer' || item.name === 'camelot' || item.name === 'safe') {
                   window.open(item.navigateTo, '_blank')
                 } else if (!(item.name === 'faucet' && selectedNetworkType === 'Mainnet')) {
                   navigate(item.navigateTo)
@@ -40,7 +40,7 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
                 {item.name}
               </div>
               <div style={{ display: 'flex' }}>
-                {item.name === 'documentation' || item.name === 'explorer' ? (
+                {item.name === 'documentation' || item.name === 'explorer' || item.name === 'camelot' || item.name === 'safe' ? (
                   <IconExternalLink className={styles.iconButton} />
                 ) : (
                   <></>

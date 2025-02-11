@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
 import styles from './NetworkToggle.module.css'
 import IconChevronDownToggle from '@/assets/IconChevronDownToggle'
 import { NetworkType, useBlockchainContext } from '@/contexts/BlockchainContext'
+import { useSearchParams } from 'react-router-dom'
 
 const NETWORK_OPTIONS: NetworkType[] = ['Testnet', 'Mainnet']
 

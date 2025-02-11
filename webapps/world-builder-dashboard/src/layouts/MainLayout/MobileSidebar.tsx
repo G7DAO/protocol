@@ -50,7 +50,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
                 }
                 onClick={() => {
                   setIsExpanded(false)
-                  if (item.name === 'documentation' || item.name === 'explorer') {
+                  if (item.name === 'documentation' || item.name === 'explorer' || item.name === 'camelot' || item.name === 'safe') {
                     window.open(item.navigateTo, '_blank')
                   } else if (!(item.name === 'faucet' && selectedNetworkType === 'Mainnet')) {
                     navigate(item.navigateTo)
@@ -63,7 +63,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
                   {item.name}
                 </div>
                 <div style={{ display: 'flex' }}>
-                  {item.name === 'documentation' || item.name === 'explorer' ? (
+                  {item.name === 'documentation' || item.name === 'explorer' || item.name === 'camelot' || item.name === 'safe' ? (
                     <IconExternalLink className={styles.icon} />
                   ) : (
                     <></>

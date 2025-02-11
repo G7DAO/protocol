@@ -9,14 +9,12 @@ interface UseBalanceProps {
   token: Token | null
   selectedLowNetwork?: NetworkInterface
   selectedHighNetwork?: NetworkInterface
-
 }
 
 const useTokenInformation = ({ account, token, selectedLowNetwork, selectedHighNetwork }: UseBalanceProps) => {
   return useQuery(
     {
-      queryKey: ['balance', account, token, selectedLowNetwork, selectedHighNetwork],
-      queryFn: async () => {
+      queryKey: ['balance', account, token, selectedLowNetwork, selectedHighNetwork], queryFn: async () => {
         if (!account || !token) {
           return { tokenBalance: '0', symbol: '' }
         }
@@ -40,7 +38,7 @@ const useTokenInformation = ({ account, token, selectedLowNetwork, selectedHighN
         return { tokenBalance, symbol, decimalPlaces }
       },
       refetchInterval: 50000,
-      enabled: !!account && !!token
+      enabled: !!account && !!token && !!selectedLowNetwork && !!selectedHighNetwork
     }
   )
 }
