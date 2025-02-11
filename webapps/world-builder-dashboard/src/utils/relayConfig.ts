@@ -1,4 +1,3 @@
-
 import { SwapWidgetToken } from '@/pages/RelayPage/RelayPage'
 import { convertViemChainToRelayChain } from '@reservoir0x/relay-sdk'
 import { defineChain, http } from 'viem'
@@ -7,31 +6,45 @@ import {
 } from 'viem/chains'
 import { createConfig } from 'wagmi'
 
+async function fetchChainData() {
+    try {
+        const response = await fetch('https://api.relay.link/chains') // Replace with actual API endpoint
+        const chainsData = await response.json()
+        console.log(chainsData)
+        return chainsData
+    } catch (error) {
+        console.error('Failed to fetch chain data:', error)
+        return null
+    }
+}
+
+fetchChainData()
+
 const g7Mainnet = defineChain({
     id: 2187,
     caipNetworkId: 'eip155:13746',
     chainNamespace: 'eip155',
     name: 'G7',
     nativeCurrency: {
-      decimals: 18,
-      name: 'Game7 Token',
-      symbol: 'G7',
+        decimals: 18,
+        name: 'Game7 Token',
+        symbol: 'G7',
     },
     rpcUrls: {
-      default: {
-        http: ['https://mainnet-rpc.game7.io'],
-        webSocket: ['wss://rpc.game7.io'],
-      },
+        default: {
+            http: ['https://mainnet-rpc.game7.io'],
+            webSocket: ['wss://rpc.game7.io'],
+        },
     },
     blockExplorers: {
-      default: {
-        name: 'Explorer',
-        url: 'https://mainnet.game7.io'
-      },
+        default: {
+            name: 'Explorer',
+            url: 'https://mainnet.game7.io'
+        },
     },
     contracts: {
     },
-  });
+});
 
 
 export const chains = [
