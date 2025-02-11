@@ -145,12 +145,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({ }) => {
       <Outlet />
       {smallView && (
         <div className={styles.links}>
-          <div className={styles.linkTextMobile} onClick={() => navigate('/terms')}>
+          <a href="https://game7.io/terms" target="_blank" className={styles.linkTextMobile}>
             Terms
-          </div>
-          <div className={styles.linkTextMobile} onClick={() => navigate('/privacy')}>
+          </a>
+          <a href="https://game7.io/privacy" target="_blank" className={styles.linkTextMobile}>
             Privacy
-          </div>
+          </a>
         </div>
       )}
     </div>
