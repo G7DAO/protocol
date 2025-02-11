@@ -77,7 +77,7 @@ interface BlockchainProviderProps {
 
 export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children }) => {
   const [walletProvider, setWalletProvider] = useState<ethers.providers.Web3Provider>()
-  const [selectedNetworkType, setSelectedNetworkType] = useState<NetworkType>('Testnet')
+  const [selectedNetworkType, setSelectedNetworkType] = useState<NetworkType>(undefined )
   const [selectedLowNetwork, _setSelectedLowNetwork] = useState<NetworkInterface>(
     selectedNetworkType === 'Testnet' ? DEFAULT_LOW_NETWORK : DEFAULT_LOW_MAINNET_NETWORK
   )
@@ -143,15 +143,15 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     handleAccountsChanged()
   }, [walletProvider])
 
-  // useEffect(() => {
-  //   const _selectedNetworkType = localStorage.getItem('selectedNetworkType')
-  //   if (_selectedNetworkType === 'Testnet' || _selectedNetworkType === 'Mainnet') {
-  //     console.log('Selecting ', _selectedNetworkType)
-  //     setSelectedNetworkType(_selectedNetworkType as NetworkType)
-  //   } else {
-  //     setSelectedNetworkType('Mainnet')
-  //   }
-  // }, [])
+  useEffect(() => {
+    const _selectedNetworkType = localStorage.getItem('selectedNetworkType')
+    if (_selectedNetworkType === 'Testnet' || _selectedNetworkType === 'Mainnet') {
+      console.log('Selecting ', _selectedNetworkType)
+      setSelectedNetworkType(_selectedNetworkType as NetworkType)
+    } else {
+      setSelectedNetworkType('Mainnet')
+    }
+  }, [])
 
   useEffect(() => {
     if (selectedNetworkType) {

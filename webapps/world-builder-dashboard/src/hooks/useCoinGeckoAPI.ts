@@ -1,14 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 
-export const useCoinGeckoAPI = () => {
+export const useMoonstreamPricesAPI = () => {
   const useUSDPriceOfToken = (coin: string) => {
     return useQuery(
       {
         queryKey: ['priceCrypto', coin],
         queryFn: async () => {
-          const res = await fetch(`https://pro-api.coingecko.com/api/v3/simple/price?ids=${coin}&vs_currencies=usd`, {
+          const res = await fetch(`https://data.moonstream.to/game7/prices.json`, {
             method: 'GET',
-            headers: { accept: 'application/json', 'x-cg-pro-api-key': 'bla' }
           })
           if (!res.ok) {
             throw new Error(`Error: ${res.statusText}`)

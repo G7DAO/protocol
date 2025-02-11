@@ -18,7 +18,6 @@ const useTokenInformation = ({ account, token, selectedLowNetwork, selectedHighN
         if (!account || !token) {
           return { tokenBalance: '0', symbol: '' }
         }
-
         const filteredTokenMap = Object.fromEntries(
           Object.entries(token.tokenAddressMap).filter(
             ([chainId, _]: [string, string]) =>
