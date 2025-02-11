@@ -36,10 +36,6 @@ const allies = [
     link: 'https://relay.link/'
   },
   {
-    logo: <SafeLogo />,
-    link: 'https://app.safe.global/'
-  },
-  {
     logo: <CamelotLogo />,
     link: 'https://camelot.exchange/'
   }

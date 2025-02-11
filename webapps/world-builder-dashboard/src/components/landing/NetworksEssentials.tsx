@@ -61,7 +61,7 @@
           title: 'Safe',
           description: 'Secure your smart contracts with Safe, the leading multi-sig wallet for asset management, powered by Protofire',
           imageClass: styles.networkEssentialSafe,
-          onClick: () => window.open('https://app.safe.global/', '_blank')
+          onClick: () => window.open(' https://safe.game7.io/', '_blank')
       }
     ]
 
