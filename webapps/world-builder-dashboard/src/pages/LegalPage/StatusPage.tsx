@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import styles from './LegalPage.module.css'
-import parentStyles from '../LandingPage/LandingPage.module.css'
 import { useMediaQuery } from 'summon-ui/mantine'
 import Navbar from '@/components/landing/Navbar'
 import Footer from '@/components/landing/Footer'
@@ -29,7 +28,7 @@ const NODE_STATUS_URL = 'https://nodes.monitoring.game7.build/status'
 const GAME7_STATUS_URL = 'https://game7.monitoring.moonstream.to/status'
 const SEER_STATUS_URL = 'https://seer.monitoring.moonstream.to/status'
 
-const LegalPage: React.FC = () => {
+const StatusPage: React.FC = () => {
   const [navbarOpen, setNavBarOpen] = useState<boolean>(false)
   const smallView = useMediaQuery('(max-width: 750px)')
   const [nodes, setNodes] = useState<NodeStatus[]>([])
@@ -74,7 +73,7 @@ const LegalPage: React.FC = () => {
     <>
       <div className={styles.container}>
         <div className={styles.viewContainer}>
-          <div className={`${styles.layout} ${navbarOpen && parentStyles.layoutBlur}`}>
+          <div className={`${styles.layout} ${navbarOpen && styles.layoutBlur}`}>
             <Navbar
               navbarOpen={navbarOpen}
               smallView={!!smallView}
@@ -168,4 +167,4 @@ const LegalPage: React.FC = () => {
   )
 }
 
-export default LegalPage
+export default StatusPage
