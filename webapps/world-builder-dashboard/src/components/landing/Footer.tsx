@@ -46,9 +46,9 @@ const Footer: React.FC = () => {
         {
             header: 'Legal',
             links: [
-                { name: 'Terms', url: '/terms' },
-                { name: 'Privacy', url: '/privacy' },
-                { name: 'Cookie', url: '/cookie' },
+                { name: 'Terms', url: 'https://game7.io/terms' },
+                { name: 'Privacy', url: 'https://game7.io/privacy' },
+                { name: 'Cookie', url: 'https://game7.io/cookies' },
             ],
         },
     ]
