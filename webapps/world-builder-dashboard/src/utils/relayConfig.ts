@@ -10,7 +10,6 @@ async function fetchChainData() {
     try {
         const response = await fetch('https://api.relay.link/chains') // Replace with actual API endpoint
         const chainsData = await response.json()
-        console.log(chainsData)
         return chainsData
     } catch (error) {
         console.error('Failed to fetch chain data:', error)
@@ -24,7 +23,7 @@ const g7Mainnet = defineChain({
     id: 2187,
     caipNetworkId: 'eip155:13746',
     chainNamespace: 'eip155',
-    name: 'G7',
+    name: 'G7 Network',
     nativeCurrency: {
         decimals: 18,
         name: 'Game7 Token',
