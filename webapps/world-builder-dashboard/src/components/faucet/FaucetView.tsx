@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { FAUCET_CHAIN, getNetworks, L3_NATIVE_TOKEN_SYMBOL, L3_NETWORK } from '../../../constants'
-import { AccountType } from '../commonComponents/accountSelector/AccountSelector'
-import AccountSelector from '../commonComponents/accountSelector/AccountSelector'
+import AccountSelector, { AccountType } from '../commonComponents/accountSelector/AccountSelector'
+
 import styles from './FaucetView.module.css'
 import { ethers } from 'ethers'
 import { useMediaQuery } from 'summon-ui/mantine'

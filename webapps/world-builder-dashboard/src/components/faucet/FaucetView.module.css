@@ -176,10 +176,19 @@
   border-radius: 8px;
   border: 1px solid var(--Connect-Wallet-Button-Faucet, #ffebef);
   background: var(--Connect-Wallet-Button-Faucet, #ffebef);
+
+  &:hover {
+    border: 1px solid var(--Error-200, #ffebef);
+    background: var(--Error-200, #ffebef);
+    transition: all linear 200ms;
+
+    /* Shadow/xs */
+    box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
+  }
 }
 
 .connectWalletText {
-  color: var( --Connect-Wallet-Text-Faucet, #dd1534);
+  color: var(--Connect-Wallet-Text-Faucet, #dd1534);
 
   /* Text sm/Semibold */
   font-family: Inter;
@@ -198,9 +207,18 @@
   align-items: center;
   gap: 8px;
   border-radius: 8px;
-  border: 1px solid var(--Primary-600, #F04438);
-  background: var(--Primary-600, #F04438);
+  border: 1px solid var(--Primary-600, #f04438);
+  background: var(--Primary-600, #f04438);
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+
+  &:hover {
+    border: 1px solid var(--Primary-600, #f04438);
+    background: var(--Primary-700, #f04438);
+    transition: all linear 200ms;
+
+    /* Shadow/xs */
+    box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
+  }
 }
 
 .requestTokensButtonDisabled {
