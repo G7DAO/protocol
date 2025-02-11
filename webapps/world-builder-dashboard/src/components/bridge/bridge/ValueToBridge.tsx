@@ -136,7 +136,7 @@ const ValueToBridge: React.FC<ValueToBridgeProps> = ({
         />
         <button
           className={styles.maxButton}
-          onClick={() => setValue(String(Number(balance) - 0.0025))}
+          onClick={() => setValue(String(Number(balance) - Number(gasFee)))}
           disabled={!connectedAccount}
         >
           MAX

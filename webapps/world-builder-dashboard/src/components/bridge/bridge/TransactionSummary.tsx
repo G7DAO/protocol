@@ -135,7 +135,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
                   >{`${fee.toFixed(8).replace(/\.?0+$/, '')} ${gasChildNativeTokenSymbol}`}</div>
                   {!!(fee * tokenRate) && (
                     <div className={styles.valueNote}>
-                      {formatCurrency(childFee * tokenRate)}
+                      {formatCurrency(fee * tokenRate)}
                     </div>
                   )}
                 </div>

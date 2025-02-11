@@ -62,8 +62,8 @@ export const useBridger = () => {
                         return null
                     }
 
-                    let FALLBACK_PARENT_FEE
-                    let FALLBACK_CHILD_FEE
+                    let FALLBACK_PARENT_FEE: any
+                    let FALLBACK_CHILD_FEE: any
 
                     if (direction === 'DEPOSIT') {
                         if (selectedLowNetwork.chainId === 11155111 || selectedLowNetwork.chainId === 1) {
@@ -109,13 +109,11 @@ export const useBridger = () => {
                                 )
 
                                 const parentFee = ethers.utils.formatEther(gasAndFee?.estimatedFee ?? '0')
-                                const childFee = gasAndFee?.childNetworkEstimation
-                                    ? ethers.utils.formatEther(gasAndFee.childNetworkEstimation.estimatedFee)
-                                    : '0'
+                                const childFee = ethers.utils.formatEther(gasAndFee.childNetworkEstimation?.estimatedFee ?? '0')
 
                                 return {
                                     parentFee,
-                                    childFee
+                                    childFee: childFee ?? FALLBACK_CHILD_FEE 
                                 }
                             })
                         } catch (e) {
