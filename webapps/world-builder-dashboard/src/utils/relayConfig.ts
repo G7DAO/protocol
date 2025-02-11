@@ -24,7 +24,7 @@ const g7Mainnet = defineChain({
     id: 2187,
     caipNetworkId: 'eip155:13746',
     chainNamespace: 'eip155',
-    name: 'G7',
+    name: 'G7 Network',
     nativeCurrency: {
         decimals: 18,
         name: 'Game7 Token',
