@@ -87,7 +87,7 @@ const LegalPage: React.FC = () => {
             />
             <div className={styles.legalHeader}>
               <div className={styles.headerContainer}>
-                <div className={styles.titleHeader}>Status Page</div>
+                <div className={styles.titleHeader}>Status</div>
               </div>
             </div>
 
