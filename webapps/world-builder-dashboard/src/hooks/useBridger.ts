@@ -109,11 +109,16 @@ export const useBridger = () => {
                                 )
 
                                 const parentFee = ethers.utils.formatEther(gasAndFee?.estimatedFee ?? '0')
-                                const childFee = ethers.utils.formatEther(gasAndFee.childNetworkEstimation?.estimatedFee ?? '0')
+                                let childFee: any
+                                if (!gasAndFee.childNetworkEstimation?.estimatedFee) {
+                                    childFee = FALLBACK_CHILD_FEE
+                                } else {
+                                    childFee = ethers.utils.formatEther(gasAndFee?.estimatedFee ?? '0')
+                                }
 
                                 return {
                                     parentFee,
-                                    childFee: childFee ?? FALLBACK_CHILD_FEE 
+                                    childFee: childFee ?? FALLBACK_CHILD_FEE
                                 }
                             })
                         } catch (e) {
