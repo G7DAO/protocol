@@ -14,6 +14,9 @@ interface NodeStatus {
     current_block_number?: number
     balance?: string
     status: string
+    timestamp_delays?: {
+      [blockchain: string]: string
+    }
   }
 }
 
@@ -78,6 +81,8 @@ const LegalPage: React.FC = () => {
               setIsNavbarOpen={setNavBarOpen}
               isContainer={false}
               isSticky={false}
+              startBuilding={() => {}}
+              navigateLink={() => {}}
             />
             <div className={styles.legalHeader}>
               <div className={styles.headerContainer}>
