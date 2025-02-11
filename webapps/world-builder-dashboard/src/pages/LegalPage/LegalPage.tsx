@@ -68,7 +68,7 @@ const LegalPage: React.FC<LegalPageProps> = ({legalContent}) => {
                     {section.title}
                   </div>
                   <div className={styles.legalContent}>
-                    {section.content}
+                    <div dangerouslySetInnerHTML={{ __html: section.content }} />
                   </div>
                 </div>
               ))}

@@ -104,7 +104,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     }
   }
 
-  const getLabel = (): String | undefined => {
+  const getLabel = (): string | undefined => {
     if (isConnecting) {
       return 'Connecting wallet...'
     }

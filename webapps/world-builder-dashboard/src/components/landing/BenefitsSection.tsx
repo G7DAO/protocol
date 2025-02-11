@@ -5,7 +5,7 @@ const benefits = [
     {
         title: "Build for gamers",
         imageClass: styles.cardImageGamers,
-        description: "Bootstrap your game with access to 470k+ citizens and counting",
+        description: "Bootstrap your game with access to 500k+ citizens and counting",
     },
     {
         title: "Fast and efficient",
