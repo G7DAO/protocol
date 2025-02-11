@@ -40,7 +40,7 @@ const copy = (notification: BridgeNotification, selectedNetworkType: NetworkType
         <>You received 1 {L3_NATIVE_TOKEN_SYMBOL}</>
       )
     }
-    return `Your ${notification.amount} ${notification.tx.symbol ?? notification.tx.transactionInputs?.tokenSymbol} withdrawal is complete`
+    return `Your ${notification.amount} ${getTokenSymbol(notification.tx, connectedAccount ?? '') ?? notification.tx.symbol} withdrawal is complete`
   }
 }
 
