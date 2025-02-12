@@ -178,7 +178,7 @@ body {
   border-radius: 12px;
   border: 1px solid #727272;
   background-color: #1b1b1b;
-  overflow-y: scroll;
+  overflow-y: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
   transition: justify-content 0.3s ease;
