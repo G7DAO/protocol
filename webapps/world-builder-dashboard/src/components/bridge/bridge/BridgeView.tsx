@@ -317,7 +317,7 @@ const BridgeView = ({
                   ? coinUSDRate[selectedBridgeToken.geckoId]?.usd ?? 0
                   : 0
           }
-          childRate={destinationRate}
+          childRate={destinationRate?.ethereum?.usd ?? 0}
           gasChildNativeTokenSymbol={
             selectedHighNetwork.nativeCurrency?.symbol ?? ''
           }
