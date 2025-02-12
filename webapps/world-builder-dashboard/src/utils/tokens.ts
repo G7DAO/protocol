@@ -84,7 +84,7 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           rpc: L2_NETWORK.rpcs[0],
           tokenAddressMap: TG7T,
           chainId: L2_NETWORK.chainId,
-          geckoId: 'G7T'
+          geckoId: 'game7'
         },
         {
           name: 'Ethereum',
@@ -119,7 +119,7 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           rpc: L3_NETWORK.rpcs[0],
           tokenAddressMap: TG7T,
           chainId: L3_NETWORK.chainId,
-          geckoId: 'G7T'
+          geckoId: 'game7'
         },
         {
           name: 'USDC',
@@ -144,7 +144,7 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           tokenAddressMap: G7T_MAINNET,
           rpc: L1_MAIN_NETWORK.rpcs[0],
           chainId: L1_MAIN_NETWORK.chainId,
-          geckoId: 'G7T'
+          geckoId: 'game7'
         },
         {
           name: 'Ethereum',
@@ -179,7 +179,7 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           tokenAddressMap: G7T_MAINNET,
           rpc: L2_MAIN_NETWORK.rpcs[0],
           chainId: L2_MAIN_NETWORK.chainId,
-          geckoId: 'G7T'
+          geckoId: 'game7'
         },
         {
           name: 'Ethereum',
@@ -214,7 +214,7 @@ export const getTokensForNetwork = (chainId: number | undefined, userAddress: st
           tokenAddressMap: G7T_MAINNET,
           rpc: L3_MAIN_NETWORK.rpcs[0],
           chainId: L3_MAIN_NETWORK.chainId,
-          geckoId: 'G7T'
+          geckoId: 'game7'
         },
         {
           name: 'USDC',
