@@ -71,7 +71,7 @@ export const useBridger = () => {
                             FALLBACK_CHILD_FEE = ethers.utils.formatEther(ethers.utils.parseEther('0.0005'))
                         } else {
                             FALLBACK_PARENT_FEE = ethers.utils.formatEther(ethers.utils.parseEther('0.0005'))
-                            FALLBACK_CHILD_FEE = ethers.utils.formatEther(ethers.utils.parseEther('0.000001'))
+                            FALLBACK_CHILD_FEE = ethers.utils.formatEther(ethers.utils.parseEther('0.0001'))
                         }
                     } else if (direction === 'WITHDRAW') {
                         if (selectedHighNetwork.chainId === 421614 || selectedHighNetwork.chainId === 42161) {
