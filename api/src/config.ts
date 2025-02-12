@@ -88,6 +88,8 @@ export const bridgeConfig: {
     G7nativeTokenName: string;
     arbitrumCircleTransmitter: string;
     ethereumCircleTransmitter: string;
+    ClaimableTimeCanonical: number;
+    ClaimableTimeCCTP: number;
   };
 } = {
   "game7-testnet": {
@@ -116,7 +118,10 @@ export const bridgeConfig: {
     l1TokenName: "TG7T",
     l2TokenName: "TG7T",
     nativeToken: "0x0000000000000000000000000000000000000000", // native token
-    G7nativeTokenName: "TG7T"
+    G7nativeTokenName: "TG7T",
+    ClaimableTimeCanonical: 1 * 60 * 60, // 1 hour
+    ClaimableTimeCCTP: 15 * 60 // 15 minutes
+
   },
   "game7": {
     addressERC20Inbox: "B1146A7eb098ECF46e8AAf695f4A960A963948d6", // Arbitrum Deposit contract address
@@ -144,7 +149,9 @@ export const bridgeConfig: {
     l1TokenName: "G7",
     l2TokenName: "G7",
     nativeToken: "0x0000000000000000000000000000000000000000", // native token
-    G7nativeTokenName: "G7"
+    G7nativeTokenName: "G7",
+    ClaimableTimeCanonical: 7 * 24 * 60 * 60, // 7 days
+    ClaimableTimeCCTP: 15 * 60 // 15 minutes
   },
 };
 
