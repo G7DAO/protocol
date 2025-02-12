@@ -15,7 +15,7 @@ import { useNotifications, usePendingTransactions } from '@/hooks/useL2ToL1Messa
 import { SwapWidget } from '@reservoir0x/relay-kit-ui'
 import { Address } from "viem"
 import { useNavigate } from 'react-router-dom'
-import { G7_G7, TOKENS, USDC_ARB } from '@/utils/relayConfig'
+import { G7_ARB, G7_G7, TOKENS } from '@/utils/relayConfig'
 export interface SwapWidgetToken {
     chainId: number;
     address: string;
@@ -64,8 +64,8 @@ const RelayPage = () => {
                 <div className={styles.mainContainer}>
                     <SwapWidget
                         key={key}
-                        defaultFromToken={USDC_ARB}
-                        defaultToToken={G7_G7}
+                        defaultFromToken={G7_G7}
+                        defaultToToken={G7_ARB}
                         defaultToAddress={connectedAccount as Address}
                         supportedWalletVMs={['evm']}
                         onConnectWallet={connectWallet}
