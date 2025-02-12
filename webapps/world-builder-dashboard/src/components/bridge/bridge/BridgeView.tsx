@@ -257,7 +257,7 @@ const BridgeView = ({
           selectedChainId={direction === 'DEPOSIT' ? selectedLowNetwork.chainId : selectedHighNetwork.chainId}
           gasFee={estimatedFee.data?.parentFee ?? ""}
           rate={
-            selectedBridgeToken?.symbol === 'TG7T' || selectedBridgeToken?.symbol === 'G7' || selectedBridgeToken?.symbol === 'USDC' || selectedBridgeToken?.symbol === 'USDC.e'
+            selectedBridgeToken?.symbol === 'USDC' || selectedBridgeToken?.symbol === 'USDC.e'
               ? 1
               : isCoinFetching
                 ? 0.0
@@ -307,7 +307,7 @@ const BridgeView = ({
           }
           ethRate={ethRate?.ethereum?.usd ?? 0}
           tokenRate={
-            selectedBridgeToken?.symbol === 'TG7T' || selectedBridgeToken?.symbol === 'G7' || selectedBridgeToken?.symbol === 'USDC' || selectedBridgeToken?.symbol === 'USDC.e'
+            selectedBridgeToken?.symbol === 'USDC' || selectedBridgeToken?.symbol === 'USDC.e'
               ? 1
               : isCoinFetching
                 ? 0.0
