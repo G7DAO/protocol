@@ -26,10 +26,8 @@ export interface SwapWidgetToken {
     verified?: boolean;
 }
 
-
-
 const RelayPage = () => {
-    const { connectedAccount, connectWallet, selectedNetworkType } = useBlockchainContext()
+    const { connectedAccount, connectWallet } = useBlockchainContext()
     const navigate = useNavigate()
     const pendingTransacions = usePendingTransactions(connectedAccount)
     const [notificationsOffset] = useState(0)
