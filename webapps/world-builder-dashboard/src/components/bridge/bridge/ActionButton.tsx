@@ -28,9 +28,9 @@ interface ActionButtonProps {
   balance?: string
   nativeBalance?: string
   gasFees?: string[]
-  isFetchingGasFee?: boolean
   refetchToken?: any
   refetchNativeToken?: any
+  isFetchingGasFee?: boolean
 }
 
 const ActionButton: React.FC<ActionButtonProps> = ({
@@ -45,10 +45,9 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   balance,
   nativeBalance,
   gasFees,
-  isFetchingGasFee,
   refetchToken,
-  refetchNativeToken
-
+  refetchNativeToken,
+  isFetchingGasFee,
 }) => {
   const {
     connectedAccount,
@@ -105,7 +104,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     }
   }
 
-  const getLabel = (): String | undefined => {
+  const getLabel = (): string | undefined => {
     if (isConnecting) {
       return 'Connecting wallet...'
     }
@@ -120,9 +119,11 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       return 'Checking allowances...'
     }
 
+
     if (isFetchingGasFee) {
       return 'Estimating fee...'
     }
+
 
     // if (!allowancesVerified)
     //   return 'Approve & Submit'
@@ -208,7 +209,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           highNetworkChainId: selectedHighNetwork.chainId,
           highNetworkHash: tx?.hash,
           highNetworkTimestamp: Date.now() / 1000,
-          challengePeriod: selectedNetworkType === 'Testnet' ? 60 * 60 : 60 * 60 * 24 * 7,
+          challengePeriod: selectedNetworkType === 'Testnet' ? 60 * 60 : selectedBridgeToken.symbol === 'USDC' && selectedLowNetwork.chainId === 1 ? 60 * 15 : 60 * 60 * 24 * 7,
           symbol: returnSymbol(direction, selectedHighNetwork, selectedLowNetwork, symbol ?? ''),
           status:
             isCCTP

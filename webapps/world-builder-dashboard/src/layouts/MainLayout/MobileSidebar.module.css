@@ -1,6 +1,6 @@
 .container {
   position: fixed;
-  z-index: 301;
+  z-index: 199;
   display: flex;
   padding: 12px 8px 12px 16px;
   justify-content: space-between;
@@ -57,7 +57,7 @@
 .expanded {
   position: fixed;
   top: 64px;
-  z-index: 300;
+  z-index: 198;
   width: 100vw;
   height: calc(100vh);
   background-color: rgba(11, 11, 11, 0.8);

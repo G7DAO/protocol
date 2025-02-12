@@ -4,7 +4,7 @@ import { Tooltip, useClipboard } from 'summon-ui/mantine'
 import { mantineBreakpoints } from '@/styles/breakpoints'
 import { useMediaQuery } from '@mantine/hooks'
 import { NetworkInterface } from '@/contexts/BlockchainContext'
-import { returnSymbol } from '@/utils/web3utils'
+import { formatCurrency, returnSymbol } from '@/utils/web3utils'
 
 interface TransactionSummaryProps {
   address: string | undefined
@@ -20,6 +20,8 @@ interface TransactionSummaryProps {
   selectedLowChain: NetworkInterface
   selectedHighChain: NetworkInterface
   childFee: number
+  ethRate: number
+  tokenRate: number
 }
 const TransactionSummary: React.FC<TransactionSummaryProps> = ({
   direction,
@@ -34,7 +36,9 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
   value,
   selectedHighChain,
   selectedLowChain,
-  childFee
+  childFee,
+  ethRate,
+  tokenRate
 }) => {
   const clipboard = useClipboard({ timeout: 700 })
 
@@ -90,6 +94,11 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
                     className={styles.value}
                     title={`Balance: ${String(nativeBalance)} ${gasNativeTokenSymbol}`}
                   >{`${fee.toFixed(8).replace(/\.?0+$/, '')} ${gasNativeTokenSymbol}`}</div>
+                  {!!(fee * ethRate) && (
+                    <div className={styles.valueNote}>
+                      {formatCurrency(fee * ethRate)}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className={styles.valueNote}>{isEstimatingFee ? 'Estimating...' : `Can't estimate fee`}</div>
@@ -103,6 +112,11 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
                     className={styles.value}
                     title={`Balance: ${String(nativeBalance)} ${gasChildNativeTokenSymbol}`}
                   >{`${childFee.toFixed(8).replace(/\.?0+$/, '')} ${gasChildNativeTokenSymbol}`}</div>
+                  {!!(childFee * ethRate) && (
+                    <div className={styles.valueNote}>
+                      {formatCurrency(childFee * ethRate)}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className={styles.valueNote}>{isEstimatingFee ? 'Estimating...' : `Can't estimate fee`}</div>
@@ -113,35 +127,22 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
           <>
             <div className={styles.dataRow}>
               <div className={styles.itemName}>Estimated gas fee on {selectedHighChain.displayName}</div>
-              {!!childFee ? (
-                <div className={styles.valueContainer}>
-                  <div
-                    className={styles.value}
-                    title={`Balance: ${String(nativeBalance)} ${gasChildNativeTokenSymbol}`}
-                  >{`${childFee.toFixed(8).replace(/\.?0+$/, '')} ${gasChildNativeTokenSymbol}`}</div>
-                </div>
-              ) : (
-                <div className={styles.valueNote}>{isEstimatingFee ? 'Estimating...' : `Can't estimate fee`}</div>
-              )}
-            </div>
-            {/* <div className={styles.dataRow}>
-              <div className={styles.itemName}>Estimated gas fee on {selectedLowChain.displayName}</div>
               {!!fee ? (
                 <div className={styles.valueContainer}>
                   <div
                     className={styles.value}
-                    title={`Balance: ${String(nativeBalance)} ${gasNativeTokenSymbol}`}
-                  >{`${fee.toFixed(8).replace(/\.?0+$/, '')} ${gasNativeTokenSymbol}`}</div>
-                  {!!(fee * ethRate) && (
+                    title={`Balance: ${String(nativeBalance)} ${gasChildNativeTokenSymbol}`}
+                  >{`${fee.toFixed(8).replace(/\.?0+$/, '')} ${gasChildNativeTokenSymbol}`}</div>
+                  {!!(fee * tokenRate) && (
                     <div className={styles.valueNote}>
-                      {formatCurrency(fee * ethRate)}
+                      {formatCurrency(fee * tokenRate)}
                     </div>
                   )}
                 </div>
               ) : (
                 <div className={styles.valueNote}>{isEstimatingFee ? 'Estimating...' : `Can't estimate fee`}</div>
               )}
-            </div> */}
+            </div>
           </>
         )}
         <div className={styles.divider} />

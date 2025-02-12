@@ -83,7 +83,7 @@ export default function App() {
                       <RelayKitProvider
                         theme={theme}
                         options={{
-                          appName: 'Relay Demo',
+                          appName: 'DevHub Relay Bridge',
                           appFees: [
                             {
                               recipient: '0xE2f669A23f83Aaa69Cc8C918bF4397E4eddA4B01',

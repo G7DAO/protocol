@@ -6,7 +6,6 @@ body {
   -webkit-scrollbar: none;
 }
 
-
 .mainLayout {
   position: relative;
   display: flex;
@@ -43,7 +42,9 @@ body {
   justify-content: center;
   align-items: center;
   align-self: stretch;
-  background: url(<path-to-image>) lightgray 0% 0% / 50px 50px repeat, #1D1D1D;
+  background:
+    url(<path-to-image>) lightgray 0% 0% / 50px 50px repeat,
+    #1d1d1d;
 }
 
 .headerContainer {
@@ -54,7 +55,7 @@ body {
 }
 
 .titleHeader {
-  color: var(--white-500, #F2F7F2);
+  color: var(--white-500, #f2f7f2);
   text-align: center;
   font-family: Inter;
   font-size: 80px;
@@ -67,7 +68,7 @@ body {
 }
 
 .lastUpdated {
-  color: var(--white-600, #CBCFCB);
+  color: var(--white-600, #cbcfcb);
   text-align: center;
 
   /* text/description/web */
@@ -84,7 +85,7 @@ body {
   width: 100%;
   padding: 32px 56px 100px 56px;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 20px;
 }
 
@@ -96,7 +97,7 @@ body {
 }
 
 .legalTitle {
-  color: var(--white-500, #F2F7F2);
+  color: var(--white-500, #f2f7f2);
   font-family: Inter;
   font-size: 48px;
   font-style: normal;
@@ -109,7 +110,7 @@ body {
 
 .legalContent {
   align-self: stretch;
-  color: var(--white-600, #CBCFCB);
+  color: var(--white-600, #cbcfcb);
 
   /* text/description/web */
   font-family: Inter;
@@ -118,8 +119,35 @@ body {
   font-weight: 400;
   line-height: 30px;
   /* 150% */
-}
 
+  a {
+    color: rgb(220, 38, 38);
+    cursor: url('../../assets/hand.svg'), pointer;
+  }
+
+  table {
+    border-style: solid;
+    text-indent: 0;
+    margin-bottom: 1.25rem;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: .25rem .25rem;
+    border-radius: .25rem;
+    border-width: 1px;
+    padding: .5rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-color: rgb(152, 162, 179);
+
+    p {
+      margin: 0;
+      padding-top: .5rem;
+      padding-bottom: .5rem;
+      font-size: 1rem;
+      line-height: 1.5rem;
+    }
+  }
+}
 
 .layout {
   display: flex;
@@ -243,7 +271,6 @@ body {
   font-weight: 600;
   line-height: 24px;
 }
-
 
 .logoWrapper {
   cursor: url('../../assets/hand.svg'), pointer;
@@ -608,7 +635,7 @@ body {
 @media (max-width: 750px) {
   .titleHeader {
     align-self: stretch;
-    color: var(--white-500, #F2F7F2);
+    color: var(--white-500, #f2f7f2);
     text-align: center;
     font-family: Inter;
     font-size: 60px;
@@ -621,10 +648,9 @@ body {
   }
 }
 
-
 @media (max-width: 430px) {
   .titleHeader {
-    color: var(--white-500, #F2F7F2);
+    color: var(--white-500, #f2f7f2);
     text-align: center;
     font-family: Inter;
     font-size: 48px;
@@ -646,7 +672,7 @@ body {
   }
 
   .legalTitle {
-    color: var(--white-500, #F2F7F2);
+    color: var(--white-500, #f2f7f2);
     font-family: Inter;
     font-size: 30px;
     font-style: normal;
@@ -658,7 +684,7 @@ body {
 
   .legalContent {
     align-self: stretch;
-    color: var(--white-600, #CBCFCB);
+    color: var(--white-600, #cbcfcb);
     font-family: Inter;
     font-size: 18px;
     font-style: normal;

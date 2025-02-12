@@ -157,3 +157,13 @@ export const returnSymbol = (direction: 'DEPOSIT' | 'WITHDRAW', selectedHighChai
   }
   return tokenSymbol
 }
+
+export const formatCurrency = (value: number) => {
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  })
+  return formatter.format(value)
+}
