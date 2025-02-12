@@ -5,7 +5,6 @@ interface Props {
 
 const IconRelay: React.FC<React.SVGProps<SVGSVGElement> & Props> = ({
                                                                       isHovered = false,
-                                                                      ...props
                                                                     }: Props & React.SVGProps<SVGSVGElement>) =>
   isHovered ? (
     <svg
