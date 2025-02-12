@@ -291,6 +291,11 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
             }
           ]
         })
+      } else {
+        // @ts-ignore
+        await ethereum.close()
+        setConnectedAccount(undefined)
+        setAccounts([])
       }
     }
   }
