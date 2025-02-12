@@ -97,7 +97,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ }) => {
       Icon: ({ isHovered }: { isHovered?: boolean }) => (
         <IconRelay
           className={styles.icomButton}
-          stroke={location.pathname.startsWith('/relay') ? '#fff' : '#B9B9B9'}
           isHovered={isHovered}
         />
       )
