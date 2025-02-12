@@ -45,12 +45,7 @@ const RelayPage = () => {
     const { newNotifications, refetchNewNotifications } = useBridgeNotificationsContext()
 
     const queryClient = useQueryClient()
-
-    if (selectedNetworkType === 'Testnet') {
-        navigate('/faucet')
-      }
     
-
     useEffect(() => {
         if (pendingTransacions.data && connectedAccount) {
             queryClient.refetchQueries({ queryKey: ['incomingMessages'] })
