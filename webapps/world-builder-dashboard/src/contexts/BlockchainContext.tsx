@@ -202,6 +202,22 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   const connectWallet = async () => {
     setIsConnecting(true)
     const ethereum = window.ethereum
+
+    //@ts-ignore
+    if (window.ethereum?.isCoinbaseWallet) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+  
+      try {
+        await window.ethereum.request({ method: "eth_requestAccounts" });
+        const signer = provider.getSigner();
+        const account = await signer.getAddress();
+        
+        setConnectedAccount(account);
+        setWalletProvider(provider);
+      } catch (error) {
+        console.error("❌ Error connecting to Coinbase Wallet:", error);
+      }
+    } 
     if (ethereum) {
       try {
         const provider = getWeb3Provider()
