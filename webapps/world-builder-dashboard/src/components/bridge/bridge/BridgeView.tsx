@@ -93,6 +93,8 @@ const BridgeView = ({
     selectedHighNetwork
   })
 
+  const { data: destinationRate } = useUSDPriceOfToken(destinationNative?.geckoId ?? '')
+
 
   const { getEstimatedFee } = useBridger()
 
@@ -315,7 +317,8 @@ const BridgeView = ({
                   ? coinUSDRate[selectedBridgeToken.geckoId]?.usd ?? 0
                   : 0
           }
-          gasChildNativeTokenSymbol={ 
+          childRate={destinationRate?.ethereum?.usd ?? 0}
+          gasChildNativeTokenSymbol={
             selectedHighNetwork.nativeCurrency?.symbol ?? ''
           }
           selectedLowChain={selectedLowNetwork}

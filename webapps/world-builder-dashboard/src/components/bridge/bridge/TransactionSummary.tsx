@@ -22,6 +22,7 @@ interface TransactionSummaryProps {
   childFee: number
   ethRate: number
   tokenRate: number
+  childRate: number
 }
 const TransactionSummary: React.FC<TransactionSummaryProps> = ({
   direction,
@@ -38,7 +39,8 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
   selectedLowChain,
   childFee,
   ethRate,
-  tokenRate
+  tokenRate,
+  childRate
 }) => {
   const clipboard = useClipboard({ timeout: 700 })
 
@@ -112,9 +114,9 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({
                     className={styles.value}
                     title={`Balance: ${String(nativeBalance)} ${gasChildNativeTokenSymbol}`}
                   >{`${childFee.toFixed(8).replace(/\.?0+$/, '')} ${gasChildNativeTokenSymbol}`}</div>
-                  {!!(childFee * ethRate) && (
+                  {!!(childFee * childRate) && (
                     <div className={styles.valueNote}>
-                      {formatCurrency(childFee * ethRate)}
+                      {formatCurrency(childFee * childRate)}
                     </div>
                   )}
                 </div>
