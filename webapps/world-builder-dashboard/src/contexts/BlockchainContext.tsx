@@ -146,7 +146,6 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   useEffect(() => {
     const _selectedNetworkType = localStorage.getItem('selectedNetworkType')
     if (_selectedNetworkType === 'Testnet' || _selectedNetworkType === 'Mainnet') {
-      console.log('Selecting ', _selectedNetworkType)
       setSelectedNetworkType(_selectedNetworkType as NetworkType)
     } else {
       setSelectedNetworkType('Mainnet')
@@ -192,12 +191,20 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     }
   }
 
+  const getWeb3Provider = () => {
+    //@ts-ignore
+    if (window.ethereum?.isCoinbaseWallet)
+      return new ethers.providers.Web3Provider(window.ethereum, 'any')
+    if (window.ethereum)
+      return new ethers.providers.Web3Provider(window.ethereum)
+  }
+
   const connectWallet = async () => {
     setIsConnecting(true)
     const ethereum = window.ethereum
     if (ethereum) {
       try {
-        const provider = new ethers.providers.Web3Provider(ethereum)
+        const provider = getWeb3Provider()
         setWalletProvider(provider)
         await ethereum.request({ method: 'eth_requestAccounts' })
         await handleAccountsChanged()
@@ -222,6 +229,11 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
     }
 
     await switchChain(network)
+
+    //@ts-ignore
+    if (window.ethereum?.isCoinbaseWallet) {
+      return new ethers.providers.Web3Provider(window.ethereum, 'any')
+    }
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     setWalletProvider(provider)
     return provider
