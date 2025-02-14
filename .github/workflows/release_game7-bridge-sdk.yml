@@ -1,0 +1,29 @@
+name: Release Game7 Bridge SDK library
+
+on:
+    push:
+        tags:
+            - "game7-bridge-sdk-v*"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository and main branch
+        uses: actions/checkout@v2
+
+      - name: Set up node.js
+        uses: actions/setup-node@v3
+        with:
+            node-version: "20.14.0"
+
+      - name: Build and install dependencies
+        run: |
+          npm install
+          npm run build
+
+      - name: Publish package
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GAME7_NPMJS_AUTH_TOKEN }}
+        run: npm publish --access public
