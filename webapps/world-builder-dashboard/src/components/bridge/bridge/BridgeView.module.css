@@ -309,20 +309,6 @@
   text-align: center;
 }
 
-.relayLink {
-  color: #B9B9B9;
-  font-family: Inter;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-}
-
-.relayLink:hover {
-  cursor: pointer;
-  color: #fff;
-}
-
 .mainContainer {
   display: flex;
   flex-direction: column;

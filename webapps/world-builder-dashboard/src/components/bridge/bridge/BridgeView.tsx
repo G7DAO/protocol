@@ -31,7 +31,6 @@ import { getTokensForNetwork } from '@/utils/tokens'
 import { useBridger } from '@/hooks/useBridger'
 import IconAlertCircle from '@/assets/IconAlertCircle'
 import { Tooltip } from 'summon-ui/mantine'
-import { useNavigate } from 'react-router-dom'
 import { useMoonstreamPricesAPI } from '@/hooks/useCoinGeckoAPI'
 
 const BridgeView = ({
@@ -41,7 +40,6 @@ const BridgeView = ({
   direction: DepositDirection
   setDirection: (arg0: DepositDirection) => void
 }) => {
-  const navigate = useNavigate()
   const [value, setValue] = useState('0')
   const [message, setMessage] = useState<{ destination: string; data: string }>({ destination: '', data: '' })
   const [isMessageExpanded, setIsMessageExpanded] = useState(false)
@@ -347,7 +345,7 @@ const BridgeView = ({
                 arrowOffset={14}
                 events={{ hover: true, focus: true, touch: true }}
                 label={direction === 'DEPOSIT' ? `Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.` :
-                  selectedBridgeToken.symbol === 'USDC' ? `Withdrawals available in 15 minutes under the CCTP protocol. Return to claim tokens via the Activity tab once available.` : `Withdrawals available in 7 days due to the challenge period for security. Return to claim tokens via the Activity tab once available or use Relay for immediate withdrawal.`
+                  selectedBridgeToken.symbol === 'USDC' ? `Withdrawals available in 15 minutes under the CCTP protocol. Return to claim tokens via the Activity tab once available.` : `Withdrawals available in 7 days due to the challenge period for security. Return to claim tokens via the Activity tab once available.`
                 }
               >
                 <IconAlertCircle stroke='#FFFAEB' height={16} width={16} />
@@ -371,7 +369,6 @@ const BridgeView = ({
           isFetchingGasFee={estimatedFee?.isFetching}
         />
       </div>
-      {selectedNetworkType === 'Mainnet' && <div className={styles.relayLink} onClick={() => navigate('/relay')}>Faster transaction with Relay</div>}
     </div>
   )
 }

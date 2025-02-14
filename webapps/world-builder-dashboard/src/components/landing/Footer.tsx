@@ -32,7 +32,7 @@ const Footer: React.FC = () => {
             header: 'DevHub',
             links: [
                 { name: 'Faucet', url: '/faucet' },
-                { name: 'Bridge', url: '/relay' },
+                { name: 'Bridge', url: '/bridge' },
                 { name: 'Documentation', url: 'https://docs.game7.io/' },
                 { name: 'Explorer', url: 'https://mainnet.game7.io/' },
             ],

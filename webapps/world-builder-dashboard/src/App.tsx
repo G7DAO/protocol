@@ -1,4 +1,3 @@
-import '@reservoir0x/relay-kit-ui/styles.css'
 import './styles/global.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider } from 'react-router-dom'
@@ -17,13 +16,6 @@ import en from '@/lang/en.json'
 import { AuthProvider } from '@/providers/AuthProvider'
 import router from '@/router'
 
-// relay stuff
-import { RelayKitProvider } from '@reservoir0x/relay-kit-ui'
-import { WagmiProvider } from 'wagmi'
-import { MAINNET_RELAY_API } from '@reservoir0x/relay-sdk'
-import { theme } from './utils/relayTheme'
-import '@reservoir0x/relay-kit-ui/styles.css'
-import { wagmiConfig, chains } from './utils/relayConfig'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -80,23 +72,7 @@ export default function App() {
                   <Notifications position='top-right' zIndex={1000} styles={NOTIFICATIONS_STYLES} />
                   <TransactionProvider>
                     <AuthProvider>
-                      <RelayKitProvider
-                        theme={theme}
-                        options={{
-                          appName: 'DevHub Relay Bridge',
-                          appFees: [
-                            {
-                              recipient: '0xE2f669A23f83Aaa69Cc8C918bF4397E4eddA4B01',
-                              fee: '175' // 1.75%
-                            }
-                          ],
-                          chains,
-                          baseApiUrl: MAINNET_RELAY_API
-                        }}>
-                        <WagmiProvider config={wagmiConfig}>
-                          <RouterProvider router={router} />
-                        </WagmiProvider>
-                      </RelayKitProvider>
+                      <RouterProvider router={router} />
                     </AuthProvider>
                   </TransactionProvider>
                 </BridgeNotificationsProvider>

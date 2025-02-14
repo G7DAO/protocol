@@ -12,7 +12,6 @@ import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import DesktopSidebar from '@/layouts/MainLayout/DesktopSidebar'
 import MobileSidebar from '@/layouts/MainLayout/MobileSidebar'
 import { useMediaQuery } from '@mantine/hooks'
-import IconRelay from '@/assets/IconRelay'
 import IconCamelot from '@/assets/IconCamelot'
 import IconSafe from '@/assets/IconSafe'
 
@@ -88,16 +87,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ }) => {
         <IconWallet04
           className={styles.simpleIcon}
           stroke={location.pathname.startsWith('/bridge') ? '#fff' : '#B9B9B9'} isHovered={isHovered}
-        />
-      )
-    },
-    {
-      name: 'relay bridge',
-      navigateTo: '/relay',
-      Icon: ({ isHovered }: { isHovered?: boolean }) => (
-        <IconRelay
-          className={styles.icomButton}
-          isHovered={isHovered}
         />
       )
     },
