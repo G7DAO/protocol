@@ -336,8 +336,15 @@ const BridgeView = ({
           (
             <div className={styles.manualGasMessageContainer}>
               <div className={styles.manualGasMessageText}>
-                {direction === 'DEPOSIT' ? `Claim transaction may be required on ${selectedHighNetwork.displayName}` :
-                  selectedBridgeToken.symbol === 'USDC' ? `Withdrawal will be available to claim on ${selectedLowNetwork.displayName} in ~15 mins` : `Withdrawal will be available to claim on ${selectedLowNetwork.displayName} in ~7 days`
+                {direction === 'DEPOSIT' ?
+                  (selectedLowNetwork.chainId === 42161
+                    ? 'You need some G7 tokens on Arbitrum for gas fees to deposit on the G7 Network'
+                    : `Claim transaction may be required on ${selectedHighNetwork.displayName}`
+                  ) :
+                  (selectedHighNetwork.chainId === 42161 && selectedBridgeToken.symbol === 'USDC'
+                    ? `Withdrawal will be available to claim on ${selectedLowNetwork.displayName} in ~15 mins`
+                    : `Withdrawal will be available to claim on ${selectedLowNetwork.displayName} in ~7 days`
+                  )
                 }
               </div>
               <Tooltip
