@@ -1,0 +1,150 @@
+diff --git a/node_modules/@arbitrum/sdk/dist/lib/dataEntities/networks.js b/node_modules/@arbitrum/sdk/dist/lib/dataEntities/networks.js
+index 97fcda5..0e55cc5 100644
+--- a/node_modules/@arbitrum/sdk/dist/lib/dataEntities/networks.js
++++ b/node_modules/@arbitrum/sdk/dist/lib/dataEntities/networks.js
+@@ -138,6 +138,88 @@ const networks = {
+             l2ForwarderFactory: '0x88feBaFBb4E36A4E7E8874E4c9Fd73A9D59C2E7c',
+         },
+     },
++    13746: {
++        chainId: 13746,
++        confirmPeriodBlocks: 20,
++        ethBridge: {
++            bridge: '0xC7EEB897bA9bc3fA071C3871e7F4Cf1Ae7570f16',
++            inbox: '0xE6470bb72291c39073AEd67a30ff93B69c1f47De',
++            outbox: '0x64105c6C3D494469D5F21323F0E917563489d9f5',
++            rollup: '0x6cf5bFffc54cDd13B4747e8DF2C72ce8A95043c0',
++            sequencerInbox: '0xAe2caC32b0eF386Ab683459648eDFC78F7FF8F1e',
++        },
++        explorerUrl: 'https://testnet.game7.io',
++        isCustom: true,
++        isTestnet: true,
++        name: 'Game7 Testnet',
++        parentChainId: 421614,
++        retryableLifetimeSeconds: constants_1.SEVEN_DAYS_IN_SECONDS,
++        nativeToken: "0x10adBf84548F923577Be12146eAc104C899D1E75",
++        tokenBridge: {
++            parentCustomGateway: '0x81aCB22000A2A81D26E7e1ed5a8f51930A31598E',
++            parentErc20Gateway: '0x4A24f98D6fB62Ce8eA8f6C2D5AF9c8BF1c853fD7',
++            parentGatewayRouter: '0x73EeAEEC11473534a2249c851e4b245E61Da8732',
++            parentMultiCall: '0xce1CAd780c529e66e3aa6D952a1ED9A6447791c1',
++            parentProxyAdmin: '0x8767Ea2Ce21ac4e624F8a36948BD5EA23A3288D9',
++            parentWeth: '0x0000000000000000000000000000000000000000',
++            parentWethGateway: '0x0000000000000000000000000000000000000000',
++            childCustomGateway: '0xe6c5Ab297E022A592a3fF26984cc6352C7cD0f92',
++            childErc20Gateway: '0x9b43912709756DcFd34A64D4362b579928fDcC26',
++            childGatewayRouter: '0xDA379C01a484fB9F0875730430a418eB8AAFdca2',
++            childMultiCall: '0x27c4a2f1B1685F0AD1ea2227F56606066Aa95Bd0',
++            childProxyAdmin: '0x07424574dbF6508D1c79755ab8f1ba3883cc38f3',
++            childWeth: '0x0000000000000000000000000000000000000000',
++            childWethGateway: '0x0000000000000000000000000000000000000000',
++        },
++        nitroGenesisBlock: 0,
++        nitroGenesisL1Block: 0,
++        depositTimeout: 900000,
++    },
++    2187: {
++        chainId: 2187,
++        confirmPeriodBlocks: 20, //TODO ?
++        ethBridge: {
++            bridge: '0x20aD3d835e152F25Bf8c7B6fbC31adD32393559e',
++            inbox: '0xB1146A7eb098ECF46e8AAf695f4A960A963948d6',
++            outbox: '0xfbe537816d181888fAbE52338a5D921eE131E9Db',
++            rollup: '0x60DAdF13101C66F14C958E9141498b0C0eaE0773',
++            sequencerInbox: '0x4cFe930c5B2F03Cf81B44D2e62297beb79222B68',
++        },
++        arbSys: '0x0000000000000000000000000000000000000064',
++        explorerUrl: 'https://mainnet.game7.io',
++        rpcs: ['https://mainnet-rpc.game7.io'],
++        isArbitrum: true,
++        isCustom: true,
++        name: 'Game7',
++        nativeCurrency: {
++            decimals: 18,
++            name: 'Game7 Token',
++            symbol: 'G7',
++        },
++        parentChainId: 42161,
++        retryableLifetimeSeconds: constants_1.SEVEN_DAYS_IN_SECONDS,
++        nativeToken: '0xF18e4466F26B4cA55bbAb890b314a54976E45B17',
++        tokenBridge: {
++            parentCustomGateway: '0xd7258a4BE508Da8E95F89c13B8b7469951e9Df2B',
++            parentErc20Gateway: '0xe41363751bd1C305384375F428585C20e3dF516A',
++            parentGatewayRouter: '0x8098247EE48ee54ADD4Feda2F93b3bA0d014d4c7',
++            parentMultiCall: '0x90B02D9F861017844F30dFbdF725b6aa84E63822',
++            parentProxyAdmin: '0x8767Ea2Ce21ac4e624F8a36948BD5EA23A3288D9',
++            parentWeth: '0x0000000000000000000000000000000000000000',
++            parentWethGateway: '0x0000000000000000000000000000000000000000',
++            childCustomGateway: '0x65dcAB2e219b2F895854A7fba95b56eb02eE933f',
++            childErc20Gateway: '0x36921bAAD215c5f3c5dffa89B1C2A5CF4BDAdC77',
++            childGatewayRouter: '0x7Ca9c81d2AdD8bff46CEE9813d52bD84d94901DD',
++            childMultiCall: '0x1422d8aC9b5E102E6EbA56F0949a2377AB3D8CE9',
++            childProxyAdmin: '0xC900F8976Ad0B945bc552cE4459F2ec1Baf4f1Ff',
++            childWeth: '0x0000000000000000000000000000000000000000',
++            childWethGateway: '0x0000000000000000000000000000000000000000',
++            depositTimeout: 2 * 60, //TODO ?
++        },
++        nitroGenesisBlock: 0,
++        nitroGenesisL1Block: 0,
++        depositTimeout: 900000, //TODO ?
++    },
+ };
+ /**
+  * Determines if a chain is a parent of *any* other chain. Could be an L1 or an L2 chain.
+diff --git a/node_modules/@arbitrum/sdk/dist/lib/message/ChildToParentMessageClassic.js b/node_modules/@arbitrum/sdk/dist/lib/message/ChildToParentMessageClassic.js
+index 970d2fa..010f947 100644
+--- a/node_modules/@arbitrum/sdk/dist/lib/message/ChildToParentMessageClassic.js
++++ b/node_modules/@arbitrum/sdk/dist/lib/message/ChildToParentMessageClassic.js
+@@ -232,10 +232,11 @@ class ChildToParentMessageWriterClassic extends ChildToParentMessageReaderClassi
+      * @returns
+      */
+     async execute(childProvider, overrides) {
+-        const status = await this.status(childProvider);
+-        if (status !== message_1.ChildToParentMessageStatus.CONFIRMED) {
+-            throw new errors_1.ArbSdkError(`Cannot execute message. Status is: ${status} but must be ${message_1.ChildToParentMessageStatus.CONFIRMED}.`);
+-        }
++        // turning this check off because it should be done by the client
++        // const status = await this.status(childProvider);
++        // if (status !== message_1.ChildToParentMessageStatus.CONFIRMED) {
++        //     throw new errors_1.ArbSdkError(`Cannot execute message. Status is: ${status} but must be ${message_1.ChildToParentMessageStatus.CONFIRMED}.`);
++        // }
+         const proofInfo = await this.tryGetProof(childProvider);
+         if (!(0, lib_1.isDefined)(proofInfo)) {
+             throw new errors_1.ArbSdkError(`Unexpected missing proof: ${this.batchNumber.toString()} ${this.indexInBatch.toString()}}`);
+diff --git a/node_modules/@arbitrum/sdk/dist/lib/message/ChildToParentMessageNitro.js b/node_modules/@arbitrum/sdk/dist/lib/message/ChildToParentMessageNitro.js
+index b202bb6..6d14c0e 100644
+--- a/node_modules/@arbitrum/sdk/dist/lib/message/ChildToParentMessageNitro.js
++++ b/node_modules/@arbitrum/sdk/dist/lib/message/ChildToParentMessageNitro.js
+@@ -462,10 +462,11 @@ class ChildToParentMessageWriterNitro extends ChildToParentMessageReaderNitro {
+      * @returns
+      */
+     async execute(childProvider, overrides) {
+-        const status = await this.status(childProvider);
+-        if (status !== message_1.ChildToParentMessageStatus.CONFIRMED) {
+-            throw new errors_1.ArbSdkError(`Cannot execute message. Status is: ${status} but must be ${message_1.ChildToParentMessageStatus.CONFIRMED}.`);
+-        }
++        // turning this check off because it should be done by the client
++        // const status = await this.status(childProvider);
++        // if (status !== message_1.ChildToParentMessageStatus.CONFIRMED) {
++        //     throw new errors_1.ArbSdkError(`Cannot execute message. Status is: ${status} but must be ${message_1.ChildToParentMessageStatus.CONFIRMED}.`);
++        // }
+         const proof = await this.getOutboxProof(childProvider);
+         const childChain = await (0, networks_1.getArbitrumNetwork)(childProvider);
+         const outbox = Outbox__factory_1.Outbox__factory.connect(childChain.ethBridge.outbox, this.parentSigner);
+diff --git a/node_modules/@arbitrum/sdk/dist/lib/message/ParentToChildMessageGasEstimator.js b/node_modules/@arbitrum/sdk/dist/lib/message/ParentToChildMessageGasEstimator.js
+index 636937d..ab521ac 100644
+--- a/node_modules/@arbitrum/sdk/dist/lib/message/ParentToChildMessageGasEstimator.js
++++ b/node_modules/@arbitrum/sdk/dist/lib/message/ParentToChildMessageGasEstimator.js
+@@ -184,7 +184,11 @@ class ParentToChildMessageGasEstimator {
+             // ethersjs currently doesnt throw for custom solidity errors, so we shouldn't end up here
+             // however we try to catch and parse the error anyway in case ethersjs changes
+             // behaviour and we dont pick up on it
+-            retryable = retryableData_1.RetryableDataTools.tryParseError(err);
++
++            //Metamask error
++            const res = err.error?.data?.originalError?.data ?? err
++            console.log(err)
++            retryable = retryableData_1.RetryableDataTools.tryParseError(res);
+             if (!(0, lib_1.isDefined)(retryable)) {
+                 throw new errors_1.ArbSdkError('No retryable data found in error', err);
+             }
