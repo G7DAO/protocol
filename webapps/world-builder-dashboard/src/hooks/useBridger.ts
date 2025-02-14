@@ -58,7 +58,7 @@ export const useBridger = () => {
             {
                 queryKey: ['estimatedFee', value, direction, selectedLowNetwork.chainId, selectedHighNetwork.chainId, selectedBridgeToken],
                 queryFn: async () => {
-                    if (!bridger || !value || !tokenInformation) {
+                    if (!bridger || !value) {
                         return null
                     }
 
