@@ -370,7 +370,6 @@ const BridgeView = ({
           refetchToken={refetchToken}
           refetchNativeToken={refetchNativeToken}
           isFetchingGasFee={estimatedFee?.isFetching}
-          fetchedGasFee={estimatedFee?.isFetched}
         />
       </div>
       {selectedNetworkType === 'Mainnet' && <div className={styles.relayLink} onClick={() => navigate('/relay')}>Faster transaction with Relay</div>}
