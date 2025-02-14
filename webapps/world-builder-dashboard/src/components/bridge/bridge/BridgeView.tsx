@@ -249,7 +249,7 @@ const BridgeView = ({
           </div>
         </div>
         <ValueToBridge
-          symbol={tokenInformation?.symbol ?? ''}
+          symbol={selectedBridgeToken?.symbol ?? ''}
           value={value}
           setValue={setValue}
           balance={tokenInformation?.tokenBalance}
@@ -303,7 +303,7 @@ const BridgeView = ({
           childFee={Number(estimatedFee.data?.childFee ?? 0)}
           isEstimatingFee={estimatedFee.isFetching}
           value={Number(value)}
-          tokenSymbol={tokenInformation?.symbol ?? ''}
+          tokenSymbol={selectedBridgeToken?.symbol ?? ''}
           gasNativeTokenSymbol={
             selectedNativeToken?.symbol ?? ''
           }
@@ -317,7 +317,9 @@ const BridgeView = ({
                   ? coinUSDRate[selectedBridgeToken.geckoId]?.usd ?? 0
                   : 0
           }
-          childRate={destinationRate?.ethereum?.usd ?? 0}
+          childRate={destinationRate && destinationNative?.geckoId && destinationRate[destinationNative.geckoId]
+            ? destinationRate[destinationNative.geckoId]?.usd ?? 0
+            : 0}
           gasChildNativeTokenSymbol={
             selectedHighNetwork.nativeCurrency?.symbol ?? ''
           }
@@ -369,6 +371,7 @@ const BridgeView = ({
           refetchToken={refetchToken}
           refetchNativeToken={refetchNativeToken}
           isFetchingGasFee={estimatedFee?.isFetching}
+          fetchedGasFee={estimatedFee?.isFetched}
         />
       </div>
       {selectedNetworkType === 'Mainnet' && <div className={styles.relayLink} onClick={() => navigate('/relay')}>Faster transaction with Relay</div>}
