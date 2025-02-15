@@ -47,7 +47,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   gasFees,
   refetchToken,
   refetchNativeToken,
-  isFetchingGasFee,
+  isFetchingGasFee
 }) => {
   const {
     connectedAccount,
@@ -292,7 +292,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           (isDisabled ||
             Number(amount) < 0 ||
             ((!L2L3message?.destination || !L2L3message.data) && Number(amount) === 0)) ||
-          allowances?.isLoading || isFetchingGasFee || Number(gasFees?.[1]) > Number(nativeBalance)
+          (allowances?.isLoading || isFetchingGasFee) || Number(gasFees?.[1]) > Number(nativeBalance)
         }
       >
         <div className={isConnecting || transfer.isPending ? styles.buttonLabelLoading : styles.buttonLabel}>
