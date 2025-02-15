@@ -9,7 +9,7 @@ export const useBridger = () => {
     const { connectedAccount } = useBlockchainContext()
 
     // Retry function with exponential backoff
-    const retryWithExponentialBackoff = async (fn: () => Promise<any>, retries = 1, delay = 1000, jitterFactor = 0.5) => {
+    const retryWithExponentialBackoff = async (fn: () => Promise<any>, retries = 3, delay = 1000, jitterFactor = 0.5) => {
         let attempt = 0
 
         while (attempt < retries) {
@@ -56,9 +56,9 @@ export const useBridger = () => {
     }) => {
         return useQuery(
             {
-                queryKey: ['estimatedFee', value, direction, selectedLowNetwork.chainId, selectedHighNetwork.chainId, selectedBridgeToken],
+                queryKey: ['estimatedFee', value, direction, selectedLowNetwork.chainId, selectedHighNetwork.chainId, selectedBridgeToken, tokenInformation],
                 queryFn: async () => {
-                    if (!bridger || !value) {
+                    if (!bridger || !value || !tokenInformation) {
                         return null
                     }
 
