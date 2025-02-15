@@ -6,7 +6,7 @@ import { FIVE_MINUTES } from '../constants'
 import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import {ThemeProvider, AssetsProvider, Tenant, UITheme} from 'summon-ui'
+import { ThemeProvider, AssetsProvider, Tenant } from 'summon-ui'
 import { IntlProvider } from 'summon-ui/intl'
 import { Notifications } from 'summon-ui/mantine'
 import { BlockchainProvider } from '@/contexts/BlockchainContext'
@@ -54,7 +54,7 @@ const queryClient = new QueryClient({
 const enMessages = { en }
 
 //@TODO we need to set this dynamically
-const TENANT_CONFIG: {name: string, lang: string, uiTheme: UITheme} = {
+const TENANT_CONFIG = {
   name: 'Game7',
   lang: 'en',
   uiTheme: 'light'
