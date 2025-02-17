@@ -101,7 +101,7 @@ const BridgeView = ({
       return `Claim transaction may be required on ${selectedHighNetwork.displayName}`
     }
 
-    if (selectedHighNetwork.chainId === 42161) {
+    if (selectedHighNetwork.chainId === 42161 || selectedHighNetwork.chainId === 421614) {
       if (selectedBridgeToken.symbol === 'USDC') {
         return `Withdrawal will be available to claim on ${selectedLowNetwork.displayName} in ~15 mins`
       }
@@ -315,7 +315,7 @@ const BridgeView = ({
                     '7 days' : '60 min'}` :
               direction === 'DEPOSIT'
                 ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
-                : `~${selectedBridgeToken.symbol === 'USDC' && selectedLowNetwork.chainId === 1 ? '15 min' : '60 min'}`
+                : `~${selectedBridgeToken.symbol === 'USDC' && (selectedLowNetwork.chainId === 1 || selectedLowNetwork.chainId === 11155111) ? '15 min' : '60 min'}`
 
           }
           fee={Number(estimatedFee.data?.parentFee ?? 0)}
@@ -368,12 +368,9 @@ const BridgeView = ({
                 events={{ hover: true, focus: true, touch: true }}
                 label={direction === 'DEPOSIT' ?
                   `Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.` :
-                  selectedBridgeToken.symbol === 'USDC' && selectedHighNetwork.chainId === 42161 || selectedLowNetwork.chainId === 421614 ?
+                  selectedBridgeToken.symbol === 'USDC' && (selectedHighNetwork.chainId === 42161 || selectedHighNetwork.chainId === 421614) ?
                     `Withdrawals available in 15 minutes under the CCTP protocol. Return to claim tokens via the Activity tab once available.`
-                    :
-                    selectedHighNetwork.chainId === 42161 ?
-                      `Withdrawals available in 7 days due to the challenge period for security. Return to claim tokens via the Activity tab once available or use Relay for immediate withdrawal.`
-                      : `Withdrawals available in 60 minutes due to the challenge period for security. Return to claim tokens via the Activity tab once available or use Relay for immediate withdrawal`
+                    : `Withdrawals available in ${selectedHighNetwork.chainId === 42161 ? '7 days' : '60 minutes'} due to the challenge period for security. Return to claim tokens via the Activity tab once available or use Relay for immediate withdrawal.`
                 }
               >
                 <IconAlertCircle stroke='#FFFAEB' height={16} width={16} />
