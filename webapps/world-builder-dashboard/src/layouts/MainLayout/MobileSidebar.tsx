@@ -18,7 +18,7 @@ interface MobileSidebarProps {
 const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { connectedAccount, disconnectWallet, connectWallet, isConnecting, selectedNetworkType } =
+  const { connectedAccount, isMetaMask, disconnectWallet, connectWallet, isConnecting, selectedNetworkType } =
     useBlockchainContext()
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -75,12 +75,12 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
               </div>
             ))}
             <div className={styles.spacer} />
-            {connectedAccount ? (
+            {isMetaMask && connectedAccount ? (
               <div className={styles.web3AddressContainer}>
                 <div className={parentStyles.web3address}>
                   {`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}
                 </div>
-                {<IconLogoutLarge onClick={disconnectWallet} className={parentStyles.iconButton} />}
+                {isMetaMask && <IconLogoutLarge onClick={disconnectWallet} className={parentStyles.iconButton} />}
               </div>
             ) : (
               <div className={parentStyles.connectWalletButton} onClick={connectWallet}>
