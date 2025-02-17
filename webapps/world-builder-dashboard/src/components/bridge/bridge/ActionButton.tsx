@@ -209,8 +209,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           highNetworkChainId: selectedHighNetwork.chainId,
           highNetworkHash: tx?.hash,
           highNetworkTimestamp: Date.now() / 1000,
-          challengePeriod: selectedNetworkType === 'Testnet' ? 60 * 60 : 
-          selectedBridgeToken.symbol === 'USDC' && selectedHighNetwork.chainId === 42161 ? 60 * 15 : selectedHighNetwork.chainId === 42161 ? 60 * 60 * 24 * 7 : 60 * 60,
+          challengePeriod: selectedNetworkType === 'Testnet' ? 60 * 60 : selectedLowNetwork.chainId === 42161 && selectedBridgeToken.symbol === 'USDC' ? 60 * 60 * 15 :
+            selectedBridgeToken.symbol === 'USDC' && selectedHighNetwork.chainId === 42161 ? 60 * 15 : selectedHighNetwork.chainId === 42161 ? 60 * 60 * 24 * 7 : 60 * 60,
           symbol: returnSymbol(direction, selectedHighNetwork, selectedLowNetwork, symbol ?? ''),
           status:
             isCCTP
