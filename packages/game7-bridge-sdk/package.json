@@ -1,6 +1,6 @@
 {
-  "name": "game7-bridge-sdk",
-  "version": "0.1.0",
+  "name": "@g7dao/bridge-sdk",
+  "version": "0.1.1",
   "description": "A SDK for bridging tokens across different networks with Game7 infrastructure.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
