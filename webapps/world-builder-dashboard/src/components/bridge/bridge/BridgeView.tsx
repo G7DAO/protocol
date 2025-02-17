@@ -288,11 +288,14 @@ const BridgeView = ({
           direction={direction}
           address={connectedAccount}
           nativeBalance={Number(nativeTokenInformation?.tokenBalance)}
+          // TODO: make a function below for 
           transferTime={
             selectedNetworkType === 'Mainnet' ?
               direction === 'DEPOSIT'
                 ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
-                : `~${selectedBridgeToken.symbol === 'USDC' && selectedLowNetwork.chainId === 1 ? '15 min' : '7 days'}` :
+                : `~${selectedBridgeToken.symbol === 'USDC' && selectedLowNetwork.chainId === 1 ? '15 min' :
+                  selectedLowNetwork.chainId === 1 ?
+                    '7 days' : '60 min'}` :
               direction === 'DEPOSIT'
                 ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
                 : `~${selectedBridgeToken.symbol === 'USDC' && selectedLowNetwork.chainId === 1 ? '15 min' : '60 min'}`
@@ -343,10 +346,13 @@ const BridgeView = ({
                   ) :
                   (selectedHighNetwork.chainId === 42161 && selectedBridgeToken.symbol === 'USDC'
                     ? `Withdrawal will be available to claim on ${selectedLowNetwork.displayName} in ~15 mins`
-                    : `Withdrawal will be available to claim on ${selectedLowNetwork.displayName} in ~7 days`
+                    : selectedHighNetwork.chainId === 42161 ?
+                      `Withdrawal will be available to claim on ${selectedLowNetwork.displayName} in ~7 days` :
+                      `Withdrawal will be available to claim on ${selectedLowNetwork.displayName} in ~60 mins`
                   )
                 }
               </div>
+              {/* TODO: Remove conditional logic */}
               <Tooltip
                 multiline
                 radius={'8px'}
@@ -355,7 +361,11 @@ const BridgeView = ({
                 arrowOffset={14}
                 events={{ hover: true, focus: true, touch: true }}
                 label={direction === 'DEPOSIT' ? `Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.` :
-                  selectedBridgeToken.symbol === 'USDC' ? `Withdrawals available in 15 minutes under the CCTP protocol. Return to claim tokens via the Activity tab once available.` : `Withdrawals available in 7 days due to the challenge period for security. Return to claim tokens via the Activity tab once available or use Relay for immediate withdrawal.`
+                  selectedBridgeToken.symbol === 'USDC' && selectedHighNetwork.chainId === 42161 ?
+                    `Withdrawals available in 15 minutes under the CCTP protocol. Return to claim tokens via the Activity tab once available.` :
+                    selectedHighNetwork.chainId === 42161 ? 
+                    `Withdrawals available in 7 days due to the challenge period for security. Return to claim tokens via the Activity tab once available or use Relay for immediate withdrawal.`
+                    : `Withdrawals available in 60 minutes due to the challenge period for security. Return to claim tokens via the Activity tab once available or use Relay for immediate withdrawal`
                 }
               >
                 <IconAlertCircle stroke='#FFFAEB' height={16} width={16} />
