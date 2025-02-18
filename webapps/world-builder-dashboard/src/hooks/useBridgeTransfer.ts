@@ -201,6 +201,8 @@ export const useBridgeTransfer = () => {
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const queryClient = useQueryClient()
 
+
+
   const claim = useMutation({
     mutationFn: async ({ txRecord }: { txRecord: TransactionRecord }) => {
       const isDeposit = txRecord.type === 'DEPOSIT'

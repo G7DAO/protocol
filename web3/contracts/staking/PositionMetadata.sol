@@ -116,7 +116,7 @@ contract PositionMetadata {
         Position memory position,
         StakingPool memory pool
     ) private view returns (string memory svg) {
-        string memory tokenAmountOrIdString = pool.tokenType == 721 ? "Token ID" : "Amount staked";
+        string memory tokenAmountOrIdLabel = pool.tokenType == 721 ? "Token ID" : "Amount staked";
         string memory amountOrTokenIdString = (position.amountOrTokenID).toString();
 
         // Timestamp string manipulations
@@ -146,7 +146,7 @@ contract PositionMetadata {
                 '<rect style="mix-blend-mode:overlay" x="120" y="80" width="1760" height="1840" rx="80" fill="url(#f1)" />',
                 generateLogo(),
                 generateTokenSymbol(tokenSymbolString),
-                generateTokenIdOrAmountElement(tokenAmountOrIdString, amountOrTokenIdString),
+                generateTokenIdOrAmountElement(tokenAmountOrIdLabel, amountOrTokenIdString),
                 generateStakingPeriodElements(stakeTimestampStr, unlockTimestampStr, cooldownStr),
                 generateTokenTypeElement(tokenTypeString, tokenAddressString, amountOrTokenIdString, poolIdString),
                 generateDefs(),
@@ -373,7 +373,7 @@ contract PositionMetadata {
         // Ethereum mainnet or arbitrum sepolia
         if (block.chainid == 1 || block.chainid == 421614) return "ETH";
         // g7 conduit testnet or local hardhat node
-        else if (block.chainid == 13746 || block.chainid == 31337) return "G7";
+        else if (block.chainid == 13746 || block.chainid == 2187) return "G7";
         else return "N/A";
     }
 

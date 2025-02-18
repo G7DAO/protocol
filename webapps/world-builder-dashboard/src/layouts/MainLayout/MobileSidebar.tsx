@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react'
+import React, { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import parentStyles from './MainLayout.module.css'
 import styles from './MobileSidebar.module.css'
@@ -8,10 +8,13 @@ import IconLogoutLarge from '@/assets/IconLogoutLarge'
 import NetworkToggle from '@/components/commonComponents/networkToggle/NetworkToggle'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
+import IconClosedHamburgerLanding from '@/assets/IconClosedHamburgerLanding'
+import { NavigationItem } from './MainLayout'
 
 interface MobileSidebarProps {
-  navigationItems: { name: string; navigateTo: string; icon: ReactNode }[]
+  navigationItems: NavigationItem[]
 }
+
 const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
   const location = useLocation()
   const navigate = useNavigate()
@@ -32,7 +35,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
             </div>
           )}
           <div className={styles.iconContainer}>
-            <IconHamburgerLanding className={parentStyles.iconButton} />
+            {isExpanded ? <IconClosedHamburgerLanding /> : <IconHamburgerLanding />}
           </div>
         </div>
       </div>
@@ -41,7 +44,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
           <div className={styles.spacer} />
           <NetworkToggle />
           <div className={styles.navigation}>
-            {navigationItems.map((item) => (
+            {navigationItems.map(({ Icon, ...item }) => (
               <div
                 className={
                   location.pathname.startsWith(item.navigateTo)
@@ -59,7 +62,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
                 key={item.name}
               >
                 <div className={parentStyles.navBeginning}>
-                  {item.icon}
+                  <Icon isHovered={false} />
                   {item.name}
                 </div>
                 <div style={{ display: 'flex' }}>

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { FAUCET_CHAIN, getNetworks, L3_NATIVE_TOKEN_SYMBOL, L3_NETWORK } from '../../../constants'
-import { AccountType } from '../commonComponents/accountSelector/AccountSelector'
-import AccountSelector from '../commonComponents/accountSelector/AccountSelector'
+import AccountSelector, { AccountType } from '../commonComponents/accountSelector/AccountSelector'
+
 import styles from './FaucetView.module.css'
 import { ethers } from 'ethers'
 import { useMediaQuery } from 'summon-ui/mantine'
@@ -11,7 +11,6 @@ import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsCon
 import { useUISettings } from '@/contexts/UISettingsContext'
 import { useFaucetAPI } from '@/hooks/useFaucetAPI'
 import { timeDifferenceInHoursAndMinutes, timeDifferenceInHoursMinutesAndSeconds } from '@/utils/timeFormat'
-import { useNavigate } from 'react-router-dom'
 
 interface FaucetViewProps { }
 const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
@@ -28,15 +27,9 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const { faucetTargetChainId } = useUISettings()
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const smallView = useMediaQuery('(max-width: 1199px)')
-  const navigate = useNavigate()
 
   const values: AccountType[] = [`External Address`, `Connected Account`]
   const networks = getNetworks(selectedNetworkType)
-
-  if (selectedNetworkType === 'Mainnet') {
-    navigate('/bridge')
-  }
-
 
   useEffect(() => {
     const targetNetwork = networks?.find((n) => n.chainId === faucetTargetChainId)

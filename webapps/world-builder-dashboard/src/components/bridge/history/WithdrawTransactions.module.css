@@ -314,6 +314,12 @@
   cursor: pointer;
 }
 
+.failed {
+  border-radius: 16px;
+  background: #B42318;
+}
+
+
 .pending {
   background: var(--Blue-50, #eff8ff);
   color: var(--Primary-200, #175cd3);
@@ -327,11 +333,6 @@
 .settled {
   background: var(--Success-100, #ecfdf3);
   color: var(--Success-700, #027a48);
-}
-
-.failed {
-  border-radius: 16px;
-  background: #B42318;
 }
 
 @keyframes blink {
@@ -370,6 +371,7 @@
 .failed:hover {
   background: #912018;
 }
+
 
 .claimButton {
   height: 28px;
