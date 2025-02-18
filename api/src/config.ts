@@ -88,7 +88,8 @@ export const bridgeConfig: {
     G7nativeTokenName: string;
     arbitrumCircleTransmitter: string;
     ethereumCircleTransmitter: string;
-    ClaimableTimeCanonical: number;
+    ClaimableTimeCanonicalArbitrum: number;
+    ClaimableTimeCanonicalEthereum: number;
     ClaimableTimeCCTP: number;
   };
 } = {
@@ -119,7 +120,8 @@ export const bridgeConfig: {
     l2TokenName: "TG7T",
     nativeToken: "0x0000000000000000000000000000000000000000", // native token
     G7nativeTokenName: "TG7T",
-    ClaimableTimeCanonical: 1 * 60 * 60, // 1 hour
+    ClaimableTimeCanonicalArbitrum: 1 * 60 * 60, // 1 hour
+    ClaimableTimeCanonicalEthereum: 1 * 60 * 60, // 1 hour
     ClaimableTimeCCTP: 15 * 60 // 15 minutes
 
   },
@@ -150,7 +152,8 @@ export const bridgeConfig: {
     l2TokenName: "G7",
     nativeToken: "0x0000000000000000000000000000000000000000", // native token
     G7nativeTokenName: "G7",
-    ClaimableTimeCanonical: 7 * 24 * 60 * 60, // 7 days
+    ClaimableTimeCanonicalArbitrum: 1 * 60 * 60, // 7 days
+    ClaimableTimeCanonicalEthereum: 7 * 24 * 60 * 60, // 7 days
     ClaimableTimeCCTP: 15 * 60 // 15 minutes
   },
 };
