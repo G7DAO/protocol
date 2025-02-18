@@ -1,7 +1,6 @@
 // src/services/bridge.service.ts
 import { pool } from '../utils/db'; // Adjust the import path as necessary
 import { bridgeConfig } from '../config'; // Adjust the import path as necessary
-
 export async function getTransactionHistory(chain: string, address: string, limit: number, offset: number): Promise<object | string> {
 
   // switch statement blockchains
@@ -120,8 +119,8 @@ export async function getTransactionHistory(chain: string, address: string, limi
           wc.block_timestamp AS childNetworkTimestamp,
           wc.from_address AS from_address,
           we.to_address AS to_address,
-          3600 AS challengePeriod,
-          (wc.block_timestamp + 3600) AS claimableTimestamp,
+          ${bridgeConfig[chain].ClaimableTimeCanonicalArbitrum} AS challengePeriod,
+          (wc.block_timestamp + ${bridgeConfig[chain].ClaimableTimeCanonicalArbitrum}) AS claimableTimestamp,
           wc.block_timestamp AS block_timestamp,
           wc.token AS token,
           wc.origin_token AS origin_token,
@@ -174,7 +173,7 @@ export async function getTransactionHistory(chain: string, address: string, limi
           LEFT JOIN arbirtrum_claims ON game7_withdrawal.position = arbirtrum_claims.position
     ), withdrawal_calls_arbitrum AS (
         SELECT
-            transaction_hash,
+            DISTINCT transaction_hash,
             COALESCE(l2_token, '${bridgeConfig[chain].nativeToken}') as token,
             COALESCE(l2_token, '${bridgeConfig[chain].nativeToken}') as origin_token,
             COALESCE(l1_token, '${bridgeConfig[chain].l2Token}') as destination_token,
@@ -185,32 +184,19 @@ export async function getTransactionHistory(chain: string, address: string, limi
         FROM
             ${bridgeConfig[chain].l2TableName} AS labels
             left join arbitrum_l1_to_l2_tokens on labels.label_data->'args'->>'_l1Token' = arbitrum_l1_to_l2_tokens.l1_token
-        WHERE
-            label='seer'
-            AND label_type = 'tx_call'
-            AND address = DECODE('${bridgeConfig[chain].addressL2GatewayRouter}', 'hex')
-            AND label_name = 'outboundTransfer'
-        UNION ALL
-        SELECT
-            transaction_hash,
-            COALESCE(l2_token, '${bridgeConfig[chain].nativeToken}') as token,
-            COALESCE(l2_token, '${bridgeConfig[chain].nativeToken}') as origin_token,
-            COALESCE(l1_token, '${bridgeConfig[chain].l2Token}') as destination_token,
-            '0x' || encode(origin_address, 'hex') AS from_address,
-            label_data -> 'args' ->> '_amount' AS amount,
-            block_timestamp,
-            label_data ->> 'status' AS status
-        FROM
-            ${bridgeConfig[chain].l2TableName} AS labels
-            left join arbitrum_l1_to_l2_tokens on labels.label_data->'args'->>'_l1Token' = arbitrum_l1_to_l2_tokens.l1_token
-        WHERE
-            label='seer'
-            AND label_type = 'tx_call'
-            AND address = DECODE('${bridgeConfig[chain].addressArbOS}', 'hex')
-            AND label_name = 'L2ToL1Tx'
+            WHERE
+                label = 'seer'
+                AND (
+                    (label_name = 'outboundTransfer' 
+                    AND label_type = 'tx_call'
+                    AND address = DECODE('${bridgeConfig[chain].addressL2GatewayRouter}', 'hex'))
+                    OR 
+                    (label_name = 'withdrawEth'
+                    AND address = DECODE('${bridgeConfig[chain].addressArbOS}', 'hex'))
+                )
     ),
     withdrawal_events_arbitrum  AS (
-        SELECT
+        SELECT DISTINCT
             transaction_hash,
             label_data -> 'args' ->> 'position' AS position,
             label_data -> 'args' ->> 'callvalue' AS amount,
@@ -243,8 +229,8 @@ export async function getTransactionHistory(chain: string, address: string, limi
             wc.block_timestamp AS childNetworkTimestamp,
             wc.from_address AS from_address,
             we.to_address AS to_address,
-            3600 AS challengePeriod,
-            (wc.block_timestamp + 3600) AS claimableTimestamp,
+            ${bridgeConfig[chain].ClaimableTimeCanonicalArbitrum} AS challengePeriod,
+            (wc.block_timestamp + ${bridgeConfig[chain].ClaimableTimeCanonicalArbitrum}) AS claimableTimestamp,
             wc.block_timestamp AS block_timestamp,
             wc.token AS token,
             wc.origin_token AS origin_token,
@@ -265,8 +251,8 @@ export async function getTransactionHistory(chain: string, address: string, limi
           block_timestamp AS childNetworkTimestamp,
           '0x' || ENCODE(origin_address, 'hex') as to_address,
           '0x' || ENCODE(origin_address, 'hex') AS from_address,
-          3600 AS challengePeriod,
-          (block_timestamp + 3600) AS claimableTimestamp,
+          ${bridgeConfig[chain].ClaimableTimeCCTP} AS challengePeriod,
+          (block_timestamp + ${bridgeConfig[chain].ClaimableTimeCCTP}) AS claimableTimestamp,
           block_timestamp as block_timestamp,
           label_data->'args'->>'burnToken' as token,
           label_data->'args'->>'burnToken' as origin_token,
