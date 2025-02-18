@@ -152,7 +152,7 @@ export const bridgeConfig: {
     l2TokenName: "G7",
     nativeToken: "0x0000000000000000000000000000000000000000", // native token
     G7nativeTokenName: "G7",
-    ClaimableTimeCanonicalArbitrum: 1 * 60 * 60, // 7 days
+    ClaimableTimeCanonicalArbitrum: 1 * 60 * 60, // 1 hour
     ClaimableTimeCanonicalEthereum: 7 * 24 * 60 * 60, // 7 days
     ClaimableTimeCCTP: 15 * 60 // 15 minutes
   },
