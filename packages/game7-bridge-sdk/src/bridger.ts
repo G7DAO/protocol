@@ -102,31 +102,29 @@ export interface TransferParams {
 }
 
 /**
- * A class representing a Bridger that manages cross-network token transfers.
+ * Represents a bridging operation between two networks for token transfers.
+ * Handles deposits and withdrawals of both native currencies and ERC20 tokens
+ * across supported networks.
  */
 export class Bridger {
   /**
-   * The configuration of the origin network.
-   * @type {BridgeNetworkConfig}
+   * The configuration of the source/origin network where the transfer initiates.
    */
   public readonly originNetwork: BridgeNetworkConfig;
 
   /**
-   * The configuration of the destination network.
-   * @type {BridgeNetworkConfig}
+   * The configuration of the target/destination network where funds will be received.
    */
   public readonly destinationNetwork: BridgeNetworkConfig;
 
   /**
-   * Indicates whether the operation is a deposit.
-   * `true` if the origin network is the parent of the destination network.
-   * @type {boolean}
+   * Indicates if this is a deposit operation (transfer from parent to child network).
+   * True if origin network is the parent of the destination network.
    */
   public readonly isDeposit: boolean;
 
   /**
-   * A map of token addresses keyed by chain IDs.
-   * @type {TokenAddressMap}
+   * Maps chain IDs to their corresponding token addresses for both networks.
    */
   public readonly token: TokenAddressMap;
 
@@ -145,17 +143,18 @@ export class Bridger {
   private approveDepositAllowance: boolean;
 
   /**
-   * Initializes a bridge operation between two networks.
-   *
-   * @param {number} originNetworkChainId - The chain ID of the origin network.
-   * @param {number} destinationNetworkChainId - The chain ID of the destination network.
-   * @param {TokenAddressMap} token - A map of token addresses keyed by chain IDs.
-   * @param {Object} [params] - Optional parameters for the bridge operation.
-   * @param {boolean} [params.useLocalStorage=false] - If true, uses local storage for caching.
-   * @param {boolean} [params.approveDepositAllowance=true] - If true, approves deposit allowance automatically.
-   *
-   * @throws {UnsupportedNetworkError} If either the origin or destination network is not supported.
-   * @throws {BridgerError} If the bridge is not set up correctly or token addresses are missing.
+   * Creates a new Bridger instance to manage token transfers between networks.
+   * 
+   * @param originNetworkChainId - Chain ID of the source network
+   * @param destinationNetworkChainId - Chain ID of the target network
+   * @param token - Mapping of chain IDs to token addresses for both networks
+   * @param params - Optional configuration parameters
+   * @param params.useLocalStorage - Whether to cache data in localStorage
+   * @param params.approveDepositAllowance - Whether to auto-approve token deposits
+   * 
+   * @throws {UnsupportedNetworkError} If either network is not supported
+   * @throws {BridgerError} If networks are not properly connected (parent/child relationship)
+   *                        or if token addresses are missing
    */
   constructor(
     originNetworkChainId: number,
@@ -205,24 +204,28 @@ export class Bridger {
     this.approveDepositAllowance = params?.approveDepositAllowance ?? true;
   }
 
-
+  /**
+   * Checks if this bridge uses the Cross-Chain Transfer Protocol (CCTP).
+   * 
+   * @returns {boolean} False for base Bridger implementation
+   */
   public isCctp(): boolean  {
     return false
   }
 
   /**
-   * Estimates the gas and fees required for a token transfer operation.
-   *
-   * This method estimates the gas and fees for either a deposit or a withdrawal operation,
-   * depending on the configuration of the bridge. It supports both native and ERC20 token transfers.
-   *
-   * @param {BigNumber} amount - The amount of the token to be transferred.
-   * @param {SignerOrProvider} provider - A signer or provider for connecting to the origin network. Can be an RPC URL string.
-   * @param {string} _from - The address initiating the transfer.
-   * @param {SignerOrProvider} destinationProvider - A signer or provider for connecting to the destination network. Can be an RPC URL string.
-   * @returns {Promise<GasAndFeeEstimation>} A promise that resolves to the estimated gas and fee details.
-   *
-   * @throws {GasEstimationError} If the gas estimation fails for any reason.
+   * Estimates gas costs and fees for a token transfer operation.
+   * Supports both deposits and withdrawals of native currencies and ERC20 tokens.
+   * 
+   * For deposits of ERC20 tokens, also estimates the gas required on the destination chain.
+   * 
+   * @param amount - Amount of tokens/currency to transfer
+   * @param provider - Provider/signer for the origin network (can be RPC URL)
+   * @param _from - Address initiating the transfer
+   * @param destinationProvider - Provider for destination network (required for ERC20 deposits)
+   * 
+   * @returns Promise resolving to gas and fee estimates for both networks where applicable
+   * @throws {GasEstimationError} If estimation fails or required parameters are missing
    */
   public getGasAndFeeEstimation(
     amount: BigNumber,
@@ -261,17 +264,16 @@ export class Bridger {
   }
 
   /**
-   * Estimates the gas and fee required for approving a token transfer
-   *
-   * @param {BigNumber} amount - The amount of tokens to deposit.
-   * @param {SignerOrProvider} _provider - The signer or provider or rpc.
-   * @param {string} _from - The address of the token holder initiating the approval.
-   * @returns {Promise<GasAndFeeEstimation | null>} - Returns gas and fee estimation details if approval is required, or `null` if no approval is needed.
-   *
-   * @throws {Error} If the token address for the current chain is not found.
+   * Estimates gas costs for approving token transfers.
+   * Only applicable for ERC20 deposits where allowance is needed.
+   * 
+   * @param amount - Amount of tokens requiring approval
+   * @param _provider - Provider/signer for checking allowance (can be RPC URL)
+   * @param _from - Address that needs to approve the tokens
+   * 
+   * @returns Promise resolving to gas estimates if approval is needed, null otherwise
+   * @throws {Error} If token configuration is invalid
    */
-
-
   public async getApprovalGasAndFeeEstimation(
     amount: BigNumber,
     _provider: SignerOrProvider,
@@ -302,7 +304,6 @@ export class Bridger {
 
     return estimateApproval(amount, provider, tokenAddress, spender, _from)
   }
-
 
   /**
    * Estimates the gas and fees required for withdrawing native ETH from the origin network.
@@ -347,14 +348,16 @@ export class Bridger {
    * Estimates the gas and fees required for withdrawing an ERC20 token from the origin network.
    *
    * This method calculates the estimated gas usage, gas price, and total fee for withdrawing
-   * an ERC20 token using the Gateway Router contract on the origin network.
+   * an ERC20 token using the Gateway Router contract's outboundTransfer function.
    *
-   * @param {BigNumber} amount - The amount of ERC20 tokens to withdraw.
-   * @param {ethers.Signer | ethers.providers.Provider} signerOrProvider - A signer or provider for connecting to the Ethereum network.
-   * @param {string} from - The address from which the ERC20 tokens are being withdrawn.
-   * @returns {Promise<GasAndFeeEstimation>} A promise that resolves to the estimated gas and fee details.
-   *
-   * @throws {GasEstimationError} If the gas estimation fails or if the input parameters are invalid.
+   * @param {BigNumber} amount - The amount of ERC20 tokens to withdraw
+   * @param {ethers.Signer | ethers.providers.Provider} signerOrProvider - Provider or signer for the origin network
+   * @param {string} from - The address initiating the withdrawal
+   * @returns {Promise<GasAndFeeEstimation>} Gas and fee estimates including:
+   *   - estimatedGas: Expected gas units required
+   *   - gasPrice: Current gas price
+   *   - estimatedFee: Total estimated fee (gas * gasPrice)
+   * @throws {GasEstimationError} If estimation fails due to invalid address or missing router contract
    */
   private async estimateWithdrawERC20(
     amount: BigNumber,
@@ -398,6 +401,15 @@ export class Bridger {
     }
   }
 
+  /**
+   * Estimates gas and fees for depositing ETH from the origin network to the destination network.
+   * 
+   * @param {BigNumber} amount - Amount of ETH to deposit
+   * @param {SignerOrProvider} _provider - Provider or signer for the origin network
+   * @param {string} from - Address initiating the deposit
+   * @returns {Promise<GasAndFeeEstimation>} Gas and fee estimates
+   * @throws {GasEstimationError} If inbox contract address is not configured
+   */
   private async estimateDepositEth(
     amount: BigNumber,
     _provider: SignerOrProvider,
@@ -411,6 +423,15 @@ export class Bridger {
     return estimateDepositEth(amount, provider, contractAddress, from)
   }
 
+  /**
+   * Estimates gas and fees for depositing ERC20 tokens that will be received as ETH on the destination network.
+   *
+   * @param {BigNumber} amount - Amount of ERC20 tokens to deposit
+   * @param {SignerOrProvider} _provider - Provider or signer for the origin network  
+   * @param {string} from - Address initiating the deposit
+   * @returns {Promise<GasAndFeeEstimation>} Gas and fee estimates
+   * @throws {GasEstimationError} If inbox contract address is not configured
+   */
   private async estimateDepositERC20ToEth(
     amount: BigNumber,
     _provider: SignerOrProvider,
@@ -424,6 +445,20 @@ export class Bridger {
     return estimateDepositERC20ToEth(amount, provider, contractAddress, from)
   }
 
+  /**
+   * Estimates gas and fees for depositing ERC20 tokens from parent chain to child chain.
+   * Includes gas estimates for both chains since token deposits require transactions on both networks.
+   *
+   * @param {BigNumber} amount - Amount of ERC20 tokens to deposit
+   * @param {ethers.providers.Provider} parentProvider - Provider for the parent chain
+   * @param {ethers.providers.Provider} childProvider - Provider for the child chain
+   * @param {string} from - Address initiating the deposit
+   * @param {number} childNativeCurrencyDecimals - Decimal places of child chain's native currency
+   * @returns {Promise<GasAndFeeEstimation>} Gas and fee estimates for both chains including:
+   *   - Parent chain estimates (estimatedGas, gasPrice, estimatedFee)
+   *   - Child chain estimates (childNetworkEstimation)
+   * @throws {GasEstimationError} If parent gateway router contract is not configured
+   */
   private async estimateDepositERC20(
     amount: BigNumber,
     parentProvider: ethers.providers.Provider,
@@ -503,32 +538,34 @@ export class Bridger {
   }
 
   /**
-   * Retrieves the current allowance for the deposit spender on the origin network.
+   * Gets the current token allowance for the bridge spender.
    *
-   * This method checks if the operation is a deposit and then queries the allowance of an
-   * ERC20 token for the spender address. If the operation is not a deposit, it returns `null`.
-   *
-   * @param {ethers.Signer | ethers.providers.Provider | string} provider - A signer, provider, or RPC URL for connecting to the Ethereum network.
-   * @param {string} account - The account address for which to check the allowance.
-   * @returns {Promise<BigNumber | null>} A promise that resolves to the allowance of the ERC20 token or `null` if it's not a deposit.
-   *
-   * @throws {Error} If the token address is not found for the specified network.
+   * @param {ethers.Signer | ethers.providers.Provider | string} provider - Provider, signer or RPC URL
+   * @param {string} account - Address to check allowance for
+   * @returns {Promise<BigNumber | null>} Current allowance amount, null if native token/no approval needed
+   * @throws {BridgerError} If token address not found for the network
    */
   public async getAllowance(
     provider: ethers.Signer | ethers.providers.Provider | string,
     account: string,
-  ): Promise<BigNumber | null | undefined> {
+  ): Promise<BigNumber | null> {
+    if (!ethers.utils.isAddress(account)) {
+      throw new BridgerError('Invalid account address');
+    }
+
     const tokenAddress = this.token[this.originNetwork.chainId];
     if (tokenAddress === ethers.constants.AddressZero) {
       return null;
     }
+
     if (typeof provider === 'string') {
       provider = new ethers.providers.JsonRpcProvider(provider);
     }
     if (!tokenAddress) {
-      throw new Error('Token address not found for the specified network');
+      throw new BridgerError('Token address not found for the specified network');
     }
-    const spender = this.getDepositSpender()
+
+    const spender = this.getDepositSpender();
     if (spender === null) {
       return null;
     }
@@ -537,6 +574,13 @@ export class Bridger {
     return await tokenContract.allowance(account, spender);
   }
 
+  /**
+   * Gets the current allowance for the native token on the destination network.
+   * 
+   * @param {ethers.Signer | ethers.providers.Provider | string} provider - Provider, signer or RPC URL
+   * @param {string} account - Address to check allowance for
+   * @returns {Promise<BigNumber | null | undefined>} Current allowance amount, null if no approval needed
+   */
   public async getNativeAllowance(
       provider: ethers.Signer | ethers.providers.Provider | string,
       account: string,
@@ -606,21 +650,32 @@ export class Bridger {
    * The type of transfer (deposit or withdrawal) is determined based on the configuration of the `Bridger` instance.
    *
    * @param {TransferParams} params - An object containing the parameters for the transfer:
-   * - `amount` (BigNumber): The amount of ETH or tokens to transfer.
-   * - `signer` (ethers.Signer): The signer performing the transfer.
-   * - `destinationAddress` (string): The address receiving the funds. Defaults to the `from` address if not provided.
-   * - `overrides` (ethers.Overrides): Transaction overrides (optional).
+   * - `amount` (BigNumber): The amount of ETH or tokens to transfer
+   * - `signer` (ethers.Signer): The signer performing the transfer
+   * - `destinationProvider` (ethers.providers.Provider): Provider for the destination network (required for ERC20 deposits)
+   * - `destinationAddress` (string): The address receiving the funds. Defaults to the signer's address
+   * - `overrides` (ethers.Overrides): Transaction overrides (optional)
    *
-   * @returns {Promise<ethers.ContractTransaction>} A promise that resolves to the transaction object representing the transfer.
-   *
-   * @throws {BridgerError} If there is an issue with the transfer operation.
+   * @returns {Promise<ethers.ContractTransaction>} A promise that resolves to the transaction object
+   * @throws {BridgerError} If there is an issue with the transfer operation
+   * @throws {Error} If required parameters are missing for specific transfer types
    */
   async transfer(params: TransferParams): Promise<ethers.ContractTransaction> {
     const { amount, signer, destinationAddress, overrides, destinationProvider } = params;
 
+    // Validate amount
+    if (amount.lte(0)) {
+      throw new BridgerError('Transfer amount must be greater than 0');
+    }
+
     const destination = destinationAddress ?? (await signer.getAddress());
     const originToken = this.token[this.originNetwork.chainId];
     const destinationToken = this.token[this.destinationNetwork.chainId];
+
+    // Validate destination provider for ERC20 deposits
+    if (this.isDeposit && destinationToken !== ethers.constants.AddressZero && !destinationProvider) {
+      throw new BridgerError('Destination provider is required for ERC20 deposits');
+    }
 
     if (!this.isDeposit) {
       if (originToken === ethers.constants.AddressZero) {
