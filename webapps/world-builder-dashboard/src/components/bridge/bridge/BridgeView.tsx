@@ -110,6 +110,25 @@ const BridgeView = ({
     selectedBridgeToken
   })
 
+  const getBridgeTip = () => {
+    if (direction === 'DEPOSIT') {
+      if (selectedLowNetwork.chainId === 42161 || selectedLowNetwork.chainId === 421614) {
+        return `You need some ${selectedNetworkType === 'Testnet' ? 'TG7T' : 'G7'} tokens on Arbitrum for gas fees to deposit on ${selectedNetworkType === 'Testnet' ? 'G7 Sepolia' : 'the G7 Network'}`
+      }
+      return `Claim transaction may be required on ${selectedHighNetwork.displayName}`
+    }
+
+    if (selectedHighNetwork.chainId === 42161 || selectedHighNetwork.chainId === 421614) {
+      if (selectedBridgeToken.symbol === 'USDC') {
+        return `Withdrawal will be available to claim on ${selectedLowNetwork.displayName} in ~15 mins`
+      }
+      return `Withdrawal will be available to claim on ${selectedLowNetwork.displayName} in ${selectedNetworkType === 'Mainnet' ? '7 days' : '60 mins'}`
+    }
+
+    return `Withdrawal will be available to claim on ${selectedLowNetwork.displayName} in ~60 mins`
+  }
+
+
   useEffect(() => {
     if (!selectedBridgeToken && !connectedAccount && !selectedHighNetwork && !selectedLowNetwork)
       return
@@ -292,7 +311,9 @@ const BridgeView = ({
             selectedNetworkType === 'Mainnet' ?
               direction === 'DEPOSIT'
                 ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
-                : `~${selectedBridgeToken.symbol === 'USDC' && selectedLowNetwork.chainId === 1 ? '15 min' : '7 days'}` :
+                : `~${selectedBridgeToken.symbol === 'USDC' && selectedLowNetwork.chainId === 1 ? '15 min' :
+                  selectedLowNetwork.chainId === 1 ?
+                    '7 days' : '60 min'}` :
               direction === 'DEPOSIT'
                 ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
                 : `~${selectedBridgeToken.symbol === 'USDC' && selectedLowNetwork.chainId === 1 ? '15 min' : '60 min'}`
@@ -336,16 +357,7 @@ const BridgeView = ({
           (
             <div className={styles.manualGasMessageContainer}>
               <div className={styles.manualGasMessageText}>
-                {direction === 'DEPOSIT' ?
-                  (selectedLowNetwork.chainId === 42161
-                    ? 'You need some G7 tokens on Arbitrum for gas fees to deposit on the G7 Network'
-                    : `Claim transaction may be required on ${selectedHighNetwork.displayName}`
-                  ) :
-                  (selectedHighNetwork.chainId === 42161 && selectedBridgeToken.symbol === 'USDC'
-                    ? `Withdrawal will be available to claim on ${selectedLowNetwork.displayName} in ~15 mins`
-                    : `Withdrawal will be available to claim on ${selectedLowNetwork.displayName} in ~7 days`
-                  )
-                }
+                {getBridgeTip()}
               </div>
               <Tooltip
                 multiline 
