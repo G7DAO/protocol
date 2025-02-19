@@ -1,6 +1,4 @@
 import { BigNumber, ethers, Overrides } from 'ethers';
-import { BridgeNetworkConfig } from './networks';
-import { TokenAddressMap } from './types';
 import { SignerOrProvider } from './bridgeNetwork';
 import { Bridger, GasAndFeeEstimation, TransferParams } from './bridger';
 import {ERC20_ABI} from "./abi/ERC20_ABI";
@@ -18,7 +16,6 @@ export class CctpBridger extends Bridger {
         amount: BigNumber,
         provider: SignerOrProvider,
         _from: string,
-        destinationProvider?: SignerOrProvider
     ): Promise<GasAndFeeEstimation> {
         try {
             const {
@@ -90,7 +87,7 @@ export class CctpBridger extends Bridger {
     public async getAllowance(
         provider: ethers.Signer | ethers.providers.Provider | string,
         account: string,
-    ): Promise<BigNumber | null | undefined> {
+    ): Promise<BigNumber | null> {
 
         const { usdcContractAddress, tokenMessengerContractAddress } =
             getCctpContracts({ originChainId: this.originNetwork.chainId })
@@ -110,7 +107,7 @@ export class CctpBridger extends Bridger {
     async getNativeAllowance(
         provider: ethers.Signer | ethers.providers.Provider | string,
         account: string
-    ): Promise<BigNumber | null | undefined> {
+    ): Promise<BigNumber | null> {
         return null
     }
 
