@@ -246,46 +246,53 @@ export class BridgeTransfer {
       info.timestamp = block?.timestamp;
     }
     info.transferType = transferType
-    if (transferType === BridgeTransferType.WITHDRAW_GAS) {
-      info.amount = decodedInputs.value;
-      info.tokenSymbol = networks[this.originNetworkChainId]?.nativeCurrency?.symbol
-      info.to = decodedInputs.args.destination
-      info.tokenOriginAddress = ethers.constants.AddressZero
-      return info
-    } else
-    if (transferType === BridgeTransferType.WITHDRAW_ERC20) {
-      const tokenContract = new ethers.Contract(decodedInputs.args._l1Token, ERC20_ABI, this.destinationProvider);
-      info.amount = decodedInputs.args._amount;
-      info.tokenSymbol = await tokenContract.symbol();
-      info.to = decodedInputs.args._to;
-      info.tokenDestinationAddress = decodedInputs.args._l1Token;
-      return info
-    } else
-    if (transferType === BridgeTransferType.DEPOSIT_ERC20) {
-      const tokenContract = new ethers.Contract(decodedInputs.args._token, ERC20_ABI, this.originProvider);
-      info.tokenSymbol = await tokenContract.symbol();
-      info.amount = decodedInputs.args._amount;
-      info.to = decodedInputs.args._to;
-      info.tokenOriginAddress = decodedInputs.args._token;
-      return info
-    } else
-    if (transferType === BridgeTransferType.DEPOSIT_GAS) {
-      info.amount = decodedInputs.value
-      info.tokenSymbol = networks[this.destinationNetworkChainId]?.nativeCurrency?.symbol
-      info.to = tx.from
-      info.tokenOriginAddress = ethers.constants.AddressZero
-      info.tokenDestinationAddress = ethers.constants.AddressZero
-      return info
-    } else
-    if (transferType === BridgeTransferType.DEPOSIT_ERC20_TO_GAS) {
-      info.amount = decodedInputs.args.amount
-      info.tokenSymbol = networks[this.destinationNetworkChainId]?.nativeCurrency?.symbol
-      info.to = tx.from
-      info.tokenDestinationAddress = ethers.constants.AddressZero
-      return info
-    }
+    switch (transferType) {
+      case BridgeTransferType.WITHDRAW_GAS: {
+        info.amount = decodedInputs.value;
+        info.tokenSymbol = networks[this.originNetworkChainId]?.nativeCurrency?.symbol;
+        info.to = decodedInputs.args.destination;
+        info.tokenOriginAddress = ethers.constants.AddressZero;
+        return info;
+      }
 
-    throw new Error('Unknown type of transfer')
+      case BridgeTransferType.WITHDRAW_ERC20: {
+        const tokenContract = new ethers.Contract(decodedInputs.args._l1Token, ERC20_ABI, this.destinationProvider);
+        info.amount = decodedInputs.args._amount;
+        info.tokenSymbol = await tokenContract.symbol();
+        info.to = decodedInputs.args._to;
+        info.tokenDestinationAddress = decodedInputs.args._l1Token;
+        return info;
+      }
+
+      case BridgeTransferType.DEPOSIT_ERC20: {
+        const tokenContract = new ethers.Contract(decodedInputs.args._token, ERC20_ABI, this.originProvider);
+        info.tokenSymbol = await tokenContract.symbol();
+        info.amount = decodedInputs.args._amount;
+        info.to = decodedInputs.args._to;
+        info.tokenOriginAddress = decodedInputs.args._token;
+        return info;
+      }
+
+      case BridgeTransferType.DEPOSIT_GAS: {
+        info.amount = decodedInputs.value;
+        info.tokenSymbol = networks[this.destinationNetworkChainId]?.nativeCurrency?.symbol;
+        info.to = tx.from;
+        info.tokenOriginAddress = ethers.constants.AddressZero;
+        info.tokenDestinationAddress = ethers.constants.AddressZero;
+        return info;
+      }
+
+      case BridgeTransferType.DEPOSIT_ERC20_TO_GAS: {
+        info.amount = decodedInputs.args.amount;
+        info.tokenSymbol = networks[this.destinationNetworkChainId]?.nativeCurrency?.symbol;
+        info.to = tx.from;
+        info.tokenDestinationAddress = ethers.constants.AddressZero;
+        return info;
+      }
+
+      default:
+        throw new Error('Unknown type of transfer');
+    }
   }
 
 
