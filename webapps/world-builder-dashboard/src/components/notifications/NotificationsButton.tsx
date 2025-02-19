@@ -4,7 +4,7 @@ import { Popover, Modal } from 'summon-ui/mantine'
 import IconBell from '@/assets/IconBell'
 import NotificationsDropModal, { NotificationsModal } from '@/components/notifications/NotificationsDropModal'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
-import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
+import { TransactionRecord } from '@/contexts/BlockchainContext'
 import { useMediaQuery } from '@mantine/hooks'
 
 export interface BridgeNotification {

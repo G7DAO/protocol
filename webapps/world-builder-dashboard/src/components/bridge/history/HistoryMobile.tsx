@@ -2,7 +2,7 @@ import React, { Fragment, useEffect } from 'react'
 import Deposit from './Deposit'
 import styles from './HistoryMobile.module.css'
 import Withdrawal from '@/components/bridge/history/Withdrawal'
-import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
+import { TransactionRecord } from '@/contexts/BlockchainContext'
 
 
 interface HistoryMobileProps {

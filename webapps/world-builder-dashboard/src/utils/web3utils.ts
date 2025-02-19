@@ -2,7 +2,7 @@ import { getHighNetworks, getLowNetworks, HIGH_NETWORKS, LOW_NETWORKS, USDC, USD
 import { ethers } from 'ethers'
 import { NetworkInterface, NetworkType } from '@/contexts/BlockchainContext'
 import { providers } from 'ethers'
-import { TransactionRecord } from './bridge/depositERC20ArbitrumSDK'
+import { TransactionRecord } from '@/contexts/BlockchainContext'
 import { getTokensForNetwork } from './tokens'
 
 export const convertToBigNumber = (numberString: string, precision = 18) => {

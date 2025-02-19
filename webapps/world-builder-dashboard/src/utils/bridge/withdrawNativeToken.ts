@@ -1,6 +1,6 @@
 import { L2_NETWORK, L3_NETWORK } from '../../../constants'
 import { ethers } from 'ethers'
-import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
+import { TransactionRecord } from '@/contexts/BlockchainContext'
 import { arbSysABI } from '@/web3/ABI/arbSys_abi'
 
 const arbSysAddress = '0x0000000000000000000000000000000000000064'

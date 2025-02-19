@@ -3,11 +3,9 @@ import styles from './DepositMobile.module.css'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import IconWithdrawalNodeCompletedMobile from '@/assets/IconWithdrawalNodeCompletedMobile'
 import parentStyles from '@/components/bridge/history/WithdrawTransactions.module.css'
-import { NetworkType } from '@/contexts/BlockchainContext'
-import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
+import { NetworkType, TransactionRecord } from '@/contexts/BlockchainContext'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getBlockExplorerUrl } from '@/utils/web3utils'
-import { ChildToParentMessageStatus } from '@arbitrum/sdk'
 import { BridgeTransferStatus } from 'game7-bridge-sdk'
 import { UseMutationResult } from '@tanstack/react-query'
 
@@ -51,7 +49,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
         <>
           <div className={styles.dataRow}>
             <div className={styles.dataText}>Transaction</div>
-            {transferStatus && transferStatus?.status === ChildToParentMessageStatus.EXECUTED && (
+            {transferStatus && transferStatus?.status === BridgeTransferStatus.WITHDRAW_EXECUTED && (
               <a
                 href={`${getBlockExplorerUrl(withdrawal.lowNetworkChainId, selectedNetworkType)}/tx/${withdrawal.lowNetworkHash}`}
                 target={'_blank'}
@@ -63,7 +61,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
                 </div>
               </a>
             )}
-            {transferStatus && (transferStatus?.status === ChildToParentMessageStatus.CONFIRMED || transferStatus?.status === BridgeTransferStatus.CCTP_COMPLETE) && (
+            {transferStatus && (transferStatus?.status === BridgeTransferStatus.WITHDRAW_CONFIRMED || transferStatus?.status === BridgeTransferStatus.CCTP_COMPLETE) && (
               <a
                 href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId, selectedNetworkType)}/tx/${withdrawal.highNetworkHash}`}
                 target={'_blank'}
@@ -75,7 +73,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
                 </div>
               </a>
             )}
-            {transferStatus && transferStatus?.status === ChildToParentMessageStatus.UNCONFIRMED && (
+            {transferStatus && transferStatus?.status === BridgeTransferStatus.WITHDRAW_UNCONFIRMED && (
               <a
                 href={`${getBlockExplorerUrl(withdrawal.highNetworkChainId, selectedNetworkType)}/tx/${withdrawal.highNetworkHash}`}
                 target={'_blank'}
@@ -88,7 +86,7 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
               </a>
             )}
           </div>
-          {transferStatus && (transferStatus?.status === ChildToParentMessageStatus.EXECUTED || transferStatus?.status === BridgeTransferStatus.CCTP_REDEEMED) && (
+          {transferStatus && (transferStatus?.status === BridgeTransferStatus.WITHDRAW_EXECUTED || transferStatus?.status === BridgeTransferStatus.CCTP_REDEEMED) && (
             <>
               <IconWithdrawalNodeCompletedMobile className={styles.nodeCompleted} />
               <div className={styles.dataRowCompleted}>
@@ -131,15 +129,15 @@ const WithdrawalMobile: React.FC<WithdrawalMobileProps> = ({
       )}
       <div className={styles.dataRow}>
         <div className={styles.dataText}>Status</div>
-        {transferStatus && (transferStatus?.status === ChildToParentMessageStatus.CONFIRMED || transferStatus?.status === BridgeTransferStatus.CCTP_COMPLETE) && (
+        {transferStatus && (transferStatus?.status === BridgeTransferStatus.WITHDRAW_CONFIRMED || transferStatus?.status === BridgeTransferStatus.CCTP_COMPLETE) && (
           <button className={parentStyles.claimButton} onClick={() => handleClaim()}>
             {claim.status === 'pending' && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}
           </button>
         )}
-        {transferStatus && (transferStatus?.status === ChildToParentMessageStatus.EXECUTED || transferStatus?.status === BridgeTransferStatus.CCTP_REDEEMED) && (
+        {transferStatus && (transferStatus?.status === BridgeTransferStatus.WITHDRAW_EXECUTED || transferStatus?.status === BridgeTransferStatus.CCTP_REDEEMED) && (
           <div className={styles.dataTextBold}>{timeAgo(status?.data?.lowNetworkTimeStamp)}</div>
         )}
-        {transferStatus && transferStatus?.status === ChildToParentMessageStatus.UNCONFIRMED && (
+        {transferStatus && transferStatus?.status === BridgeTransferStatus.WITHDRAW_UNCONFIRMED && (
           <div className={styles.dataTextBold}>{ETA(status?.data?.timestamp, withdrawal.challengePeriod)}</div>
         )}
       </div>

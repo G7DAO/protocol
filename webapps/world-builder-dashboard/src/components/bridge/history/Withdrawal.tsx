@@ -5,12 +5,10 @@ import IconArrowNarrowUp from '@/assets/IconArrowNarrowUp'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import IconWithdrawalNodeCompleted from '@/assets/IconWithdrawalNodeCompleted'
 import WithdrawalMobile from '@/components/bridge/history/WithdrawalMobile'
-import { NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
+import { NetworkInterface, useBlockchainContext, TransactionRecord } from '@/contexts/BlockchainContext'
 import { useBridgeTransfer } from '@/hooks/useBridgeTransfer'
-import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
 import { ETA, timeAgo } from '@/utils/timeFormat'
 import { getAmount, getBlockExplorerUrl, getTokenSymbol } from '@/utils/web3utils'
-import { ChildToParentMessageStatus } from '@arbitrum/sdk'
 import { useMediaQuery } from '@mantine/hooks'
 import { BridgeTransferStatus } from 'game7-bridge-sdk'
 import IconChevronDown from '@/assets/IconChevronDown'
@@ -35,10 +33,10 @@ export const getStatus = (
     highNetworkHash
   } = withdrawal
   const status = completionTimestamp
-    ? ChildToParentMessageStatus.EXECUTED || BridgeTransferStatus.CCTP_REDEEMED
+    ? BridgeTransferStatus.WITHDRAW_EXECUTED || BridgeTransferStatus.CCTP_REDEEMED
     : claimableTimestamp
-      ? ChildToParentMessageStatus.CONFIRMED
-      : ChildToParentMessageStatus.UNCONFIRMED
+      ? BridgeTransferStatus.WITHDRAW_CONFIRMED
+      : BridgeTransferStatus.WITHDRAW_UNCONFIRMED
   const lowNetwork = lowNetworks.find((n) => n.chainId === lowNetworkChainId)
   const highNetwork = highNetworks.find((n) => n.chainId === highNetworkChainId)
   if (lowNetwork && highNetwork) {
@@ -303,7 +301,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                       </div>
                       <div className={styles.gridItem}>{status?.data?.from ?? ''}</div>
                       <div className={styles.gridItem}>{status?.data?.to ?? ''}</div>
-                      {transferStatus && (transferStatus?.status === ChildToParentMessageStatus.CONFIRMED || transferStatus?.status === BridgeTransferStatus.CCTP_COMPLETE) && (
+                      {transferStatus && (transferStatus?.status === BridgeTransferStatus.WITHDRAW_CONFIRMED || transferStatus?.status === BridgeTransferStatus.CCTP_COMPLETE) && (
                         <>
                           <div className={styles.gridItem}>
                             <a
@@ -330,7 +328,7 @@ const Withdrawal: React.FC<WithdrawalProps> = ({ withdrawal }) => {
                           <div className={styles.emptyCell} />
                         </>
                       )}
-                      {transferStatus && (transferStatus?.status === ChildToParentMessageStatus.UNCONFIRMED || transferStatus?.status === BridgeTransferStatus.CCTP_PENDING) && (
+                      {transferStatus && (transferStatus?.status === BridgeTransferStatus.WITHDRAW_UNCONFIRMED || transferStatus?.status === BridgeTransferStatus.CCTP_PENDING) && (
                         <>
                           <div className={styles.gridItem}>
                             <a
