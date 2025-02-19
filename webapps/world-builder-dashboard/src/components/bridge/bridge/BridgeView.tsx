@@ -33,6 +33,7 @@ import IconAlertCircle from '@/assets/IconAlertCircle'
 import { Tooltip } from 'summon-ui/mantine'
 import { useNavigate } from 'react-router-dom'
 import { useMoonstreamPricesAPI } from '@/hooks/useCoinGeckoAPI'
+import { getBridgeOperationLabel, getProcessingTimeString } from '@/utils/web3utils'
 
 const BridgeView = ({
   direction,
@@ -109,6 +110,25 @@ const BridgeView = ({
     selectedNetworkType,
     selectedBridgeToken
   })
+
+  const getBridgeTip = () => {
+    if (direction === 'DEPOSIT') {
+      if (selectedLowNetwork.chainId === 42161 || selectedLowNetwork.chainId === 421614) {
+        return `You need some ${selectedNetworkType === 'Testnet' ? 'TG7T' : 'G7'} tokens on Arbitrum for gas fees to deposit on ${selectedNetworkType === 'Testnet' ? 'G7 Sepolia' : 'the G7 Network'}`
+      }
+      return `Claim transaction may be required on ${selectedHighNetwork.displayName}`
+    }
+
+    if (selectedHighNetwork.chainId === 42161 || selectedHighNetwork.chainId === 421614) {
+      if (selectedBridgeToken.symbol === 'USDC') {
+        return `Withdrawal will be available to claim on ${selectedLowNetwork.displayName} in ~15 mins`
+      }
+      return `Withdrawal will be available to claim on ${selectedLowNetwork.displayName} in ${selectedNetworkType === 'Mainnet' ? '7 days' : '60 mins'}`
+    }
+
+    return `Withdrawal will be available to claim on ${selectedLowNetwork.displayName} in ~60 mins`
+  }
+
 
   useEffect(() => {
     if (!selectedBridgeToken && !connectedAccount && !selectedHighNetwork && !selectedLowNetwork)
@@ -289,15 +309,7 @@ const BridgeView = ({
           address={connectedAccount}
           nativeBalance={Number(nativeTokenInformation?.tokenBalance)}
           transferTime={
-            selectedNetworkType === 'Mainnet' ?
-              direction === 'DEPOSIT'
-                ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
-                : `~${selectedBridgeToken.symbol === 'USDC' && selectedLowNetwork.chainId === 1 ? '15 min' : '7 days'}` :
-              direction === 'DEPOSIT'
-                ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
-                : `~${selectedBridgeToken.symbol === 'USDC' && selectedLowNetwork.chainId === 1 ? '15 min' : '60 min'}`
-
-          }
+            getProcessingTimeString(direction, selectedNetworkType ?? '', selectedBridgeToken.symbol, selectedLowNetwork.chainId, selectedLowNetwork.retryableCreationTimeout)}
           fee={Number(estimatedFee.data?.parentFee ?? 0)}
           childFee={Number(estimatedFee.data?.childFee ?? 0)}
           isEstimatingFee={estimatedFee.isFetching}
@@ -336,16 +348,7 @@ const BridgeView = ({
           (
             <div className={styles.manualGasMessageContainer}>
               <div className={styles.manualGasMessageText}>
-                {direction === 'DEPOSIT' ?
-                  (selectedLowNetwork.chainId === 42161
-                    ? 'You need some G7 tokens on Arbitrum for gas fees to deposit on the G7 Network'
-                    : `Claim transaction may be required on ${selectedHighNetwork.displayName}`
-                  ) :
-                  (selectedHighNetwork.chainId === 42161 && selectedBridgeToken.symbol === 'USDC'
-                    ? `Withdrawal will be available to claim on ${selectedLowNetwork.displayName} in ~15 mins`
-                    : `Withdrawal will be available to claim on ${selectedLowNetwork.displayName} in ~7 days`
-                  )
-                }
+                {getBridgeTip()}
               </div>
               <Tooltip
                 multiline
@@ -354,9 +357,7 @@ const BridgeView = ({
                 withArrow
                 arrowOffset={14}
                 events={{ hover: true, focus: true, touch: true }}
-                label={direction === 'DEPOSIT' ? `Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.` :
-                  selectedBridgeToken.symbol === 'USDC' ? `Withdrawals available in 15 minutes under the CCTP protocol. Return to claim tokens via the Activity tab once available.` : `Withdrawals available in 7 days due to the challenge period for security. Return to claim tokens via the Activity tab once available or use Relay for immediate withdrawal.`
-                }
+                label={getBridgeOperationLabel(direction, selectedNetworkType ?? '', selectedBridgeToken.symbol, selectedHighNetwork.chainId)}
               >
                 <IconAlertCircle stroke='#FFFAEB' height={16} width={16} />
               </Tooltip>
