@@ -346,6 +346,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   const disconnectWallet = async () => {
     if (!wallet) return
     disconnect(wallet)
+    setWallet(undefined)
     setConnectedAccount(undefined)
     // if (window.ethereum) {
     //   const provider = new ethers.providers.Web3Provider(window.ethereum)

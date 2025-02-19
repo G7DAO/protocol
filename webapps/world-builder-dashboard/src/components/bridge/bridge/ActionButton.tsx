@@ -150,8 +150,14 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       return
     }
     if (!connectedAccount && !wallet) {
+      try {
       const wallet = await connect({ client, wallets, size: 'compact' })
       setConnectedAccount(wallet.getAccount()?.address ?? ''); setWallet(wallet)
+      } 
+      catch (error) {
+        console.log(error)
+        return
+      }
       return
     }
 
