@@ -1,12 +1,15 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { getNetworks } from '../../constants'
+import { getNetworks, getNetworksThirdWeb } from '../../constants'
 import { BridgeTransfer, BridgeTransferStatus, getBridgeTransfer } from 'game7-bridge-sdk'
 import { useBlockchainContext, TransactionRecord } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 import { fetchTransactionTimestamp, getCachedTransactions, saveCachedTransactions } from '@/utils/web3utils'
 import { useRequestQueue } from './useQueueRequests'
+import { ethers5Adapter } from 'thirdweb/adapters/ethers5'
+import { useThirdWeb } from './useThirdWeb'
+import { useActiveAccount, useActiveWalletChain } from 'thirdweb/react'
 
 interface UseTransferDataProps {
   txRecord: TransactionRecord
@@ -14,7 +17,10 @@ interface UseTransferDataProps {
 
 export const useBridgeTransfer = () => {
   const { queueRequest } = useRequestQueue()
-  const { connectedAccount, selectedNetworkType, getProvider } = useBlockchainContext()
+  const { connectedAccount, selectedNetworkType } = useBlockchainContext()
+  const { client } = useThirdWeb()
+  const account = useActiveAccount()
+  const chain = useActiveWalletChain()
   const LOCK_TIMEOUT = 5000; // 5 seconds timeout for lock
 
   // Helper functions to manage locks
@@ -213,12 +219,12 @@ export const useBridgeTransfer = () => {
       if (!txRecord) {
         throw new Error('transaction hash is undefined')
       }
-      const targetChain = getNetworks(selectedNetworkType)?.find((network) => network.chainId === destinationChainId);
+      const targetChain = getNetworksThirdWeb(selectedNetworkType)?.find((network) => network.id === destinationChainId);
       if (!targetChain) {
         throw new Error('Target chain is undefined');
       }
-      const provider = await getProvider(targetChain);
-      const signer = provider.getSigner()
+      if (!account || !chain) throw new Error('Account or chain not available')
+      const signer = await ethers5Adapter.signer.toEthers({ client, chain: targetChain, account })
 
       // Bridge Transfer execute
       const _bridgeTransfer: BridgeTransfer = await getBridgeTransfer({

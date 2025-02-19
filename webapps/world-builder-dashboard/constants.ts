@@ -1,5 +1,9 @@
 import { TokenAddressMap } from 'game7-bridge-sdk'
 import { NetworkInterface, HighNetworkInterface, NetworkType } from '@/contexts/BlockchainContext'
+import { defineChain } from 'thirdweb'
+
+
+
 
 export const L1_NETWORK: NetworkInterface = {
   chainId: 11155111,
@@ -104,12 +108,48 @@ export const L3_MAIN_NETWORK: NetworkInterface = {
   challengePeriod: 60 * 60 * 24 * 7
 }
 
+export const SEPOLIA = defineChain({
+  id: 11155111,
+  rpc: `${import.meta.env.VITE_NB_JSON_RPC_URI}/sepolia/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`
+})
+
+export const ARB_SEPOLIA = defineChain({
+  id: 421614,
+  rpc: `${import.meta.env.VITE_NB_JSON_RPC_URI}/arbitrum-sepolia/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`
+})
+
+export const G7_SEPOLIA = defineChain({
+  id: 13746,
+  rpc: `https://testnet-rpc.game7.io`
+})
+
+export const MAINNET = defineChain({
+  id: 1,
+  rpc: `${import.meta.env.VITE_NB_JSON_RPC_URI}/ethereum/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`
+})
+
+export const ARBITRUM = defineChain({
+  id: 42161,
+  rpc: `${import.meta.env.VITE_NB_JSON_RPC_URI}/arbitrum-one/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`
+})
+
+export const G7 = defineChain({
+  id: 2187,
+  rpc: `https://mainnet-rpc.game7.io`
+})
+
 export const ALL_TESTNET_NETWORKS = [L1_NETWORK, L2_NETWORK, L3_NETWORK]
 export const ALL_MAINNET_NETWORKS = [L1_MAIN_NETWORK, L2_MAIN_NETWORK, L3_MAIN_NETWORK]
 export const ALL_HIGH_TESTNET_NETWORKS = [L2_NETWORK, L3_NETWORK]
 export const ALL_LOW_TESTNET_NETWORKS = [L1_NETWORK, L2_NETWORK]
 export const ALL_HIGH_MAINNET_NETWORKS = [L2_MAIN_NETWORK, L3_MAIN_NETWORK]
 export const ALL_LOW_MAINNET_NETWORKS = [L1_MAIN_NETWORK, L2_MAIN_NETWORK]
+export const ALL_THIRDWEB_TESTNET_NETWORKS = [SEPOLIA, ARB_SEPOLIA, G7_SEPOLIA]
+export const ALL_THIRDWEB_MAINNET_NETWORKS = [MAINNET, ARBITRUM, G7]
+export const ALL_THIRDWEB_HIGH_TESTNET_NETWORKS = [ARB_SEPOLIA, G7_SEPOLIA]
+export const ALL_THIRDWEB_LOW_TESTNET_NETWORKS = [SEPOLIA, ARB_SEPOLIA]
+export const ALL_THIRDWEB_HIGH_MAINNET_NETWORKS = [ARBITRUM, G7]
+export const ALL_THIRDWEB_LOW_MAINNET_NETWORKS = [MAINNET, ARBITRUM]
 
 export const L3_NATIVE_TOKEN_SYMBOL = 'TG7T'
 export const DEFAULT_LOW_NETWORK = L2_NETWORK
@@ -189,3 +229,32 @@ export const getLowNetworks = (selectedNetworkType: NetworkType) => {
       return ALL_LOW_TESTNET_NETWORKS
   }
 }
+
+export const getNetworksThirdWeb = (selectedNetworkType: NetworkType) => {
+  switch (selectedNetworkType) {
+    case 'Mainnet':
+      return ALL_THIRDWEB_MAINNET_NETWORKS
+    case 'Testnet':
+      return ALL_THIRDWEB_TESTNET_NETWORKS
+  }
+}
+
+export const getThirdWebHighNetworks = (selectedNetworkType: NetworkType) => {
+  switch (selectedNetworkType) {
+    case 'Mainnet':
+      return ALL_THIRDWEB_HIGH_MAINNET_NETWORKS
+    case 'Testnet':
+      return ALL_THIRDWEB_HIGH_TESTNET_NETWORKS
+  }
+}
+
+export const getThirdWebLowNetworks = (selectedNetworkType: NetworkType) => {
+  switch (selectedNetworkType) {
+    case 'Mainnet':
+      return ALL_THIRDWEB_LOW_MAINNET_NETWORKS
+    case 'Testnet':
+      return ALL_THIRDWEB_LOW_TESTNET_NETWORKS
+  }
+}
+
+

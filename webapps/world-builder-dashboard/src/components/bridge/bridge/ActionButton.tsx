@@ -2,10 +2,11 @@
 import React, { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { useConnectModal } from 'thirdweb/react'
+import { useConnectModal, useActiveAccount, useActiveWalletChain } from 'thirdweb/react'
+import { ethers5Adapter } from "thirdweb/adapters/ethers5";
 
 // Constants
-import { getNetworks } from '../../../../constants'
+import { getNetworksThirdWeb } from '../../../../constants'
 
 // Styles
 import styles from './ActionButton.module.css'
@@ -59,7 +60,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     isConnecting,
     selectedHighNetwork,
     selectedLowNetwork,
-    getProvider,
     selectedBridgeToken,
     selectedNetworkType,
     wallet,
@@ -70,11 +70,13 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   const { refetchNewNotifications } = useBridgeNotificationsContext()
   const { useAllowances } = useBridger()
   const navigate = useNavigate()
-  const networks = getNetworks(selectedNetworkType)
+  const networks = getNetworksThirdWeb(selectedNetworkType)
   const [showApproval, setShowApproval] = useState(false)
   const [startingTokenIndex, setStartingTokenIndex] = useState(0)
   const { connect } = useConnectModal()
   const { client, wallets } = useThirdWeb()
+  const account = useActiveAccount()
+  const chain = useActiveWalletChain()
 
   const allowances = useAllowances({
     bridger,
@@ -134,9 +136,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       return 'Estimating fee...'
     }
 
-    // if (!allowancesVerified)
-    //   return 'Approve & Submit'
-
     return 'Submit'
   }
 
@@ -151,9 +150,9 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     }
     if (!connectedAccount && !wallet) {
       try {
-      const wallet = await connect({ client, wallets, size: 'compact' })
-      setConnectedAccount(wallet.getAccount()?.address ?? ''); setWallet(wallet)
-      } 
+        const wallet = await connect({ client, wallets, size: 'compact' })
+        setConnectedAccount(wallet.getAccount()?.address ?? ''); setWallet(wallet)
+      }
       catch (error) {
         console.log(error)
         return
@@ -175,15 +174,16 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     }: {
       amount: string
     }) => {
-      const network = networks?.find((n) => n.chainId === bridger?.originNetwork.chainId)
+      const network = networks?.find((n) => n.id === bridger?.originNetwork.chainId)
 
       if (!network) {
         console.error('Network not found!')
         return
       }
 
-      const provider = await getProvider(network)
-      const signer = provider.getSigner()
+      if (!account || !chain) return
+      const signer = await ethers5Adapter.signer.toEthers({ client, chain: network, account })
+
       const destinationChain = direction === 'DEPOSIT' ? selectedHighNetwork : selectedLowNetwork
       const destinationRPC = destinationChain.rpcs[0]
       const destinationProvider = new ethers.providers.JsonRpcProvider(destinationRPC) as ethers.providers.Provider
