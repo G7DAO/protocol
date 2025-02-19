@@ -232,8 +232,7 @@ export class Bridger {
   ): Promise<GasAndFeeEstimation> {
     const originToken = this.token[this.originNetwork.chainId];
     const destinationToken = this.token[this.destinationNetwork.chainId];
-    const DEFAULT_ADDRESS = '0x5F9261B04033C294B22397A1e3F057E1a28D5fC8';
-    const from = _from ?? DEFAULT_ADDRESS;
+    const from = _from ?? '';
     if (typeof provider === 'string') {
       provider = new ethers.providers.JsonRpcProvider(provider);
     }
