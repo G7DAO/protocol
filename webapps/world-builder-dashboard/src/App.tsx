@@ -6,7 +6,7 @@ import { FIVE_MINUTES } from '../constants'
 import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import {ThemeProvider, AssetsProvider, Tenant, UITheme} from 'summon-ui'
+import { ThemeProvider, AssetsProvider, Tenant, UITheme } from 'summon-ui'
 import { IntlProvider } from 'summon-ui/intl'
 import { Notifications } from 'summon-ui/mantine'
 import { BlockchainProvider } from '@/contexts/BlockchainContext'
@@ -15,9 +15,10 @@ import { UISettingsProvider } from '@/contexts/UISettingsContext'
 import { TransactionProvider } from './contexts/TransactionsContext'
 import en from '@/lang/en.json'
 import { AuthProvider } from '@/providers/AuthProvider'
+import { ThirdwebProvider } from "thirdweb/react";
 import router from '@/router'
 
-// relay stuff
+// Relay stuff
 import { RelayKitProvider } from '@reservoir0x/relay-kit-ui'
 import { WagmiProvider } from 'wagmi'
 import { MAINNET_RELAY_API } from '@reservoir0x/relay-sdk'
@@ -54,7 +55,7 @@ const queryClient = new QueryClient({
 const enMessages = { en }
 
 //@TODO we need to set this dynamically
-const TENANT_CONFIG: {name: string, lang: string, uiTheme: UITheme} = {
+const TENANT_CONFIG: { name: string, lang: string, uiTheme: UITheme } = {
   name: 'Game7',
   lang: 'en',
   uiTheme: 'light'
@@ -63,48 +64,50 @@ const { name, lang, uiTheme } = TENANT_CONFIG
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <BlockchainProvider>
-        <UISettingsProvider>
-          <AssetsProvider tenant={name as Tenant}>
-            <IntlProvider
-              intlConf={{
-                currentLang: lang as LangKey,
-                messagesConf: {
-                  ...enMessages
-                }
-              }}
-            >
-              <ThemeProvider uiTheme={uiTheme}>
-                <BridgeNotificationsProvider>
-                  <Notifications position='top-right' zIndex={1000} styles={NOTIFICATIONS_STYLES} />
-                  <TransactionProvider>
-                    <AuthProvider>
-                      <RelayKitProvider
-                        theme={theme}
-                        options={{
-                          appName: 'DevHub Relay Bridge',
-                          appFees: [
-                            {
-                              recipient: '0xE2f669A23f83Aaa69Cc8C918bF4397E4eddA4B01',
-                              fee: '175' // 1.75%
-                            }
-                          ],
-                          chains,
-                          baseApiUrl: MAINNET_RELAY_API
-                        }}>
-                        <WagmiProvider config={wagmiConfig}>
-                          <RouterProvider router={router} />
-                        </WagmiProvider>
-                      </RelayKitProvider>
-                    </AuthProvider>
-                  </TransactionProvider>
-                </BridgeNotificationsProvider>
-              </ThemeProvider>
-            </IntlProvider>
-          </AssetsProvider>
-        </UISettingsProvider>
-      </BlockchainProvider>
-    </QueryClientProvider >
+    <ThirdwebProvider>
+      <QueryClientProvider client={queryClient}>
+        <BlockchainProvider>
+          <UISettingsProvider>
+            <AssetsProvider tenant={name as Tenant}>
+              <IntlProvider
+                intlConf={{
+                  currentLang: lang as LangKey,
+                  messagesConf: {
+                    ...enMessages
+                  }
+                }}
+              >
+                <ThemeProvider uiTheme={uiTheme}>
+                  <BridgeNotificationsProvider>
+                    <Notifications position='top-right' zIndex={1000} styles={NOTIFICATIONS_STYLES} />
+                    <TransactionProvider>
+                      <AuthProvider>
+                        <RelayKitProvider
+                          theme={theme}
+                          options={{
+                            appName: 'DevHub Relay Bridge',
+                            appFees: [
+                              {
+                                recipient: '0xE2f669A23f83Aaa69Cc8C918bF4397E4eddA4B01',
+                                fee: '175' // 1.75%
+                              }
+                            ],
+                            chains,
+                            baseApiUrl: MAINNET_RELAY_API
+                          }}>
+                          <WagmiProvider config={wagmiConfig}>
+                            <RouterProvider router={router} />
+                          </WagmiProvider>
+                        </RelayKitProvider>
+                      </AuthProvider>
+                    </TransactionProvider>
+                  </BridgeNotificationsProvider>
+                </ThemeProvider>
+              </IntlProvider>
+            </AssetsProvider>
+          </UISettingsProvider>
+        </BlockchainProvider>
+      </QueryClientProvider >
+    </ThirdwebProvider>
   )
 }

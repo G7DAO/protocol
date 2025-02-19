@@ -2,12 +2,16 @@
 import React, { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
+import { useConnectModal } from 'thirdweb/react'
+
 // Constants
 import { getNetworks } from '../../../../constants'
+
 // Styles
 import styles from './ActionButton.module.css'
 import { ethers } from 'ethers'
 import { Bridger, BridgeTransferStatus } from 'game7-bridge-sdk'
+
 // Absolute Imports
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
@@ -15,6 +19,7 @@ import { getTokensForNetwork, Token } from '@/utils/tokens'
 import { returnSymbol, ZERO_ADDRESS } from '@/utils/web3utils'
 import { MultiTokenApproval } from './MultiTokenApproval'
 import { useBridger } from '@/hooks/useBridger'
+import { useThirdWeb } from '@/hooks/useThirdWeb'
 
 interface ActionButtonProps {
   direction: 'DEPOSIT' | 'WITHDRAW'
@@ -54,10 +59,12 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     isConnecting,
     selectedHighNetwork,
     selectedLowNetwork,
-    connectWallet,
     getProvider,
     selectedBridgeToken,
-    selectedNetworkType
+    selectedNetworkType,
+    wallet,
+    setConnectedAccount,
+    setWallet
   } = useBlockchainContext()
 
   const { refetchNewNotifications } = useBridgeNotificationsContext()
@@ -66,6 +73,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   const networks = getNetworks(selectedNetworkType)
   const [showApproval, setShowApproval] = useState(false)
   const [startingTokenIndex, setStartingTokenIndex] = useState(0)
+  const { connect } = useConnectModal()
+  const { client, wallets } = useThirdWeb()
 
   const allowances = useAllowances({
     bridger,
@@ -111,7 +120,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     if (transfer.isPending) {
       return 'Submitting...'
     }
-    if (!connectedAccount) {
+
+    if (!connectedAccount && !wallet) {
       return 'Connect wallet'
     }
 
@@ -123,7 +133,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     if (isFetchingGasFee) {
       return 'Estimating fee...'
     }
-
 
     // if (!allowancesVerified)
     //   return 'Approve & Submit'
@@ -140,8 +149,9 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       setErrorMessage("Wallet isn't installed")
       return
     }
-    if (!connectedAccount) {
-      await connectWallet()
+    if (!connectedAccount && !wallet) {
+      const wallet = await connect({ client, wallets, size: 'compact' })
+      setConnectedAccount(wallet.getAccount()?.address ?? ''); setWallet(wallet)
       return
     }
 

@@ -27,6 +27,7 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.11.2",
     "summon-ui": "^6.3.0",
+    "thirdweb": "^5.88.7",
     "viem": "^2.23.2",
     "wagmi": "^2.14.11"
   },
