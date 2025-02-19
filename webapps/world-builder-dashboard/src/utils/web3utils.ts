@@ -4,6 +4,7 @@ import { NetworkInterface, NetworkType } from '@/contexts/BlockchainContext'
 import { providers } from 'ethers'
 import { TransactionRecord } from './bridge/depositERC20ArbitrumSDK'
 import { getTokensForNetwork } from './tokens'
+import { DepositDirection } from '@/pages/BridgePage/BridgePage'
 
 export const convertToBigNumber = (numberString: string, precision = 18) => {
   const [integerPart, decimalPart] = numberString.split('.')
@@ -166,4 +167,71 @@ export const formatCurrency = (value: number) => {
     maximumFractionDigits: 2
   })
   return formatter.format(value)
+}
+
+export const getChallengePeriod = (
+  networkType: string,
+  tokenSymbol: string,
+  chainId: number
+): number => {
+  if (networkType === 'Testnet') {
+    return 60 * 60
+  }
+
+  if (chainId === 42161) {
+    if (tokenSymbol === 'USDC') {
+      return 60 * 15
+    }
+    return 60 * 60 * 24 * 7
+  }
+
+  return 60 * 60
+}
+
+export const getProcessingTimeString = (
+  direction: DepositDirection,
+  networkType: string,
+  tokenSymbol: string,
+  lowNetworkChainId: number,
+  retryableCreationTimeout?: number
+): string => {
+  if (networkType === 'Mainnet') {
+    if (direction === 'DEPOSIT') {
+      return `~${Math.floor((retryableCreationTimeout ?? 0) / 60)} min`
+    } else {
+      if (tokenSymbol === 'USDC' && lowNetworkChainId === 1) {
+        return '~15 min'
+      } else if (lowNetworkChainId === 1) {
+        return '~7 days'
+      } else {
+        return '~60 min'
+      }
+    }
+  } else {
+    if (direction === 'DEPOSIT') {
+      return `~${Math.floor((retryableCreationTimeout ?? 0) / 60)} min`
+    } else {
+      return `~${tokenSymbol === 'USDC' && lowNetworkChainId === 1 ? '15 min' : '60 min'}`
+    }
+  }
+}
+
+
+export const getBridgeOperationLabel = (
+  direction: DepositDirection,
+  networkType: string,
+  tokenSymbol: string,
+  highNetworkChainId: number
+): string => {
+  if (direction === 'DEPOSIT') {
+    return 'Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.'
+  }
+
+  if (tokenSymbol === 'USDC' && (highNetworkChainId === 42161 || highNetworkChainId === 421614)) {
+    return 'Withdrawals available in 15 minutes under the CCTP protocol. Return to claim tokens via the Activity tab once available.'
+  }
+
+  const withdrawalTime = highNetworkChainId === 42161 ? '7 days' : '60 minutes'
+  const relayText = networkType === 'Mainnet' ? ' or use Relay for immediate withdrawal.' : '.'
+  return `Withdrawals available in ${withdrawalTime} due to the challenge period for security. Return to claim tokens via the Activity tab once available${relayText}`
 }

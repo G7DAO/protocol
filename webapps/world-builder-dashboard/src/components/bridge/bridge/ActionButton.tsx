@@ -12,7 +12,7 @@ import { Bridger, BridgeTransferStatus } from 'game7-bridge-sdk'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 import { getTokensForNetwork, Token } from '@/utils/tokens'
-import { returnSymbol, ZERO_ADDRESS } from '@/utils/web3utils'
+import { getChallengePeriod, returnSymbol, ZERO_ADDRESS } from '@/utils/web3utils'
 import { MultiTokenApproval } from './MultiTokenApproval'
 import { useBridger } from '@/hooks/useBridger'
 
@@ -209,9 +209,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           highNetworkChainId: selectedHighNetwork.chainId,
           highNetworkHash: tx?.hash,
           highNetworkTimestamp: Date.now() / 1000,
-          challengePeriod: selectedNetworkType === 'Testnet' ? 60 * 60 :
-            selectedBridgeToken.symbol === 'USDC' && (selectedHighNetwork.chainId === 42161) ?
-              60 * 15 : selectedHighNetwork.chainId === 42161 ? 60 * 60 * 24 * 7 : 60 * 60,
+          challengePeriod: getChallengePeriod(selectedNetworkType ?? '', selectedBridgeToken.symbol, selectedBridgeToken.chainId),
           symbol: returnSymbol(direction, selectedHighNetwork, selectedLowNetwork, symbol ?? ''),
           status:
             isCCTP

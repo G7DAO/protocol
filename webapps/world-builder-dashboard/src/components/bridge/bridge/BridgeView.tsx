@@ -33,6 +33,7 @@ import IconAlertCircle from '@/assets/IconAlertCircle'
 import { Tooltip } from 'summon-ui/mantine'
 import { useNavigate } from 'react-router-dom'
 import { useMoonstreamPricesAPI } from '@/hooks/useCoinGeckoAPI'
+import { getBridgeOperationLabel, getProcessingTimeString } from '@/utils/web3utils'
 
 const BridgeView = ({
   direction,
@@ -308,17 +309,7 @@ const BridgeView = ({
           address={connectedAccount}
           nativeBalance={Number(nativeTokenInformation?.tokenBalance)}
           transferTime={
-            selectedNetworkType === 'Mainnet' ?
-              direction === 'DEPOSIT'
-                ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
-                : `~${selectedBridgeToken.symbol === 'USDC' && selectedLowNetwork.chainId === 1 ? '15 min' :
-                  selectedLowNetwork.chainId === 1 ?
-                    '7 days' : '60 min'}` :
-              direction === 'DEPOSIT'
-                ? `~${Math.floor((selectedLowNetwork.retryableCreationTimeout ?? 0) / 60)} min`
-                : `~${selectedBridgeToken.symbol === 'USDC' && selectedLowNetwork.chainId === 1 ? '15 min' : '60 min'}`
-
-          }
+            getProcessingTimeString(direction, selectedNetworkType ?? '', selectedBridgeToken.symbol, selectedLowNetwork.chainId, selectedLowNetwork.retryableCreationTimeout)}
           fee={Number(estimatedFee.data?.parentFee ?? 0)}
           childFee={Number(estimatedFee.data?.childFee ?? 0)}
           isEstimatingFee={estimatedFee.isFetching}
@@ -360,17 +351,13 @@ const BridgeView = ({
                 {getBridgeTip()}
               </div>
               <Tooltip
-                multiline 
+                multiline
                 radius={'8px'}
                 arrowSize={8}
                 withArrow
                 arrowOffset={14}
                 events={{ hover: true, focus: true, touch: true }}
-                label={direction === 'DEPOSIT' ?
-                  `Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.` :
-                  selectedBridgeToken.symbol === 'USDC' && (selectedHighNetwork.chainId === 42161 || selectedHighNetwork.chainId === 421614) ?
-                    `Withdrawals available in 15 minutes under the CCTP protocol. Return to claim tokens via the Activity tab once available.`
-                    : `Withdrawals available in ${selectedHighNetwork.chainId === 42161 ? '7 days' : '60 minutes'} due to the challenge period for security. Return to claim tokens via the Activity tab once available${selectedNetworkType === 'Mainnet' ? ' or use Relay for immediate withdrawal.' : '.'}`}
+                label={getBridgeOperationLabel(direction, selectedNetworkType ?? '', selectedBridgeToken.symbol, selectedHighNetwork.chainId)}
               >
                 <IconAlertCircle stroke='#FFFAEB' height={16} width={16} />
               </Tooltip>
