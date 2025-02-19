@@ -118,7 +118,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   const [selectedHighNetwork, _setSelectedHighNetwork] = useState<NetworkInterface>(
     selectedNetworkType === 'Testnet' ? DEFAULT_HIGH_NETWORK : DEFAULT_HIGH_MAINNET_NETWORK
   )
-  const [isMetaMask, setIsMetaMask] = useState(false)
+  const [isMetaMask] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
   const [chainId, setChainId] = useState<number | undefined>(undefined)
   const [connectedAccount, setConnectedAccount] = useState<string>()
@@ -215,59 +215,51 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   }
 
   const handleAccountsChanged = async () => {
-    const ethereum = window.ethereum
-    if (ethereum) {
-      const provider = new ethers.providers.Web3Provider(ethereum)
-      // @ts-ignore
-      setIsMetaMask(window.ethereum?.isMetaMask && !window.ethereum?.overrideIsMetaMask)
-      const accounts = await provider.listAccounts()
-      setAccounts(accounts)
-      if (accounts.length > 0) {
-        setConnectedAccount(accounts[0])
-      } else {
-        setConnectedAccount(undefined)
-      }
-    }
-  }
-
-  const getWeb3Provider = () => {
-    //@ts-ignore
-    if (window.ethereum?.isCoinbaseWallet)
-      return new ethers.providers.Web3Provider(window.ethereum, 'any')
-    if (window.ethereum)
-      return new ethers.providers.Web3Provider(window.ethereum)
+    // const ethereum = window.ethereum
+    // if (ethereum) {
+    //   const provider = new ethers.providers.Web3Provider(ethereum)
+    //   // @ts-ignore
+    //   setIsMetaMask(window.ethereum?.isMetaMask && !window.ethereum?.overrideIsMetaMask)
+    //   const accounts = await provider.listAccounts()
+    //   setAccounts(accounts)
+    //   if (accounts.length > 0) {
+    //     setConnectedAccount(accounts[0])
+    //   } else {
+    //     setConnectedAccount(undefined)
+    //   }
+    // }
   }
 
   const connectWallet = async () => {
-    setIsConnecting(true)
-    const ethereum = window.ethereum
+    // setIsConnecting(true)
+    // const ethereum = window.ethereum
 
-    //@ts-ignore
-    if (window.ethereum?.isCoinbaseWallet) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+    // //@ts-ignore
+    // if (window.ethereum?.isCoinbaseWallet) {
+    //   const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
 
-      try {
-        await window.ethereum.request({ method: "eth_requestAccounts" });
-        const signer = provider.getSigner();
-        const account = await signer.getAddress();
+    //   try {
+    //     await window.ethereum.request({ method: "eth_requestAccounts" });
+    //     const signer = provider.getSigner();
+    //     const account = await signer.getAddress();
 
-        setConnectedAccount(account);
-        setWalletProvider(provider);
-      } catch (error) {
-        console.error("❌ Error connecting to Coinbase Wallet:", error);
-      }
-    }
-    if (ethereum) {
-      try {
-        const provider = getWeb3Provider()
-        setWalletProvider(provider)
-        await ethereum.request({ method: 'eth_requestAccounts' })
-        await handleAccountsChanged()
-      } catch (error) {
-        console.error('Error connecting to wallet:', error)
-      }
-    }
-    setIsConnecting(false)
+    //     setConnectedAccount(account);
+    //     setWalletProvider(provider);
+    //   } catch (error) {
+    //     console.error("❌ Error connecting to Coinbase Wallet:", error);
+    //   }
+    // }
+    // if (ethereum) {
+    //   try {
+    //     const provider = getWeb3Provider()
+    //     setWalletProvider(provider)
+    //     await ethereum.request({ method: 'eth_requestAccounts' })
+    //     await handleAccountsChanged()
+    //   } catch (error) {
+    //     console.error('Error connecting to wallet:', error)
+    //   }
+    // }
+    // setIsConnecting(false)
   }
 
   const getProvider = async (network: NetworkInterface) => {
