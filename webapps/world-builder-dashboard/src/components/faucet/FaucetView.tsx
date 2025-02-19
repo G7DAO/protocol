@@ -11,6 +11,8 @@ import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsCon
 import { useUISettings } from '@/contexts/UISettingsContext'
 import { useFaucetAPI } from '@/hooks/useFaucetAPI'
 import { timeDifferenceInHoursAndMinutes, timeDifferenceInHoursMinutesAndSeconds } from '@/utils/timeFormat'
+import { useConnectModal } from 'thirdweb/react'
+import { useThirdWeb } from '@/hooks/useThirdWeb'
 
 interface FaucetViewProps { }
 const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
@@ -18,7 +20,7 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false)
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkInterface>(L3_NETWORK)
   const { useFaucetInterval, useFaucetTimestamp } = useFaucetAPI()
-  const { connectedAccount, connectWallet, chainId, selectedNetworkType } = useBlockchainContext()
+  const { connectedAccount, wallet, chainId, selectedNetworkType, setConnectedAccount, setWallet } = useBlockchainContext()
   const [animatedInterval, setAnimatedInterval] = useState('')
   const [nextClaimTimestamp, setNextClaimTimestamp] = useState(0)
   const [networkError, setNetworkError] = useState('')
@@ -30,6 +32,9 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
 
   const values: AccountType[] = [`External Address`, `Connected Account`]
   const networks = getNetworks(selectedNetworkType)
+
+  const {connect} = useConnectModal()
+  const {wallets, client} = useThirdWeb() 
 
   useEffect(() => {
     const targetNetwork = networks?.find((n) => n.chainId === faucetTargetChainId)
@@ -58,9 +63,12 @@ const FaucetView: React.FC<FaucetViewProps> = ({ }) => {
   }, [connectedAccount])
 
   const handleConnect = async () => {
-    if (!connectedAccount) connectWallet()
+    if (!connectedAccount && !wallet) {
+      const wallet = await connect({ client, wallets, size: 'compact' })
+      setConnectedAccount(wallet.getAccount()?.address ?? ''); setWallet(wallet)
+      return
+    }
   }
-
   const handleSelectAccountType = (selectedAccountType: AccountType) => {
     if (selectedAccountType === 'External Address') setAddress('')
     else setAddress(connectedAccount)
