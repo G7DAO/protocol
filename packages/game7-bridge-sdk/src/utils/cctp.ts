@@ -78,7 +78,6 @@ export const chainIdToUSDC = (chainId: number): string | null => {
         42161: CommonAddress.ArbitrumOne.USDC, // Arbitrum One
         11155111: CommonAddress.Sepolia.USDC, // Sepolia
         421613: CommonAddress.ArbitrumSepolia.USDC, // Arbitrum Sepolia
-        660279: CommonAddress[660279]?.CU // Xai Mainnet (optional CU as example)
     };
 
     return chainMapping[chainId] || null;
