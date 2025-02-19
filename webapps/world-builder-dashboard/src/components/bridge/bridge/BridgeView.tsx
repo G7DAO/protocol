@@ -348,15 +348,17 @@ const BridgeView = ({
                 }
               </div>
               <Tooltip
-                multiline
+                multiline 
                 radius={'8px'}
                 arrowSize={8}
                 withArrow
                 arrowOffset={14}
                 events={{ hover: true, focus: true, touch: true }}
-                label={direction === 'DEPOSIT' ? `Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.` :
-                  selectedBridgeToken.symbol === 'USDC' ? `Withdrawals available in 15 minutes under the CCTP protocol. Return to claim tokens via the Activity tab once available.` : `Withdrawals available in 7 days due to the challenge period for security. Return to claim tokens via the Activity tab once available or use Relay for immediate withdrawal.`
-                }
+                label={direction === 'DEPOSIT' ?
+                  `Gas requirements may change on the destination chain, requiring manual completion. Check the Activity tab for updates.` :
+                  selectedBridgeToken.symbol === 'USDC' && (selectedHighNetwork.chainId === 42161 || selectedHighNetwork.chainId === 421614) ?
+                    `Withdrawals available in 15 minutes under the CCTP protocol. Return to claim tokens via the Activity tab once available.`
+                    : `Withdrawals available in ${selectedHighNetwork.chainId === 42161 ? '7 days' : '60 minutes'} due to the challenge period for security. Return to claim tokens via the Activity tab once available${selectedNetworkType === 'Mainnet' ? ' or use Relay for immediate withdrawal.' : '.'}`}
               >
                 <IconAlertCircle stroke='#FFFAEB' height={16} width={16} />
               </Tooltip>
