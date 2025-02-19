@@ -1,87 +1,12 @@
-import { useQueries, useQuery, UseQueryResult } from '@tanstack/react-query'
-import { getHighNetworks, getLowNetworks, L2_NETWORK } from '../../constants'
-import { ethers, providers } from 'ethers'
+import { useQuery, UseQueryResult } from '@tanstack/react-query'
+import { ethers } from 'ethers'
 import { Transaction } from 'ethers'
 import { BridgeNotification } from '@/components/notifications/NotificationsButton'
-import { NetworkType, useBlockchainContext } from '@/contexts/BlockchainContext'
-import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
-import {
-  ParentTransactionReceipt,
-  ChildToParentMessageReader,
-  ChildToParentMessageStatus,
-  ChildTransactionReceipt
-} from '@arbitrum/sdk'
-import { ParentContractCallTransactionReceipt } from '@arbitrum/sdk/dist/lib/message/ParentTransaction'
+import { useBlockchainContext } from '@/contexts/BlockchainContext'
+import { TransactionRecord } from '@/contexts/BlockchainContext'
 import { BridgeTransferStatus } from 'game7-bridge-sdk'
 import { getTokenSymbol } from '@/utils/web3utils'
 
-const eventABI = [
-  {
-    anonymous: false,
-    inputs: [
-      { indexed: false, internalType: 'address', name: 'caller', type: 'address' },
-      { indexed: true, internalType: 'address', name: 'destination', type: 'address' },
-      { indexed: true, internalType: 'uint256', name: 'hash', type: 'uint256' },
-      { indexed: true, internalType: 'uint256', name: 'position', type: 'uint256' },
-      { indexed: false, internalType: 'uint256', name: 'arbBlockNum', type: 'uint256' },
-      { indexed: false, internalType: 'uint256', name: 'ethBlockNum', type: 'uint256' },
-      { indexed: false, internalType: 'uint256', name: 'timestamp', type: 'uint256' },
-      { indexed: false, internalType: 'uint256', name: 'callvalue', type: 'uint256' },
-      { indexed: false, internalType: 'bytes', name: 'data', type: 'bytes' }
-    ],
-    name: 'L2ToL1Tx',
-    type: 'event'
-  }
-]
-
-export interface L2ToL1MessageStatusResult {
-  from?: string
-  to?: string
-  value?: string
-  timestamp?: number
-  confirmations?: number
-  status?: ChildToParentMessageStatus
-  l2Receipt?: ChildTransactionReceipt
-}
-
-const fetchL2ToL1MessageStatus = async (withdrawal: TransactionRecord, selectedNetworkType: NetworkType) => {
-  const { lowNetworkChainId, highNetworkChainId, highNetworkHash, amount, highNetworkTimestamp } = withdrawal
-
-  const lowNetwork = getLowNetworks(selectedNetworkType)?.find((n) => n.chainId === lowNetworkChainId)
-  const highNetwork = getHighNetworks(selectedNetworkType)?.find((n) => n.chainId === highNetworkChainId)
-  if (!highNetwork || !lowNetwork || !highNetworkHash) {
-    return undefined
-  }
-
-  const l3Provider = new providers.JsonRpcProvider(highNetwork.rpcs[0])
-  const l2Provider = new providers.JsonRpcProvider(lowNetwork.rpcs[0])
-
-  const receipt = await l3Provider.getTransactionReceipt(highNetworkHash)
-  const l2Receipt = new ChildTransactionReceipt(receipt)
-  const messages: ChildToParentMessageReader[] = (await l2Receipt.getChildToParentMessages(
-    l2Provider
-  )) as ChildToParentMessageReader[]
-  const l2ToL1Msg: ChildToParentMessageReader = messages[0]
-  const status: ChildToParentMessageStatus = await l2ToL1Msg.status(l3Provider)
-
-  return {
-    status,
-    from: highNetwork.displayName,
-    to: lowNetwork.displayName,
-    timestamp: highNetworkTimestamp,
-    lowNetworkTimeStamp: withdrawal.completionTimestamp,
-    amount,
-    l2Receipt
-  }
-}
-
-export const useL2ToL1MessageStatus = (withdrawal: TransactionRecord, selectedNetworkType: NetworkType) => {
-  return useQuery({
-    queryKey: ['withdrawalStatus', withdrawal],
-    queryFn: () => fetchL2ToL1MessageStatus(withdrawal, selectedNetworkType),
-    refetchInterval: 60 * 1000
-  })
-}
 
 export const getDecodedInputs = (tx: Transaction, ABI: any) => {
   //ABI:  ReadonlyArray<Fragment | JsonFragment | string> gives TS building error
@@ -92,122 +17,10 @@ export const getDecodedInputs = (tx: Transaction, ABI: any) => {
   })
 }
 
-const fetchDepositStatus = async (deposit: TransactionRecord, selectedNetworkType: NetworkType) => {
-  const { lowNetworkChainId, highNetworkChainId, lowNetworkHash, lowNetworkTimestamp } = deposit
-  if (lowNetworkChainId === L2_NETWORK.chainId) {
-    return {
-      l2Result: { complete: true },
-      highNetworkTimestamp: lowNetworkTimestamp
-    }
-  }
-
-  const lowNetwork = getLowNetworks(selectedNetworkType)?.find((n) => n.chainId === lowNetworkChainId)
-  const highNetwork = getHighNetworks(selectedNetworkType)?.find((n) => n.chainId === highNetworkChainId)
-
-  if (!lowNetwork || !lowNetworkHash) {
-    return undefined
-  }
-
-  const l1Provider = new providers.JsonRpcProvider(lowNetwork.rpcs[0])
-  let receipt
-  try {
-    receipt = await l1Provider.getTransactionReceipt(lowNetworkHash)
-  } catch (e) {
-    console.log(e)
-  }
-
-  if (!receipt) {
-    return
-  }
-
-  const l1Receipt = new ParentTransactionReceipt(receipt)
-  const l1ContractCallReceipt = new ParentContractCallTransactionReceipt(l1Receipt)
-
-  if (!highNetwork) {
-    return { l1Receipt }
-  }
-
-  const l2Provider = new providers.JsonRpcProvider(highNetwork.rpcs[0])
-  let l2Result
-
-  try {
-    l2Result = await l1ContractCallReceipt.waitForChildTransactionReceipt(l2Provider, l1Receipt.confirmations)
-  } catch (e) {
-    console.error('Error waiting for child transaction receipt: ', { error: e, receipt: l1Receipt })
-  }
-
-  if (!l2Result) {
-    return { l1Receipt }
-  }
-
-  const retryableCreationReceipt = await l2Result.message.getRetryableCreationReceipt()
-  let highNetworkTimestamp
-  if (retryableCreationReceipt) {
-    const block = await l2Provider.getBlock(retryableCreationReceipt.blockNumber)
-    highNetworkTimestamp = block.timestamp
-  }
-
-  return { l1Receipt, l2Result, highNetworkTimestamp }
-}
-
-export const useDepositStatus = (deposit: TransactionRecord, selectedNetworkType: NetworkType) => {
-  return useQuery({
-    queryKey: ['depositStatus', deposit],
-    queryFn: () => fetchDepositStatus(deposit, selectedNetworkType),
-    refetchInterval: 60000 * 3,
-    staleTime: 2 * 60 * 1000
-  })
-}
-
 export interface TransactionType {
   txHash: string
   l2RPC: string
   l3RPC: string
-}
-
-export const useL2ToL1MessagesStatus = (transactions: TransactionType[] | undefined) => {
-  if (!transactions) {
-    return useQuery({ queryKey: ['withdrawalStatusEmpty'], queryFn: () => undefined, })
-  }
-  return useQueries({
-    queries: transactions.map(({ txHash, l2RPC, l3RPC }) => ({
-      queryKey: ['withdrawalStatus', txHash, l2RPC, l3RPC],
-      queryFn: async () => {
-        const l3Provider = new ethers.providers.JsonRpcProvider(l3RPC)
-        const l2Provider = new ethers.providers.JsonRpcProvider(l2RPC)
-        const receipt = await l3Provider.getTransactionReceipt(txHash)
-        const l2Receipt = new ChildTransactionReceipt(receipt)
-        const log = receipt.logs.find((l) => l.data !== '0x')
-        let decodedLog
-
-        if (log) {
-          try {
-            const iface = new ethers.utils.Interface(eventABI)
-            decodedLog = iface.parseLog(log)
-          } catch (e) {
-            console.log(log, e)
-          }
-        }
-
-        const messages: ChildToParentMessageReader[] = (await l2Receipt.getChildToParentMessages(
-          l2Provider
-        )) as ChildToParentMessageReader[]
-        const l2ToL1Msg: ChildToParentMessageReader = messages[0]
-        const status: ChildToParentMessageStatus = await l2ToL1Msg.status(l3Provider)
-
-        return {
-          from: decodedLog?.args?.caller,
-          to: decodedLog?.args?.destination,
-          value: ethers.utils.formatEther(decodedLog?.args?.callvalue ?? '0'),
-          timestamp: decodedLog?.args?.timestamp,
-          confirmations: receipt.confirmations,
-          status,
-          l2Receipt
-        }
-      },
-      refetchInterval: 60000 * 3
-    }))
-  })
 }
 
 const sortTransactions = (a: TransactionRecord, b: TransactionRecord) => {
@@ -369,7 +182,7 @@ export const usePendingTransactions = (connectedAccount: string | undefined): Us
               }
             }
             if (t.type === 'WITHDRAWAL') {
-              if (t.status === ChildToParentMessageStatus.CONFIRMED || t.status === BridgeTransferStatus.CCTP_COMPLETE) {
+              if (t.status === BridgeTransferStatus.WITHDRAW_CONFIRMED || t.status === BridgeTransferStatus.CCTP_COMPLETE) {
                 updatedTransactions.push({ ...t, claimableTimestamp: t.claimableTimestamp })
               } else if (t.status === BridgeTransferStatus.CCTP_PENDING) {
                 updatedTransactions.push({ ...t, highNetworkTimestamp: t.highNetworkTimestamp })
@@ -397,5 +210,3 @@ export const usePendingTransactions = (connectedAccount: string | undefined): Us
     }
   )
 }
-
-export default useL2ToL1MessageStatus

@@ -1,6 +1,6 @@
 import { L1_NETWORK, L2_NETWORK } from '../../../constants'
 import { ethers } from 'ethers'
-import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
+import { TransactionRecord } from '@/contexts/BlockchainContext'
 import { L2GatewayRouterABI } from '@/web3/ABI/l2GatewayRouter_abi'
 
 const L2GatewayRouterAddress = '0x9fDD1C4E4AA24EEc1d913FABea925594a20d43C7'

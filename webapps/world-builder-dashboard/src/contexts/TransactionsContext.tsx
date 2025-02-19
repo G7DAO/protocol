@@ -1,7 +1,6 @@
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react'
 import { useTransactions } from '@/hooks/useTransactions' // Assuming this is the hook for fetching transactions
-import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
-import { useBlockchainContext } from '@/contexts/BlockchainContext'
+import { useBlockchainContext, TransactionRecord } from '@/contexts/BlockchainContext'
 
 interface TransactionsContextType {
   transactions: TransactionRecord[]

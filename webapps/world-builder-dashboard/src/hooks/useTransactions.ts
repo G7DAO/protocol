@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useMessages } from '@/hooks/useL2ToL1MessageStatus'
 import { useBridgeAPI } from '@/hooks/useBridgeAPI'
-import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
+import { TransactionRecord } from '@/contexts/BlockchainContext'
 import { isUSDC } from '@/utils/web3utils'
 import { ethers } from 'ethers'
 

@@ -5,8 +5,7 @@ import styles from './WithdrawTransactions.module.css'
 // Absolute Imports
 import Deposit from '@/components/bridge/history/Deposit'
 import Withdrawal from '@/components/bridge/history/Withdrawal'
-import { useBlockchainContext } from '@/contexts/BlockchainContext'
-import { TransactionRecord } from '@/utils/bridge/depositERC20ArbitrumSDK'
+import { useBlockchainContext, TransactionRecord } from '@/contexts/BlockchainContext'
 import SpyMode from "@/components/bridge/history/SpyMode";
 import { useTransactionContext } from '@/contexts/TransactionsContext'
 

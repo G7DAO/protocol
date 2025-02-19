@@ -14,6 +14,7 @@ import {
 } from '../../constants'
 import { ethers } from 'ethers'
 import { getTokensForNetwork, Token } from '@/utils/tokens'
+import { BridgeTransferInfo } from 'game7-bridge-sdk'
 
 interface BlockchainContextType {
   walletProvider?: ethers.providers.Web3Provider
@@ -38,6 +39,34 @@ interface BlockchainContextType {
   isConnecting: boolean
   selectedNetworkType: NetworkType
   setSelectedNetworkType: (networkType: NetworkType) => void
+}
+
+export interface TransactionRecord {
+  type: 'DEPOSIT' | 'WITHDRAWAL' | 'CLAIM'
+  amount: string
+  lowNetworkChainId?: number
+  lowNetworkHash?: string
+  lowNetworkTimestamp?: number
+  lowNetworkBlockNumber?: number
+  highNetworkChainId?: number
+  highNetworkHash?: string
+  highNetworkBlockNumber?: number
+  highNetworkTimestamp?: number
+  complete?: boolean
+  retryableCreationTimeout?: number //seconds
+  challengePeriod?: number //seconds
+  completionTimestamp?: number
+  claimableTimestamp?: number
+  newTransaction?: boolean
+  isFailed?: boolean
+  symbol?: string
+  status?: number
+  ETA?: number
+  tokenAddress?: string
+  destinationTokenAddress?: string
+  transactionInputs?: BridgeTransferInfo
+  isCCTP?: boolean
+  address?: string
 }
 
 export interface NetworkInterface {
