@@ -471,29 +471,32 @@ export class Bridger {
   }
 
   /**
-   * Retrieves the address of the spender for a deposit transaction.
+   * Gets the appropriate spender address for token approvals based on the transfer type.
+   * 
+   * For deposits:
+   * - USDC: Returns settlement layer gateway
+   * - ETH: Returns inbox contract
+   * - Other ERC20: Returns parent gateway
+   * 
+   * For withdrawals:
+   * - Bridged USDC: Returns rollup gateway
+   * - Other cases: Returns null
    *
-   * This method determines the correct spender address based on whether the deposit involves
-   * native ETH or an ERC20 token. If native ETH is being deposited, the spender is set to the
-   * `inbox` address of the origin network's ETH bridge. If an ERC20 token is being deposited,
-   * the spender is set to the `parentErc20Gateway` address of the destination network's token bridge.
-   *
-   * @returns {string} The address of the spender for the deposit transaction.
-   *
+   * @returns {string|null} The spender address or null if approval not needed
    */
-  private getDepositSpender() {
+  private getDepositSpender(): string | null {
     const tokenAddress = this.token[this.originNetwork.chainId];
     if (!this.isDeposit && this.originNetwork.usdcAddresses && tokenAddress === this.originNetwork.usdcAddresses.bridged) {
-      return this.originNetwork.usdcAddresses.rollupGateway
+      return this.originNetwork.usdcAddresses.rollupGateway;
     }
     if (this.isDeposit) {
       if (this.destinationNetwork.usdcAddresses && this.token[this.destinationNetwork.chainId] === this.destinationNetwork.usdcAddresses.bridged) {
-        return this.destinationNetwork.usdcAddresses.settlementLayerGateway
+        return this.destinationNetwork.usdcAddresses.settlementLayerGateway;
       }
       if (this.token[this.destinationNetwork.chainId] === ethers.constants.AddressZero) {
-        return this.destinationNetwork.ethBridge?.inbox ?? '';
+        return this.destinationNetwork.ethBridge?.inbox ?? null;
       } else {
-        return this.destinationNetwork.tokenBridge?.parentErc20Gateway ?? '';
+        return this.destinationNetwork.tokenBridge?.parentErc20Gateway ?? null;
       }
     }
     return null;
