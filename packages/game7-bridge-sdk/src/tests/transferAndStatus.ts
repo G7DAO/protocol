@@ -10,7 +10,7 @@ import {BridgeTransferStatusToString, ETH, getTypeMessage, logBalance, rpcs, TG7
 
 
 async function transfer(_amount: string, _transfers: Array<{destinationNetworkChainId: number; originNetworkChainId: number; token: TokenAddressMap; txHash?: string, isCCTP?: boolean, decimals?: number }>, params: {send: boolean} = {send: true }) {
-    const from = process.env.FROM
+    const from = process.env.FROM ?? ''
     const key = process.env.KEY
     const failedTransactions = []
     const uniqueTokens = Array.from(new Set(_transfers.map(d => d.token)))
