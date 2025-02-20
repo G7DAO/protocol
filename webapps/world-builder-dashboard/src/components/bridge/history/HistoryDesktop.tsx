@@ -52,21 +52,6 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = ({
   }
 
   useEffect(() => {
-    if (transactions.length > 0) {
-      requestAnimationFrame(() => {
-        if (transactionsRef.current) {
-          const { scrollHeight, clientHeight } = transactionsRef.current
-          if (scrollHeight <= clientHeight) { 
-            loadMoreItems()
-          }
-        }
-      });
-    }
-  }, [transactions.length])
-
-
-
-  useEffect(() => {
     const checkAndLoadMore = () => {
       if (transactionsRef.current) {
         const { scrollHeight, clientHeight } = transactionsRef.current
@@ -80,7 +65,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = ({
       if (transactionsRef.current) {
         const { scrollTop, scrollHeight, clientHeight } = transactionsRef.current
         // If we're close to the bottom (within 100px)
-        if (scrollHeight - (scrollTop + clientHeight) < 100 && !isLoading) {
+        if (scrollHeight - (scrollTop + clientHeight) < 100 && !isLoading) { 
           loadMoreItems()
         }
       }

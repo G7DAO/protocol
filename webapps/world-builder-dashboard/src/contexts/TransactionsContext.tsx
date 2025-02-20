@@ -27,31 +27,33 @@ export const TransactionProvider: React.FC<TransactionProviderProps> = ({ childr
   const [currentOffset, setCurrentOffset] = useState(0);
   const [loading, setLoading] = useState<boolean>(true)
 
+  const { mergedTransactions } = useTransactions(
+    isSpyMode ? spyAddress : connectedAccount, 
+    selectedNetworkType || 'Testnet',
+    currentOffset
+  )
+
   const fetchNextPage = async () => {
-    setLoading(true)
-    const nextOffset = currentOffset + 50
-    console.log(nextOffset)
-    const { mergedTransactions: newTransactions } = useTransactions(
-      isSpyMode ? spyAddress : connectedAccount, 
-      selectedNetworkType || 'Testnet', 
-      nextOffset
-    )
-    console.log(newTransactions)
-    
-    if (newTransactions && newTransactions.length > 0) {
-      setTransactions(prev => [...prev, ...newTransactions])
-      setCurrentOffset(nextOffset)
-    }
-    setLoading(false)
-  };
+    setCurrentOffset(prev => prev + 50)  // Just update the offset
+  }
 
-  // Fetch transactions using the custom hook
-  const { mergedTransactions } = useTransactions(isSpyMode ? spyAddress : connectedAccount, selectedNetworkType || 'Testnet', currentOffset)
-
+  // Watch for mergedTransactions changes
   useEffect(() => {
     if (mergedTransactions) {
-      setTransactions(mergedTransactions)
-      setLoading(false) // Set loading to false once transactions are loaded
+      setTransactions(prev => {
+        // Only add new transactions that aren't already in the list
+        const existingHashes = new Set(prev.map(tx =>  
+          tx.type === 'DEPOSIT' ? tx.lowNetworkHash : tx.highNetworkHash
+        ))
+        
+        const newTxs = mergedTransactions.filter(tx => {
+          const hash = tx.type === 'DEPOSIT' ? tx.lowNetworkHash : tx.highNetworkHash
+          return !existingHashes.has(hash)
+        })
+
+        return [...prev, ...newTxs]
+      })
+      setLoading(false)
     }
   }, [mergedTransactions])
 
