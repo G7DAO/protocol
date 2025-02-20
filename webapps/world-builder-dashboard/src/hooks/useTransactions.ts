@@ -70,11 +70,11 @@ const apiDataToTransactionRecord = (apiData: any): TransactionRecord => {
     }
 }
 
-export const useTransactions = (account: string | undefined, networkType: string) => {
+export const useTransactions = (account: string | undefined, networkType: string, offset: number) => {
     const { data: messages } = useMessages(account, networkType || 'Testnet')
     const { useHistoryTransactions } = useBridgeAPI()
-    const { data: apiTransactions } = useHistoryTransactions(account)
-
+    const { data: apiTransactions } = useHistoryTransactions(account, offset)
+    console.log(apiTransactions)
     const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])
 
     useEffect(() => {

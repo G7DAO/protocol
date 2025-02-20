@@ -17,8 +17,9 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = ({
   transactions
 }) => {
   const { selectedNetworkType } = useBlockchainContext()
-  const { isSpyMode, setIsSpyMode, setSpyAddress } = useTransactionContext()
+  const { isSpyMode, setIsSpyMode, setSpyAddress, fetchNextPage } = useTransactionContext()
   const [visibleCount, setVisibleCount] = useState(10)
+  const [isLoading, setIsLoading] = useState(false)
 
   const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status', '']
   const transactionsRef = useRef<HTMLDivElement | null>(null)
@@ -34,9 +35,34 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = ({
     )
   ))
 
-  const loadMoreItems = () => {
+  const loadMoreItems = async () => {
+    if (isLoading) return
+    console.log('..loading more items .. ?')
+    // If we're about to show all current transactions
+    if (visibleCount + 5 >= transactions.length) {
+      console.log('checking visible count .. ?')
+      setIsLoading(true)
+      await fetchNextPage()
+      setIsLoading(false)
+    }
+      
+    console.log('.. about to set visible count?')
+    // Always increase visible count regardless of fetch
     setVisibleCount(prev => Math.min(prev + 5, transactions.length))
   }
+
+  useEffect(() => {
+    if (transactions.length > 0) {
+      requestAnimationFrame(() => {
+        if (transactionsRef.current) {
+          const { scrollHeight, clientHeight } = transactionsRef.current
+          if (scrollHeight <= clientHeight) { 
+            loadMoreItems()
+          }
+        }
+      });
+    }
+  }, [transactions.length])
 
 
 
@@ -44,8 +70,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = ({
     const checkAndLoadMore = () => {
       if (transactionsRef.current) {
         const { scrollHeight, clientHeight } = transactionsRef.current
-        // If there's no overflow (scrollHeight <= clientHeight) and we have more items to load
-        if (scrollHeight <= clientHeight && visibleCount < transactions.length) {
+        if (scrollHeight - clientHeight < 100 && !isLoading) {
           loadMoreItems()
         }
       }
@@ -54,7 +79,8 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = ({
     const handleScroll = () => {
       if (transactionsRef.current) {
         const { scrollTop, scrollHeight, clientHeight } = transactionsRef.current
-        if (Math.ceil(scrollTop + clientHeight + 1) >= Math.floor(scrollHeight)) {
+        // If we're close to the bottom (within 100px)
+        if (scrollHeight - (scrollTop + clientHeight) < 100 && !isLoading) {
           loadMoreItems()
         }
       }
@@ -73,7 +99,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = ({
         currentRef.removeEventListener('scroll', handleScroll)
       }
     }
-  }, [visibleCount, transactions])
+  }, [visibleCount, transactions, isLoading])
 
   return (
     <div className={styles.container}>

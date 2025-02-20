@@ -10,6 +10,7 @@ interface TransactionsContextType {
   setIsSpyMode: (isSpymode: boolean) => void
   spyAddress: string
   setSpyAddress: (spyAddress: string) => void
+  fetchNextPage: () => Promise<void>  // Add this
 }
 
 const TransactionContext = createContext<TransactionsContextType | undefined>(undefined)
@@ -23,11 +24,29 @@ export const TransactionProvider: React.FC<TransactionProviderProps> = ({ childr
   const [transactions, setTransactions] = useState<TransactionRecord[]>([])
   const [isSpyMode, setIsSpyMode] = useState(false)
   const [spyAddress, setSpyAddress] = useState('')
-
+  const [currentOffset, setCurrentOffset] = useState(0);
   const [loading, setLoading] = useState<boolean>(true)
 
+  const fetchNextPage = async () => {
+    setLoading(true)
+    const nextOffset = currentOffset + 50
+    console.log(nextOffset)
+    const { mergedTransactions: newTransactions } = useTransactions(
+      isSpyMode ? spyAddress : connectedAccount, 
+      selectedNetworkType || 'Testnet', 
+      nextOffset
+    )
+    console.log(newTransactions)
+    
+    if (newTransactions && newTransactions.length > 0) {
+      setTransactions(prev => [...prev, ...newTransactions])
+      setCurrentOffset(nextOffset)
+    }
+    setLoading(false)
+  };
+
   // Fetch transactions using the custom hook
-  const { mergedTransactions } = useTransactions(isSpyMode ? spyAddress : connectedAccount, selectedNetworkType || 'Testnet')
+  const { mergedTransactions } = useTransactions(isSpyMode ? spyAddress : connectedAccount, selectedNetworkType || 'Testnet', currentOffset)
 
   useEffect(() => {
     if (mergedTransactions) {
@@ -45,7 +64,8 @@ export const TransactionProvider: React.FC<TransactionProviderProps> = ({ childr
         isSpyMode,
         setIsSpyMode,
         spyAddress,
-        setSpyAddress
+        setSpyAddress,
+        fetchNextPage
       }}
     >
       {children}
