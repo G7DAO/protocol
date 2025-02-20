@@ -183,6 +183,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 
       if (!account || !chain) return
       const signer = await ethers5Adapter.signer.toEthers({ client, chain: network, account })
+      await wallet?.switchChain(network)
 
       const destinationChain = direction === 'DEPOSIT' ? selectedHighNetwork : selectedLowNetwork
       const destinationRPC = destinationChain.rpcs[0]

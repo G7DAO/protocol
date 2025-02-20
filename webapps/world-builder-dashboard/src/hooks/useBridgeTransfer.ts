@@ -17,7 +17,7 @@ interface UseTransferDataProps {
 
 export const useBridgeTransfer = () => {
   const { queueRequest } = useRequestQueue()
-  const { connectedAccount, selectedNetworkType } = useBlockchainContext()
+  const { connectedAccount, selectedNetworkType, wallet } = useBlockchainContext()
   const { client } = useThirdWeb()
   const account = useActiveAccount()
   const chain = useActiveWalletChain()
@@ -225,6 +225,7 @@ export const useBridgeTransfer = () => {
       }
       if (!account || !chain) throw new Error('Account or chain not available')
       const signer = await ethers5Adapter.signer.toEthers({ client, chain: targetChain, account })
+      await wallet?.switchChain(targetChain)
 
       // Bridge Transfer execute
       const _bridgeTransfer: BridgeTransfer = await getBridgeTransfer({

@@ -34,7 +34,7 @@ interface MultiTokenApprovalProps {
 }
 
 export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showApproval, setShowApproval, bridger, balance, nativeBalance, decimals, tokens, startingTokenIndex, onApprovalComplete, gasFees, amount, allowances }) => {
-  const { selectedNetworkType } = useBlockchainContext()
+  const { selectedNetworkType, wallet } = useBlockchainContext()
   const { client } = useThirdWeb()
   const account = useActiveAccount()
   const chain = useActiveWalletChain()
@@ -101,6 +101,7 @@ export const MultiTokenApproval: React.FC<MultiTokenApprovalProps> = ({ showAppr
 
       if (!account || !chain) throw new Error('Account or chain not available')
       const signer = await ethers5Adapter.signer.toEthers({ client, chain: network, account })
+      await wallet?.switchChain(network)
 
       const txApprove = currentTokenIndex === 0
         ? await bridger?.approve(amount, signer)
