@@ -24,12 +24,12 @@ export const TransactionProvider: React.FC<TransactionProviderProps> = ({ childr
   const [transactions, setTransactions] = useState<TransactionRecord[]>([])
   const [isSpyMode, setIsSpyMode] = useState(false)
   const [spyAddress, setSpyAddress] = useState('')
-  const [currentOffset, setCurrentOffset] = useState(0);
+  const [currentOffset, setCurrentOffset] = useState(0)
   const [loading, setLoading] = useState<boolean>(true)
 
   const { mergedTransactions } = useTransactions(
     isSpyMode ? spyAddress : connectedAccount, 
-    selectedNetworkType || 'Testnet',
+    selectedNetworkType ?? '',
     currentOffset
   )
 
@@ -40,19 +40,7 @@ export const TransactionProvider: React.FC<TransactionProviderProps> = ({ childr
   // Watch for mergedTransactions changes
   useEffect(() => {
     if (mergedTransactions) {
-      setTransactions(prev => {
-        // Only add new transactions that aren't already in the list
-        const existingHashes = new Set(prev.map(tx =>  
-          tx.type === 'DEPOSIT' ? tx.lowNetworkHash : tx.highNetworkHash
-        ))
-        
-        const newTxs = mergedTransactions.filter(tx => {
-          const hash = tx.type === 'DEPOSIT' ? tx.lowNetworkHash : tx.highNetworkHash
-          return !existingHashes.has(hash)
-        })
-
-        return [...prev, ...newTxs]
-      })
+      setTransactions(mergedTransactions)
       setLoading(false)
     }
   }, [mergedTransactions])

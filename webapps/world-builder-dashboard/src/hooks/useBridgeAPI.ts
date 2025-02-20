@@ -14,7 +14,7 @@ export const useBridgeAPI = () => {
       {
         queryKey: ['historyTransactions', address, selectedNetworkType, offset], // Add offset to queryKey
         queryFn: async () => {
-          const res = await fetch(`${BASE_URL}/bridge/game7${uriSnippet}/${address}/transactions?offset=${offset}`, {
+          const res = await fetch(`${BASE_URL}/bridge/game7${uriSnippet}/${address}/transactions&offset=${offset}`, {
             method: 'GET'
           })
           if (!res.ok) {
@@ -27,7 +27,6 @@ export const useBridgeAPI = () => {
         retry: false,
         refetchInterval: 600000,
         refetchIntervalInBackground: true,
-        keepPreviousData: true // Add this to maintain previous data while loading
       },
     )
   }

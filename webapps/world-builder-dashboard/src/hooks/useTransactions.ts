@@ -75,7 +75,6 @@ export const useTransactions = (account: string | undefined, networkType: string
     const { useHistoryTransactions } = useBridgeAPI()
     const { data: apiTransactions } = useHistoryTransactions(account, offset)
     const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])
-    console.log(apiTransactions)
 
     useEffect(() => {
         if (!messages && !apiTransactions) return
@@ -97,7 +96,6 @@ export const useTransactions = (account: string | undefined, networkType: string
                 JSON.stringify(combinedTransactions)
             )
         }
-        console.log('..')
         setMergedTransactions(combinedTransactions)
     }, [messages, apiTransactions])
 

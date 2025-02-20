@@ -37,16 +37,12 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = ({
 
   const loadMoreItems = async () => {
     if (isLoading) return
-    console.log('..loading more items .. ?')
     // If we're about to show all current transactions
     if (visibleCount + 5 >= transactions.length) {
-      console.log('checking visible count .. ?')
       setIsLoading(true)
       await fetchNextPage()
       setIsLoading(false)
     }
-      
-    console.log('.. about to set visible count?')
     // Always increase visible count regardless of fetch
     setVisibleCount(prev => Math.min(prev + 5, transactions.length))
   }
