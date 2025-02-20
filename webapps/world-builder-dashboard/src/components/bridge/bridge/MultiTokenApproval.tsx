@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styles from './MultiTokenApproval.module.css'
-import { Modal } from 'summon-ui/mantine'
+import { Modal } from '@mantine/core'
 import AllowanceSelector from '../allowance/AllowanceSelector'
 import { ethers } from 'ethers'
 import { useQueryClient, UseQueryResult } from '@tanstack/react-query'

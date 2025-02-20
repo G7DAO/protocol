@@ -7,7 +7,7 @@ import {
   L3_NETWORK
 } from '../../../../constants'
 import styles from './NetworkSelector.module.css'
-import { Combobox, Group, InputBase, InputBaseProps, useCombobox } from 'summon-ui/mantine'
+import { Combobox, Group, InputBase, InputBaseProps, useCombobox } from '@mantine/core'
 import G7LogoBlue from '@/assets/G7LogoBlue'
 import G7LogoRed from '@/assets/G7LogoRed'
 import IconArbitrumOne from '@/assets/IconArbitrumOne'

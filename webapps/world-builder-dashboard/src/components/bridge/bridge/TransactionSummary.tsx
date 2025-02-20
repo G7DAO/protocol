@@ -1,6 +1,7 @@
 import React from 'react'
 import styles from './TransactionSummary.module.css'
-import { Tooltip, useClipboard } from 'summon-ui/mantine'
+import { Tooltip } from '@mantine/core'
+import { useClipboard } from '@mantine/hooks'
 import { mantineBreakpoints } from '@/styles/breakpoints'
 import { useMediaQuery } from '@mantine/hooks'
 import { NetworkInterface } from '@/contexts/BlockchainContext'

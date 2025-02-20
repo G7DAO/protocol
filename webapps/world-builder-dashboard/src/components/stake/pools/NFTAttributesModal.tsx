@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, ModalProps } from 'summon-ui/mantine'; // assuming the path to your modal component
+import { Modal, ModalProps } from '@mantine/core'; // assuming the path to your modal component
 import styles from './NFTAttributesButton.module.css'
 
 interface NFTAttributesModalProps extends ModalProps {

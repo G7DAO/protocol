@@ -1,6 +1,6 @@
 import React from 'react'
 import styles from './NotificationsButton.module.css'
-import { Popover, Modal } from 'summon-ui/mantine'
+import { Popover, Modal } from '@mantine/core'
 import IconBell from '@/assets/IconBell'
 import NotificationsDropModal, { NotificationsModal } from '@/components/notifications/NotificationsDropModal'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'

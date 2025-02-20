@@ -7,7 +7,7 @@ import IconLinkedIn from '@/assets/IconLinkedIn'
 import IconForkTheWorld from '@/assets/IconForkTheWorld'
 import { useNavigate } from 'react-router-dom'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
-import { useMediaQuery } from 'summon-ui/mantine'
+import { useMediaQuery } from '@mantine/hooks'
 import IconChevronDown from '@/assets/IconChevronDown'
 
 

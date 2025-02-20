@@ -7,7 +7,7 @@ import PositionsTable from './PositionsTable';
 import usePools from '@/hooks/usePools';
 import { formatAddress } from '@/utils/addressFormat';
 import { tokenTypes } from '@/utils/web3utils';
-import { Pagination } from 'summon-ui/mantine'
+import { Pagination } from '@mantine/core'
 
 interface PoolDesktopProps { }
 

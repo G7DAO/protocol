@@ -1,7 +1,7 @@
 import React from 'react'
 import styles from './BridgeMessage.module.css'
 import { ethers } from 'ethers'
-import { Tooltip } from 'summon-ui/mantine'
+import { Tooltip } from '@mantine/core'
 import IconInfoCircle from '@/assets/IconInfoCircle'
 import IconPlus from '@/assets/IconPlus'
 

@@ -1,4 +1,4 @@
-import { useMediaQuery } from 'summon-ui/mantine'
+import { useMediaQuery } from '@mantine/hooks'
 
 export const useIsMobile = () => useMediaQuery('(max-width: 48rem)')
 export const useIsDevMode = () => import.meta.env.VITE_ENV === 'development'

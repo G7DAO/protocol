@@ -1,4 +1,4 @@
-import { Box, Text } from 'summon-ui/mantine'
+import { Box, Text } from '@mantine/core'
 
 const SignUpPage = () => {
   return (

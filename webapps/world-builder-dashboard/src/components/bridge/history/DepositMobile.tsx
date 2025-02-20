@@ -3,7 +3,8 @@ import { getHighNetworks, getLowNetworks } from '../../../../constants'
 import styles from './DepositMobile.module.css'
 import parentStyles from './WithdrawTransactions.module.css'
 import { BridgeTransferStatus } from 'game7-bridge-sdk'
-import { Skeleton, useMediaQuery } from 'summon-ui/mantine'
+import { Skeleton } from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import { NetworkType, TransactionRecord } from '@/contexts/BlockchainContext'
 import { ETA, timeAgo } from '@/utils/timeFormat'
@@ -29,7 +30,7 @@ const DepositMobile: React.FC<DepositMobileProps> = ({
   deposit,
   isLoading,
   selectedNetworkType,
-  transferStatus, 
+  transferStatus,
   symbol,
   claim
 }) => {
@@ -148,7 +149,7 @@ const DepositMobile: React.FC<DepositMobileProps> = ({
           <div className={styles.dataRow}>
             <div className={styles.dataText}>Status</div>
             {transferStatus && transferStatus?.status === BridgeTransferStatus.CCTP_COMPLETE ? (
-              <button className={parentStyles.claimButton} onClick={() => claim.mutate({txRecord: deposit})}>
+              <button className={parentStyles.claimButton} onClick={() => claim.mutate({ txRecord: deposit })}>
                 {claim.status === 'pending' && !claim.isSuccess ? 'Claiming...' : 'Claim Now'}
               </button>
             ) : (

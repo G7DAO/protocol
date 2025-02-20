@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom'
-import { Flex } from 'summon-ui/mantine'
+import { Flex } from '@mantine/core'
 
 const AuthLayout = () => {
   return (

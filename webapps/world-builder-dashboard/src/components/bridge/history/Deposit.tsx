@@ -3,7 +3,7 @@ import { getHighNetworks, getLowNetworks, getNetworks } from '../../../../consta
 import DepositMobile from './DepositMobile'
 import styles from './WithdrawTransactions.module.css'
 import { BridgeTransferStatus } from 'game7-bridge-sdk'
-import { useMediaQuery } from 'summon-ui/mantine'
+import { useMediaQuery } from '@mantine/hooks'
 import IconLinkExternal02 from '@/assets/IconLinkExternal02'
 import { TransactionRecord, useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeTransfer } from '@/hooks/useBridgeTransfer'

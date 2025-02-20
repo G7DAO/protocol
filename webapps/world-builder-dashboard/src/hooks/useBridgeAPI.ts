@@ -13,7 +13,7 @@ export const useBridgeAPI = () => {
       {
         queryKey: ['historyTransactions', address, selectedNetworkType],
         queryFn: async () => {
-          const res = await fetch(`${BASE_URL}/bridge/game7${uriSnippet}/${address}/transactions?limit=50&offset=0`, {
+          const res = await fetch(`${BASE_URL}/bridge/game7${uriSnippet}/${address}/transactions?offset=0`, {
             method: 'GET'
           })
           if (!res.ok) {

@@ -5,7 +5,7 @@ import AccountSelector, { AccountType } from '../commonComponents/accountSelecto
 
 import styles from './FaucetView.module.css'
 import { ethers } from 'ethers'
-import { useMediaQuery } from 'summon-ui/mantine'
+import { useMediaQuery } from '@mantine/hooks'
 import { NetworkInterface, useBlockchainContext } from '@/contexts/BlockchainContext'
 import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsContext'
 import { useUISettings } from '@/contexts/UISettingsContext'

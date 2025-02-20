@@ -1,6 +1,6 @@
 import styles from './AllowanceSelector.module.css'
 import { ethers } from 'ethers'
-import { Combobox, useCombobox } from 'summon-ui/mantine'
+import { Combobox, useCombobox } from '@mantine/core'
 import IconCheck from '@/assets/IconCheck'
 import IconChevronDown from '@/assets/IconChevronDown'
 import { Token } from '@/utils/tokens'

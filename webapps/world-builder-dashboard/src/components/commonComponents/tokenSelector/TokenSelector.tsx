@@ -1,5 +1,5 @@
 import styles from './TokenSelector.module.css'
-import { Combobox, Group, InputBase, InputBaseProps, useCombobox } from 'summon-ui/mantine'
+import { Combobox, Group, InputBase, InputBaseProps, useCombobox } from '@mantine/core'
 import IconCheck from '@/assets/IconCheck'
 import IconChevronDown from '@/assets/IconChevronDown'
 import { useBlockchainContext } from '@/contexts/BlockchainContext'

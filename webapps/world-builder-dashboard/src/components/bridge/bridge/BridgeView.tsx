@@ -30,7 +30,7 @@ import { getStakeNativeTxData } from '@/utils/bridge/stakeContractInfo'
 import { getTokensForNetwork } from '@/utils/tokens'
 import { useBridger } from '@/hooks/useBridger'
 import IconAlertCircle from '@/assets/IconAlertCircle'
-import { Tooltip } from 'summon-ui/mantine'
+import { Tooltip } from '@mantine/core'
 import { useNavigate } from 'react-router-dom'
 import { useMoonstreamPricesAPI } from '@/hooks/useCoinGeckoAPI'
 

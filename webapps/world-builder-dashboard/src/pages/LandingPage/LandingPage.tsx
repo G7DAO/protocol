@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './LandingPage.module.css'
-import { useMediaQuery } from 'summon-ui/mantine'
+import { useMediaQuery } from '@mantine/hooks'
 import AlliesSection from '@/components/landing/AlliesSection'
 import BenefitsSection from '@/components/landing/BenefitsSection'
 import Container from '@/components/landing/Container'

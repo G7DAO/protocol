@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useRouteError } from 'react-router-dom'
-import { useTranslation } from 'summon-ui/intl'
-import { Button, Text, Stack, Title, Box } from 'summon-ui/mantine'
+import useTranslation  from '../hooks/useTranslation'
+import { Button, Text, Stack, Title, Box } from '@mantine/core'
 import { useAuthState } from '@/providers/AuthProvider'
 
 const INVALID_TOKEN_MESSAGE = "Cannot read properties of undefined (reading 'lastIndexOf')"

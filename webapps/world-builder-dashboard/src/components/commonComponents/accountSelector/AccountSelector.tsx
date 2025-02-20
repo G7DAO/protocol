@@ -1,5 +1,5 @@
 import styles from './AccountSelector.module.css'
-import { Combobox, Group, InputBase, InputBaseProps, useCombobox } from 'summon-ui/mantine'
+import { Combobox, Group, InputBase, InputBaseProps, useCombobox } from '@mantine/core'
 import IconCheck from '@/assets/IconCheck'
 import IconChevronDownSelector from '@/assets/IconChevronDownSelector'
 
