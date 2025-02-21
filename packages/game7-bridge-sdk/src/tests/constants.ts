@@ -85,8 +85,8 @@ export const USDC: TokenAddressMap = {
 }
 
 export const rpcs: { [key: number]: string } = {
-    42161: `${process.env.NB_JSON_RPC_URI}/arbitrum-one/jsonrpc/${process.env.NB_WB_DASHBOARD_ACCESS_ID}`,
-    1: "https://mainnet.infura.io/v3/0eddb9de2a4043c4b6728e160cfc7fa1",
+    42161: `https://arb1.arbitrum.io/rpc`,
+    1: "https://nb.moonstream.to/nb/ethereum/jsonrpc/6f7ab832-1b07-473e-a249-a180792949c2",
     2187: "https://mainnet-rpc.game7.io",
     13746: `${process.env.NB_JSON_RPC_URI}/game7-testnet/jsonrpc/${process.env.NB_WB_DASHBOARD_ACCESS_ID}`,
     11155111: "https://ethereum-sepolia-rpc.publicnode.com",
