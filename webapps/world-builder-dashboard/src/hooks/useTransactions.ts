@@ -73,7 +73,10 @@ const apiDataToTransactionRecord = (apiData: any): TransactionRecord => {
 export const useTransactions = (account: string | undefined, networkType: string) => {
     const { data: messages } = useMessages(account, networkType || 'Testnet')
     const { useHistoryTransactions } = useBridgeAPI()
-    const { data: apiTransactions } = useHistoryTransactions(account)
+    const [offset, setOffset] = useState(0)
+    const [hasMore, setHasMore] = useState(true)
+
+    const { data: apiTransactions } = useHistoryTransactions(account, offset)
 
     const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])
 
@@ -84,6 +87,9 @@ export const useTransactions = (account: string | undefined, networkType: string
             ? apiTransactions.map(apiDataToTransactionRecord)
             : []
         const combinedTransactions = mergeTransactions(formattedApiTransactions, localTransactions)
+        if (apiTransactions?.length < 50) {
+            setHasMore(false)
+          }
 
         combinedTransactions.sort((x, y) => {
             const xTimestamp = x.type === 'DEPOSIT' ? x.lowNetworkTimestamp : x.highNetworkTimestamp
@@ -101,5 +107,13 @@ export const useTransactions = (account: string | undefined, networkType: string
         setMergedTransactions(combinedTransactions)
     }, [messages, apiTransactions])
 
-    return { mergedTransactions }
+    const loadMoreTransactions = () => {
+        console.log('loading more..')
+        console.log(hasMore)
+        if (hasMore) {
+          setOffset(prev => prev + 50) // Increment offset by 50
+        }
+      }
+    
+    return { mergedTransactions, loadMoreTransactions, hasMore }
 }

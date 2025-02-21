@@ -10,6 +10,8 @@ interface TransactionsContextType {
   setIsSpyMode: (isSpymode: boolean) => void
   spyAddress: string
   setSpyAddress: (spyAddress: string) => void
+  hasMore: boolean
+  loadMoreTransactions: () => void
 }
 
 const TransactionContext = createContext<TransactionsContextType | undefined>(undefined)
@@ -27,7 +29,7 @@ export const TransactionProvider: React.FC<TransactionProviderProps> = ({ childr
   const [loading, setLoading] = useState<boolean>(true)
 
   // Fetch transactions using the custom hook
-  const { mergedTransactions } = useTransactions(isSpyMode ? spyAddress : connectedAccount, selectedNetworkType || 'Testnet')
+  const { mergedTransactions, hasMore, loadMoreTransactions } = useTransactions(isSpyMode ? spyAddress : connectedAccount, selectedNetworkType || 'Testnet')
 
   useEffect(() => {
     if (mergedTransactions) {
@@ -45,7 +47,9 @@ export const TransactionProvider: React.FC<TransactionProviderProps> = ({ childr
         isSpyMode,
         setIsSpyMode,
         spyAddress,
-        setSpyAddress
+        setSpyAddress,
+        hasMore,
+        loadMoreTransactions
       }}
     >
       {children}
