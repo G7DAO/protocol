@@ -1,0 +1,6 @@
+src/
+node_modules/
+.env
+scripts/
+.tgz
+.idea/

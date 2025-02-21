@@ -1,0 +1,36 @@
+{
+  "name": "@g7dao/bridge-sdk",
+  "version": "0.1.1",
+  "description": "A SDK for bridging tokens across different networks with Game7 infrastructure.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rm -rf dist && tsc",
+    "watch": "tsc --watch",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write 'src/**/*.ts'",
+    "postinstall": "patch-package",
+    "patch-arb": "npx patch-package @arbitrum/sdk"
+  },
+  "keywords": [
+    "sdk",
+    "bridge",
+    "blockchain",
+    "arbitrum",
+    "ethereum",
+    "game7"
+  ],
+  "author": "mumintrl",
+  "license": "MIT",
+  "dependencies": {
+    "@arbitrum/sdk": "4.0.1",
+    "ethers": "^5.7.2",
+    "patch-package": "^8.0.0",
+    "postinstall-postinstall": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.3",
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.4"
+  }
+}
