@@ -23,9 +23,15 @@ jobs:
         run: |
           npm install
           npm run build
+      
+      - name: Configure npm with auth token
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPMJS_GAME7_BRIDGE_SDK_AUTH_TOKEN }}" > ~/.npmrc
 
       - name: Publish package
         working-directory: ./packages/game7-bridge-sdk
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_GAME7_BRIDGE_SDK_AUTH_TOKEN }}
         run: npm publish --access public
+
+      - name: Clean up
+        if: always()
+        run: |
+          rm ~/.npmrc
