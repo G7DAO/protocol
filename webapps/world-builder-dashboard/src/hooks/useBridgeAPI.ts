@@ -5,15 +5,15 @@ import { useBlockchainContext } from '@/contexts/BlockchainContext'
 const BASE_URL = 'https://api.game7.build'
 
 export const useBridgeAPI = () => {
-  const useHistoryTransactions = (address: string | undefined) => {
+  const useHistoryTransactions = (address: string | undefined, offset: number) => {
     const isValidAddress = ethers.utils.isAddress(address ?? '')
     const { selectedNetworkType } = useBlockchainContext()
     const uriSnippet = selectedNetworkType === 'Testnet' ? '-testnet' : ''
     return useQuery(
       {
-        queryKey: ['historyTransactions', address, selectedNetworkType],
+        queryKey: ['historyTransactions', address, selectedNetworkType, offset],
         queryFn: async () => {
-          const res = await fetch(`${BASE_URL}/bridge/game7${uriSnippet}/${address}/transactions?limit=50&offset=0`, {
+          const res = await fetch(`${BASE_URL}/bridge/game7${uriSnippet}/${address}/transactions?limit=50&offset=${offset}`, {
             method: 'GET'
           })
           if (!res.ok) {

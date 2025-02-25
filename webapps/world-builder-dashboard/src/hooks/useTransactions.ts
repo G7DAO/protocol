@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useMessages } from '@/hooks/useL2ToL1MessageStatus'
 import { useBridgeAPI } from '@/hooks/useBridgeAPI'
-import { TransactionRecord } from '@/contexts/BlockchainContext'
+import { TransactionRecord, useBlockchainContext } from '@/contexts/BlockchainContext'
 import { isUSDC } from '@/utils/web3utils'
 import { ethers } from 'ethers'
 
@@ -72,34 +72,57 @@ const apiDataToTransactionRecord = (apiData: any): TransactionRecord => {
 
 export const useTransactions = (account: string | undefined, networkType: string) => {
     const { data: messages } = useMessages(account, networkType || 'Testnet')
+    const { selectedNetworkType } = useBlockchainContext()
     const { useHistoryTransactions } = useBridgeAPI()
-    const { data: apiTransactions } = useHistoryTransactions(account)
-
+    const [offset, setOffset] = useState(0)
+    const [hasMore, setHasMore] = useState(true)
+    const { data: apiTransactions, isLoading: isLoadingAPITransactions } = useHistoryTransactions(account, offset)
     const [mergedTransactions, setMergedTransactions] = useState<TransactionRecord[]>([])
 
     useEffect(() => {
         if (!messages && !apiTransactions) return
+
         const localTransactions = messages || []
         const formattedApiTransactions = apiTransactions
             ? apiTransactions.map(apiDataToTransactionRecord)
             : []
-        const combinedTransactions = mergeTransactions(formattedApiTransactions, localTransactions)
 
-        combinedTransactions.sort((x, y) => {
-            const xTimestamp = x.type === 'DEPOSIT' ? x.lowNetworkTimestamp : x.highNetworkTimestamp
-            const yTimestamp = y.type === 'DEPOSIT' ? y.lowNetworkTimestamp : y.highNetworkTimestamp
-            return (yTimestamp ?? 0) - (xTimestamp ?? 0)
-        })
+        // Merge old and new transactions while preserving state
+        setMergedTransactions(prev => {
+            const combinedTransactions = mergeTransactions([...prev, ...formattedApiTransactions], localTransactions)
 
-        if (account && networkType) {
+            // Stop fetching if API returns < 50 (end of data)
+            if (apiTransactions?.length < 50) {
+                setHasMore(false)
+            }
+
+            // Sort transactions by timestamp (most recent first)
+            combinedTransactions.sort((x, y) => {
+                const xTimestamp = x.type === 'DEPOSIT' ? x.lowNetworkTimestamp : x.highNetworkTimestamp
+                const yTimestamp = y.type === 'DEPOSIT' ? y.lowNetworkTimestamp : y.highNetworkTimestamp
+                return (yTimestamp ?? 0) - (xTimestamp ?? 0)
+            })
+
             localStorage.setItem(
                 `bridge-${account}-transactions-${networkType}`,
                 JSON.stringify(combinedTransactions)
             )
-        }
 
-        setMergedTransactions(combinedTransactions)
+            return combinedTransactions
+        })
     }, [messages, apiTransactions])
 
-    return { mergedTransactions }
+    useEffect(() => {
+        setOffset(0)
+        setMergedTransactions([])
+        setHasMore(true)
+    }, [account, selectedNetworkType])
+
+    const loadMoreTransactions = () => {
+        if (hasMore) {
+            setOffset(prev => prev + 50)
+        }
+    }
+
+    return { mergedTransactions, loadMoreTransactions, hasMore, isLoading: isLoadingAPITransactions }
 }
