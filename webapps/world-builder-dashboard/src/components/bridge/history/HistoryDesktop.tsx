@@ -37,7 +37,6 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = ({
   const loadMoreItems = () => {
     setVisibleCount(prev => {
       const newCount = Math.min(prev + 5, transactions.length)
-      console.log(newCount, transactions.length)
       if (newCount === transactions.length && hasMore && !isLoading) {
         loadMoreTransactions()
       }

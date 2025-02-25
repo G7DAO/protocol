@@ -93,7 +93,6 @@ export const useTransactions = (account: string | undefined, networkType: string
 
             // Stop fetching if API returns < 50 (end of data)
             if (apiTransactions?.length < 50) {
-                console.log('reached the end.')
                 setHasMore(false)
             }
 
