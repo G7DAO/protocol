@@ -11,8 +11,9 @@ export const useBridgeAPI = () => {
     const uriSnippet = selectedNetworkType === 'Testnet' ? '-testnet' : ''
     return useQuery(
       {
-        queryKey: ['historyTransactions', address, selectedNetworkType],
+        queryKey: ['historyTransactions', address, selectedNetworkType, offset],
         queryFn: async () => {
+          console.log('fetching..')
           const res = await fetch(`${BASE_URL}/bridge/game7${uriSnippet}/${address}/transactions?limit=50&offset=${offset}`, {
             method: 'GET'
           })
@@ -20,6 +21,8 @@ export const useBridgeAPI = () => {
             throw new Error(`Error: ${res.statusText}`)
           }
           const data = await res.json()
+          console.log(data)
+          console.log(offset)
           return data
         },
 
