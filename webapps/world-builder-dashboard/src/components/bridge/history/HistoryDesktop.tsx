@@ -17,7 +17,7 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = ({
   transactions
 }) => {
   const { selectedNetworkType } = useBlockchainContext()
-  const { isSpyMode, setIsSpyMode, setSpyAddress, hasMore, loadMoreTransactions, isLoading } = useTransactionContext()
+  const { isSpyMode, setIsSpyMode, setSpyAddress, hasMore, loadMoreTransactions } = useTransactionContext()
   const [visibleCount, setVisibleCount] = useState(10)
 
   const headers = ['Type', 'Submitted', 'Token', 'From', 'To', 'Transaction', 'Status', '']
@@ -37,7 +37,9 @@ const HistoryDesktop: React.FC<HistoryDesktopProps> = ({
   const loadMoreItems = () => {
     setVisibleCount(prev => {
       const newCount = Math.min(prev + 5, transactions.length)
-      if (newCount === transactions.length && hasMore && !isLoading) {
+      console.log({newCount, tranlength: transactions.length})
+      if (newCount === transactions.length && hasMore) {
+        console.log('reached the end');
         loadMoreTransactions()
       }
       return newCount
