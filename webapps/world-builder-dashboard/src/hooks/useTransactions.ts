@@ -107,11 +107,9 @@ export const useTransactions = (account: string | undefined, networkType: string
         setMergedTransactions(combinedTransactions)
     }, [messages, apiTransactions])
 
-    useEffect(() => {
-        setOffset(0)
-    }, [account])
-
     const loadMoreTransactions = () => {
+        console.log('loading more..')
+        console.log(hasMore)
         if (hasMore) {
           setOffset(prev => prev + 50) // Increment offset by 50
         }
