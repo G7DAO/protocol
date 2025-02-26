@@ -37,6 +37,7 @@ const BridgePage = () => {
   const pendingTransactions = usePendingTransactions(connectedAccount)
   const historyContainerRef = useRef<HTMLDivElement>(null)  // Add this line
 
+
   useEffect(() => {
     if (pendingTransactions.data && connectedAccount) {
       queryClient.refetchQueries({ queryKey: ['incomingMessages'] })
