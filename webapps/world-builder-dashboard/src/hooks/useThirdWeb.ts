@@ -19,8 +19,7 @@ export function useThirdWeb() {
     const client = useMemo(
         () =>
             createThirdwebClient({
-                clientId: '--',
-                secretKey: '--',
+                clientId: '19cd2025c587b9766c486f12cd755745',
             }),
         []
     );
