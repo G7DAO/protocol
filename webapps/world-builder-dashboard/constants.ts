@@ -239,7 +239,7 @@ export const getNetworksThirdWeb = (selectedNetworkType: NetworkType) => {
   }
 }
 
-export const getThirdWebHighNetworks = (selectedNetworkType: NetworkType) => {
+export const getHighNetworksThirdWeb = (selectedNetworkType: NetworkType) => {
   switch (selectedNetworkType) {
     case 'Mainnet':
       return ALL_THIRDWEB_HIGH_MAINNET_NETWORKS
@@ -248,7 +248,7 @@ export const getThirdWebHighNetworks = (selectedNetworkType: NetworkType) => {
   }
 }
 
-export const getThirdWebLowNetworks = (selectedNetworkType: NetworkType) => {
+export const getLowNetworksThirdWeb = (selectedNetworkType: NetworkType) => {
   switch (selectedNetworkType) {
     case 'Mainnet':
       return ALL_THIRDWEB_LOW_MAINNET_NETWORKS

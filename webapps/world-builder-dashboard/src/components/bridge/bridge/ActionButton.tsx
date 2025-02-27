@@ -151,7 +151,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     if (!connectedAccount && !wallet) {
       try {
         const wallet = await connect({ client, wallets, size: 'compact' })
-        setConnectedAccount(wallet.getAccount()?.address ?? ''); setWallet(wallet)
+        setConnectedAccount(wallet.getAccount()?.address ?? '')
+        setWallet(wallet)
       }
       catch (error) {
         console.log(error)
@@ -175,7 +176,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       amount: string
     }) => {
       const network = networks?.find((n) => n.id === bridger?.originNetwork.chainId)
-
       if (!network) {
         console.error('Network not found!')
         return
