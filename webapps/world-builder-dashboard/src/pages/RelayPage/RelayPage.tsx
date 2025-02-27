@@ -16,6 +16,9 @@ import { SwapWidget } from '@reservoir0x/relay-kit-ui'
 import { Address } from "viem"
 import { useNavigate } from 'react-router-dom'
 import { G7_ARB, G7_G7, TOKENS } from '@/utils/relayConfig'
+import { useConnectModal } from 'thirdweb/react'
+import { useThirdWeb } from '@/hooks/useThirdWeb'
+
 export interface SwapWidgetToken {
     chainId: number;
     address: string;
@@ -27,23 +30,38 @@ export interface SwapWidgetToken {
 }
 
 const RelayPage = () => {
-    const { connectedAccount, connectWallet } = useBlockchainContext()
+    const { connectedAccount, setConnectedAccount, setWallet } = useBlockchainContext()
+    const { client, wallets } = useThirdWeb()
+
+    const { connect } = useConnectModal()
     const navigate = useNavigate()
     const pendingTransacions = usePendingTransactions(connectedAccount)
     const [notificationsOffset] = useState(0)
     const [notificationsLimit] = useState(10)
-    const [key, setKey] = useState(0) // Add this line
+    const [key, setKey] = useState(0)
+
+    const connectWallet = async () => {
+        try {
+            const wallet = await connect({ client, wallets, size: 'compact' })
+            setConnectedAccount(wallet.getAccount()?.address ?? '');
+            setWallet(wallet)
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
 
     useEffect(() => {
         setKey(prev => prev + 1)
+        console.log(connectedAccount)
     }, [connectedAccount])
-    
+
 
     const notifications = useNotifications(connectedAccount, notificationsOffset, notificationsLimit)
     const { newNotifications, refetchNewNotifications } = useBridgeNotificationsContext()
 
     const queryClient = useQueryClient()
-    
+
     useEffect(() => {
         if (pendingTransacions.data && connectedAccount) {
             queryClient.refetchQueries({ queryKey: ['incomingMessages'] })

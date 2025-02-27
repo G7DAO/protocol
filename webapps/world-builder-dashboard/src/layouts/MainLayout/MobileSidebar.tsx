@@ -10,6 +10,9 @@ import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
 import IconClosedHamburgerLanding from '@/assets/IconClosedHamburgerLanding'
 import { NavigationItem } from './MainLayout'
+import { Wallet } from 'thirdweb/wallets'
+import { ConnectButton, darkTheme } from 'thirdweb/react'
+import { useThirdWeb } from '@/hooks/useThirdWeb'
 
 interface MobileSidebarProps {
   navigationItems: NavigationItem[]
@@ -18,8 +21,9 @@ interface MobileSidebarProps {
 const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { connectedAccount, disconnectWallet, connectWallet, isConnecting, selectedNetworkType } =
+  const { connectedAccount, disconnectWallet, selectedNetworkType, setWallet, setConnectedAccount, wallet } =
     useBlockchainContext()
+  const {client, wallets} = useThirdWeb()
   const [isExpanded, setIsExpanded] = useState(false)
 
   return (
@@ -75,22 +79,33 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ navigationItems }) => {
               </div>
             ))}
             <div className={styles.spacer} />
-            {connectedAccount ? (
+            {connectedAccount && wallet ? (
               <div className={styles.web3AddressContainer}>
                 <div className={parentStyles.web3address}>
                   {`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}
                 </div>
                 {<IconLogoutLarge onClick={disconnectWallet} className={parentStyles.iconButton} />}
               </div>
-            ) : (
-              <div className={parentStyles.connectWalletButton} onClick={connectWallet}>
-                {isConnecting ? (
-                  <div className={parentStyles.connectingWalletText}>{'Connecting Wallet...'}</div>
-                ) : (
-                  <div className={parentStyles.connectWalletText}>{'Connect Wallet'}</div>
-                )}
-              </div>
-            )}
+            ) :
+              <ConnectButton
+                client={client}
+                wallets={wallets}
+                connectModal={{ size: "compact" }}
+                theme={darkTheme({
+                  colors: {
+                    danger: "hsl(358, 76%, 47%)",
+                    success: "hsl(151, 55%, 42%)",
+                    tooltipBg: "hsl(240, 6%, 94%)",
+                    modalBg: "hsl(228, 12%, 8%)",
+                    separatorLine: "hsl(228, 12%, 17%)",
+                    borderColor: "hsl(228, 12%, 17%)",
+                    primaryButtonBg: "hsl(4, 86%, 58%)",
+                    primaryButtonText: "hsl(0, 0%, 100%)"
+                  },
+                })}
+                connectButton={{ label: "Connect Wallet", style: { height: '40px', width: '100%' } }}
+                onConnect={(wallet: Wallet) => { setConnectedAccount(wallet.getAccount()?.address ?? ''); setWallet(wallet) }}
+              />}
           </div>
           <div className={styles.backdrop} onClick={() => setIsExpanded(false)} />
         </div>

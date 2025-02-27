@@ -15,6 +15,8 @@ import {
 import { ethers } from 'ethers'
 import { getTokensForNetwork, Token } from '@/utils/tokens'
 import { BridgeTransferInfo } from 'game7-bridge-sdk'
+import { useDisconnect } from "thirdweb/react";
+import { Wallet, WalletId } from 'thirdweb/wallets';
 
 interface BlockchainContextType {
   walletProvider?: ethers.providers.Web3Provider
@@ -39,6 +41,9 @@ interface BlockchainContextType {
   isConnecting: boolean
   selectedNetworkType: NetworkType
   setSelectedNetworkType: (networkType: NetworkType) => void
+  setConnectedAccount: (connectedAccount: string) => void
+  setWallet: (wallet: Wallet) => void
+  wallet: Wallet<WalletId> | undefined
 }
 
 export interface TransactionRecord {
@@ -113,7 +118,7 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   const [selectedHighNetwork, _setSelectedHighNetwork] = useState<NetworkInterface>(
     selectedNetworkType === 'Testnet' ? DEFAULT_HIGH_NETWORK : DEFAULT_HIGH_MAINNET_NETWORK
   )
-  const [isMetaMask, setIsMetaMask] = useState(false)
+  const [isMetaMask] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
   const [chainId, setChainId] = useState<number | undefined>(undefined)
   const [connectedAccount, setConnectedAccount] = useState<string>()
@@ -126,6 +131,11 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
       (token) => token.symbol === DEFAULT_LOW_NETWORK.nativeCurrency?.symbol
     ) ?? null
   )
+
+
+  // thirdweb
+  const [wallet, setWallet] = useState<Wallet<WalletId> | undefined>()
+  const { disconnect } = useDisconnect()
 
   const tokenAddress = '0x5f88d811246222F6CB54266C42cc1310510b9feA'
 
@@ -205,59 +215,51 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   }
 
   const handleAccountsChanged = async () => {
-    const ethereum = window.ethereum
-    if (ethereum) {
-      const provider = new ethers.providers.Web3Provider(ethereum)
-      // @ts-ignore
-      setIsMetaMask(window.ethereum?.isMetaMask && !window.ethereum?.overrideIsMetaMask)
-      const accounts = await provider.listAccounts()
-      setAccounts(accounts)
-      if (accounts.length > 0) {
-        setConnectedAccount(accounts[0])
-      } else {
-        setConnectedAccount(undefined)
-      }
-    }
-  }
-
-  const getWeb3Provider = () => {
-    //@ts-ignore
-    if (window.ethereum?.isCoinbaseWallet)
-      return new ethers.providers.Web3Provider(window.ethereum, 'any')
-    if (window.ethereum)
-      return new ethers.providers.Web3Provider(window.ethereum)
+    // const ethereum = window.ethereum
+    // if (ethereum) {
+    //   const provider = new ethers.providers.Web3Provider(ethereum)
+    //   // @ts-ignore
+    //   setIsMetaMask(window.ethereum?.isMetaMask && !window.ethereum?.overrideIsMetaMask)
+    //   const accounts = await provider.listAccounts()
+    //   setAccounts(accounts)
+    //   if (accounts.length > 0) {
+    //     setConnectedAccount(accounts[0])
+    //   } else {
+    //     setConnectedAccount(undefined)
+    //   }
+    // }
   }
 
   const connectWallet = async () => {
-    setIsConnecting(true)
-    const ethereum = window.ethereum
+    // setIsConnecting(true)
+    // const ethereum = window.ethereum
 
-    //@ts-ignore
-    if (window.ethereum?.isCoinbaseWallet) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-  
-      try {
-        await window.ethereum.request({ method: "eth_requestAccounts" });
-        const signer = provider.getSigner();
-        const account = await signer.getAddress();
-        
-        setConnectedAccount(account);
-        setWalletProvider(provider);
-      } catch (error) {
-        console.error("❌ Error connecting to Coinbase Wallet:", error);
-      }
-    } 
-    if (ethereum) {
-      try {
-        const provider = getWeb3Provider()
-        setWalletProvider(provider)
-        await ethereum.request({ method: 'eth_requestAccounts' })
-        await handleAccountsChanged()
-      } catch (error) {
-        console.error('Error connecting to wallet:', error)
-      }
-    }
-    setIsConnecting(false)
+    // //@ts-ignore
+    // if (window.ethereum?.isCoinbaseWallet) {
+    //   const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+
+    //   try {
+    //     await window.ethereum.request({ method: "eth_requestAccounts" });
+    //     const signer = provider.getSigner();
+    //     const account = await signer.getAddress();
+
+    //     setConnectedAccount(account);
+    //     setWalletProvider(provider);
+    //   } catch (error) {
+    //     console.error("❌ Error connecting to Coinbase Wallet:", error);
+    //   }
+    // }
+    // if (ethereum) {
+    //   try {
+    //     const provider = getWeb3Provider()
+    //     setWalletProvider(provider)
+    //     await ethereum.request({ method: 'eth_requestAccounts' })
+    //     await handleAccountsChanged()
+    //   } catch (error) {
+    //     console.error('Error connecting to wallet:', error)
+    //   }
+    // }
+    // setIsConnecting(false)
   }
 
   const getProvider = async (network: NetworkInterface) => {
@@ -334,27 +336,31 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
   }
 
   const disconnectWallet = async () => {
-    if (window.ethereum) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-      const ethereum = window.ethereum ?? null
-      // @ts-ignore
-      if (ethereum && provider.connection.url === 'metamask' && !window.ethereum?.overrideIsMetaMask) {
-        // @ts-ignore
-        await ethereum.request({
-          method: 'wallet_revokePermissions',
-          params: [
-            {
-              eth_accounts: {}
-            }
-          ]
-        })
-      } else {
-        // @ts-ignore
-        await ethereum.close()
-        setConnectedAccount(undefined)
-        setAccounts([])
-      }
-    }
+    if (!wallet) return
+    disconnect(wallet)
+    setWallet(undefined)
+    setConnectedAccount(undefined)
+    // if (window.ethereum) {
+    //   const provider = new ethers.providers.Web3Provider(window.ethereum)
+    //   const ethereum = window.ethereum ?? null
+    //   // @ts-ignore
+    //   if (ethereum && provider.connection.url === 'metamask' && !window.ethereum?.overrideIsMetaMask) {
+    //     // @ts-ignore
+    //     await ethereum.request({
+    //       method: 'wallet_revokePermissions',
+    //       params: [
+    //         {
+    //           eth_accounts: {}
+    //         }
+    //       ]
+    //     })
+    //   } else {
+    //     // @ts-ignore
+    //     await ethereum.close()
+    //     setConnectedAccount(undefined)
+    //     setAccounts([])
+    //   }
+    // }
   }
 
   return (
@@ -381,7 +387,10 @@ export const BlockchainProvider: React.FC<BlockchainProviderProps> = ({ children
         selectedNetworkType,
         setSelectedNetworkType,
         setSelectedNativeToken,
-        selectedNativeToken
+        selectedNativeToken,
+        setConnectedAccount,
+        setWallet,
+        wallet
       }}
     >
       {children}

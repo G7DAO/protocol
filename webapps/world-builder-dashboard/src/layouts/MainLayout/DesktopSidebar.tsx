@@ -7,6 +7,8 @@ import NetworkToggle from '@/components/commonComponents/networkToggle/NetworkTo
 import { useBlockchainContext } from '@/contexts/BlockchainContext'
 import Game7Logo from '@/layouts/MainLayout/Game7Logo'
 import { NavigationItem } from './MainLayout'
+import { ConnectButton, darkTheme } from 'thirdweb/react'
+import { useThirdWeb } from '@/hooks/useThirdWeb'
 
 interface DesktopSidebarProps {
   navigationItems: NavigationItem[]
@@ -16,8 +18,9 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
   const [isHoveredElement, setIsHovereredElement] = useState('');
   const location = useLocation()
   const navigate = useNavigate()
-  const { connectedAccount, connectWallet, disconnectWallet, isConnecting, selectedNetworkType } =
+  const { connectedAccount, disconnectWallet, selectedNetworkType, setConnectedAccount, setWallet, wallet} =
     useBlockchainContext()
+  const { client, wallets } = useThirdWeb()
 
   return (
     <div className={styles.sideBar}>
@@ -25,7 +28,7 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
         <Game7Logo />
         <NetworkToggle />
         <div className={styles.navigation}>
-          {navigationItems.map(({Icon, ...item}) => (
+          {navigationItems.map(({ Icon, ...item }) => (
             <div
               onMouseEnter={() => setIsHovereredElement(item.name)}
               onMouseLeave={() => setIsHovereredElement('')}
@@ -41,7 +44,7 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
               key={item.name}
             >
               <div className={styles.navBeginning}>
-                <Icon isHovered={isHoveredElement === item.name}/>
+                <Icon isHovered={isHoveredElement === item.name} />
                 {item.name}
               </div>
               <div style={{ display: 'flex' }}>
@@ -57,22 +60,33 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ navigationItems }) => {
       </div>
       <div className={styles.footer}>
         <div className={styles.footerContent}>
-          {connectedAccount ? (
+          {connectedAccount && wallet ? (
             <div className={styles.web3AddressContainer}>
               <div className={styles.web3address}>
                 {`${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`}
               </div>
               {<IconLogout onClick={disconnectWallet} className={styles.iconButton} />}
             </div>
-          ) : (
-            <div className={styles.connectWalletButton} onClick={connectWallet}>
-              {isConnecting ? (
-                <div className={styles.connectingWalletText}>{'Connecting Wallet...'}</div>
-              ) : (
-                <div className={styles.connectWalletText}>{'Connect Wallet'}</div>
-              )}
-            </div>
-          )}
+          ) :
+            <ConnectButton
+              client={client}
+              wallets={wallets}
+              connectModal={{ size: "compact" }}
+              theme={darkTheme({
+                colors: {
+                  danger: "hsl(358, 76%, 47%)",
+                  success: "hsl(151, 55%, 42%)",
+                  tooltipBg: "hsl(240, 6%, 94%)",
+                  modalBg: "hsl(228, 12%, 8%)",
+                  separatorLine: "hsl(228, 12%, 17%)",
+                  borderColor: "hsl(228, 12%, 17%)",
+                  primaryButtonBg: "hsl(4, 86%, 58%)",
+                  primaryButtonText: "hsl(0, 0%, 100%)"
+                },
+              })}
+              connectButton={{ label: "Connect Wallet", style: { height: '40px', width: '100%' } }}
+              onConnect={(wallet) => { setConnectedAccount(wallet.getAccount()?.address ?? ''); setWallet(wallet) }}
+            />}
           <div className={styles.linkContainer}>
             <a href="https://game7.io/terms" target="_blank" className={styles.linkText} rel="noreferrer">
               Terms of Service
