@@ -5,6 +5,7 @@ import { BigNumber, ethers, Overrides } from 'ethers';
 import { arbSysABI } from './abi/ArbSysABI';
 import { ERC20_ABI } from './abi/ERC20_ABI';
 import { L2GatewayRouterABI } from './abi/L2GatewayRouterABI';
+import { Erc20Bridger, getArbitrumNetwork } from '@arbitrum/sdk';
 
 // Internal Modules - Actions
 import {
@@ -26,8 +27,7 @@ import {BridgeNetworkConfig, networks} from './networks';
 import { TokenAddressMap } from './types';
 import { SignerOrProvider } from './bridgeNetwork';
 import {getProvider, percentIncrease, scaleFrom18DecimalsToNativeTokenDecimals} from './utils/web3Utils';
-import {isNativeUSDC, isTokenNativeUSDC} from "./utils/cctp";
-import {CctpBridger} from "./cctpBridger";
+import { SignerOrProviderOrRpc } from './bridgeTransfer';
 
 
 export const DEFAULT_GAS_PRICE_PERCENT_INCREASE = BigNumber.from(500)
@@ -703,5 +703,57 @@ export class Bridger {
         );
       }
     }
+  }
+
+  static async completeTokenAddressMap(
+    _tokenMap: TokenAddressMap,
+    originNetworkChainId: number,
+    destinationNetworkChainId: number,
+    _originProvider: SignerOrProviderOrRpc,
+    _destinationProvider: SignerOrProviderOrRpc
+  ): Promise<TokenAddressMap> {
+    const arbitrumOriginNetwork = getArbitrumNetwork(originNetworkChainId)
+    const arbitrumDestinationNetwork = getArbitrumNetwork(destinationNetworkChainId)
+    const originProvider = getProvider(_originProvider)
+    const destinationProvider = getProvider(_destinationProvider)
+    if (arbitrumOriginNetwork.parentChainId !== arbitrumDestinationNetwork.chainId && arbitrumDestinationNetwork.parentChainId !== arbitrumOriginNetwork.chainId) {
+      throw new Error('Invalid network chain ids')
+    }
+    const isDeposit = arbitrumDestinationNetwork.parentChainId === arbitrumOriginNetwork.chainId
+    const childNetwork = isDeposit ? arbitrumDestinationNetwork : arbitrumOriginNetwork
+    const parentNetwork = isDeposit ? arbitrumOriginNetwork : arbitrumDestinationNetwork
+    const childProvider = isDeposit ? destinationProvider : originProvider
+    const parentProvider = isDeposit ? originProvider : destinationProvider
+  
+    const tokenMap = Object.fromEntries(
+      Object.entries(_tokenMap).filter(
+        ([chainId, _]: [string, string]) =>
+          Number(chainId) === originNetworkChainId || Number(chainId) === destinationNetworkChainId
+      )
+    );
+  
+    if (!tokenMap[originNetworkChainId] && !tokenMap[destinationNetworkChainId]) {
+      throw new Error('Token not found in token map')
+    }
+  
+    let completeTokenMap = tokenMap
+    if (!tokenMap[parentNetwork.chainId]) {
+      const erc20Bridger = new Erc20Bridger(childNetwork)
+      const parentAddress = await erc20Bridger.getParentErc20Address(tokenMap[childNetwork.chainId], childProvider)
+      completeTokenMap = {
+          [parentNetwork.chainId]: parentAddress,
+          [childNetwork.chainId]: tokenMap[childNetwork.chainId],
+      }
+    }
+    if (!tokenMap[childNetwork.chainId]) {
+      const erc20Bridger = new Erc20Bridger(childNetwork)
+      const childAddress = await erc20Bridger.getChildErc20Address(tokenMap[parentNetwork.chainId], parentProvider)
+      completeTokenMap = {
+          [childNetwork.chainId]: childAddress,
+          [parentNetwork.chainId]: tokenMap[parentNetwork.chainId],
+      }
+    }
+  
+    return completeTokenMap;
   }
 }
