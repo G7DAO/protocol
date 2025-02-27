@@ -9,7 +9,7 @@
     "watch": "tsc --watch",
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write 'src/**/*.ts'",
-    "postinstall": "patch-package",
+    "postinstall": "node ./run-patch.js",
     "patch-arb": "npx patch-package @arbitrum/sdk"
   },
   "keywords": [
