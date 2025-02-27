@@ -110,14 +110,12 @@ export const L3_MAIN_NETWORK: NetworkInterface = {
 
 export const SEPOLIA = defineChain({
   id: 11155111,
-  rpc: `https://eth-sepolia.g.alchemy.com/v2/demo`
-  // rpc: `${import.meta.env.VITE_NB_JSON_RPC_URI}/sepolia/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`
+  rpc: `${import.meta.env.VITE_NB_JSON_RPC_URI}/sepolia/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`
 })
 
 export const ARB_SEPOLIA = defineChain({
   id: 421614,
-  // rpc: `${import.meta.env.VITE_NB_JSON_RPC_URI}/arbitrum-sepolia/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`
-  rpc: `https://sepolia-rollup.arbitrum.io/rpc`
+  rpc: `${import.meta.env.VITE_NB_JSON_RPC_URI}/arbitrum-sepolia/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`
 })
 
 export const G7_SEPOLIA = defineChain({
@@ -127,14 +125,12 @@ export const G7_SEPOLIA = defineChain({
 
 export const MAINNET = defineChain({
   id: 1,
-  rpc: `https://eth-mainnet.g.alchemy.com/v2/demo`
-  // rpc: `${import.meta.env.VITE_NB_JSON_RPC_URI}/ethereum/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`
+  rpc: `${import.meta.env.VITE_NB_JSON_RPC_URI}/ethereum/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`
 })
 
 export const ARBITRUM = defineChain({
   id: 42161,
-  // rpc: `${import.meta.env.VITE_NB_JSON_RPC_URI}/arbitrum-one/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`
-  rpc: `https://arb1.arbitrum.io/rpc`
+  rpc: `${import.meta.env.VITE_NB_JSON_RPC_URI}/arbitrum-one/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`
 })
 
 export const G7 = defineChain({
