@@ -32,7 +32,7 @@ jobs:
           echo "Listing bastion hosts..."
           aws ec2 describe-instances --output text \
             --query "Reservations[*].Instances[*].PublicIpAddress" \
-            --filter Name=instance-state-name,Values=running Name=tag:bastion,Values=true \
+            --filter Name=instance-state-name,Values=running Name=tag:bastion,Values=true Name=tag:wb,Values=true \
             | tee bastion-hosts.txt
           echo
           echo "Listing protocol API hosts..."
