@@ -18,6 +18,12 @@ contract PositionMetadata {
     using Strings for uint256;
     using Strings for address;
 
+    string public displayNativeSymbol; // display symbol for native tokens
+
+    constructor(string memory _displayNativeSymbol) {
+        displayNativeSymbol = _displayNativeSymbol; // initialize the display symbol for native tokens
+    }
+
     function metadataBytes(
         uint256 positionTokenID,
         Position memory position,
@@ -370,11 +376,7 @@ contract PositionMetadata {
     }
 
     function returnTokenSymbolNative() public view returns (string memory) {
-        // Ethereum mainnet or arbitrum sepolia
-        if (block.chainid == 1 || block.chainid == 421614) return "ETH";
-        // g7 conduit testnet or local hardhat node
-        else if (block.chainid == 13746 || block.chainid == 2187) return "G7";
-        else return "N/A";
+        return displayNativeSymbol;
     }
 
     function returnTokenSymbol(uint256 tokenType, address tokenAddress) public view returns (string memory) {
