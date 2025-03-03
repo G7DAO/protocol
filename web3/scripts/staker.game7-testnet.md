@@ -17,12 +17,13 @@ staking pool are transferable. This pool is owned by the zero address, and canno
 
 ```bash
 export RPC="https://testnet-rpc.game7.io"
-export KEYFILE="<path to keyfile>"
+export KEYFILE="<Path to keyfile>"
 # The following lines were added in the course of this script
-export STAKER="0xA1D917972df7E88904A2aaFd92f5c0dF16ABA77e"
+export STAKER="0x8d89Efe97d40DE393d1A7c01ea0231529199fAf3"
 export NATIVE_TOKEN_STAKING_POOL_ID="0"
-export POSITION_METADATA='0x5dF0f705864980Ee890FeBEF0C67c41e7fc5F791'
+export POSITION_METADATA='0x827b5A3f6705a9F15c514Ad6DD9BD45F1b096cb9'
 export ADMINISTRATOR='0xfbca6f618bf24eb5fc1ac544ae2f70b24ffd0e15'
+export NATIVESYMBOL="G7"
 ```
 
 ### Deploy Staker Metadata contract
@@ -33,7 +34,8 @@ export ADMINISTRATOR='0xfbca6f618bf24eb5fc1ac544ae2f70b24ffd0e15'
 ```bash
 bin/game7 staker-metadata deploy \
     --rpc $RPC \
-    --keyfile $KEYFILE
+    --keyfile $KEYFILE \
+    --display-native-symbol $NATIVESYMBOL
 ```
 
 ```bash
@@ -44,14 +46,14 @@ forge verify-contract \
   --verifier-url 'https://testnet.game7.io/api/' \
   --compiler-version '0.8.24' \
   --optimizer-runs '99999' \
-  0x5dF0f705864980Ee890FeBEF0C67c41e7fc5F791 \
+  0x827b5A3f6705a9F15c514Ad6DD9BD45F1b096cb9 \
   contracts/staking/PositionMetadata.sol:PositionMetadata
 cd ..
 ```
 - [x] Record `PositionMetadata` contract address
 
 ```bash
-export POSITION_METADATA='0x5dF0f705864980Ee890FeBEF0C67c41e7fc5F791'
+export POSITION_METADATA='0x827b5A3f6705a9F15c514Ad6DD9BD45F1b096cb9'
 ```
 
 - [x] Update `PositionMetadata` contract address and deployment transaction hash at top of the file.
@@ -76,7 +78,7 @@ forge verify-contract \
   --verifier-url 'https://testnet.game7.io/api/' \
   --compiler-version '0.8.24' \
   --optimizer-runs '99999' \
-  0x3aFE96deaA3559405F865F32c0d979b20EC8753b \
+  0x8d89Efe97d40DE393d1A7c01ea0231529199fAf3 \
   contracts/staking/Staker.sol:Staker
 cd ..
 ```
@@ -84,7 +86,7 @@ cd ..
 - [x] Record `Staker` contract address
 
 ```bash
-export STAKER="0x3aFE96deaA3559405F865F32c0d979b20EC8753b"
+export STAKER="0x8d89Efe97d40DE393d1A7c01ea0231529199fAf3"
 ```
 
 - [x] Update `Staker` contract address and deployment transaction hash at top of the file.
@@ -200,7 +202,7 @@ bin/game7 staker stake-native \
     --keyfile $KEYFILE \
     --pool-id $NATIVE_TOKEN_STAKING_POOL_ID \
     --position-holder $POSITION_HOLDER \
-    --value 100000000000000000
+    --value 111111111111111111
 ```
 
 Transaction: [`0x26f0b702bdbef7d34aa5021e9c32e940ebbae0426f9d2214d8f105a8f5606beb`](https://explorer-game7-testnet-0ilneybprf.t.conduit.xyz/tx/0x26f0b702bdbef7d34aa5021e9c32e940ebbae0426f9d2214d8f105a8f5606beb)
