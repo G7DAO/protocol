@@ -58,6 +58,8 @@ bindings/MockERC1155/MockERC1155.go: hardhat
 bindings/Metronome/Metronome.go: hardhat
 	mkdir -p bindings/Metronome
 	seer evm generate --package Metronome --output bindings/Metronome/Metronome.go --hardhat web3/artifacts/contracts/metronome/Metronome.sol/Metronome.json --cli --struct Metronome
+	mkdir -p bindings/Metronome/MetronomeStrat1
+	seer evm generate --package MetronomeStrat1 --output bindings/Metronome/MetronomeStrat1/MetronomeStrat1.go --hardhat web3/artifacts/contracts/metronome/MetronomeStrat1.sol/MetronomeStrat1.json --cli --struct MetronomeStrat1
 
 bindings/utils/diamonds/Diamonds.go: hardhat
 	mkdir -p bindings/utils/diamonds/Diamond

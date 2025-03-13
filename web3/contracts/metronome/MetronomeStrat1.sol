@@ -15,9 +15,8 @@ contract MetronomeStrat1 is ReentrancyGuard {
 
     uint256 private payedOut;
     uint256 private immutable startTime;
-    ArbSys public constant arbSys = ArbSys(address(100));
-    ArbGasInfo public constant arbGasInfo = ArbGasInfo(address(0x000000000000000000000000000000000000006c));
-
+    ArbSys public constant arbSys = ArbSys(0x0000000000000000000000000000000000000064);
+    ArbGasInfo public constant arbGasInfo = ArbGasInfo(0x000000000000000000000000000000000000006C);
     event MembershipExtension(address indexed member, uint256 indexed endBlock);
     event GasReturn(address indexed member, uint256 indexed amount);
 
