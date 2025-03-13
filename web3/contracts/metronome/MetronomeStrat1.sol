@@ -28,7 +28,7 @@ contract MetronomeStrat1 is ReentrancyGuard {
     error InvalidMembership();
     error InvalidPayment();
 
-    function collectArbBlockHashes() external nonReentrant {
+    function collectArbBlockHashes() external nonReentrant returns (uint256) {
         uint256 gasLeftInitial = gasleft();
         //can only record hashes from previous block not current
         uint256 arbBlockNumber = arbSys.arbBlockNumber() - 1;
@@ -49,6 +49,7 @@ contract MetronomeStrat1 is ReentrancyGuard {
         (bool success, ) = payable(msg.sender).call{ value: gasReturn }("");
         require(success, "Transfer failed");
         emit GasReturn(msg.sender, gasReturn);
+        return gasReturn;
     }
 
     function extendMembership(address member) external payable nonReentrant {
