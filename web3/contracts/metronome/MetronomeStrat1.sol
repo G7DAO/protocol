@@ -3,6 +3,7 @@ pragma solidity ^0.8.24;
 
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import { ArbSys } from "../interfaces/ArbSys.sol";
+import { ArbGasInfo } from "../interfaces/ArbGasInfo.sol";
 
 contract MetronomeStrat1 is ReentrancyGuard {
     mapping(address => uint256) public membershipEndBlock;
@@ -15,15 +16,9 @@ contract MetronomeStrat1 is ReentrancyGuard {
     uint256 private payedOut;
     uint256 private immutable startTime;
     ArbSys public constant arbSys = ArbSys(address(100));
+    ArbGasInfo public constant arbGasInfo = ArbGasInfo(address(0x000000000000000000000000000000000000006c));
 
     event MembershipExtension(address indexed member, uint256 indexed endBlock);
-
-    modifier onlyMembers() {
-        if (membershipEndBlock[msg.sender] <= block.timestamp) {
-            revert InvalidMembership();
-        }
-        _;
-    }
 
     constructor() {
         startTime = block.timestamp;
@@ -46,10 +41,12 @@ contract MetronomeStrat1 is ReentrancyGuard {
             allArbBlockHashesCollected[totalArbBlockHashesCollected] = arbBlockNumberToArbBlockHash[blockNumber];
         }
 
-        uint256 gasReturn = ((tx.gasprice * (gasLeftInitial - gasleft())) * 11) / 10;
+        uint256 gasReturn = (tx.gasprice * (gasLeftInitial - gasleft())) + arbGasInfo.getCurrentTxL1GasFees();
+        gasReturn += (gasReturn * 11) / 10;
         payedOut += gasReturn;
 
-        payable(msg.sender).transfer(gasReturn);
+        (bool success, ) = payable(msg.sender).call{ value: gasReturn }("");
+        require(success, "Transfer failed");
     }
 
     function extendMembership(address member) external payable nonReentrant {
@@ -76,15 +73,23 @@ contract MetronomeStrat1 is ReentrancyGuard {
     }
 
     //returns the hash and a boolean indicating if the block number is within the range of collected hashes
-    function getArbBlockHashAtBlockNumber(uint256 arbBlockNumber) public view onlyMembers returns (bytes32, bool) {
-        return (
-            arbBlockNumberToArbBlockHash[arbBlockNumber],
-            arbBlockNumber <= lastArbBlockNumber && arbBlockNumberToArbBlockHash[arbBlockNumber] != bytes32(0)
-        );
+    function getArbBlockHashAtBlockNumber(uint256 arbBlockNumber) public view returns (bytes32, bool) {
+        if (membershipEndBlock[msg.sender] <= block.timestamp) {
+            return (bytes32(0), false);
+        } else {
+            return (
+                arbBlockNumberToArbBlockHash[arbBlockNumber],
+                arbBlockNumber <= lastArbBlockNumber && arbBlockNumberToArbBlockHash[arbBlockNumber] != bytes32(0)
+            );
+        }
     }
 
     //returns the hash and a boolean indicating if the index is within the range of collected hashes
-    function getArbBlockHashesAtIndex(uint256 index) public view onlyMembers returns (bytes32, bool) {
-        return (allArbBlockHashesCollected[index], index <= totalArbBlockHashesCollected);
+    function getArbBlockHashesAtIndex(uint256 index) public view returns (bytes32, bool) {
+        if (membershipEndBlock[msg.sender] <= block.timestamp) {
+            return (bytes32(0), false);
+        } else {
+            return (allArbBlockHashesCollected[index], index <= totalArbBlockHashesCollected);
+        }
     }
 }
