@@ -19,6 +19,7 @@ contract MetronomeStrat1 is ReentrancyGuard {
     ArbGasInfo public constant arbGasInfo = ArbGasInfo(address(0x000000000000000000000000000000000000006c));
 
     event MembershipExtension(address indexed member, uint256 indexed endBlock);
+    event GasReturn(address indexed member, uint256 indexed amount);
 
     constructor() {
         startTime = block.timestamp;
@@ -47,6 +48,7 @@ contract MetronomeStrat1 is ReentrancyGuard {
 
         (bool success, ) = payable(msg.sender).call{ value: gasReturn }("");
         require(success, "Transfer failed");
+        emit GasReturn(msg.sender, gasReturn);
     }
 
     function extendMembership(address member) external payable nonReentrant {
