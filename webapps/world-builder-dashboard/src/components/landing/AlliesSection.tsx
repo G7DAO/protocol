@@ -1,5 +1,5 @@
 import React from 'react'
-import { HyperPlayLogo, SummonLogo, SummonTextLogo, ArbitrumLogo, ConduitLogo, MarketWarsLogo, ReservoirLogo, CamelotLogo, RelayLogo } from '../../assets'
+import { HyperPlayLogo, SummonLogo, SummonTextLogo, ArbitrumLogo, ConduitLogo, ReservoirLogo, CamelotLogo, RelayLogo } from '../../assets'
 import styles from './Landing.module.css'
 
 const allies = [
@@ -22,10 +22,6 @@ const allies = [
   {
     logo: <ConduitLogo />,
     link: 'https://www.conduit.xyz/'
-  },
-  {
-    logo: <MarketWarsLogo />,
-    link: 'https://www.marketwars.com/'
   },
   {
     logo: <ReservoirLogo />,
