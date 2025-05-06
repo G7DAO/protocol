@@ -58,7 +58,7 @@ export const L1_MAIN_NETWORK: NetworkInterface = {
   chainId: 1,
   name: 'ethereum',
   displayName: 'Ethereum',
-  rpcs: [`${import.meta.env.VITE_NB_JSON_RPC_URI}/ethereum/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`],
+  rpcs: [`${import.meta.env.VITE_NB_ETHEREUM_JSON_RPC_URL || 'https://cloudflare-eth.com'}`],
   blockExplorerUrls: ['https://etherscan.io'],
   nativeCurrency: {
     decimals: 18,
@@ -75,7 +75,7 @@ export const L2_MAIN_NETWORK: NetworkInterface = {
   chainId: 42161,
   name: 'arbitrumOne',
   displayName: 'Arbitrum One',
-  rpcs: [`${import.meta.env.VITE_NB_JSON_RPC_URI}/arbitrum-one/jsonrpc/${import.meta.env.VITE_NB_WB_DASHBOARD_ACCESS_ID}`],
+  rpcs: [`${import.meta.env.VITE_NB_ARBITRUM_ONE_JSON_RPC_URL || 'https://arb1.arbitrum.io/rpc'}`],
   blockExplorerUrls: ['https://arbiscan.io'],
   nativeCurrency: {
     decimals: 18,
