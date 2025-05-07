@@ -74,9 +74,9 @@ const RelayPage = () => {
                         }}
                         tokens={TOKENS}
                     />
-                    <div className={styles.canonicalLink} onClick={() => navigate('/bridge')}>
+                  {/*   <div className={styles.canonicalLink} onClick={() => navigate('/bridge')}>
                         Bridge with Canonical
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </div>

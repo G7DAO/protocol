@@ -32,7 +32,7 @@ const router = createBrowserRouter([
     path: '/cookie',
     errorElement: <ErrorBoundary />
   },
-  {
+ /*  {
     element: <MainLayout />,
     children: [
       {
@@ -40,13 +40,22 @@ const router = createBrowserRouter([
         element: <BridgePage />
       }
     ]
-  },
+  }, */
   {
     element: <MainLayout />,
     children: [
       {
         path: '/faucet/*',
         element: <FaucetPage />
+      }
+    ]
+  },
+  {
+    element: <MainLayout />,
+    children: [
+      {
+        path: '/bridge/*',
+        element: <RelayPage />
       }
     ]
   },

@@ -81,7 +81,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ }) => {
   ]
 
   const MAINNET_NAVIGATION_ITEMS: NavigationItem[] = [
-    {
+  /*   {
       name: 'bridge',
       navigateTo: '/bridge',
       Icon: ({ isHovered }: { isHovered?: boolean }) => (
@@ -90,10 +90,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({ }) => {
           stroke={location.pathname.startsWith('/bridge') ? '#fff' : '#B9B9B9'} isHovered={isHovered}
         />
       )
-    },
+    }, */
     {
-      name: 'relay bridge',
-      navigateTo: '/relay',
+      name: 'bridge',
+      navigateTo: '/bridge',
       Icon: ({ isHovered }: { isHovered?: boolean }) => (
         <IconRelay
           className={styles.icomButton}
