@@ -2,7 +2,7 @@ import { createBrowserRouter } from 'react-router-dom'
 import ErrorBoundary from '@/components/ErrorBoundry'
 //Layouts
 import MainLayout from '@/layouts/MainLayout/MainLayout'
-import BridgePage from '@/pages/BridgePage/BridgePage'
+//import BridgePage from '@/pages/BridgePage/BridgePage'
 import FaucetPage from '@/pages/FaucetPage/FaucetPage'
 //Pages
 import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage'
