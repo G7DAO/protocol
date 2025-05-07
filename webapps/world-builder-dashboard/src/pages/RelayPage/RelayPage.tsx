@@ -14,7 +14,7 @@ import { useBridgeNotificationsContext } from '@/contexts/BridgeNotificationsCon
 import { useNotifications, usePendingTransactions } from '@/hooks/useL2ToL1MessageStatus'
 import { SwapWidget } from '@reservoir0x/relay-kit-ui'
 import { Address } from "viem"
-import { useNavigate } from 'react-router-dom'
+//import { useNavigate } from 'react-router-dom'
 import { G7_ARB, G7_G7, TOKENS } from '@/utils/relayConfig'
 export interface SwapWidgetToken {
     chainId: number;
@@ -28,7 +28,7 @@ export interface SwapWidgetToken {
 
 const RelayPage = () => {
     const { connectedAccount, connectWallet } = useBlockchainContext()
-    const navigate = useNavigate()
+    //const navigate = useNavigate()
     const pendingTransacions = usePendingTransactions(connectedAccount)
     const [notificationsOffset] = useState(0)
     const [notificationsLimit] = useState(10)
@@ -74,9 +74,9 @@ const RelayPage = () => {
                         }}
                         tokens={TOKENS}
                     />
-                    <div className={styles.canonicalLink} onClick={() => navigate('/bridge')}>
+                  {/*   <div className={styles.canonicalLink} onClick={() => navigate('/bridge')}>
                         Bridge with Canonical
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </div>
