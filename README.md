@@ -91,3 +91,7 @@ To run all tests for all the code in this repository:
 ```bash
 make test
 ```
+
+## Support
+
+For help or feedback, please [visit our support site](https://x.com/G7_DAO)
