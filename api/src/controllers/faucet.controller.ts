@@ -14,6 +14,13 @@ export class FaucetController {
       const { recipientAddress } = req.params;
       const checksummedAddress = ethers.getAddress(recipientAddress);
       console.log(`[FaucetController::sendTokens] Sending tokens to ${checksummedAddress}`);
+      const remainingTime = await this.faucetService.getRemainingTime(checksummedAddress);
+      if (remainingTime > 0) {
+        const availableAt = Date.now() + remainingTime * 1000;
+        console.log(`[FaucetController::sendTokens] Too many requests. Available at: ${new Date(availableAt).toISOString()}`);
+        res.setHeader('x-game7-faucet-available-at', new Date(availableAt).toISOString());
+        return res.status(429).send({ status: 'error', message: 'Too many requests. Try again later.' });
+      }
       const response = await this.faucetService.send(checksummedAddress);
       console.log(`[FaucetController::sendTokens] Tokens sent to ${checksummedAddress}: ${response}`);
       return res.status(200).send({ status: 'success', result: response });
